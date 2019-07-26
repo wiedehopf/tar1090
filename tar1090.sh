@@ -2,8 +2,8 @@
 
 trap "kill 0" SIGINT
 trap "kill -2 0" SIGTERM
-INTERVAL=6
-HISTORY_SIZE=600
+INTERVAL=8
+HISTORY_SIZE=360
 CS=60
 SOURCE=/run/dump1090-fa
 source /etc/default/tar1090
