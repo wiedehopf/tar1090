@@ -10,7 +10,7 @@ source /etc/default/tar1090
 
 dir=/run/tar1090
 hist=$(($HISTORY_SIZE))
-chunks=$(( 1 + ($hist/$CS) ))
+chunks=$(( $hist/$CS ))
 partial=$(($hist%$CS))
 if [[ $partial != 0 ]]
 then actual_chunks=$(($chunks+1))
