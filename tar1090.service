@@ -1,0 +1,19 @@
+
+[Unit]
+Description=tar1090 - compress dump1090 json data
+Wants=network.target
+After=network.target
+
+[Service]
+User=dump1090
+RuntimeDirectory=tar1090
+RuntimeDirectoryMode=0755
+EnvironmentFile=/etc/default/tar1090
+ExecStart=-/usr/local/bin/tar1090.sh
+Type=simple
+Restart=always
+RestartSec=30
+Nice=19
+
+[Install]
+WantedBy=default.target

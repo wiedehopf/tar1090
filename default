@@ -1,0 +1,5 @@
+INTERVAL=6
+HISTORY_SIZE=600
+
+# chaning this probably requires more changes in the code, expect it not to work
+SOURCE=/run/dump1090-fa
