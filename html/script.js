@@ -479,7 +479,7 @@ function load_history_chunk(i) {
 	//$("#loader_progress").attr('value',i);
 
 	$.ajax({ url: 'chunks/chunk_' + i + '.gz',
-		timeout: PositionHistorySize * 1000, // Allow 40 ms load time per history entry
+		timeout: PositionHistorySize * 5000, // Allow 40 ms load time per history entry
 		//cache: false,
 		dataType: 'json'
 	})
