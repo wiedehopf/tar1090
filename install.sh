@@ -34,12 +34,12 @@ then
 		echo "Unable to download files, exiting! (Maybe try again?)"
 		exit 1
 	fi
+	cd tar1090-master
 fi
 
 mkdir -p $ipath
-cp -r -T tar1090-master $ipath
+cp -r * $ipath
 
-cd tar1090-master
 cp -n default /etc/default/tar1090
 cp tar1090.service /lib/systemd/system
 
