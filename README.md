@@ -17,3 +17,23 @@ sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/tar1090
 Click the following URL and replace the IP address with address of your Raspberry Pi:
 
 http://192.168.x.yy/tar1090
+
+## Configuration (optional):
+
+Edit the configuration file to change the interval in seconds and number of history files saved:
+```
+sudo nano /etc/default/tar1090
+```
+Ctrl-x to exit, y (yes) and enter to save.
+
+Apply the configuration:
+```
+sudo systemctl restart tar1090
+```
+
+The duration of the history in seconds can be calculated as interval times history_size.
+
+
+## Remove / Uninstall
+
+coming soon ;)
