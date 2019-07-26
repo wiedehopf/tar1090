@@ -587,7 +587,7 @@ function make_geodesic_circle(center, radius, points) {
 	var angularDistance = radius / 6378137.0;
 	var lon1 = center[0] * Math.PI / 180.0;
 	var lat1 = center[1] * Math.PI / 180.0;
-	var geom = new ol.geom.LineString();
+	var geom;
 	for (var i = 0; i <= points; ++i) {
 		var bearing = i * 2 * Math.PI / points;
 
@@ -598,7 +598,10 @@ function make_geodesic_circle(center, radius, points) {
 
 		lat2 = lat2 * 180.0 / Math.PI;
 		lon2 = lon2 * 180.0 / Math.PI;
-		geom.appendCoordinate([lon2, lat2]);
+		if (!geom)
+			geom = new ol.geom.LineString([[lon2, lat2]]);
+		else
+			geom.appendCoordinate([lon2, lat2]);
 	}
 	return geom;
 }
@@ -762,11 +765,9 @@ function initialize_map() {
 			function(feature, layer) {
 				return feature.hex;
 			},
-			null,
-			function(layer) {
+			{ layerFilter: function(layer) {
 				return (layer === iconsLayer);
-			},
-			null);
+			}});
 		if (hex) {
 			selectPlaneByHex(hex, (evt.type === 'dblclick'));
 			adjustSelectedInfoBlockPosition();
@@ -784,11 +785,9 @@ function initialize_map() {
 			function(feature, layer) {
 				return feature.hex;
 			},
-			null,
-			function(layer) {
+			{ layerFilter: function(layer) {
 				return (layer === iconsLayer);
-			},
-			null
+			}}
 		);
 
 		if (hex) {
@@ -858,11 +857,14 @@ function initialize_map() {
 		});
 
 		for (var i = 0; i < data.rings.length; ++i) {
-			var geom = new ol.geom.LineString();
+			var geom = null;
 			var points = data.rings[i].points;
 			if (points.length > 0) {
 				for (var j = 0; j < points.length; ++j) {
-					geom.appendCoordinate([ points[j][1], points[j][0] ]);
+					if (!geom)
+						geom = new ol.geom.LineString([[ points[j][1], points[j][0] ]]);
+					else
+						geom.appendCoordinate([ points[j][1], points[j][0] ]);
 				}
 				geom.appendCoordinate([ points[0][1], points[0][0] ]);
 				geom.transform('EPSG:4326', 'EPSG:3857');
