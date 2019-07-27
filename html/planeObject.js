@@ -699,7 +699,11 @@ PlaneObject.prototype.updateLines = function() {
 	var lastfixed = lastseg.fixed.getCoordinateAt(1.0);
 	var geom = new ol.geom.LineString([lastfixed, ol.proj.fromLonLat(this.position)]);
 	this.elastic_feature = new ol.Feature(geom);
-	this.elastic_feature.setStyle(this.altitudeLines(lastseg.altitude));
+	if (lastseg.estimated) {
+		this.elastic_feature.setStyle(estimateStyle);
+	} else {
+		this.elastic_feature.setStyle(this.altitudeLines(lastseg.altitude));
+	}
 
 	if (oldElastic < 0) {
 		PlaneTrailFeatures.push(this.elastic_feature);
