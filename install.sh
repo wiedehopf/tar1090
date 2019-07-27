@@ -47,6 +47,10 @@ cp tar1090.service /lib/systemd/system
 cp 88-tar1090.conf /etc/lighttpd/conf-available
 lighty-enable-mod tar1090 >/dev/null
 
+if grep -q '^server.modules += ( "mod_setenv" )' /etc/lighttpd/conf-available/89-dump1090-fa.conf
+then
+	sed -i -e 's/^server.modules += ( "mod_setenv" )/#server.modules += ( "mod_setenv" )/'  $(find /etc/lighttpd/conf-available/* | grep -v dump1090-fa)
+fi
 
 systemctl daemon-reload
 systemctl enable tar1090 &>/dev/null
