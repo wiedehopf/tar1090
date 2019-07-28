@@ -28,7 +28,7 @@ function get_unit_label(quantity, systemOfMeasurement) {
 
 // track in degrees (0..359)
 function format_track_brief(track) {
-	if (track === null){
+	if (track == null){
 		return "";
 	}
 
@@ -37,7 +37,7 @@ function format_track_brief(track) {
 
 // track in degrees (0..359)
 function format_track_long(track) {
-	if (track === null){
+	if (track == null){
 		return "n/a";
 	}
 
@@ -49,7 +49,7 @@ function format_track_long(track) {
 function format_altitude_brief(alt, vr, displayUnits) {
 	var alt_text;
 
-	if (alt === null){
+	if (alt == null){
 		return "";
 	} else if (alt === "ground"){
 		return "ground";
@@ -75,7 +75,7 @@ function format_altitude_brief(alt, vr, displayUnits) {
 function format_altitude_long(alt, vr, displayUnits) {
 	var alt_text = "";
 
-	if (alt === null) {
+	if (alt == null) {
 		return "n/a";
 	} else if (alt === "ground") {
 		return "on ground";
@@ -94,7 +94,7 @@ function format_altitude_long(alt, vr, displayUnits) {
 
 // alt ground/airborne
 function format_onground (alt) {
-	if (alt === null) {
+	if (alt == null) {
 		return "n/a";
 	} else if (alt === "ground") {
 		return "on ground";
@@ -114,7 +114,7 @@ function convert_altitude(alt, displayUnits) {
 
 // speed in knots
 function format_speed_brief(speed, displayUnits) {
-	if (speed === null) {
+	if (speed == null) {
 		return "";
 	}
 
@@ -123,7 +123,7 @@ function format_speed_brief(speed, displayUnits) {
 
 // speed in knots
 function format_speed_long(speed, displayUnits) {
-	if (speed === null) {
+	if (speed == null) {
 		return "n/a";
 	}
 
@@ -146,7 +146,7 @@ function convert_speed(speed, displayUnits) {
 
 // dist in meters
 function format_distance_brief(dist, displayUnits) {
-	if (dist === null) {
+	if (dist == null) {
 		return "";
 	}
 
@@ -155,7 +155,7 @@ function format_distance_brief(dist, displayUnits) {
 
 // dist in meters
 function format_distance_long(dist, displayUnits, fixed) {
-	if (dist === null) {
+	if (dist == null) {
 		return "n/a";
 	}
 
@@ -169,7 +169,7 @@ function format_distance_long(dist, displayUnits, fixed) {
 }
 
 function format_distance_short (dist, displayUnits) {
-	if (dist === null) {
+	if (dist == null) {
 		return "n/a";
 	}
 
@@ -200,7 +200,7 @@ function convert_distance_short(dist, displayUnits) {
 
 // rate in ft/min
 function format_vert_rate_brief(rate, displayUnits) {
-	if (rate === null || rate === undefined) {
+	if (rate == null) {
 		return "";
 	}
 
@@ -209,7 +209,7 @@ function format_vert_rate_brief(rate, displayUnits) {
 
 // rate in ft/min
 function format_vert_rate_long(rate, displayUnits) {
-	if (rate === null || rate === undefined) {
+	if (rate == null){
 		return "n/a";
 	}
 

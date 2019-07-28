@@ -56,7 +56,7 @@ var layers;
 // piaware vs flightfeeder
 var isFlightFeeder = false;
 
-function processReceiverUpdate(data) {
+function processReceiverUpdate(data, locOnly) {
 	// Loop through all the planes in the data packet
 	var now = data.now;
 	var acs = data.aircraft;
@@ -76,7 +76,6 @@ function processReceiverUpdate(data) {
 	for (var j=0; j < acs.length; j++) {
 		var ac = acs[j];
 		var hex = ac.hex;
-		var squawk = ac.squawk;
 		var plane = null;
 
 		// Do we already have this plane object in Planes?
@@ -135,7 +134,7 @@ function processReceiverUpdate(data) {
 		}
 
 		// Call the function update
-		plane.updateData(now, ac);
+		plane.updateData(now, ac, locOnly);
 	}
 }
 
@@ -527,7 +526,7 @@ function end_load_history() {
 			now = PositionHistoryBuffer[h].now;
 			if (h%100==99)
 				console.log("Applying history " + (h + 1) + "/" + PositionHistoryBuffer.length + " at: " + now);
-			processReceiverUpdate(PositionHistoryBuffer[h]);
+			processReceiverUpdate(PositionHistoryBuffer[h], true);
 
 			// update track
 			//console.log("Updating tracks at: " + now);
