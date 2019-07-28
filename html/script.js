@@ -429,7 +429,7 @@ var HistoryItemsReturned = 0;
 function start_load_history() {
 	if (PositionHistorySize > 0 && window.location.hash != '#nohistory') {
 		if (HistoryChunks) {
-			$("#loader_progress").attr('max',PositionHistorySize);
+			$("#loader_progress").attr('max',PositionHistorySize*2);
 			console.log("Starting to load history (" + PositionHistorySize + " items)");
 			console.time("Downloaded and parsed History");
 			//Load history chunks in parallel
@@ -537,7 +537,7 @@ function end_load_history() {
 			}
 
 
-			if(h%50 == 49) {
+			if(h%180 == 49) {
 				for (var i = 0; i < PlanesOrdered.length; ++i) {
 					var plane = PlanesOrdered[i];
 					plane.updateTick(now, last);

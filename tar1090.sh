@@ -13,8 +13,8 @@ hist=$(($HISTORY_SIZE))
 chunks=$(( $hist/$CS ))
 partial=$(($hist%$CS))
 if [[ $partial != 0 ]]
-then actual_chunks=$(($chunks+1))
-else actual_chunks=$chunks
+then actual_chunks=$(($chunks+2))
+else actual_chunks=$(($chunks+1))
 fi
 
 
@@ -45,10 +45,15 @@ do
 		sed -i -e '$a,' history_$((i%$CS)).json
 
 
-		if [[ $((i%13)) == 3 ]]
+		if [[ $((i%6)) == 5 ]]
 		then
 			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' history_*.json | gzip -1 > temp.gz
 			mv temp.gz chunk_$j.gz
+			rm -f latest_*.json chunk_$(($actual_chunks - 1)).gz
+		else
+			cp history_$((i%$CS)).json latest_$((i%6)).json
+			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' latest_*.json | gzip -1 > temp.gz
+			mv temp.gz chunk_$(($actual_chunks - 1)).gz
 		fi
 
 		i=$((i+1))
