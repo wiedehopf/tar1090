@@ -2,17 +2,6 @@
 "use strict";
 
 // Base layers configuration
-
-function createBaseLayers() {
-	var layers = [];
-
-	var world = [];
-	var us = [];
-
-	world.push(new ol.layer.Tile({
-		source: new ol.source.OSM({
-
-			"url" : "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"
 			//			"url" : "https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 			//			"url" : "http://{a-c}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"
 			//			"url" : "http://{a-c}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"
@@ -22,12 +11,75 @@ function createBaseLayers() {
 			//			"url" : "http://{a-c}.tilessputnik.ru/tiles/kmt2/{z}/{x}/{y}.png"
 			//			"url" : "https://{a-c}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png"
 			//			"url" : "https://{a-c}.tile.openstreetmap.se/osm/{z}/{x}/{y}.png"
+
+function createBaseLayers() {
+	var layers = [];
+
+	var world = [];
+	var us = [];
+
+	//		opacity: 0.9,
+	world.push(new ol.layer.Tile({
+		source: new ol.source.OSM({
+			"url" : "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"
 		}),
-		//		opacity: 0.9,
+		name: 'wikimedia',
+		title: 'OpenStreetMap Wikimedia',
+		type: 'base',
+	}));
+
+	world.push(new ol.layer.Tile({
+		source: new ol.source.OSM(),
 		name: 'osm',
 		title: 'OpenStreetMap',
 		type: 'base',
 	}));
+
+	world.push(new ol.layer.Tile({
+		source: new ol.source.OSM({
+			"url" : "http://{a-d}.tile.stamen.com/terrain/{z}/{x}/{y}.png", 
+			"attributions" : 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. ' 
+			+ 'Data by <a _href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
+		}),
+		name: 'terrain',
+		title: 'Terrain + Roads',
+		type: 'base',
+	}));
+
+	world.push(new ol.layer.Tile({
+		source: new ol.source.OSM({
+			"url" : "http://{a-d}.tile.stamen.com/terrain-background/{z}/{x}/{y}.png", 
+			"attributions" : 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. ' 
+			+ 'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
+		}),
+		name: 'terrain',
+		title: 'Terrain',
+		type: 'base',
+	}));
+
+	// carto.com basemaps, see the following URLs for details on them:
+	// http://basemaps.cartocdn.com
+	// https://github.com/CartoDB/cartodb/wiki/BaseMaps-available
+	
+	var basemaps = [ "dark_all", "dark_nolabels", "dark_only_labels",
+					"light_all", "light_nolabels", "light_only_labels",
+					"voyager_all", "voyager_nolabels", "voyager_only_labels",
+					"voyager_labels_under"
+	]
+
+	for (var i in basemaps) {
+		var basemap_id = basemaps[i];
+		world.push(new ol.layer.Tile({
+			source: new ol.source.OSM({
+				"url" : "http://{a-z}.basemaps.cartocdn.com/"+ basemap_id + "/{z}/{x}/{y}.png",
+				"attributions" : 'Courtesy of <a href="https://carto.com">CARTO.com</a>'
+			+ 'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
+			}),
+			name: "carto_" + basemap_id,
+			title: 'carto.com ' +basemap_id,
+			type: 'base',
+		}));
+	}
 
 	if (BingMapsAPIKey) {
 		world.push(new ol.layer.Tile({

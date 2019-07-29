@@ -307,7 +307,7 @@ PlaneObject.prototype.getDataSource = function() {
 	}
 
 	// Not MLAT, but position reported - ADSB or variants
-	if (this.position !== null) {
+	if (this.position != null) {
 		return this.addrtype;
 	}
 

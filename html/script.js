@@ -40,8 +40,6 @@ var TrackedHistorySize = 0;
 
 var SitePosition = null;
 
-var ReceiverClock = null;
-
 var LastReceiverTimestamp = 0;
 var StaleReceiverCount = 0;
 var FetchPending = null;
@@ -164,26 +162,22 @@ function fetchData() {
 
 		if ((now-LastReceiverTimestamp)*1000 >  1.5* RefreshInterval || (now-LastReceiverTimestamp)*1000 < 0.5 * RefreshInterval)
 			console.log("We missed a beat: aircraft.json");
-	//console.log(((now-LastReceiverTimestamp)*1000).toFixed(0) + " " + diff +" "+ delay + "                  "+now);
-	*/
+		console.log(((now-LastReceiverTimestamp)*1000).toFixed(0) + " " + diff +" "+ delay + "                  "+now);
+		*/
 
-	processReceiverUpdate(data);
+		refreshClock(new Date(now * 1000));
+		processReceiverUpdate(data);
 
-	// update timestamps, visibility, history track for all planes - not only those updated
-	for (var i = 0; i < PlanesOrdered.length; ++i) {
-		var plane = PlanesOrdered[i];
-		plane.updateTick(now, LastReceiverTimestamp);
-	}
+		// update timestamps, visibility, history track for all planes - not only those updated
+		for (var i = 0; i < PlanesOrdered.length; ++i) {
+			var plane = PlanesOrdered[i];
+			plane.updateTick(now, LastReceiverTimestamp);
+		}
 
 		selectNewPlanes();
 		refreshTableInfo();
 		refreshSelected();
 		refreshHighlighted();
-
-		if (ReceiverClock) {
-			var rcv = new Date(now * 1000);
-			ReceiverClock.render(rcv.getUTCHours(),rcv.getUTCMinutes(),rcv.getUTCSeconds());
-		}
 
 		// Check for stale receiver data
 		if (LastReceiverTimestamp === now) {
@@ -223,6 +217,10 @@ function test_chunk() {
 }
 var PositionHistorySize = 0;
 function initialize() {
+	$.getJSON("db/aircraft_types/icao_aircraft_types.json")
+		.done(function(typeLookupData) {
+			_aircraft_type_cache = typeLookupData;
+		})
 	// Set page basics
 	document.title = PageName;
 
@@ -230,7 +228,7 @@ function initialize() {
 
 	PlaneRowTemplate = document.getElementById("plane_row_template");
 
-	refreshClock();
+	$('#clock_div').text(new Date().toLocaleString());
 
 
 	$("#loader").removeClass("hidden");
@@ -724,6 +722,7 @@ function initialize_map() {
 		controls: [new ol.control.Zoom(),
 			new ol.control.Rotate(),
 			new ol.control.Attribution({collapsed: true}),
+			new ol.control.LayerSwitcher(),
 			new ol.control.ScaleLine({units: DisplayUnits})
 		],
 		loadTilesWhileAnimating: true,
@@ -1296,9 +1295,10 @@ function refreshHighlighted() {
 
 }
 
-function refreshClock() {
-	$('#clock_div').text(new Date().toLocaleString());
-	var c = setTimeout(refreshClock, 500);
+function refreshClock(now_date) {
+    var hhmm = now_date.getHours().toString().padStart(2,'0') + ":" + now_date.getMinutes().toString().padStart(2,'0');
+    var hms = hhmm + ":" + now_date.getSeconds().toString().padStart(2,'0');
+    $('#clock_div').text(hms + "   " + now_date.toDateString());
 }
 
 function removeHighlight() {
@@ -2000,11 +2000,11 @@ function updatePiAwareOrFlightFeeder() {
 	if (isFlightFeeder) {
 		$('.piAwareLogo').hide();
 		$('.flightfeederLogo').show();
-		PageName = 'FlightFeeder Skyview';
+		PageName = 'FlightFeeder SkyAware';
 	} else {
 		$('.flightfeederLogo').hide();
 		$('.piAwareLogo').show();
-		PageName = 'PiAware Skyview';
+		PageName = 'PiAware SkyAware';
 	}
 	refreshPageTitle();
 }

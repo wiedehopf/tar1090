@@ -27,6 +27,12 @@ var _aircraft_type_cache = null;
 function getAircraftData(icao) {
 	var defer;
 
+	if (icao.charAt(0) == '~') {
+		defer = $.Deferred()
+		defer.reject();
+		return defer;
+	}
+
 	icao = icao.toUpperCase();
 
 	if (icao in _aircraft_cache) {
