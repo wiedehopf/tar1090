@@ -66,7 +66,7 @@ function processReceiverUpdate(data, locOnly, uat) {
 	if (data.uat_978 && data.uat_978 == "true")
 		uat = true;
 
-	if (!uat) {
+	if (!uat && !locOnly) {
 		// Detect stats reset
 		if (MessageCountHistory.length > 0 && MessageCountHistory[MessageCountHistory.length-1].messages > data.messages) {
 			MessageCountHistory = [{'time' : MessageCountHistory[MessageCountHistory.length-1].time,
@@ -196,7 +196,7 @@ function fetchData() {
 		processReceiverUpdate(data);
 
 		if (enable_uat) {
-			FetchPendingUAT.done(function(data) {
+			$.when(FetchPendingUAT).done(function(data) {
 				processReceiverUpdate(data, false, true);
 			});
 		}
@@ -1310,7 +1310,7 @@ function refreshHighlighted() {
 		$('#higlighted_icaotype').text("n/a");
 	}
 
-	if (selected.uat) {
+	if (highlighted.uat) {
 		$('#highlighted_source').text("UAT");
 	} else if (highlighted.getDataSource() === "adsb_icao") {
 		$('#highlighted_source').text("ADS-B");

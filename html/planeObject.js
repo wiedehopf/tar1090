@@ -611,26 +611,22 @@ PlaneObject.prototype.updateTick = function(receiver_timestamp, last_timestamp) 
 	this.seen_pos = (this.last_position_time != null ? receiver_timestamp - this.last_position_time : null);
 
 	// If no packet in over 58 seconds, clear the plane.
-	if (this.seen > 58) {
+	if (this.seen > 58 || this.position == null || this.seen_pos > 100) {
 		if (this.visible) {
 			//console.log("hiding " + this.icao);
 			this.clearMarker();
+			this.clearLines();
 			this.visible = false;
 			if (SelectedPlane == this.icao)
 				selectPlaneByHex(null,false);
 		}
 	} else {
-		if (this.position != null && (this.selected || this.seen_pos < 60)) {
-			this.visible = true;
-			if (this.updateTrack(receiver_timestamp, last_timestamp)) {
-				this.updateLines();
-				this.updateMarker(true);
-			} else { 
-				this.updateMarker(false); // didn't move
-			}
-		} else {
-			this.clearMarker();
-			this.visible = false;
+		this.visible = true;
+		if (this.updateTrack(receiver_timestamp, last_timestamp)) {
+			this.updateLines();
+			this.updateMarker(true);
+		} else { 
+			this.updateMarker(false); // didn't move
 		}
 	}
 };
