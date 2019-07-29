@@ -487,7 +487,7 @@ PlaneObject.prototype.updateIcon = function() {
 // Update our data
 PlaneObject.prototype.updateData = function(receiver_timestamp, data, locOnly) {
 	// get location data first, return early if only those are needed.
-	if (data.mlat && "lat" in data.mlat)
+	if (data.mlat && data.mlat.indexOf("lat") >= 0)
 		this.position_from_mlat = true;
 	else
 		this.position_from_mlat = false;
