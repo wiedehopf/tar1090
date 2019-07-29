@@ -19,6 +19,7 @@ var customAltitudeColors = true;
 var loadtime = "loadtime";
 var HistoryChunks = false;
 var refresh;
+var enable_uat = false;
 
 var SpecialSquawks = {
 	'7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -43,6 +44,7 @@ var SitePosition = null;
 var LastReceiverTimestamp = 0;
 var StaleReceiverCount = 0;
 var FetchPending = null;
+var FetchPendingUAT = null;
 
 var MessageCountHistory = [];
 var MessageRate = 0;
@@ -54,22 +56,38 @@ var layers;
 // piaware vs flightfeeder
 var isFlightFeeder = false;
 
-function processReceiverUpdate(data, locOnly) {
+function processReceiverUpdate(data, locOnly, uat) {
+
 	// Loop through all the planes in the data packet
 	var now = data.now;
 	var acs = data.aircraft;
 
-	// Detect stats reset
-	if (MessageCountHistory.length > 0 && MessageCountHistory[MessageCountHistory.length-1].messages > data.messages) {
-		MessageCountHistory = [{'time' : MessageCountHistory[MessageCountHistory.length-1].time,
-			'messages' : 0}];
-	}
+	// Note this is only present in the history jsons
+	if (data.uat_978 && data.uat_978 == "true")
+		uat = true;
 
-	// Note the message count in the history
-	MessageCountHistory.push({ 'time' : now, 'messages' : data.messages});
-	// .. and clean up any old values
-	if ((now - MessageCountHistory[0].time) > 30)
-		MessageCountHistory.shift();
+	if (!uat) {
+		// Detect stats reset
+		if (MessageCountHistory.length > 0 && MessageCountHistory[MessageCountHistory.length-1].messages > data.messages) {
+			MessageCountHistory = [{'time' : MessageCountHistory[MessageCountHistory.length-1].time,
+				'messages' : 0}];
+		}
+
+		// Note the message count in the history
+		MessageCountHistory.push({ 'time' : now, 'messages' : data.messages});
+		// .. and clean up any old values
+		if ((now - MessageCountHistory[0].time) > 30)
+			MessageCountHistory.shift();
+
+		if (MessageCountHistory.length > 1) {
+			var message_time_delta = MessageCountHistory[MessageCountHistory.length-1].time - MessageCountHistory[0].time;
+			var message_count_delta = MessageCountHistory[MessageCountHistory.length-1].messages - MessageCountHistory[0].messages;
+			if (message_time_delta > 0)
+				MessageRate = message_count_delta / message_time_delta;
+		} else {
+			MessageRate = null;
+		}
+	}
 
 	for (var j=0; j < acs.length; j++) {
 		var ac = acs[j];
@@ -87,6 +105,9 @@ function processReceiverUpdate(data, locOnly) {
 			plane = new PlaneObject(hex);
 			plane.filter = PlaneFilter;
 			plane.tr = PlaneRowTemplate.cloneNode(true);
+
+			if (uat && ac.type && ac.type.substring(0,4) == "adsb")
+				plane.uat = true;
 
 			if (hex[0] === '~') {
 				// Non-ICAO address
@@ -142,6 +163,12 @@ function fetchData() {
 		return;
 	}
 
+	if (enable_uat) {
+		FetchPendingUAT = $.ajax({ url: '/chunks/978.json',
+			timeout: 5000,
+			cache: false,
+			dataType: 'json' });
+	}
 	FetchPending = $.ajax({ url: 'data/aircraft.json',
 		timeout: 5000,
 		cache: false,
@@ -167,6 +194,12 @@ function fetchData() {
 
 		refreshClock(new Date(now * 1000));
 		processReceiverUpdate(data);
+
+		if (enable_uat) {
+			FetchPendingUAT.done(function(data) {
+				processReceiverUpdate(data, false, true);
+			});
+		}
 
 		// update timestamps, visibility, history track for all planes - not only those updated
 		for (var i = 0; i < PlanesOrdered.length; ++i) {
@@ -409,6 +442,8 @@ function initialize() {
 		).done(function(data) {
 			HistoryChunks = true;
 			PositionHistorySize = data.chunks;
+			enable_uat = (data.enable_uat == "true");
+			console.log("UAT/978 enabled!");
 			initialize_map();
 			start_load_history();
 		}).fail(function() {
@@ -481,11 +516,11 @@ function load_history_chunk(i) {
 		dataType: 'json'
 	})
 
-		.done(function(data) {
+		.done(function(json) {
 			$("#loader_progress").attr('value',HistoryItemsReturned);
 
-			for (var i in data.files) {
-				PositionHistoryBuffer.push(data.files[i]);
+			for (var i in json.files) {
+				PositionHistoryBuffer.push(json.files[i]);
 			}
 
 			HistoryItemsReturned++;
@@ -513,7 +548,7 @@ function end_load_history() {
 	//console.log("Done loading history");
 
 	if (PositionHistoryBuffer.length > 0) {
-		var now, last=0;
+		var now=0, last=0, uat_last=0;
 
 		// Sort history by timestamp
 		console.log("Sorting history");
@@ -521,30 +556,41 @@ function end_load_history() {
 
 		// Process history
 		for (var h = 0; h < PositionHistoryBuffer.length; ++h) {
-			now = PositionHistoryBuffer[h].now;
+			var data = PositionHistoryBuffer[h];
+			var uat = false;
+			if (data.uat_978 && data.uat_978 == "true")
+				uat = true;
+
+
+			now = data.now;
 			if (h%100==99)
 				console.log("Applying history " + (h + 1) + "/" + PositionHistoryBuffer.length + " at: " + now);
-			processReceiverUpdate(PositionHistoryBuffer[h], true);
+			processReceiverUpdate(data, true);
 
 			// update track
 			//console.log("Updating tracks at: " + now);
 			for (var i = 0; i < PlanesOrdered.length; ++i) {
 				var plane = PlanesOrdered[i];
-				plane.updateTrack(now, last);
+				plane.updateTrack(now, uat ? uat_last : last);
 			}
 
 
-			if(h%180 == 49) {
+			if(false) {
 				for (var i = 0; i < PlanesOrdered.length; ++i) {
 					var plane = PlanesOrdered[i];
-					plane.updateTick(now, last);
+					plane.updateTick(now, uat ? uat_last : last);
 				}
 				refreshTableInfo();
 				reaper();
 			}
 
-			last = now;
-			LastReceiverTimestamp = last;
+			if (uat) {
+				uat_last = now;
+			} else {
+				last = now;
+				LastReceiverTimestamp = last;
+			}
+
 		}
 
 		// Final pass to update all planes to their latest state
@@ -971,14 +1017,6 @@ function refreshPageTitle() {
 
 // Refresh the detail window about the plane
 function refreshSelected() {
-	if (MessageCountHistory.length > 1) {
-		var message_time_delta = MessageCountHistory[MessageCountHistory.length-1].time - MessageCountHistory[0].time;
-		var message_count_delta = MessageCountHistory[MessageCountHistory.length-1].messages - MessageCountHistory[0].messages;
-		if (message_time_delta > 0)
-			MessageRate = message_count_delta / message_time_delta;
-	} else {
-		MessageRate = null;
-	}
 
 	refreshPageTitle();
 
@@ -1086,7 +1124,9 @@ function refreshSelected() {
 			$('#selected_follow').css('font-weight', 'normal');
 		}
 	}
-	if (selected.getDataSource() === "adsb_icao") {
+	if (selected.uat) {
+		$('#selected_source').text("UAT");
+	} else if (selected.getDataSource() === "adsb_icao") {
 		$('#selected_source').text("ADS-B");
 	} else if (selected.getDataSource() === "tisb_trackfile" || selected.getDataSource() === "tisb_icao" || selected.getDataSource() === "tisb_other") {
 		$('#selected_source').text("TIS-B");
@@ -1270,7 +1310,9 @@ function refreshHighlighted() {
 		$('#higlighted_icaotype').text("n/a");
 	}
 
-	if (highlighted.getDataSource() === "adsb_icao") {
+	if (selected.uat) {
+		$('#highlighted_source').text("UAT");
+	} else if (highlighted.getDataSource() === "adsb_icao") {
 		$('#highlighted_source').text("ADS-B");
 	} else if (highlighted.getDataSource() === "tisb_trackfile" || highlighted.getDataSource() === "tisb_icao" || highlighted.getDataSource() === "tisb_other") {
 		$('#highlighted_source').text("TIS-B");
@@ -1333,7 +1375,9 @@ function refreshTableInfo() {
 				++TrackedAircraftPositions;
 			}
 
-			if (tableplane.getDataSource() === "adsb_icao") {
+			if (tableplane.uat) {
+				classes += " uat";
+			} else if (tableplane.getDataSource() === "adsb_icao") {
 				classes += " vPosition";
 			} else if (tableplane.getDataSource() === "tisb_trackfile" || tableplane.getDataSource() === "tisb_icao" || tableplane.getDataSource() === "tisb_other") {
 				classes += " tisb";

@@ -8,6 +8,7 @@ function PlaneObject(icao) {
 	this.squawk    = null;
 	this.selected  = false;
 	this.category  = null;
+	this.uat       = false;
 
 	// Basic location information
 	this.altitude       = null;
@@ -305,6 +306,8 @@ PlaneObject.prototype.getDataSource = function() {
 	if (this.position_from_mlat) {
 		return 'mlat';
 	}
+	if (this.uat)
+		return 'uat';
 
 	// Not MLAT, but position reported - ADSB or variants
 	if (this.position != null) {

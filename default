@@ -1,2 +1,6 @@
 INTERVAL=10
 HISTORY_SIZE=360
+# Change to yes to enable UAT/978 display in tar1090
+ENABLE_978=no
+# If running dump978-fa on another computer, modify the IP-address as appropriate.
+URL_978="http://127.0.0.1/skyview978"
