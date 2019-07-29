@@ -62,18 +62,17 @@ function createBaseLayers() {
 	// https://github.com/CartoDB/cartodb/wiki/BaseMaps-available
 	
 	var basemaps = [ "dark_all", "dark_nolabels", "dark_only_labels",
-					"light_all", "light_nolabels", "light_only_labels",
-					"voyager_all", "voyager_nolabels", "voyager_only_labels",
-					"voyager_labels_under"
+					"light_all", "light_nolabels", "light_only_labels"
 	]
 
 	for (var i in basemaps) {
 		var basemap_id = basemaps[i];
+
 		world.push(new ol.layer.Tile({
 			source: new ol.source.OSM({
 				"url" : "http://{a-z}.basemaps.cartocdn.com/"+ basemap_id + "/{z}/{x}/{y}.png",
 				"attributions" : 'Courtesy of <a href="https://carto.com">CARTO.com</a>'
-			+ 'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
+			+ ' using data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
 			}),
 			name: "carto_" + basemap_id,
 			title: 'carto.com ' +basemap_id,

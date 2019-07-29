@@ -850,6 +850,7 @@ function initialize_map() {
 			fill: null,
 			stroke: new ol.style.Stroke({
 				color: '#0000DD',
+				lineDash:[4,4],
 				width: 2
 			})
 		});
