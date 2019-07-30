@@ -163,6 +163,8 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	}
 	var prev_track = this.prev_track;
 
+	var on_ground = (this.altitude === "ground");
+
 	this.prev_position = this.position;
 	this.prev_position_time = this.last_position_time;
 	this.prev_track = this.track;
@@ -173,7 +175,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		var newseg = { fixed: new ol.geom.LineString([projHere]),
 			feature: null,
 			estimated: false,
-			ground: (this.altitude === "ground"),
+			ground: on_ground,
 			altitude: this.altitude
 		};
 		this.track_linesegs.push(newseg);
@@ -198,8 +200,6 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	// Makes stale check more accurate for example for 30s spaced history points
 
 	est_track = est_track || ((receiver_timestamp - this.last_position_time) > stale_timeout);
-
-	var ground_track = (this.altitude === "ground");
 
 	if (est_track) {
 
@@ -232,7 +232,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		lastseg = { fixed: new ol.geom.LineString([projPrev]),
 			feature: null,
 			estimated: false,
-			ground: (this.altitude === "ground"),
+			ground: on_ground,
 			altitude: this.altitude };
 		this.track_linesegs.push(lastseg);
 		this.tail_update = prev_time;
@@ -254,12 +254,10 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 			feature: null,
 			estimated: false,
 			altitude: this.altitude,
-			ground: (this.altitude === "ground") });
+			ground: on_ground });
 		this.tail_update = prev_time;
 		this.tail_track = prev_track;
 		this.history_size += 2;
-		//if (this.selected)
-		//	console.log((this.altitude-lastseg.altitude) + "  " + since_update.toPrecision(3) + "  " +this.history_size);
 		return true;
 	}
 
@@ -428,13 +426,11 @@ PlaneObject.prototype.updateIcon = function() {
 	var add_stroke = (this.selected && !SelectedAllPlanes) ? ' stroke="black" stroke-width="1px"' : '';
 	var baseMarker = getBaseMarker(this.category, this.icaotype, this.typeDescription, this.wtc);
 	var rotation = this.track;
-	if (rotation === null) {
+	if (rotation == null) {
 		rotation = this.true_heading;
-	}
-	if (rotation === null) {
+	} else if (rotation == null) {
 		rotation = this.mag_heading;
-	}
-	if (rotation === null) {
+	} else if (rotation == null) {
 		rotation = 0;
 	}
 
@@ -443,7 +439,7 @@ PlaneObject.prototype.updateIcon = function() {
 	var svgKey = col + '!' + outline + '!' + baseMarker.svg + '!' + add_stroke + "!" + scaleFactor;
 	var styleKey = opacity + '!' + rotation;
 
-	if (this.markerStyle === null || this.markerIcon === null || this.markerSvgKey != svgKey) {
+	if (this.markerStyle == null || this.markerIcon == null || this.markerSvgKey != svgKey) {
 		//console.log(this.icao + " new icon and style " + this.markerSvgKey + " -> " + svgKey);
 
 		var icon = new ol.style.Icon({
@@ -468,7 +464,7 @@ PlaneObject.prototype.updateIcon = function() {
 		this.markerStyleKey = styleKey;
 		this.markerSvgKey = svgKey;
 
-		if (this.marker !== null) {
+		if (this.marker) {
 			this.marker.setStyle(this.markerStyle);
 			this.markerStatic.setStyle(this.markerStaticStyle);
 		}
