@@ -380,7 +380,7 @@ PlaneObject.prototype.getAltitudeColor = function(altitude) {
 		h = ColorByAlt.unknown.h;
 		s = ColorByAlt.unknown.s;
 		l = ColorByAlt.unknown.l;
-	} else if (this.altitude === "ground") {
+	} else if (altitude === "ground") {
 		h = ColorByAlt.ground.h;
 		s = ColorByAlt.ground.s;
 		l = ColorByAlt.ground.l;
