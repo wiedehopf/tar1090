@@ -164,7 +164,7 @@ function fetchData() {
 	}
 
 	if (enable_uat) {
-		FetchPendingUAT = $.ajax({ url: '/chunks/978.json',
+		FetchPendingUAT = $.ajax({ url: 'chunks/978.json',
 			timeout: 5000,
 			cache: false,
 			dataType: 'json' });
