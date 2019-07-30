@@ -241,14 +241,20 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		return true;
 	}
 
+	var alt_change = Math.abs(this.altitude - lastseg.altitude);
 	var since_update = prev_time - this.tail_update;
-	if ( (lastseg.ground && this.altitude !== "ground") ||
-		(!lastseg.ground && this.altitude === "ground") || Math.abs(this.altitude - lastseg.altitude) >= 400 ) {
+
+	if ( (lastseg.ground != on_ground) || (!on_ground && isNaN(alt_change)) || alt_change >= 300 || (this.altitude < 10000 && alt_change >= 75) ) {
 		//console.log(this.icao + " ground state changed");
 		// Create a new segment as the ground state or the altitude changed.
 		// The new state is only drawn after the state has changed
-		// and we get a new position.
+		// and we then get a new position.
 
+		// Let's assume the ground state change happened somewhere between the previous and current position
+		// Represent that assumption. With altitude it's not quite as critical.
+		if (lastseg.ground != on_ground) {
+			projPrev = [(projPrev[0]+projHere[0])/2,(projPrev[1]+projHere[1])/2];
+		}
 		lastseg.fixed.appendCoordinate(projPrev);
 		this.track_linesegs.push({ fixed: new ol.geom.LineString([projPrev]),
 			feature: null,
