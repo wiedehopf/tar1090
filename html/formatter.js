@@ -58,15 +58,14 @@ function format_altitude_brief(alt, vr, displayUnits) {
 	alt_text = Math.round(convert_altitude(alt, displayUnits)).toLocaleString() + NBSP;
 
 	// Vertical Rate Triangle
-	var verticalRateTriangle = "<span class=\"verticalRateTriangle\">";
+	var verticalRateTriangle = "";
 	if (vr > 128){
-		verticalRateTriangle += UP_TRIANGLE;
+		verticalRateTriangle = UP_TRIANGLE;
 	} else if (vr < -128){
-		verticalRateTriangle += DOWN_TRIANGLE;
+		verticalRateTriangle = DOWN_TRIANGLE;
 	} else {
-		verticalRateTriangle += NBSP;
+		verticalRateTriangle = NBSP;
 	}
-	verticalRateTriangle += "</span>"
 
 	return alt_text + verticalRateTriangle;
 }

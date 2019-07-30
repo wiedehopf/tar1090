@@ -192,7 +192,6 @@ function fetchData() {
 		console.log(((now-LastReceiverTimestamp)*1000).toFixed(0) + " " + diff +" "+ delay + "                  "+now);
 		*/
 
-		refreshClock(new Date(now * 1000));
 		processReceiverUpdate(data);
 
 		if (enable_uat) {
@@ -209,6 +208,7 @@ function fetchData() {
 
 		selectNewPlanes();
 		refreshTableInfo();
+		refreshClock(new Date(now * 1000));
 		refreshSelected();
 		refreshHighlighted();
 
@@ -1399,28 +1399,38 @@ function refreshTableInfo() {
 			}			                
 
 			// ICAO doesn't change
-			if (tableplane.flight) {
+			if (tableplane.flight && tableplane.flight_cache !== tableplane.flight) {
 				tableplane.tr.cells[2].innerHTML = getFlightAwareModeSLink(tableplane.icao, tableplane.flight, tableplane.flight);
-			} else {
-				tableplane.tr.cells[2].innerHTML = "";
+				tableplane.tr.cells[18].innerHTML = getFlightAwareModeSLink(tableplane.icao, tableplane.flight);
+				tableplane.flight_cache = tableplane.flight;
 			}
-			tableplane.tr.cells[3].textContent = (tableplane.registration !== null ? tableplane.registration : "");
-			tableplane.tr.cells[4].textContent = (tableplane.icaotype !== null ? tableplane.icaotype : "");
-			tableplane.tr.cells[5].textContent = (tableplane.squawk !== null ? tableplane.squawk : "");
-			tableplane.tr.cells[6].innerHTML = format_altitude_brief(tableplane.altitude, tableplane.vert_rate, DisplayUnits);
+			if (!tableplane.flight) {
+				tableplane.tr.cells[2].textContent = (tableplane.registration != null ? tableplane.registration : "");
+				tableplane.tr.cells[18].textContent = (tableplane.registration != null ? tableplane.registration : "");
+			}
+			tableplane.tr.cells[3].textContent = (tableplane.registration != null ? tableplane.registration : "");
+			tableplane.tr.cells[4].textContent = (tableplane.icaotype != null ? tableplane.icaotype : "");
+			tableplane.tr.cells[5].textContent = (tableplane.squawk != null ? tableplane.squawk : "");
+			tableplane.tr.cells[6].textContent = format_altitude_brief(tableplane.altitude, tableplane.vert_rate, DisplayUnits);
 			tableplane.tr.cells[7].textContent = format_speed_brief(tableplane.gs, DisplayUnits);
 			tableplane.tr.cells[8].textContent = format_vert_rate_brief(tableplane.vert_rate, DisplayUnits);
 			tableplane.tr.cells[9].textContent = format_distance_brief(tableplane.sitedist, DisplayUnits);
 			tableplane.tr.cells[10].textContent = format_track_brief(tableplane.track);
 			tableplane.tr.cells[11].textContent = tableplane.messages;
 			tableplane.tr.cells[12].textContent = tableplane.seen.toFixed(0);
-			tableplane.tr.cells[13].textContent = (tableplane.rssi !== null ? tableplane.rssi.toFixed(1) : "");
-			tableplane.tr.cells[14].textContent = (tableplane.position !== null ? tableplane.position[1].toFixed(4) : "");
-			tableplane.tr.cells[15].textContent = (tableplane.position !== null ? tableplane.position[0].toFixed(4) : "");
+			tableplane.tr.cells[13].textContent = (tableplane.rssi != null ? tableplane.rssi.toFixed(1) : "");
+			tableplane.tr.cells[14].textContent = (tableplane.position != null ? tableplane.position[1].toFixed(4) : "");
+			tableplane.tr.cells[15].textContent = (tableplane.position != null ? tableplane.position[0].toFixed(4) : "");
 			tableplane.tr.cells[16].textContent = format_data_source(tableplane.getDataSource());
-			tableplane.tr.cells[17].innerHTML = getAirframesModeSLink(tableplane.icao);
-			tableplane.tr.cells[18].innerHTML = getFlightAwareModeSLink(tableplane.icao, tableplane.flight);
-			tableplane.tr.cells[19].innerHTML = getFlightAwarePhotoLink(tableplane.registration);
+			if (tableplane.icao_cache !== tableplane.icao) {
+				tableplane.tr.cells[17].innerHTML = getAirframesModeSLink(tableplane.icao);
+				tableplane.icao_cache = tableplane.icao;
+			}
+			if (tableplane.registration_cache !== tableplane.registration) {
+				tableplane.tr.cells[19].innerHTML = getFlightAwarePhotoLink(tableplane.registration);
+				tableplane.registration_cache = tableplane.registration;
+			}
+
 			tableplane.tr.className = classes;
 		}
 	}
@@ -1504,9 +1514,11 @@ function resortTable() {
 	PlanesOrdered.sort(sortFunction);
 
 	var tbody = document.getElementById('tableinfo').tBodies[0];
+	var fragment = document.createDocumentFragment();
 	for (var i = 0; i < PlanesOrdered.length; ++i) {
-		tbody.appendChild(PlanesOrdered[i].tr);
+		fragment.appendChild(PlanesOrdered[i].tr);
 	}
+	tbody.appendChild(fragment);
 }
 
 function sortBy(id,sc,se) {
