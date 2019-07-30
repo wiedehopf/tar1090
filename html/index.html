@@ -56,6 +56,7 @@
 			</div>
 			<div class="buttonContainer">
 				<div class="dateTime" id="clock_div"></div>
+				<div class="button buttonHeader" onclick="followRandomPlane();"><span class="buttonText">R</span></div>
 				<div class="button buttonHeader" onclick="resetMap();"><span class="buttonText">Reset Map</span></div>
 				<div class="button buttonHeader" onclick="selectAllPlanes();"><span class="buttonText">Show All Tracks</span></div>
 				<div class="button buttonHeader" onclick="deselectAllPlanes();"><span class="buttonText">Hide All Tracks</span></div>
@@ -208,6 +209,7 @@
 							<label for="maxAltitude" class="altitudeUnit"></label>
 							<button type="submit">Filter</button>
 							<button id="altitude_filter_reset_button">Reset</button>
+
 						</form>
 
 						<div id="planes_table">

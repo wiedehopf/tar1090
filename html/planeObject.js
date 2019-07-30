@@ -244,7 +244,10 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	var alt_change = Math.abs(this.altitude - lastseg.altitude);
 	var since_update = prev_time - this.tail_update;
 
-	if ( (lastseg.ground != on_ground) || (!on_ground && isNaN(alt_change)) || alt_change >= 300 || (this.altitude < 10000 && alt_change >= 75) ) {
+	if ( (lastseg.ground != on_ground)
+		|| (!on_ground && isNaN(alt_change))
+		|| alt_change >= 300
+		|| (this.altitude < 8000 && this.altitude > 1700 && alt_change >= 100) ) {
 		//console.log(this.icao + " ground state changed");
 		// Create a new segment as the ground state or the altitude changed.
 		// The new state is only drawn after the state has changed
@@ -273,7 +276,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 
 	if ( since_update > 32 ||
 		(track_change > 4.5) ||
-		(track_change > 1 && since_update > 2.5) ||
+		(track_change > 1 && since_update > 3.5) ||
 		(track_change > 0.25 && since_update > 7.7) ||
 		(this.position_from_mlat && since_update > 4.5) ||
 		(track_change == -1 && since_update > 4.5) )
@@ -613,7 +616,9 @@ PlaneObject.prototype.updateTick = function(receiver_timestamp, last_timestamp) 
 	this.seen_pos = (this.last_position_time != null ? receiver_timestamp - this.last_position_time : null);
 
 	// If no packet in over 58 seconds, clear the plane.
-	if (this.seen > 58 || this.position == null || this.seen_pos > 100) {
+	// Only clear the plane if it's not selected individually
+	if ((this.seen > 58 || this.position == null || this.seen_pos > 100)
+		&& (!this.selected || SelectedAllPlanes)) {
 		if (this.visible) {
 			//console.log("hiding " + this.icao);
 			this.clearMarker();

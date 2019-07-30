@@ -548,7 +548,7 @@ function end_load_history() {
 	//console.log("Done loading history");
 
 	if (PositionHistoryBuffer.length > 0) {
-		var now=0, last=0, uat_last=0;
+		var now=0, last=0, uat_now, uat_last=0;
 
 		// Sort history by timestamp
 		console.log("Sorting history");
@@ -558,11 +558,14 @@ function end_load_history() {
 		for (var h = 0; h < PositionHistoryBuffer.length; ++h) {
 			var data = PositionHistoryBuffer[h];
 			var uat = false;
-			if (data.uat_978 && data.uat_978 == "true")
+			if (data.uat_978 && data.uat_978 == "true") {
 				uat = true;
+				uat_now = data.now;
+			} else {
+				now = data.now;
+			}
 
 
-			now = data.now;
 			if (h%100==99)
 				console.log("Applying history " + (h + 1) + "/" + PositionHistoryBuffer.length + " at: " + now);
 			processReceiverUpdate(data, true);
@@ -571,21 +574,21 @@ function end_load_history() {
 			//console.log("Updating tracks at: " + now);
 			for (var i = 0; i < PlanesOrdered.length; ++i) {
 				var plane = PlanesOrdered[i];
-				plane.updateTrack(now, uat ? uat_last : last);
+				plane.updateTrack(uat ? uat_now : now, uat ? uat_last : last);
 			}
 
 
-			if(false) {
+			if(h%200 == 199) {
 				for (var i = 0; i < PlanesOrdered.length; ++i) {
 					var plane = PlanesOrdered[i];
-					plane.updateTick(now, uat ? uat_last : last);
+					plane.updateTick(now, last);
 				}
 				refreshTableInfo();
 				reaper();
 			}
 
 			if (uat) {
-				uat_last = now;
+				uat_last = uat_now;
 			} else {
 				last = now;
 				LastReceiverTimestamp = last;
@@ -976,7 +979,7 @@ function reaper() {
 	var newPlanes = [];
 	for (var i = 0; i < PlanesOrdered.length; ++i) {
 		var plane = PlanesOrdered[i];
-		if (plane.seen > 300) {
+		if (plane.seen > 600) {
 			// Reap it.                                
 			plane.tr.parentNode.removeChild(plane.tr);
 			plane.tr = null;
@@ -1930,6 +1933,16 @@ function toggleAltitudeChart(switchToggle) {
 	}
 	localStorage['altitudeChart'] = altitudeChartDisplay;
 }
+
+function followRandomPlane() {
+	var this_one = null;
+	do {
+		this_one = PlanesOrdered[Math.floor(Math.random()*PlanesOrdered.length)];
+	} while (this_one.isFiltered() || !this_one.position || (LastReceiverTimestamp - this_one.last_position_time > 30));
+	//console.log(this_one.icao);
+	selectPlaneByHex(this_one.icao, true);
+}
+
 
 function onResetAltitudeFilter(e) {
 	$("#altitude_filter_min").val("");

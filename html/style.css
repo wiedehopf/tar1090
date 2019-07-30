@@ -429,7 +429,7 @@ select.error, textarea.error, input.error {
 .button {
     background: #00A0E2;
     background: rgba(0, 160, 226, 1);
-    min-width: 80px;
+    min-width: 23px;
     height: 23px;
     border-radius: 4px;
     -moz-border-radius: 4px;
