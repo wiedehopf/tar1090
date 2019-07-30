@@ -334,7 +334,7 @@ PlaneObject.prototype.getMarkerColor = function() {
 	l = colorArr[2];
 
 	// If we have not seen a recent position update, change color
-	if (this.seen_pos > 15) {
+	if (this.seen_pos > 15 && this.altitude !== "ground") {
 		h += ColorByAlt.stale.h;
 		s += ColorByAlt.stale.s;
 		l += ColorByAlt.stale.l;
