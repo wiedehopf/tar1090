@@ -600,6 +600,7 @@ function end_load_history() {
 		console.log("Final history cleanup pass");
 		for (var i = 0; i < PlanesOrdered.length; ++i) {
 			var plane = PlanesOrdered[i];
+			plane.updateMarker(true);
 			plane.updateTick(now, last);
 		}
 

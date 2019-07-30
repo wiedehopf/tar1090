@@ -495,18 +495,19 @@ PlaneObject.prototype.updateIcon = function() {
 // Update our data
 PlaneObject.prototype.updateData = function(receiver_timestamp, data, locOnly) {
 	// get location data first, return early if only those are needed.
-	if (data.mlat && data.mlat.indexOf("lat") >= 0)
-		this.position_from_mlat = true;
-	else
-		this.position_from_mlat = false;
-
 	if (data.lat != null) {
 		this.position   = [data.lon, data.lat];
 		this.last_position_time = receiver_timestamp - data.seen_pos;
 	}
+	if (data.mlat && data.mlat.indexOf("lat") >= 0)
+		this.position_from_mlat = true;
+	else if (data.lat != null)
+		this.position_from_mlat = false;
 
-	this.track = data.track;
-	this.altitude = data.alt_baro;
+	if (data.track != null)
+		this.track = data.track;
+	if (data.alt_baro != null)
+		this.altitude = data.alt_baro;
 	this.last_message_time = receiver_timestamp - data.seen;
 
 	if (locOnly)
@@ -584,8 +585,6 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, locOnly) {
 		this.altitude = data.alt_baro;
 	} else if ('alt_geom' in data) {
 		this.altitude = data.alt_geom;
-	} else {
-		this.altitude = null;
 	}
 
 	// Pick vertical rate from either baro or geom rate
