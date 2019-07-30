@@ -55,7 +55,7 @@ do
 
 		if [[ $ENABLE_978 == "yes" ]]; then
 			cp $dir/978.json $dir/978_history_$((i%$CS)).json
-			sed -i -e 's/,"now":/,"uat_978":"true","now":/' -e '$a,' 978_history_$((i%$CS)).json
+			sed -i -e 's/"now" \?:/"uat_978":"true","now":/' -e '$a,' 978_history_$((i%$CS)).json
 		fi
 
 
@@ -64,7 +64,7 @@ do
 		then
 			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | gzip -1 > temp.gz
 			mv temp.gz chunk_$j.gz
-			rm -f latest_*.json chunk_$(($actual_chunks - 1)).gz
+			rm -f *latest_*.json chunk_$(($actual_chunks - 1)).gz
 		else
 			cp history_$((i%$CS)).json latest_$((i%6)).json
 			if [[ $ENABLE_978 == "yes" ]]; then
@@ -78,19 +78,19 @@ do
 
 		if [[ $i == $CS ]]
 		then
-			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' history_*.json | gzip -9 > temp.gz
+			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | gzip -9 > temp.gz
 			mv temp.gz chunk_$j.gz
 			i=0
 			j=$((j+1))
-			rm -f history*.json
+			rm -f *history_*.json
 		fi
 		if [[ $j == $chunks ]] && [[ $i == $partial ]]
 		then
-			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' history_*.json 2>/dev/null | gzip -9 > temp.gz
+			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json 2>/dev/null | gzip -9 > temp.gz
 			mv temp.gz chunk_$j.gz 2>/dev/null
 			i=0
 			j=0
-			rm -f history*.json
+			rm -f *history_*.json
 		fi
 
 		wait
@@ -101,7 +101,7 @@ done &
 while [[ $ENABLE_978 == "yes" ]]
 do
 	sleep 1 &
-	wget -T 2 -q -O $dir/978.tmp $URL_978/data/aircraft.json
+	wget -T 5 -q -O $dir/978.tmp $URL_978/data/aircraft.json
 	mv $dir/978.tmp $dir/978.json
 	wait
 done &
