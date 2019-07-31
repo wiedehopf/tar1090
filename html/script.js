@@ -501,13 +501,22 @@ function parse_history() {
 			}
 
 
-			if(false) {
+			if(h != 0 && h % Math.floor(PositionHistoryBuffer.length/4) == 0) {
+
+				var newPlanes = [];
 				for (var i = 0; i < PlanesOrdered.length; ++i) {
 					var plane = PlanesOrdered[i];
-					plane.updateTick(now, last);
-				}
-				refreshTableInfo();
-				reaper();
+					if (plane.seen > 600) {
+						// Reap it.
+						delete Planes[plane.icao];
+						plane.destroy();
+					} else {
+						// Keep it.
+						newPlanes.push(plane);
+					}
+				};
+
+				PlanesOrdered = newPlanes;
 			}
 
 			if (uat) {
