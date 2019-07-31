@@ -68,10 +68,6 @@ function processReceiverUpdate(data, loading, uat) {
 	var now = data.now;
 	var acs = data.aircraft;
 
-	// Note this is only present in the history jsons
-	if (data.uat_978 && data.uat_978 == "true")
-		uat = true;
-
 	if (!uat && !loading) {
 		// Detect stats reset
 		if (MessageCountHistory.length > 0 && MessageCountHistory[MessageCountHistory.length-1].messages > data.messages) {
@@ -106,6 +102,8 @@ function processReceiverUpdate(data, loading, uat) {
 		if (Planes[hex]) {
 			plane = Planes[hex];
 		} else if ( ac.messages < 4) {
+			continue;
+		} else if ( uat && tisb in ac && ac.tisb.indexOf("lat") >= 0) {
 			continue;
 		} else {
 			plane = new PlaneObject(hex);
@@ -491,7 +489,7 @@ function parse_history() {
 			if (h%100 == 99)
 				console.log("Applying history " + (h + 1) + "/" + PositionHistoryBuffer.length + " from: " + (new Date(now * 1000)).toLocaleTimeString());
 
-			processReceiverUpdate(data, true);
+			processReceiverUpdate(data, true, uat);
 
 			// update track
 			//console.log("Updating tracks at: " + now);
