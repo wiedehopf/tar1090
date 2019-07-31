@@ -19,7 +19,6 @@ var infoBoxOriginalPosition = {};
 var customAltitudeColors = true;
 var loadtime = "loadtime";
 var mapResizeTimeout;
-var PositionHistoryBuffer = [];
 var HistoryItemsReturned = 0;
 var refresh;
 
@@ -416,8 +415,8 @@ function init_page() {
 
 
 function push_history() {
-	$("#loader_progress").attr('max',PositionHistorySize*2);
-	for (var i = 0; i < PositionHistorySize; i++) {
+	$("#loader_progress").attr('max',nHistoryItems*2);
+	for (var i = 0; i < nHistoryItems; i++) {
 		push_history_item(i);
 	}
 }
@@ -438,7 +437,7 @@ function push_history_item(i) {
 
 			$("#loader_progress").attr('value',HistoryItemsReturned);
 			HistoryItemsReturned++;
-			if (HistoryItemsReturned == PositionHistorySize) {
+			if (HistoryItemsReturned == nHistoryItems) {
 				parse_history();
 			}
 		})
@@ -449,7 +448,7 @@ function push_history_item(i) {
 			$("#loader_progress").attr('value',HistoryItemsReturned);
 			//console.log(error);
 			HistoryItemsReturned++;
-			if (HistoryItemsReturned == PositionHistorySize) {
+			if (HistoryItemsReturned == nHistoryItems) {
 				parse_history();
 			}
 		});
@@ -477,7 +476,7 @@ function parse_history() {
 			var data = PositionHistoryBuffer[h];
 			if (!data) {
 				console.log("nothing in history buffer?!");
-				console.log(data);
+				//console.log(data);
 				continue;
 			}
 			var uat = false;
@@ -489,8 +488,9 @@ function parse_history() {
 			}
 
 
-			if (h%100==99)
-				console.log("Applying history " + (h + 1) + "/" + PositionHistoryBuffer.length + " at: " + now);
+			if (h%100 == 99)
+				console.log("Applying history " + (h + 1) + "/" + PositionHistoryBuffer.length + " from: " + (new Date(now * 1000)).toLocaleTimeString());
+
 			processReceiverUpdate(data, true);
 
 			// update track

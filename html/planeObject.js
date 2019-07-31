@@ -530,6 +530,7 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, loading) {
 		this.track = data.track;
 	if ("alt_baro" in data)
 		this.altitude = data.alt_baro;
+
 	this.last_message_time = receiver_timestamp - data.seen;
 
 	if (loading)

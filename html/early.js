@@ -4,9 +4,11 @@ var Dump1090Version = "unknown version";
 var RefreshInterval = 1000;
 var enable_uat = false;
 var HistoryChunks = false;
-var PositionHistorySize = 0;
+var nHistoryItems = 0;
+var PositionHistoryBuffer = [];
 var	receiverJson;
 var deferHistory = [];
+var configureReceiver;
 
 // get configuration json files, will be used in initialize function
 var get_receiver_defer = $.ajax({ url: 'data/receiver.json',
@@ -21,18 +23,20 @@ var test_chunk_defer = $.ajax({
 	dataType: 'json'
 });
 
-var configureReceiver = $.when(get_receiver_defer).done(function(data){
+$.when(get_receiver_defer).done(function(data){
 
 	receiverJson = data;
 	Dump1090Version = data.version;
 	RefreshInterval = data.refresh;
-	PositionHistorySize = data.history;
+	nHistoryItems = data.history;
 
-	$.when(test_chunk_defer).done(function(data) {
+	configureReceiver = $.when(test_chunk_defer).done(function(data) {
 		HistoryChunks = true;
-		PositionHistorySize = data.chunks;
+		nHistoryItems = data.chunks;
 		enable_uat = (data.enable_uat == "true");
-		console.log("UAT/978 enabled!");
+		if (enable_uat)
+			console.log("UAT/978 enabled!");
+		console.log("Chunks enabled");
 		get_history();
 	}).fail(function() {
 		HistoryChunks = false;
@@ -41,11 +45,11 @@ var configureReceiver = $.when(get_receiver_defer).done(function(data){
 });
 
 function get_history() {
-	if (PositionHistorySize > 0) {
-		console.log("Starting to load history (" + PositionHistorySize + " items)");
+	if (nHistoryItems > 0) {
+		console.log("Starting to load history (" + nHistoryItems + " items)");
 		console.time("Downloaded History");
 		// Queue up the history file downloads
-		for (var i = 0; i < PositionHistorySize; i++) {
+		for (var i = 0; i < nHistoryItems; i++) {
 			get_history_item(i);
 		}
 	}
@@ -56,13 +60,13 @@ function get_history_item(i) {
 	if (HistoryChunks) {
 
 		deferHistory[i] = $.ajax({ url: 'chunks/chunk_' + i + '.gz',
-			timeout: PositionHistorySize * 5000, // Allow 40 ms load time per history entry
+			timeout: nHistoryItems * 5000, // Allow 40 ms load time per history entry
 			dataType: 'json'
 		});
 	} else {
 
 		deferHistory[i] = $.ajax({ url: 'data/history_' + i + '.json',
-			timeout: PositionHistorySize * 120, // Allow 40 ms load time per history entry
+			timeout: nHistoryItems * 120, // Allow 40 ms load time per history entry
 			cache: false,
 			dataType: 'json' });
 	}
