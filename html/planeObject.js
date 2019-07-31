@@ -499,9 +499,9 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, locOnly) {
 		this.position   = [data.lon, data.lat];
 		this.last_position_time = receiver_timestamp - data.seen_pos;
 	}
-	if ("mlat" in data && "lat" in data.mlat)
+	if ("mlat" in data && data.mlat.indexOf("lat") >= 0)
 		this.position_from_mlat = true;
-	else if (data.lat != null)
+	else if (data.seen_pos < 30)
 		this.position_from_mlat = false;
 
 	if ("track" in data)
