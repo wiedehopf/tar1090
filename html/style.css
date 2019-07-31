@@ -224,10 +224,10 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
 }
 
 .vPosition  { background-color: #D5E6EC; }
-.mlat       { background-color: #ffe8bd; }
+.mlat       { background-color: #FFEFCD; }
 .uat        { background-color: #B5F0E6; }
 .other      { background-color: #CCD5F8; }
-.tisb       { background-color: #FFF3B8; }
+.tisb       { background-color: #FFFF99; }
 .squawk7500 { font-weight: bold; background-color: #ff5555; }
 .squawk7600 { font-weight: bold; background-color: #00ffff; }
 .squawk7700 { font-weight: bold; background-color: #ffff00; }

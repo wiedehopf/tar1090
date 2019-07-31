@@ -1248,12 +1248,7 @@ function refreshHighlighted() {
 	// this is following nearly identical logic, etc, as the refreshSelected function, but doing less junk for the highlighted pane
 	var highlighted = false;
 
-	if (typeof HighlightedPlane !== 'undefined' && HighlightedPlane !== null) {
-		highlighted = Planes[HighlightedPlane];
-	}
-
-	// no highlighted plane
-	if (!highlighted) {
+	if (!HighlightedPlane || !(highlighted = Planes[HighlightedPlane]) ) {
 		$('#highlighted_infoblock').hide();
 		return;
 	}
@@ -1278,12 +1273,17 @@ function refreshHighlighted() {
 	var mapExtent = getExtent(0, 0, mapCanvas.width(), mapCanvas.height());
 
 	var marker = highlighted.marker;
-	var markerCoordinates = highlighted.marker.getGeometry().getCoordinates();
+	var geom;
+	var markerCoordinates;
+	if (!marker || !(geom = marker.getGeometry()) || !(markerCoordinates = geom.getCoordinates()) ) {
+		$('#highlighted_infoblock').hide();
+		return;
+	}
 	var markerPosition = OLMap.getPixelFromCoordinate(markerCoordinates);
 
 	// Check for overlap
 	//FIXME TODO: figure out this/remove this check
-	if (isPointInsideExtent(markerPosition[0], markerPosition[1], infoBoxExtent) || true) {
+	if (true || isPointInsideExtent(markerPosition[0], markerPosition[1], infoBoxExtent)) {
 		// Array of possible new positions for info box
 		var candidatePositions = [];
 		candidatePositions.push( { x: 40, y: 80 } );
