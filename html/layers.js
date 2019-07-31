@@ -101,29 +101,27 @@ function createBaseLayers() {
 		}));
 	}
 
-	if (ChartBundleLayers) {
-		var chartbundleTypes = {
-			sec: "Sectional Charts",
-			tac: "Terminal Area Charts",
-			hel: "Helicopter Charts",
-			enrl: "IFR Enroute Low Charts",
-			enra: "IFR Area Charts",
-			enrh: "IFR Enroute High Charts"
-		};
+	var chartbundleTypes = {
+		sec: "Sectional Charts",
+		tac: "Terminal Area Charts",
+		hel: "Helicopter Charts",
+		enrl: "IFR Enroute Low Charts",
+		enra: "IFR Area Charts",
+		enrh: "IFR Enroute High Charts"
+	};
 
-		for (var type in chartbundleTypes) {
-			us.push(new ol.layer.Tile({
-				source: new ol.source.TileWMS({
-					url: 'http://wms.chartbundle.com/wms',
-					params: {LAYERS: type},
-					projection: 'EPSG:3857',
-					attributions: 'Tiles courtesy of <a href="http://www.chartbundle.com/">ChartBundle</a>'
-				}),
-				name: 'chartbundle_' + type,
-				title: chartbundleTypes[type],
-				type: 'base',
-				group: 'chartbundle'}));
-		}
+	for (var type in chartbundleTypes) {
+		us.push(new ol.layer.Tile({
+			source: new ol.source.TileWMS({
+				url: 'http://wms.chartbundle.com/wms',
+				params: {LAYERS: type},
+				projection: 'EPSG:3857',
+				attributions: 'Tiles courtesy of <a href="http://www.chartbundle.com/">ChartBundle</a>'
+			}),
+			name: 'chartbundle_' + type,
+			title: chartbundleTypes[type],
+			type: 'base',
+			group: 'chartbundle'}));
 	}
 
 	var nexrad = new ol.layer.Tile({
