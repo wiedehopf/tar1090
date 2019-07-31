@@ -1,5 +1,6 @@
-// -*- mode: javascript; indent-tabs-mode: nil; c-basic-offset: 8 -*-
-"use strict";
+// Some global variables are defined in early.js
+// early.js takes care of getting some history files while the html page and
+// some javascript libraries are still loading, hopefully speeding up loading
 
 // Define our global variables
 var OLMap         = null;
@@ -18,13 +19,9 @@ var infoBoxOriginalPosition = {};
 var customAltitudeColors = true;
 var loadtime = "loadtime";
 var mapResizeTimeout;
-var HistoryChunks = false;
-var PositionHistorySize = 0;
 var PositionHistoryBuffer = [];
-var deferHistory = [];
 var HistoryItemsReturned = 0;
 var refresh;
-var enable_uat = false;
 
 var SpecialSquawks = {
 	'7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -35,8 +32,6 @@ var SpecialSquawks = {
 // Get current map settings
 var CenterLat, CenterLon, ZoomLvl, MapType;
 
-var Dump1090Version = "unknown version";
-var RefreshInterval = 1000;
 
 var PlaneRowTemplate = null;
 
@@ -61,25 +56,12 @@ var layers;
 // piaware vs flightfeeder
 var isFlightFeeder = false;
 
-
 // this will be needed later, get it right when the script is loaded
 $.getJSON("db/aircraft_types/icao_aircraft_types.json")
 	.done(function(typeLookupData) {
 		_aircraft_type_cache = typeLookupData;
 	})
 
-// get configuration json files, will be used in initialize function
-var get_receiver_defer = $.ajax({ url: 'data/receiver.json',
-	timeout: 5000,
-	cache: false,
-	dataType: 'json'
-});
-var test_chunk_defer = $.ajax({
-	url:'chunks/chunks.json',
-	timeout: 3000,
-	cache: false,
-	dataType: 'json'
-});
 
 function processReceiverUpdate(data, loading, uat) {
 
@@ -271,41 +253,14 @@ function fetchData() {
 // kicks off the whole rabbit hole
 function initialize() {
 
-	$.when(get_receiver_defer).done(function(data){
-		if (typeof data.lat !== "undefined") {
-			SiteShow = true;
-			SiteLat = data.lat;
-			SiteLon = data.lon;
-			DefaultCenterLat = data.lat;
-			DefaultCenterLon = data.lon;
-		}
 
-		Dump1090Version = data.version;
-		RefreshInterval = data.refresh;
-		PositionHistorySize = data.history;
-
-		$.when(test_chunk_defer).done(function(data) {
-			HistoryChunks = true;
-			PositionHistorySize = data.chunks;
-			enable_uat = (data.enable_uat == "true");
-			console.log("UAT/978 enabled!");
-			initialize_map();
-			start_load_history();
-		}).fail(function() {
-			HistoryChunks = false;
-			initialize_map();
-			start_load_history();
-		});
-
-
+	$.when(configureReceiver).done(function() {
 
 		// Initialize stuff
-
 		init_page();
 
-		// Wait for history item downloads and parse them
-
-		when_history();
+		// Wait for history item downloads and append them to the buffer
+		push_history();
 	});
 
 }
@@ -459,42 +414,15 @@ function init_page() {
 }
 
 
-function start_load_history() {
-	if (PositionHistorySize > 0) {
-		console.log("Starting to load history (" + PositionHistorySize + " items)");
-		console.time("Downloaded History");
-		// Queue up the history file downloads
-		for (var i = 0; i < PositionHistorySize; i++) {
-			load_history_item(i);
-		}
-	}
-}
 
-function load_history_item(i) {
-
-	if (HistoryChunks) {
-
-		deferHistory[i] = $.ajax({ url: 'chunks/chunk_' + i + '.gz',
-			timeout: PositionHistorySize * 5000, // Allow 40 ms load time per history entry
-			dataType: 'json'
-		});
-	} else {
-
-		deferHistory[i] = $.ajax({ url: 'data/history_' + i + '.json',
-			timeout: PositionHistorySize * 120, // Allow 40 ms load time per history entry
-			cache: false,
-			dataType: 'json' });
-	}
-}
-
-function when_history() {
+function push_history() {
 	$("#loader_progress").attr('max',PositionHistorySize*2);
 	for (var i = 0; i < PositionHistorySize; i++) {
-		when_history_item(i);
+		push_history_item(i);
 	}
 }
 
-function when_history_item(i) {
+function push_history_item(i) {
 
 	$.when(deferHistory[i])
 		.done(function(json) {
@@ -504,14 +432,14 @@ function when_history_item(i) {
 					PositionHistoryBuffer.push(json.files[i]);
 				}
 			} else {
-				PositionHistoryBuffer.push(data);
+				PositionHistoryBuffer.push(json);
 			}
 
 
 			$("#loader_progress").attr('value',HistoryItemsReturned);
 			HistoryItemsReturned++;
 			if (HistoryItemsReturned == PositionHistorySize) {
-				end_load_history();
+				parse_history();
 			}
 		})
 
@@ -522,19 +450,20 @@ function when_history_item(i) {
 			//console.log(error);
 			HistoryItemsReturned++;
 			if (HistoryItemsReturned == PositionHistorySize) {
-				end_load_history();
+				parse_history();
 			}
 		});
 }
 
 
 
-function end_load_history() {
+function parse_history() {
 	console.timeEnd("Downloaded History");
-	console.time("Processed Hisory");
+
+	console.time("Loaded aircraft tracks from History");
 	$("#loader").addClass("hidden");
 
-	//console.log("Done loading history");
+	initialize_map();
 
 	if (PositionHistoryBuffer.length > 0) {
 		var now=0, last=0, uat_now, uat_last=0;
@@ -589,21 +518,18 @@ function end_load_history() {
 		console.log("Final history cleanup pass");
 		for (var i = 0; i < PlanesOrdered.length; ++i) {
 			var plane = PlanesOrdered[i];
-			plane.updateMarker(true);
-			plane.updateTick(now, last);
+			plane.updateTick(now, last, true);
 		}
 
 
-		console.time("setupPlane");
 		for (var i in PlanesOrdered)
 			setupPlane(PlanesOrdered[i].icao,PlanesOrdered[i]);
-		console.timeEnd("setupPlane");
 
 		LastReceiverTimestamp = last;
 	}
 
 	PositionHistoryBuffer = null;
-	console.timeEnd("Processed Hisory");
+	console.timeEnd("Loaded aircraft tracks from History");
 
 	console.log("Completing init");
 
@@ -650,6 +576,13 @@ function make_geodesic_circle(center, radius, points) {
 
 // Initalizes the map and starts up our timers to call various functions
 function initialize_map() {
+	if (receiverJson && receiverJson.lat != null) {
+		SiteShow = true;
+		SiteLat = receiverJson.lat;
+		SiteLon = receiverJson.lon;
+		DefaultCenterLat = receiverJson.lat;
+		DefaultCenterLon = receiverJson.lon;
+	}
 	// Load stored map settings if present
 	CenterLat = Number(localStorage['CenterLat']) || DefaultCenterLat;
 	CenterLon = Number(localStorage['CenterLon']) || DefaultCenterLon;

@@ -596,7 +596,7 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, loading) {
 
 };
 
-PlaneObject.prototype.updateTick = function(receiver_timestamp, last_timestamp) {
+PlaneObject.prototype.updateTick = function(receiver_timestamp, last_timestamp, init) {
 	// recompute seen and seen_pos
 	this.seen = receiver_timestamp - this.last_message_time;
 	this.seen_pos = (this.last_position_time != null ? receiver_timestamp - this.last_position_time : null);
@@ -615,7 +615,7 @@ PlaneObject.prototype.updateTick = function(receiver_timestamp, last_timestamp) 
 		}
 	} else {
 		this.visible = true;
-		if (this.updateTrack(receiver_timestamp, last_timestamp)) {
+		if (init || this.updateTrack(receiver_timestamp, last_timestamp)) {
 			this.updateLines();
 			this.updateMarker(true);
 		} else { 
