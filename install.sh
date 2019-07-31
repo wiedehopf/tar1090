@@ -37,6 +37,13 @@ then
 	cd tar1090-master
 fi
 
+if [[ -n $1 ]] && [ $1 != "test" ] ; then
+	sed -i -e "s?/run/dump1090-fa?$1?" 88-tar1090.conf
+	sed -i -e "s?/run/dump1090-fa?$1?" tar1090.sh
+fi
+
+
+
 mkdir -p $ipath
 cp -r * $ipath
 

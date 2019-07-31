@@ -33,6 +33,12 @@ sudo systemctl restart tar1090
 
 The duration of the history in seconds can be calculated as interval times history_size.
 
+### Installation to work with another folder, for example /run/combine1090
+
+```
+wget -q -O /tmp/install.sh https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh
+sudo bash /tmp/install.sh /run/combine1090
+```
 
 ## Remove / Uninstall
 
