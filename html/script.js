@@ -56,7 +56,7 @@ var layers;
 // piaware vs flightfeeder
 var isFlightFeeder = false;
 
-function processReceiverUpdate(data, locOnly, uat) {
+function processReceiverUpdate(data, loading, uat) {
 
 	// Loop through all the planes in the data packet
 	var now = data.now;
@@ -66,7 +66,7 @@ function processReceiverUpdate(data, locOnly, uat) {
 	if (data.uat_978 && data.uat_978 == "true")
 		uat = true;
 
-	if (!uat && !locOnly) {
+	if (!uat && !loading) {
 		// Detect stats reset
 		if (MessageCountHistory.length > 0 && MessageCountHistory[MessageCountHistory.length-1].messages > data.messages) {
 			MessageCountHistory = [{'time' : MessageCountHistory[MessageCountHistory.length-1].time,
@@ -104,57 +104,64 @@ function processReceiverUpdate(data, locOnly, uat) {
 		} else {
 			plane = new PlaneObject(hex);
 			plane.filter = PlaneFilter;
-			plane.tr = PlaneRowTemplate.cloneNode(true);
 
 			if (uat && ac.type && ac.type.substring(0,4) == "adsb")
 				plane.uat = true;
 
-			if (hex[0] === '~') {
-				// Non-ICAO address
-				plane.tr.cells[0].textContent = hex.substring(1);
-				$(plane.tr).css('font-style', 'italic');
-			} else {
-				plane.tr.cells[0].textContent = hex;
-			}
-
-			// set flag image if available
-			if (ShowFlags && plane.icaorange.flag_image !== null) {
-				$('img', plane.tr.cells[1]).attr('src', FlagPath + plane.icaorange.flag_image);
-				$('img', plane.tr.cells[1]).attr('title', plane.icaorange.country);
-			} else {
-				$('img', plane.tr.cells[1]).css('display', 'none');
-			}
-
-			plane.tr.addEventListener('click', function(h, evt) {
-				if (evt.srcElement instanceof HTMLAnchorElement) {
-					evt.stopPropagation();
-					return;
-				}
-
-				if (!$("#map_container").is(":visible")) {
-					showMap();
-				}
-				selectPlaneByHex(h, false);
-				adjustSelectedInfoBlockPosition();
-				evt.preventDefault();
-			}.bind(undefined, hex));
-
-			plane.tr.addEventListener('dblclick', function(h, evt) {
-				if (!$("#map_container").is(":visible")) {
-					showMap();
-				}
-				selectPlaneByHex(h, true);
-				adjustSelectedInfoBlockPosition();
-				evt.preventDefault();
-			}.bind(undefined, hex));
+			if (!loading)
+				setupPlane(hex,plane);
 
 			Planes[hex] = plane;
 			PlanesOrdered.push(plane);
 		}
 
 		// Call the function update
-		plane.updateData(now, ac, locOnly);
+		plane.updateData(now, ac, loading);
 	}
+}
+
+function setupPlane(hex, plane) {
+
+	plane.tr = PlaneRowTemplate.cloneNode(true);
+
+	if (hex[0] === '~') {
+		// Non-ICAO address
+		plane.tr.cells[0].textContent = hex.substring(1);
+		$(plane.tr).css('font-style', 'italic');
+	} else {
+		plane.tr.cells[0].textContent = hex;
+	}
+
+	// set flag image if available
+	if (ShowFlags && plane.icaorange.flag_image !== null) {
+		$('img', plane.tr.cells[1]).attr('src', FlagPath + plane.icaorange.flag_image);
+		$('img', plane.tr.cells[1]).attr('title', plane.icaorange.country);
+	} else {
+		$('img', plane.tr.cells[1]).css('display', 'none');
+	}
+
+	plane.tr.addEventListener('click', function(h, evt) {
+		if (evt.srcElement instanceof HTMLAnchorElement) {
+			evt.stopPropagation();
+			return;
+		}
+
+		if (!$("#map_container").is(":visible")) {
+			showMap();
+		}
+		selectPlaneByHex(h, false);
+		adjustSelectedInfoBlockPosition();
+		evt.preventDefault();
+	}.bind(undefined, hex));
+
+	plane.tr.addEventListener('dblclick', function(h, evt) {
+		if (!$("#map_container").is(":visible")) {
+			showMap();
+		}
+		selectPlaneByHex(h, true);
+		adjustSelectedInfoBlockPosition();
+		evt.preventDefault();
+	}.bind(undefined, hex));
 }
 
 function fetchData() {
@@ -254,10 +261,13 @@ function initialize() {
 		.done(function(typeLookupData) {
 			_aircraft_type_cache = typeLookupData;
 		})
+
+	var get_receiver_defer = get_receiver();
+	var test_chunk_defer = test_chunk();
 	// Set page basics
 	document.title = PageName;
 
-	flightFeederCheck();
+	//flightFeederCheck();
 
 	PlaneRowTemplate = document.getElementById("plane_row_template");
 
@@ -317,7 +327,7 @@ function initialize() {
 
 	// to make the infoblock responsive 
 	$('#sidebar_container').on('resize', function() {
-		if ($('#sidebar_container').width() < 500) {
+		if ($('#sidebar_container').width() < 600) {
 			$('#selected_infoblock').addClass('infoblock-container-small');
 		} else {
 			$('#selected_infoblock').removeClass('infoblock-container-small');
@@ -424,8 +434,7 @@ function initialize() {
 	// with initialization
 
 
-	$.when(get_receiver()
-	).done(function(data){
+	$.when(get_receiver_defer).done(function(data){
 		if (typeof data.lat !== "undefined") {
 			SiteShow = true;
 			SiteLat = data.lat;
@@ -438,8 +447,7 @@ function initialize() {
 		RefreshInterval = data.refresh;
 		PositionHistorySize = data.history;
 
-		$.when(test_chunk()
-		).done(function(data) {
+		$.when(test_chunk_defer).done(function(data) {
 			HistoryChunks = true;
 			PositionHistorySize = data.chunks;
 			enable_uat = (data.enable_uat == "true");
@@ -578,7 +586,7 @@ function end_load_history() {
 			}
 
 
-			if(h%200 == 199) {
+			if(false) {
 				for (var i = 0; i < PlanesOrdered.length; ++i) {
 					var plane = PlanesOrdered[i];
 					plane.updateTick(now, last);
@@ -603,6 +611,12 @@ function end_load_history() {
 			plane.updateMarker(true);
 			plane.updateTick(now, last);
 		}
+
+
+		console.time("setupPlane");
+		for (var i in PlanesOrdered)
+			setupPlane(PlanesOrdered[i].icao,PlanesOrdered[i]);
+		console.timeEnd("setupPlane");
 
 		LastReceiverTimestamp = last;
 	}

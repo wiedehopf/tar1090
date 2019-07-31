@@ -493,7 +493,7 @@ PlaneObject.prototype.updateIcon = function() {
 };
 
 // Update our data
-PlaneObject.prototype.updateData = function(receiver_timestamp, data, locOnly) {
+PlaneObject.prototype.updateData = function(receiver_timestamp, data, loading) {
 	// get location data first, return early if only those are needed.
 	if ("lat" in data) {
 		this.position   = [data.lon, data.lat];
@@ -510,7 +510,7 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, locOnly) {
 		this.altitude = data.alt_baro;
 	this.last_message_time = receiver_timestamp - data.seen;
 
-	if (locOnly)
+	if (loading)
 		return;
 
 
