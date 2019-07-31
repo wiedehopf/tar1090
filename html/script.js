@@ -1400,14 +1400,10 @@ function refreshTableInfo() {
 			}			                
 
 			// ICAO doesn't change
-			if (tableplane.flight && tableplane.flight_cache !== tableplane.flight) {
+			if (tableplane.flight && tableplane.flight_cache != tableplane.flight) {
 				tableplane.tr.cells[2].innerHTML = getFlightAwareModeSLink(tableplane.icao, tableplane.flight, tableplane.flight);
 				tableplane.tr.cells[18].innerHTML = getFlightAwareModeSLink(tableplane.icao, tableplane.flight);
 				tableplane.flight_cache = tableplane.flight;
-			}
-			if (!tableplane.flight) {
-				tableplane.tr.cells[2].textContent = (tableplane.registration != null ? tableplane.registration : "");
-				tableplane.tr.cells[18].textContent = (tableplane.registration != null ? tableplane.registration : "");
 			}
 			tableplane.tr.cells[3].textContent = (tableplane.registration != null ? tableplane.registration : "");
 			tableplane.tr.cells[4].textContent = (tableplane.icaotype != null ? tableplane.icaotype : "");
@@ -1430,6 +1426,11 @@ function refreshTableInfo() {
 			if (tableplane.registration_cache !== tableplane.registration) {
 				tableplane.tr.cells[19].innerHTML = getFlightAwarePhotoLink(tableplane.registration);
 				tableplane.registration_cache = tableplane.registration;
+				if (!tableplane.flight) {
+					var label = tableplane.registration != null ? tableplane.registration : tableplane.icao.toUpperCase();
+					tableplane.tr.cells[2].innerHTML = getFlightAwareModeSLink(tableplane.icao, tableplane.flight, label);
+					tableplane.tr.cells[18].innerHTML = getFlightAwareModeSLink(tableplane.icao, label);
+				}
 			}
 
 			tableplane.tr.className = classes;
@@ -2000,7 +2001,7 @@ function getFlightAwareModeSLink(code, ident, linkText) {
 		}
 
 		var linkHtml = "<a target=\"_blank\" href=\"https://flightaware.com/live/modes/" + code ;
-		if (ident !== null && ident !== "") {
+		if (ident != null && ident !== "") {
 			linkHtml += "/ident/" + ident.trim();
 		}
 		linkHtml += "/redirect\">" + linkText + "</a>";
