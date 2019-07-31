@@ -17,7 +17,12 @@ var FollowSelected = false;
 var infoBoxOriginalPosition = {};
 var customAltitudeColors = true;
 var loadtime = "loadtime";
+var mapResizeTimeout;
 var HistoryChunks = false;
+var PositionHistorySize = 0;
+var PositionHistoryBuffer = [];
+var deferHistory = [];
+var HistoryItemsReturned = 0;
 var refresh;
 var enable_uat = false;
 
@@ -55,6 +60,26 @@ var layers;
 
 // piaware vs flightfeeder
 var isFlightFeeder = false;
+
+
+// this will be needed later, get it right when the script is loaded
+$.getJSON("db/aircraft_types/icao_aircraft_types.json")
+	.done(function(typeLookupData) {
+		_aircraft_type_cache = typeLookupData;
+	})
+
+// get configuration json files, will be used in initialize function
+var get_receiver_defer = $.ajax({ url: 'data/receiver.json',
+	timeout: 5000,
+	cache: false,
+	dataType: 'json'
+});
+var test_chunk_defer = $.ajax({
+	url:'chunks/chunks.json',
+	timeout: 3000,
+	cache: false,
+	dataType: 'json'
+});
 
 function processReceiverUpdate(data, loading, uat) {
 
@@ -240,30 +265,52 @@ function fetchData() {
 	});
 }
 
-function get_receiver() {
-	return $.ajax({ url: 'data/receiver.json',
-		timeout: 5000,
-		cache: false,
-		dataType: 'json'
-	});
-}
-function test_chunk() {
-	return $.ajax({
-		url:'chunks/chunks.json',
-		timeout: 3000,
-		cache: false,
-		dataType: 'json'
-	});
-}
-var PositionHistorySize = 0;
-function initialize() {
-	$.getJSON("db/aircraft_types/icao_aircraft_types.json")
-		.done(function(typeLookupData) {
-			_aircraft_type_cache = typeLookupData;
-		})
 
-	var get_receiver_defer = get_receiver();
-	var test_chunk_defer = test_chunk();
+
+// this function is called from index.html on body load
+// kicks off the whole rabbit hole
+function initialize() {
+
+	$.when(get_receiver_defer).done(function(data){
+		if (typeof data.lat !== "undefined") {
+			SiteShow = true;
+			SiteLat = data.lat;
+			SiteLon = data.lon;
+			DefaultCenterLat = data.lat;
+			DefaultCenterLon = data.lon;
+		}
+
+		Dump1090Version = data.version;
+		RefreshInterval = data.refresh;
+		PositionHistorySize = data.history;
+
+		$.when(test_chunk_defer).done(function(data) {
+			HistoryChunks = true;
+			PositionHistorySize = data.chunks;
+			enable_uat = (data.enable_uat == "true");
+			console.log("UAT/978 enabled!");
+			initialize_map();
+			start_load_history();
+		}).fail(function() {
+			HistoryChunks = false;
+			initialize_map();
+			start_load_history();
+		});
+
+
+
+		// Initialize stuff
+
+		init_page();
+
+		// Wait for history item downloads and parse them
+
+		when_history();
+	});
+
+}
+
+function init_page() {
 	// Set page basics
 	document.title = PageName;
 
@@ -348,24 +395,6 @@ function initialize() {
 
 	// Set up altitude filter button event handlers and validation options
 	$("#altitude_filter_form").submit(onFilterByAltitude);
-	$("#altitude_filter_form").validate({
-		errorPlacement: function(error, element) {
-			return true;
-		},
-
-		rules: {
-			minAltitude: {
-				number: true,
-				min: -99999,
-				max: 99999
-			},
-			maxAltitude: {
-				number: true,
-				min: -99999,
-				max: 99999
-			}
-		}
-	});
 
 	// check if the altitude color values are default to enable the altitude filter
 	if (ColorByAlt.air.h.length === 3 && ColorByAlt.air.h[0].alt === 2000 && ColorByAlt.air.h[0].val === 20 && ColorByAlt.air.h[1].alt === 10000 && ColorByAlt.air.h[1].val === 140 && ColorByAlt.air.h[2].alt === 40000 && ColorByAlt.air.h[2].val === 300) {
@@ -419,7 +448,6 @@ function initialize() {
 	})
 
 	// Force map to redraw if sidebar container is resized - use a timer to debounce
-	var mapResizeTimeout;
 	$("#sidebar_container").on("resize", function() {
 		clearTimeout(mapResizeTimeout);
 		mapResizeTimeout = setTimeout(updateMapSize, 10);
@@ -428,109 +456,59 @@ function initialize() {
 	filterGroundVehicles(false);
 	filterBlockedMLAT(false);
 	toggleAltitudeChart(false);
-
-
-	// Get receiver metadata, reconfigure using it, then continue
-	// with initialization
-
-
-	$.when(get_receiver_defer).done(function(data){
-		if (typeof data.lat !== "undefined") {
-			SiteShow = true;
-			SiteLat = data.lat;
-			SiteLon = data.lon;
-			DefaultCenterLat = data.lat;
-			DefaultCenterLon = data.lon;
-		}
-
-		Dump1090Version = data.version;
-		RefreshInterval = data.refresh;
-		PositionHistorySize = data.history;
-
-		$.when(test_chunk_defer).done(function(data) {
-			HistoryChunks = true;
-			PositionHistorySize = data.chunks;
-			enable_uat = (data.enable_uat == "true");
-			console.log("UAT/978 enabled!");
-			initialize_map();
-			start_load_history();
-		}).fail(function() {
-			HistoryChunks = false;
-			initialize_map();
-			start_load_history();
-		});
-
-	});
 }
 
-var CurrentHistoryFetch = null;
-var PositionHistoryBuffer = [];
-var HistoryItemsReturned = 0;
+
 function start_load_history() {
-	if (PositionHistorySize > 0 && window.location.hash != '#nohistory') {
-		if (HistoryChunks) {
-			$("#loader_progress").attr('max',PositionHistorySize*2);
-			console.log("Starting to load history (" + PositionHistorySize + " items)");
-			console.time("Downloaded and parsed History");
-			//Load history chunks in parallel
-			for (var i = 0; i < PositionHistorySize; i++) {
-				load_history_chunk(i);
-			}
-		} else {
-			$("#loader_progress").attr('max',PositionHistorySize);
-			console.log("Starting to load history (" + PositionHistorySize + " items)");
-			//Load history items in parallel
-			for (var i = 0; i < PositionHistorySize; i++) {
-				load_history_item(i);
-			}
+	if (PositionHistorySize > 0) {
+		console.log("Starting to load history (" + PositionHistorySize + " items)");
+		console.time("Downloaded History");
+		// Queue up the history file downloads
+		for (var i = 0; i < PositionHistorySize; i++) {
+			load_history_item(i);
 		}
 	}
 }
 
 function load_history_item(i) {
-	console.log("Loading history #" + i);
-	$("#loader_progress").attr('value',i);
 
-	$.ajax({ url: 'data/history_' + i + '.json',
-		timeout: PositionHistorySize * 120, // Allow 40 ms load time per history entry
-		cache: false,
-		dataType: 'json' })
+	if (HistoryChunks) {
 
-		.done(function(data) {
-			PositionHistoryBuffer.push(data);
-			HistoryItemsReturned++;
-			$("#loader_progress").attr('value',HistoryItemsReturned);
-			if (HistoryItemsReturned == PositionHistorySize) {
-				end_load_history();
-			}
-		})
-
-		.fail(function(jqxhr, status, error) {
-			//Doesn't matter if it failed, we'll just be missing a data point
-			HistoryItemsReturned++;
-			if (HistoryItemsReturned == PositionHistorySize) {
-				end_load_history();
-			}
+		deferHistory[i] = $.ajax({ url: 'chunks/chunk_' + i + '.gz',
+			timeout: PositionHistorySize * 5000, // Allow 40 ms load time per history entry
+			dataType: 'json'
 		});
+	} else {
+
+		deferHistory[i] = $.ajax({ url: 'data/history_' + i + '.json',
+			timeout: PositionHistorySize * 120, // Allow 40 ms load time per history entry
+			cache: false,
+			dataType: 'json' });
+	}
 }
 
-function load_history_chunk(i) {
-	//console.log("Loading history #" + i);
-	//$("#loader_progress").attr('value',i);
+function when_history() {
+	$("#loader_progress").attr('max',PositionHistorySize*2);
+	for (var i = 0; i < PositionHistorySize; i++) {
+		when_history_item(i);
+	}
+}
 
-	$.ajax({ url: 'chunks/chunk_' + i + '.gz',
-		timeout: PositionHistorySize * 5000, // Allow 40 ms load time per history entry
-		//cache: false,
-		dataType: 'json'
-	})
+function when_history_item(i) {
 
+	$.when(deferHistory[i])
 		.done(function(json) {
-			$("#loader_progress").attr('value',HistoryItemsReturned);
 
-			for (var i in json.files) {
-				PositionHistoryBuffer.push(json.files[i]);
+			if (HistoryChunks) {
+				for (var i in json.files) {
+					PositionHistoryBuffer.push(json.files[i]);
+				}
+			} else {
+				PositionHistoryBuffer.push(data);
 			}
 
+
+			$("#loader_progress").attr('value',HistoryItemsReturned);
 			HistoryItemsReturned++;
 			if (HistoryItemsReturned == PositionHistorySize) {
 				end_load_history();
@@ -538,6 +516,7 @@ function load_history_chunk(i) {
 		})
 
 		.fail(function(jqxhr, status, error) {
+
 			//Doesn't matter if it failed, we'll just be missing a data point
 			$("#loader_progress").attr('value',HistoryItemsReturned);
 			//console.log(error);
@@ -548,8 +527,10 @@ function load_history_chunk(i) {
 		});
 }
 
+
+
 function end_load_history() {
-	console.timeEnd("Downloaded and parsed History");
+	console.timeEnd("Downloaded History");
 	console.time("Processed Hisory");
 	$("#loader").addClass("hidden");
 
@@ -1890,6 +1871,7 @@ function setAltitudeLegend(units) {
 
 function onFilterByAltitude(e) {
 	e.preventDefault();
+
 	updatePlaneFilter();
 	refreshTableInfo();
 
@@ -1984,13 +1966,10 @@ function updatePlaneFilter() {
 	var minAltitude = parseFloat($("#altitude_filter_min").val().trim());
 	var maxAltitude = parseFloat($("#altitude_filter_max").val().trim());
 
-	if (minAltitude === NaN) {
-		minAltitude = -Infinity;
-	}
-
-	if (maxAltitude === NaN) {
-		maxAltitude = Infinity;
-	}
+	if (minAltitude < -1e6 || minAltitude > 1e6 || isNaN(minAltitude))
+		minAltitude = -1e6;
+	if (maxAltitude < -1e6 || maxAltitude > 1e6 || isNaN(maxAltitude))
+		maxAltitude = 1e6;
 
 	PlaneFilter.minAltitude = minAltitude;
 	PlaneFilter.maxAltitude = maxAltitude;
