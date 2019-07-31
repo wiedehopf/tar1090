@@ -52,6 +52,7 @@ do
 			cp $SOURCE/aircraft.json history_$((i%$CS)).json
 		fi
 		sed -i -e '$a,' history_$((i%$CS)).json
+		sed -i -e 's/,"alt_geom":[^,^}]*//' -e 's/,"gs":[^,^}]*//' -e 's/,"ias":[^,^}]*//' -e 's/,"tas":[^,^}]*//' -e 's/,"track_rate":[^,^}]*//' -e 's/,"mag_heading":[^,^}]*//' -e 's/,"mach":[^,^}]*//' -e 's/,"roll":[^,^}]*//' -e 's/,"nav_qnh":[^,^}]*//' -e 's/,"nav_altitude_mcp":[^,^}]*//' -e 's/,"nav_altitude_fms":[^,^}]*//' -e 's/,"nac":[^,^}]*//' -e 's/,"nac":[^,^}]*//' -e 's/,"nic":[^,^}]*//' -e 's/,"nic_baro":[^,^}]*//' -e 's/,"sil_type":[^,^}]*//' -e 's/,"sil":[^,^}]*//' -e 's/,"nav_heading":[^,^}]*//' -e 's/,"baro_rate":[^,^}]*//' -e 's/,"geom_rate":[^,^}]*//' -e 's/,"rc":[^,^}]*//' -e 's/,"squawk":[^,^}]*//' -e 's/,"category":[^,^}]*//' -e 's/,"version":[^,^}]*//' -e 's/,"flight":[^,^}]*//' -e 's/,"rssi":[^,^}]*//' -e 's/,"emer":[^,^}]*//' -e 's/,"sda":[^,^}]*//' -e 's/,"gva":[^,^}]*//' history_$((i%$CS)).json
 
 		if [[ $ENABLE_978 == "yes" ]]; then
 			cp $dir/978.json $dir/978_history_$((i%$CS)).json
