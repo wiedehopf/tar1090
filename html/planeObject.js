@@ -495,24 +495,23 @@ PlaneObject.prototype.updateIcon = function() {
 // Update our data
 PlaneObject.prototype.updateData = function(receiver_timestamp, data, locOnly) {
 	// get location data first, return early if only those are needed.
-	if (data.lat != null) {
+	if ("lat" in data) {
 		this.position   = [data.lon, data.lat];
 		this.last_position_time = receiver_timestamp - data.seen_pos;
 	}
-	if (data.mlat && data.mlat.indexOf("lat") >= 0)
+	if ("mlat" in data && "lat" in data.mlat)
 		this.position_from_mlat = true;
 	else if (data.lat != null)
 		this.position_from_mlat = false;
 
-	if (data.track != null)
+	if ("track" in data)
 		this.track = data.track;
-	if (data.alt_baro != null)
+	if ("alt_baro" in data)
 		this.altitude = data.alt_baro;
 	this.last_message_time = receiver_timestamp - data.seen;
 
 	if (locOnly)
 		return;
-
 
 
 	// Update all of our data
@@ -526,6 +525,7 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, locOnly) {
 
 	this.alt_baro = data.alt_baro;
 	this.alt_geom = data.alt_geom;
+	this.speed = data.gs;
 	this.gs = data.gs;
 	this.ias = data.ias;
 	this.tas = data.tas;
@@ -548,7 +548,6 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, locOnly) {
 	this.squawk = data.squawk;
 	this.category = data.category;
 	this.version = data.version;
-	this.alt_baro = data.alt_baro;
 
 	// fields with more complex behaviour
 	if ("true_heading" in data)
@@ -580,10 +579,8 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, locOnly) {
 	}
 
 
-	// Pick an altitude
-	if ('alt_baro' in data) {
-		this.altitude = data.alt_baro;
-	} else if ('alt_geom' in data) {
+	// Use geometric altitude if plane doesn't transmit alt_baro
+	if (this.altitude == null && 'alt_geom' in data) {
 		this.altitude = data.alt_geom;
 	}
 
@@ -597,16 +594,6 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, locOnly) {
 		this.vert_rate = null;
 	}
 
-	// Pick a speed
-	if ('gs' in data) {
-		this.speed = data.gs;
-	} else if ('tas' in data) {
-		this.speed = data.tas;
-	} else if ('ias' in data) {
-		this.speed = data.ias;
-	} else {
-		this.speed = null;
-	}
 };
 
 PlaneObject.prototype.updateTick = function(receiver_timestamp, last_timestamp) {
