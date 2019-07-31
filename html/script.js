@@ -475,6 +475,11 @@ function parse_history() {
 		// Process history
 		for (var h = 0; h < PositionHistoryBuffer.length; ++h) {
 			var data = PositionHistoryBuffer[h];
+			if (!data) {
+				console.log("nothing in history buffer?!");
+				console.log(data);
+				continue;
+			}
 			var uat = false;
 			if (data.uat_978 && data.uat_978 == "true") {
 				uat = true;
@@ -1409,7 +1414,7 @@ function sortByCountry()  { sortBy('country', compareAlpha,   function(x) { retu
 function sortByRssi()     { sortBy('rssi',    compareNumeric, function(x) { return x.rssi }); }
 function sortByLatitude()   { sortBy('lat',   compareNumeric, function(x) { return (x.position !== null ? x.position[1] : null) }); }
 function sortByLongitude()  { sortBy('lon',   compareNumeric, function(x) { return (x.position !== null ? x.position[0] : null) }); }
-function sortByDataSource() { sortBy('data_source',     compareAlpha, function(x) { return x.getDataSource() } ); }
+function sortByDataSource() { sortBy('data_source',     compareNumeric, function(x) { return x.getDataSourceNumber() } ); }
 
 var sortId = '';
 var sortCompare = null;

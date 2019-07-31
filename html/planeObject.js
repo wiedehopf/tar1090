@@ -308,6 +308,28 @@ PlaneObject.prototype.clearLines = function() {
 	}
 };
 
+PlaneObject.prototype.getDataSourceNumber = function() {
+	// MLAT
+	if (this.position_from_mlat) {
+		return 3;
+	}
+	if (this.uat)
+		return 2; // UAT
+
+	// Not MLAT, but position reported - ADSB or variants
+	if (this.position != null) {
+		if (this.addrtype && this.addrtype.substring(0,4) == "tisb")
+			return 4; // TIS-B
+		else
+			return 1; // ADS-B
+	}
+
+	// Otherwise Mode S
+	return 5;
+
+	// TODO: add support for Mode A/C
+};
+
 PlaneObject.prototype.getDataSource = function() {
 	// MLAT
 	if (this.position_from_mlat) {
