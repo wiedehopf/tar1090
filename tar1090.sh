@@ -35,8 +35,23 @@ do
 		sed -i -e "s/history\" : [0-9]*/chunks\" : $actual_chunks/" chunks.json
 	fi
 
+	# integrate original dump1090-fa history on startup so we don't start blank
+	cp $SOURCE/history_*.json $dir
+	if [[ -f history_0.json ]]; then
+		for i in history_*.json ; do
+			sed -i -e '$a,' $i
+		done
+		sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | gzip -9 > temp.gz
+		mv temp.gz chunk_0.gz
+	fi
+	# cleanup
+	rm -f history_*.json
+
+
+
+	# start with chunk 1 instead of 0 to not overwrite original dump1090-fa history just in case
 	i=0
-	j=0
+	j=1
 
 	sleep 2;
 
@@ -87,8 +102,12 @@ do
 		fi
 		if [[ $j == $chunks ]] && [[ $i == $partial ]]
 		then
-			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json 2>/dev/null | gzip -9 > temp.gz
-			mv temp.gz chunk_$j.gz 2>/dev/null
+			if [[ $i != 0 ]]; then
+				# only necessary if the last chunk is a partial one
+				sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | gzip -9 > temp.gz
+				mv temp.gz chunk_$j.gz
+			fi
+			# reset counters and do cleanup
 			i=0
 			j=0
 			rm -f *history_*.json
