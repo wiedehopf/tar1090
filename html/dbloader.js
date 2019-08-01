@@ -54,6 +54,11 @@ function request_from_db(icao, level, defer) {
 	req.done(function(data) {
 		var subkey;
 
+		if (data == null) {
+			defer.reject();
+			return;
+		}
+
 		if (dkey in data) {
 			getIcaoAircraftTypeData(data[dkey], defer);
 			return;

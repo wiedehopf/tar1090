@@ -60,7 +60,7 @@ function get_history_item(i) {
 	if (HistoryChunks) {
 
 		deferHistory[i] = $.ajax({ url: 'chunks/chunk_' + i + '.gz',
-			timeout: nHistoryItems * 5000, // Allow 40 ms load time per history entry
+			timeout: nHistoryItems * 4000, // Allow 4s load time per history chunk
 			dataType: 'json'
 		});
 	} else {

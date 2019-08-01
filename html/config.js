@@ -99,7 +99,7 @@ SiteCircles = true; // true to show circles (only shown if the center marker is 
 SiteCirclesDistances = new Array(100,150,200,250);
 
 // Controls page title, righthand pane when nothing is selected
-PageName = "PiAware SkyAware";
+PageName = "dump1090-fa";
 
 // Show country flags by ICAO addresses?
 ShowFlags = true;
