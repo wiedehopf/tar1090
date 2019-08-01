@@ -48,15 +48,15 @@ html, body {
 #toggle_sidebar_control {
     display: block;
     position: absolute;
-    top: 16px;
-    right: -3px;
+    top: 6px;
+    right: -4px;
 }
 
 #toggle_sidebar_button {
     cursor: pointer;
     float: right;
-    width: 24px;
-    height: 25px;
+    width: 30px;
+    height: 36px;
     background-size: 24px 25px;
     background-repeat: no-repeat;
     background-position: 0px;
@@ -65,27 +65,25 @@ html, body {
 }
 
 #toggle_sidebar_button.show_sidebar {
-    background-image: url("images/table-icon.png");
-    background-size: cover;
+    background-image: url("images/show_sidebar_active_48x40.png");
 }
 
 #toggle_sidebar_button.hide_sidebar {
-    background-image: url("images/map-icon.png");
-    background-size: cover;
+    background-image: url("images/hide_sidebar_active_48x40.png");
 }
 
 #expand_sidebar_control {
     display: block;
     position: absolute;
-    top: 48px;
-    right: -3px;
+    top: 40px;
+    right: -4px;
 }
 
 #expand_sidebar_button {
     cursor: pointer;
     float: right;
-    width: 24px;
-    height: 25px;
+    width: 30px;
+    height: 36px;
     background-size: 24px 25px;
     background-repeat: no-repeat;
     background-position: 0px;
@@ -94,8 +92,7 @@ html, body {
 }
 
 #expand_sidebar_button {
-    background-image: url("images/table-icon.png");
-    background-size: cover;
+    background-image: url("images/show_sidebar_active_48x40.png");
 }
 
 
@@ -103,8 +100,8 @@ html, body {
     cursor: ew-resize;
     display: block;
     position: absolute;
-    top: 125px;
-    left: -24px;
+    top: 84px;
+    left: -30px;
     float: right;
     width: 24px;
     height: 25px;
@@ -266,9 +263,9 @@ select.error, textarea.error, input.error {
 }
 
 .layer-switcher {
-    bottom: 80px !important;
-    top: auto !important;
-    right: 10px !important;
+    top: 8px !important;
+    bottom: auto !important;
+    right: 48px !important;
 }
 
 /* new css */
