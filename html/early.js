@@ -8,7 +8,7 @@ var nHistoryItems = 0;
 var PositionHistoryBuffer = [];
 var	receiverJson;
 var deferHistory = [];
-var configureReceiver;
+var configureReceiver = $.Deferred();
 
 // get configuration json files, will be used in initialize function
 var get_receiver_defer = $.ajax({ url: 'data/receiver.json',
@@ -23,6 +23,7 @@ var test_chunk_defer = $.ajax({
 	dataType: 'json'
 });
 
+
 $.when(get_receiver_defer).done(function(data){
 
 	receiverJson = data;
@@ -30,7 +31,7 @@ $.when(get_receiver_defer).done(function(data){
 	RefreshInterval = data.refresh;
 	nHistoryItems = data.history;
 
-	configureReceiver = $.when(test_chunk_defer).done(function(data) {
+	$.when(test_chunk_defer).done(function(data) {
 		HistoryChunks = true;
 		nHistoryItems = data.chunks;
 		enable_uat = (data.enable_uat == "true");
@@ -53,6 +54,7 @@ function get_history() {
 			get_history_item(i);
 		}
 	}
+	configureReceiver.resolve();
 }
 
 function get_history_item(i) {

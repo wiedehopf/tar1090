@@ -186,6 +186,9 @@ function fetchData() {
 		cache: false,
 		dataType: 'json' });
 	FetchPending.done(function(data) {
+		if (data == null)
+			return;
+
 		var now = data.now;
 
 		// experimental stuff
