@@ -103,7 +103,8 @@ function processReceiverUpdate(data, loading, uat) {
 			plane = Planes[hex];
 		} else if ( ac.messages < 4) {
 			continue;
-		} else if ( uat && tisb in ac && ac.tisb.indexOf("lat") >= 0) {
+		} else if ( uat && !(ac.type && ac.type.substring(0,4) == "adsb")) {
+			// drop non ADS-B planes from UAT (TIS-B)
 			continue;
 		} else {
 			plane = new PlaneObject(hex);
@@ -485,21 +486,28 @@ function parse_history() {
 				now = data.now;
 			}
 
-
-			if (h%100 == 99)
-				console.log("Applying history " + (h + 1) + "/" + PositionHistoryBuffer.length + " from: " + (new Date(now * 1000)).toLocaleTimeString());
-
+			// process new data
 			processReceiverUpdate(data, true, uat);
 
-			// update track
-			//console.log("Updating tracks at: " + now);
-			for (var i = 0; i < PlanesOrdered.length; ++i) {
-				var plane = PlanesOrdered[i];
-				plane.updateTrack(uat ? uat_now : now, uat ? uat_last : last);
+			// update aircraft tracks
+			if (!uat) {
+				for (var i = 0; i < PlanesOrdered.length; ++i) {
+					var plane = PlanesOrdered[i];
+					if (plane.uat)
+						plane.updateTrack(uat_now, uat_last);
+					else
+						plane.updateTrack(now, last);
+				}
 			}
 
 
-			if(h != 0 && h % Math.floor(PositionHistoryBuffer.length/4) == 0) {
+			// prune aircraft list
+			var pruneInt = Math.floor(PositionHistoryBuffer.length/5);
+			if(h % pruneInt == pruneInt - 1) {
+
+				console.log("Applied history " + (h + 1) + "/"
+					+ PositionHistoryBuffer.length + " from: "
+					+ (new Date(now * 1000)).toLocaleTimeString());
 
 				var newPlanes = [];
 				for (var i = 0; i < PlanesOrdered.length; ++i) {
@@ -548,7 +556,6 @@ function parse_history() {
 	refreshTableInfo();
 	refreshSelected();
 	refreshHighlighted();
-	reaper();
 
 	// Setup our timer to poll from the server.
 	window.setInterval(fetchData, RefreshInterval);
