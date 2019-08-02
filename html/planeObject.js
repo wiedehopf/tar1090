@@ -12,6 +12,7 @@ function PlaneObject(icao) {
 
 	// Basic location information
 	this.altitude       = null;
+	this.altitude_cached = null;
 	this.alt_baro       = null;
 	this.alt_geom       = null;
 
@@ -80,8 +81,6 @@ function PlaneObject(icao) {
 	this.marker = null;
 	this.markerStyle = null;
 	this.markerIcon = null;
-	this.markerStaticStyle = null;
-	this.markerStaticIcon = null;
 	this.markerStyleKey = null;
 	this.markerSvgKey = null;
 	this.filter = {};
@@ -115,6 +114,12 @@ function PlaneObject(icao) {
 			refreshSelected();
 		}
 	}.bind(this));
+}
+
+PlaneObject.prototype.logSel = function(loggable) {
+	if (this.selected)
+		console.log(loggable);
+	return;
 }
 
 PlaneObject.prototype.isFiltered = function() {
@@ -182,7 +187,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		this.tail_update = prev_time;
 		this.tail_track = prev_track;
 		this.history_size ++;
-		return;
+		return true;
 	}
 
 	var lastseg = this.track_linesegs[this.track_linesegs.length - 1];
@@ -247,11 +252,13 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	if ( (lastseg.ground != on_ground)
 		|| (!on_ground && isNaN(alt_change))
 		|| alt_change >= 300
-		|| (this.altitude < 8000 && this.altitude > 1700 && alt_change >= 80) ) {
+		|| (this.altitude < 6000 && this.altitude > 2000 && alt_change >= 150) ) {
 		//console.log(this.icao + " ground state changed");
 		// Create a new segment as the ground state or the altitude changed.
 		// The new state is only drawn after the state has changed
 		// and we then get a new position.
+
+		//this.logSel(since_update.toFixed(1) + " " + this.history_size + " " + alt_change.toFixed(0) + " alt_change");
 
 		// Let's assume the ground state change happened somewhere between the previous and current position
 		// Represent that assumption. With altitude it's not quite as critical.
@@ -272,17 +279,20 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 
 	// Add current position to the existing track.
 	// We only retain some points depending on time elapsed and track change
-	var track_change = (this.tail_track && this.track) ? Math.abs(this.tail_track - this.track) : -1;
+	var track_change = (this.tail_track != null && this.track != null) ? Math.abs(this.tail_track - this.track) : -1;
+
 
 	if ( since_update > 32 ||
-		(track_change > 4.5) ||
-		(track_change > 1 && since_update > 3.5) ||
-		(track_change > 0.25 && since_update > 7.7) ||
-		(this.position_from_mlat && since_update > 4.5) ||
-		(track_change == -1 && since_update > 4.5) )
+		(track_change > 0.5 && since_update > 12) ||
+		(track_change > 1 && since_update > 6) ||
+		(track_change > 2 && since_update > 4) ||
+		(track_change > 3 && since_update > 3) ||
+		(track_change > 4 && since_update > 2) ||
+		(this.position_from_mlat && since_update > 16) ||
+		(track_change == -1 && since_update > 5) )
 	{
 		// enough time has elapsed; retain the last point and add a new one
-		//if (this.selected) console.log(track_change.toPrecision(2) + "  " + since_update.toPrecision(3) + "  " +this.history_size);
+		//this.logSel(since_update.toFixed(1) + " " + this.history_size + " " + track_change.toFixed(1) + " track_change");
 		lastseg.fixed.appendCoordinate(projPrev);
 		this.tail_update = prev_time;
 		this.tail_track = prev_track;
@@ -356,7 +366,7 @@ PlaneObject.prototype.getMarkerColor = function() {
 
 	var h, s, l;
 
-	var colorArr = this.getAltitudeColor();
+	var colorArr = this.getAltitudeColor(this.altitude_cached);
 
 	h = colorArr[0];
 	s = colorArr[1];
@@ -449,10 +459,9 @@ PlaneObject.prototype.getAltitudeColor = function(altitude) {
 }
 
 PlaneObject.prototype.updateIcon = function() {
-	var scaleFactor = Math.max(0.2, Math.min(1.2, 0.15 * Math.pow(1.25, ZoomLvl))).toFixed(1);
 
 	var col = this.getMarkerColor();
-	var opacity = 1.0;
+	//var opacity = 1.0;
 	var outline = (this.position_from_mlat ? OutlineMlatColor : OutlineADSBColor);
 	var add_stroke = (this.selected && !SelectedAllPlanes) ? ' stroke="black" stroke-width="1px"' : '';
 	var baseMarker = getBaseMarker(this.category, this.icaotype, this.typeDescription, this.wtc);
@@ -467,21 +476,22 @@ PlaneObject.prototype.updateIcon = function() {
 
 	//var transparentBorderWidth = (32 / baseMarker.scale / scaleFactor).toFixed(1);
 
-	var svgKey = col + '!' + outline + '!' + baseMarker.svg + '!' + add_stroke + "!" + scaleFactor;
-	var styleKey = opacity + '!' + rotation;
+	var svgKey = col + '!' + outline + '!' + baseMarker.svg + '!' + add_stroke;
 
 	if (this.markerStyle == null || this.markerIcon == null || this.markerSvgKey != svgKey) {
 		//console.log(this.icao + " new icon and style " + this.markerSvgKey + " -> " + svgKey);
+
+		this.markerSvgKey = svgKey;
 
 		var icon = new ol.style.Icon({
 			anchor: [0.5, 0.5],
 			anchorXUnits: 'fraction',
 			anchorYUnits: 'fraction',
-			scale: 1.2 * scaleFactor,
+			scale: scaleFactor,
 			imgSize: baseMarker.size,
 			src: svgPathToURI(baseMarker.svg, outline, col, add_stroke),
 			rotation: (baseMarker.noRotate ? 0 : rotation * Math.PI / 180.0),
-			opacity: opacity,
+			//opacity: opacity,
 			rotateWithView: (baseMarker.noRotate ? false : true)
 		});
 
@@ -489,33 +499,36 @@ PlaneObject.prototype.updateIcon = function() {
 		this.markerStyle = new ol.style.Style({
 			image: this.markerIcon
 		});
-		this.markerStaticIcon = null;
-		this.markerStaticStyle = new ol.style.Style({});
 
-		this.markerStyleKey = styleKey;
-		this.markerSvgKey = svgKey;
 
 		if (this.marker) {
 			this.marker.setStyle(this.markerStyle);
-			this.markerStatic.setStyle(this.markerStaticStyle);
 		}
 	}
 
-	if (this.markerStyleKey != styleKey) {
-		//console.log(this.icao + " new rotation");
+	if (this.rotationCache == null || Math.abs(this.rotationCache - rotation) > 0.25) {
+		this.rotationCache = rotation;
 		this.markerIcon.setRotation(rotation * Math.PI / 180.0);
-		this.markerIcon.setOpacity(opacity);
-		if (this.staticIcon) {
-			this.staticIcon.setOpacity(opacity);
-		}
-		this.markerStyleKey = styleKey;
 	}
+
+	if (this.scaleFactorCache != scaleFactor) {
+		this.scaleCache = scaleFactor;
+		this.markerIcon.setScale(scaleFactor);
+	}
+
+	/*
+	if (this.opacityCache != opacity) {
+		this.opacityCache = opacity;
+		this.markerIcon.setOpacity(opacity);
+	}
+	*/
+
 
 	return true;
 };
 
 // Update our data
-PlaneObject.prototype.updateData = function(receiver_timestamp, data, loading) {
+PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	// get location data first, return early if only those are needed.
 	if ("lat" in data) {
 		this.position   = [data.lon, data.lat];
@@ -528,14 +541,17 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, loading) {
 
 	if ("track" in data)
 		this.track = data.track;
+
 	if ("alt_baro" in data)
 		this.altitude = data.alt_baro;
 
 	this.last_message_time = receiver_timestamp - data.seen;
 
-	if (loading)
+	if (init)
 		return;
 
+	if (this.altitude_cached == null || Math.abs(this.altitude - this.altitude_cached) >=75)
+		this.altitude_cached = this.altitude;
 
 	// Update all of our data
 	this.messages	= data.messages;
@@ -650,9 +666,8 @@ PlaneObject.prototype.updateTick = function(receiver_timestamp, last_timestamp, 
 PlaneObject.prototype.clearMarker = function() {
 	if (this.marker) {
 		PlaneIconFeatures.remove(this.marker);
-		PlaneIconFeatures.remove(this.markerStatic);
 		/* FIXME google.maps.event.clearListeners(this.marker, 'click'); */
-		this.marker = this.markerStatic = null;
+		this.marker = null;
 	}
 };
 
@@ -667,18 +682,12 @@ PlaneObject.prototype.updateMarker = function(moved) {
 	if (this.marker) {
 		if (moved) {
 			this.marker.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
-			this.markerStatic.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
 		}
 	} else {
 		this.marker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
 		this.marker.hex = this.icao;
 		this.marker.setStyle(this.markerStyle);
 		PlaneIconFeatures.push(this.marker);
-
-		this.markerStatic = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
-		this.markerStatic.hex = this.icao;
-		this.markerStatic.setStyle(this.markerStaticStyle);
-		PlaneIconFeatures.push(this.markerStatic);
 	}
 };
 
@@ -686,12 +695,35 @@ PlaneObject.prototype.updateMarker = function(moved) {
 // return the styling of the lines based on altitude
 PlaneObject.prototype.altitudeLines = function(altitude) {
 	var colorArr = this.getAltitudeColor(altitude);
-	return new ol.style.Style({
-		stroke: new ol.style.Stroke({
-			color: 'hsl(' + (colorArr[0]/5).toFixed(0)*5 + ',' + (colorArr[1]/5).toFixed(0)*5 + '%,' + (colorArr[2]/5).toFixed(0)*5 + '%)',
-			width: 2
-		})
-	})
+	var color = 'hsl(' + (colorArr[0]/5).toFixed(0)*5 + ',' + (colorArr[1]/5).toFixed(0)*5 + '%,' + (colorArr[2]/5).toFixed(0)*5 + '%)'
+	if (!debug)
+		return new ol.style.Style({
+			stroke: new ol.style.Stroke({
+				color: color,
+				width: 2
+			})
+		});
+
+	if (debug)
+		return [
+			new ol.style.Style({
+				image: new ol.style.Circle({
+					radius: 2,
+					fill: new ol.style.Fill({
+						color: color
+					})
+				}),
+				geometry: function(feature) {
+					return new ol.geom.MultiPoint(feature.getGeometry().getCoordinates());
+				}
+			}),
+			new ol.style.Style({
+				stroke: new ol.style.Stroke({
+					color: color,
+					width: 1
+				})
+			})
+		];
 }
 
 // Update our planes tail line,
@@ -704,9 +736,8 @@ PlaneObject.prototype.updateLines = function() {
 
 	var estimateStyle = new ol.style.Style({
 		stroke: new ol.style.Stroke({
-			color: '#a08080',
-			width: 1.5,
-			lineDash: [3, 3]
+			color: '#808080',
+			width: 1.5
 		})
 	});
 

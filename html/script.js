@@ -21,6 +21,8 @@ var loadtime = "loadtime";
 var mapResizeTimeout;
 var HistoryItemsReturned = 0;
 var refresh;
+var scaleFactor;
+var debug = false;
 
 var SpecialSquawks = {
 	'7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -29,7 +31,7 @@ var SpecialSquawks = {
 };
 
 // Get current map settings
-var CenterLat, CenterLon, ZoomLvl, MapType;
+var CenterLat, CenterLon, ZoomLvl, ZoomLvlCache, MapType;
 
 
 var PlaneRowTemplate = null;
@@ -62,13 +64,13 @@ $.getJSON("db/aircraft_types/icao_aircraft_types.json")
 	})
 
 
-function processReceiverUpdate(data, loading, uat) {
+function processReceiverUpdate(data, init, uat) {
 
 	// Loop through all the planes in the data packet
 	var now = data.now;
 	var acs = data.aircraft;
 
-	if (!uat && !loading) {
+	if (!uat && !init) {
 		// Detect stats reset
 		if (MessageCountHistory.length > 0 && MessageCountHistory[MessageCountHistory.length-1].messages > data.messages) {
 			MessageCountHistory = [{'time' : MessageCountHistory[MessageCountHistory.length-1].time,
@@ -113,7 +115,7 @@ function processReceiverUpdate(data, loading, uat) {
 			if (uat && ac.type && ac.type.substring(0,4) == "adsb")
 				plane.uat = true;
 
-			if (!loading)
+			if (!init)
 				setupPlane(hex,plane);
 
 			Planes[hex] = plane;
@@ -121,7 +123,7 @@ function processReceiverUpdate(data, loading, uat) {
 		}
 
 		// Call the function update
-		plane.updateData(now, ac, loading);
+		plane.updateData(now, ac, init);
 	}
 }
 
@@ -490,7 +492,10 @@ function parse_history() {
 			}
 
 			// process new data
-			processReceiverUpdate(data, true, uat);
+			if (h < PositionHistoryBuffer.length - 10)
+				processReceiverUpdate(data, true, uat);
+			else
+				processReceiverUpdate(data, false, uat);
 
 			// update aircraft tracks
 			if (!uat) {
@@ -515,6 +520,7 @@ function parse_history() {
 				var newPlanes = [];
 				for (var i = 0; i < PlanesOrdered.length; ++i) {
 					var plane = PlanesOrdered[i];
+					plane.seen = now - this.last_message_time;
 					if (plane.seen > 600) {
 						// Reap it.
 						delete Planes[plane.icao];
@@ -609,6 +615,7 @@ function initialize_map() {
 	CenterLat = Number(localStorage['CenterLat']) || DefaultCenterLat;
 	CenterLon = Number(localStorage['CenterLon']) || DefaultCenterLon;
 	ZoomLvl = Number(localStorage['ZoomLvl']) || DefaultZoomLvl;
+	ZoomLvlCache = ZoomLvl;
 	MapType = localStorage['MapType'];
 
 	// Set SitePosition, initialize sorting
@@ -750,11 +757,22 @@ function initialize_map() {
 		}
 	});
 
+	scaleFactor = 1.2*Math.max(0.2, Math.min(1.2, 0.15 * Math.pow(1.25, ZoomLvl)));
 	OLMap.getView().on('change:resolution', function(event) {
-		ZoomLvl = localStorage['ZoomLvl']  = OLMap.getView().getZoom();
+
+		ZoomLvl = localStorage['ZoomLvl'] = OLMap.getView().getZoom();
+
+		// small zoomstep, no need to change aircraft scaling
+		if (Math.abs(ZoomLvl-ZoomLvlCache) < 0.3)
+			return;
+
+		ZoomLvlCache = ZoomLvl;
+
+		scaleFactor = 1.2*Math.max(0.2, Math.min(1.2, 0.15 * Math.pow(1.25, ZoomLvl)));
 		for (var plane in Planes) {
-			Planes[plane].updateMarker(false);
-		};
+			if (Planes[plane].markerIcon)
+				Planes[plane].markerIcon.setScale(scaleFactor);
+		}
 	});
 
 	OLMap.on(['click', 'dblclick'], function(evt) {
@@ -849,7 +867,6 @@ function initialize_map() {
 			fill: null,
 			stroke: new ol.style.Stroke({
 				color: '#0000DD',
-				lineDash:[4,4],
 				width: 2
 			})
 		});
@@ -858,10 +875,8 @@ function initialize_map() {
 			var geom = null;
 			var points = data.rings[i].points;
 			if (points.length > 0) {
+				geom = new ol.geom.LineString([[ points[0][1], points[0][0] ]]);
 				for (var j = 0; j < points.length; ++j) {
-					if (!geom)
-						geom = new ol.geom.LineString([[ points[j][1], points[j][0] ]]);
-					else
 						geom.appendCoordinate([ points[j][1], points[j][0] ]);
 				}
 				geom.appendCoordinate([ points[0][1], points[0][0] ]);
