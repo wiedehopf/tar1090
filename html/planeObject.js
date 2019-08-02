@@ -541,8 +541,13 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	if ("track" in data)
 		this.track = data.track;
 
-	if ("alt_baro" in data)
+	if ("alt_baro" in data) {
 		this.altitude = data.alt_baro;
+		this.alt_baro = data.alt_baro;
+	} else if ("altitude" in data) {
+		this.altitude = data.altitude;
+		this.alt_baro = data.altitude;
+	}
 
 	this.last_message_time = receiver_timestamp - data.seen;
 
@@ -559,12 +564,20 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	this.rssa[this.rindex++%4] = data.rssi;
 	this.rssi       = (this.rssa[0] + this.rssa[1] + this.rssa[2] + this.rssa[3])/4;
 
+	if ("gs" in data)
+		this.gs = data.gs;
+	else if ("speed" in data)
+		this.gs = data.speed;
+
+	if ("baro_rate" in data)
+		this.baro_rate = data.baro_rate;
+	else if ("vert_rate" in data)
+		this.baro_rate = data.vert_rate;
+
 	// simple fields
 
-	this.alt_baro = data.alt_baro;
 	this.alt_geom = data.alt_geom;
 	this.speed = data.gs;
-	this.gs = data.gs;
 	this.ias = data.ias;
 	this.tas = data.tas;
 	this.track_rate = data.track_rate;
@@ -580,7 +593,6 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	this.sil_type = data.sil_type;
 	this.sil = data.sil;
 	this.nav_qnh = data.nav_qnh;
-	this.baro_rate = data.baro_rate;
 	this.geom_rate = data.geom_rate;
 	this.rc = data.rc;
 	this.squawk = data.squawk;
