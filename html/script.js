@@ -105,7 +105,7 @@ function processReceiverUpdate(data, init, uat) {
 			plane = Planes[hex];
 		} else if ( ac.messages < 4) {
 			continue;
-		} else if ( uat && !(ac.type && ac.type.substring(0,4) == "adsb")) {
+		} else if ( uat && ac.type && ac.type.substring(0,4) == "tisb") {
 			// drop non ADS-B planes from UAT (TIS-B)
 			continue;
 		} else {
@@ -258,6 +258,7 @@ function initialize() {
 
 
 	$.when(configureReceiver).done(function() {
+		configureReceiver = null;
 
 		// Initialize stuff
 		init_page();
@@ -465,6 +466,9 @@ function parse_history() {
 
 	console.time("Loaded aircraft tracks from History");
 	$("#loader").addClass("hidden");
+
+	for (i in deferHistory)
+		deferHistory[i] = null;
 
 	initialize_map();
 
