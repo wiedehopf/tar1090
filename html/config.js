@@ -62,8 +62,8 @@ ColorByAlt = {
 		// the last entry use the hue of the last
 		// entry.
 		h: [ { alt: 0,  val: 20 },    // orange
-			{ alt: 9000, val: 90 },   // green yellow
-			{ alt: 13000, val: 140 },   // light green
+			{ alt: 9000, val: 85 },   // green yellow
+			{ alt: 12000, val: 140 },   // light green
 			{ alt: 40000, val: 300 } ], // magenta
 		s: 88,
 		l: 44,
