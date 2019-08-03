@@ -75,7 +75,7 @@ html, body {
 #expand_sidebar_control {
     display: block;
     position: absolute;
-    top: 40px;
+    top: 60px;
     right: -4px;
 }
 
@@ -100,8 +100,8 @@ html, body {
     cursor: ew-resize;
     display: block;
     position: absolute;
-    top: 84px;
-    left: -30px;
+    top: 120px;
+    left: -25px;
     float: right;
     width: 24px;
     height: 25px;
