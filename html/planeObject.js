@@ -8,7 +8,7 @@ function PlaneObject(icao) {
 	this.squawk    = null;
 	this.selected  = false;
 	this.category  = null;
-	this.uat       = false;
+	this.dataSource = null;
 
 	// Basic location information
 	this.altitude       = null;
@@ -49,7 +49,6 @@ function PlaneObject(icao) {
 	this.prev_position_time = null;
 	this.prev_track = null;
 	this.position  = null;
-	this.position_from_mlat = false
 	this.sitedist  = null;
 
 	// Data packet numbers
@@ -199,7 +198,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	var time_difference = (this.last_position_time - prev_time) - (receiver_timestamp - last_timestamp);
 
 	// MLAT data are given some more leeway
-	var stale_timeout = (this.position_from_mlat ? 15 : 6);
+	var stale_timeout = (this.dataSource == "mlat" ? 15 : 6);
 	var est_track = (time_difference > stale_timeout);
 
 	// Also check if the position was already stale when it was exported by dump1090
@@ -287,7 +286,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		(track_change > 2 && since_update > 4) ||
 		(track_change > 3 && since_update > 3) ||
 		(track_change > 4 && since_update > 2) ||
-		(this.position_from_mlat && since_update > 16) ||
+		(this.dataSource == "mlat" && since_update > 16) ||
 		(track_change == -1 && since_update > 5) )
 	{
 		// enough time has elapsed; retain the last point and add a new one
@@ -319,10 +318,10 @@ PlaneObject.prototype.clearLines = function() {
 
 PlaneObject.prototype.getDataSourceNumber = function() {
 	// MLAT
-	if (this.position_from_mlat) {
+	if (this.dataSource == "mlat") {
 		return 3;
 	}
-	if (this.uat)
+	if (this.dataSource == "uat")
 		return 2; // UAT
 
 	// Not MLAT, but position reported - ADSB or variants
@@ -341,10 +340,10 @@ PlaneObject.prototype.getDataSourceNumber = function() {
 
 PlaneObject.prototype.getDataSource = function() {
 	// MLAT
-	if (this.position_from_mlat) {
+	if (this.dataSource == "mlat") {
 		return 'mlat';
 	}
-	if (this.uat)
+	if (this.dataSource == "uat")
 		return 'uat';
 
 	// Not MLAT, but position reported - ADSB or variants
@@ -386,7 +385,7 @@ PlaneObject.prototype.getMarkerColor = function() {
 	}
 
 	// If this marker is a mlat position, change color
-	if (this.position_from_mlat) {
+	if (this.dataSource == "mlat") {
 		h += ColorByAlt.mlat.h;
 		s += ColorByAlt.mlat.s;
 		l += ColorByAlt.mlat.l;
@@ -461,7 +460,7 @@ PlaneObject.prototype.updateIcon = function() {
 
 	var col = this.getMarkerColor();
 	//var opacity = 1.0;
-	var outline = (this.position_from_mlat ? OutlineMlatColor : OutlineADSBColor);
+	var outline = (this.dataSource == "mlat" ? OutlineMlatColor : OutlineADSBColor);
 	var add_stroke = (this.selected && !SelectedAllPlanes) ? ' stroke="black" stroke-width="1px"' : '';
 	var baseMarker = getBaseMarker(this.category, this.icaotype, this.typeDescription, this.wtc);
 	var rotation = this.track;
@@ -529,17 +528,19 @@ PlaneObject.prototype.updateIcon = function() {
 // Update our data
 PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	// get location data first, return early if only those are needed.
-	if ("lat" in data) {
-		this.position   = [data.lon, data.lat];
-		this.last_position_time = receiver_timestamp - data.seen_pos;
-	}
-	if ("mlat" in data && data.mlat.indexOf("lat") >= 0)
-		this.position_from_mlat = true;
-	else if (data.seen_pos < 30)
-		this.position_from_mlat = false;
 
-	if ("track" in data)
-		this.track = data.track;
+	if (data.seen_pos < 55) {
+		if ("mlat" in data && data.mlat.indexOf("lat") >= 0)
+			this.dataSource = "mlat";
+		else if (this.addrtype && this.addrtype.substring(0,4) == "tisb")
+			this.dataSource = "tisb";
+		else if (this.dataSource != "uat")
+			this.dataSource = "adsb";
+		else
+			this.dataSource = "other";
+	} else {
+		this.dataSource = "other";
+	}
 
 	if ("alt_baro" in data) {
 		this.altitude = data.alt_baro;
@@ -548,6 +549,14 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.altitude = data.altitude;
 		this.alt_baro = data.altitude;
 	}
+
+	if ("lat" in data) {
+		this.position   = [data.lon, data.lat];
+		this.last_position_time = receiver_timestamp - data.seen_pos;
+	}
+
+	if ("track" in data)
+		this.track = data.track;
 
 	this.last_message_time = receiver_timestamp - data.seen;
 
@@ -604,15 +613,14 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	if ("true_heading" in data)
 		this.true_heading = data.true_heading;
 
-	if ('type' in data)
-		this.addrtype	= data.type;
-	else
-		this.addrtype   = 'adsb_icao';
-
 	// don't expire callsigns
 	if ('flight' in data)
 		this.flight	= data.flight;
 
+	if ('type' in data)
+		this.addrtype	= data.type;
+	else
+		this.addrtype   = 'adsb_icao';
 
 	if ('lat' in data && SitePosition) {
 		//var WGS84 = new ol.Sphere(6378137);

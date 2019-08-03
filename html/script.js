@@ -114,7 +114,7 @@ function processReceiverUpdate(data, init, uat) {
 			plane.filter = PlaneFilter;
 
 			if (uat && ac.type && ac.type.substring(0,4) == "adsb")
-				plane.uat = true;
+				plane.dataSource = "uat";
 
 			if (!init)
 				setupPlane(hex,plane);
@@ -509,7 +509,7 @@ function parse_history() {
 			if (!uat) {
 				for (var i = 0; i < PlanesOrdered.length; ++i) {
 					var plane = PlanesOrdered[i];
-					if (plane.uat)
+					if (plane.dataSource == "uat")
 						plane.updateTrack(uat_now, uat_last);
 					else
 						plane.updateTrack(now, last);
@@ -1069,7 +1069,7 @@ function refreshSelected() {
 		$('#selected_follow').addClass('hidden');
 	} else {
 
-		if (selected.seen_pos > 1) {
+		if (selected.seen_pos > -1) {
 			$('#selected_position').text(format_latlng(selected.position));
 		} else {
 			$('#selected_position').text(format_latlng(selected.position));
@@ -1083,7 +1083,7 @@ function refreshSelected() {
 			$('#selected_follow').css('font-weight', 'normal');
 		}
 	}
-	if (selected.uat) {
+	if (selected.dataSource == "uat") {
 		$('#selected_source').text("UAT");
 	} else if (selected.getDataSource() === "adsb_icao") {
 		$('#selected_source').text("ADS-B");
@@ -1269,7 +1269,7 @@ function refreshHighlighted() {
 		$('#higlighted_icaotype').text("n/a");
 	}
 
-	if (highlighted.uat) {
+	if (highlighted.dataSource == "uat") {
 		$('#highlighted_source').text("UAT");
 	} else if (highlighted.getDataSource() === "adsb_icao") {
 		$('#highlighted_source').text("ADS-B");
@@ -1334,7 +1334,7 @@ function refreshTableInfo() {
 				++TrackedAircraftPositions;
 			}
 
-			if (tableplane.uat) {
+			if (tableplane.dataSource == "uat") {
 				classes += " uat";
 			} else if (tableplane.getDataSource() === "adsb_icao") {
 				classes += " vPosition";
