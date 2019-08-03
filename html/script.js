@@ -525,21 +525,7 @@ function parse_history() {
 					+ PositionHistoryBuffer.length + " from: "
 					+ (new Date(now * 1000)).toLocaleTimeString());
 
-				var newPlanes = [];
-				var plane;
-				while (plane = PlanesOrdered.pop()) {
-					plane.seen = now - this.last_message_time;
-					if (plane.seen > 600) {
-						// Reap it.
-						delete Planes[plane.icao];
-						plane.destroy();
-					} else {
-						// Keep it.
-						newPlanes.push(plane);
-					}
-				};
-
-				PlanesOrdered = newPlanes;
+				reaper();
 			}
 
 			if (uat) {
@@ -952,12 +938,12 @@ function reaper() {
 	var newPlanes = [];
 	var plane;
 	while (plane = PlanesOrdered.pop()) {
+		plane.seen = LastReceiverTimestamp - plane.last_message_time;
 		if (plane.seen > 600) {
 			// Reap it.                                
-			plane.tr.parentNode.removeChild(plane.tr);
-			plane.tr = null;
-			delete Planes[plane.icao];
+			//console.log("Removed " + plane.icao);
 			plane.destroy();
+			delete Planes[plane.icao];
 		} else {
 			// Keep it.
 			newPlanes.push(plane);
@@ -965,9 +951,6 @@ function reaper() {
 	};
 
 	PlanesOrdered = newPlanes;
-	refreshTableInfo();
-	refreshSelected();
-	refreshHighlighted();
 }
 
 // Page Title update function
