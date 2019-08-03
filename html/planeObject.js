@@ -810,8 +810,8 @@ PlaneObject.prototype.updateLines = function() {
 PlaneObject.prototype.destroy = function() {
 	this.clearLines();
 	this.clearMarker();
-	plane.tr.removeEventListener('click', plane.clickListener);
-	plane.tr.removeEventListener('dblclick', plane.dblclickListener);
+	this.tr.removeEventListener('click', plane.clickListener);
+	this.tr.removeEventListener('dblclick', plane.dblclickListener);
 	this.track_linesegs = null;
 	this.filter = null;
 	this.markerIcon = null;
