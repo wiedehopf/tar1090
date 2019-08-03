@@ -42,10 +42,10 @@ SiteName    = "My Radar Site"; // tooltip of the marker
 // All color values are given as Hue (0-359) / Saturation (0-100) / Lightness (0-100)
 ColorByAlt = {
 	// HSL for planes with unknown altitude:
-	unknown : { h: 0,   s: 0,   l: 40 },
+	unknown : { h: 0,   s: 0,   l: 30 },
 
 	// HSL for planes that are on the ground:
-	ground  : { h: 15, s: 80, l: 20 },
+	ground  : { h: 0, s: 0, l: 45 },
 
 	air : {
 		// These define altitude-to-hue mappings
@@ -63,7 +63,7 @@ ColorByAlt = {
 		// entry.
 		h: [ { alt: 0,  val: 20 },    // orange
 			{ alt: 9000, val: 85 },   // green yellow
-			{ alt: 12000, val: 140 },   // light green
+			{ alt: 11000, val: 140 },   // light green
 			{ alt: 40000, val: 300 } ], // magenta
 		s: 88,
 		l: 44,
