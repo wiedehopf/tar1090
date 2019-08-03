@@ -554,7 +554,8 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	if (init)
 		return;
 
-	if (this.altitude_cached == null || Math.abs(this.altitude - this.altitude_cached) >=75)
+	var alt_change = Math.abs(this.altitude - this.altitude_cached);
+	if (isNaN(alt_change) || alt_change >= 75)
 		this.altitude_cached = this.altitude;
 
 	// Update all of our data
