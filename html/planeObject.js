@@ -113,6 +113,7 @@ function PlaneObject(icao) {
 		if (this.selected) {
 			refreshSelected();
 		}
+		data = null;
 	}.bind(this));
 }
 
@@ -234,12 +235,11 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		// We are back to good data (we got two points close in time), switch back to
 		// solid lines.
 		lastseg.fixed.appendCoordinate(projPrev);
-		lastseg = { fixed: new ol.geom.LineString([projPrev]),
+		this.track_linesegs.push({ fixed: new ol.geom.LineString([projPrev]),
 			feature: null,
 			estimated: false,
 			ground: on_ground,
-			altitude: this.altitude };
-		this.track_linesegs.push(lastseg);
+			altitude: this.altitude });
 		this.tail_update = prev_time;
 		this.tail_track = prev_track;
 		this.history_size += 2;
@@ -809,4 +809,11 @@ PlaneObject.prototype.updateLines = function() {
 PlaneObject.prototype.destroy = function() {
 	this.clearLines();
 	this.clearMarker();
+	plane.tr.removeEventListener('click', plane.clickListener);
+	plane.tr.removeEventListener('dblclick', plane.dblclickListener);
+	this.track_linesegs = null;
+	this.filter = null;
+	this.markerIcon = null;
+	this.markerStyle = null;
+	this.tr = null;
 };

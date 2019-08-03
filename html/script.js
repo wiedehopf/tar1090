@@ -23,6 +23,7 @@ var HistoryItemsReturned = 0;
 var refresh;
 var scaleFactor;
 var debug = false;
+var fragment;
 
 var SpecialSquawks = {
 	'7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -147,7 +148,7 @@ function setupPlane(hex, plane) {
 		$('img', plane.tr.cells[1]).css('display', 'none');
 	}
 
-	plane.tr.addEventListener('click', function(h, evt) {
+	plane.clickListener = function(h, evt) {
 		if (evt.srcElement instanceof HTMLAnchorElement) {
 			evt.stopPropagation();
 			return;
@@ -159,16 +160,19 @@ function setupPlane(hex, plane) {
 		selectPlaneByHex(h, false);
 		adjustSelectedInfoBlockPosition();
 		evt.preventDefault();
-	}.bind(undefined, hex));
+	}.bind(undefined, hex);
 
-	plane.tr.addEventListener('dblclick', function(h, evt) {
+	plane.dblclickListener = function(h, evt) {
 		if (!$("#map_container").is(":visible")) {
 			showMap();
 		}
 		selectPlaneByHex(h, true);
 		adjustSelectedInfoBlockPosition();
 		evt.preventDefault();
-	}.bind(undefined, hex));
+	}.bind(undefined, hex);
+
+	plane.tr.addEventListener('click', plane.clickListener);
+	plane.tr.addEventListener('dblclick', plane.dblclickListener);
 }
 
 function fetchData() {
@@ -522,8 +526,8 @@ function parse_history() {
 					+ (new Date(now * 1000)).toLocaleTimeString());
 
 				var newPlanes = [];
-				for (var i = 0; i < PlanesOrdered.length; ++i) {
-					var plane = PlanesOrdered[i];
+				var plane;
+				while (plane = PlanesOrdered.pop()) {
 					plane.seen = now - this.last_message_time;
 					if (plane.seen > 600) {
 						// Reap it.
@@ -946,8 +950,8 @@ function reaper() {
 
 	// Look for planes where we have seen no messages for >300 seconds
 	var newPlanes = [];
-	for (var i = 0; i < PlanesOrdered.length; ++i) {
-		var plane = PlanesOrdered[i];
+	var plane;
+	while (plane = PlanesOrdered.pop()) {
 		if (plane.seen > 600) {
 			// Reap it.                                
 			plane.tr.parentNode.removeChild(plane.tr);
@@ -1387,7 +1391,7 @@ function refreshTableInfo() {
 			tableplane.tr.cells[14].textContent = (tableplane.position != null ? tableplane.position[1].toFixed(4) : "");
 			tableplane.tr.cells[15].textContent = (tableplane.position != null ? tableplane.position[0].toFixed(4) : "");
 			tableplane.tr.cells[16].textContent = format_data_source(tableplane.getDataSource());
-			if (tableplane.icao_cache !== tableplane.icao) {
+			if (false && tableplane.icao_cache !== tableplane.icao) {
 				tableplane.tr.cells[17].innerHTML = getAirframesModeSLink(tableplane.icao);
 				tableplane.icao_cache = tableplane.icao;
 			}
@@ -1484,7 +1488,7 @@ function resortTable() {
 	PlanesOrdered.sort(sortFunction);
 
 	var tbody = document.getElementById('tableinfo').tBodies[0];
-	var fragment = document.createDocumentFragment();
+	fragment = document.createDocumentFragment();
 	for (var i = 0; i < PlanesOrdered.length; ++i) {
 		fragment.appendChild(PlanesOrdered[i].tr);
 	}
