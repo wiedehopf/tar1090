@@ -335,12 +335,10 @@ PlaneObject.prototype.getDataSourceNumber = function() {
 		return 2; // UAT
 
 	// Not MLAT, but position reported - ADSB or variants
-	if (this.position != null) {
-		if (this.addrtype && this.addrtype.substring(0,4) == "tisb")
-			return 4; // TIS-B
-		else
-			return 1; // ADS-B
-	}
+	if (this.dataSource == "tisb")
+		return 4; // TIS-B
+	if (this.dataSource == "adsb")
+		return 1;
 
 	// Otherwise Mode S
 	return 5;
@@ -357,9 +355,11 @@ PlaneObject.prototype.getDataSource = function() {
 		return 'uat';
 
 	// Not MLAT, but position reported - ADSB or variants
-	if (this.position != null) {
+	if (this.dataSource == "tisb" && this.addrtype) {
 		return this.addrtype;
 	}
+	if (this.dataSource == "adsb")
+		return "adsb_icao";
 
 	// Otherwise Mode S
 	return 'mode_s';
@@ -540,16 +540,16 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	// get location data first, return early if only those are needed.
 
 	if (this.dataSource != "uat") {
-		if (data.seen_pos < 55) {
-			if ("mlat" in data && data.mlat.indexOf("lat") >= 0)
-				this.dataSource = "mlat";
-			else if (this.addrtype && this.addrtype.substring(0,4) == "tisb")
-				this.dataSource = "tisb";
-			else
-				this.dataSource = "adsb";
-		} else {
+		if (data.seen_pos < 50 && "mlat" in data && data.mlat.indexOf("lat") >= 0)
+			this.dataSource = "mlat";
+		else if (this.addrtype && this.addrtype.substring(0,4) == "tisb")
+			this.dataSource = "tisb";
+		else if (this.addrtype && this.addrtype.substring(0,4) == "adsb")
+			this.dataSource = "adsb";
+		else if (data.seen_pos < 50)
+			this.dataSource = "adsb";
+		else
 			this.dataSource = "other";
-		}
 	}
 
 	if ("alt_baro" in data) {
@@ -629,8 +629,6 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 
 	if ('type' in data)
 		this.addrtype	= data.type;
-	else
-		this.addrtype   = 'adsb_icao';
 
 	if ('lat' in data && SitePosition) {
 		//var WGS84 = new ol.Sphere(6378137);
