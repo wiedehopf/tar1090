@@ -117,19 +117,18 @@ function processReceiverUpdate(data, init) {
 		// Do we already have this plane object in Planes?
 		// If not make it.
 
+		if (uat && ac.type && ac.type.substring(0,4) == "tisb") {
+			// drop non ADS-B planes from UAT (TIS-B)
+			continue;
+		}
+
 		if (Planes[hex]) {
 			plane = Planes[hex];
 		} else if ( ac.messages < 4) {
 			continue;
-		} else if ( uat && ac.type && ac.type.substring(0,4) == "tisb") {
-			// drop non ADS-B planes from UAT (TIS-B)
-			continue;
 		} else {
 			plane = new PlaneObject(hex);
 			plane.filter = PlaneFilter;
-
-			if (uat)
-				plane.dataSource = "uat";
 
 			if (!init)
 				setupPlane(hex,plane);
@@ -139,10 +138,15 @@ function processReceiverUpdate(data, init) {
 		}
 
 		// Call the function update
-		if (uat)
+		if (uat) {
+			if (ac.seen_pos < 50)
+				plane.dataSource = "uat";
+			else
+				plane.dataSource = "other";
 			plane.updateData(uat_now, ac, init);
-		else
+		} else {
 			plane.updateData(now, ac, init);
+		}
 	}
 }
 
