@@ -354,10 +354,10 @@ PlaneObject.prototype.getDataSource = function() {
 	if (this.dataSource == "uat")
 		return 'uat';
 
-	// Not MLAT, but position reported - ADSB or variants
-	if (this.dataSource == "tisb" && this.addrtype) {
+	if (this.addrtype) {
 		return this.addrtype;
 	}
+
 	if (this.dataSource == "adsb")
 		return "adsb_icao";
 
@@ -542,10 +542,14 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	if (this.dataSource != "uat") {
 		if (data.seen_pos < 50 && "mlat" in data && data.mlat.indexOf("lat") >= 0)
 			this.dataSource = "mlat";
-		else if (this.addrtype && this.addrtype.substring(0,4) == "tisb")
+		else if (data.addrtype && data.addrtype.substring(0,4) == "tisb")
 			this.dataSource = "tisb";
-		else if (this.addrtype && this.addrtype.substring(0,4) == "adsb")
+		else if (data.addrtype == "adsb_icao" || data.addrtype == "adsb_other")
 			this.dataSource = "adsb";
+		else if (data.addrtype && data.addrtype.substring(0,4) == "adsr")
+			this.dataSource = "other";
+		else if (data.addrtype == "adsb_icao_nt")
+			this.dataSource = "other";
 		else if (data.seen_pos < 50)
 			this.dataSource = "adsb";
 		else
