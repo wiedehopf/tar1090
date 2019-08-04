@@ -255,7 +255,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		|| (alt_change > 650 && this.altitude > 25000)
 		|| (alt_change > 450 && this.altitude <= 25000 && this.altitude > 20000)
 		|| (alt_change > 300 && this.altitude <= 20000)
-		|| (alt_change > 250 && track_change > 2 && since_update > 2)
+		|| (alt_change > 250 && track_change > 1 && since_update > 2)
 	) {
 		// Create a new segment as the ground state or the altitude changed.
 		// The new state is only drawn after the state has changed
@@ -285,15 +285,17 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	// We only retain some points depending on time elapsed and track change
 
 
-	if ( since_update > 32 ||
+	if (
+		since_update > 32 ||
 		(track_change > 0.5 && since_update > 16) ||
 		(track_change > 1 && since_update > 8) ||
 		(track_change > 2 && since_update > 6) ||
 		(track_change > 3 && since_update > 3) ||
-		(track_change > 4 && since_update > 2) ||
+		(track_change > 4 && since_update > 2.5) ||
 		(this.dataSource == "mlat" && since_update > 16) ||
-		(track_change == -1 && since_update > 5) )
-	{
+		(track_change == -1 && since_update > 5) ||
+		debugAll
+	) {
 		// enough time has elapsed; retain the last point and add a new one
 		if (debug && (since_update > 32 || track_change == -1))
 			this.logSel("sec_elapsed: " + since_update.toFixed(1) + " time_based" );

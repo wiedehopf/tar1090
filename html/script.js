@@ -25,6 +25,7 @@ var HistoryItemsReturned = 0;
 var refresh;
 var scaleFactor;
 var debug = false;
+var debugAll = false;
 var fragment;
 
 var SpecialSquawks = {
@@ -419,6 +420,18 @@ function init_page() {
 	$('#altitude_checkbox').on('click', function() {
 		toggleAltitudeChart(true);
 	});
+
+	$('#debugAll_checkbox').on('click', function() {
+		toggleDebugAll();
+	});
+
+	if (localStorage['debugAll'] === "true") {
+		debugAll = true;
+		$('#debugAll_checkbox').addClass('settingsCheckboxChecked');
+	} else {
+		debugAll = false;
+		$('#debugAll_checkbox').removeClass('settingsCheckboxChecked');
+	}
 
 	$('#debug_checkbox').on('click', function() {
 		toggleDebug();
@@ -1892,6 +1905,18 @@ function filterBlockedMLAT(switchFilter) {
 	}
 	localStorage['blockedMLATFilter'] = blockedMLATFilter;
 	PlaneFilter.blockedMLAT = blockedMLATFilter;
+}
+
+function toggleDebugAll() {
+	if (localStorage['debugAll'] === "true") {
+		debugAll = false;
+		localStorage['debugAll'] = "false";
+		$('#debugAll_checkbox').removeClass('settingsCheckboxChecked');
+	} else {
+		debugAll = true;
+		localStorage['debugAll'] = "true";
+		$('#debugAll_checkbox').addClass('settingsCheckboxChecked');
+	}
 }
 
 function toggleDebug() {
