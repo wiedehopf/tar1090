@@ -2,6 +2,8 @@
 // early.js takes care of getting some history files while the html page and
 // some javascript libraries are still loading, hopefully speeding up loading
 
+"use strict";
+
 // Define our global variables
 var OLMap         = null;
 var StaticFeatures = new ol.Collection();
@@ -43,7 +45,8 @@ var TrackedHistorySize = 0;
 
 var SitePosition = null;
 
-var LastReceiverTimestamp = 0;
+// timestamps
+var now=0, last=0, uat_now=0, uat_last=0;
 var StaleReceiverCount = 0;
 var FetchPending = null;
 var FetchPendingUAT = null;
@@ -67,8 +70,17 @@ $.getJSON("db/aircraft_types/icao_aircraft_types.json")
 
 function processReceiverUpdate(data, init, uat) {
 
+
+	// update now and last
+	if (uat) {
+		uat_last = uat_now;
+		uat_now = data.now;
+	} else {
+		last = now;
+		now = data.now;
+	}
+
 	// Loop through all the planes in the data packet
-	var now = data.now;
 	var acs = data.aircraft;
 
 	if (!uat && !init) {
@@ -195,7 +207,6 @@ function fetchData() {
 		if (data == null)
 			return;
 
-		var now = data.now;
 
 		// experimental stuff
 		/*
@@ -208,9 +219,9 @@ function fetchData() {
 
 		window.setTimeout(fetchData, delay);
 
-		if ((now-LastReceiverTimestamp)*1000 >  1.5* RefreshInterval || (now-LastReceiverTimestamp)*1000 < 0.5 * RefreshInterval)
+		if ((now-last)*1000 >  1.5* RefreshInterval || (now-last)*1000 < 0.5 * RefreshInterval)
 			console.log("We missed a beat: aircraft.json");
-		console.log(((now-LastReceiverTimestamp)*1000).toFixed(0) + " " + diff +" "+ delay + "                  "+now);
+		console.log(((now-last)*1000).toFixed(0) + " " + diff +" "+ delay + "                  "+now);
 		*/
 
 		processReceiverUpdate(data);
@@ -224,7 +235,10 @@ function fetchData() {
 		// update timestamps, visibility, history track for all planes - not only those updated
 		for (var i = 0; i < PlanesOrdered.length; ++i) {
 			var plane = PlanesOrdered[i];
-			plane.updateTick(now, LastReceiverTimestamp);
+			if (plane.dataSource == "uat")
+				plane.updateTick(uat_now, uat_last);
+			else
+				plane.updateTick(now, last);
 		}
 
 		selectNewPlanes();
@@ -234,15 +248,14 @@ function fetchData() {
 		refreshHighlighted();
 
 		// Check for stale receiver data
-		if (LastReceiverTimestamp === now) {
+		if (last == now) {
 			StaleReceiverCount++;
 			if (StaleReceiverCount > 5) {
 				$("#update_error_detail").text("The data from dump1090 hasn't been updated in a while. Maybe dump1090 is no longer running?");
 				$("#update_error").css('display','block');
 			}
-		} else { 
+		} else {
 			StaleReceiverCount = 0;
-			LastReceiverTimestamp = now;
 			$("#update_error").css('display','none');
 		}
 	});
@@ -477,7 +490,6 @@ function parse_history() {
 	initialize_map();
 
 	if (PositionHistoryBuffer.length > 0) {
-		var now=0, last=0, uat_now, uat_last=0;
 
 		// Sort history by timestamp
 		console.log("Sorting history");
@@ -492,12 +504,8 @@ function parse_history() {
 				continue;
 			}
 			var uat = false;
-			if (data.uat_978 && data.uat_978 == "true") {
+			if (data.uat_978 && data.uat_978 == "true")
 				uat = true;
-				uat_now = data.now;
-			} else {
-				now = data.now;
-			}
 
 			// process new data
 			if (h < PositionHistoryBuffer.length - 10)
@@ -527,28 +535,21 @@ function parse_history() {
 
 				reaper();
 			}
-
-			if (uat) {
-				uat_last = uat_now;
-			} else {
-				last = now;
-				LastReceiverTimestamp = last;
-			}
-
 		}
 
 		// Final pass to update all planes to their latest state
 		console.log("Final history cleanup pass");
 		for (var i = 0; i < PlanesOrdered.length; ++i) {
 			var plane = PlanesOrdered[i];
-			plane.updateTick(now, last, true);
+			if (plane.dataSource == "uat")
+				plane.updateTick(uat_now, uat_last, true);
+			else
+				plane.updateTick(now, last, true);
 		}
 
 
 		for (var i in PlanesOrdered)
 			setupPlane(PlanesOrdered[i].icao,PlanesOrdered[i]);
-
-		LastReceiverTimestamp = last;
 	}
 
 	PositionHistoryBuffer = null;
@@ -938,7 +939,7 @@ function reaper() {
 	var newPlanes = [];
 	var plane;
 	while (plane = PlanesOrdered.pop()) {
-		plane.seen = LastReceiverTimestamp - plane.last_message_time;
+		plane.seen = now - plane.last_message_time;
 		if (plane.seen > 600) {
 			// Reap it.                                
 			//console.log("Removed " + plane.icao);
@@ -1908,7 +1909,7 @@ function followRandomPlane() {
 	var this_one = null;
 	do {
 		this_one = PlanesOrdered[Math.floor(Math.random()*PlanesOrdered.length)];
-	} while (this_one.isFiltered() || !this_one.position || (LastReceiverTimestamp - this_one.last_position_time > 30));
+	} while (this_one.isFiltered() || !this_one.position || (now - this_one.last_position_time > 30));
 	//console.log(this_one.icao);
 	selectPlaneByHex(this_one.icao, true);
 }

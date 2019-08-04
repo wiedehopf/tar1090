@@ -256,7 +256,8 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		// The new state is only drawn after the state has changed
 		// and we then get a new position.
 
-		//this.logSel(since_update.toFixed(1) + " " + this.history_size + " " + alt_change.toFixed(0) + " alt_change");
+		if (debug)
+			this.logSel(since_update.toFixed(1) + " " + this.history_size + " " + alt_change.toFixed(0) + " alt_change");
 
 		// Let's assume the ground state change happened somewhere between the previous and current position
 		// Represent that assumption. With altitude it's not quite as critical.
@@ -290,7 +291,8 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		(track_change == -1 && since_update > 5) )
 	{
 		// enough time has elapsed; retain the last point and add a new one
-		//this.logSel(since_update.toFixed(1) + " " + this.history_size + " " + track_change.toFixed(1) + " track_change");
+		if (debug)
+			this.logSel(since_update.toFixed(1) + " " + this.history_size + " " + track_change.toFixed(1) + " track_change");
 		lastseg.fixed.appendCoordinate(projPrev);
 		this.tail_update = prev_time;
 		this.tail_track = prev_track;
@@ -740,7 +742,7 @@ PlaneObject.prototype.altitudeLines = function(altitude) {
 			new ol.style.Style({
 				stroke: new ol.style.Stroke({
 					color: color,
-					width: 1
+					width: 2
 				})
 			})
 		];
@@ -757,7 +759,7 @@ PlaneObject.prototype.updateLines = function() {
 	var estimateStyle = new ol.style.Style({
 		stroke: new ol.style.Stroke({
 			color: '#808080',
-			width: 1.5
+			width: 1.2
 		})
 	});
 
