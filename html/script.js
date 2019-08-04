@@ -523,21 +523,19 @@ function parse_history() {
 
 		// Sort history by timestamp
 		console.log("Sorting history");
-		PositionHistoryBuffer.sort(function(x,y) { return (x.now - y.now); });
+		PositionHistoryBuffer.sort(function(x,y) { return (y.now - x.now); });
 
 		// Process history
-		for (var h = 0; h < PositionHistoryBuffer.length; ++h) {
-			var data = PositionHistoryBuffer[h];
-			if (!data) {
-				console.log("nothing in history buffer?!");
-				//console.log(data);
-				continue;
-			}
+		var data;
+		var h = 0;
+		var pruneInt = Math.floor(PositionHistoryBuffer.length/5);
+		while (data = PositionHistoryBuffer.pop()) {
+
 			// process new data
-			if (h < PositionHistoryBuffer.length - 10)
-				processReceiverUpdate(data, true);
-			else
+			if (PositionHistoryBuffer.length < 10)
 				processReceiverUpdate(data, false);
+			else
+				processReceiverUpdate(data, true);
 
 			// update aircraft tracks
 			if (data.uat_978 != "true") {
@@ -552,11 +550,9 @@ function parse_history() {
 
 
 			// prune aircraft list
-			var pruneInt = Math.floor(PositionHistoryBuffer.length/5);
-			if(h % pruneInt == pruneInt - 1) {
+			if(h++ % pruneInt == pruneInt - 1) {
 
-				console.log("Applied history " + (h + 1) + "/"
-					+ PositionHistoryBuffer.length + " from: "
+				console.log("Applied history " + (h + 1) + " from: "
 					+ (new Date(now * 1000)).toLocaleTimeString());
 
 				reaper();

@@ -252,10 +252,9 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	if (
 		lastseg.ground != on_ground
 		|| (!on_ground && isNaN(alt_change))
-		|| (alt_change > 650 && this.altitude > 25000)
-		|| (alt_change > 450 && this.altitude <= 25000 && this.altitude > 20000)
-		|| (alt_change > 300 && this.altitude <= 20000)
-		|| (alt_change > 250 && track_change > 1 && since_update > 2)
+		|| (alt_change > 800 && this.altitude > 25000)
+		|| (alt_change > 600 && this.altitude <= 25000 && this.altitude > 9000)
+		|| (alt_change > 400 && this.altitude <= 9000)
 	) {
 		// Create a new segment as the ground state or the altitude changed.
 		// The new state is only drawn after the state has changed
@@ -286,12 +285,13 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 
 
 	if (
-		since_update > 32 ||
+		since_update > 48 ||
 		(track_change > 0.5 && since_update > 16) ||
-		(track_change > 1 && since_update > 8) ||
-		(track_change > 2 && since_update > 6) ||
-		(track_change > 3 && since_update > 3) ||
-		(track_change > 4 && since_update > 2.5) ||
+		(track_change > 2 && since_update > 12) ||
+		(track_change > 4 && since_update > 10) ||
+		(track_change > 6 && since_update > 8) ||
+		(track_change > 8 && since_update > 5) ||
+		(track_change > 12 && since_update > 2.5) ||
 		(this.dataSource == "mlat" && since_update > 16) ||
 		(track_change == -1 && since_update > 5) ||
 		debugAll
@@ -560,7 +560,7 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.alt_baro = data.altitude;
 	}
 
-	if ("lat" in data) {
+	if ("lat" in data && data.seen_pos < (receiver_timestamp - this.last_position_time + 2)) {
 		this.position   = [data.lon, data.lat];
 		this.last_position_time = receiver_timestamp - data.seen_pos;
 	}
@@ -831,7 +831,8 @@ PlaneObject.prototype.destroy = function() {
 	if (this.tr) {
 		this.tr.removeEventListener('click', this.clickListener);
 		this.tr.removeEventListener('dblclick', this.dblclickListener);
-		this.tr.parentNode.removeChild(this.tr);
+		if (this.tr.parentNode)
+			this.tr.parentNode.removeChild(this.tr);
 		this.tr = null;
 	}
 	this.track_linesegs = null;

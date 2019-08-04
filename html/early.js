@@ -47,6 +47,14 @@ $.when(get_receiver_defer).done(function(data){
 });
 
 function get_history() {
+
+	$.ajax({ url: 'data/aircraft.json',
+		timeout: 5000,
+		cache: false,
+		dataType: 'json' }).done(function(data) {
+			PositionHistoryBuffer.push(data);
+		});
+
 	if (nHistoryItems > 0) {
 		console.log("Starting to load history (" + nHistoryItems + " items)");
 		console.time("Downloaded History");
@@ -60,17 +68,19 @@ function get_history() {
 
 function get_history_item(i) {
 
-	if (HistoryChunks) {
+	var request;
 
-		deferHistory[i] = $.ajax({ url: 'chunks/chunk_' + i + '.gz',
+	if (HistoryChunks) {
+		request = $.ajax({ url: 'chunks/chunk_' + i + '.gz',
 			timeout: nHistoryItems * 4000, // Allow 4s load time per history chunk
 			dataType: 'json'
 		});
 	} else {
 
-		deferHistory[i] = $.ajax({ url: 'data/history_' + i + '.json',
+		request = $.ajax({ url: 'data/history_' + i + '.json',
 			timeout: nHistoryItems * 120, // Allow 40 ms load time per history entry
 			cache: false,
 			dataType: 'json' });
 	}
+	deferHistory.push(request);
 }
