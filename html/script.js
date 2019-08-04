@@ -420,6 +420,18 @@ function init_page() {
 		toggleAltitudeChart(true);
 	});
 
+	$('#debug_checkbox').on('click', function() {
+		toggleDebug();
+	});
+
+	if (localStorage['debug'] === "true") {
+		debug = true;
+		$('#debug_checkbox').addClass('settingsCheckboxChecked');
+	} else {
+		debug = false;
+		$('#debug_checkbox').removeClass('settingsCheckboxChecked');
+	}
+
 	$('#selectall_checkbox').on('click', function() {
 		if ($('#selectall_checkbox').hasClass('settingsCheckboxChecked')) {
 			deselectAllPlanes();
@@ -1880,6 +1892,18 @@ function filterBlockedMLAT(switchFilter) {
 	}
 	localStorage['blockedMLATFilter'] = blockedMLATFilter;
 	PlaneFilter.blockedMLAT = blockedMLATFilter;
+}
+
+function toggleDebug() {
+	if (localStorage['debug'] === "true") {
+		debug = false;
+		localStorage['debug'] = "false";
+		$('#debug_checkbox').removeClass('settingsCheckboxChecked');
+	} else {
+		debug = true;
+		localStorage['debug'] = "true";
+		$('#debug_checkbox').addClass('settingsCheckboxChecked');
+	}
 }
 
 function toggleAltitudeChart(switchToggle) {

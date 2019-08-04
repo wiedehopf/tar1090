@@ -117,7 +117,7 @@ function PlaneObject(icao) {
 }
 
 PlaneObject.prototype.logSel = function(loggable) {
-	if (this.selected)
+	if (this.selected && !SelectedAllPlanes)
 		console.log(loggable);
 	return;
 }
@@ -245,19 +245,24 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		return true;
 	}
 
+	var track_change = (this.tail_track != null && this.track != null) ? Math.abs(this.tail_track - this.track) : -1;
 	var alt_change = Math.abs(this.altitude - lastseg.altitude);
 	var since_update = prev_time - this.tail_update;
 
-	if ( (lastseg.ground != on_ground)
+	if (
+		lastseg.ground != on_ground
 		|| (!on_ground && isNaN(alt_change))
-		|| alt_change >= 300 ) {
-		//console.log(this.icao + " ground state changed");
+		|| (alt_change > 650 && this.altitude > 25000)
+		|| (alt_change > 450 && this.altitude <= 25000 && this.altitude > 20000)
+		|| (alt_change > 300 && this.altitude <= 20000)
+		|| (alt_change > 250 && track_change > 2 && since_update > 2)
+	) {
 		// Create a new segment as the ground state or the altitude changed.
 		// The new state is only drawn after the state has changed
 		// and we then get a new position.
 
 		if (debug)
-			this.logSel(since_update.toFixed(1) + " " + this.history_size + " " + alt_change.toFixed(0) + " alt_change");
+			this.logSel("sec_elapsed: " + since_update.toFixed(1) + " alt_change: "+ alt_change.toFixed(0));
 
 		// Let's assume the ground state change happened somewhere between the previous and current position
 		// Represent that assumption. With altitude it's not quite as critical.
@@ -278,21 +283,22 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 
 	// Add current position to the existing track.
 	// We only retain some points depending on time elapsed and track change
-	var track_change = (this.tail_track != null && this.track != null) ? Math.abs(this.tail_track - this.track) : -1;
 
 
 	if ( since_update > 32 ||
-		(track_change > 0.5 && since_update > 12) ||
-		(track_change > 1 && since_update > 6) ||
-		(track_change > 2 && since_update > 4) ||
+		(track_change > 0.5 && since_update > 16) ||
+		(track_change > 1 && since_update > 8) ||
+		(track_change > 2 && since_update > 6) ||
 		(track_change > 3 && since_update > 3) ||
 		(track_change > 4 && since_update > 2) ||
 		(this.dataSource == "mlat" && since_update > 16) ||
 		(track_change == -1 && since_update > 5) )
 	{
 		// enough time has elapsed; retain the last point and add a new one
-		if (debug)
-			this.logSel(since_update.toFixed(1) + " " + this.history_size + " " + track_change.toFixed(1) + " track_change");
+		if (debug && (since_update > 32 || track_change == -1))
+			this.logSel("sec_elapsed: " + since_update.toFixed(1) + " time_based" );
+		else if (debug)
+			this.logSel("sec_elapsed: " + since_update.toFixed(1) + " track_change: "+ track_change.toFixed(1));
 		lastseg.fixed.appendCoordinate(projPrev);
 		this.tail_update = prev_time;
 		this.tail_track = prev_track;
