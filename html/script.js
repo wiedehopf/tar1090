@@ -194,7 +194,11 @@ function setupPlane(hex, plane) {
 }
 
 function fetchData() {
-	if (FetchPending !== null && FetchPending.state() == 'pending') {
+	if (FetchPending != null && FetchPending.state() == 'pending') {
+		// don't double up on fetches, let the last one resolve
+		return;
+	}
+	if (FetchPendingUAT != null && FetchPendingUAT.state() == 'pending') {
 		// don't double up on fetches, let the last one resolve
 		return;
 	}
