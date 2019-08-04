@@ -287,10 +287,10 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	if (
 		since_update > 48 ||
 		(track_change > 0.5 && since_update > 16) ||
-		(track_change > 2 && since_update > 12) ||
-		(track_change > 4 && since_update > 10) ||
-		(track_change > 6 && since_update > 8) ||
-		(track_change > 8 && since_update > 5) ||
+		(track_change > 1.5 && since_update > 10) ||
+		(track_change > 2.5 && since_update > 8) ||
+		(track_change > 4 && since_update > 6) ||
+		(track_change > 8 && since_update > 4) ||
 		(track_change > 12 && since_update > 2.5) ||
 		(this.dataSource == "mlat" && since_update > 16) ||
 		(track_change == -1 && since_update > 5) ||
