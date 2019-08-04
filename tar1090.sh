@@ -72,7 +72,7 @@ do
 
 		if [[ $ENABLE_978 == "yes" ]]; then
 			cp $dir/978.json $dir/978_history_$((i%$CS)).json
-			sed -i -e 's/"now" \?:/"uat_978":"true","now":/' -e '$a,' 978_history_$((i%$CS)).json
+			sed -i -e '$a,' 978_history_$((i%$CS)).json
 		fi
 
 
@@ -123,6 +123,7 @@ while [[ $ENABLE_978 == "yes" ]]
 do
 	sleep 1 &
 	wget -T 5 -q -O $dir/978.tmp $URL_978/data/aircraft.json
+	sed -i -e 's/"now" \?:/"uat_978":"true","now":/' $dir/978.tmp
 	mv $dir/978.tmp $dir/978.json
 	wait
 done &

@@ -531,17 +531,17 @@ PlaneObject.prototype.updateIcon = function() {
 PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	// get location data first, return early if only those are needed.
 
-	if (data.seen_pos < 55) {
-		if ("mlat" in data && data.mlat.indexOf("lat") >= 0)
-			this.dataSource = "mlat";
-		else if (this.addrtype && this.addrtype.substring(0,4) == "tisb")
-			this.dataSource = "tisb";
-		else if (this.dataSource != "uat")
-			this.dataSource = "adsb";
-		else
+	if (this.dataSource != "uat") {
+		if (data.seen_pos < 55) {
+			if ("mlat" in data && data.mlat.indexOf("lat") >= 0)
+				this.dataSource = "mlat";
+			else if (this.addrtype && this.addrtype.substring(0,4) == "tisb")
+				this.dataSource = "tisb";
+			else
+				this.dataSource = "adsb";
+		} else {
 			this.dataSource = "other";
-	} else {
-		this.dataSource = "other";
+		}
 	}
 
 	if ("alt_baro" in data) {
@@ -718,15 +718,14 @@ PlaneObject.prototype.updateMarker = function(moved) {
 PlaneObject.prototype.altitudeLines = function(altitude) {
 	var colorArr = this.getAltitudeColor(altitude);
 	var color = 'hsl(' + (colorArr[0]/5).toFixed(0)*5 + ',' + (colorArr[1]/5).toFixed(0)*5 + '%,' + (colorArr[2]/5).toFixed(0)*5 + '%)'
-	if (!debug)
+	if (!debug) {
 		return new ol.style.Style({
 			stroke: new ol.style.Stroke({
 				color: color,
 				width: 2
 			})
 		});
-
-	if (debug)
+	} else {
 		return [
 			new ol.style.Style({
 				image: new ol.style.Circle({
@@ -746,6 +745,7 @@ PlaneObject.prototype.altitudeLines = function(altitude) {
 				})
 			})
 		];
+	}
 }
 
 // Update our planes tail line,

@@ -25,13 +25,14 @@ var test_chunk_defer = $.ajax({
 
 
 $.when(get_receiver_defer).done(function(data){
-
+	get_receiver_defer = null;
 	receiverJson = data;
 	Dump1090Version = data.version;
 	RefreshInterval = data.refresh;
 	nHistoryItems = data.history;
 
 	$.when(test_chunk_defer).done(function(data) {
+		test_chunk_defer = null;
 		HistoryChunks = true;
 		nHistoryItems = data.chunks;
 		enable_uat = (data.enable_uat == "true");

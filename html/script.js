@@ -68,11 +68,13 @@ $.getJSON("db/aircraft_types/icao_aircraft_types.json")
 	})
 
 
-function processReceiverUpdate(data, init, uat) {
+function processReceiverUpdate(data, init) {
 
 
 	// update now and last
-	if (uat) {
+	var uat = false;
+	if (data.uat_978 == "true") {
+		uat = true;
 		uat_last = uat_now;
 		uat_now = data.now;
 	} else {
@@ -125,7 +127,7 @@ function processReceiverUpdate(data, init, uat) {
 			plane = new PlaneObject(hex);
 			plane.filter = PlaneFilter;
 
-			if (uat && ac.type && ac.type.substring(0,4) == "adsb")
+			if (uat)
 				plane.dataSource = "uat";
 
 			if (!init)
@@ -136,7 +138,10 @@ function processReceiverUpdate(data, init, uat) {
 		}
 
 		// Call the function update
-		plane.updateData(now, ac, init);
+		if (uat)
+			plane.updateData(uat_now, ac, init);
+		else
+			plane.updateData(now, ac, init);
 	}
 }
 
@@ -195,9 +200,13 @@ function fetchData() {
 
 	if (enable_uat) {
 		FetchPendingUAT = $.ajax({ url: 'chunks/978.json',
-			timeout: 5000,
+			timeout: 3000,
 			cache: false,
 			dataType: 'json' });
+
+		$.when(FetchPendingUAT).done(function(data) {
+			processReceiverUpdate(data);
+		});
 	}
 	FetchPending = $.ajax({ url: 'data/aircraft.json',
 		timeout: 5000,
@@ -226,11 +235,6 @@ function fetchData() {
 
 		processReceiverUpdate(data);
 
-		if (enable_uat) {
-			$.when(FetchPendingUAT).done(function(data) {
-				processReceiverUpdate(data, false, true);
-			});
-		}
 
 		// update timestamps, visibility, history track for all planes - not only those updated
 		for (var i = 0; i < PlanesOrdered.length; ++i) {
@@ -258,6 +262,7 @@ function fetchData() {
 			StaleReceiverCount = 0;
 			$("#update_error").css('display','none');
 		}
+
 	});
 
 	FetchPending.fail(function(jqxhr, status, error) {
@@ -503,18 +508,14 @@ function parse_history() {
 				//console.log(data);
 				continue;
 			}
-			var uat = false;
-			if (data.uat_978 && data.uat_978 == "true")
-				uat = true;
-
 			// process new data
 			if (h < PositionHistoryBuffer.length - 10)
-				processReceiverUpdate(data, true, uat);
+				processReceiverUpdate(data, true);
 			else
-				processReceiverUpdate(data, false, uat);
+				processReceiverUpdate(data, false);
 
 			// update aircraft tracks
-			if (!uat) {
+			if (data.uat_978 != "true") {
 				for (var i = 0; i < PlanesOrdered.length; ++i) {
 					var plane = PlanesOrdered[i];
 					if (plane.dataSource == "uat")
