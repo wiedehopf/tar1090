@@ -59,6 +59,7 @@ do
 	do
 		sleep $INTERVAL &
 
+		source <(grep -F -e INTERVAL /etc/default/tar1090)
 
 		cd $dir
 		if ! cp $SOURCE/aircraft.json history_$((i%$CS)).json &>/dev/null
