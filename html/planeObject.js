@@ -837,4 +837,6 @@ PlaneObject.prototype.destroy = function() {
 	this.filter = null;
 	this.markerIcon = null;
 	this.markerStyle = null;
+	if (this.icao == SelectedPlane)
+		SelectedPlane = null;
 };

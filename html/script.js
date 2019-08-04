@@ -1536,7 +1536,7 @@ function selectPlaneByHex(hex,autofollow) {
 		deselectAllPlanes();
 	}
 
-	if (SelectedPlane != null) {
+	if (SelectedPlane != null && Planes[SelectedPlane]) {
 		Planes[SelectedPlane].selected = false;
 		Planes[SelectedPlane].clearLines();
 		Planes[SelectedPlane].updateMarker();
