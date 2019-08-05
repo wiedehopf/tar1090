@@ -1930,13 +1930,7 @@ function toggleDebug() {
 		$('#debug_checkbox').addClass('settingsCheckboxChecked');
 	}
 	for (var i in PlanesOrdered) {
-		var plane = PlanesOrdered[i];
-		plane.trail_features.clear();
-		for (var i in plane.track_linesegs) {
-			plane.track_linesegs[i].feature = null;
-		}
-		plane.elastic_feature = null;
-		plane.updateLines();
+		PlanesOrdered[i].remakeTrail();
 	}
 }
 

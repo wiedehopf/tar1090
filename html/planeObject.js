@@ -836,6 +836,30 @@ PlaneObject.prototype.updateLines = function() {
 
 };
 
+PlaneObject.prototype.remakeTrail = function() {
+
+	this.trail_features.clear();
+	for (var i in this.track_linesegs) {
+		this.track_linesegs[i].feature = null;
+	}
+	this.elastic_feature = null;
+
+	trailGroup.remove(this.layer);
+
+	this.trail_features = new ol.Collection();
+
+	this.layer = new ol.layer.Vector({
+		name: this.icao,
+		source: new ol.source.Vector({
+			features: this.trail_features,
+		})
+	});
+
+	trailGroup.push(this.layer);
+
+	this.updateLines();
+}
+
 PlaneObject.prototype.destroy = function() {
 	this.clearLines();
 	this.clearMarker();
