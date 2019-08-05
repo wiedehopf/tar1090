@@ -569,8 +569,12 @@ function parse_history() {
 
 		// Final pass to update all planes to their latest state
 		console.log("Final history cleanup pass");
-		for (var i = 0; i < PlanesOrdered.length; ++i) {
+		for (var i in PlanesOrdered) {
 			var plane = PlanesOrdered[i];
+
+			if (plane.position && SitePosition)
+				plane.sitedist = ol.sphere.getDistance(SitePosition, plane.position);
+
 			if (plane.dataSource == "uat")
 				plane.updateTick(uat_now, uat_last, true);
 			else

@@ -674,9 +674,7 @@ PlaneObject.prototype.updateTick = function(receiver_timestamp, last_timestamp, 
 
 	// If no packet in over 58 seconds, clear the plane.
 	// Only clear the plane if it's not selected individually
-	if (this.seen_pos > 100  && (!this.selected || SelectedAllPlanes) )
-		this.position = null;
-	if ((this.seen > 58 || this.position == null)
+	if ((this.seen > 58 || this.position == null || this.seen_pos > 100)
 		&& (!this.selected || SelectedAllPlanes)) {
 		if (this.visible) {
 			//console.log("hiding " + this.icao);
@@ -789,6 +787,24 @@ PlaneObject.prototype.updateLines = function() {
 		})
 	});
 
+	// create any missing fixed line features
+	for (var i = 0; i < this.track_linesegs.length; ++i) {
+		var seg = this.track_linesegs[i];
+		if (!seg.feature) {
+			seg.feature = new ol.Feature(seg.fixed);
+			if (seg.estimated) {
+				seg.feature.setStyle(estimateStyle);
+			} else {
+				seg.feature.setStyle(this.altitudeLines(seg.altitude));
+			}
+
+			PlaneTrailFeatures.push(seg.feature);
+		}
+	}
+
+	if (!this.position)
+		return;
+
 	// find the old elastic band so we can replace it in place
 	// (which should be faster than remove-and-add when PlaneTrailFeatures is large)
 	var oldElastic = -1;
@@ -813,20 +829,6 @@ PlaneObject.prototype.updateLines = function() {
 		PlaneTrailFeatures.setAt(oldElastic, this.elastic_feature);
 	}
 
-	// create any missing fixed line features
-	for (var i = 0; i < this.track_linesegs.length; ++i) {
-		var seg = this.track_linesegs[i];
-		if (!seg.feature) {
-			seg.feature = new ol.Feature(seg.fixed);
-			if (seg.estimated) {
-				seg.feature.setStyle(estimateStyle);
-			} else {
-				seg.feature.setStyle(this.altitudeLines(seg.altitude));
-			}
-
-			PlaneTrailFeatures.push(seg.feature);
-		}
-	}
 };
 
 PlaneObject.prototype.destroy = function() {
