@@ -27,6 +27,8 @@ var scaleFactor;
 var debug = false;
 var debugAll = false;
 var fragment;
+var grouptype_checkbox;
+
 
 var SpecialSquawks = {
 	'7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -139,7 +141,7 @@ function processReceiverUpdate(data, init) {
 
 		// Call the function update
 		if (uat) {
-			if (ac.seen_pos < 50)
+			if (ac.seen < 58)
 				plane.dataSource = "uat";
 			else
 				plane.dataSource = "other";
@@ -1475,6 +1477,18 @@ function sortFunction(x,y) {
 }
 
 function resortTable() {
+	// presort by dataSource
+	if (sortId == "sitedist") {
+		PlanesOrdered.sort(function(x,y) {
+			return (x.getDataSourceNumber() - y.getDataSourceNumber());
+		});
+	}
+	// or distance
+	if (sortId == "data_source") {
+		PlanesOrdered.sort(function(x,y) {
+			return (x.sitedist - y.sitedist);
+		});
+	}
 	// number the existing rows so we can do a stable sort
 	// regardless of whether sort() is stable or not.
 	// Also extract the sort comparison value.
@@ -1494,10 +1508,12 @@ function resortTable() {
 }
 
 function sortBy(id,sc,se) {
-	if (id !== 'data_source') {
+	if (id != 'data_source' && grouptype_checkbox) {
 		$('#grouptype_checkbox').removeClass('settingsCheckboxChecked');
-	} else {
+		grouptype_checkbox = false;
+	} else if (id == 'data_source' && !grouptype_checkbox) {
 		$('#grouptype_checkbox').addClass('settingsCheckboxChecked');
+		grouptype_checkbox = true;
 	}
 	if (id === sortId) {
 		sortAscending = !sortAscending;
