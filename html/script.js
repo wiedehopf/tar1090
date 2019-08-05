@@ -1114,17 +1114,7 @@ function refreshSelected() {
 			$('#selected_follow').css('font-weight', 'normal');
 		}
 	}
-	if (selected.dataSource == "uat") {
-		$('#selected_source').text("UAT");
-	} else if (selected.getDataSource() === "adsb_icao") {
-		$('#selected_source').text("ADS-B");
-	} else if (selected.getDataSource() === "tisb_trackfile" || selected.getDataSource() === "tisb_icao" || selected.getDataSource() === "tisb_other") {
-		$('#selected_source').text("TIS-B");
-	} else if (selected.getDataSource() === "mlat") {
-		$('#selected_source').text("MLAT");
-	} else {
-		$('#selected_source').text("Other");
-	}
+	$('#selected_source').text(format_data_source(selected.getDataSource()));
 	$('#selected_category').text(selected.category ? selected.category : "n/a");
 	$('#selected_sitedist').text(format_distance_long(selected.sitedist, DisplayUnits));
 	$('#selected_rssi').text(selected.rssi.toFixed(1) + ' dBFS');
@@ -1300,17 +1290,7 @@ function refreshHighlighted() {
 		$('#higlighted_icaotype').text("n/a");
 	}
 
-	if (highlighted.dataSource == "uat") {
-		$('#highlighted_source').text("UAT");
-	} else if (highlighted.getDataSource() === "adsb_icao") {
-		$('#highlighted_source').text("ADS-B");
-	} else if (highlighted.getDataSource() === "tisb_trackfile" || highlighted.getDataSource() === "tisb_icao" || highlighted.getDataSource() === "tisb_other") {
-		$('#highlighted_source').text("TIS-B");
-	} else if (highlighted.getDataSource() === "mlat") {
-		$('#highlighted_source').text("MLAT");
-	} else {
-		$('#highlighted_source').text("Other");
-	}
+	$('#highlighted_source').text(format_data_source(highlighted.getDataSource()));
 
 	if (highlighted.registration !== null) {
 		$('#highlighted_registration').text(highlighted.registration);
@@ -1361,17 +1341,17 @@ function refreshTableInfo() {
 			TrackedAircraft++;
 			var classes = "plane_table_row";
 
-			if (tableplane.position !== null && tableplane.seen_pos < 60) {
+			if (tableplane.position != null && tableplane.seen_pos < 60) {
 				++TrackedAircraftPositions;
 			}
 
 			if (tableplane.dataSource == "uat") {
 				classes += " uat";
-			} else if (tableplane.getDataSource() === "adsb_icao") {
+			} else if (tableplane.dataSource == "adsb") {
 				classes += " vPosition";
-			} else if (tableplane.getDataSource() === "tisb_trackfile" || tableplane.getDataSource() === "tisb_icao" || tableplane.getDataSource() === "tisb_other") {
+			} else if (tableplane.dataSource == "tisb") {
 				classes += " tisb";
-			} else if (tableplane.getDataSource() === "mlat") {
+			} else if (tableplane.dataSource == "mlat") {
 				classes += " mlat";
 			} else {
 				classes += " other";

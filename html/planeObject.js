@@ -68,8 +68,8 @@ function PlaneObject(icao) {
 	this.tail_update = null;
 
 	// When was this last updated (receiver timestamp)
-	this.last_message_time = null;
-	this.last_position_time = null;
+	this.last_message_time = 0;
+	this.last_position_time = 0;
 
 	// When was this last updated (seconds before last update)
 	this.seen = null;
@@ -539,18 +539,23 @@ PlaneObject.prototype.updateIcon = function() {
 PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	// get location data first, return early if only those are needed.
 
+	if ("lat" in data && data.seen_pos < (receiver_timestamp - this.last_position_time + 2)) {
+		this.position   = [data.lon, data.lat];
+		this.last_position_time = receiver_timestamp - data.seen_pos;
+	}
+
 	if (this.dataSource != "uat") {
 		if (data.seen_pos < 50 && "mlat" in data && data.mlat.indexOf("lat") >= 0)
 			this.dataSource = "mlat";
-		else if (data.addrtype && data.addrtype.substring(0,4) == "tisb")
+		else if (data.type && data.type.substring(0,4) == "tisb")
 			this.dataSource = "tisb";
-		else if (data.addrtype == "adsb_icao" || data.addrtype == "adsb_other")
+		else if (data.type == "adsb_icao" || data.type == "adsb_other")
 			this.dataSource = "adsb";
-		else if (data.addrtype && data.addrtype.substring(0,4) == "adsr")
+		else if (data.type && data.type.substring(0,4) == "adsr")
 			this.dataSource = "other";
-		else if (data.addrtype == "adsb_icao_nt")
+		else if (data.type == "adsb_icao_nt")
 			this.dataSource = "other";
-		else if (data.seen_pos < 50)
+		else if (this.position)
 			this.dataSource = "adsb";
 		else
 			this.dataSource = "other";
@@ -562,11 +567,6 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	} else if ("altitude" in data) {
 		this.altitude = data.altitude;
 		this.alt_baro = data.altitude;
-	}
-
-	if ("lat" in data && data.seen_pos < (receiver_timestamp - this.last_position_time + 2)) {
-		this.position   = [data.lon, data.lat];
-		this.last_position_time = receiver_timestamp - data.seen_pos;
 	}
 
 	if ("track" in data)
@@ -670,11 +670,13 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 PlaneObject.prototype.updateTick = function(receiver_timestamp, last_timestamp, init) {
 	// recompute seen and seen_pos
 	this.seen = receiver_timestamp - this.last_message_time;
-	this.seen_pos = (this.last_position_time != null ? receiver_timestamp - this.last_position_time : null);
+	this.seen_pos = receiver_timestamp - this.last_position_time;
 
 	// If no packet in over 58 seconds, clear the plane.
 	// Only clear the plane if it's not selected individually
-	if ((this.seen > 58 || this.position == null || this.seen_pos > 100)
+	if (this.seen_pos > 100  && (!this.selected || SelectedAllPlanes) )
+		this.position = null;
+	if ((this.seen > 58 || this.position == null)
 		&& (!this.selected || SelectedAllPlanes)) {
 		if (this.visible) {
 			//console.log("hiding " + this.icao);
