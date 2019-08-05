@@ -91,6 +91,18 @@ function PlaneObject(icao) {
 	this.typeDescription = null;
 	this.wtc = null;
 
+
+	this.trail_features = new ol.Collection();
+
+	this.layer = new ol.layer.Vector({
+		name: this.icao,
+		source: new ol.source.Vector({
+			features: this.trail_features,
+		})
+	});
+
+	trailGroup.push(this.layer);
+
 	// request metadata
 	getAircraftData(this.icao).done(function(data) {
 		if ("r" in data) {
@@ -308,16 +320,11 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 
 // This is to remove the line from the screen if we deselect the plane
 PlaneObject.prototype.clearLines = function() {
-	for (var i = this.track_linesegs.length - 1; i >= 0 ; --i) {
-		var seg = this.track_linesegs[i];
-		if (seg.feature !== null) {
-			PlaneTrailFeatures.remove(seg.feature);
-			seg.feature = null;
-		}
-	}
 
-	if (this.elastic_feature !== null) {
-		PlaneTrailFeatures.remove(this.elastic_feature);
+	this.layer.setVisible(false);
+
+	if (this.elastic_feature != null) {
+		this.trail_features.remove(this.elastic_feature);
 		this.elastic_feature = null;
 	}
 };
@@ -759,6 +766,8 @@ PlaneObject.prototype.updateLines = function() {
 	if (!this.selected)
 		return;
 
+	this.layer.setVisible(true);
+
 	if (this.track_linesegs.length == 0)
 		return;
 
@@ -794,7 +803,7 @@ PlaneObject.prototype.updateLines = function() {
 				seg.feature.setStyle(this.altitudeLines(seg.altitude));
 			}
 
-			PlaneTrailFeatures.push(seg.feature);
+			this.trail_features.push(seg.feature);
 		}
 	}
 
@@ -805,7 +814,7 @@ PlaneObject.prototype.updateLines = function() {
 	// (which should be faster than remove-and-add when PlaneTrailFeatures is large)
 	var oldElastic = -1;
 	if (this.elastic_feature) {
-		oldElastic = PlaneTrailFeatures.getArray().indexOf(this.elastic_feature);
+		oldElastic = this.trail_features.getArray().indexOf(this.elastic_feature);
 	}
 
 	// create the new elastic band feature
@@ -820,9 +829,9 @@ PlaneObject.prototype.updateLines = function() {
 	}
 
 	if (oldElastic < 0) {
-		PlaneTrailFeatures.push(this.elastic_feature);
+		this.trail_features.push(this.elastic_feature);
 	} else {
-		PlaneTrailFeatures.setAt(oldElastic, this.elastic_feature);
+		this.trail_features.setAt(oldElastic, this.elastic_feature);
 	}
 
 };
@@ -830,6 +839,8 @@ PlaneObject.prototype.updateLines = function() {
 PlaneObject.prototype.destroy = function() {
 	this.clearLines();
 	this.clearMarker();
+	trailGroup.remove(this.layer);
+	this.trail_features.clear();
 	if (this.tr) {
 		this.tr.removeEventListener('click', this.clickListener);
 		this.tr.removeEventListener('dblclick', this.dblclickListener);

@@ -9,7 +9,7 @@ var OLMap         = null;
 var StaticFeatures = new ol.Collection();
 var SiteCircleFeatures = new ol.Collection();
 var PlaneIconFeatures = new ol.Collection();
-var PlaneTrailFeatures = new ol.Collection();
+var trailGroup = new ol.Collection();
 var Planes        = {};
 var PlanesOrdered = [];
 var PlaneFilter   = {};
@@ -680,30 +680,26 @@ function initialize_map() {
 		})
 	});
 
-	layers.push(new ol.layer.Group({
-		title: 'Overlays',
-		layers: [
-			new ol.layer.Vector({
-				name: 'site_pos',
-				type: 'overlay',
-				title: 'Site position and range rings',
-				source: new ol.source.Vector({
-					features: StaticFeatures,
-				})
-			}),
+	layers.push(
+		new ol.layer.Vector({
+			name: 'site_pos',
+			type: 'overlay',
+			title: 'Site position and range rings',
+			source: new ol.source.Vector({
+				features: StaticFeatures,
+			})
+		}));
 
-			new ol.layer.Vector({
-				name: 'ac_trail',
-				type: 'overlay',
-				title: 'Selected aircraft trail',
-				source: new ol.source.Vector({
-					features: PlaneTrailFeatures,
-				})
-			}),
+	layers.push(
+		new ol.layer.Group({
+			name: 'ac_trail',
+			title: 'Aircraft trails',
+			type: 'overlay',
+			layers: trailGroup,
+		})
+	);
 
-			iconsLayer
-		]
-	}));
+	layers.push(iconsLayer);
 
 	var foundType = false;
 	var baseCount = 0;
@@ -1932,6 +1928,15 @@ function toggleDebug() {
 		debug = true;
 		localStorage['debug'] = "true";
 		$('#debug_checkbox').addClass('settingsCheckboxChecked');
+	}
+	for (var i in PlanesOrdered) {
+		var plane = PlanesOrdered[i];
+		plane.trail_features.clear();
+		for (var i in plane.track_linesegs) {
+			plane.track_linesegs[i].feature = null;
+		}
+		plane.elastic_feature = null;
+		plane.updateLines();
 	}
 }
 
