@@ -266,8 +266,8 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		|| (!on_ground && isNaN(alt_change))
 		|| (alt_change > 900 && this.altitude > 25000)
 		|| (alt_change > 700 && this.altitude <= 25000 && this.altitude > 9000)
-		|| (alt_change > 500 && this.altitude <= 9000 && this.altitude > 4000)
-		|| (alt_change > 250 && this.altitude <= 3500)
+		|| (alt_change > 500 && this.altitude <= 9000 && this.altitude > 4500)
+		|| (alt_change > 250 && this.altitude <= 4500)
 	) {
 		// Create a new segment as the ground state or the altitude changed.
 		// The new state is only drawn after the state has changed
@@ -296,7 +296,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	// Add current position to the existing track.
 	// We only retain some points depending on time elapsed and track change
 	// the bigger this number, the less points are saved during track changes
-	var less_points = 10;
+	var less_points = 11;
 	if (
 		since_update > 48 ||
 		(since_update > less_points/track_change) ||
@@ -320,13 +320,8 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 
 // This is to remove the line from the screen if we deselect the plane
 PlaneObject.prototype.clearLines = function() {
-
-	this.layer.setVisible(false);
-
-	if (this.elastic_feature != null) {
-		this.trail_features.remove(this.elastic_feature);
-		this.elastic_feature = null;
-	}
+	if (this.layer.getVisible())
+		this.layer.setVisible(false);
 };
 
 PlaneObject.prototype.getDataSourceNumber = function() {
@@ -475,7 +470,11 @@ PlaneObject.prototype.updateIcon = function() {
 	//var opacity = 1.0;
 	var outline = (this.dataSource == "mlat" ? OutlineMlatColor : OutlineADSBColor);
 	var add_stroke = (this.selected && !SelectedAllPlanes) ? ' stroke="black" stroke-width="1px"' : '';
-	var baseMarker = getBaseMarker(this.category, this.icaotype, this.typeDescription, this.wtc);
+	var baseMarkerKey = this.category + "!" + this.icaotype + "!" + this.typeDescription + "!" + this.wtc;
+	if (this.baseMarkerKey != baseMarkerKey) {
+		this.baseMarkerKey = baseMarkerKey;
+		this.baseMarker = getBaseMarker(this.category, this.icaotype, this.typeDescription, this.wtc);
+	}
 	var rotation = this.track;
 	if (rotation == null) {
 		rotation = this.true_heading;
@@ -485,9 +484,9 @@ PlaneObject.prototype.updateIcon = function() {
 		rotation = 0;
 	}
 
-	//var transparentBorderWidth = (32 / baseMarker.scale / scaleFactor).toFixed(1);
+	//var transparentBorderWidth = (32 / this.baseMarker.scale / scaleFactor).toFixed(1);
 
-	var svgKey = col + '!' + outline + '!' + baseMarker.svg + '!' + add_stroke;
+	var svgKey = col + '!' + outline + '!' + this.baseMarker.svg + '!' + add_stroke;
 
 	if (this.markerStyle == null || this.markerIcon == null || this.markerSvgKey != svgKey) {
 		//console.log(this.icao + " new icon and style " + this.markerSvgKey + " -> " + svgKey);
@@ -499,11 +498,11 @@ PlaneObject.prototype.updateIcon = function() {
 			anchorXUnits: 'fraction',
 			anchorYUnits: 'fraction',
 			scale: scaleFactor,
-			imgSize: baseMarker.size,
-			src: svgPathToURI(baseMarker.svg, outline, col, add_stroke),
-			rotation: (baseMarker.noRotate ? 0 : rotation * Math.PI / 180.0),
+			imgSize: this.baseMarker.size,
+			src: svgPathToURI(this.baseMarker.svg, outline, col, add_stroke),
+			rotation: (this.baseMarker.noRotate ? 0 : rotation * Math.PI / 180.0),
 			//opacity: opacity,
-			rotateWithView: (baseMarker.noRotate ? false : true)
+			rotateWithView: (this.baseMarker.noRotate ? false : true)
 		});
 
 		this.markerIcon = icon;
@@ -766,7 +765,8 @@ PlaneObject.prototype.updateLines = function() {
 	if (!this.selected)
 		return;
 
-	this.layer.setVisible(true);
+	if (!this.layer.getVisible())
+		this.layer.setVisible(true);
 
 	if (this.track_linesegs.length == 0)
 		return;
@@ -792,8 +792,27 @@ PlaneObject.prototype.updateLines = function() {
 		})
 	});
 
+
+	// create the new elastic band feature
+	var lastseg = this.track_linesegs[this.track_linesegs.length - 1];
+	var lastfixed = lastseg.fixed.getCoordinateAt(1.0);
+	var geom = new ol.geom.LineString([lastfixed, ol.proj.fromLonLat(this.position)]);
+	this.elastic_feature = new ol.Feature(geom);
+	if (lastseg.estimated) {
+		this.elastic_feature.setStyle(estimateStyle);
+	} else {
+		this.elastic_feature.setStyle(this.altitudeLines(lastseg.altitude));
+	}
+
+	// elastic feature is always at index 0 for each aircraft
+	this.trail_features.setAt(0, this.elastic_feature);
+
 	// create any missing fixed line features
-	for (var i = 0; i < this.track_linesegs.length; ++i) {
+	var start_i = 0;
+	if (this.track_linesegs.length > 1 && this.track_linesegs[this.track_linesegs.length-2].feature != null)
+		start_i = this.track_linesegs.length-1;
+
+	for (var i = start_i; i < this.track_linesegs.length; ++i) {
 		var seg = this.track_linesegs[i];
 		if (!seg.feature) {
 			seg.feature = new ol.Feature(seg.fixed);
@@ -807,32 +826,6 @@ PlaneObject.prototype.updateLines = function() {
 		}
 	}
 
-	if (!this.position)
-		return;
-
-	// find the old elastic band so we can replace it in place
-	// (which should be faster than remove-and-add when PlaneTrailFeatures is large)
-	var oldElastic = -1;
-	if (this.elastic_feature) {
-		oldElastic = this.trail_features.getArray().indexOf(this.elastic_feature);
-	}
-
-	// create the new elastic band feature
-	var lastseg = this.track_linesegs[this.track_linesegs.length - 1];
-	var lastfixed = lastseg.fixed.getCoordinateAt(1.0);
-	var geom = new ol.geom.LineString([lastfixed, ol.proj.fromLonLat(this.position)]);
-	this.elastic_feature = new ol.Feature(geom);
-	if (lastseg.estimated) {
-		this.elastic_feature.setStyle(estimateStyle);
-	} else {
-		this.elastic_feature.setStyle(this.altitudeLines(lastseg.altitude));
-	}
-
-	if (oldElastic < 0) {
-		this.trail_features.push(this.elastic_feature);
-	} else {
-		this.trail_features.setAt(oldElastic, this.elastic_feature);
-	}
 
 };
 
