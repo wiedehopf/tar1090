@@ -45,6 +45,11 @@ fi
 
 
 mkdir -p $ipath
+
+if [ -f $ipath/defaults.json ]; then
+	cp $ipath/config.json . 2>/dev/null
+fi
+
 cp -r * $ipath
 
 cp -n default /etc/default/tar1090
