@@ -49,11 +49,19 @@ $.when(get_receiver_defer).done(function(data){
 function get_history() {
 
 	$.ajax({ url: 'data/aircraft.json',
-		timeout: 5000,
+		timeout: 3000,
 		cache: false,
 		dataType: 'json' }).done(function(data) {
 			PositionHistoryBuffer.push(data);
 		});
+	if (enable_uat) {
+		$.ajax({ url: 'chunks/978.json',
+			timeout: 3000,
+			cache: false,
+			dataType: 'json' }).done(function(data) {
+				PositionHistoryBuffer.push(data);
+			});
+	}
 
 	if (nHistoryItems > 0) {
 		console.log("Starting to load history (" + nHistoryItems + " items)");
