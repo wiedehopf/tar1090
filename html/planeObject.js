@@ -182,9 +182,21 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 
 	var on_ground = (this.altitude === "ground");
 
-	this.prev_position = this.position;
+	if (this.dataSource == "mlat" && on_ground)
+		return true;
+
+	var barely_moved = false;
+	if (this.prev_position && ol.sphere.getDistance(this.prev_position, this.position) < 8)
+		barely_moved = true;
+
 	this.prev_position_time = this.last_position_time;
 	this.prev_track = this.track;
+
+	// don't bother wasting track drawing on a stationary object
+	if (barely_moved)
+		return true;
+
+	this.prev_position = this.position;
 
 	if (this.track_linesegs.length == 0) {
 		// Brand new track
@@ -209,8 +221,14 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	// greater than the difference between data inputs
 	var time_difference = (this.last_position_time - prev_time) - (receiver_timestamp - last_timestamp);
 
+	var stale_timeout = 7;
+
 	// MLAT data are given some more leeway
-	var stale_timeout = (this.dataSource == "mlat" ? 15 : 6);
+	if (this.dataSource == "mlat") stale_timeout = 15;
+
+	// On the ground you can't go that quick
+	if (on_ground) stale_timeout = 30;
+
 	var est_track = (time_difference > stale_timeout);
 
 	// Also check if the position was already stale when it was exported by dump1090
@@ -257,7 +275,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		return true;
 	}
 
-	var track_change = (this.tail_track != null && this.track != null) ? Math.abs(this.tail_track - this.track) : -1;
+	var track_change = (this.tail_track != null && this.track != null) ? Math.abs(this.tail_track - this.track) : NaN;
 	var alt_change = Math.abs(this.altitude - lastseg.altitude);
 	var since_update = prev_time - this.tail_update;
 
@@ -299,13 +317,15 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	var turn_density = 8;
 	if (
 		since_update > 48 ||
-		(since_update > (100/turn_density)/track_change) ||
+		(!on_ground && since_update > (100/turn_density)/track_change) ||
+		(on_ground && since_update > (300/turn_density)/track_change) ||
 		(this.dataSource == "mlat" && since_update > 16) ||
-		(track_change == -1 && since_update > 5) ||
+		(!on_ground && isNaN(track_change) && since_update > 5) ||
+		(on_ground && isNaN(track_change) && since_update > 20) ||
 		debugAll
 	) {
 		// enough time has elapsed; retain the last point and add a new one
-		if (debug && (since_update > 48 || track_change == -1))
+		if (debug && (since_update > 48))
 			this.logSel("sec_elapsed: " + since_update.toFixed(1) + " time_based" );
 		else if (debug)
 			this.logSel("sec_elapsed: " + since_update.toFixed(1) + " track_change: "+ track_change.toFixed(1));
@@ -546,10 +566,10 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.last_position_time = receiver_timestamp - data.seen_pos;
 	}
 
-	if (this.dataSource != "uat") {
-		if (data.seen_pos < 50 && "mlat" in data && data.mlat.indexOf("lat") >= 0)
-			this.dataSource = "mlat";
-		else if (data.type && data.type.substring(0,4) == "tisb")
+	if (data.seen_pos < 45 && "mlat" in data && data.mlat.indexOf("lat") >= 0) {
+		this.dataSource = "mlat";
+	} else if (this.dataSource != "uat") {
+		if (data.type && data.type.substring(0,4) == "tisb")
 			this.dataSource = "tisb";
 		else if (data.type == "adsb_icao" || data.type == "adsb_other")
 			this.dataSource = "adsb";

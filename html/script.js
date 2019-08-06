@@ -1547,13 +1547,14 @@ function selectPlaneByHex(hex,autofollow) {
 		hex = null;
 	}
 
-	if (hex !== null) {
+	if (hex != null && Planes[hex]) {
 		// Assign the new selected
 		SelectedPlane = hex;
 		Planes[SelectedPlane].selected = true;
 		Planes[SelectedPlane].updateLines();
 		Planes[SelectedPlane].updateMarker();
 		$(Planes[SelectedPlane].tr).addClass("selected");
+		Planes[SelectedPlane].logSel(Planes[SelectedPlane].history_size);
 	} else { 
 		SelectedPlane = null;
 	}
