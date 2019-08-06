@@ -6,7 +6,7 @@ Provides an improved dump1090-fa webinterface
 - Show All Tracks much faster than original with many planes
 
 
-### Installation
+### Installation / Update:
 
 ```
 sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"
