@@ -264,10 +264,10 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	if (
 		lastseg.ground != on_ground
 		|| (!on_ground && isNaN(alt_change))
-		|| (alt_change > 900 && this.altitude > 25000)
-		|| (alt_change > 700 && this.altitude <= 25000 && this.altitude > 9000)
+		|| (alt_change > 700 && this.altitude > 9000)
 		|| (alt_change > 500 && this.altitude <= 9000 && this.altitude > 4500)
 		|| (alt_change > 250 && this.altitude <= 4500)
+		|| (alt_change > 175 && this.altitude <= 2000)
 	) {
 		// Create a new segment as the ground state or the altitude changed.
 		// The new state is only drawn after the state has changed

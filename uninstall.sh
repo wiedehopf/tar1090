@@ -13,6 +13,8 @@ rm -f /lib/systemd/system/tar1090.service
 
 rm -f /etc/lighttpd/conf-available/88-tar1090.conf
 rm -f /etc/lighttpd/conf-enabled/88-tar1090.conf
+rm -f /etc/lighttpd/conf-available/99-tar1090-webroot.conf
+rm -f /etc/lighttpd/conf-enabled/99-tar1090-webroot.conf
 
 
 systemctl daemon-reload
