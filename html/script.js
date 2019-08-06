@@ -1963,7 +1963,7 @@ function followRandomPlane() {
 	var this_one = null;
 	do {
 		this_one = PlanesOrdered[Math.floor(Math.random()*PlanesOrdered.length)];
-	} while (this_one.isFiltered() || !this_one.position || (now - this_one.last_position_time > 30));
+	} while (this_one.isFiltered() || !this_one.position || (now - this_one.position_time > 30));
 	//console.log(this_one.icao);
 	selectPlaneByHex(this_one.icao, true);
 }

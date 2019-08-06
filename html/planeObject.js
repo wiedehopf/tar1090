@@ -46,7 +46,7 @@ function PlaneObject(icao) {
 	this.version        = null;
 
 	this.prev_position = null;
-	this.prev_position_time = null;
+	this.prev_time = null;
 	this.prev_track = null;
 	this.position  = null;
 	this.sitedist  = null;
@@ -69,7 +69,7 @@ function PlaneObject(icao) {
 
 	// When was this last updated (receiver timestamp)
 	this.last_message_time = 0;
-	this.last_position_time = 0;
+	this.position_time = 0;
 
 	// When was this last updated (seconds before last update)
 	this.seen = null;
@@ -160,6 +160,25 @@ PlaneObject.prototype.isFiltered = function() {
 	return false;
 }
 
+PlaneObject.prototype.updateTail = function() {
+
+	this.tail_update = this.prev_time;
+	this.tail_track = this.prev_track;
+	this.tail_position = this.prev_position;
+
+	this.prev_position = this.position;
+	this.prev_time = this.position_time;
+	this.prev_track = this.track;
+	return true;
+}
+PlaneObject.prototype.updateTrackPrev = function() {
+
+	this.prev_position = this.position;
+	this.prev_time = this.position_time;
+	this.prev_track = this.track;
+	return true;
+}
+
 // Appends data to the running track so we can get a visual tail on the plane
 // Only useful for a long running browser session.
 PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp) {
@@ -169,34 +188,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		return false;
 
 	var projHere = ol.proj.fromLonLat(this.position);
-	var projPrev;
-	var prev_time;
-	if (this.prev_position) {
-		projPrev = ol.proj.fromLonLat(this.prev_position);
-		prev_time = this.prev_position_time;
-	} else {
-		projPrev = projHere;
-		prev_time = this.last_position_time;
-	}
-	var prev_track = this.prev_track;
-
 	var on_ground = (this.altitude === "ground");
-
-	if (this.dataSource == "mlat" && on_ground)
-		return true;
-
-	var barely_moved = false;
-	if (this.prev_position && ol.sphere.getDistance(this.prev_position, this.position) < 8)
-		barely_moved = true;
-
-	this.prev_position_time = this.last_position_time;
-	this.prev_track = this.track;
-
-	// don't bother wasting track drawing on a stationary object
-	if (barely_moved)
-		return true;
-
-	this.prev_position = this.position;
 
 	if (this.track_linesegs.length == 0) {
 		// Brand new track
@@ -208,18 +200,23 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 			altitude: this.altitude
 		};
 		this.track_linesegs.push(newseg);
-		this.tail_update = prev_time;
-		this.tail_track = prev_track;
 		this.history_size ++;
-		return true;
+		this.prev_position = this.position;
+		return this.updateTail();
 	}
 
+	var projPrev = ol.proj.fromLonLat(this.prev_position);
 	var lastseg = this.track_linesegs[this.track_linesegs.length - 1];
+	var distance_traveled = ol.sphere.getDistance(this.tail_position, this.prev_position)
+
+	// don't bother wasting track drawing on an almost stationary object
+	if (distance_traveled < 8)
+		return this.updateTrackPrev();
 
 	// Determine if track data are intermittent/stale
 	// Time difference between two position updates should not be much
 	// greater than the difference between data inputs
-	var time_difference = (this.last_position_time - prev_time) - (receiver_timestamp - last_timestamp);
+	var time_difference = (this.position_time - this.prev_time) - (receiver_timestamp - last_timestamp);
 
 	var stale_timeout = 7;
 
@@ -234,7 +231,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	// Also check if the position was already stale when it was exported by dump1090
 	// Makes stale check more accurate for example for 30s spaced history points
 
-	est_track = est_track || ((receiver_timestamp - this.last_position_time) > stale_timeout);
+	est_track = est_track || ((receiver_timestamp - this.position_time) > stale_timeout);
 
 	if (est_track) {
 
@@ -246,18 +243,14 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 				feature: null,
 				altitude: 0,
 				estimated: true });
-			this.tail_update = prev_time;
-			this.tail_track = prev_track;
 			this.history_size += 2;
 		} else {
 			// Keep appending to the existing dashed line; keep every point
 			lastseg.fixed.appendCoordinate(projPrev);
-			this.tail_update = prev_time;
-			this.tail_track = prev_track;
 			this.history_size++;
 		}
 
-		return true;
+		return this.updateTail();
 	}
 
 	if (lastseg.estimated) {
@@ -269,16 +262,14 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 			estimated: false,
 			ground: on_ground,
 			altitude: this.altitude });
-		this.tail_update = prev_time;
-		this.tail_track = prev_track;
 		this.history_size += 2;
-		return true;
+
+		return this.updateTail();
 	}
 
 	var track_change = (this.tail_track != null && this.track != null) ? Math.abs(this.tail_track - this.track) : NaN;
 	var alt_change = Math.abs(this.altitude - lastseg.altitude);
-	var since_update = prev_time - this.tail_update;
-
+	var since_update = this.prev_time - this.tail_update;
 	if (
 		lastseg.ground != on_ground
 		|| (!on_ground && isNaN(alt_change))
@@ -305,10 +296,10 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 			estimated: false,
 			altitude: this.altitude,
 			ground: on_ground });
-		this.tail_update = prev_time;
-		this.tail_track = prev_track;
+
 		this.history_size += 2;
-		return true;
+
+		return this.updateTail();
 	}
 
 	// Add current position to the existing track.
@@ -317,24 +308,22 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	if (
 		since_update > 48 ||
 		(!on_ground && since_update > (100/turn_density)/track_change) ||
+		(!on_ground && isNaN(track_change) && since_update > 8) ||
 		(on_ground && since_update > (300/turn_density)/track_change) ||
-		(this.dataSource == "mlat" && since_update > 16) ||
-		(!on_ground && isNaN(track_change) && since_update > 5) ||
 		(on_ground && isNaN(track_change) && since_update > 20) ||
+		(on_ground && distance_traveled > 100) ||
 		debugAll
 	) {
-		// enough time has elapsed; retain the last point and add a new one
-		if (since_update > 48)
-			this.logSel("sec_elapsed: " + since_update.toFixed(1) + " time_based" );
-		else
-			this.logSel("sec_elapsed: " + since_update.toFixed(1) + " track_change: "+ track_change.toFixed(1));
+
 		lastseg.fixed.appendCoordinate(projPrev);
-		this.tail_update = prev_time;
-		this.tail_track = prev_track;
 		this.history_size ++;
+
+		this.logSel("sec_elapsed: " + since_update.toFixed(1) + " " + (on_ground ? "ground" : "air") +  " dist:" + distance_traveled.toFixed(0) +  " track_change: "+ track_change.toFixed(1));
+
+		return this.updateTail();
 	}
 
-	return true;
+	return this.updateTrackPrev();
 };
 
 // This is to remove the line from the screen if we deselect the plane
@@ -560,9 +549,9 @@ PlaneObject.prototype.updateIcon = function() {
 PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	// get location data first, return early if only those are needed.
 
-	if ("lat" in data && data.seen_pos < (receiver_timestamp - this.last_position_time + 2)) {
+	if ("lat" in data && data.seen_pos < (receiver_timestamp - this.position_time + 2)) {
 		this.position   = [data.lon, data.lat];
-		this.last_position_time = receiver_timestamp - data.seen_pos;
+		this.position_time = receiver_timestamp - data.seen_pos;
 	}
 
 	if (data.seen_pos < 45 && "mlat" in data && data.mlat.indexOf("lat") >= 0) {
@@ -691,7 +680,7 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 PlaneObject.prototype.updateTick = function(receiver_timestamp, last_timestamp, init) {
 	// recompute seen and seen_pos
 	this.seen = receiver_timestamp - this.last_message_time;
-	this.seen_pos = receiver_timestamp - this.last_position_time;
+	this.seen_pos = receiver_timestamp - this.position_time;
 
 	// If no packet in over 58 seconds, clear the plane.
 	// Only clear the plane if it's not selected individually
