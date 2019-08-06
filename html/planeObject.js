@@ -279,6 +279,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		// Let's assume the ground state change happened somewhere between the previous and current position
 		// Represent that assumption. With altitude it's not quite as critical.
 		if (lastseg.ground != on_ground) {
+			lastseg.fixed.appendCoordinate(projPrev);
 			projPrev = [(projPrev[0]+projHere[0])/2,(projPrev[1]+projHere[1])/2];
 		}
 		lastseg.fixed.appendCoordinate(projPrev);
