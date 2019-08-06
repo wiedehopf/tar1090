@@ -129,7 +129,7 @@ function PlaneObject(icao) {
 }
 
 PlaneObject.prototype.logSel = function(loggable) {
-	if (this.selected && !SelectedAllPlanes)
+	if (debug && this.selected && !SelectedAllPlanes)
 		console.log(loggable);
 	return;
 }
@@ -291,8 +291,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		// The new state is only drawn after the state has changed
 		// and we then get a new position.
 
-		if (debug)
-			this.logSel("sec_elapsed: " + since_update.toFixed(1) + " alt_change: "+ alt_change.toFixed(0));
+		this.logSel("sec_elapsed: " + since_update.toFixed(1) + " alt_change: "+ alt_change.toFixed(0));
 
 		// Let's assume the ground state change happened somewhere between the previous and current position
 		// Represent that assumption. With altitude it's not quite as critical.
@@ -325,9 +324,9 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		debugAll
 	) {
 		// enough time has elapsed; retain the last point and add a new one
-		if (debug && (since_update > 48))
+		if (since_update > 48)
 			this.logSel("sec_elapsed: " + since_update.toFixed(1) + " time_based" );
-		else if (debug)
+		else
 			this.logSel("sec_elapsed: " + since_update.toFixed(1) + " track_change: "+ track_change.toFixed(1));
 		lastseg.fixed.appendCoordinate(projPrev);
 		this.tail_update = prev_time;
