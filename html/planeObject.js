@@ -295,11 +295,10 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 
 	// Add current position to the existing track.
 	// We only retain some points depending on time elapsed and track change
-	// the bigger this number, the less points are saved during track changes
-	var less_points = 11;
+	var turn_density = 8;
 	if (
 		since_update > 48 ||
-		(since_update > less_points/track_change) ||
+		(since_update > (100/turn_density)/track_change) ||
 		(this.dataSource == "mlat" && since_update > 16) ||
 		(track_change == -1 && since_update > 5) ||
 		debugAll
@@ -765,9 +764,6 @@ PlaneObject.prototype.updateLines = function() {
 	if (!this.selected)
 		return;
 
-	if (!this.layer.getVisible())
-		this.layer.setVisible(true);
-
 	if (this.track_linesegs.length == 0)
 		return;
 
@@ -827,6 +823,9 @@ PlaneObject.prototype.updateLines = function() {
 	}
 
 
+	// after making sure everything is drawn, also show the layer
+	if (!this.layer.getVisible())
+		this.layer.setVisible(true);
 };
 
 PlaneObject.prototype.remakeTrail = function() {
