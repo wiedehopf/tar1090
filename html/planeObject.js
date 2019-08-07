@@ -64,6 +64,7 @@ function PlaneObject(icao) {
 
 	// Track (direction) at the time we last appended to the track history
 	this.tail_track = null;
+	this.tail_true = null;
 	// Timestamp of the most recent point appended to the track history
 	this.tail_update = null;
 
@@ -164,18 +165,19 @@ PlaneObject.prototype.updateTail = function() {
 
 	this.tail_update = this.prev_time;
 	this.tail_track = this.prev_track;
+	this.tail_true = this.prev_true;
 	this.tail_position = this.prev_position;
 
-	this.prev_position = this.position;
-	this.prev_time = this.position_time;
-	this.prev_track = this.track;
-	return true;
+	return this.updateTrackPrev();
 }
+
 PlaneObject.prototype.updateTrackPrev = function() {
 
 	this.prev_position = this.position;
 	this.prev_time = this.position_time;
 	this.prev_track = this.track;
+	this.prev_true = this.true_head;
+
 	return true;
 }
 
@@ -207,11 +209,15 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 
 	var projPrev = ol.proj.fromLonLat(this.prev_position);
 	var lastseg = this.track_linesegs[this.track_linesegs.length - 1];
-	var distance_traveled = ol.sphere.getDistance(this.tail_position, this.prev_position)
+	var distance_traveled = ol.sphere.getDistance(this.tail_position, this.prev_position);
 
-	// don't bother wasting track drawing on an almost stationary object
-	if (distance_traveled < 8)
-		return this.updateTrackPrev();
+	// discard current position for track stuff while preventing the old position to go stale
+	if (ol.sphere.getDistance(this.position, this.prev_position) < 8) {
+		this.prev_time = this.position_time;
+		return true;
+	}
+	if (this.dataSource == "mlat" && on_ground)
+		return true;
 
 	// Determine if track data are intermittent/stale
 	// Time difference between two position updates should not be much
@@ -267,16 +273,20 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		return this.updateTail();
 	}
 
-	var track_change = (this.tail_track != null && this.track != null) ? Math.abs(this.tail_track - this.track) : NaN;
+	var track_change = Math.abs(this.tail_track - this.track);
+	var true_change =  Math.abs(this.tail_true - this.true_heading);
+	if (!isNaN(true_change)) {
+		track_change = isNaN(track_change) ? true_change : Math.max(track_change, true_change);
+	}
 	var alt_change = Math.abs(this.altitude - lastseg.altitude);
 	var since_update = this.prev_time - this.tail_update;
 	if (
 		lastseg.ground != on_ground
 		|| (!on_ground && isNaN(alt_change))
-		|| (alt_change > 700 && this.altitude > 9000)
-		|| (alt_change > 500 && this.altitude <= 9000 && this.altitude > 4500)
-		|| (alt_change > 250 && this.altitude <= 4500)
-		|| (alt_change > 175 && this.altitude <= 2000)
+		|| (alt_change > 700)
+		|| (alt_change > 500 && this.altitude < 9000)
+		|| (alt_change > 250 && this.altitude < 4500)
+		|| (alt_change > 125 && this.altitude < 2000)
 	) {
 		// Create a new segment as the ground state or the altitude changed.
 		// The new state is only drawn after the state has changed
@@ -287,7 +297,6 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		// Let's assume the ground state change happened somewhere between the previous and current position
 		// Represent that assumption. With altitude it's not quite as critical.
 		if (lastseg.ground != on_ground) {
-			lastseg.fixed.appendCoordinate(projPrev);
 			projPrev = [(projPrev[0]+projHere[0])/2,(projPrev[1]+projHere[1])/2];
 		}
 		lastseg.fixed.appendCoordinate(projPrev);
@@ -304,14 +313,13 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 
 	// Add current position to the existing track.
 	// We only retain some points depending on time elapsed and track change
-	var turn_density = 8;
+	var turn_density = 6.5;
 	if (
 		since_update > 48 ||
 		(!on_ground && since_update > (100/turn_density)/track_change) ||
 		(!on_ground && isNaN(track_change) && since_update > 8) ||
-		(on_ground && since_update > (300/turn_density)/track_change) ||
-		(on_ground && isNaN(track_change) && since_update > 20) ||
-		(on_ground && distance_traveled > 100) ||
+		(on_ground && since_update > (500/turn_density)/track_change && distance_traveled > 8) ||
+		(on_ground && distance_traveled > 60) ||
 		debugAll
 	) {
 
