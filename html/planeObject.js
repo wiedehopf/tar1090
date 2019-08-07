@@ -284,9 +284,8 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		lastseg.ground != on_ground
 		|| (!on_ground && isNaN(alt_change))
 		|| (alt_change > 700)
-		|| (alt_change > 500 && this.altitude < 9000)
-		|| (alt_change > 250 && this.altitude < 4500)
-		|| (alt_change > 125 && this.altitude < 2000)
+		|| (alt_change > 375 && this.altitude < 9000)
+		|| (alt_change > 150 && this.altitude < 5500)
 	) {
 		// Create a new segment as the ground state or the altitude changed.
 		// The new state is only drawn after the state has changed
@@ -315,11 +314,11 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	// We only retain some points depending on time elapsed and track change
 	var turn_density = 6.5;
 	if (
-		since_update > 48 ||
+		since_update > 42 ||
 		(!on_ground && since_update > (100/turn_density)/track_change) ||
 		(!on_ground && isNaN(track_change) && since_update > 8) ||
 		(on_ground && since_update > (500/turn_density)/track_change && distance_traveled > 8) ||
-		(on_ground && distance_traveled > 60) ||
+		(on_ground && distance_traveled > 60 && since_update > 5) ||
 		debugAll
 	) {
 
@@ -750,7 +749,7 @@ PlaneObject.prototype.altitudeLines = function(altitude) {
 		return new ol.style.Style({
 			stroke: new ol.style.Stroke({
 				color: color,
-				width: 2
+				width: 2,
 			})
 		});
 	} else {
