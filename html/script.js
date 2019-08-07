@@ -37,7 +37,7 @@ var SpecialSquawks = {
 };
 
 // Get current map settings
-var CenterLat, CenterLon, ZoomLvl, ZoomLvlCache, MapType;
+var CenterLat, CenterLon, ZoomLvl, ZoomLvlCache, MapType_tar1090;
 
 
 var PlaneRowTemplate = null;
@@ -647,7 +647,7 @@ function initialize_map() {
 	CenterLon = Number(localStorage['CenterLon']) || DefaultCenterLon;
 	ZoomLvl = Number(localStorage['ZoomLvl']) || DefaultZoomLvl;
 	ZoomLvlCache = ZoomLvl;
-	MapType = localStorage['MapType'];
+	MapType_tar1090 = localStorage['MapType_tar1090'];
 
 	// Set SitePosition, initialize sorting
 	if (SiteShow && (typeof SiteLat !==  'undefined') && (typeof SiteLon !==  'undefined')) {
@@ -710,7 +710,7 @@ function initialize_map() {
 
 		if (lyr.get('type') === 'base') {
 			baseCount++;
-			if (MapType === lyr.get('name')) {
+			if (MapType_tar1090 === lyr.get('name')) {
 				foundType = true;
 				lyr.setVisible(true);
 			} else {
@@ -719,7 +719,7 @@ function initialize_map() {
 
 			lyr.on('change:visible', function(evt) {
 				if (evt.target.getVisible()) {
-					MapType = localStorage['MapType'] = evt.target.get('name');
+					MapType_tar1090 = localStorage['MapType_tar1090'] = evt.target.get('name');
 				}
 			});
 		} else if (lyr.get('type') === 'overlay') {
