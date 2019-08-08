@@ -52,6 +52,9 @@ fi
 
 cp -r * $ipath
 
+# bust cache for all css and js files
+sed -i -e "s/__cache_version__/$(date +%s | tail -c5)/g" $ipath/html/index.html
+
 cp -n default /etc/default/tar1090
 cp tar1090.service /lib/systemd/system
 
