@@ -365,7 +365,7 @@ select.error, textarea.error, input.error {
 
 #header {
     width: 100%;
-    height: 23px;
+    height: 25px;
     background: #002F5D;
     background: -webkit-linear-gradient(#002F5D, #002F5D 60%, #021624);
     background: -moz-linear-gradient(#002F5D, #002F5D 60%, #021624);

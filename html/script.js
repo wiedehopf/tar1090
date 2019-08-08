@@ -28,6 +28,7 @@ var debug = false;
 var debugAll = false;
 var fragment;
 var grouptype_checkbox;
+var multiSelect = false;
 
 
 var SpecialSquawks = {
@@ -1359,7 +1360,7 @@ function refreshTableInfo() {
 				classes += " other";
 			}
 
-			if (tableplane.icao == SelectedPlane)
+			if (tableplane.selected)
 				classes += " selected";
 
 			if (tableplane.squawk in SpecialSquawks) {
@@ -1531,41 +1532,54 @@ function selectPlaneByHex(hex,autofollow) {
 	if (SelectedAllPlanes) {
 		deselectAllPlanes();
 	}
+	console.log(hex);
+	// already selected plane
+	var oldPlane = Planes[SelectedPlane];
+	// plane to be selected
+	var newPlane = Planes[hex];
 
-	if (SelectedPlane != null && Planes[SelectedPlane]) {
-		Planes[SelectedPlane].selected = false;
-		Planes[SelectedPlane].clearLines();
-		Planes[SelectedPlane].updateMarker();
-		$(Planes[SelectedPlane].tr).removeClass("selected");
+	if (!multiSelect && oldPlane) {
+		oldPlane.selected = false;
+		oldPlane.clearLines();
+		oldPlane.updateMarker();
+		$(oldPlane.tr).removeClass("selected");
 		// scroll the infoblock back to the top for the next plane to be selected
-		$('.infoblock-container').scrollTop(0);
+		//$('.infoblock-container').scrollTop(0);
+	}
+	// multiSelect deselect
+	if (multiSelect && newPlane.selected && !autofollow) {
+		newPlane.selected = false;
+		newPlane.clearLines();
+		newPlane.updateMarker();
+		$(newPlane.tr).removeClass("selected");
+		newPlane = null;
 	}
 
 	// If we are clicking the same plane, we are deselecting it.
 	// (unless it was a doubleclick..)
-	if (SelectedPlane === hex && !autofollow) {
-		hex = null;
+	if (oldPlane == newPlane && !autofollow) {
+		newPlane = null;
 	}
 
-	if (hex != null && Planes[hex]) {
+	if (newPlane) {
 		// Assign the new selected
-		SelectedPlane = hex;
-		Planes[SelectedPlane].selected = true;
-		Planes[SelectedPlane].updateLines();
-		Planes[SelectedPlane].updateMarker();
-		$(Planes[SelectedPlane].tr).addClass("selected");
-		Planes[SelectedPlane].logSel(Planes[SelectedPlane].history_size);
-	} else { 
+		SelectedPlane = newPlane.icao;
+		newPlane.selected = true;
+		newPlane.updateLines();
+		newPlane.updateMarker();
+		$(newPlane.tr).addClass("selected");
+		newPlane.logSel(newPlane.history_size);
+	} else {
 		SelectedPlane = null;
 	}
 
-	if (SelectedPlane !== null && autofollow) {
+	if (newPlane && autofollow) {
 		FollowSelected = true;
 		if (OLMap.getView().getZoom() < 8)
 			OLMap.getView().setZoom(8);
 	} else {
 		FollowSelected = false;
-	} 
+	}
 
 	refreshSelected();
 	refreshHighlighted();
@@ -1968,6 +1982,14 @@ function followRandomPlane() {
 	selectPlaneByHex(this_one.icao, true);
 }
 
+function toggleMultiSelect() {
+	if (multiSelect) {
+		multiSelect = false;
+		deselectAllPlanes();
+	} else {
+		multiSelect = true;
+	}
+}
 
 function onResetAltitudeFilter(e) {
 	$("#altitude_filter_min").val("");
