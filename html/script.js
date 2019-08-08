@@ -350,6 +350,7 @@ function init_page() {
 		}
 	});
 
+	/*
 	// this is a little hacky, but the best, most consitent way of doing this. change the margin bottom of the table container to the height of the overlay
 	$('#selected_infoblock').on('resize', function() {
 		$('#sidebar_canvas').css('margin-bottom', $('#selected_infoblock').height() + 'px');
@@ -373,6 +374,7 @@ function init_page() {
 			$('#selected_infoblock').removeClass('infoblock-container-small');
 		}
 	});
+	*/
 
 	// Set up event handlers for buttons
 	$("#toggle_sidebar_button").click(toggleSidebarVisibility);
@@ -1751,11 +1753,11 @@ function setSelectedInfoBlockVisibility() {
 
 	if (planeSelected && mapIsVisible) {
 		$('#selected_infoblock').show();
-		$('#sidebar_canvas').css('margin-bottom', $('#selected_infoblock').height() + 'px');
+		//$('#sidebar_canvas').css('margin-bottom', $('#selected_infoblock').height() + 'px');
 	}
 	else {
 		$('#selected_infoblock').hide();
-		$('#sidebar_canvas').css('margin-bottom', 0);
+		//$('#sidebar_canvas').css('margin-bottom', 0);
 	}
 }
 
