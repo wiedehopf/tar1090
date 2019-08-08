@@ -535,7 +535,7 @@ function parse_history() {
 	if (PositionHistoryBuffer.length > 0) {
 
 		// Sort history by timestamp
-		console.log("Sorting history");
+		console.log("Sorting history: " + PositionHistoryBuffer.length);
 		PositionHistoryBuffer.sort(function(x,y) { return (y.now - x.now); });
 
 		// Process history
@@ -1362,7 +1362,7 @@ function refreshTableInfo() {
 				classes += " other";
 			}
 
-			if (tableplane.selected)
+			if (tableplane.selected && !SelectedAllPlanes)
 				classes += " selected";
 
 			if (tableplane.squawk in SpecialSquawks) {

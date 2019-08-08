@@ -5,6 +5,7 @@ var RefreshInterval = 1000;
 var enable_uat = false;
 var HistoryChunks = false;
 var nHistoryItems = 0;
+var chunkNames;
 var PositionHistoryBuffer = [];
 var	receiverJson;
 var deferHistory = [];
@@ -34,7 +35,8 @@ $.when(get_receiver_defer).done(function(data){
 	$.when(test_chunk_defer).done(function(data) {
 		test_chunk_defer = null;
 		HistoryChunks = true;
-		nHistoryItems = data.chunks;
+		chunkNames = data.chunks;
+		nHistoryItems = chunkNames.length;
 		enable_uat = (data.enable_uat == "true");
 		if (enable_uat)
 			console.log("UAT/978 enabled!");
@@ -79,7 +81,7 @@ function get_history_item(i) {
 	var request;
 
 	if (HistoryChunks) {
-		request = $.ajax({ url: 'chunks/chunk_' + i + '.gz',
+		request = $.ajax({ url: 'chunks/' + chunkNames[i],
 			timeout: nHistoryItems * 4000, // Allow 4s load time per history chunk
 			dataType: 'json'
 		});

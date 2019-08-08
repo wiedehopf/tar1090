@@ -10,17 +10,27 @@ source /etc/default/tar1090
 
 dir=/run/tar1090
 hist=$(($HISTORY_SIZE))
-chunks=$(( $hist/$CS ))
-partial=$(($hist%$CS))
-if [[ $partial != 0 ]]
-then actual_chunks=$(($chunks+2))
-else actual_chunks=$(($chunks+1))
-fi
+chunks=$(( $hist/$CS + 2 ))
+#increase chunk size to get history size as close as we can
+CS=$(( CS - ( (CS - hist % CS)/(chunks-1) ) ))
+list="$dir/list_of_chunks"
 
+new_chunk() {
+	cur_chunk="chunk_$(date +%s).gz"
+	echo $cur_chunk >> $list
+	for iterator in $(head -n-$chunks $list); do rm -f $dir/$iterator; done
+	tail -n$chunks $list > newlist
+	mv newlist $list
+	as_json="\"chunk_recent.gz\"$(for i in $(cat $list); do echo -n ", \"$i\""; done)"
+	sed -e "s/\"chunks\" : \[.*\]/\"chunks\" : [ $as_json ]/" $dir/chunks.json > $dir/chunks.tmp
+	echo "{ \"files\" : [ ] }" | gzip -1 > $cur_chunk
+	mv $dir/chunks.tmp $dir/chunks.json
+}
 
 while true
 do
 	cd $dir
+	rm -f $list
 	rm -f $dir/*.gz
 	rm -f $dir/*.json
 
@@ -30,9 +40,9 @@ do
 		continue
 	fi
 	if [[ $ENABLE_978 == "yes" ]]; then
-		sed -i -e "s?history\" : [0-9]*?chunks\" : $actual_chunks, \"enable_uat\" : \"true\"?" chunks.json
+		sed -i -e "s?history\" : [0-9]*?chunks\" : [], \"enable_uat\" : \"true\"?" chunks.json
 	else
-		sed -i -e "s/history\" : [0-9]*/chunks\" : $actual_chunks/" chunks.json
+		sed -i -e "s/history\" : [0-9]*/chunks\" : []/" chunks.json
 	fi
 
 	# integrate original dump1090-fa history on startup so we don't start blank
@@ -42,18 +52,15 @@ do
 			sed -i -e '$a,' $i
 		done
 		sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | gzip -9 > temp.gz
-		mv temp.gz chunk_0.gz
+		new_chunk
+		mv temp.gz $cur_chunk
 	fi
 	# cleanup
 	rm -f history_*.json
 
-
-
-	# start with chunk 1 instead of 0 to not overwrite original dump1090-fa history just in case
-	i=0
-	j=1
-
 	sleep 2;
+	i=0
+	new_chunk
 
 	while true
 	do
@@ -80,15 +87,17 @@ do
 		if [[ $((i%6)) == 5 ]]
 		then
 			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | gzip -1 > temp.gz
-			mv temp.gz chunk_$j.gz
-			rm -f *latest_*.json chunk_$(($actual_chunks - 1)).gz
+			echo "{ \"files\" : [ ] }" | gzip -1 > rec_temp.gz
+			mv temp.gz $cur_chunk
+			mv rec_temp.gz chunk_recent.gz
+			rm -f *latest_*.json
 		else
 			cp history_$((i%$CS)).json latest_$((i%6)).json
 			if [[ $ENABLE_978 == "yes" ]]; then
 				cp 978_history_$((i%$CS)).json 978_latest_$((i%6)).json
 			fi
 			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *latest_*.json | gzip -1 > temp.gz
-			mv temp.gz chunk_$(($actual_chunks - 1)).gz
+			mv temp.gz chunk_recent.gz
 		fi
 
 		i=$((i+1))
@@ -96,22 +105,10 @@ do
 		if [[ $i == $CS ]]
 		then
 			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | gzip -9 > temp.gz
-			mv temp.gz chunk_$j.gz
+			mv temp.gz $cur_chunk
 			i=0
-			j=$((j+1))
 			rm -f *history_*.json
-		fi
-		if [[ $j == $chunks ]] && [[ $i == $partial ]]
-		then
-			if [[ $i != 0 ]]; then
-				# only necessary if the last chunk is a partial one
-				sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | gzip -9 > temp.gz
-				mv temp.gz chunk_$j.gz
-			fi
-			# reset counters and do cleanup
-			i=0
-			j=0
-			rm -f *history_*.json
+			new_chunk
 		fi
 
 		wait
