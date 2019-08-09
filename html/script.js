@@ -565,7 +565,7 @@ function parse_history() {
 			// prune aircraft list
 			if(h++ % pruneInt == pruneInt - 1) {
 
-				console.log("Applied history " + (h + 1) + " from: "
+				console.log("Applied history " + h + " from: "
 					+ (new Date(now * 1000)).toLocaleTimeString());
 
 				reaper();
