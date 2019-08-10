@@ -11,21 +11,20 @@ html, body {
 
 #selected_infoblock {
 	position: absolute;
-	bottom: 0;
+	bottom: 0px !important;
 	margin: 0;
     background: #ffffff;
 	width: 100%;
 	height: 400px;
-	overflow-x: hidden;
+	overflow: auto;
 }
 .infoblock-container {
-	overflow: scroll;
+	overflow: auto;
 	height: 100%;
-	overflow-x: hidden;
 }
 #sidebar_canvas { 
     padding: 10px;
-	overflow: scroll;
+	overflow: auto;
 }
 #sidebar_container {
 	display: flex;
@@ -721,15 +720,6 @@ select.error, textarea.error, input.error {
     .ol-zoom-in {
         background-image: url("images/zoom-in@2x.png");
     }
-    #toggle_sidebar_button.show_sidebar {
-        background-image: url("images/table-icon@2x.png");
-    }
-    #expand_sidebar_button {
-        background-image: url("images/table-icon@2x.png");
-    }
-    #toggle_sidebar_button.hide_sidebar {
-        background-image: url("images/map-icon@2x.png");
-    }
 }
 
 /* Retina 3x images */
@@ -748,14 +738,5 @@ select.error, textarea.error, input.error {
     }
     .ol-zoom-in {
         background-image: url("images/zoom-in@3x.png");
-    }
-    #toggle_sidebar_button.show_sidebar {
-        background-image: url("images/table-icon@3x.png");
-    }
-    #expand_sidebar_button {
-        background-image: url("images/table-icon@3x.png");
-    }
-    #toggle_sidebar_button.hide_sidebar {
-        background-image: url("images/map-icon@3x.png");
     }
 }
