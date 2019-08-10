@@ -40,8 +40,9 @@
 
 // These settings control the coloring of aircraft by altitude.
 // All color values are given as Hue (0-359) / Saturation (0-100) / Lightness (0-100)
-/*
-ColorByAlt = {
+//
+// To enable these colors, remove the disabled before ColorByAlt in the next line
+disabledColorByAlt = {
 	// HSL for planes with unknown altitude:
 	unknown : { h: 0,   s: 0,   l: 30 },
 
@@ -62,10 +63,9 @@ ColorByAlt = {
 		// hue of the first entry; altitudes above
 		// the last entry use the hue of the last
 		// entry.
-		h: [ { alt: 0,  val: 20 },    // orange
-			{ alt: 9000, val: 85 },   // green yellow
-			{ alt: 11000, val: 140 },   // light green
-			{ alt: 40000, val: 300 } ], // magenta
+		h: [ { alt: 2000,  val: 20 },    // orange
+			 { alt: 10000, val: 140 },   // light green
+			 { alt: 40000, val: 300 } ], // magenta
 		s: 88,
 		l: 44,
 	},
@@ -79,7 +79,6 @@ ColorByAlt = {
 	// Changes added to the color of planes that have positions from mlat
 	mlat :     { h: 0, s: -10, l: -10 }
 };
-*/
 
 // For a monochrome display try this:
 // ColorByAlt = {
