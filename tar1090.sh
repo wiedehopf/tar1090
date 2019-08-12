@@ -158,7 +158,7 @@ done &
 while [[ $ENABLE_978 == "yes" ]]
 do
 	sleep $INT_978 &
-	wget -T 5 -q -O $dir/978.tmp $URL_978/data/aircraft.json
+	wget -T 5 -q -O $dir/978.tmp $URL_978/data/aircraft.json $COMPRESS_978
 	sed -i -e 's/"now" \?:/"uat_978":"true","now":/' $dir/978.tmp
 	mv $dir/978.tmp $dir/978.json
 	wait
