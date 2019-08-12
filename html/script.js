@@ -1534,7 +1534,6 @@ function selectPlaneByHex(hex,autofollow) {
 	if (SelectedAllPlanes) {
 		deselectAllPlanes();
 	}
-	console.log(hex);
 	// already selected plane
 	var oldPlane = Planes[SelectedPlane];
 	// plane to be selected

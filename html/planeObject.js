@@ -273,8 +273,8 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		return this.updateTail();
 	}
 
-	var track_change = Math.abs(this.tail_track - this.track);
-	var true_change =  Math.abs(this.tail_true - this.true_heading);
+	var track_change = this.track != null ? Math.abs(this.tail_track - this.track) : NaN;
+	var true_change =  this.trueheading != null ? Math.abs(this.tail_true - this.true_heading) : NaN;
 	if (!isNaN(true_change)) {
 		track_change = isNaN(track_change) ? true_change : Math.max(track_change, true_change);
 	}
@@ -318,7 +318,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		(!on_ground && since_update > (100/turn_density)/track_change) ||
 		(!on_ground && isNaN(track_change) && since_update > 8) ||
 		(on_ground && since_update > (500/turn_density)/track_change && distance_traveled > 8) ||
-		(on_ground && distance_traveled > 60 && since_update > 5) ||
+		(on_ground && distance_traveled > 60 && since_update > 4) ||
 		debugAll
 	) {
 
