@@ -350,22 +350,22 @@ function init_page() {
 		}
 	});
 
-	/*
 	// this is a little hacky, but the best, most consitent way of doing this. change the margin bottom of the table container to the height of the overlay
 	$('#selected_infoblock').on('resize', function() {
 		$('#sidebar_canvas').css('margin-bottom', $('#selected_infoblock').height() + 'px');
 	});
 	// look at the window resize to resize the pop-up infoblock so it doesn't float off the bottom or go off the top
 	$(window).on('resize', function() {
-		var topCalc = ($(window).height() - $('#selected_infoblock').height() - 60);
+		var topCalc = ($(window).height() - $('#selected_infoblock').height() - 25);
 		// check if the top will be less than zero, which will be overlapping/off the screen, and set the top correctly. 
 		if (topCalc < 0) {
 			topCalc = 0;
-			$('#selected_infoblock').css('height', ($(window).height() - 60) +'px');
+			$('#selected_infoblock').css('height', ($(window).height() - 25) +'px');
 		}
 		$('#selected_infoblock').css('top', topCalc + 'px');
 	});
 
+	/*
 	// to make the infoblock responsive 
 	$('#sidebar_container').on('resize', function() {
 		if ($('#sidebar_container').width() < 600) {
@@ -1752,11 +1752,11 @@ function setSelectedInfoBlockVisibility() {
 
 	if (planeSelected && mapIsVisible) {
 		$('#selected_infoblock').show();
-		//$('#sidebar_canvas').css('margin-bottom', $('#selected_infoblock').height() + 'px');
+		$('#sidebar_canvas').css('margin-bottom', $('#selected_infoblock').height() + 'px');
 	}
 	else {
 		$('#selected_infoblock').hide();
-		//$('#sidebar_canvas').css('margin-bottom', 0);
+		$('#sidebar_canvas').css('margin-bottom', 0);
 	}
 }
 

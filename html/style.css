@@ -11,7 +11,7 @@ html, body {
 
 #selected_infoblock {
 	position: absolute;
-	bottom: 0px !important;
+	bottom: 0;
 	margin: 0;
     background: #ffffff;
 	width: 100%;
