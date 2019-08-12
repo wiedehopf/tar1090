@@ -274,7 +274,9 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	}
 
 	var track_change = this.track != null ? Math.abs(this.tail_track - this.track) : NaN;
+	track_change = track_change < 180 ? track_change : Math.abs(track_change - 360);
 	var true_change =  this.trueheading != null ? Math.abs(this.tail_true - this.true_heading) : NaN;
+	true_change = true_change < 180 ? true_change : Math.abs(true_change - 360);
 	if (!isNaN(true_change)) {
 		track_change = isNaN(track_change) ? true_change : Math.max(track_change, true_change);
 	}
