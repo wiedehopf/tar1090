@@ -896,11 +896,31 @@ function initialize_map() {
 		var ringStyle = new ol.style.Style({
 			fill: null,
 			stroke: new ol.style.Stroke({
-				color: '#0000DD',
+				color: '#00FF80',
 				width: 2
 			})
 		});
-
+		var ringStyle2 = new ol.style.Style({
+			fill: null,
+			stroke: new ol.style.Stroke({
+				color: '#0080FF',
+				width: 2
+			})
+		});
+		var ringStyle3 = new ol.style.Style({
+			fill: null,
+			stroke: new ol.style.Stroke({
+				color: '#0000FF',
+				width: 2
+			})
+		});
+		var ringStyle4 = new ol.style.Style({
+			fill: null,
+			stroke: new ol.style.Stroke({
+				color: '#CC00CC',
+				width: 2
+			})
+		});
 		for (var i = 0; i < data.rings.length; ++i) {
 			var geom = null;
 			var points = data.rings[i].points;
@@ -913,7 +933,18 @@ function initialize_map() {
 				geom.transform('EPSG:4326', 'EPSG:3857');
 
 				var feature = new ol.Feature(geom);
-				feature.setStyle(ringStyle);
+				if (i==0){
+					feature.setStyle(ringStyle);
+				}
+				if (i==1){
+					feature.setStyle(ringStyle2);
+				}
+				if (i==2){
+					feature.setStyle(ringStyle3);
+				}
+				if (i==3){
+					feature.setStyle(ringStyle4);
+				}
 				StaticFeatures.push(feature);
 			}
 		}
