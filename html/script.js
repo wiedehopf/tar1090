@@ -893,17 +893,22 @@ function initialize_map() {
 		cache: true,
 		dataType: 'json' });
 	request.done(function(data) {
-		var ringStyle = new ol.style.Style({
-			fill: null,
-			stroke: new ol.style.Stroke({
-				color: '#0000DD',
-				width: 2
-			})
-		});
-
 		for (var i = 0; i < data.rings.length; ++i) {
 			var geom = null;
 			var points = data.rings[i].points;
+			var altitude = (3.28084 * data.rings[i].alt).toFixed(0);
+			var color = range_outline_color;
+			if (range_outline_colored_by_altitude) {
+				var colorArr = altitudeColor(altitude);
+				color = 'hsl(' + (colorArr[0]/5).toFixed(0)*5 + ',' + (colorArr[1]/5).toFixed(0)*5 + '%,' + (colorArr[2]/5).toFixed(0)*5 + '%)'
+			}
+			var ringStyle = new ol.style.Style({
+				fill: null,
+				stroke: new ol.style.Stroke({
+					color: color,
+					width: range_outline_width,
+				})
+			});
 			if (points.length > 0) {
 				geom = new ol.geom.LineString([[ points[0][1], points[0][0] ]]);
 				for (var j = 0; j < points.length; ++j) {

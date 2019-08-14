@@ -432,11 +432,15 @@ PlaneObject.prototype.getMarkerColor = function() {
 }
 
 PlaneObject.prototype.getAltitudeColor = function(altitude) {
-	var h, s, l;
 
 	if (typeof altitude === 'undefined') {
 		altitude = this.altitude;
 	}
+	return altitudeColor(altitude);
+}
+
+function altitudeColor(altitude) {
+	var h, s, l;
 
 	if (altitude === null) {
 		h = ColorByAlt.unknown.h;

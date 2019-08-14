@@ -36,6 +36,11 @@
 //SiteLon     = 9.0;
 //SiteName    = "My Radar Site"; // tooltip of the marker
 
+// Color controls for the range outline
+//range_outline_color = '#0000DD';
+//range_outline_width = 1.7;
+//range_outline_colored_by_altitude = false;
+
 // -- Marker settings -------------------------------------
 
 // These settings control the coloring of aircraft by altitude.
