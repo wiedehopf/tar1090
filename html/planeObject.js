@@ -83,6 +83,7 @@ function PlaneObject(icao) {
 	this.markerIcon = null;
 	this.markerStyleKey = null;
 	this.markerSvgKey = null;
+	this.baseScale = 1;
 	this.filter = {};
 
 	// start from a computed registration, let the DB override it
@@ -495,6 +496,10 @@ PlaneObject.prototype.updateIcon = function() {
 	if (this.baseMarkerKey != baseMarkerKey) {
 		this.baseMarkerKey = baseMarkerKey;
 		this.baseMarker = getBaseMarker(this.category, this.icaotype, this.typeDescription, this.wtc);
+		if (this.baseMarker.length == 2) {
+			this.baseScale = this.baseMarker[1];
+			this.baseMarker = this.baseMarker[0];
+		}
 	}
 	var rotation = this.track;
 	if (rotation == null) {
@@ -513,12 +518,13 @@ PlaneObject.prototype.updateIcon = function() {
 		//console.log(this.icao + " new icon and style " + this.markerSvgKey + " -> " + svgKey);
 
 		this.markerSvgKey = svgKey;
+		this.scaleCache = scaleFactor * this.baseScale;
 
 		var icon = new ol.style.Icon({
 			anchor: [0.5, 0.5],
 			anchorXUnits: 'fraction',
 			anchorYUnits: 'fraction',
-			scale: scaleFactor,
+			scale: this.scaleCache,
 			imgSize: this.baseMarker.size,
 			src: svgPathToURI(this.baseMarker.svg, outline, col, add_stroke),
 			rotation: (this.baseMarker.noRotate ? 0 : rotation * Math.PI / 180.0),
@@ -542,9 +548,9 @@ PlaneObject.prototype.updateIcon = function() {
 		this.markerIcon.setRotation(rotation * Math.PI / 180.0);
 	}
 
-	if (this.scaleFactorCache != scaleFactor) {
-		this.scaleCache = scaleFactor;
-		this.markerIcon.setScale(scaleFactor);
+	if (this.scaleCache != scaleFactor * this.baseScale) {
+		this.scaleCache = scaleFactor * this.baseScale;
+		this.markerIcon.setScale(this.scaleCache);
 	}
 
 	/*
