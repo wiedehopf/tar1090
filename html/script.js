@@ -798,10 +798,12 @@ function initialize_map() {
 		ZoomLvlCache = ZoomLvl;
 
 		scaleFactor = 1.2*Math.max(0.2, Math.min(1.2, 0.15 * Math.pow(1.25, ZoomLvl)));
-		for (var plane in Planes) {
-			if (Planes[plane].markerIcon)
-				this.scaleCache = scaleFactor * this.baseScale;
-				Planes[plane].markerIcon.setScale(this.scaleCache);
+		for (var i in PlanesOrdered) {
+			var plane = PlanesOrdered[i];
+			if (plane.markerIcon) {
+				plane.scaleCache = scaleFactor * plane.baseScale;
+				plane.markerIcon.setScale(plane.scaleCache);
+			}
 		}
 	});
 
