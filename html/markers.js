@@ -77,6 +77,12 @@ var TypeDesignatorIcons = {
 	'A320': 'airliner',
 	'A321': 'airliner', // stretched a320
 
+	'A330': 'heavy_2e',
+	'A332': 'heavy_2e',
+	'A333': 'heavy_2e',
+	'DC10': 'heavy_2e',
+	'MD11': 'heavy_2e',
+
 	'A388': 'heavy_4e',
 
 	// dubious since these are old-generation 737s

@@ -257,7 +257,6 @@ function fetchData() {
 				plane.updateTick(now, last);
 		}
 
-		selectNewPlanes();
 		refreshTableInfo();
 		refreshClock(new Date(now * 1000));
 		refreshSelected();
@@ -1420,6 +1419,7 @@ function refreshTableInfo() {
 	}
 
 	resortTable();
+	selectNewPlanes();
 }
 
 //
