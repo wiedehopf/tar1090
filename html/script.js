@@ -1436,6 +1436,15 @@ function compareAlpha(xa,ya) {
 		return -1;
 	return 1;
 }
+function compareBeta(xa,ya) {
+	if (xa === ya)
+		return 0;
+	if (sortAscending && xa < ya)
+		return -1;
+	if (!sortAscending && (xa.replace(/ /g, "").split("").reverse().join("") > ya.replace(/ /g, "").split("").reverse().join("")))
+		return -1;
+	return 1;
+}
 
 function compareNumeric(xf,yf) {
 	if (Math.abs(xf - yf) < 1e-9)
@@ -1445,7 +1454,7 @@ function compareNumeric(xf,yf) {
 }
 
 function sortByICAO()     { sortBy('icao',    compareAlpha,   function(x) { return x.icao; }); }
-function sortByFlight()   { sortBy('flight',  compareAlpha,   function(x) { return x.flight; }); }
+function sortByFlight()   { sortBy('flight',  compareBeta,   function(x) { return x.flight ? x.flight : x.registration; }); }
 function sortByRegistration()   { sortBy('registration',    compareAlpha,   function(x) { return x.registration; }); }
 function sortByAircraftType()   { sortBy('icaotype',        compareAlpha,   function(x) { return x.icaotype; }); }
 function sortBySquawk()   { sortBy('squawk',  compareAlpha,   function(x) { return x.squawk; }); }
