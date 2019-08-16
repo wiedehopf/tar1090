@@ -46,8 +46,8 @@ fi
 
 mkdir -p $ipath
 
-if [ -f $ipath/defaults.json ]; then
-	cp $ipath/config.json . 2>/dev/null
+if [ -f $ipath/html/defaults.js ]; then
+	cp $ipath/html/config.js html/
 fi
 
 cp -r * $ipath
