@@ -321,7 +321,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		(!on_ground && since_update > (100/turn_density)/track_change) ||
 		(!on_ground && isNaN(track_change) && since_update > 8) ||
 		(on_ground && since_update > (500/turn_density)/track_change && distance_traveled > 8) ||
-		(on_ground && distance_traveled > 60 && since_update > 4) ||
+		(on_ground && distance_traveled > 40 && since_update > 4) ||
 		debugAll
 	) {
 
