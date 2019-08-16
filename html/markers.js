@@ -139,23 +139,32 @@ var TypeDesignatorIcons = {
 	'C750': ['jet_swept', 0.94],
 	'CL30': ['jet_swept', 0.92],
 	'CL35': ['jet_swept', 0.92],
-	'CL60': ['jet_swept', 0.94],
-	'GLEX': ['jet_swept', 0.96],
-	'GL5T': ['jet_swept', 0.95],
+	'CL60': ['jet_swept', 0.94], // 22t
+	'GLEX': ['jet_swept', 1],
+	'GL5T': ['jet_swept', 1],
 	'GLF2': ['jet_swept', 0.92],
-	'GLF3': ['jet_swept', 0.93],
-	'GLF4': ['jet_swept', 0.94],
-	'GLF5': ['jet_swept', 0.95],
+	'G280': ['jet_swept', 0.92],
+	'GLF3': ['jet_swept', 0.96],
+	'GLF4': ['jet_swept', 0.96],
+	'GLF5': ['jet_swept', 0.96],
 	'GLF6': ['jet_swept', 0.96],
-	'E170': ['airliner', 0.8],
-	'E190': ['airliner', 0.82],
-	'E135': ['jet_swept', 1],
-	'E145': ['jet_swept', 1],
-	'E45X': ['jet_swept', 1],
-	'CRJ1': ['jet_swept', 1],
-	'CRJ2': ['jet_swept', 1],
-	'CRJ7': ['jet_swept', 1],
-	'CRJ9': ['jet_swept', 1],
+	'E170': ['airliner', 0.78], // 38t
+	'E75S/L': ['airliner', 0.78],
+	'E75L': ['airliner', 0.78], 
+	'E75S': ['airliner', 0.78],  // 40t
+	'E190': ['airliner', 0.82], // 52t
+	'E195': ['airliner', 0.82], // 52t
+	'E290': ['airliner', 0.82], // 56t
+	'E295': ['airliner', 0.86], // 62t
+	'E135': ['jet_swept', 0.96], // 20t
+	'E35L': ['jet_swept', 0.96], // 24t
+	'E145': ['jet_swept', 0.96], // 22t
+	'E45X': ['jet_swept', 0.96], // 24t
+	'CRJ1': ['jet_swept', 0.96], // 24t
+	'CRJ2': ['jet_swept', 0.96], // 24t
+	'CRJ7': ['jet_swept', 1.1], // 34t
+	'CRJ9': ['jet_swept', 1.1], // 38t
+	'CRJX': ['jet_swept', 1.1], // 41t
 	'H25A': ['jet_nonswept', 1.1],
 	'H25B': ['jet_nonswept', 1.1],
 	'H25C': ['jet_nonswept', 1.1],
@@ -171,6 +180,7 @@ var TypeDesignatorIcons = {
 	'E55P': ['jet_nonswept', 0.96],
 	'E50P': ['jet_nonswept', 0.96],
 	'EA50': ['jet_nonswept', 0.96],
+	'HDJT': ['jet_nonswept', 0.96],
 
 
 	'A37': ['hi_perf', 1],
