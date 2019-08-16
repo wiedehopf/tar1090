@@ -34,8 +34,8 @@ var shapes = {
 		size: [15,21]
 	},
 	'jet_nonswept': {
-		svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="18px" height="18px" add_stroke_selected><defs><style>.cls-1{fill:aircraft_color_fill;}.cls-2{fill:aircraft_color_stroke;}</style></defs><title>jet_nonswept_live</title><g id="Layer_2" data-name="Layer 2"><g id="Bizjet_Non-Swept" data-name="Bizjet Non-Swept"><path class="cls-1" d="M9,17.09l-3.51.61v-.3c0-.65.11-1,.33-1.09L8.5,15a5.61,5.61,0,0,1-.28-1.32l-.53-.41-.1-.69H7.12l0-.21a7.19,7.19,0,0,1-.15-2.19L.24,9.05V8.84c0-1.1.51-1.15.61-1.15L7.8,7.18V2.88C7.8.64,8.89.3,8.93.28L9,.26l.07,0s1.13.36,1.13,2.6v4.3l7,.51c.09,0,.59.06.59,1.15v.21l-6.69,1.16a7.17,7.17,0,0,1-.15,2.19l0,.21h-.47l-.1.69-.53.41A5.61,5.61,0,0,1,9.5,15l2.74,1.28c.2.07.31.43.31,1.08v.3Z"/><path class="cls-2" d="M9,.53s1,.28,1,2.35V7.41l7.19.53h0s.36,0,.36.9L10.78,10a5,5,0,0,1-.1,2.35H10.2l-.12.8-.54.42a4.88,4.88,0,0,1-.35,1.59l2.95,1.38s.16.06.17.85L9,16.84l-3.31.56c0-.79.17-.85.17-.85l2.95-1.38a4.88,4.88,0,0,1-.35-1.59l-.54-.42-.12-.8H7.32A5,5,0,0,1,7.22,10L.49,8.84c0-.88.33-.9.36-.9h0L8,7.41V2.88C8,.81,9,.53,9,.53M9,0,8.87,0c-.13,0-1.31.45-1.31,2.84V6.94L.82,7.43h0c-.24,0-.82.19-.82,1.4v.43l.41.07,6.26,1.08a8.45,8.45,0,0,0,.18,2l.08.41h.47l.05.37,0,.21.16.12.36.28a5.87,5.87,0,0,0,.22,1.05L5.66,16.09c-.39.15-.45.78-.46,1.31V18l.57-.1L9,17.35l3.23.55.57.1v-.6c0-.53-.06-1.16-.49-1.32L9.79,14.9A5.87,5.87,0,0,0,10,13.85l.36-.28.16-.12,0-.21.05-.37h.47l.08-.41a8.45,8.45,0,0,0,.18-2l6.26-1.08L18,9.27V8.84c0-1.34-.71-1.41-.85-1.41l-6.71-.49V2.88C10.44.49,9.27.08,9.13,0L9,0Z"/></g></g></svg>',
-		size: [18,18]
+		svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19 19" width="19px" height="19px" add_stroke_selected><defs><style>.cls-1{fill:aircraft_color_fill;}.cls-2{fill:aircraft_color_stroke;}</style></defs><title>jet_nonswept_live</title><g id="Layer_2" data-name="Layer 2"><g id="Bizjet_Non-Swept" data-name="Bizjet Non-Swept"><path class="cls-1" d="M9,17.09l-3.51.61v-.3c0-.65.11-1,.33-1.09L8.5,15a5.61,5.61,0,0,1-.28-1.32l-.53-.41-.1-.69H7.12l0-.21a7.19,7.19,0,0,1-.15-2.19L.24,9.05V8.84c0-1.1.51-1.15.61-1.15L7.8,7.18V2.88C7.8.64,8.89.3,8.93.28L9,.26l.07,0s1.13.36,1.13,2.6v4.3l7,.51c.09,0,.59.06.59,1.15v.21l-6.69,1.16a7.17,7.17,0,0,1-.15,2.19l0,.21h-.47l-.1.69-.53.41A5.61,5.61,0,0,1,9.5,15l2.74,1.28c.2.07.31.43.31,1.08v.3Z"/><path class="cls-2" d="M9,.53s1,.28,1,2.35V7.41l7.19.53h0s.36,0,.36.9L10.78,10a5,5,0,0,1-.1,2.35H10.2l-.12.8-.54.42a4.88,4.88,0,0,1-.35,1.59l2.95,1.38s.16.06.17.85L9,16.84l-3.31.56c0-.79.17-.85.17-.85l2.95-1.38a4.88,4.88,0,0,1-.35-1.59l-.54-.42-.12-.8H7.32A5,5,0,0,1,7.22,10L.49,8.84c0-.88.33-.9.36-.9h0L8,7.41V2.88C8,.81,9,.53,9,.53M9,0,8.87,0c-.13,0-1.31.45-1.31,2.84V6.94L.82,7.43h0c-.24,0-.82.19-.82,1.4v.43l.41.07,6.26,1.08a8.45,8.45,0,0,0,.18,2l.08.41h.47l.05.37,0,.21.16.12.36.28a5.87,5.87,0,0,0,.22,1.05L5.66,16.09c-.39.15-.45.78-.46,1.31V18l.57-.1L9,17.35l3.23.55.57.1v-.6c0-.53-.06-1.16-.49-1.32L9.79,14.9A5.87,5.87,0,0,0,10,13.85l.36-.28.16-.12,0-.21.05-.37h.47l.08-.41a8.45,8.45,0,0,0,.18-2l6.26-1.08L18,9.27V8.84c0-1.34-.71-1.41-.85-1.41l-6.71-.49V2.88C10.44.49,9.27.08,9.13,0L9,0Z"/></g></g></svg>',
+		size: [19,19]
 	},
 	'jet_swept': {
 		svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 24" width="18px" height="24" add_stroke_selected><defs><style>.cls-1{fill:aircraft_color_fill;}.cls-2{fill:aircraft_color_stroke;}</style></defs><title>jet_swept_live</title><g id="Layer_2" data-name="Layer 2"><g id="Bizjet_Swept" data-name="Bizjet Swept"><path class="cls-1" d="M9.44,23c-.1.6-.35.6-.44.6s-.34,0-.44-.6l-3,.67V22.6A.54.54,0,0,1,6,22.05l2.38-1.12L8,19.33H6.69l0-.2a8.23,8.23,0,0,1-.14-3.85l.06-.18H7.73V13.19h-2L.26,14.29v-.93c0-.28.07-.46.22-.53l7.25-3.6V3.85A4.47,4.47,0,0,1,8.83.49L9,.34l.17.15a4.47,4.47,0,0,1,1.1,3.36V9.23l7.25,3.6c.14.07.22.25.22.53v.93l-5.51-1.1h-2V15.1h1.17l.06.18a8.24,8.24,0,0,1-.15,3.84l0,.2H10l-.36,1.6,2.43,1.14a.52.52,0,0,1,.35.53v1.08Z"/><path class="cls-2" d="M9,.68a4.25,4.25,0,0,1,1,3.16V9.39l7.4,3.67s.07,0,.07.3V14l-5.2-1H10v2.42h1.24a8,8,0,0,1-.15,3.72H9.79l-.45,2L12,22.3a.28.28,0,0,1,.2.3v.76l-3-.66s0,.66-.21.66-.21-.66-.21-.66l-3,.66V22.6a.28.28,0,0,1,.2-.3l2.62-1.23-.45-2H6.9a8,8,0,0,1-.15-3.72H8V12.93H5.71L.52,14v-.62c0-.26.07-.3.07-.3L8,9.39V3.85A4.25,4.25,0,0,1,9,.68M9,0,8.66.3A4.73,4.73,0,0,0,7.47,3.85V9.07L.36,12.6c-.16.08-.36.28-.36.76V14.6l.62-.12,5.15-1h1.7v1.4H6.36l-.11.36a8.49,8.49,0,0,0,.14,4l.09.4H7.79l.27,1.2-2.21,1a.79.79,0,0,0-.53.78V24l.63-.14,2.42-.54c.12.37.33.55.63.55s.51-.19.63-.55l2.42.54.63.14V22.6a.79.79,0,0,0-.53-.78l-2.21-1,.27-1.2h1.31l.09-.4a8.49,8.49,0,0,0,.14-4l-.11-.36H10.53v-1.4h1.7l5.15,1,.62.12V13.36c0-.48-.2-.68-.36-.76L10.53,9.07V3.85A4.73,4.73,0,0,0,9.34.3L9,0Z"/></g></g></svg>',
@@ -72,31 +72,38 @@ var shapes = {
 }
 
 var TypeDesignatorIcons = {
-	'A318': ['airliner', 0.90], // shortened a320
+	'A318': ['airliner', 0.88], // shortened a320
 	'A319': ['airliner', 0.92], // shortened a320
+	'A19N': ['airliner', 0.93], // shortened a320
 	'A320': ['airliner', 0.96],
+	'A20N': ['airliner', 0.97],
 	'A321': ['airliner', 1.02], // stretched a320
+	'A21N': ['airliner', 1.03], // stretched a320
 
+	'A306': ['heavy_2e', 0.92],
 	'A330': ['heavy_2e', 1],
 	'A332': ['heavy_2e', 1],
 	'A333': ['heavy_2e', 1],
 	'DC10': ['heavy_2e', 1],
 	'MD11': ['heavy_2e', 1],
 
+	'A359': ['heavy_2e', 1.04],
+	'A35K': ['heavy_2e', 1.06],
+
 	'A388': ['heavy_4e', 1.08],
 
 	// dubious since these are old-generation 737s
 	// but the shape is similar
-	'B731': ['airliner', 0.8],
-	'B732': ['airliner', 0.8],
-	'B733': ['airliner', 0.8],
-	'B734': ['airliner', 0.9],
-	'B735': ['airliner', 1],
+	'B731': ['airliner', 0.88],
+	'B732': ['airliner', 0.88],
+	'B733': ['airliner', 0.88],
+	'B734': ['airliner', 0.94],
+	'B735': ['airliner', 0.96],
 
 	// these probably need reworking
 	// since they vary in length
-	'B736': ['airliner', 0.90],
-	'B737': ['airliner', 0.92],
+	'B736': ['airliner', 0.92],
+	'B737': ['airliner', 0.94],
 	'B738': ['airliner', 0.96],
 	'B739': ['airliner', 1],
 
@@ -109,57 +116,61 @@ var TypeDesignatorIcons = {
 	'B74R': ['heavy_4e', 1],
 	'BLCF': ['heavy_2e', 1],
 	'BSCA': ['heavy_4e', 1], // hah!
-	'B748': ['heavy_4e', 1],
+	'B748': ['heavy_4e', 1.02],
 
 	'B752': ['airliner', 1.04],
 	'B753': ['airliner', 1.04],
 
 	'B772': ['heavy_2e', 1.04], // all pretty similar except for length
-	'B77W': ['heavy_2e', 1.04],
-	'B773': ['heavy_2e', 1.04],
-	'B77L': ['heavy_2e', 1.04],
+	'B773': ['heavy_2e', 1.06],
+	'B77L': ['heavy_2e', 1.06],
+	'B77W': ['heavy_2e', 1.08],
 
-	'E170': ['jet_swept', 1],
-	'E45X': ['jet_swept', 1],
-	'B712': ['jet_swept', 1],
-	'C56X': ['jet_swept', 0.92],
-	'C510': ['jet_swept', 0.92],
-	'C25A': ['jet_swept', 0.92],
-	'C525': ['jet_swept', 0.92],
-	'C550': ['jet_swept', 0.92],
-	'C560': ['jet_swept', 0.92],
-	'C650': ['jet_swept', 0.92],
+	'C501': ['jet_nonswept', 1],
+	'C510': ['jet_nonswept', 1],
+	'C25A': ['jet_nonswept', 1],
+	'C525': ['jet_nonswept', 1],
+	'C550': ['jet_nonswept', 1],
+	'C560': ['jet_nonswept', 1],
+	'C56X': ['jet_nonswept', 1],
+	'LR45': ['jet_nonswept', 1],
+	'C650': ['jet_swept', 0.90],
 	'C68A': ['jet_swept', 0.92],
-	'C750': ['jet_swept', 0.92],
-	'E55P': ['jet_swept', 0.88],
+	'C750': ['jet_swept', 0.94],
+	'CL30': ['jet_swept', 0.92],
+	'CL35': ['jet_swept', 0.92],
+	'CL60': ['jet_swept', 0.94],
+	'GLEX': ['jet_swept', 0.96],
+	'GL5T': ['jet_swept', 0.95],
+	'GLF2': ['jet_swept', 0.92],
+	'GLF3': ['jet_swept', 0.93],
+	'GLF4': ['jet_swept', 0.94],
+	'GLF5': ['jet_swept', 0.95],
+	'GLF6': ['jet_swept', 0.96],
+	'E170': ['airliner', 0.8],
+	'E190': ['airliner', 0.82],
 	'E135': ['jet_swept', 1],
 	'E145': ['jet_swept', 1],
-	'CL30': ['jet_swept', 1],
-	'CL35': ['jet_swept', 1],
-	'CL60': ['jet_swept', 1],
-	'GLEX': ['jet_swept', 1],
-	'GL5T': ['jet_swept', 1],
-	'GLF2': ['jet_swept', 1],
-	'GLF3': ['jet_swept', 1],
-	'GLF4': ['jet_swept', 1],
-	'GLF5': ['jet_swept', 1],
-	'GLF6': ['jet_swept', 1],
+	'E45X': ['jet_swept', 1],
 	'CRJ1': ['jet_swept', 1],
 	'CRJ2': ['jet_swept', 1],
 	'CRJ7': ['jet_swept', 1],
 	'CRJ9': ['jet_swept', 1],
-	'H25A': ['jet_swept', 0.92],
-	'H25B': ['jet_swept', 0.92],
-	'H25C': ['jet_swept', 0.92],
-	'LR45': ['jet_swept', 0.92],
-	'MD80': ['jet_swept', 1],
-	'MD81': ['jet_swept', 1],
-	'MD82': ['jet_swept', 1],
-	'MD83': ['jet_swept', 1],
-	'MD87': ['jet_swept', 1],
-	'MD88': ['jet_swept', 1],
+	'H25A': ['jet_nonswept', 1.1],
+	'H25B': ['jet_nonswept', 1.1],
+	'H25C': ['jet_nonswept', 1.1],
+	'MD80': ['jet_swept', 1.1],
+	'MD81': ['jet_swept', 1.1],
+	'MD82': ['jet_swept', 1.1],
+	'MD83': ['jet_swept', 1.1],
+	'MD87': ['jet_swept', 1.1],
+	'MD88': ['jet_swept', 1.1],
+	'B712': ['jet_swept', 1.1],
 
-	'PRM1': ['jet_swept', 0.88],
+	'PRM1': ['jet_nonswept', 0.96],
+	'E55P': ['jet_nonswept', 0.96],
+	'E50P': ['jet_nonswept', 0.96],
+	'EA50': ['jet_nonswept', 0.96],
 
 
 	'A37': ['hi_perf', 1],
