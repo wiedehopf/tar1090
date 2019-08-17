@@ -1050,7 +1050,7 @@ function refreshSelected() {
 	} else {
 		$('#selected_callsign').text('n/a');
 	}
-	$('#selected_flightaware_link').html(getFlightAwareModeSLink(selected.icao, selected.flight, "Visit Flight Page"));
+	$('#selected_flightaware_link').html(getFlightAwareModeSLink(selected.icao, selected.flight ? selected.flight : selected.registration, "Visit Flight Page"));
 
 	if (selected.registration !== null) {
 		$('#selected_registration').text(selected.registration);
@@ -1406,8 +1406,8 @@ function refreshTableInfo() {
 				tableplane.registration_cache = tableplane.registration;
 				if (!tableplane.flight) {
 					var label = tableplane.registration != null ? tableplane.registration : tableplane.icao.toUpperCase();
-					tableplane.tr.cells[2].innerHTML = getFlightAwareModeSLink(tableplane.icao, tableplane.flight, label);
-					tableplane.tr.cells[18].innerHTML = getFlightAwareModeSLink(tableplane.icao, label);
+					tableplane.tr.cells[2].innerHTML = getFlightAwareModeSLink(tableplane.icao, tableplane.registration, label);
+					tableplane.tr.cells[18].innerHTML = getFlightAwareModeSLink(tableplane.icao, tableplane.registration);
 				}
 			}
 
