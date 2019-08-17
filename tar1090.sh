@@ -155,9 +155,13 @@ do
 	sleep 5
 done &
 
-while [[ $ENABLE_978 == "yes" ]]
+while true
 do
+	source /etc/default/tar1090
 	sleep $INT_978 &
+
+	if ! [[ $ENABLE_978 == "yes" ]]; then continue; fi
+
 	wget -T 5 -q -O $dir/978.tmp $URL_978/data/aircraft.json $COMPRESS_978
 	sed -i -e 's/"now" \?:/"uat_978":"true","now":/' $dir/978.tmp
 	mv $dir/978.tmp $dir/978.json

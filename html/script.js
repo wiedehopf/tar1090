@@ -257,10 +257,10 @@ function fetchData() {
 				plane.updateTick(now, last);
 		}
 
-		refreshTableInfo();
-		refreshClock(new Date(now * 1000));
 		refreshSelected();
 		refreshHighlighted();
+		refreshClock(new Date(now * 1000));
+		refreshTableInfo();
 
 		// Check for stale receiver data
 		if (last == now) {
@@ -679,7 +679,7 @@ function initialize_map() {
 		title: 'Aircraft positions',
 		source: new ol.source.Vector({
 			features: PlaneIconFeatures,
-		})
+		}),
 	});
 
 	layers.push(
@@ -1587,6 +1587,7 @@ function selectPlaneByHex(hex,autofollow) {
 		newPlane.updateMarker();
 		$(newPlane.tr).addClass("selected");
 		newPlane.logSel(newPlane.history_size);
+		newPlane.logSel(newPlane.baseMarkerKey);
 	} else {
 		SelectedPlane = null;
 	}
