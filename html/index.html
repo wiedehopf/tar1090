@@ -39,20 +39,6 @@
 			<progress id="loader_progress"></progress>
 		</div>
 
-		<!--
-	  This is hideous. airframes.org insists on getting a POST with a "submit" value specified,
-	  but if we have an input control with that name then it shadows the submit() function that
-	  we need. So steal the submit function off a different form. Surely there is a better way?!
-		-->
-		<form id="horrible_hack" class="hidden">
-		</form>
-		<form id="airframes_post" method="POST" action="http://www.airframes.org/" target="_blank" class="hidden">
-			<input type="hidden" name="reg1" value="">
-			<input type="hidden" name="selcal" value="">
-			<input id="airframes_post_icao" type="hidden" name="ica024" value="">
-			<input type="hidden" name="submit" value="submit">
-		</form>
-
 		<div id="header" class="infoHeading">
 			<div class="logoContainer">
 			</div>
@@ -244,7 +230,7 @@
 										<td id="lat" onclick="sortByLatitude();">Latitude</td>
 										<td id="lon" onclick="sortByLongitude();">Longitude</td>
 										<td id="data_source" onclick="sortByDataSource();">Data Source</td>
-										<td id="airframes_mode_s_link">Airframes.org</td>
+										<td id="base_marker_key" onclick="sortByBaseMarkerKey();">Type Desc./Cat.</td>
 										<td id="flightaware_mode_s_link">FlightAware</td>
 										<td id="flightaware_photo_link">Photos</td>
 									</tr>
@@ -303,8 +289,11 @@
 						<div class="highlightedTitle">
 							<span class="identLarge" title="Typically the air traffic control callsign or the aircraft's registration, as entered into the transponder by the pilot."><span id="selected_callsign">n/a</span></span>
 							<span class="identSmall" title="The aircraft's unique ICAO identification number shown in hexadecimal format."><span id="selected_icao">n/a</span></span>
-						</div>
 
+							<span style="position:absolute; right:60px;" class="button buttonHeader" onClick="selectPlaneByHex(SelectedPlane, true);">
+								<span class="buttonText">Follow</span>
+							</span>
+						</div>
 						<div class="infoBlockTopSection">
 							<span id="selected_flightaware_link" class=""></span>
 							<div class="infoRow removePadding">

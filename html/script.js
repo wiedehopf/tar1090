@@ -1401,6 +1401,8 @@ function refreshTableInfo() {
 				tableplane.tr.cells[17].innerHTML = getAirframesModeSLink(tableplane.icao);
 				tableplane.icao_cache = tableplane.icao;
 			}
+			tableplane.tr.cells[17].textContent = tableplane.baseMarkerKey;
+
 			if (tableplane.registration_cache !== tableplane.registration) {
 				tableplane.tr.cells[19].innerHTML = getFlightAwarePhotoLink(tableplane.registration);
 				tableplane.registration_cache = tableplane.registration;
@@ -1470,6 +1472,7 @@ function sortByRssi()     { sortBy('rssi',    compareNumeric, function(x) { retu
 function sortByLatitude()   { sortBy('lat',   compareNumeric, function(x) { return (x.position !== null ? x.position[1] : null) }); }
 function sortByLongitude()  { sortBy('lon',   compareNumeric, function(x) { return (x.position !== null ? x.position[0] : null) }); }
 function sortByDataSource() { sortBy('data_source',     compareNumeric, function(x) { return x.getDataSourceNumber() } ); }
+function sortByBaseMarkerKey()  { sortBy('base_marker_key', compareAlpha,   function(x) { return x.baseMarkerKey; }); }
 
 var sortId = '';
 var sortCompare = null;
@@ -1587,7 +1590,6 @@ function selectPlaneByHex(hex,autofollow) {
 		newPlane.updateMarker();
 		$(newPlane.tr).addClass("selected");
 		newPlane.logSel(newPlane.history_size);
-		newPlane.logSel(newPlane.baseMarkerKey);
 	} else {
 		SelectedPlane = null;
 	}
@@ -1759,7 +1761,7 @@ function setColumnVisibility() {
 	showColumn(infoTable, "#lat", !mapIsVisible);
 	showColumn(infoTable, "#lon", !mapIsVisible);
 	showColumn(infoTable, "#data_source", !mapIsVisible);
-	showColumn(infoTable, "#airframes_mode_s_link", !mapIsVisible);
+	showColumn(infoTable, "#base_marker_key", !mapIsVisible);
 	showColumn(infoTable, "#flightaware_mode_s_link", !mapIsVisible);
 	showColumn(infoTable, "#flightaware_photo_link", !mapIsVisible);
 }
