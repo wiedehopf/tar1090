@@ -568,6 +568,7 @@ PlaneObject.prototype.updateIcon = function() {
 PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	// get location data first, return early if only those are needed.
 
+	// remember last known position even if stale
 	if ("lat" in data && data.seen_pos < (receiver_timestamp - this.position_time + 2)) {
 		this.position   = [data.lon, data.lat];
 		this.position_time = receiver_timestamp - data.seen_pos;
@@ -590,14 +591,18 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 			this.dataSource = "other";
 	}
 
+	// remember last known altitude even if stale
 	if ("alt_baro" in data) {
 		this.altitude = data.alt_baro;
 		this.alt_baro = data.alt_baro;
 	} else if ("altitude" in data) {
 		this.altitude = data.altitude;
 		this.alt_baro = data.altitude;
+	} else {
+		this.alt_baro = null;
 	}
 
+	// don't expire the track, even display outdated track
 	if ("track" in data)
 		this.track = data.track;
 
@@ -621,11 +626,15 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.gs = data.gs;
 	else if ("speed" in data)
 		this.gs = data.speed;
+	else
+		this.gs = null;
 
 	if ("baro_rate" in data)
 		this.baro_rate = data.baro_rate;
 	else if ("vert_rate" in data)
 		this.baro_rate = data.vert_rate;
+	else
+		this.baro_rate = null;
 
 	// simple fields
 
@@ -655,6 +664,8 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	// fields with more complex behaviour
 	if ("true_heading" in data)
 		this.true_heading = data.true_heading;
+	else
+		this.true_heading = null;
 
 	// don't expire callsigns
 	if ('flight' in data)
@@ -662,6 +673,8 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 
 	if ('type' in data)
 		this.addrtype	= data.type;
+	else
+		this.addrtype = null;
 
 	if ('lat' in data && SitePosition) {
 		//var WGS84 = new ol.Sphere(6378137);
