@@ -1095,6 +1095,7 @@ function refreshSelected() {
 	$('#selected_vertical_rate').text(format_vert_rate_long(selected.baro_rate, DisplayUnits));
 	$('#selected_vertical_rate_geo').text(format_vert_rate_long(selected.geom_rate, DisplayUnits));
 	$('#selected_icao').text(selected.icao.toUpperCase());
+	$('#selected_pf_info').text((selected.pfRoute ? selected.pfRoute : "") +" "+ (selected.pfFlightno ? selected.pfFlightno : ""));
 	$('#airframes_post_icao').attr('value',selected.icao);
 	$('#selected_track').text(format_track_long(selected.track));
 
@@ -2154,7 +2155,7 @@ function fetchPfData() {
 				plane.pfRoute = ac.route;
 				plane.pfMach = ac.mach;
 				plane.pfFlightno = ac.flightno;
-				if (ac.reg && ac.reg != "????")
+				if (ac.reg && ac.reg != "????" && ac.reg != "z.NO-REG")
 					plane.registration = ac.reg;
 				if (ac.type && ac.type != "????")
 					plane.icaoType = ac.type;
@@ -2164,7 +2165,7 @@ function fetchPfData() {
 						plane.typeDescription = typeData.desc;
 						plane.wtc = typeData.wtc;
 					}
-					console.log(plane.icaoType + " " + plane.icaoTypeCache + " " + plane.typeDescription + "-" + plane.wtc);
+					console.log(plane.icao +" "+ plane.flight + " was " + plane.icaoTypeCache + " and is now " + plane.icaoType + " " + plane.typeDescription + "-" + plane.wtc);
 					//console.log(plane.flight);
 					plane.icaoTypeCache = plane.icaoType;
 				}

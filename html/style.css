@@ -478,7 +478,7 @@ select.error, textarea.error, input.error {
     padding-left: 18px;
 	padding-top: 18px;
 	display: inline-block;
-	width: 80%;
+	width: 83%;
 }
 
 .highlightedInfo {
@@ -488,6 +488,15 @@ select.error, textarea.error, input.error {
 .identLarge {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 24px;
+    line-height: 20px;
+    color: #002F5D;
+    color: rgb(0, 47, 93);
+    font-weight: lighter;
+}
+
+.identMedium {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 18px;
     line-height: 20px;
     color: #002F5D;
     color: rgb(0, 47, 93);
