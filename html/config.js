@@ -1,10 +1,9 @@
 // --------------------------------------------------------
 //
 // This file is to configure the configurable settings.
-// Load this file before script.js file at gmap.html.
 //
 // --------------------------------------------------------
-
+"use strict";
 // -- Title Settings --------------------------------------
 // Show number of aircraft and/or messages per second in the page title
 //PlaneCountInTitle = true;

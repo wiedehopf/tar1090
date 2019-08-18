@@ -1,21 +1,20 @@
 // --------------------------------------------------------
 //
 // This file is for the default settings, use config.js instead to make settings.
-// Load this file before script.js file at gmap.html.
 //
 // --------------------------------------------------------
-
+"use strict";
 // -- Title Settings --------------------------------------
 // Show number of aircraft and/or messages per second in the page title
-PlaneCountInTitle = true;
-MessageRateInTitle = false;
+var PlaneCountInTitle = true;
+var MessageRateInTitle = false;
 
 // -- Output Settings -------------------------------------
 // The DisplayUnits setting controls whether nautical (ft, NM, knots), 
 // metric (m, km, km/h) or imperial (ft, mi, mph) units are used in the 
 // plane table and in the detailed plane info. Valid values are
 // "nautical", "metric", or "imperial".
-DisplayUnits = "nautical";
+var DisplayUnits = "nautical";
 
 // -- Map settings ----------------------------------------
 // These settings are overridden by any position information
@@ -23,18 +22,18 @@ DisplayUnits = "nautical";
 // degrees.
 
 // Default center of the map.
-DefaultCenterLat = 45.0;
-DefaultCenterLon = 9.0;
+var DefaultCenterLat = 45.0;
+var DefaultCenterLon = 9.0;
 // The google maps zoom level, 0 - 16, lower is further out
-DefaultZoomLvl   = 7;
+var DefaultZoomLvl   = 7;
 
 // Center marker. If dump1090 provides a receiver location,
 // that location is used and these settings are ignored.
 
-SiteShow    = false;           // true to show a center marker
-SiteLat     = 45.0;            // position of the marker
-SiteLon     = 9.0;
-SiteName    = "My Radar Site"; // tooltip of the marker
+var SiteShow    = false;           // true to show a center marker
+var SiteLat     = 45.0;            // position of the marker
+var SiteLon     = 9.0;
+var SiteName    = "My Radar Site"; // tooltip of the marker
 
 // Color controls for the range outline
 var range_outline_color = '#0000DD';
@@ -45,7 +44,7 @@ var range_outline_colored_by_altitude = false;
 
 // These settings control the coloring of aircraft by altitude.
 // All color values are given as Hue (0-359) / Saturation (0-100) / Lightness (0-100)
-ColorByAlt = {
+var ColorByAlt = {
 	// HSL for planes with unknown altitude:
 	unknown : { h: 0,   s: 0,   l: 30 },
 
@@ -99,26 +98,26 @@ ColorByAlt = {
 // };
 
 // Outline color for aircraft icons with an ADS-B position
-OutlineADSBColor = '#000000';
+var OutlineADSBColor = '#000000';
 
 // Outline color for aircraft icons with a mlat position
-OutlineMlatColor = '#4040FF';
+var OutlineMlatColor = '#4040FF';
 
-SiteCircles = true; // true to show circles (only shown if the center marker is shown)
+var SiteCircles = true; // true to show circles (only shown if the center marker is shown)
 // In miles, nautical miles, or km (depending settings value 'DisplayUnits')
-SiteCirclesDistances = new Array(100,150,200,250);
+var SiteCirclesDistances = new Array(100,150,200,250);
 
 // Controls page title, righthand pane when nothing is selected
-PageName = "dump1090-fa";
+var PageName = "dump1090-fa";
 
 // Show country flags by ICAO addresses?
-ShowFlags = true;
+var ShowFlags = true;
 
 // Path to country flags (can be a relative or absolute URL; include a trailing /)
-FlagPath = "flags-tiny/";
+var FlagPath = "flags-tiny/";
 
 // Set to false to disable the ChartBundle base layers (US coverage only)
-ChartBundleLayers = true;
+var ChartBundleLayers = true;
 
 // Provide a Bing Maps API key here to enable the Bing imagery layer.
 // You can obtain a free key (with usage limits) at
@@ -127,9 +126,10 @@ ChartBundleLayers = true;
 // Be sure to quote your key:
 //   BingMapsAPIKey = "your key here";
 //
-BingMapsAPIKey = null;
+var BingMapsAPIKey = null;
 
 // Turn on display of extra Mode S EHS / ADS-B v1/v2 data
 // This is not polished yet (and so is disabled by default),
 // currently it's just a data dump of the new fields with no UX work.
-ExtendedData = false;
+var ExtendedData = false;
+var pf_data = ["chunks/pf.json"]

@@ -6,8 +6,9 @@
 // working backwards to an algorithm that generates that pattern,
 // spot-checking aircraft to see if it worked.
 // YMMV.
+"use strict";
 
-registration_from_hexid = (function () {
+const registration_from_hexid = (function () {
 	// hide the guts in a closure
 
 	var limited_alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // 24 chars; no I, O
@@ -111,6 +112,7 @@ registration_from_hexid = (function () {
 			return null;
 		}
 
+		var reg;
 		reg = n_reg(hexid);
 		if (reg)
 			return reg;

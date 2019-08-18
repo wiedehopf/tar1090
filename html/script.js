@@ -761,7 +761,7 @@ function initialize_map() {
 			center: ol.proj.fromLonLat([CenterLon, CenterLat]),
 			zoom: ZoomLvl
 		}),
-		controls: [new ol.control.Zoom(),
+		controls: [new ol.control.Zoom({delta: 1,}),
 			new ol.control.Rotate(),
 			new ol.control.Attribution({collapsed: true}),
 			new ol.control.ScaleLine({units: DisplayUnits})
@@ -1597,7 +1597,7 @@ function selectPlaneByHex(hex,autofollow) {
 		newPlane.updateMarker();
 		$(newPlane.tr).addClass("selected");
 		newPlane.logSel(newPlane.history_size);
-		//console.log(newPlane.baseMarkerKey);
+		console.log(newPlane.baseMarkerKey);
 	} else {
 		SelectedPlane = null;
 	}
@@ -2141,11 +2141,12 @@ function updatePiAwareOrFlightFeeder() {
 }
 
 function fetchPfData() {
-		$.ajax({ url: 'chunks/pf.json',
+	for (const i in pf_data) {
+		const req = $.ajax({ url: pf_data[i],
 			timeout: 3000,
 			cache: false,
-			dataType: 'json' })
-		.done(function(data) {
+			dataType: 'json' });
+		$.when(req).done(function(data) {
 			for (const i in PlanesOrdered) {
 				const plane = PlanesOrdered[i];
 				const ac = data.aircraft[plane.icao.toUpperCase()];
@@ -2172,4 +2173,5 @@ function fetchPfData() {
 
 			}
 		});
+	}
 }
