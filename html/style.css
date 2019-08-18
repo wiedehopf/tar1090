@@ -477,6 +477,8 @@ select.error, textarea.error, input.error {
     border-bottom: 1px solid #00A0E2;
     padding-left: 18px;
 	padding-top: 18px;
+	display: inline-block;
+	width: 80%;
 }
 
 .highlightedInfo {

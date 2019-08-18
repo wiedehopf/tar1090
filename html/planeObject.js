@@ -492,7 +492,7 @@ PlaneObject.prototype.updateIcon = function() {
 	//var opacity = 1.0;
 	var outline = (this.dataSource == "mlat" ? OutlineMlatColor : OutlineADSBColor);
 	var add_stroke = (this.selected && !SelectedAllPlanes) ? ' stroke="black" stroke-width="1px"' : '';
-	var baseMarkerKey = (this.category ? this.category : "A0") + "_" + this.wtc  + "_" + this.typeDescription + "_" + this.icaotype;
+	var baseMarkerKey = (this.category ? this.category : "A0") + "_" + this.typeDescription + "_" + this.wtc  + "_" + this.icaotype;
 	if (!this.baseMarker || this.baseMarkerKey != baseMarkerKey) {
 		this.baseMarkerKey = baseMarkerKey;
 		this.baseMarker = getBaseMarker(this.category, this.icaotype, this.typeDescription, this.wtc);

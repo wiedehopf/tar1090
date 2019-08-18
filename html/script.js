@@ -483,6 +483,9 @@ function push_history() {
 	for (var i = 0; i < nHistoryItems; i++) {
 		push_history_item(i);
 	}
+	if (!nHistoryItems) {
+		parse_history();
+	}
 }
 
 function push_history_item(i) {
@@ -1590,6 +1593,7 @@ function selectPlaneByHex(hex,autofollow) {
 		newPlane.updateMarker();
 		$(newPlane.tr).addClass("selected");
 		newPlane.logSel(newPlane.history_size);
+		//console.log(newPlane.baseMarkerKey);
 	} else {
 		SelectedPlane = null;
 	}
