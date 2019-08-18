@@ -77,10 +77,10 @@ do
 		sleep 60
 		continue
 	fi
+
+	sed -i -e "s?\"history\" : [0-9]*?\"pf_data\" : \"false\", \"enable_uat\" : \"false\", \"chunks\" : []?" chunks.json
 	if [[ $ENABLE_978 == "yes" ]]; then
-		sed -i -e "s?history\" : [0-9]*?chunks\" : [], \"enable_uat\" : \"true\"?" chunks.json
-	else
-		sed -i -e "s/history\" : [0-9]*/chunks\" : []/" chunks.json
+		sed -i -e "s?\"enable_uat\" : \"false\"?\"enable_uat\" : \"true\"?" chunks.json
 	fi
 
 	# integrate original dump1090-fa history on startup so we don't start blank
@@ -157,10 +157,14 @@ done &
 
 while true
 do
-	source /etc/default/tar1090
-	sleep $INT_978 &
+	if ! [ -f /etc/default/tar1090 ]; then
+		sleep 1 &
+	else
+		source /etc/default/tar1090
+		sleep $INT_978 &
+	fi
 
-	if ! [[ $ENABLE_978 == "yes" ]]; then continue; fi
+	if [[ $ENABLE_978 != "yes" ]]; then sleep 30; continue; fi
 
 	wget -T 5 -q -O $dir/978.tmp $URL_978/data/aircraft.json $COMPRESS_978
 	sed -i -e 's/"now" \?:/"uat_978":"true","now":/' $dir/978.tmp
@@ -168,6 +172,21 @@ do
 	wait
 done &
 
+sleep 3
+
+while true
+do
+	sleep 10 &
+	cd $dir
+	if wget -T 5 -q -O pf.tmp http://127.0.0.1:30053/ajax/aircraft 2>/dev/null; then
+		mv pf.tmp pf.json
+		sed -e "s?\"pf_data\" : \"false\"?\"pf_data\" : \"true\"?" chunks.json > chunks.json.tmp
+		mv chunks.json.tmp chunks.json
+	else
+		sleep 120
+	fi
+	wait
+done &
 wait
 
 exit 0

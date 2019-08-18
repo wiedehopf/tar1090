@@ -89,7 +89,7 @@ function PlaneObject(icao) {
 	// start from a computed registration, let the DB override it
 	// if it has something else.
 	this.registration = registration_from_hexid(this.icao);
-	this.icaotype = null;
+	this.icaoType = null;
 	this.typeDescription = null;
 	this.wtc = null;
 
@@ -112,7 +112,8 @@ function PlaneObject(icao) {
 		}
 
 		if ("t" in data) {
-			this.icaotype = data.t;
+			this.icaoType = data.t;
+			this.icaoTypeCache = this.icaoType;
 		}
 
 		if ("desc" in data) {
@@ -492,10 +493,10 @@ PlaneObject.prototype.updateIcon = function() {
 	//var opacity = 1.0;
 	var outline = (this.dataSource == "mlat" ? OutlineMlatColor : OutlineADSBColor);
 	var add_stroke = (this.selected && !SelectedAllPlanes) ? ' stroke="black" stroke-width="1px"' : '';
-	var baseMarkerKey = (this.category ? this.category : "A0") + "_" + this.typeDescription + "_" + this.wtc  + "_" + this.icaotype;
+	var baseMarkerKey = (this.category ? this.category : "A0") + "_" + this.typeDescription + "_" + this.wtc  + "_" + this.icaoType;
 	if (!this.baseMarker || this.baseMarkerKey != baseMarkerKey) {
 		this.baseMarkerKey = baseMarkerKey;
-		this.baseMarker = getBaseMarker(this.category, this.icaotype, this.typeDescription, this.wtc);
+		this.baseMarker = getBaseMarker(this.category, this.icaoType, this.typeDescription, this.wtc);
 		if (!this.baseMarker)
 			console.log(baseMarkerKey);
 		if (this.baseMarker.length == 2) {

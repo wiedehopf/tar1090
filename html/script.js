@@ -605,6 +605,9 @@ function parse_history() {
 	// Setup our timer to poll from the server.
 	window.setInterval(fetchData, RefreshInterval);
 	window.setInterval(reaper, 60000);
+	if (enable_pf_data) {
+		window.setInterval(fetchPfData, RefreshInterval*10);
+	}
 
 	// And kick off one refresh immediately.
 	fetchData();
@@ -1061,8 +1064,8 @@ function refreshSelected() {
 		$('#selected_registration').text("n/a");
 	}
 
-	if (selected.icaotype !== null) {
-		$('#selected_icaotype').text(selected.icaotype);
+	if (selected.icaoType !== null) {
+		$('#selected_icaotype').text(selected.icaoType);
 	} else {
 		$('#selected_icaotype').text("n/a");
 	}
@@ -1299,10 +1302,10 @@ function refreshHighlighted() {
 		$('#highlighted_callsign').text('n/a');
 	}
 
-	if (highlighted.icaotype !== null) {
-		$('#higlighted_icaotype').text(highlighted.icaotype);
+	if (highlighted.icaoType !== null) {
+		$('#highlighted_icaotype').text(highlighted.icaoType);
 	} else {
-		$('#higlighted_icaotype').text("n/a");
+		$('#highlighted_icaotype').text("n/a");
 	}
 
 	$('#highlighted_source').text(format_data_source(highlighted.getDataSource()));
@@ -1387,7 +1390,7 @@ function refreshTableInfo() {
 				tableplane.flight_cache = tableplane.flight;
 			}
 			tableplane.tr.cells[3].textContent = (tableplane.registration != null ? tableplane.registration : "");
-			tableplane.tr.cells[4].textContent = (tableplane.icaotype != null ? tableplane.icaotype : "");
+			tableplane.tr.cells[4].textContent = (tableplane.icaoType != null ? tableplane.icaoType : "");
 			tableplane.tr.cells[5].textContent = (tableplane.squawk != null ? tableplane.squawk : "");
 			tableplane.tr.cells[6].textContent = format_altitude_brief(tableplane.altitude, tableplane.vert_rate, DisplayUnits);
 			tableplane.tr.cells[7].textContent = format_speed_brief(tableplane.gs, DisplayUnits);
@@ -1461,7 +1464,7 @@ function compareNumeric(xf,yf) {
 function sortByICAO()     { sortBy('icao',    compareAlpha,   function(x) { return x.icao; }); }
 function sortByFlight()   { sortBy('flight',  compareBeta,   function(x) { return x.flight ? x.flight : x.registration; }); }
 function sortByRegistration()   { sortBy('registration',    compareAlpha,   function(x) { return x.registration; }); }
-function sortByAircraftType()   { sortBy('icaotype',        compareAlpha,   function(x) { return x.icaotype; }); }
+function sortByAircraftType()   { sortBy('icaoType',        compareAlpha,   function(x) { return x.icaoType; }); }
 function sortBySquawk()   { sortBy('squawk',  compareAlpha,   function(x) { return x.squawk; }); }
 function sortByAltitude() { sortBy('altitude',compareNumeric, function(x) { return (x.altitude == "ground" ? -1e9 : x.altitude); }); }
 function sortBySpeed()    { sortBy('speed',   compareNumeric, function(x) { return x.gs; }); }
@@ -2134,4 +2137,38 @@ function updatePiAwareOrFlightFeeder() {
 		PageName = 'PiAware SkyAware';
 	}
 	refreshPageTitle();
+}
+
+function fetchPfData() {
+		$.ajax({ url: 'chunks/pf.json',
+			timeout: 3000,
+			cache: false,
+			dataType: 'json' })
+		.done(function(data) {
+			for (const i in PlanesOrdered) {
+				const plane = PlanesOrdered[i];
+				const ac = data.aircraft[plane.icao.toUpperCase()];
+				if (!ac) {
+					continue;
+				}
+				plane.pfRoute = ac.route;
+				plane.pfMach = ac.mach;
+				plane.pfFlightno = ac.flightno;
+				if (ac.reg && ac.reg != "????")
+					plane.registration = ac.reg;
+				if (ac.type && ac.type != "????")
+					plane.icaoType = ac.type;
+				if (plane.icaoType != plane.icaoTypeCache) {
+					var typeData = _aircraft_type_cache[plane.icaoType];
+					if (typeData) {
+						plane.typeDescription = typeData.desc;
+						plane.wtc = typeData.wtc;
+					}
+					console.log(plane.icaoType + " " + plane.icaoTypeCache + " " + plane.typeDescription + "-" + plane.wtc);
+					//console.log(plane.flight);
+					plane.icaoTypeCache = plane.icaoType;
+				}
+
+			}
+		});
 }

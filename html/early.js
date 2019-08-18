@@ -3,6 +3,7 @@
 var Dump1090Version = "unknown version";
 var RefreshInterval = 1000;
 var enable_uat = false;
+var enable_pf_data = false;
 var HistoryChunks = false;
 var nHistoryItems = 0;
 var chunkNames;
@@ -38,6 +39,7 @@ $.when(get_receiver_defer).done(function(data){
 		chunkNames = data.chunks;
 		nHistoryItems = chunkNames.length;
 		enable_uat = (data.enable_uat == "true");
+		enable_pf_data = (data.pf_data == "true");
 		if (enable_uat)
 			console.log("UAT/978 enabled!");
 		console.log("Chunks enabled");
