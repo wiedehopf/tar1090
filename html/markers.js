@@ -158,9 +158,10 @@ var TypeDesignatorIcons = {
 	'CL35': ['jet_swept', 0.92],
 	'CL60': ['jet_swept', 0.96], // 22t
 	'GLEX': ['jet_swept', 1],
+	'G150': ['jet_swept', 0.88], // 11t
+	'G280': ['jet_swept', 0.92], // 18t
 	'GL5T': ['jet_swept', 1],
 	'GLF2': ['jet_swept', 0.92],
-	'G280': ['jet_swept', 0.92],
 	'GLF3': ['jet_swept', 0.96],
 	'GLF4': ['jet_swept', 0.96],
 	'GLF5': ['jet_swept', 0.96],

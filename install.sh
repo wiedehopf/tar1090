@@ -50,6 +50,7 @@ if [ -f $ipath/html/defaults.js ]; then
 	cp $ipath/html/config.js html/
 fi
 
+rm -f $ipath/html/db/*.json
 cp -r * $ipath
 
 # bust cache for all css and js files
