@@ -464,6 +464,9 @@ function init_page() {
 			selectAllPlanes();
 		}
 	})
+	$('#mapdim_checkbox').on('click', function() {
+		toggleMapDim();
+	});
 
 	// Force map to redraw if sidebar container is resized - use a timer to debounce
 	$("#sidebar_container").on("resize", function() {
@@ -880,6 +883,15 @@ function initialize_map() {
 			createSiteCircleFeatures();
 		}
 	}
+
+	if (localStorage['MapDim'] === "true") {
+		const maps = layers[0].getLayersArray();
+		for (const i in maps) {
+			maps[i].dimKey = maps[i].on('postcompose', dim);
+		}
+		$('#mapdim_checkbox').addClass('settingsCheckboxChecked');
+	}
+
 
 	// Add terrain-limit rings. To enable this:
 	//
@@ -1976,6 +1988,42 @@ function toggleDebug() {
 	for (var i in PlanesOrdered) {
 		PlanesOrdered[i].remakeTrail();
 	}
+}
+
+function dim(evt) {
+	const dim = 0.3;
+	const contrast = 0.1;
+	evt.context.globalCompositeOperation = 'multiply';
+	if (evt.context.globalCompositeOperation == 'multiply') {
+		evt.context.fillStyle = 'rgba(0,0,0,'+dim+')';
+		evt.context.fillRect(0, 0, evt.context.canvas.width, evt.context.canvas.height);
+	}
+	evt.context.globalCompositeOperation = 'overlay';
+	if (evt.context.globalCompositeOperation == 'overlay') {
+		evt.context.fillStyle = 'rgba(0,0,0,'+contrast+')';
+		evt.context.fillRect(0, 0, evt.context.canvas.width, evt.context.canvas.height);
+	}
+	evt.context.globalCompositeOperation = 'source-over';
+}
+
+function toggleMapDim() {
+	const maps = layers[0].getLayersArray();
+	if (localStorage['MapDim'] === "true") {
+		localStorage['MapDim'] = "false";
+
+		for (const i in maps) {
+			ol.Observable.unByKey(maps[i].dimKey);
+		}
+		$('#mapdim_checkbox').removeClass('settingsCheckboxChecked');
+	} else {
+		localStorage['MapDim'] = "true";
+
+		for (const i in maps) {
+			maps[i].dimKey = maps[i].on('postcompose', dim);
+		}
+		$('#mapdim_checkbox').addClass('settingsCheckboxChecked');
+	}
+	OLMap.renderSync();
 }
 
 function toggleAltitudeChart(switchToggle) {
