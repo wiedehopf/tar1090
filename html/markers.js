@@ -82,12 +82,12 @@ var shapes = {
 }
 
 var TypeDesignatorIcons = {
-	'A318': ['airliner', 0.88], // shortened a320
-	'A319': ['airliner', 0.92], // shortened a320
+	'A318': ['airliner', 0.88], // shortened a320 68t
+	'A319': ['airliner', 0.92], // shortened a320 75t
 	'A19N': ['airliner', 0.93], // shortened a320
-	'A320': ['airliner', 0.96],
+	'A320': ['airliner', 0.96], // 78t
 	'A20N': ['airliner', 0.97],
-	'A321': ['airliner', 1.02], // stretched a320
+	'A321': ['airliner', 1.02], // stretched a320 93t
 	'A21N': ['airliner', 1.03], // stretched a320
 
 	'A306': ['heavy_2e', 0.96],
@@ -145,11 +145,15 @@ var TypeDesignatorIcons = {
 	'C550': ['jet_nonswept', 1],
 	'C560': ['jet_nonswept', 1],
 	'C56X': ['jet_nonswept', 1], // 9t
+	'LJ35': ['jet_nonswept', 1], // 8t
+	'LR35': ['jet_nonswept', 1], // wrong but in database
+	'LJ60': ['jet_nonswept', 1], // 10t
 	'LR45': ['jet_nonswept', 1], // 10t
 	'C650': ['jet_swept', 0.90],
 	'C680': ['jet_swept', 0.92], // 14t
 	'C68A': ['jet_swept', 0.92], // 14t
 	'C750': ['jet_swept', 0.94], // 17t
+	'FA50': ['jet_swept', 0.94], // 18t
 	'CL30': ['jet_swept', 0.92], // 14t
 	'CL35': ['jet_swept', 0.92],
 	'CL60': ['jet_swept', 0.96], // 22t
@@ -169,6 +173,8 @@ var TypeDesignatorIcons = {
 	'E195': ['airliner', 0.84], // 52t
 	'E290': ['airliner', 0.84], // 56t
 	'E295': ['airliner', 0.86], // 62t
+	'BCS1': ['airliner', 0.86], // 64t
+	'BCS3': ['airliner', 0.88], // 70t
 	'E135': ['jet_swept', 0.96], // 20t
 	'E35L': ['jet_swept', 0.96], // 24t
 	'E145': ['jet_swept', 0.96], // 22t
@@ -194,6 +200,7 @@ var TypeDesignatorIcons = {
 	'E50P': ['jet_nonswept', 0.96],
 	'EA50': ['jet_nonswept', 0.96],
 	'HDJT': ['jet_nonswept', 0.96],
+	'SF50': ['jet_nonswept', 0.94],
 
 
 	'A37': ['hi_perf', 1],
@@ -273,8 +280,10 @@ var TypeDescriptionIcons = {
 	'L1J': ['hi_perf', 1],
 
 	'L2P': ['twin_small', 1],
-	'L2T': ['twin_large', 1],
+	'L2T': ['twin_large', 0.96],
+	'L2T-M': ['twin_large', 1.12],
 
+	'L1J-L': ['jet_nonswept', 1], // < 7t
 	'L2J-L': ['jet_nonswept', 1], // < 7t
 	'L2J-M': ['airliner', 1], // < 136t
 	'L2J-H': ['heavy_2e', 1], // > 136t
