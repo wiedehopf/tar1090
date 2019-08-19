@@ -179,6 +179,7 @@ do
 	sleep 10 &
 	cd $dir
 	if wget -T 5 -q -O pf.tmp http://127.0.0.1:30053/ajax/aircraft 2>/dev/null; then
+		sed -i -e 's/"user_l[a-z]*":"[0-9,.,-]*",//g' pf.tmp
 		mv pf.tmp pf.json
 		sed -e "s?\"pf_data\" : \"false\"?\"pf_data\" : \"true\"?" chunks.json > chunks.json.tmp
 		mv chunks.json.tmp chunks.json
