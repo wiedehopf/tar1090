@@ -29,6 +29,7 @@ var debugAll = false;
 var fragment;
 var grouptype_checkbox;
 var multiSelect = false;
+var uat_data = null;
 
 
 var SpecialSquawks = {
@@ -212,12 +213,12 @@ function fetchData() {
 
 	if (enable_uat) {
 		FetchPendingUAT = $.ajax({ url: 'chunks/978.json',
-			timeout: 3000,
+			timeout: 2000,
 			cache: false,
 			dataType: 'json' });
 
 		$.when(FetchPendingUAT).done(function(data) {
-			processReceiverUpdate(data);
+			uat_data = data;
 		});
 	}
 	FetchPending = $.ajax({ url: 'data/aircraft.json',
@@ -245,7 +246,13 @@ function fetchData() {
 		console.log(((now-last)*1000).toFixed(0) + " " + diff +" "+ delay + "                  "+now);
 		*/
 
-		processReceiverUpdate(data);
+		if (uat_data && uat_data.now > uat_now) {
+			processReceiverUpdate(uat_data);
+			uat_data = null;
+		}
+		if (data.now > now) {
+			processReceiverUpdate(data);
+		}
 
 
 		// update timestamps, visibility, history track for all planes - not only those updated
@@ -256,12 +263,14 @@ function fetchData() {
 			else
 				plane.updateTick(now, last);
 		}
+		selectNewPlanes();
 
 		refreshSelected();
 		refreshHighlighted();
-		refreshClock(new Date(now * 1000));
 		refreshTableInfo();
+		refreshClock(new Date(now * 1000));
 
+		OLMap.render();
 		// Check for stale receiver data
 		if (last == now) {
 			StaleReceiverCount++;
@@ -920,7 +929,7 @@ function initialize_map() {
 			var color = range_outline_color;
 			if (range_outline_colored_by_altitude) {
 				var colorArr = altitudeColor(altitude);
-				color = 'hsl(' + (colorArr[0]/5).toFixed(0)*5 + ',' + (colorArr[1]/5).toFixed(0)*5 + '%,' + (colorArr[2]/5).toFixed(0)*5 + '%)'
+				color = 'hsl(' + colorArr[0].toFixed(0) + ',' + colorArr[1].toFixed(0) + '%,' + colorArr[2].toFixed(0) + '%)';
 			}
 			var ringStyle = new ol.style.Style({
 				fill: null,
@@ -1443,7 +1452,6 @@ function refreshTableInfo() {
 	}
 
 	resortTable();
-	selectNewPlanes();
 }
 
 //
@@ -1669,17 +1677,15 @@ function selectAllPlanes() {
 // on refreshes, try to find new planes and mark them as selected
 function selectNewPlanes() {
 	if (SelectedAllPlanes) {
-		for (var key in Planes) {
-			if (!Planes[key].visible || Planes[key].isFiltered()) {
-				Planes[key].selected = false;
-				Planes[key].clearLines();
-				Planes[key].updateMarker();
-			} else {
-				if (Planes[key].selected !== true) {
-					Planes[key].selected = true;
-					Planes[key].updateLines();
-					Planes[key].updateMarker();
+		for (var key in PlanesOrdered) {
+			if (!PlanesOrdered[key].visible || PlanesOrdered[key].isFiltered()) {
+				if (PlanesOrdered[key].selected) {
+					PlanesOrdered[key].selected = false;
+					PlanesOrdered[key].clearLines();
 				}
+			} else if (PlanesOrdered[key].selected !== true) {
+				PlanesOrdered[key].selected = true;
+				PlanesOrdered[key].updateLines();
 			}
 		}
 	}
@@ -1887,9 +1893,9 @@ function onDisplayUnitsChanged(e) {
 	updatePlaneFilter();
 
 	// Refresh data
-	refreshTableInfo();
 	refreshSelected();
 	refreshHighlighted();
+	refreshTableInfo();
 
 	// Redraw range rings
 	if (SitePosition !== null && SitePosition !== undefined && SiteCircles) {

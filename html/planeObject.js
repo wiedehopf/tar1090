@@ -430,7 +430,7 @@ PlaneObject.prototype.getMarkerColor = function() {
 	if (l < 5) l = 5;
 	else if (l > 95) l = 95;
 
-	return 'hsl(' + (h/5).toFixed(0)*5 + ',' + (s/5).toFixed(0)*5 + '%,' + (l/5).toFixed(0)*5 + '%)'
+	return 'hsl(' + h.toFixed(0) + ',' + s.toFixed(0) + '%,' + l.toFixed(0) + '%)'
 }
 
 PlaneObject.prototype.getAltitudeColor = function(altitude) {
@@ -772,7 +772,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
 // return the styling of the lines based on altitude
 PlaneObject.prototype.altitudeLines = function(altitude) {
 	var colorArr = this.getAltitudeColor(altitude);
-	var color = 'hsl(' + (colorArr[0]/5).toFixed(0)*5 + ',' + (colorArr[1]/5).toFixed(0)*5 + '%,' + (colorArr[2]/5).toFixed(0)*5 + '%)'
+	var color = 'hsl(' + colorArr[0].toFixed(0) + ',' + colorArr[1].toFixed(0) + '%,' + colorArr[2].toFixed(0) + '%)';
 	if (!debug) {
 		return new ol.style.Style({
 			stroke: new ol.style.Stroke({
