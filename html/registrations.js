@@ -93,7 +93,7 @@ const registration_from_hexid = (function () {
 			mapping.end = mapping.start - mapping.offset +
 				c1 * mapping.s1 +
 				c2 * mapping.s2 +
-				c3 - mapping.offset;
+				c3;
 		} else {
 			mapping.end = mapping.start - mapping.offset +
 				(mapping.alphabet.length - 1) * mapping.s1 +
