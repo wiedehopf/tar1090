@@ -72,16 +72,40 @@ var ColorByAlt = {
 			{ alt: 8000, val: 72 },   // yellow
 			{ alt: 9000, val: 85 },   // green yellow
 			{ alt: 11000, val: 140 },   // light green
-			{ alt: 40000, val: 300 } ], // magenta
+			{ alt: 40000, val: 300 } , // magenta
+			{ alt: 51000, val: 360 } , // red
+		],
 		s: 88,
-		l: 44,
+		l: [
+			{ h: 0,   val: 56},
+			{ h: 20,  val: 52},
+			{ h: 40,  val: 44},
+			{ h: 60,  val: 40},
+			{ h: 80,  val: 41},
+			{ h: 100, val: 42},
+			{ h: 120, val: 43},
+			{ h: 140, val: 43},
+			{ h: 160, val: 42},
+			{ h: 180, val: 41},
+			{ h: 200, val: 47},
+			{ h: 220, val: 55},
+			{ h: 240, val: 59},
+			{ h: 260, val: 56},
+			{ h: 280, val: 53},
+			{ h: 290, val: 49},
+			{ h: 300, val: 44},
+			{ h: 310, val: 49},
+			{ h: 320, val: 50},
+			{ h: 340, val: 54},
+			{ h: 360, val: 56},
+		],
 	},
 
 	// Changes added to the color of the currently selected plane
-	selected : { h: 0, s: -10, l: +20 },
+	selected : { h: 0, s: 5, l: +20 },
 
 	// Changes added to the color of planes that have stale position info
-	stale :    { h: 0, s: -10, l: +30 },
+	stale :    { h: 0, s: -50, l: 0 },
 
 	// Changes added to the color of planes that have positions from mlat
 	mlat :     { h: 0, s: -10, l: -10 }
@@ -133,3 +157,49 @@ var BingMapsAPIKey = null;
 // currently it's just a data dump of the new fields with no UX work.
 var ExtendedData = false;
 var pf_data = ["chunks/pf.json"]
+/*
+60
+54
+44
+38
+40
+42
+42
+42
+41
+40
+48
+59
+64
+60
+56
+50
+44
+51
+52
+58
+60
+
+old:
+69
+60
+45
+36
+39
+41
+42
+42
+40
+39
+51
+67
+74
+69
+62
+54
+45
+55
+57
+65
+69
+*/

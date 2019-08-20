@@ -444,7 +444,7 @@ PlaneObject.prototype.getAltitudeColor = function(altitude) {
 function altitudeColor(altitude) {
 	var h, s, l;
 
-	if (altitude === null) {
+	if (altitude == null) {
 		h = ColorByAlt.unknown.h;
 		s = ColorByAlt.unknown.s;
 		l = ColorByAlt.unknown.l;
@@ -454,7 +454,6 @@ function altitudeColor(altitude) {
 		l = ColorByAlt.ground.l;
 	} else {
 		s = ColorByAlt.air.s;
-		l = ColorByAlt.air.l;
 
 		// find the pair of points the current altitude lies between,
 		// and interpolate the hue between those points
@@ -466,6 +465,19 @@ function altitudeColor(altitude) {
 					h = hpoints[i].val;
 				} else {
 					h = hpoints[i].val + (hpoints[i+1].val - hpoints[i].val) * (altitude - hpoints[i].alt) / (hpoints[i+1].alt - hpoints[i].alt)
+				}
+				break;
+			}
+		}
+		var lpoints = ColorByAlt.air.l;
+		lpoints = lpoints.length ? lpoints : [{h:0, val:lpoints}];
+		l = lpoints[0].val;
+		for (var i = lpoints.length-1; i >= 0; --i) {
+			if (h > lpoints[i].h) {
+				if (i == lpoints.length-1) {
+					l = lpoints[i].val;
+				} else {
+					l = lpoints[i].val + (lpoints[i+1].val - lpoints[i].val) * (h - lpoints[i].h) / (lpoints[i+1].h - lpoints[i].h)
 				}
 				break;
 			}
