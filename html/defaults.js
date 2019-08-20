@@ -46,10 +46,10 @@ var range_outline_colored_by_altitude = false;
 // All color values are given as Hue (0-359) / Saturation (0-100) / Lightness (0-100)
 var ColorByAlt = {
 	// HSL for planes with unknown altitude:
-	unknown : { h: 0,   s: 0,   l: 30 },
+	unknown : { h: 0,   s: 0,   l: 60 },
 
 	// HSL for planes that are on the ground:
-	ground  : { h: 0, s: 0, l: 45 },
+	ground  : { h: 220, s: 0, l: 30 },
 
 	air : {
 		// These define altitude-to-hue mappings
@@ -77,21 +77,21 @@ var ColorByAlt = {
 		],
 		s: 88,
 		l: [
-			{ h: 0,   val: 56},
-			{ h: 20,  val: 52},
+			{ h: 0,   val: 54},
+			{ h: 20,  val: 50},
 			{ h: 40,  val: 44},
-			{ h: 60,  val: 40},
-			{ h: 80,  val: 41},
+			{ h: 60,  val: 42},
+			{ h: 80,  val: 42},
 			{ h: 100, val: 42},
 			{ h: 120, val: 43},
 			{ h: 140, val: 43},
-			{ h: 160, val: 42},
+			{ h: 160, val: 41},
 			{ h: 180, val: 41},
-			{ h: 200, val: 47},
-			{ h: 220, val: 55},
-			{ h: 240, val: 59},
-			{ h: 260, val: 56},
-			{ h: 280, val: 53},
+			{ h: 200, val: 48},
+			{ h: 220, val: 53},
+			{ h: 240, val: 55},
+			{ h: 260, val: 51},
+			{ h: 280, val: 51},
 			{ h: 290, val: 49},
 			{ h: 300, val: 44},
 			{ h: 310, val: 49},
@@ -102,13 +102,13 @@ var ColorByAlt = {
 	},
 
 	// Changes added to the color of the currently selected plane
-	selected : { h: 0, s: 5, l: +20 },
+	selected : { h: 0, s: 10, l: 5 },
 
 	// Changes added to the color of planes that have stale position info
-	stale :    { h: 0, s: -50, l: 0 },
+	stale :    { h: 0, s: -50, l: 12 },
 
 	// Changes added to the color of planes that have positions from mlat
-	mlat :     { h: 0, s: -10, l: -10 }
+	mlat :     { h: 0, s: 0, l: 0 }
 };
 
 // For a monochrome display try this:
@@ -125,7 +125,7 @@ var ColorByAlt = {
 var OutlineADSBColor = '#000000';
 
 // Outline color for aircraft icons with a mlat position
-var OutlineMlatColor = '#4040FF';
+var OutlineMlatColor = '#001F66';
 
 var SiteCircles = true; // true to show circles (only shown if the center marker is shown)
 // In miles, nautical miles, or km (depending settings value 'DisplayUnits')

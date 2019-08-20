@@ -398,10 +398,13 @@ PlaneObject.prototype.getMarkerColor = function() {
 	l = colorArr[2];
 
 	// If we have not seen a recent position update, change color
-	if (this.seen_pos > 15 && this.altitude !== "ground") {
+	if (this.seen_pos > 15)  {
 		h += ColorByAlt.stale.h;
 		s += ColorByAlt.stale.s;
 		l += ColorByAlt.stale.l;
+	}
+	if (this.altitude == "ground") {
+		l += 15;
 	}
 
 	// If this marker is selected, change color
@@ -504,7 +507,7 @@ PlaneObject.prototype.updateIcon = function() {
 	var col = this.getMarkerColor();
 	//var opacity = 1.0;
 	var outline = (this.dataSource == "mlat" ? OutlineMlatColor : OutlineADSBColor);
-	var add_stroke = (this.selected && !SelectedAllPlanes) ? ' stroke="black" stroke-width="1px"' : '';
+	var add_stroke = (this.selected && !SelectedAllPlanes) ? (' stroke="'+outline+'" stroke-width="1px"') : '';
 	var baseMarkerKey = (this.category ? this.category : "A0") + "_" + this.typeDescription + "_" + this.wtc  + "_" + this.icaoType;
 	if (!this.baseMarker || this.baseMarkerKey != baseMarkerKey) {
 		this.baseMarkerKey = baseMarkerKey;
