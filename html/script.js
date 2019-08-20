@@ -6,6 +6,7 @@
 
 // Define our global variables
 var OLMap         = null;
+var center = [50,10];
 var StaticFeatures = new ol.Collection();
 var SiteCircleFeatures = new ol.Collection();
 var PlaneIconFeatures = new ol.Collection();
@@ -204,6 +205,8 @@ function setupPlane(hex, plane) {
 }
 
 function fetchData() {
+	localStorage['CenterLon'] = center[0];
+	localStorage['CenterLat'] = center[1];
 	if (FetchPending != null && FetchPending.state() == 'pending') {
 		// don't double up on fetches, let the last one resolve
 		return;
@@ -347,12 +350,11 @@ function init_page() {
 	});
 
 	$('#close-button').on('click', function() {
-		if (SelectedPlane !== null) {
-			var selectedPlane = Planes[SelectedPlane];
+		if (SelectedPlane) {
+			SelectedPlane.selected = null;
+			SelectedPlane.clearLines();
+			SelectedPlane.updateMarker();
 			SelectedPlane = null;
-			selectedPlane.selected = null;
-			selectedPlane.clearLines();
-			selectedPlane.updateMarker();         
 			refreshSelected();
 			refreshHighlighted();
 			$('#selected_infoblock').hide();
@@ -619,7 +621,7 @@ function parse_history() {
 	window.setInterval(fetchData, RefreshInterval);
 	window.setInterval(reaper, 60000);
 	if (enable_pf_data) {
-		window.setInterval(fetchPfData, RefreshInterval*10);
+		window.setInterval(fetchPfData, RefreshInterval*10.314);
 	}
 
 	// And kick off one refresh immediately.
@@ -664,8 +666,8 @@ function initialize_map() {
 		DefaultCenterLon = receiverJson.lon;
 	}
 	// Load stored map settings if present
-	CenterLat = Number(localStorage['CenterLat']) || DefaultCenterLat;
-	CenterLon = Number(localStorage['CenterLon']) || DefaultCenterLon;
+	center[0] = CenterLat = Number(localStorage['CenterLat']) || DefaultCenterLat;
+	center[1] = CenterLon = Number(localStorage['CenterLon']) || DefaultCenterLon;
 	ZoomLvl = Number(localStorage['ZoomLvl']) || DefaultZoomLvl;
 	ZoomLvlCache = ZoomLvl;
 	MapType_tar1090 = localStorage['MapType_tar1090'];
@@ -789,15 +791,12 @@ function initialize_map() {
 
 	// Listeners for newly created Map
 	OLMap.getView().on('change:center', function(event) {
-		var center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
-		localStorage['CenterLon'] = center[0]
-		localStorage['CenterLat'] = center[1]
+		center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
 		if (FollowSelected) {
 			// On manual navigation, disable follow
-			var selected = Planes[SelectedPlane];
-			if (typeof selected === 'undefined' ||
-				(Math.abs(center[0] - selected.position[0]) > 0.0001 &&
-					Math.abs(center[1] - selected.position[1]) > 0.0001)){
+			if (!SelectedPlane ||
+				(Math.abs(center[0] - SelectedPlane.position[0]) > 0.0001 &&
+					Math.abs(center[1] - SelectedPlane.position[1]) > 0.0001)){
 				FollowSelected = false;
 				refreshSelected();
 				refreshHighlighted();
@@ -1050,11 +1049,6 @@ function refreshSelected() {
 
 	refreshPageTitle();
 
-	var selected = false;
-	if (typeof SelectedPlane !== 'undefined' && SelectedPlane != "ICAO" && SelectedPlane != null) {
-		selected = Planes[SelectedPlane];
-	}
-
 	$('#dump1090_infoblock').css('display','block');
 	$('#dump1090_version').text(Dump1090Version);
 	$('#dump1090_total_ac').text(TrackedAircraft);
@@ -1069,24 +1063,25 @@ function refreshSelected() {
 
 	setSelectedInfoBlockVisibility();
 
-	if (!selected) {
+	if (!SelectedPlane) {
 		return;
 	}
+	const selected = SelectedPlane;
 
-	if (selected.flight !== null && selected.flight !== "") {
+	if (selected.flight && selected.flight.replace(/ /g, '')) {
 		$('#selected_callsign').text(selected.flight);
 	} else {
 		$('#selected_callsign').text('n/a');
 	}
 	$('#selected_flightaware_link').html(getFlightAwareModeSLink(selected.icao, selected.flight ? selected.flight : selected.registration, "Visit Flight Page"));
 
-	if (selected.registration !== null) {
+	if (selected.registration) {
 		$('#selected_registration').text(selected.registration);
 	} else {
 		$('#selected_registration').text("n/a");
 	}
 
-	if (selected.icaoType !== null) {
+	if (selected.icaoType) {
 		$('#selected_icaotype').text(selected.icaoType);
 	} else {
 		$('#selected_icaotype').text("n/a");
@@ -1583,7 +1578,7 @@ function selectPlaneByHex(hex,autofollow) {
 		deselectAllPlanes();
 	}
 	// already selected plane
-	var oldPlane = Planes[SelectedPlane];
+	var oldPlane = SelectedPlane;
 	// plane to be selected
 	var newPlane = Planes[hex];
 
@@ -1612,13 +1607,13 @@ function selectPlaneByHex(hex,autofollow) {
 
 	if (newPlane) {
 		// Assign the new selected
-		SelectedPlane = newPlane.icao;
+		SelectedPlane = newPlane;
 		newPlane.selected = true;
 		newPlane.updateLines();
 		newPlane.updateMarker();
 		$(newPlane.tr).addClass("selected");
 		newPlane.logSel(newPlane.history_size);
-		console.log(newPlane.baseMarkerKey);
+		//console.log(newPlane.baseMarkerKey);
 	} else {
 		SelectedPlane = null;
 	}
@@ -1651,10 +1646,10 @@ function selectAllPlanes() {
 	} else {
 		// If SelectedPlane has something in it, clear out the selected
 		if (SelectedPlane != null) {
-			Planes[SelectedPlane].selected = false;
-			Planes[SelectedPlane].clearLines();
-			Planes[SelectedPlane].updateMarker();
-			$(Planes[SelectedPlane].tr).removeClass("selected");
+			SelectedPlane.selected = false;
+			SelectedPlane.clearLines();
+			SelectedPlane.updateMarker();
+			$(SelectedPlane.tr).removeClass("selected");
 		}
 
 		SelectedPlane = null;
@@ -1795,9 +1790,8 @@ function setColumnVisibility() {
 
 function setSelectedInfoBlockVisibility() {
 	var mapIsVisible = $("#map_container").is(":visible");
-	var planeSelected = (typeof SelectedPlane !== 'undefined' && SelectedPlane != null && SelectedPlane != "ICAO");
 
-	if (planeSelected && mapIsVisible) {
+	if (SelectedPlane && mapIsVisible) {
 		$('#selected_infoblock').show();
 		$('#sidebar_canvas').css('margin-bottom', $('#selected_infoblock').height() + 'px');
 	}
@@ -1809,48 +1803,39 @@ function setSelectedInfoBlockVisibility() {
 
 // Reposition selected plane info box if it overlaps plane marker
 function adjustSelectedInfoBlockPosition() {
-	if (typeof Planes === 'undefined' || typeof SelectedPlane === 'undefined' || Planes === null) {
+	return; // this function is probably obsolete
+	if (!SelectedPlane || !SelectedPlane.marker) {
 		return;
 	}
+	// Get marker position
+	var marker = SelectedPlane.marker;
+	var markerCoordinates = SelectedPlane.marker.getGeometry().getCoordinates();
+	var markerPosition = OLMap.getPixelFromCoordinate(markerCoordinates);
 
-	var selectedPlane = Planes[SelectedPlane];
+	// Get map size
+	var mapCanvas = $('#map_canvas');
+	var mapExtent = getExtent(0, 0, mapCanvas.width(), mapCanvas.height());
 
-	if (selectedPlane === undefined || selectedPlane === null || selectedPlane.marker === undefined || selectedPlane.marker === null) {
-		return;
-	}
+	// Check for overlap
+	if (isPointInsideExtent(markerPosition[0], markerPosition[1], infoBoxExtent)) {
+		// Array of possible new positions for info box
+		var candidatePositions = [];
+		candidatePositions.push( { x: 40, y: 60 } );
+		candidatePositions.push( { x: 40, y: markerPosition[1] + 80 } );
 
-	try {
-		// Get marker position
-		var marker = selectedPlane.marker;
-		var markerCoordinates = selectedPlane.marker.getGeometry().getCoordinates();
-		var markerPosition = OLMap.getPixelFromCoordinate(markerCoordinates);
+		// Find new position
+		for (var i = 0; i < candidatePositions.length; i++) {
+			var candidatePosition = candidatePositions[i];
+			var candidateExtent = getExtent(candidatePosition.x, candidatePosition.y, infoBox.outerWidth(), infoBox.outerHeight());
 
-		// Get map size
-		var mapCanvas = $('#map_canvas');
-		var mapExtent = getExtent(0, 0, mapCanvas.width(), mapCanvas.height());
-
-		// Check for overlap
-		if (isPointInsideExtent(markerPosition[0], markerPosition[1], infoBoxExtent)) {
-			// Array of possible new positions for info box
-			var candidatePositions = [];
-			candidatePositions.push( { x: 40, y: 60 } );
-			candidatePositions.push( { x: 40, y: markerPosition[1] + 80 } );
-
-			// Find new position
-			for (var i = 0; i < candidatePositions.length; i++) {
-				var candidatePosition = candidatePositions[i];
-				var candidateExtent = getExtent(candidatePosition.x, candidatePosition.y, infoBox.outerWidth(), infoBox.outerHeight());
-
-				if (!isPointInsideExtent(markerPosition[0],  markerPosition[1], candidateExtent) && isPointInsideExtent(candidatePosition.x, candidatePosition.y, mapExtent)) {
-					// Found a new position that doesn't overlap marker - move box to that position
-					infoBox.css("left", candidatePosition.x);
-					infoBox.css("top", candidatePosition.y);
-					return;
-				}
+			if (!isPointInsideExtent(markerPosition[0],  markerPosition[1], candidateExtent) && isPointInsideExtent(candidatePosition.x, candidatePosition.y, mapExtent)) {
+				// Found a new position that doesn't overlap marker - move box to that position
+				infoBox.css("left", candidatePosition.x);
+				infoBox.css("top", candidatePosition.y);
+				return;
 			}
 		}
-	} 
-	catch(e) { }
+	}
 }
 
 function getExtent(x, y, width, height) {
@@ -1925,12 +1910,11 @@ function onFilterByAltitude(e) {
 	updatePlaneFilter();
 	refreshTableInfo();
 
-	var selectedPlane = Planes[SelectedPlane];
-	if (selectedPlane !== undefined && selectedPlane !== null && selectedPlane.isFiltered()) {
+	if (SelectedPlane && SelectedPlane.isFiltered()) {
+		SelectedPlane.selected = false;
+		SelectedPlane.clearLines();
+		SelectedPlane.updateMarker();
 		SelectedPlane = null;
-		selectedPlane.selected = false;
-		selectedPlane.clearLines();
-		selectedPlane.updateMarker();         
 		refreshSelected();
 		refreshHighlighted();
 	}
@@ -2221,7 +2205,7 @@ function fetchPfData() {
 						plane.typeDescription = typeData.desc;
 						plane.wtc = typeData.wtc;
 					}
-					console.log(plane.icao +" "+ plane.flight + " was " + plane.icaoTypeCache + " and is now " + plane.icaoType + " " + plane.typeDescription + "-" + plane.wtc);
+					//console.log(plane.icao +" "+ plane.flight + " was " + plane.icaoTypeCache + " and is now " + plane.icaoType + " " + plane.typeDescription + "-" + plane.wtc);
 					//console.log(plane.flight);
 					plane.icaoTypeCache = plane.icaoType;
 				}

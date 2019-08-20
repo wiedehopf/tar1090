@@ -226,7 +226,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	// greater than the difference between data inputs
 	var time_difference = (this.position_time - this.prev_time) - (receiver_timestamp - last_timestamp);
 
-	var stale_timeout = 7;
+	var stale_timeout = 8;
 
 	// MLAT data are given some more leeway
 	if (this.dataSource == "mlat") stale_timeout = 15;
@@ -543,8 +543,6 @@ PlaneObject.prototype.updateIcon = function() {
 		if (!iconCache[svgKey]) {
 			iconCache[svgKey] = new Image();
 			iconCache[svgKey].src = svgPathToURI(this.baseMarker.svg, outline, col, add_stroke);
-		} else {
-			this.logSel("iconCache hit!");
 		}
 
 		this.markerSvgKey = svgKey;
@@ -561,6 +559,7 @@ PlaneObject.prototype.updateIcon = function() {
 			image: this.markerIcon
 		});
 		this.marker.setStyle(this.markerStyle);
+		//iconCache[svgKey] = undefined; // disable caching for testing
 	}
 
 	if (this.rotationCache == null || Math.abs(this.rotationCache - rotation) > 0.15) {
@@ -625,10 +624,10 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 
 	if (this.altitude == "ground") {
 		this.alt_rounded = this.altitude;
-	} else if (this.altitude > 5500) {
-		this.alt_rounded = (this.altitude/500).toFixed(0)*500;
+	} else if (this.altitude > 10000) {
+		this.alt_rounded = (this.altitude/1000).toFixed(0)*1000;
 	} else {
-		this.alt_rounded = (this.altitude/250).toFixed(0)*250;
+		this.alt_rounded = (this.altitude/500).toFixed(0)*500;
 	}
 
 	// don't expire the track, even display outdated track
