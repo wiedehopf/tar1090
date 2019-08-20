@@ -894,11 +894,7 @@ function initialize_map() {
 	}
 
 	if (localStorage['MapDim'] === "true") {
-		const maps = layers[0].getLayersArray();
-		for (const i in maps) {
-			maps[i].dimKey = maps[i].on('postcompose', dim);
-		}
-		$('#mapdim_checkbox').addClass('settingsCheckboxChecked');
+		toggleMapDim(true);
 	}
 
 
@@ -1997,9 +1993,11 @@ function dim(evt) {
 	evt.context.globalCompositeOperation = 'source-over';
 }
 
-function toggleMapDim() {
-	const maps = layers[0].getLayersArray();
-	if (localStorage['MapDim'] === "true") {
+function toggleMapDim(switchOn) {
+	const maps_world = layers[0].getLayersArray();
+	const maps_US = layers[1].getLayersArray();
+	const maps = maps_world.concat(maps_US);
+	if (!switchOn && localStorage['MapDim'] === "true") {
 		localStorage['MapDim'] = "false";
 
 		for (const i in maps) {
