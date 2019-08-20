@@ -59,9 +59,9 @@ function format_altitude_brief(alt, vr, displayUnits) {
 
 	// Vertical Rate Triangle
 	var verticalRateTriangle = "";
-	if (vr > 128){
+	if (vr > 192){
 		verticalRateTriangle = UP_TRIANGLE;
-	} else if (vr < -128){
+	} else if (vr < -192){
 		verticalRateTriangle = DOWN_TRIANGLE;
 	} else {
 		verticalRateTriangle = NBSP;
@@ -82,9 +82,9 @@ function format_altitude_long(alt, vr, displayUnits) {
 
 	alt_text = Math.round(convert_altitude(alt, displayUnits)).toLocaleString() + NBSP + get_unit_label("altitude", displayUnits);
 
-	if (vr > 128) {
+	if (vr > 192) {
 		return UP_TRIANGLE + NBSP + alt_text;
-	} else if (vr < -128) {
+	} else if (vr < -192) {
 		return DOWN_TRIANGLE + NBSP + alt_text;
 	} else {
 		return alt_text;

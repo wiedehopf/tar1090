@@ -201,7 +201,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 			feature: null,
 			estimated: false,
 			ground: on_ground,
-			altitude: this.altitude
+			altitude: this.alt_rounded,
 		};
 		this.track_linesegs.push(newseg);
 		this.history_size ++;
@@ -269,7 +269,8 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 			feature: null,
 			estimated: false,
 			ground: on_ground,
-			altitude: this.altitude });
+			altitude: this.alt_rounded,
+		});
 		this.history_size += 2;
 
 		return this.updateTail();
@@ -282,14 +283,15 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	if (!isNaN(true_change)) {
 		track_change = isNaN(track_change) ? true_change : Math.max(track_change, true_change);
 	}
-	var alt_change = Math.abs(this.altitude - lastseg.altitude);
+	var alt_change = Math.abs(this.alt_rounded - lastseg.altitude);
 	var since_update = this.prev_time - this.tail_update;
 	if (
-		lastseg.ground != on_ground
-		|| (!on_ground && isNaN(alt_change))
-		|| (alt_change > 700)
-		|| (alt_change > 375 && this.altitude < 9000)
-		|| (alt_change > 150 && this.altitude < 5500)
+		this.alt_rounded !== lastseg.altitude
+		//lastseg.ground != on_ground
+		//|| (!on_ground && isNaN(alt_change))
+		//|| (alt_change > 700)
+		//|| (alt_change > 375 && this.alt_rounded < 9000)
+		//|| (alt_change > 150 && this.alt_rounded < 5500)
 	) {
 		// Create a new segment as the ground state or the altitude changed.
 		// The new state is only drawn after the state has changed
@@ -306,8 +308,9 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		this.track_linesegs.push({ fixed: new ol.geom.LineString([projPrev]),
 			feature: null,
 			estimated: false,
-			altitude: this.altitude,
-			ground: on_ground });
+			altitude: this.alt_rounded,
+			ground: on_ground,
+		});
 
 		this.history_size += 2;
 
@@ -391,7 +394,7 @@ PlaneObject.prototype.getMarkerColor = function() {
 
 	var h, s, l;
 
-	var colorArr = this.getAltitudeColor(this.altitude_cached);
+	var colorArr = this.getAltitudeColor(this.alt_rounded);
 
 	h = colorArr[0];
 	s = colorArr[1];
@@ -403,7 +406,7 @@ PlaneObject.prototype.getMarkerColor = function() {
 		s += ColorByAlt.stale.s;
 		l += ColorByAlt.stale.l;
 	}
-	if (this.altitude == "ground") {
+	if (this.alt_rounded == "ground") {
 		l += 15;
 	}
 
@@ -439,7 +442,7 @@ PlaneObject.prototype.getMarkerColor = function() {
 PlaneObject.prototype.getAltitudeColor = function(altitude) {
 
 	if (typeof altitude === 'undefined') {
-		altitude = this.altitude;
+		altitude = this.alt_rounded;
 	}
 	return altitudeColor(altitude);
 }
@@ -508,7 +511,9 @@ PlaneObject.prototype.updateIcon = function() {
 	//var opacity = 1.0;
 	var outline = (this.dataSource == "mlat" ? OutlineMlatColor : OutlineADSBColor);
 	var add_stroke = (this.selected && !SelectedAllPlanes) ? (' stroke="'+outline+'" stroke-width="1px"') : '';
-	var baseMarkerKey = (this.category ? this.category : "A0") + "_" + this.typeDescription + "_" + this.wtc  + "_" + this.icaoType;
+	var baseMarkerKey = (this.category ? this.category : "A0") + "_"
+		+ this.typeDescription + "_" + this.wtc  + "_" + this.icaoType;
+
 	if (!this.baseMarker || this.baseMarkerKey != baseMarkerKey) {
 		this.baseMarkerKey = baseMarkerKey;
 		this.baseMarker = getBaseMarker(this.category, this.icaoType, this.typeDescription, this.wtc);
@@ -530,40 +535,37 @@ PlaneObject.prototype.updateIcon = function() {
 
 	//var transparentBorderWidth = (32 / this.baseMarker.scale / scaleFactor).toFixed(1);
 
-	var svgKey = col + '!' + outline + '!' + this.baseMarker.svg + '!' + add_stroke;
+	const svgKey = col + '!' + outline + '!' + this.baseMarker.svg + '!' + add_stroke;
 
-	if (this.markerStyle == null || this.markerIcon == null || this.markerSvgKey != svgKey) {
+	if (this.markerStyle == null || this.markerIcon == null || (this.markerSvgKey != svgKey)) {
 		//console.log(this.icao + " new icon and style " + this.markerSvgKey + " -> " + svgKey);
+
+		if (!iconCache[svgKey]) {
+			iconCache[svgKey] = new Image();
+			iconCache[svgKey].src = svgPathToURI(this.baseMarker.svg, outline, col, add_stroke);
+		} else {
+			this.logSel("iconCache hit!");
+		}
 
 		this.markerSvgKey = svgKey;
 		this.scaleCache = scaleFactor * this.baseScale;
 
-		var icon = new ol.style.Icon({
-			anchor: [0.5, 0.5],
-			anchorXUnits: 'fraction',
-			anchorYUnits: 'fraction',
+		this.markerIcon = new ol.style.Icon({
 			scale: this.scaleCache,
 			imgSize: this.baseMarker.size,
-			src: svgPathToURI(this.baseMarker.svg, outline, col, add_stroke),
+			img: iconCache[svgKey],
 			rotation: (this.baseMarker.noRotate ? 0 : rotation * Math.PI / 180.0),
-			//opacity: opacity,
 			rotateWithView: (this.baseMarker.noRotate ? false : true)
 		});
-
-		this.markerIcon = icon;
 		this.markerStyle = new ol.style.Style({
 			image: this.markerIcon
 		});
-
-
-		if (this.marker) {
-			this.marker.setStyle(this.markerStyle);
-		}
+		this.marker.setStyle(this.markerStyle);
 	}
 
-	if (this.rotationCache == null || Math.abs(this.rotationCache - rotation) > 0.25) {
+	if (this.rotationCache == null || Math.abs(this.rotationCache - rotation) > 0.15) {
 		this.rotationCache = rotation;
-		this.markerIcon.setRotation(rotation * Math.PI / 180.0);
+		this.markerIcon.setRotation(this.baseMarker.noRotate ? 0 : rotation * Math.PI / 180.0);
 	}
 
 	if (this.scaleCache != scaleFactor * this.baseScale) {
@@ -618,6 +620,15 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.alt_baro = data.altitude;
 	} else {
 		this.alt_baro = null;
+		this.altitude = data.alt_geom;
+	}
+
+	if (this.altitude == "ground") {
+		this.alt_rounded = this.altitude;
+	} else if (this.altitude > 5500) {
+		this.alt_rounded = (this.altitude/500).toFixed(0)*500;
+	} else {
+		this.alt_rounded = (this.altitude/250).toFixed(0)*250;
 	}
 
 	// don't expire the track, even display outdated track
@@ -629,9 +640,6 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	if (init)
 		return;
 
-	var alt_change = Math.abs(this.altitude - this.altitude_cached);
-	if (isNaN(alt_change) || alt_change >= 75)
-		this.altitude_cached = this.altitude;
 
 	// Update all of our data
 	this.messages	= data.messages;
@@ -709,12 +717,6 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.nav_altitude = null;
 	}
 
-
-	// Use geometric altitude if plane doesn't transmit alt_baro
-	if (this.altitude == null && 'alt_geom' in data) {
-		this.altitude = data.alt_geom;
-	}
-
 	// Pick vertical rate from either baro or geom rate
 	// geometric rate is generally more reliable (smoothed etc)
 	if ('geom_rate' in data) {
@@ -770,17 +772,14 @@ PlaneObject.prototype.updateMarker = function(moved) {
 		return;
 	}
 
-	this.updateIcon();
-	if (this.marker) {
-		if (moved) {
-			this.marker.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
-		}
-	} else {
+	if (!this.marker) {
 		this.marker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
 		this.marker.hex = this.icao;
-		this.marker.setStyle(this.markerStyle);
 		PlaneIconFeatures.push(this.marker);
+	} else if (moved) {
+		this.marker.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
 	}
+	this.updateIcon();
 };
 
 

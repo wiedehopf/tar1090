@@ -10,6 +10,8 @@ var StaticFeatures = new ol.Collection();
 var SiteCircleFeatures = new ol.Collection();
 var PlaneIconFeatures = new ol.Collection();
 var trailGroup = new ol.Collection();
+var iconsLayer;
+var iconCache = {};
 var Planes        = {};
 var PlanesOrdered = [];
 var PlaneFilter   = {};
@@ -254,7 +256,6 @@ function fetchData() {
 			processReceiverUpdate(data);
 		}
 
-
 		// update timestamps, visibility, history track for all planes - not only those updated
 		for (var i = 0; i < PlanesOrdered.length; ++i) {
 			var plane = PlanesOrdered[i];
@@ -265,12 +266,12 @@ function fetchData() {
 		}
 		selectNewPlanes();
 
+
 		refreshSelected();
 		refreshHighlighted();
 		refreshTableInfo();
 		refreshClock(new Date(now * 1000));
 
-		OLMap.render();
 		// Check for stale receiver data
 		if (last == now) {
 			StaleReceiverCount++;
@@ -691,7 +692,7 @@ function initialize_map() {
 
 	layers = createBaseLayers();
 
-	var iconsLayer = new ol.layer.Vector({
+	iconsLayer = new ol.layer.Vector({
 		name: 'ac_positions',
 		type: 'overlay',
 		title: 'Aircraft positions',
@@ -2029,7 +2030,7 @@ function toggleMapDim() {
 		}
 		$('#mapdim_checkbox').addClass('settingsCheckboxChecked');
 	}
-	OLMap.renderSync();
+	OLMap.render();
 }
 
 function toggleAltitudeChart(switchToggle) {

@@ -105,7 +105,7 @@ var ColorByAlt = {
 	selected : { h: 0, s: 10, l: 5 },
 
 	// Changes added to the color of planes that have stale position info
-	stale :    { h: 0, s: -50, l: 12 },
+	stale :    { h: 0, s: -35, l: 9 },
 
 	// Changes added to the color of planes that have positions from mlat
 	mlat :     { h: 0, s: 0, l: 0 }
