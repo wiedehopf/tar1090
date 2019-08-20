@@ -519,10 +519,9 @@ PlaneObject.prototype.updateIcon = function() {
 		this.baseMarker = getBaseMarker(this.category, this.icaoType, this.typeDescription, this.wtc);
 		if (!this.baseMarker)
 			console.log(baseMarkerKey);
-		if (this.baseMarker.length == 2) {
-			this.baseScale = this.baseMarker[1];
-			this.baseMarker = this.baseMarker[0];
-		}
+		this.baseScale = this.baseMarker[1];
+		this.shape = this.baseMarker[0];
+		this.baseMarker = shapes[this.shape]
 	}
 	var rotation = this.track;
 	if (rotation == null) {
@@ -533,9 +532,7 @@ PlaneObject.prototype.updateIcon = function() {
 		rotation = 0;
 	}
 
-	//var transparentBorderWidth = (32 / this.baseMarker.scale / scaleFactor).toFixed(1);
-
-	const svgKey = col + '!' + outline + '!' + this.baseMarker.svg + '!' + add_stroke;
+	const svgKey = col + '!' + outline + '!' + this.shape + '!' + add_stroke;
 
 	if (this.markerStyle == null || this.markerIcon == null || (this.markerSvgKey != svgKey)) {
 		//console.log(this.icao + " new icon and style " + this.markerSvgKey + " -> " + svgKey);

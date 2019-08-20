@@ -326,39 +326,39 @@ function getBaseMarker(category, typeDesignator, typeDescription, wtc) {
 	if (typeDesignator in TypeDesignatorIcons) {
 		var shape = TypeDesignatorIcons[typeDesignator][0];
 		var scaling = TypeDesignatorIcons[typeDesignator][1];
-		return [shapes[shape], scaling];
+		return [shape, scaling];
 	}
 
 	if (typeDescription !== undefined && typeDescription !== null && typeDescription.length === 3) {
 		if (wtc !== undefined && wtc !== null && wtc.length === 1) {
 			var typeDescriptionWithWtc = typeDescription + "-" + wtc;
 			if (typeDescriptionWithWtc === "L2J-M" && category === "A2") {
-				return shapes["jet_swept"];
+				return ["jet_swept", 1];
 			}
 			if (typeDescriptionWithWtc in TypeDescriptionIcons) {
 				var shape = TypeDescriptionIcons[typeDescriptionWithWtc][0];
 				var scaling = TypeDescriptionIcons[typeDescriptionWithWtc][1];
-				return [shapes[shape], scaling];
+				return [shape, scaling];
 			}
 		}
 
 		if (typeDescription in TypeDescriptionIcons) {
 			var shape = TypeDescriptionIcons[typeDescription][0];
 			var scaling = TypeDescriptionIcons[typeDescription][1];
-			return [shapes[shape], scaling];
+			return [shape, scaling];
 		}
 
 		var basicType = typeDescription.charAt(0);
 		if (basicType in TypeDescriptionIcons) {
-			return shapes[TypeDescriptionIcons[basicType][0]];
+			return [TypeDescriptionIcons[basicType][0], 1];
 		}
 	}
 
 	if (category in CategoryIcons) {
-		return shapes[CategoryIcons[category]];
+		return [CategoryIcons[category], 1];
 	}
 
-	return shapes['unknown'];
+	return ['unknown', 1];
 }
 
 function svgPathToSvg(path, stroke, fill, selected_stroke) {
