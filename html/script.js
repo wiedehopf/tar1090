@@ -666,8 +666,8 @@ function initialize_map() {
 		DefaultCenterLon = receiverJson.lon;
 	}
 	// Load stored map settings if present
-	center[0] = CenterLat = Number(localStorage['CenterLat']) || DefaultCenterLat;
-	center[1] = CenterLon = Number(localStorage['CenterLon']) || DefaultCenterLon;
+	center[0] = CenterLon = Number(localStorage['CenterLon']) || DefaultCenterLon;
+	center[1] = CenterLat = Number(localStorage['CenterLat']) || DefaultCenterLat;
 	ZoomLvl = Number(localStorage['ZoomLvl']) || DefaultZoomLvl;
 	ZoomLvlCache = ZoomLvl;
 	MapType_tar1090 = localStorage['MapType_tar1090'];
@@ -794,7 +794,7 @@ function initialize_map() {
 		center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
 		if (FollowSelected) {
 			// On manual navigation, disable follow
-			if (!SelectedPlane ||
+			if (!SelectedPlane || !SelectedPlane.position ||
 				(Math.abs(center[0] - SelectedPlane.position[0]) > 0.0001 &&
 					Math.abs(center[1] - SelectedPlane.position[1]) > 0.0001)){
 				FollowSelected = false;
@@ -1153,7 +1153,7 @@ function refreshSelected() {
 	$('#selected_source').text(format_data_source(selected.getDataSource()));
 	$('#selected_category').text(selected.category ? selected.category : "n/a");
 	$('#selected_sitedist').text(format_distance_long(selected.sitedist, DisplayUnits));
-	$('#selected_rssi').text(selected.rssi.toFixed(1) + ' dBFS');
+	$('#selected_rssi').text(selected.rssi ? selected.rssi.toFixed(1) + ' dBFS' : "n/a");
 	$('#selected_message_count').text(selected.messages);
 	$('#selected_photo_link').html(getFlightAwarePhotoLink(selected.registration));
 
@@ -2213,4 +2213,18 @@ function fetchPfData() {
 			}
 		});
 	}
+}
+
+
+function bearingFromLonLat(position1, position2) {
+	// Positions in format [lon in deg, lat in deg]
+	const lon1 = position1[0]*Math.PI/180;
+	const lat1 = position1[1]*Math.PI/180;
+	const lon2 = position2[0]*Math.PI/180;
+	const lat2 = position2[1]*Math.PI/180;
+
+	const y = Math.sin(lon2-lon1)*Math.cos(lat2);
+	const x = Math.cos(lat1)*Math.sin(lat2)
+		- Math.sin(lat1)*Math.cos(lat2)*Math.cos(lon2-lon1);
+	return (Math.atan2(y, x)* 180 / Math.PI + 360) % 360;
 }

@@ -631,13 +631,24 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	}
 
 	// don't expire the track, even display outdated track
-	if ("track" in data)
+	if ("track" in data) {
 		this.track = data.track;
+	}
 
 	this.last_message_time = receiver_timestamp - data.seen;
 
 	if (init)
 		return;
+
+	if (data["track"] == null && this.position && this.prev_position
+		&& this.position[0] != this.prev_position[0]
+		&& this.position[1] != this.prev_position[1]
+		&& ol.sphere.getDistance(this.position, this.prev_position) > 100
+	) {
+		//console.log(bearingFromLonLat(this.prev_position, this.position));
+		//this.track = bearingFromLonLat(this.prev_position, this.position);
+		//selectPlaneByHex(this.icao, true);
+	}
 
 
 	// Update all of our data
