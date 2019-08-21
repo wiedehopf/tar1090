@@ -836,11 +836,10 @@ function initialize_map() {
 		if (hex) {
 			selectPlaneByHex(hex, (evt.type === 'dblclick'));
 			adjustSelectedInfoBlockPosition();
-			evt.stopPropagation();
-		} else {
+		} else if (!multiSelect) {
 			deselectAllPlanes();
-			evt.stopPropagation();
 		}
+		evt.stopPropagation();
 	});
 
 
