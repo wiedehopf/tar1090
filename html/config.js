@@ -121,3 +121,6 @@ disabledColorByAlt = {
 //   BingMapsAPIKey = "your key here";
 //
 BingMapsAPIKey = null;
+
+// This determines what is up, default is north (0 degrees)
+//mapOrientation = 0;

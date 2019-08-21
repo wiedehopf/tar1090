@@ -302,6 +302,7 @@ function fetchData() {
 // kicks off the whole rabbit hole
 function initialize() {
 
+	mapOrientation *= (Math.PI/180); // adjust to radians
 
 	$.when(configureReceiver).done(function() {
 		configureReceiver = null;
@@ -785,6 +786,8 @@ function initialize_map() {
 		loadTilesWhileInteracting: true
 	});
 
+	OLMap.getView().setRotation(mapOrientation); // adjust orientation
+
 	if (baseCount > 1) {
 		OLMap.addControl(new ol.control.LayerSwitcher());
 	}
@@ -896,6 +899,35 @@ function initialize_map() {
 		toggleMapDim(true);
 	}
 
+	window.addEventListener('keydown', function(e) {
+		if (e.defaultPrevented || e.repeat) {
+			return; // Do nothing if the event was already processed
+		}
+
+		if( e.ctrlKey || e.altKey || e.metaKey) {
+			return;
+		}
+		switch (e.key) {
+			case "d":
+			case "Esc":
+			case "Escape":
+				deselectAllPlanes();
+				break;
+			case "m":
+				toggleMultiSelect();
+				break;
+			case "r":
+				followRandomPlane();
+				break;
+			case "a":
+				selectAllPlanes();
+				break;
+			case "f":
+				toggleFollowSelected();
+				break;
+
+		}
+	}, true);
 
 	// Add terrain-limit rings. To enable this:
 	//
@@ -1713,6 +1745,7 @@ function resetMap() {
 	// Set and refresh
 	OLMap.getView().setZoom(ZoomLvl);
 	OLMap.getView().setCenter(ol.proj.fromLonLat([CenterLon, CenterLat]));
+	OLMap.getView().setRotation(mapOrientation);
 
 	selectPlaneByHex(null,false);
 }

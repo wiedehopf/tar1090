@@ -157,6 +157,9 @@ var BingMapsAPIKey = null;
 // currently it's just a data dump of the new fields with no UX work.
 var ExtendedData = false;
 var pf_data = ["chunks/pf.json"]
+
+var mapOrientation = 0; // This determines what is up, normally north (0 degrees)
+
 /*
 60
 54
