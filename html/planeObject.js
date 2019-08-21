@@ -505,6 +505,9 @@ function altitudeColor(altitude) {
 	return [h, s, l];
 }
 
+PlaneObject.prototype.newIcon = function() {
+}
+
 PlaneObject.prototype.updateIcon = function() {
 
 	var col = this.getMarkerColor();
@@ -523,13 +526,13 @@ PlaneObject.prototype.updateIcon = function() {
 		this.shape = this.baseMarker[0];
 		this.baseMarker = shapes[this.shape]
 	}
-	var rotation = this.track;
-	if (rotation == null) {
-		rotation = this.true_heading;
-	} else if (rotation == null) {
-		rotation = this.mag_heading;
-	} else if (rotation == null) {
-		rotation = 0;
+	this.rotation = this.track;
+	if (this.rotation == null) {
+		this.rotation = this.true_heading;
+	} else if (this.rotation == null) {
+		this.rotation = this.mag_heading;
+	} else if (this.rotation == null) {
+		this.rotation = 0;
 	}
 
 	const svgKey = col + '!' + outline + '!' + this.shape + '!' + add_stroke;
@@ -537,36 +540,44 @@ PlaneObject.prototype.updateIcon = function() {
 	if (this.markerStyle == null || this.markerIcon == null || (this.markerSvgKey != svgKey)) {
 		//console.log(this.icao + " new icon and style " + this.markerSvgKey + " -> " + svgKey);
 
-		if (!iconCache[svgKey]) {
-			iconCache[svgKey] = new Image();
-			iconCache[svgKey].src = svgPathToURI(this.baseMarker.svg, outline, col, add_stroke);
-		}
-
 		this.markerSvgKey = svgKey;
 		this.scaleCache = scaleFactor * this.baseScale;
+		this.rotationCache = this.rotation;
 
-		this.markerIcon = new ol.style.Icon({
-			scale: this.scaleCache,
-			imgSize: this.baseMarker.size,
-			img: iconCache[svgKey],
-			rotation: (this.baseMarker.noRotate ? 0 : rotation * Math.PI / 180.0),
-			rotateWithView: (this.baseMarker.noRotate ? false : true)
-		});
+		if (!iconCache[svgKey]) {
+			this.markerIcon = new ol.style.Icon({
+				scale: this.scaleCache,
+				imgSize: this.baseMarker.size,
+				src: svgPathToURI(this.baseMarker.svg, outline, col, add_stroke),
+				rotation: (this.baseMarker.noRotate ? 0 : this.rotation * Math.PI / 180.0),
+				rotateWithView: (this.baseMarker.noRotate ? false : true)
+			});
+			iconCache[svgKey] = new Image();
+			iconCache[svgKey].src = svgPathToURI(this.baseMarker.svg, outline, col, add_stroke);
+		} else {
+			this.markerIcon = new ol.style.Icon({
+				scale: this.scaleCache,
+				imgSize: this.baseMarker.size,
+				img: iconCache[svgKey],
+				rotation: (this.baseMarker.noRotate ? 0 : this.rotation * Math.PI / 180.0),
+				rotateWithView: (this.baseMarker.noRotate ? false : true)
+			});
+		}
 		this.markerStyle = new ol.style.Style({
 			image: this.markerIcon
 		});
 		this.marker.setStyle(this.markerStyle);
 		//iconCache[svgKey] = undefined; // disable caching for testing
-	}
+	} else {
+		if (this.rotationCache == null || Math.abs(this.rotationCache - this.rotation) > 0.15) {
+			this.rotationCache = this.rotation;
+			this.markerIcon.setRotation(this.baseMarker.noRotate ? 0 : this.rotation * Math.PI / 180.0);
+		}
 
-	if (this.rotationCache == null || Math.abs(this.rotationCache - rotation) > 0.15) {
-		this.rotationCache = rotation;
-		this.markerIcon.setRotation(this.baseMarker.noRotate ? 0 : rotation * Math.PI / 180.0);
-	}
-
-	if (this.scaleCache != scaleFactor * this.baseScale) {
-		this.scaleCache = scaleFactor * this.baseScale;
-		this.markerIcon.setScale(this.scaleCache);
+		if (this.scaleCache != scaleFactor * this.baseScale) {
+			this.scaleCache = scaleFactor * this.baseScale;
+			this.markerIcon.setScale(this.scaleCache);
+		}
 	}
 
 	/*
@@ -616,7 +627,9 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.alt_baro = data.altitude;
 	} else {
 		this.alt_baro = null;
-		this.altitude = data.alt_geom;
+		if ("alt_geom" in data) {
+			this.altitude = data.alt_geom;
+		}
 	}
 
 	if (this.altitude == "ground") {
