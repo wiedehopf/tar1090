@@ -14,13 +14,13 @@ var configureReceiver = $.Deferred();
 
 // get configuration json files, will be used in initialize function
 var get_receiver_defer = $.ajax({ url: 'data/receiver.json',
-	timeout: 5000,
+	timeout: 15000,
 	cache: false,
 	dataType: 'json'
 });
 var test_chunk_defer = $.ajax({
 	url:'chunks/chunks.json',
-	timeout: 3000,
+	timeout: 10000,
 	cache: false,
 	dataType: 'json'
 });
@@ -53,14 +53,14 @@ $.when(get_receiver_defer).done(function(data){
 function get_history() {
 
 	$.ajax({ url: 'data/aircraft.json',
-		timeout: 3000,
+		timeout: 8000,
 		cache: false,
 		dataType: 'json' }).done(function(data) {
 			PositionHistoryBuffer.push(data);
 		});
 	if (enable_uat) {
 		$.ajax({ url: 'chunks/978.json',
-			timeout: 3000,
+			timeout: 8000,
 			cache: false,
 			dataType: 'json' }).done(function(data) {
 				PositionHistoryBuffer.push(data);
@@ -84,7 +84,7 @@ function get_history_item(i) {
 
 	if (HistoryChunks) {
 		request = $.ajax({ url: 'chunks/' + chunkNames[i],
-			timeout: nHistoryItems * 4000, // Allow 4s load time per history chunk
+			timeout: nHistoryItems * 10000, // Allow 10s load time per history chunk
 			dataType: 'json'
 		});
 	} else {

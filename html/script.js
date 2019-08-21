@@ -11,7 +11,7 @@ var StaticFeatures = new ol.Collection();
 var SiteCircleFeatures = new ol.Collection();
 var PlaneIconFeatures = new ol.Collection();
 var trailGroup = new ol.Collection();
-var iconsLayer;
+var iconLayer;
 var iconCache = {};
 var Planes        = {};
 var PlanesOrdered = [];
@@ -218,7 +218,7 @@ function fetchData() {
 
 	if (enable_uat) {
 		FetchPendingUAT = $.ajax({ url: 'chunks/978.json',
-			timeout: 2000,
+			timeout: 7000,
 			cache: false,
 			dataType: 'json' });
 
@@ -227,7 +227,7 @@ function fetchData() {
 		});
 	}
 	FetchPending = $.ajax({ url: 'data/aircraft.json',
-		timeout: 5000,
+		timeout: 8000,
 		cache: false,
 		dataType: 'json' });
 	FetchPending.done(function(data) {
@@ -694,7 +694,7 @@ function initialize_map() {
 
 	layers = createBaseLayers();
 
-	iconsLayer = new ol.layer.Vector({
+	iconLayer = new ol.layer.Vector({
 		name: 'ac_positions',
 		type: 'overlay',
 		title: 'Aircraft positions',
@@ -722,7 +722,7 @@ function initialize_map() {
 		})
 	);
 
-	layers.push(iconsLayer);
+	layers.push(iconLayer);
 
 	var foundType = false;
 	var baseCount = 0;
@@ -831,7 +831,7 @@ function initialize_map() {
 				return feature.hex;
 			},
 			{ layerFilter: function(layer) {
-				return (layer === iconsLayer);
+				return (layer === iconLayer);
 			}});
 		if (hex) {
 			selectPlaneByHex(hex, (evt.type === 'dblclick'));
@@ -851,7 +851,7 @@ function initialize_map() {
 				return feature.hex;
 			},
 			{ layerFilter: function(layer) {
-				return (layer === iconsLayer);
+				return (layer === iconLayer);
 			}}
 		);
 
@@ -914,7 +914,7 @@ function initialize_map() {
 
 	// kick off an ajax request that will add the rings when it's done
 	var request = $.ajax({ url: 'upintheair.json',
-		timeout: 5000,
+		timeout: 15000,
 		cache: true,
 		dataType: 'json' });
 	request.done(function(data) {
@@ -2180,7 +2180,7 @@ function updatePiAwareOrFlightFeeder() {
 function fetchPfData() {
 	for (const i in pf_data) {
 		const req = $.ajax({ url: pf_data[i],
-			timeout: 3000,
+			timeout: 20000,
 			cache: false,
 			dataType: 'json' });
 		$.when(req).done(function(data) {
