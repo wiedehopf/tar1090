@@ -33,6 +33,18 @@ sudo systemctl restart tar1090
 
 The duration of the history in seconds can be calculated as interval times history_size.
 
+## UAT receiver running dump978-fa and skyview978:
+
+This is the relevant part in the configuration file:
+```
+# Change to yes to enable UAT/978 display in tar1090
+ENABLE_978=no
+# If running dump978-fa on another computer, modify the IP-address as appropriate.
+URL_978="http://127.0.0.1/skyview978"
+```
+Open and save as described above in the Configuration section.
+Follow the instructions in the file.
+
 ### Installation / Update to work with another folder, for example /run/combine1090
 
 ```
