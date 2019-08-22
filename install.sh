@@ -1,9 +1,10 @@
 #!/bin/bash
 
+repo="https://github.com/wiedehopf/tar1090"
 ipath=/usr/local/share/tar1090
 install=0
 
-packages="lighttpd unzip"
+packages="lighttpd unzip git"
 
 for i in $packages
 do
@@ -17,7 +18,6 @@ if [ $install == 1 ]
 then
 	echo "Installing required packages: $packages"
 	apt-get update
-	apt-get upgrade -y
 	if ! apt-get install -y $packages
 	then
 		echo "Failed to install required packages: $packages"
@@ -26,15 +26,23 @@ then
 	fi
 fi
 
+mkdir -p $ipath
+
 if [ -z $1 ] || [ $1 != "test" ]
 then
 	cd /tmp
-	if ! wget --timeout=30 -q -O master.zip https://github.com/wiedehopf/tar1090/archive/master.zip || ! unzip -q -o master.zip
-	then
-		echo "Unable to download files, exiting! (Maybe try again?)"
-		exit 1
+	git clone --depth 1 $repo $ipath/git 2>/dev/null
+	cd $ipath/git
+	git checkout -f
+	if ! git pull -f; then
+		cd /tmp
+		if ! wget --timeout=30 -q -O master.zip $repo/archive/master.zip || ! unzip -q -o master.zip
+		then
+			echo "Unable to download files, exiting! (Maybe try again?)"
+			exit 1
+		fi
+		cd tar1090-master
 	fi
-	cd tar1090-master
 fi
 
 if [[ -n $1 ]] && [ $1 != "test" ] ; then
@@ -44,11 +52,16 @@ fi
 
 
 
-mkdir -p $ipath
 
 if [ -f $ipath/html/defaults.js ]; then
 	cp $ipath/html/config.js html/
 fi
+
+! diff tar1090.sh /usr/local/share/tar1090/tar1090.sh &>/dev/null \
+	|| ! diff tar1090.service /lib/systemd/system/tar1090.service &>/dev/null \
+	|| ! diff 88-tar1090.conf /etc/lighttpd/conf-available/88-tar1090.conf &>/dev/null \
+	|| ! diff 88-tar1090.conf /etc/lighttpd/conf-enabled/88-tar1090.conf &>/dev/null
+changed=$?
 
 rm -f $ipath/html/db/*.json
 cp -r * $ipath
@@ -68,9 +81,14 @@ then
 	sed -i -e 's/^server.modules += ( "mod_setenv" )/#server.modules += ( "mod_setenv" )/'  $(find /etc/lighttpd/conf-available/* | grep -v dump1090-fa)
 fi
 
-systemctl daemon-reload
-systemctl enable tar1090 &>/dev/null
-systemctl restart tar1090 lighttpd
+if [ 0 -eq $changed ]; then
+	systemctl daemon-reload
+	systemctl restart lighttpd
+	systemctl restart tar1090
+fi
+if ! systemctl is-enabled tar1090 &>/dev/null; then
+	systemctl enable tar1090 &>/dev/null
+fi
 
 
 
