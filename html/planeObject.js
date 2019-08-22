@@ -768,16 +768,17 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	}
 	this.name = this.name.replace(/ /g, '')
 
-	this.rotation = this.track;
-	if (this.rotation == null) {
+	if (this.track != null) {
+		this.rotation = this.track;
+	} else if (this.true_heading != null) {
 		this.rotation = this.true_heading;
-	} else if (this.rotation == null) {
+	} else if (this.mag_heading != null) {
 		this.rotation = this.mag_heading;
-	} else if (this.rotation == null
-		&& this.position && this.prev_position
+	} else if (
+		this.position && this.prev_position
 		&& this.position[0] != this.prev_position[0]
 		&& this.position[1] != this.prev_position[1]
-		&& ol.sphere.getDistance(this.position, this.prev_position) > 100
+		&& ol.sphere.getDistance(this.position, this.prev_position) > 50
 	) {
 		this.rotation = bearingFromLonLat(this.prev_position, this.position);
 	}
