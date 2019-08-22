@@ -473,7 +473,7 @@ select.error, textarea.error, input.error {
 }
 
 .highlightedTitle {
-    height: 36px;
+    height: 48px;
     border-bottom: 1px solid #00A0E2;
     padding-left: 18px;
 	padding-top: 18px;
