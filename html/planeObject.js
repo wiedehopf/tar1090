@@ -571,9 +571,8 @@ PlaneObject.prototype.updateIcon = function() {
 					textAlign: 'left',
 					textBaseline: "top",
 					font: 'bold 12px tahoma',
-					offsetX: (5*this.scale),
-					offsetY: (14*this.scale),
-					zIndex: (this.zIndex-100000),
+					offsetX: (this.baseMarker.size[0]*0.5*0.74*this.scale),
+					offsetY: (this.baseMarker.size[0]*0.5*0.74*this.scale),
 				}),
 				zIndex: this.zIndex,
 			});
@@ -978,10 +977,9 @@ PlaneObject.prototype.destroy = function() {
 			this.tr.parentNode.removeChild(this.tr);
 		this.tr = null;
 	}
-	this.track_linesegs = null;
-	this.filter = null;
-	this.markerIcon = null;
-	this.markerStyle = null;
 	if (this.icao == SelectedPlane)
 		SelectedPlane = null;
+	for (var key in Object.keys(this)) {
+		delete this[key];
+	}
 };
