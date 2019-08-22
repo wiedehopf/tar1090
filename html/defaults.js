@@ -162,7 +162,7 @@ var mapOrientation = 0; // This determines what is up, normally north (0 degrees
 
 // Only display labels when zoomed in this far:
 var labelZoom = 0;
-var labelZoomGround = 12.5;
+var labelZoomGround = 14.8;
 
 /*
 60
