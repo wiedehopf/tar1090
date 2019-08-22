@@ -82,15 +82,16 @@ do
 	if [[ $ENABLE_978 == "yes" ]]; then
 		sed -i -e "s?\"enable_uat\" : \"false\"?\"enable_uat\" : \"true\"?" chunks.json
 	fi
+	echo "{ \"files\" : [ ] }" | gzip -1 > chunk_recent.gz
 
 	# integrate original dump1090-fa history on startup so we don't start blank
 	cp $SOURCE/history_*.json $dir
 	if [[ -f history_0.json ]]; then
+		new_chunk
 		for i in history_*.json ; do
 			sed -i -e '$a,' $i
 		done
 		sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | gzip -9 > temp.gz
-		new_chunk
 		mv temp.gz $cur_chunk
 	fi
 	# cleanup
@@ -105,20 +106,21 @@ do
 		sleep $INTERVAL &
 
 		source <(grep -F -e INTERVAL /etc/default/tar1090)
+		date=$(date +%s)
 
 		cd $dir
-		if ! cp $SOURCE/aircraft.json history_$((i%$CS)).json &>/dev/null
+		if ! cp $SOURCE/aircraft.json history_$date.json &>/dev/null
 		then
 			sleep 0.05
-			cp $SOURCE/aircraft.json history_$((i%$CS)).json
+			cp $SOURCE/aircraft.json history_$date.json
 		fi
-		sed -i -e '$a,' history_$((i%$CS)).json
-		prune history_$((i%$CS)).json
+		sed -i -e '$a,' history_$date.json
+		prune history_$date.json
 
 		if [[ $ENABLE_978 == "yes" ]]; then
-			cp $dir/978.json $dir/978_history_$((i%$CS)).json
-			sed -i -e '$a,' 978_history_$((i%$CS)).json
-			prune 978_history_$((i%$CS)).json
+			cp $dir/978.json $dir/978_history_$date.json
+			sed -i -e '$a,' 978_history_$date.json
+			prune 978_history_$date.json
 		fi
 
 
@@ -131,9 +133,9 @@ do
 			mv rec_temp.gz chunk_recent.gz
 			rm -f *latest_*.json
 		else
-			cp history_$((i%$CS)).json latest_$((i%6)).json
+			cp history_$date.json latest_$date.json
 			if [[ $ENABLE_978 == "yes" ]]; then
-				cp 978_history_$((i%$CS)).json 978_latest_$((i%6)).json
+				cp 978_history_$date.json 978_latest_$date.json
 			fi
 			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *latest_*.json | gzip -1 > temp.gz
 			mv temp.gz chunk_recent.gz
