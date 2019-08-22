@@ -33,6 +33,7 @@ var fragment;
 var grouptype_checkbox;
 var multiSelect = false;
 var uat_data = null;
+var enableLabels = false;
 
 
 var SpecialSquawks = {
@@ -303,6 +304,9 @@ function fetchData() {
 function initialize() {
 
 	mapOrientation *= (Math.PI/180); // adjust to radians
+	if (localStorage['enableLabels'] == 'true'){
+		enableLabels = true;
+	}
 
 	$.when(configureReceiver).done(function() {
 		configureReceiver = null;
@@ -807,7 +811,8 @@ function initialize_map() {
 		}
 	});
 
-	scaleFactor = 1.2*Math.max(0.2, Math.min(1.2, 0.15 * Math.pow(1.25, ZoomLvl)));
+	scaleFactor = getScaleFactor();
+	console.log(scaleFactor);
 	OLMap.getView().on('change:resolution', function(event) {
 
 		ZoomLvl = localStorage['ZoomLvl'] = OLMap.getView().getZoom();
@@ -818,7 +823,7 @@ function initialize_map() {
 
 		ZoomLvlCache = ZoomLvl;
 
-		scaleFactor = 1.2*Math.max(0.2, Math.min(1.2, 0.15 * Math.pow(1.25, ZoomLvl)));
+		scaleFactor = getScaleFactor();
 		for (var i in PlanesOrdered) {
 			var plane = PlanesOrdered[i];
 			if (plane.markerIcon) {
@@ -925,7 +930,9 @@ function initialize_map() {
 			case "f":
 				toggleFollowSelected();
 				break;
-
+			case "l":
+				toggleLabels();
+				break;
 		}
 	}, true);
 
@@ -2080,6 +2087,14 @@ function followRandomPlane() {
 	selectPlaneByHex(this_one.icao, true);
 }
 
+function toggleLabels() {
+	enableLabels = !enableLabels;
+	localStorage['enableLabels'] = enableLabels;
+	for (const key in PlanesOrdered) {
+		PlanesOrdered[key].updateMarker(false);
+	}
+}
+
 function toggleMultiSelect() {
 	if (multiSelect) {
 		multiSelect = false;
@@ -2257,4 +2272,8 @@ function bearingFromLonLat(position1, position2) {
 	const x = Math.cos(lat1)*Math.sin(lat2)
 		- Math.sin(lat1)*Math.cos(lat2)*Math.cos(lon2-lon1);
 	return (Math.atan2(y, x)* 180 / Math.PI + 360) % 360;
+}
+
+function getScaleFactor() {
+	return 1.2*Math.max(0.6, Math.min(1.2, 0.045 * Math.pow(1.5, ZoomLvl)));
 }

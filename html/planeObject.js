@@ -505,9 +505,6 @@ function altitudeColor(altitude) {
 	return [h, s, l];
 }
 
-PlaneObject.prototype.newIcon = function() {
-}
-
 PlaneObject.prototype.updateIcon = function() {
 
 	var col = this.getMarkerColor();
@@ -526,58 +523,67 @@ PlaneObject.prototype.updateIcon = function() {
 		this.shape = this.baseMarker[0];
 		this.baseMarker = shapes[this.shape]
 	}
-	this.rotation = this.track;
-	if (this.rotation == null) {
-		this.rotation = this.true_heading;
-	} else if (this.rotation == null) {
-		this.rotation = this.mag_heading;
-	} else if (this.rotation == null) {
-		this.rotation = 0;
-	}
 
-	const svgKey = col + '!' + outline + '!' + this.shape + '!' + add_stroke;
+	this.scale = scaleFactor * this.baseScale;
+	var svgKey = col + '!' + outline + '!' + this.shape + '!' + add_stroke;
+	var labelText = null;
+	if ( enableLabels && ((ZoomLvl >= labelZoom && this.altitude != "ground") || ZoomLvl >= labelZoomGround) ) {
+		labelText = this.name;
+	}
+	var styleKey = svgKey + '!' + labelText + '!' + this.scale;
 
 	if (this.markerStyle == null || this.markerIcon == null || (this.markerSvgKey != svgKey)) {
 		//console.log(this.icao + " new icon and style " + this.markerSvgKey + " -> " + svgKey);
 
 		this.markerSvgKey = svgKey;
-		this.scaleCache = scaleFactor * this.baseScale;
 		this.rotationCache = this.rotation;
 
 		if (!iconCache[svgKey]) {
 			this.markerIcon = new ol.style.Icon({
-				scale: this.scaleCache,
+				scale: this.scale,
 				imgSize: this.baseMarker.size,
 				src: svgPathToURI(this.baseMarker.svg, outline, col, add_stroke),
 				rotation: (this.baseMarker.noRotate ? 0 : this.rotation * Math.PI / 180.0),
-				rotateWithView: (this.baseMarker.noRotate ? false : true)
+				rotateWithView: (this.baseMarker.noRotate ? false : true),
 			});
 			iconCache[svgKey] = new Image();
 			iconCache[svgKey].src = svgPathToURI(this.baseMarker.svg, outline, col, add_stroke);
 		} else {
 			this.markerIcon = new ol.style.Icon({
-				scale: this.scaleCache,
+				scale: this.scale,
 				imgSize: this.baseMarker.size,
 				img: iconCache[svgKey],
 				rotation: (this.baseMarker.noRotate ? 0 : this.rotation * Math.PI / 180.0),
-				rotateWithView: (this.baseMarker.noRotate ? false : true)
+				rotateWithView: (this.baseMarker.noRotate ? false : true),
 			});
 		}
-		this.markerStyle = new ol.style.Style({
-			image: this.markerIcon
-		});
-		this.marker.setStyle(this.markerStyle);
 		//iconCache[svgKey] = undefined; // disable caching for testing
-	} else {
-		if (this.rotationCache == null || Math.abs(this.rotationCache - this.rotation) > 0.15) {
-			this.rotationCache = this.rotation;
-			this.markerIcon.setRotation(this.baseMarker.noRotate ? 0 : this.rotation * Math.PI / 180.0);
+	}
+	if (this.styleKey != styleKey) {
+		this.styleKey = styleKey;
+		if (labelText) {
+			this.markerStyle = new ol.style.Style({
+				image: this.markerIcon,
+				text: new ol.style.Text({
+					text: labelText ,
+					fill: new ol.style.Fill({color: 'white' }),
+					backgroundFill: new ol.style.Stroke({color: 'rgba(0,0,0,0.4'}),
+					textAlign: 'left',
+					textBaseline: "top",
+					font: 'bold 12px tahoma',
+					offsetX: (5*this.scale),
+					offsetY: (14*this.scale),
+					zIndex: (this.zIndex-100000),
+				}),
+				zIndex: this.zIndex,
+			});
+		} else {
+			this.markerStyle = new ol.style.Style({
+				image: this.markerIcon,
+				zIndex: this.zIndex,
+			});
 		}
-
-		if (this.scaleCache != scaleFactor * this.baseScale) {
-			this.scaleCache = scaleFactor * this.baseScale;
-			this.markerIcon.setScale(this.scaleCache);
-		}
+		this.marker.setStyle(this.markerStyle);
 	}
 
 	/*
@@ -587,6 +593,15 @@ PlaneObject.prototype.updateIcon = function() {
 	}
 	*/
 
+	if (this.rotationCache == null || Math.abs(this.rotationCache - this.rotation) > 0.15) {
+		this.rotationCache = this.rotation;
+		this.markerIcon.setRotation(this.baseMarker.noRotate ? 0 : this.rotation * Math.PI / 180.0);
+	}
+
+	if (this.scaleCache != this.scale) {
+		this.scaleCache = this.scale;
+		this.markerIcon.setScale(this.scale);
+	}
 
 	return true;
 };
@@ -640,6 +655,14 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.alt_rounded = (this.altitude/500).toFixed(0)*500;
 	}
 
+	if (this.altitude == "ground") {
+		this.onGround = true;
+		this.zIndex = -10000;
+	} else {
+		this.onGround = false;
+		this.zIndex = this.alt_rounded;
+	}
+
 	// don't expire the track, even display outdated track
 	if ("track" in data) {
 		this.track = data.track;
@@ -649,16 +672,6 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 
 	if (init)
 		return;
-
-	if (data["track"] == null && this.position && this.prev_position
-		&& this.position[0] != this.prev_position[0]
-		&& this.position[1] != this.prev_position[1]
-		&& ol.sphere.getDistance(this.position, this.prev_position) > 100
-	) {
-		//console.log(bearingFromLonLat(this.prev_position, this.position));
-		//this.track = bearingFromLonLat(this.prev_position, this.position);
-		//selectPlaneByHex(this.icao, true);
-	}
 
 
 	// Update all of our data
@@ -745,6 +758,29 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.vert_rate = data.baro_rate;
 	} else {
 		this.vert_rate = null;
+	}
+
+	if (this.flight) {
+		this.name = this.flight;
+	} else if (this.registration) {
+		this.name = this.registration
+	} else {
+		this.name = this.icao.toUpperCase();
+	}
+	this.name = this.name.replace(/ /g, '')
+
+	this.rotation = this.track;
+	if (this.rotation == null) {
+		this.rotation = this.true_heading;
+	} else if (this.rotation == null) {
+		this.rotation = this.mag_heading;
+	} else if (this.rotation == null
+		&& this.position && this.prev_position
+		&& this.position[0] != this.prev_position[0]
+		&& this.position[1] != this.prev_position[1]
+		&& ol.sphere.getDistance(this.position, this.prev_position) > 100
+	) {
+		this.rotation = bearingFromLonLat(this.prev_position, this.position);
 	}
 
 };
