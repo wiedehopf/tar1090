@@ -18,6 +18,8 @@ Click the following URL and replace the IP address with address of your Raspberr
 
 http://192.168.x.yy/tar1090
 
+Check further down or keyboard shortcuts.
+
 ## Configuration (optional):
 
 Edit the configuration file to change the interval in seconds and number of history files saved:
@@ -57,3 +59,14 @@ sudo bash /tmp/install.sh /run/combine1090
 ```
 sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/uninstall.sh)"
 ```
+
+## Keyboard Shortcuts
+
+
+- Q and E zoom out and in.
+- A and D move West and East.
+- W and S move North and South.
+- C or Esc clears the selection.
+- M toggles multiselect.
+- T selects all aircraft
+- B toggle map brightness
