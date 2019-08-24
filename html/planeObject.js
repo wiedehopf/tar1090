@@ -517,17 +517,21 @@ PlaneObject.prototype.updateIcon = function() {
 	if (!this.baseMarker || this.baseMarkerKey != baseMarkerKey) {
 		this.baseMarkerKey = baseMarkerKey;
 		this.baseMarker = getBaseMarker(this.category, this.icaoType, this.typeDescription, this.wtc);
+		this.shape = this.baseMarker[0];
+		this.baseScale = this.baseMarker[1];
+		this.baseMarker = shapes[this.shape]
 		if (!this.baseMarker)
 			console.log(baseMarkerKey);
-		this.baseScale = this.baseMarker[1];
-		this.shape = this.baseMarker[0];
-		this.baseMarker = shapes[this.shape]
 	}
 
 	this.scale = scaleFactor * this.baseScale;
 	var svgKey = col + '!' + outline + '!' + this.shape + '!' + add_stroke;
 	var labelText = null;
-	if ( enableLabels && ((ZoomLvl >= labelZoom && this.altitude != "ground") || ZoomLvl >= labelZoomGround) ) {
+	if ( enableLabels && (
+		(ZoomLvl >= labelZoom && this.altitude != "ground")
+		|| (ZoomLvl >= labelZoomGround-2 && this.speed > 18)
+		|| ZoomLvl >= labelZoomGround
+	)) {
 		labelText = this.name;
 	}
 	var styleKey = svgKey + '!' + labelText + '!' + this.scale;
@@ -609,6 +613,8 @@ PlaneObject.prototype.updateIcon = function() {
 PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	// get location data first, return early if only those are needed.
 
+	this.last_message_time = receiver_timestamp - data.seen;
+
 	// remember last known position even if stale
 	if ("lat" in data && data.seen_pos < (receiver_timestamp - this.position_time + 2)) {
 		this.position   = [data.lon, data.lat];
@@ -667,7 +673,10 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.track = data.track;
 	}
 
-	this.last_message_time = receiver_timestamp - data.seen;
+	// don't expire callsigns
+	if ('flight' in data) {
+		this.flight	= data.flight;
+	}
 
 	if (init)
 		return;
@@ -724,10 +733,6 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.true_heading = data.true_heading;
 	else
 		this.true_heading = null;
-
-	// don't expire callsigns
-	if ('flight' in data)
-		this.flight	= data.flight;
 
 	if ('type' in data)
 		this.addrtype	= data.type;

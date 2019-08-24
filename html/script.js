@@ -34,6 +34,7 @@ var grouptype_checkbox;
 var multiSelect = false;
 var uat_data = null;
 var enableLabels = false;
+var mapIsVisible = false;
 
 
 var SpecialSquawks = {
@@ -779,7 +780,7 @@ function initialize_map() {
 		layers: layers,
 		view: new ol.View({
 			center: ol.proj.fromLonLat([CenterLon, CenterLat]),
-			zoom: ZoomLvl
+			zoom: ZoomLvl,
 		}),
 		controls: [new ol.control.Zoom({delta: 1,}),
 			new ol.control.Rotate(),
@@ -812,7 +813,6 @@ function initialize_map() {
 	});
 
 	scaleFactor = getScaleFactor();
-	console.log(scaleFactor);
 	OLMap.getView().on('change:resolution', function(event) {
 
 		ZoomLvl = localStorage['ZoomLvl'] = OLMap.getView().getZoom();
@@ -912,8 +912,9 @@ function initialize_map() {
 		if( e.ctrlKey || e.altKey || e.metaKey) {
 			return;
 		}
+		var oldCenter, extent, newCenter;
 		switch (e.key) {
-			case "d":
+			case "c":
 			case "Esc":
 			case "Escape":
 				deselectAllPlanes();
@@ -924,7 +925,7 @@ function initialize_map() {
 			case "r":
 				followRandomPlane();
 				break;
-			case "a":
+			case "t":
 				selectAllPlanes();
 				break;
 			case "f":
@@ -932,6 +933,36 @@ function initialize_map() {
 				break;
 			case "l":
 				toggleLabels();
+				break;
+			case "q":
+				OLMap.getView().setZoom((ZoomLvl-1).toFixed());
+				break;
+			case "e":
+				OLMap.getView().setZoom((ZoomLvl+1).toFixed());
+				break;
+			case "w":
+				oldCenter = OLMap.getView().getCenter();
+				extent = OLMap.getView().calculateExtent(OLMap.getSize());
+				newCenter = [oldCenter[0], (oldCenter[1] + extent[3])/2];
+				OLMap.getView().setCenter(newCenter);
+				break;
+			case "s":
+				oldCenter = OLMap.getView().getCenter();
+				extent = OLMap.getView().calculateExtent(OLMap.getSize());
+				newCenter = [oldCenter[0], (oldCenter[1] + extent[1])/2];
+				OLMap.getView().setCenter(newCenter);
+				break;
+			case "a":
+				oldCenter = OLMap.getView().getCenter();
+				extent = OLMap.getView().calculateExtent(OLMap.getSize());
+				newCenter = [(oldCenter[0] + extent[0])/2, oldCenter[1]];
+				OLMap.getView().setCenter(newCenter);
+				break;
+			case "d":
+				oldCenter = OLMap.getView().getCenter();
+				extent = OLMap.getView().calculateExtent(OLMap.getSize());
+				newCenter = [(oldCenter[0] + extent[2])/2,  oldCenter[1]];
+				OLMap.getView().setCenter(newCenter);
 				break;
 		}
 	}, true);
@@ -1429,6 +1460,8 @@ function refreshTableInfo() {
 
 			if (tableplane.selected && !SelectedAllPlanes)
 				classes += " selected";
+			else
+				classes += " not-selected";
 
 			if (tableplane.squawk in SpecialSquawks) {
 				classes = classes + " " + SpecialSquawks[tableplane.squawk].cssClass;
@@ -1436,12 +1469,14 @@ function refreshTableInfo() {
 			}			                
 
 			// ICAO doesn't change
-			if (tableplane.flight && tableplane.flight_cache != tableplane.flight) {
-				tableplane.tr.cells[2].innerHTML = getFlightAwareModeSLink(tableplane.icao, tableplane.flight, tableplane.flight);
-				tableplane.tr.cells[18].innerHTML = getFlightAwareModeSLink(tableplane.icao, tableplane.flight);
-				tableplane.flight_cache = tableplane.flight;
+			if (tableplane.name && tableplane.name_cache != tableplane.name) {
+				tableplane.tr.cells[2].innerHTML = getFlightAwareModeSLink(tableplane.icao, tableplane.name, tableplane.name);
+				tableplane.name_cache = tableplane.name;
 			}
-			tableplane.tr.cells[3].textContent = (tableplane.registration != null ? tableplane.registration : "");
+			if (tableplane.registration_cache !== tableplane.registration) {
+				tableplane.registration_cache = tableplane.registration;
+				tableplane.tr.cells[3].innerHTML = getFlightAwareIdentLink(tableplane.registration, tableplane.registration);
+			}
 			tableplane.tr.cells[4].textContent = (tableplane.icaoType != null ? tableplane.icaoType : "");
 			tableplane.tr.cells[5].textContent = (tableplane.squawk != null ? tableplane.squawk : "");
 			tableplane.tr.cells[6].textContent = format_altitude_brief(tableplane.altitude, tableplane.vert_rate, DisplayUnits);
@@ -1455,21 +1490,8 @@ function refreshTableInfo() {
 			tableplane.tr.cells[14].textContent = (tableplane.position != null ? tableplane.position[1].toFixed(4) : "");
 			tableplane.tr.cells[15].textContent = (tableplane.position != null ? tableplane.position[0].toFixed(4) : "");
 			tableplane.tr.cells[16].textContent = format_data_source(tableplane.getDataSource());
-			if (false && tableplane.icao_cache !== tableplane.icao) {
-				tableplane.tr.cells[17].innerHTML = getAirframesModeSLink(tableplane.icao);
-				tableplane.icao_cache = tableplane.icao;
-			}
 			tableplane.tr.cells[17].textContent = tableplane.baseMarkerKey;
 
-			if (tableplane.registration_cache !== tableplane.registration) {
-				tableplane.tr.cells[19].innerHTML = getFlightAwarePhotoLink(tableplane.registration);
-				tableplane.registration_cache = tableplane.registration;
-				if (!tableplane.flight) {
-					var label = tableplane.registration != null ? tableplane.registration : tableplane.icao.toUpperCase();
-					tableplane.tr.cells[2].innerHTML = getFlightAwareModeSLink(tableplane.icao, tableplane.registration, label);
-					tableplane.tr.cells[18].innerHTML = getFlightAwareModeSLink(tableplane.icao, tableplane.registration);
-				}
-			}
 
 			tableplane.tr.className = classes;
 		}
@@ -1555,8 +1577,16 @@ function sortFunction(x,y) {
 function resortTable() {
 	// presort by dataSource
 	if (sortId == "sitedist") {
+		for (var i = 0; i < PlanesOrdered.length; ++i) {
+			PlanesOrdered[i]._sort_pos = i;
+		}
 		PlanesOrdered.sort(function(x,y) {
-			return (x.getDataSourceNumber() - y.getDataSourceNumber());
+			const a = x.getDataSourceNumber();
+			const b = y.getDataSourceNumber();
+			if (a == b)
+				return (x._sort_pos - y._sort_pos);
+
+			return (a-b);
 		});
 	}
 	// or distance
@@ -1574,6 +1604,24 @@ function resortTable() {
 	}
 
 	PlanesOrdered.sort(sortFunction);
+	// Put selected planes on top, do a stable sort!
+	// actually that's a bad idea, disable this for now
+	if (false && !SelectedAllPlanes && multiSelect) {
+		for (var i = 0; i < PlanesOrdered.length; ++i) {
+			PlanesOrdered[i]._sort_pos = i;
+		}
+		PlanesOrdered.sort(function(x,y) {
+			if (x.selected && y.selected) {
+				return (x._sort_pos - y._sort_pos);
+			}
+			if (x.selected)
+				return -1;
+			if (y.selected)
+				return 1;
+
+			return (x._sort_pos - y._sort_pos);
+		});
+	}
 
 	var tbody = document.getElementById('tableinfo').tBodies[0];
 	fragment = document.createDocumentFragment();
@@ -1808,7 +1856,7 @@ function showColumn(table, columnId, visible) {
 }
 
 function setColumnVisibility() {
-	var mapIsVisible = $("#map_container").is(":visible");
+	mapIsVisible = $("#map_container").is(":visible");
 	var infoTable = $("#tableinfo");
 
 	showColumn(infoTable, "#registration", !mapIsVisible);
@@ -1838,7 +1886,8 @@ function setSelectedInfoBlockVisibility() {
 
 // Reposition selected plane info box if it overlaps plane marker
 function adjustSelectedInfoBlockPosition() {
-	return; // this function is probably obsolete
+	if (true)
+		return; // this function is probably obsolete
 	if (!SelectedPlane || !SelectedPlane.marker) {
 		return;
 	}

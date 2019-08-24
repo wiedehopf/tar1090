@@ -221,18 +221,26 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
     text-transform: uppercase;
 }
 
-.vPosition  { background-color: #D5E6EC; }
+.vPosition  { background-color: #C4EDFC; }
 .mlat       { background-color: #FFEFCD; }
-.uat        { background-color: #B5F0E6; }
-.other      { background-color: #CCD5F8; }
+.uat        { background-color: #7EF8E4; }
+.other      { background-color: #E0E0FB; }
 .tisb       { background-color: #FFFF99; }
 .squawk7500 { font-weight: bold; background-color: #ff5555; }
 .squawk7600 { font-weight: bold; background-color: #00ffff; }
 .squawk7700 { font-weight: bold; background-color: #ffff00; }
-.selected   { background-color: #dddddd; }
-.plane_table_row { 
-    cursor: pointer;
+.selected.vPosition  { background-color: #5BCDF6; }
+.selected.mlat       { background-color: #F0C976; }
+.selected.uat        { background-color: #0BD2B1; }
+.selected.other      { background-color: #9898F1; }
+.selected.tisb       { background-color: #F5F500; }
+
+.plane_table_row {
+	cursor: default;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.plane_table_row a:link, a:visited {
+	color: black;
 }
 .hidden { display: none; }
 
