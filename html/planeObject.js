@@ -542,9 +542,9 @@ PlaneObject.prototype.updateIcon = function() {
 		this.markerSvgKey = svgKey;
 		this.rotationCache = this.rotation;
 
-		if (!iconCache[svgKey]) {
-			const svgURI = svgPathToURI(this.baseMarker.svg, outline, col, add_stroke);
-			const element = new Image();
+		if (iconCache[svgKey] == null) {
+			var svgURI = svgPathToURI(this.baseMarker.svg, outline, col, add_stroke);
+			var element = new Image();
 			element.src = svgURI;
 			addToIconCache.push([svgKey, element]);
 			this.markerIcon = new ol.style.Icon({
@@ -756,6 +756,9 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.vert_rate = data.geom_rate;
 	} else if ('baro_rate' in data) {
 		this.vert_rate = data.baro_rate;
+	} else if ('vert_rate' in data) {
+		// legacy from mut v 1.15
+		this.vert_rate = data.vert_rate;
 	} else {
 		this.vert_rate = null;
 	}
@@ -768,8 +771,9 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.name = this.icao.toUpperCase();
 	}
 	this.name = this.name.replace(/ /g, '')
-
-	if (this.track != null) {
+	if (this.altitude == "ground" && this.true_heading != null) {
+		this.rotation = this.true_heading;
+	} else if (this.track != null) {
 		this.rotation = this.track;
 	} else if (this.true_heading != null) {
 		this.rotation = this.true_heading;

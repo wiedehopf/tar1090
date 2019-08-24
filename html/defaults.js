@@ -129,7 +129,7 @@ var OutlineMlatColor = '#001F66';
 
 var SiteCircles = true; // true to show circles (only shown if the center marker is shown)
 // In miles, nautical miles, or km (depending settings value 'DisplayUnits')
-var SiteCirclesDistances = new Array(100,150,200,250);
+var SiteCirclesDistances = new Array(100,150,200);
 
 // Controls page title, righthand pane when nothing is selected
 var PageName = "dump1090-fa";

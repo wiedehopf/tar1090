@@ -222,13 +222,19 @@ function fetchData() {
 	}
 
 	var item;
+	var tryAgain = [];
 	while(item = addToIconCache.pop()) {
-		const svgKey = item[0];
-		const element = item[1];
+		var svgKey = item[0];
+		var element = item[1];
+		if (!element.complete) {
+			tryAgain.push(item);
+			continue;
+		}
 		if (!iconCache[svgKey]) {
 			iconCache[svgKey] = element;
 		}
 	}
+	addToIconCache = tryAgain;
 	if (enable_uat) {
 		FetchPendingUAT = $.ajax({ url: 'chunks/978.json',
 			timeout: 7000,
@@ -1071,7 +1077,7 @@ function createSiteCircleFeatures() {
 
 	for (var i=0; i < SiteCirclesDistances.length; ++i) {
 		var distance = SiteCirclesDistances[i] * conversionFactor;
-		var circle = make_geodesic_circle(SitePosition, distance, 360);
+		var circle = make_geodesic_circle(SitePosition, distance, 180);
 		circle.transform('EPSG:4326', 'EPSG:3857');
 		var feature = new ol.Feature(circle);
 		feature.setStyle(circleStyle(distance));
