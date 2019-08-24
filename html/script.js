@@ -13,6 +13,7 @@ var PlaneIconFeatures = new ol.Collection();
 var trailGroup = new ol.Collection();
 var iconLayer;
 var iconCache = {};
+var addToIconCache = [];
 var Planes        = {};
 var PlanesOrdered = [];
 var PlaneFilter   = {};
@@ -163,6 +164,8 @@ function setupPlane(hex, plane) {
 
 	plane.tr = PlaneRowTemplate.cloneNode(true);
 
+	plane.trCache = [];
+
 	if (hex[0] === '~') {
 		// Non-ICAO address
 		plane.tr.cells[0].textContent = hex.substring(1);
@@ -216,6 +219,16 @@ function fetchData() {
 	if (FetchPendingUAT != null && FetchPendingUAT.state() == 'pending') {
 		// don't double up on fetches, let the last one resolve
 		return;
+	}
+
+	var item;
+	while(item = addToIconCache.pop()) {
+		const svgKey = item[0];
+		const svgURI = item[1];
+		if (!iconCache[svgKey]) {
+			iconCache[svgKey] = new Image();
+			iconCache[svgKey].src = svgURI;
+		}
 	}
 
 	if (enable_uat) {
@@ -799,8 +812,8 @@ function initialize_map() {
 
 	// Listeners for newly created Map
 	OLMap.getView().on('change:center', function(event) {
-		center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
 		if (FollowSelected) {
+			center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
 			// On manual navigation, disable follow
 			if (!SelectedPlane || !SelectedPlane.position ||
 				(Math.abs(center[0] - SelectedPlane.position[0]) > 0.0001 &&
@@ -905,7 +918,7 @@ function initialize_map() {
 	}
 
 	window.addEventListener('keydown', function(e) {
-		if (e.defaultPrevented || e.repeat) {
+		if (e.defaultPrevented ) {
 			return; // Do nothing if the event was already processed
 		}
 
@@ -933,6 +946,9 @@ function initialize_map() {
 				break;
 			case "l":
 				toggleLabels();
+				break;
+			case "b":
+				toggleMapDim();
 				break;
 			case "q":
 				OLMap.getView().setZoom((ZoomLvl-1).toFixed());
@@ -1469,31 +1485,28 @@ function refreshTableInfo() {
 			}			                
 
 			// ICAO doesn't change
-			if (tableplane.name && tableplane.name_cache != tableplane.name) {
-				tableplane.tr.cells[2].innerHTML = getFlightAwareModeSLink(tableplane.icao, tableplane.name, tableplane.name);
-				tableplane.name_cache = tableplane.name;
-			}
-			if (tableplane.registration_cache !== tableplane.registration) {
-				tableplane.registration_cache = tableplane.registration;
-				tableplane.tr.cells[3].innerHTML = getFlightAwareIdentLink(tableplane.registration, tableplane.registration);
-			}
-			tableplane.tr.cells[4].textContent = (tableplane.icaoType != null ? tableplane.icaoType : "");
-			tableplane.tr.cells[5].textContent = (tableplane.squawk != null ? tableplane.squawk : "");
-			tableplane.tr.cells[6].textContent = format_altitude_brief(tableplane.altitude, tableplane.vert_rate, DisplayUnits);
-			tableplane.tr.cells[7].textContent = format_speed_brief(tableplane.gs, DisplayUnits);
-			tableplane.tr.cells[8].textContent = format_vert_rate_brief(tableplane.vert_rate, DisplayUnits);
-			tableplane.tr.cells[9].textContent = format_distance_brief(tableplane.sitedist, DisplayUnits);
-			tableplane.tr.cells[10].textContent = format_track_brief(tableplane.track);
-			tableplane.tr.cells[11].textContent = tableplane.messages;
-			tableplane.tr.cells[12].textContent = tableplane.seen.toFixed(0);
-			tableplane.tr.cells[13].textContent = (tableplane.rssi != null ? tableplane.rssi.toFixed(1) : "");
-			tableplane.tr.cells[14].textContent = (tableplane.position != null ? tableplane.position[1].toFixed(4) : "");
-			tableplane.tr.cells[15].textContent = (tableplane.position != null ? tableplane.position[0].toFixed(4) : "");
-			tableplane.tr.cells[16].textContent = format_data_source(tableplane.getDataSource());
-			tableplane.tr.cells[17].textContent = tableplane.baseMarkerKey;
+			updateCell(tableplane, 2, getFlightAwareModeSLink(tableplane.icao, tableplane.name, tableplane.name), true);
+			updateCell(tableplane, 3, getFlightAwareIdentLink(tableplane.registration, tableplane.registration), true);
+			updateCell(tableplane, 4, (tableplane.icaoType != null ? tableplane.icaoType : ""));
+			updateCell(tableplane, 5, (tableplane.squawk != null ? tableplane.squawk : ""));
+			updateCell(tableplane, 6, format_altitude_brief(tableplane.altitude, tableplane.vert_rate, DisplayUnits));
+			updateCell(tableplane, 7, format_speed_brief(tableplane.gs, DisplayUnits));
+			updateCell(tableplane, 8, format_vert_rate_brief(tableplane.vert_rate, DisplayUnits));
+			updateCell(tableplane, 9, format_distance_brief(tableplane.sitedist, DisplayUnits));
+			updateCell(tableplane, 10, format_track_brief(tableplane.track));
+			updateCell(tableplane, 11, tableplane.messages);
+			updateCell(tableplane, 12, tableplane.seen.toFixed(0));
+			updateCell(tableplane, 13, (tableplane.rssi != null ? tableplane.rssi.toFixed(1) : ""));
+			updateCell(tableplane, 14, (tableplane.position != null ? tableplane.position[1].toFixed(4) : ""));
+			updateCell(tableplane, 15, (tableplane.position != null ? tableplane.position[0].toFixed(4) : ""));
+			updateCell(tableplane, 16, format_data_source(tableplane.getDataSource()));
+			updateCell(tableplane, 17, tableplane.baseMarkerKey);
 
 
-			tableplane.tr.className = classes;
+			if (tableplane.classesCache != classes) {
+				tableplane.classesCache = classes;
+				tableplane.tr.className = classes;
+			}
 		}
 	}
 
@@ -2325,4 +2338,15 @@ function bearingFromLonLat(position1, position2) {
 
 function getScaleFactor() {
 	return 1.2*Math.max(0.6, Math.min(1.2, 0.045 * Math.pow(1.5, ZoomLvl)));
+}
+
+function updateCell(plane, cell, newValue, html) {
+	if (newValue != plane.trCache[cell]) {
+		plane.trCache[cell] = newValue;
+		if (html) {
+			plane.tr.cells[cell].innerHTML = newValue
+		} else {
+			plane.tr.cells[cell].textContent = newValue
+		}
+	}
 }

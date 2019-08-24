@@ -543,15 +543,15 @@ PlaneObject.prototype.updateIcon = function() {
 		this.rotationCache = this.rotation;
 
 		if (!iconCache[svgKey]) {
+			const svgURI = svgPathToURI(this.baseMarker.svg, outline, col, add_stroke)
+			addToIconCache.push([svgKey, svgURI]);
 			this.markerIcon = new ol.style.Icon({
 				scale: this.scale,
 				imgSize: this.baseMarker.size,
-				src: svgPathToURI(this.baseMarker.svg, outline, col, add_stroke),
+				src: svgURI,
 				rotation: (this.baseMarker.noRotate ? 0 : this.rotation * Math.PI / 180.0),
 				rotateWithView: (this.baseMarker.noRotate ? false : true),
 			});
-			iconCache[svgKey] = new Image();
-			iconCache[svgKey].src = svgPathToURI(this.baseMarker.svg, outline, col, add_stroke);
 		} else {
 			this.markerIcon = new ol.style.Icon({
 				scale: this.scale,
@@ -652,13 +652,7 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		}
 	}
 
-	if (this.altitude == "ground") {
-		this.alt_rounded = this.altitude;
-	} else if (this.altitude > 10000) {
-		this.alt_rounded = (this.altitude/1000).toFixed(0)*1000;
-	} else {
-		this.alt_rounded = (this.altitude/500).toFixed(0)*500;
-	}
+	this.alt_rounded = calcAltitudeRounded(this.altitude);
 
 	if (this.altitude == "ground") {
 		this.onGround = true;
@@ -989,3 +983,13 @@ PlaneObject.prototype.destroy = function() {
 		delete this[key];
 	}
 };
+
+function calcAltitudeRounded(altitude) {
+	if (altitude == "ground") {
+		return altitude;
+	} else if (altitude > 10000) {
+		return (altitude/1000).toFixed(0)*1000;
+	} else {
+		return (altitude/500).toFixed(0)*500;
+	}
+}
