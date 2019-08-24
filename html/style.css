@@ -221,19 +221,19 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
     text-transform: uppercase;
 }
 
-.vPosition  { background-color: #C4EDFC; }
-.mlat       { background-color: #FFEFCD; }
-.uat        { background-color: #7EF8E4; }
-.other      { background-color: #E0E0FB; }
-.tisb       { background-color: #FFFF99; }
+.vPosition  { background-color: #d8f4ff; }
+.mlat       { background-color: #FDF7DD; }
+.uat        { background-color: #C4FFDC; }
+.other      { background-color: #d8d8ff; }
+.tisb       { background-color: #ffd8e6; }
 .squawk7500 { font-weight: bold; background-color: #ff5555; }
 .squawk7600 { font-weight: bold; background-color: #00ffff; }
 .squawk7700 { font-weight: bold; background-color: #ffff00; }
-.selected.vPosition  { background-color: #5BCDF6; }
-.selected.mlat       { background-color: #F0C976; }
-.selected.uat        { background-color: #0BD2B1; }
-.selected.other      { background-color: #9898F1; }
-.selected.tisb       { background-color: #F5F500; }
+.selected.vPosition  { background-color: #88DDFF; }
+.selected.mlat       { background-color: #F1DD83; }
+.selected.uat        { background-color: #66FFA6; }
+.selected.other      { background-color: #BEBEFF; }
+.selected.tisb       { background-color: #FFC1D8; }
 
 .plane_table_row {
 	cursor: default;
