@@ -38,6 +38,7 @@ prune() {
 			-e 's/,"mag_heading":[^,^}]*//' \
 			-e 's/,"mach":[^,^}]*//' \
 			-e 's/,"roll":[^,^}]*//' \
+			-e 's/,"flight":[^,^}]*//' \
 			-e 's/,"nav_qnh":[^,^}]*//' \
 			-e 's/,"nav_altitude_mcp":[^,^}]*//' \
 			-e 's/,"nav_altitude_fms":[^,^}]*//' \
