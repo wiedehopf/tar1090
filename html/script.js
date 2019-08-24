@@ -1618,7 +1618,7 @@ function resortTable() {
 	PlanesOrdered.sort(sortFunction);
 	// Put selected planes on top, do a stable sort!
 	// actually that's a bad idea, disable this for now
-	if (false && !SelectedAllPlanes && multiSelect) {
+	if (!SelectedAllPlanes && multiSelect) {
 		for (var i = 0; i < PlanesOrdered.length; ++i) {
 			PlanesOrdered[i]._sort_pos = i;
 		}
