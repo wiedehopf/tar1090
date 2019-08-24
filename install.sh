@@ -56,6 +56,7 @@ fi
 if [ -f $ipath/html/defaults.js ]; then
 	cp $ipath/html/config.js html/
 fi
+cp $ipath/html/colors.css html/ 2>/dev/null
 
 ! diff tar1090.sh /usr/local/share/tar1090/tar1090.sh &>/dev/null \
 	|| ! diff tar1090.service /lib/systemd/system/tar1090.service &>/dev/null \
