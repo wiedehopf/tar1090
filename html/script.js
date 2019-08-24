@@ -35,6 +35,7 @@ var multiSelect = false;
 var uat_data = null;
 var enableLabels = false;
 var mapIsVisible = false;
+var emptyStyle = new ol.style.Style({});
 
 
 var SpecialSquawks = {
@@ -226,13 +227,23 @@ function fetchData() {
 	while(item = addToIconCache.pop()) {
 		var svgKey = item[0];
 		var element = item[1];
-		if (!element.complete) {
+		if (iconCache[svgKey] != undefined) {
+			continue;
+		}
+		if (!element) {
+			element = new Image();
+			element.src = item[2];
+			item[1] = element;
 			tryAgain.push(item);
 			continue;
 		}
-		if (!iconCache[svgKey]) {
-			iconCache[svgKey] = element;
+		if (!element.complete) {
+			console.log("moep");
+			tryAgain.push(item);
+			continue;
 		}
+
+		iconCache[svgKey] = element;
 	}
 	addToIconCache = tryAgain;
 	if (enable_uat) {
@@ -2015,7 +2026,6 @@ function onFilterByAltitude(e) {
 	if (SelectedPlane && SelectedPlane.isFiltered()) {
 		SelectedPlane.selected = false;
 		SelectedPlane.clearLines();
-		SelectedPlane.updateMarker();
 		SelectedPlane = null;
 		refreshSelected();
 		refreshHighlighted();
@@ -2191,6 +2201,10 @@ function updatePlaneFilter() {
 	PlaneFilter.minAltitude = minAltitude;
 	PlaneFilter.maxAltitude = maxAltitude;
 	PlaneFilter.altitudeUnits = DisplayUnits;
+
+	for (var i in PlanesOrdered) {
+		PlanesOrdered[i].updateMarker();
+	}
 }
 
 function getFlightAwareIdentLink(ident, linkText) {

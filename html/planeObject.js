@@ -542,11 +542,9 @@ PlaneObject.prototype.updateIcon = function() {
 		this.markerSvgKey = svgKey;
 		this.rotationCache = this.rotation;
 
-		if (iconCache[svgKey] == null) {
+		if (iconCache[svgKey] == undefined) {
 			var svgURI = svgPathToURI(this.baseMarker.svg, outline, col, add_stroke);
-			var element = new Image();
-			element.src = svgURI;
-			addToIconCache.push([svgKey, element]);
+			addToIconCache.push([svgKey, null, svgURI]);
 			this.markerIcon = new ol.style.Icon({
 				scale: this.scale,
 				imgSize: this.baseMarker.size,
@@ -819,10 +817,10 @@ PlaneObject.prototype.updateTick = function(receiver_timestamp, last_timestamp, 
 };
 
 PlaneObject.prototype.clearMarker = function() {
-	if (this.marker) {
-		PlaneIconFeatures.remove(this.marker);
-		/* FIXME google.maps.event.clearListeners(this.marker, 'click'); */
-		this.marker = null;
+	if (this.marker && this.marker.visible) {
+		//PlaneIconFeatures.remove(this.marker);
+		this.marker.setStyle(emptyStyle);
+		this.marker.visible = false;
 	}
 };
 
@@ -832,7 +830,6 @@ PlaneObject.prototype.updateMarker = function(moved) {
 		this.clearMarker();
 		return;
 	}
-
 	if (!this.marker) {
 		this.marker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
 		this.marker.hex = this.icao;
@@ -840,7 +837,13 @@ PlaneObject.prototype.updateMarker = function(moved) {
 	} else if (moved) {
 		this.marker.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
 	}
+
 	this.updateIcon();
+
+	if (!this.marker.visible) {
+		this.marker.visible = true;
+		this.marker.setStyle(this.markerStyle);
+	}
 };
 
 
@@ -974,6 +977,9 @@ PlaneObject.prototype.remakeTrail = function() {
 PlaneObject.prototype.destroy = function() {
 	this.clearLines();
 	this.clearMarker();
+	if (this.marker) {
+		PlaneIconFeatures.remove(this.marker);
+	}
 	trailGroup.remove(this.layer);
 	this.trail_features.clear();
 	if (this.tr) {
