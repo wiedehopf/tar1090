@@ -6,7 +6,6 @@
 
 // Define our global variables
 var OLMap         = null;
-var center = [50,10];
 var StaticFeatures = new ol.Collection();
 var SiteCircleFeatures = new ol.Collection();
 var PlaneIconFeatures = new ol.Collection();
@@ -210,6 +209,7 @@ function setupPlane(hex, plane) {
 }
 
 function fetchData() {
+	var center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
 	localStorage['CenterLon'] = center[0];
 	localStorage['CenterLat'] = center[1];
 	if (FetchPending != null && FetchPending.state() == 'pending') {
@@ -219,16 +219,6 @@ function fetchData() {
 	if (FetchPendingUAT != null && FetchPendingUAT.state() == 'pending') {
 		// don't double up on fetches, let the last one resolve
 		return;
-	}
-
-	var item;
-	while(item = addToIconCache.pop()) {
-		const svgKey = item[0];
-		const svgURI = item[1];
-		if (!iconCache[svgKey]) {
-			iconCache[svgKey] = new Image();
-			iconCache[svgKey].src = svgURI;
-		}
 	}
 
 	if (enable_uat) {
@@ -301,6 +291,19 @@ function fetchData() {
 			StaleReceiverCount = 0;
 			$("#update_error").css('display','none');
 		}
+
+		window.setTimeout(function() {
+			var item;
+			while(item = addToIconCache.pop()) {
+				const svgKey = item[0];
+				const svgURI = item[1];
+				if (!iconCache[svgKey]) {
+					iconCache[svgKey] = new Image();
+					iconCache[svgKey].src = svgURI;
+				}
+			}
+		}, RefreshInterval/3);
+
 
 	});
 
@@ -685,8 +688,8 @@ function initialize_map() {
 		DefaultCenterLon = receiverJson.lon;
 	}
 	// Load stored map settings if present
-	center[0] = CenterLon = Number(localStorage['CenterLon']) || DefaultCenterLon;
-	center[1] = CenterLat = Number(localStorage['CenterLat']) || DefaultCenterLat;
+	CenterLon = Number(localStorage['CenterLon']) || DefaultCenterLon;
+	CenterLat = Number(localStorage['CenterLat']) || DefaultCenterLat;
 	ZoomLvl = Number(localStorage['ZoomLvl']) || DefaultZoomLvl;
 	ZoomLvlCache = ZoomLvl;
 	MapType_tar1090 = localStorage['MapType_tar1090'];
@@ -800,8 +803,8 @@ function initialize_map() {
 			new ol.control.Attribution({collapsed: true}),
 			new ol.control.ScaleLine({units: DisplayUnits})
 		],
-		loadTilesWhileAnimating: true,
-		loadTilesWhileInteracting: true
+		//loadTilesWhileAnimating: true,
+		//loadTilesWhileInteracting: true,
 	});
 
 	OLMap.getView().setRotation(mapOrientation); // adjust orientation
@@ -813,7 +816,7 @@ function initialize_map() {
 	// Listeners for newly created Map
 	OLMap.getView().on('change:center', function(event) {
 		if (FollowSelected) {
-			center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
+			const center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
 			// On manual navigation, disable follow
 			if (!SelectedPlane || !SelectedPlane.position ||
 				(Math.abs(center[0] - SelectedPlane.position[0]) > 0.0001 &&
@@ -828,13 +831,14 @@ function initialize_map() {
 	scaleFactor = getScaleFactor();
 	OLMap.getView().on('change:resolution', function(event) {
 
-		ZoomLvl = localStorage['ZoomLvl'] = OLMap.getView().getZoom();
+		ZoomLvl = OLMap.getView().getZoom();
 
 		// small zoomstep, no need to change aircraft scaling
 		if (Math.abs(ZoomLvl-ZoomLvlCache) < 0.3)
 			return;
 
 		ZoomLvlCache = ZoomLvl;
+		localStorage['ZoomLvl'] = ZoomLvl;
 
 		scaleFactor = getScaleFactor();
 		for (var i in PlanesOrdered) {

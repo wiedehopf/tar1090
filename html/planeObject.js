@@ -543,7 +543,7 @@ PlaneObject.prototype.updateIcon = function() {
 		this.rotationCache = this.rotation;
 
 		if (!iconCache[svgKey]) {
-			const svgURI = svgPathToURI(this.baseMarker.svg, outline, col, add_stroke)
+			const svgURI = svgPathToURI(this.baseMarker.svg, outline, col, add_stroke);
 			addToIconCache.push([svgKey, svgURI]);
 			this.markerIcon = new ol.style.Icon({
 				scale: this.scale,
