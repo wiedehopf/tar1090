@@ -100,7 +100,7 @@ function PlaneObject(icao) {
 		name: this.icao,
 		source: new ol.source.Vector({
 			features: this.trail_features,
-		})
+		}),
 	});
 
 	trailGroup.push(this.layer);
@@ -544,7 +544,9 @@ PlaneObject.prototype.updateIcon = function() {
 
 		if (!iconCache[svgKey]) {
 			const svgURI = svgPathToURI(this.baseMarker.svg, outline, col, add_stroke);
-			addToIconCache.push([svgKey, svgURI]);
+			const element = new Image();
+			element.src = svgURI;
+			addToIconCache.push([svgKey, element]);
 			this.markerIcon = new ol.style.Icon({
 				scale: this.scale,
 				imgSize: this.baseMarker.size,

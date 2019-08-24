@@ -221,6 +221,14 @@ function fetchData() {
 		return;
 	}
 
+	var item;
+	while(item = addToIconCache.pop()) {
+		const svgKey = item[0];
+		const element = item[1];
+		if (!iconCache[svgKey]) {
+			iconCache[svgKey] = element;
+		}
+	}
 	if (enable_uat) {
 		FetchPendingUAT = $.ajax({ url: 'chunks/978.json',
 			timeout: 7000,
@@ -291,19 +299,6 @@ function fetchData() {
 			StaleReceiverCount = 0;
 			$("#update_error").css('display','none');
 		}
-
-		window.setTimeout(function() {
-			var item;
-			while(item = addToIconCache.pop()) {
-				const svgKey = item[0];
-				const svgURI = item[1];
-				if (!iconCache[svgKey]) {
-					iconCache[svgKey] = new Image();
-					iconCache[svgKey].src = svgURI;
-				}
-			}
-		}, RefreshInterval/3);
-
 
 	});
 
