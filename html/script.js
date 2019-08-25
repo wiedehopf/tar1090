@@ -1468,11 +1468,12 @@ function refreshTableInfo() {
 	for (var i = 0; i < PlanesOrdered.length; ++i) {
 		var tableplane = PlanesOrdered[i];
 		TrackedHistorySize += tableplane.history_size;
+		var classes;
 		if (tableplane.seen >= 58 || tableplane.isFiltered()) {
-			tableplane.tr.className = "plane_table_row hidden";
+			classes = tableplane.tr.className = "plane_table_row hidden";
 		} else {
 			TrackedAircraft++;
-			var classes = "plane_table_row";
+			classes = "plane_table_row";
 
 			if (tableplane.position != null && tableplane.seen_pos < 60) {
 				++TrackedAircraftPositions;
@@ -1519,10 +1520,10 @@ function refreshTableInfo() {
 			updateCell(tableplane, 17, tableplane.baseMarkerKey);
 
 
-			if (tableplane.classesCache != classes) {
-				tableplane.classesCache = classes;
-				tableplane.tr.className = classes;
 			}
+		if (tableplane.classesCache != classes) {
+			tableplane.classesCache = classes;
+			tableplane.tr.className = classes;
 		}
 	}
 
@@ -2167,7 +2168,7 @@ function followRandomPlane() {
 function toggleLabels() {
 	enableLabels = !enableLabels;
 	localStorage['enableLabels'] = enableLabels;
-	for (const key in PlanesOrdered) {
+	for (var key in PlanesOrdered) {
 		PlanesOrdered[key].updateMarker(false);
 	}
 }
@@ -2203,7 +2204,11 @@ function updatePlaneFilter() {
 	PlaneFilter.altitudeUnits = DisplayUnits;
 
 	for (var i in PlanesOrdered) {
-		PlanesOrdered[i].updateMarker();
+		var plane = PlanesOrdered[i];
+		if (plane.dataSource == "uat")
+			plane.updateTick(uat_now, uat_last);
+		else
+			plane.updateTick(now, last);
 	}
 }
 
