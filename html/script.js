@@ -138,7 +138,6 @@ function processReceiverUpdate(data, init) {
 			continue;
 		} else {
 			plane = new PlaneObject(hex);
-			plane.filter = PlaneFilter;
 
 			if (!init)
 				setupPlane(hex,plane);
@@ -1109,8 +1108,8 @@ function reaper() {
 		if (plane.seen > 600) {
 			// Reap it.                                
 			//console.log("Removed " + plane.icao);
-			plane.destroy();
 			delete Planes[plane.icao];
+			plane.destroy();
 		} else {
 			// Keep it.
 			newPlanes.push(plane);
@@ -1703,7 +1702,7 @@ function selectPlaneByHex(hex,autofollow) {
 		//$('.infoblock-container').scrollTop(0);
 	}
 	// multiSelect deselect
-	if (multiSelect && newPlane.selected && !autofollow) {
+	if (multiSelect && newPlane && newPlane.selected && !autofollow) {
 		newPlane.selected = false;
 		newPlane.clearLines();
 		newPlane.updateMarker();
