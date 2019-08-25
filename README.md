@@ -4,7 +4,12 @@ Provides an improved dump1090-fa webinterface
 
 - Improved adjustable history
 - Show All Tracks much faster than original with many planes
+- Multiple Maps available
+- Map can be dimmed/darkened
+- Multiple aircraft can be selected
+- Labels with the callsign can be switched on and off
 
+See the bottom of the page for screenshots
 
 ### Installation / Update:
 
@@ -70,3 +75,8 @@ sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/tar1090
 - M toggles multiselect.
 - T selects all aircraft
 - B toggle map brightness
+
+
+## Screenshots
+![Screenshot1](https://raw.githubusercontent.com/wiedehopf/tar1090/screenshots/screenshot1.png)
+![Screenshot2](https://raw.githubusercontent.com/wiedehopf/tar1090/screenshots/screenshot2.png)
