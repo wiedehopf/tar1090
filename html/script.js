@@ -957,6 +957,9 @@ function initialize_map() {
 			case "t":
 				selectAllPlanes();
 				break;
+			case "h":
+				resetMap();
+				break;
 			case "f":
 				toggleFollowSelected();
 				break;
