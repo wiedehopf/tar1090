@@ -71,7 +71,6 @@ cp -r * $ipath
 sed -i -e "s/__cache_version__/$(date +%s)/g" $ipath/html/index.html
 
 cp -n default /etc/default/tar1090
-cp tar1090.service /lib/systemd/system
 
 
 cp 88-tar1090.conf /etc/lighttpd/conf-available
@@ -83,6 +82,7 @@ then
 fi
 
 if [ 0 -eq $changed ]; then
+	cp tar1090.service /lib/systemd/system
 	systemctl daemon-reload
 	systemctl restart lighttpd
 	systemctl restart tar1090
