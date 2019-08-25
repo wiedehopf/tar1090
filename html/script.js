@@ -980,24 +980,28 @@ function initialize_map() {
 				extent = OLMap.getView().calculateExtent(OLMap.getSize());
 				newCenter = [oldCenter[0], (oldCenter[1] + extent[3])/2];
 				OLMap.getView().setCenter(newCenter);
+				FollowSelected = false;
 				break;
 			case "s":
 				oldCenter = OLMap.getView().getCenter();
 				extent = OLMap.getView().calculateExtent(OLMap.getSize());
 				newCenter = [oldCenter[0], (oldCenter[1] + extent[1])/2];
 				OLMap.getView().setCenter(newCenter);
+				FollowSelected = false;
 				break;
 			case "a":
 				oldCenter = OLMap.getView().getCenter();
 				extent = OLMap.getView().calculateExtent(OLMap.getSize());
 				newCenter = [(oldCenter[0] + extent[0])/2, oldCenter[1]];
 				OLMap.getView().setCenter(newCenter);
+				FollowSelected = false;
 				break;
 			case "d":
 				oldCenter = OLMap.getView().getCenter();
 				extent = OLMap.getView().calculateExtent(OLMap.getSize());
 				newCenter = [(oldCenter[0] + extent[2])/2,  oldCenter[1]];
 				OLMap.getView().setCenter(newCenter);
+				FollowSelected = false;
 				break;
 		}
 	}, true);
@@ -2120,16 +2124,22 @@ function toggleMapDim(switchOn) {
 	if (!switchOn && localStorage['MapDim'] === "true") {
 		localStorage['MapDim'] = "false";
 
-		for (const i in maps) {
-			ol.Observable.unByKey(maps[i].dimKey);
-		}
+		ol.control.LayerSwitcher.forEachRecursive(layers, function(lyr) {
+			if (lyr.get('type') != 'base')
+				return;
+			ol.Observable.unByKey(lyr.dimKey);
+		});
+
 		$('#mapdim_checkbox').removeClass('settingsCheckboxChecked');
 	} else {
 		localStorage['MapDim'] = "true";
 
-		for (const i in maps) {
-			maps[i].dimKey = maps[i].on('postcompose', dim);
-		}
+		ol.control.LayerSwitcher.forEachRecursive(layers, function(lyr) {
+			if (lyr.get('type') != 'base')
+				return;
+			lyr.dimKey = lyr.on('postcompose', dim);
+		});
+
 		$('#mapdim_checkbox').addClass('settingsCheckboxChecked');
 	}
 	OLMap.render();

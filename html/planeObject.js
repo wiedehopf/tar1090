@@ -760,14 +760,14 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.vert_rate = null;
 	}
 
-	if (this.flight) {
+	if (this.flight && this.flight.replace(/ /g, '')) {
 		this.name = this.flight;
 	} else if (this.registration) {
 		this.name = this.registration
 	} else {
 		this.name = this.icao.toUpperCase();
 	}
-	this.name = this.name.replace(/ /g, '')
+	this.name = this.name.replace(/ /g, '');
 	if (this.altitude == "ground" && this.true_heading != null) {
 		this.rotation = this.true_heading;
 	} else if (this.track != null) {
