@@ -64,7 +64,7 @@ function format_altitude_brief(alt, vr, displayUnits) {
 	} else if (vr < -192){
 		verticalRateTriangle = DOWN_TRIANGLE;
 	} else {
-		verticalRateTriangle = NBSP;
+		verticalRateTriangle = NBSP + NBSP + NBSP;
 	}
 
 	return alt_text + verticalRateTriangle;

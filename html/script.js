@@ -35,6 +35,7 @@ var multiSelect = false;
 var uat_data = null;
 var enableLabels = false;
 var mapIsVisible = false;
+var columnVis = Array(30).fill(true);
 var emptyStyle = new ol.style.Style({});
 
 
@@ -1472,6 +1473,7 @@ function refreshTableInfo() {
 	$(".distanceUnit").text(get_unit_label("distance", DisplayUnits));
 	$(".verticalRateUnit").text(get_unit_label("verticalRate", DisplayUnits));
 
+	//console.time("updateCells");
 	for (var i = 0; i < PlanesOrdered.length; ++i) {
 		var tableplane = PlanesOrdered[i];
 		TrackedHistorySize += tableplane.history_size;
@@ -1486,22 +1488,15 @@ function refreshTableInfo() {
 				++TrackedAircraftPositions;
 			}
 
-			if (tableplane.dataSource == "uat") {
-				classes += " uat";
-			} else if (tableplane.dataSource == "adsb") {
+			if (tableplane.dataSource == "adsb") {
 				classes += " vPosition";
-			} else if (tableplane.dataSource == "tisb") {
-				classes += " tisb";
-			} else if (tableplane.dataSource == "mlat") {
-				classes += " mlat";
 			} else {
-				classes += " other";
+				classes += " ";
+				classes += tableplane.dataSource;
 			}
 
 			if (tableplane.selected && !SelectedAllPlanes)
 				classes += " selected";
-			else
-				classes += " not-selected";
 
 			if (tableplane.squawk in SpecialSquawks) {
 				classes = classes + " " + SpecialSquawks[tableplane.squawk].cssClass;
@@ -1524,7 +1519,7 @@ function refreshTableInfo() {
 			updateCell(tableplane, 14, (tableplane.position != null ? tableplane.position[1].toFixed(4) : ""));
 			updateCell(tableplane, 15, (tableplane.position != null ? tableplane.position[0].toFixed(4) : ""));
 			updateCell(tableplane, 16, format_data_source(tableplane.getDataSource()));
-			updateCell(tableplane, 17, tableplane.baseMarkerKey);
+			//updateCell(tableplane, 17, tableplane.baseMarkerKey);
 
 
 			}
@@ -1533,6 +1528,7 @@ function refreshTableInfo() {
 			tableplane.tr.className = classes;
 		}
 	}
+	//console.timeEnd("updateCells");
 
 	if (show_squawk_warning) {
 		$("#SpecialSquawkWarning").css('display','block');
@@ -1882,6 +1878,7 @@ function showMap() {
 
 function showColumn(table, columnId, visible) {
 	var index = $(columnId).index();
+	columnVis[index] = visible;
 	if (index >= 0) {
 		var cells = $(table).find("td:nth-child(" + (index + 1).toString() + ")");
 		if (visible) {
@@ -1904,8 +1901,6 @@ function setColumnVisibility() {
 	showColumn(infoTable, "#lon", !mapIsVisible);
 	showColumn(infoTable, "#data_source", !mapIsVisible);
 	showColumn(infoTable, "#base_marker_key", !mapIsVisible);
-	showColumn(infoTable, "#flightaware_mode_s_link", !mapIsVisible);
-	showColumn(infoTable, "#flightaware_photo_link", !mapIsVisible);
 }
 
 function setSelectedInfoBlockVisibility() {
@@ -2378,7 +2373,7 @@ function getScaleFactor() {
 }
 
 function updateCell(plane, cell, newValue, html) {
-	if (newValue != plane.trCache[cell]) {
+	if (columnVis[cell] && newValue != plane.trCache[cell]) {
 		plane.trCache[cell] = newValue;
 		if (html) {
 			plane.tr.cells[cell].innerHTML = newValue
