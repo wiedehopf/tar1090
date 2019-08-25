@@ -94,4 +94,4 @@ fi
 
 
 echo --------------
-echo "All done!"
+echo "All done! Webinterface available at $(ip route | grep -m1 -o -P 'src \K[0-9,.]*')/tar1090"
