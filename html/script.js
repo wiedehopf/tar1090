@@ -138,6 +138,7 @@ function processReceiverUpdate(data, init) {
 			continue;
 		} else {
 			plane = new PlaneObject(hex);
+			plane.filter = PlaneFilter;
 
 			if (!init)
 				setupPlane(hex,plane);
@@ -1097,7 +1098,7 @@ function createSiteCircleFeatures() {
 }
 
 // This looks for planes to reap out of the master Planes variable
-function reaper() {
+function reaper(all) {
 	//console.log("Reaping started..");
 
 	// Look for planes where we have seen no messages for >300 seconds
@@ -1105,7 +1106,7 @@ function reaper() {
 	var plane;
 	while (plane = PlanesOrdered.pop()) {
 		plane.seen = now - plane.last_message_time;
-		if (plane.seen > 600) {
+		if (all || plane.seen > 600) {
 			// Reap it.                                
 			//console.log("Removed " + plane.icao);
 			delete Planes[plane.icao];

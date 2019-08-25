@@ -93,8 +93,6 @@ function PlaneObject(icao) {
 	this.typeDescription = null;
 	this.wtc = null;
 
-
-	this.filter = PlaneFilter;
 	this.trail_features = new ol.Collection();
 
 	this.layer = new ol.layer.Vector({
@@ -139,11 +137,6 @@ PlaneObject.prototype.logSel = function(loggable) {
 }
 
 PlaneObject.prototype.isFiltered = function() {
-	if (!this.filter) {
-		console.log("No filter, this shouldn't happen, PlaneObject in question:");
-		console.log(this);
-		return false;
-	}
 	if (this.filter.minAltitude != undefined && this.filter.maxAltitude != undefined) {
 		if (this.altitude == null) {
 			return true;
