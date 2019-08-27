@@ -1181,7 +1181,7 @@ function refreshSelected() {
 	$('#selected_flightaware_link').html(getFlightAwareModeSLink(selected.icao, selected.flight ? selected.flight : selected.registration, "Visit Flight Page"));
 
 	if (selected.registration) {
-		$('#selected_registration').text(selected.registration);
+		$('#selected_registration').html(getFlightAwareIdentLink(selected.registration, selected.registration));
 	} else {
 		$('#selected_registration').text("n/a");
 	}
