@@ -1178,7 +1178,7 @@ function refreshSelected() {
 	} else {
 		$('#selected_callsign').text('n/a');
 	}
-	$('#selected_flightaware_link').html(getFlightAwareModeSLink(selected.icao, selected.flight ? selected.flight : selected.registration, "Visit Flight Page"));
+	$('#selected_flightaware_link').html(getFlightAwareModeSLink(selected.icao, selected.flight, "Visit Flight Page"));
 
 	if (selected.registration) {
 		$('#selected_registration').html(getFlightAwareIdentLink(selected.registration, selected.registration));
@@ -1504,7 +1504,7 @@ function refreshTableInfo() {
 			}			                
 
 			// ICAO doesn't change
-			updateCell(tableplane, 2, getFlightAwareModeSLink(tableplane.icao, tableplane.name, tableplane.name), true);
+			updateCell(tableplane, 2, getFlightAwareModeSLink(tableplane.icao, tableplane.flight, tableplane.name), true);
 			updateCell(tableplane, 3, getFlightAwareIdentLink(tableplane.registration, tableplane.registration), true);
 			updateCell(tableplane, 4, (tableplane.icaoType != null ? tableplane.icaoType : ""));
 			updateCell(tableplane, 5, (tableplane.squawk != null ? tableplane.squawk : ""));

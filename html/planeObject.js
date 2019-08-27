@@ -33,6 +33,8 @@ function PlaneObject(icao) {
 	this.nav_qnh        = null;
 	this.rc				= null;
 
+	this.rotation       = 0;
+
 	this.nac_p			= null;
 	this.nac_v			= null;
 	this.nic_baro		= null;
@@ -760,14 +762,14 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.vert_rate = null;
 	}
 
-	if (this.flight && this.flight.replace(/ /g, '')) {
+	if (this.flight && this.flight.trim()) {
 		this.name = this.flight;
 	} else if (this.registration) {
 		this.name = this.registration
 	} else {
 		this.name = this.icao.toUpperCase();
 	}
-	this.name = this.name.replace(/ /g, '');
+	this.name = this.name.trim();
 	if (this.altitude == "ground" && this.true_heading != null) {
 		this.rotation = this.true_heading;
 	} else if (this.track != null) {
