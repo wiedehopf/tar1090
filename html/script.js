@@ -29,6 +29,7 @@ var refresh;
 var scaleFactor;
 var debug = false;
 var debugAll = false;
+var trackLabels = false;
 var fragment;
 var grouptype_checkbox;
 var multiSelect = false;
@@ -334,8 +335,12 @@ function fetchData() {
 function initialize() {
 
 	mapOrientation *= (Math.PI/180); // adjust to radians
+
 	if (localStorage['enableLabels'] == 'true'){
 		enableLabels = true;
+	}
+	if (localStorage['trackLabels'] == "true") {
+		trackLabels = true;
 	}
 
 	$.when(configureReceiver).done(function() {
@@ -503,6 +508,7 @@ function init_page() {
 		debug = false;
 		$('#debug_checkbox').removeClass('settingsCheckboxChecked');
 	}
+
 
 	$('#selectall_checkbox').on('click', function() {
 		if ($('#selectall_checkbox').hasClass('settingsCheckboxChecked')) {
@@ -966,6 +972,9 @@ function initialize_map() {
 				break;
 			case "l":
 				toggleLabels();
+				break;
+			case "k":
+				toggleTrackLabels();
 				break;
 			case "b":
 				toggleMapDim();
@@ -2178,6 +2187,14 @@ function toggleLabels() {
 	localStorage['enableLabels'] = enableLabels;
 	for (var key in PlanesOrdered) {
 		PlanesOrdered[key].updateMarker(false);
+	}
+}
+
+function toggleTrackLabels() {
+	trackLabels = !trackLabels;
+	localStorage['trackLabels'] = trackLabels;
+	for (var i in PlanesOrdered) {
+		PlanesOrdered[i].remakeTrail();
 	}
 }
 

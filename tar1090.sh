@@ -31,7 +31,6 @@ new_chunk() {
 prune() {
 		sed -i \
 			-e 's/,"alt_geom":[^,^}]*//' \
-			-e 's/,"gs":[^,^}]*//' \
 			-e 's/,"ias":[^,^}]*//' \
 			-e 's/,"tas":[^,^}]*//' \
 			-e 's/,"track_rate":[^,^}]*//' \

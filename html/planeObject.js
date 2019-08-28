@@ -180,6 +180,8 @@ PlaneObject.prototype.updateTrackPrev = function() {
 	this.prev_time = this.position_time;
 	this.prev_track = this.track;
 	this.prev_true = this.true_head;
+	this.prev_alt = this.altitude;
+	this.prev_speed = this.speed;
 
 	return true;
 }
@@ -203,6 +205,8 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 			estimated: false,
 			ground: on_ground,
 			altitude: this.alt_rounded,
+			alt_real: this.altitude,
+			speed: this.speed,
 		};
 		this.track_linesegs.push(newseg);
 		this.history_size ++;
@@ -271,6 +275,8 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 			estimated: false,
 			ground: on_ground,
 			altitude: this.alt_rounded,
+			alt_real: this.prev_alt,
+			speed: this.prev_speed,
 		});
 		this.history_size += 2;
 
@@ -310,6 +316,8 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 			feature: null,
 			estimated: false,
 			altitude: this.alt_rounded,
+			alt_real: this.prev_alt,
+			speed: this.prev_speed,
 			ground: on_ground,
 		});
 
@@ -940,8 +948,25 @@ PlaneObject.prototype.updateLines = function() {
 			} else {
 				seg.feature.setStyle(this.altitudeLines(seg.altitude));
 			}
-
 			this.trail_features.push(seg.feature);
+		}
+		if (trackLabels && !seg.label && seg.alt_real != null) {
+			seg.label = new ol.Feature(new ol.geom.Point(seg.fixed.getFirstCoordinate()));
+			seg.label.setStyle(
+				new ol.style.Style({
+					text: new ol.style.Text({
+						text: (seg.alt_real + "\n" + seg.speed),
+						fill: new ol.style.Fill({color: 'white' }),
+						backgroundFill: new ol.style.Stroke({color: 'rgba(0,0,0,0.4'}),
+						textAlign: 'left',
+						textBaseline: "top",
+						font: 'bold 12px tahoma',
+						offsetX: 5,
+						offsetY: 5,
+					}),
+				})
+			);
+			this.trail_features.push(seg.label);
 		}
 	}
 
@@ -955,7 +980,8 @@ PlaneObject.prototype.remakeTrail = function() {
 
 	this.trail_features.clear();
 	for (var i in this.track_linesegs) {
-		this.track_linesegs[i].feature = null;
+		this.track_linesegs[i].feature = undefined;
+		this.track_linesegs[i].label = undefined;
 	}
 	this.elastic_feature = null;
 
