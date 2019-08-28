@@ -181,6 +181,7 @@ PlaneObject.prototype.updateTrackPrev = function() {
 	this.prev_track = this.track;
 	this.prev_true = this.true_head;
 	this.prev_alt = this.altitude;
+	this.prev_alt_rounded = this.alt_rounded;
 	this.prev_speed = this.speed;
 
 	return true;
@@ -274,7 +275,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 			feature: null,
 			estimated: false,
 			ground: on_ground,
-			altitude: this.alt_rounded,
+			altitude: this.prev_alt_rounded,
 			alt_real: this.prev_alt,
 			speed: this.prev_speed,
 		});
@@ -293,7 +294,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	var alt_change = Math.abs(this.alt_rounded - lastseg.altitude);
 	var since_update = this.prev_time - this.tail_update;
 	if (
-		this.alt_rounded !== lastseg.altitude
+		this.prev_alt_rounded !== lastseg.altitude
 		//lastseg.ground != on_ground
 		//|| (!on_ground && isNaN(alt_change))
 		//|| (alt_change > 700)
@@ -306,16 +307,11 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 
 		this.logSel("sec_elapsed: " + since_update.toFixed(1) + " alt_change: "+ alt_change.toFixed(0));
 
-		// Let's assume the ground state change happened somewhere between the previous and current position
-		// Represent that assumption. With altitude it's not quite as critical.
-		if (lastseg.ground != on_ground) {
-			projPrev = [(projPrev[0]+projHere[0])/2,(projPrev[1]+projHere[1])/2];
-		}
 		lastseg.fixed.appendCoordinate(projPrev);
 		this.track_linesegs.push({ fixed: new ol.geom.LineString([projPrev]),
 			feature: null,
 			estimated: false,
-			altitude: this.alt_rounded,
+			altitude: this.prev_alt_rounded,
 			alt_real: this.prev_alt,
 			speed: this.prev_speed,
 			ground: on_ground,
