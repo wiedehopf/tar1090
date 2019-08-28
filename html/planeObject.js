@@ -542,7 +542,11 @@ PlaneObject.prototype.updateIcon = function() {
 		|| ZoomLvl >= labelZoomGround
 	)) {
 		if (extendedLabels) {
-			labelText =  Number(this.speed).toFixed(0)+ "  " + this.altitude + "\n" + this.name;
+			if (this.onGround && this.speed < 15) {
+				labelText =  this.name;
+			} else {
+				labelText =  Number(this.speed).toFixed(0)+ "  " + this.altitude + "\n" + this.name;
+			}
 		} else {
 			labelText = this.name;
 		}
@@ -958,10 +962,11 @@ PlaneObject.prototype.updateLines = function() {
 		}
 		if (trackLabels && !seg.label && seg.alt_real != null) {
 			seg.label = new ol.Feature(new ol.geom.Point(seg.fixed.getFirstCoordinate()));
+			const text = seg.alt_real == "ground" ? "" : (Number(seg.speed).toFixed(0)+ "\n" + seg.alt_real);
 			seg.label.setStyle(
 				new ol.style.Style({
 					text: new ol.style.Text({
-						text: (Number(seg.speed).toFixed(0)+ "\n" + seg.alt_real),
+						text: text,
 						fill: new ol.style.Fill({color: 'white' }),
 						backgroundFill: new ol.style.Stroke({color: 'rgba(0,0,0,0.4'}),
 						textAlign: 'left',
