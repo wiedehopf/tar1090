@@ -82,6 +82,8 @@ var shapes = {
 }
 
 var TypeDesignatorIcons = {
+	'SHIP': ['balloon', 1], // Blimp
+
 	'A318': ['airliner', 0.88], // shortened a320 68t
 	'A319': ['airliner', 0.92], // shortened a320 75t
 	'A19N': ['airliner', 0.93], // shortened a320
