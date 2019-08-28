@@ -541,7 +541,11 @@ PlaneObject.prototype.updateIcon = function() {
 		|| (ZoomLvl >= labelZoomGround-2 && this.speed > 18)
 		|| ZoomLvl >= labelZoomGround
 	)) {
-		labelText = this.name;
+		if (extendedLabels) {
+			labelText =  Number(this.speed).toFixed(0)+ "  " + this.altitude + "\n" + this.name;
+		} else {
+			labelText = this.name;
+		}
 	}
 	var styleKey = svgKey + '!' + labelText + '!' + this.scale;
 
@@ -671,6 +675,9 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.zIndex = this.alt_rounded;
 	}
 
+	// needed for track labels
+	this.speed = data.gs;
+
 	// don't expire the track, even display outdated track
 	if ("track" in data) {
 		this.track = data.track;
@@ -709,7 +716,6 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	// simple fields
 
 	this.alt_geom = data.alt_geom;
-	this.speed = data.gs;
 	this.ias = data.ias;
 	this.tas = data.tas;
 	this.track_rate = data.track_rate;
@@ -955,7 +961,7 @@ PlaneObject.prototype.updateLines = function() {
 			seg.label.setStyle(
 				new ol.style.Style({
 					text: new ol.style.Text({
-						text: (seg.alt_real + "\n" + seg.speed),
+						text: (Number(seg.speed).toFixed(0)+ "\n" + seg.alt_real),
 						fill: new ol.style.Fill({color: 'white' }),
 						backgroundFill: new ol.style.Stroke({color: 'rgba(0,0,0,0.4'}),
 						textAlign: 'left',
