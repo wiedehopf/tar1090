@@ -542,7 +542,7 @@ PlaneObject.prototype.updateIcon = function() {
 		|| ZoomLvl >= labelZoomGround
 	)) {
 		if (extendedLabels) {
-			if (this.onGround && this.speed < 15) {
+			if (this.onGround && (!this.speed || this.speed < 15)) {
 				labelText =  this.name;
 			} else {
 				labelText =  Number(this.speed).toFixed(0)+ "  " + this.altitude + "\n" + this.name;
