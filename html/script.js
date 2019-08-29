@@ -1890,6 +1890,7 @@ function showMap() {
 	setColumnVisibility();
 	setSelectedInfoBlockVisibility();
 	updateMapSize();    
+	refreshTableInfo();
 }
 
 function showColumn(table, columnId, visible) {

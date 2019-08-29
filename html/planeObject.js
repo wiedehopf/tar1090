@@ -102,6 +102,7 @@ function PlaneObject(icao) {
 		source: new ol.source.Vector({
 			features: this.trail_features,
 		}),
+		renderOrder: null,
 	});
 
 	trailGroup.push(this.layer);
@@ -1000,7 +1001,8 @@ PlaneObject.prototype.remakeTrail = function() {
 		name: this.icao,
 		source: new ol.source.Vector({
 			features: this.trail_features,
-		})
+		}),
+		renderOrder: null,
 	});
 
 	trailGroup.push(this.layer);
