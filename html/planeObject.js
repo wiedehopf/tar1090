@@ -540,12 +540,13 @@ PlaneObject.prototype.updateIcon = function() {
 	)) {
 		if (extendedLabels) {
 			if (this.onGround && (!this.speed || this.speed < 15)) {
-				labelText =  this.name;
+				labelText =  " " + this.name + " ";
 			} else {
-				labelText =  Number(this.speed).toFixed(0)+ "  " + this.altitude + "\n" + this.name;
+				labelText =  Number(this.speed).toFixed(0).toString().padStart(4, NBSP)+ "  "
+					+ this.altitude.toString().padStart(5, NBSP) + " \n " + this.name + " ";
 			}
 		} else {
-			labelText = this.name;
+			labelText = " " + this.name + " ";
 		}
 	}
 	var styleKey = svgKey + '!' + labelText + '!' + this.scale;
@@ -959,7 +960,8 @@ PlaneObject.prototype.updateLines = function() {
 		}
 		if (trackLabels && !seg.label && seg.alt_real != null) {
 			seg.label = new ol.Feature(new ol.geom.Point(seg.fixed.getFirstCoordinate()));
-			const text = seg.alt_real == "ground" ? "" : (Number(seg.speed).toFixed(0)+ "\n" + seg.alt_real);
+			const text = seg.alt_real == "ground" ? "" :
+				(Number(seg.speed).toFixed(0).toString().padStart(6, NBSP) + " \n" + seg.alt_real.toString().padStart(6, NBSP)) + " ";
 			seg.label.setStyle(
 				new ol.style.Style({
 					text: new ol.style.Text({
