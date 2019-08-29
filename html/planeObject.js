@@ -537,13 +537,14 @@ PlaneObject.prototype.updateIcon = function() {
 		(ZoomLvl >= labelZoom && this.altitude != "ground")
 		|| (ZoomLvl >= labelZoomGround-2 && this.speed > 18)
 		|| ZoomLvl >= labelZoomGround
+		|| (this.selected && !SelectedAllPlanes)
 	)) {
 		if (extendedLabels) {
-			if (this.onGround && (!this.speed || this.speed < 15)) {
-				labelText =  " " + this.name + " ";
-			} else {
+			if (this.altitude && (!this.onGround || (this.speed && this.speed > 15) || this.selected)) {
 				labelText =  Number(this.speed).toFixed(0).toString().padStart(4, NBSP)+ "  "
 					+ this.altitude.toString().padStart(5, NBSP) + " \n " + this.name + " ";
+			} else {
+				labelText =  " " + this.name + " ";
 			}
 		} else {
 			labelText = " " + this.name + " ";
