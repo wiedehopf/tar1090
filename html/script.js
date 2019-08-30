@@ -959,6 +959,13 @@ function initialize_map() {
 			case "Escape":
 				deselectAllPlanes();
 				break;
+			case "?":
+				if (!SelectedPlane) {
+					console.log("No plane selected");
+					break;
+				}
+				console.log(SelectedPlane.icao + ": " + SelectedPlane.baseMarkerKey + "  " + SelectedPlane.shape);
+				break;
 			case "m":
 				toggleMultiSelect();
 				break;
