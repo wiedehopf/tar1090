@@ -149,16 +149,24 @@ function processReceiverUpdate(data, init) {
 
 			Planes[hex] = plane;
 			PlanesOrdered.push(plane);
+			if (uat) {
+				plane.receiver = "uat";
+				plane.dataSource = "uat";
+			}
 		}
 
 		// Call the function update
 		if (uat) {
-			if (ac.seen < 58)
+			if (ac.seen < 5) {
+				plane.receiver = "uat";
 				plane.dataSource = "uat";
-			else
-				plane.dataSource = "other";
+			}
 			plane.updateData(uat_now, ac, init);
 		} else {
+			if (ac.seen < 5) {
+				plane.receiver = "1090";
+				plane.dataSource = "adsb";
+			}
 			plane.updateData(now, ac, init);
 		}
 	}
@@ -285,18 +293,18 @@ function fetchData() {
 		console.log(((now-last)*1000).toFixed(0) + " " + diff +" "+ delay + "                  "+now);
 		*/
 
+		if (data.now > now) {
+			processReceiverUpdate(data);
+		}
 		if (uat_data && uat_data.now > uat_now) {
 			processReceiverUpdate(uat_data);
 			uat_data = null;
-		}
-		if (data.now > now) {
-			processReceiverUpdate(data);
 		}
 
 		// update timestamps, visibility, history track for all planes - not only those updated
 		for (var i = 0; i < PlanesOrdered.length; ++i) {
 			var plane = PlanesOrdered[i];
-			if (plane.dataSource == "uat")
+			if (plane.receiver == "uat")
 				plane.updateTick(uat_now, uat_last);
 			else
 				plane.updateTick(now, last);
