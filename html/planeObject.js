@@ -540,7 +540,7 @@ PlaneObject.prototype.updateIcon = function() {
 		|| (this.selected && !SelectedAllPlanes)
 	)) {
 		if (extendedLabels) {
-			if (this.altitude && (!this.onGround || (this.speed && this.speed > 15) || this.selected)) {
+			if (this.altitude && (!this.onGround || (this.speed && this.speed > 15) || (this.selected && !SelectedAllPlanes))) {
 				labelText =  Number(this.speed).toFixed(0).toString().padStart(4, NBSP)+ "  "
 					+ this.altitude.toString().padStart(5, NBSP) + " \n " + this.name + " ";
 			} else {

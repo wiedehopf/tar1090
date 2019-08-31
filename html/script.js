@@ -2408,7 +2408,7 @@ function bearingFromLonLat(position1, position2) {
 }
 
 function getScaleFactor() {
-	return 1.2*Math.max(0.6, Math.min(1.2, 0.045 * Math.pow(1.5, ZoomLvl)));
+	return 1.2*Math.max(0.6, Math.min(1.15, 0.068 * Math.pow(1.40, ZoomLvl)));
 }
 
 function updateCell(plane, cell, newValue, html) {
