@@ -1191,7 +1191,7 @@ function refreshSelected() {
 	}
 	const selected = SelectedPlane;
 
-	if (selected.flight && selected.flight.replace(/ /g, '')) {
+	if (selected.flight && selected.flight.trim()) {
 		$('#selected_callsign').text(selected.flight);
 	} else {
 		$('#selected_callsign').text('n/a');
@@ -1437,11 +1437,7 @@ function refreshHighlighted() {
 		}
 	}
 
-	if (highlighted.flight !== null && highlighted.flight !== "") {
-		$('#highlighted_callsign').text(highlighted.flight);
-	} else {
-		$('#highlighted_callsign').text('n/a');
-	}
+	$('#highlighted_callsign').text(highlighted.name);
 
 	if (highlighted.icaoType !== null) {
 		$('#highlighted_icaotype').text(highlighted.icaoType);
@@ -1462,6 +1458,8 @@ function refreshHighlighted() {
 	$("#highlighted_altitude").text(format_altitude_long(highlighted.altitude, highlighted.vert_rate, DisplayUnits));
 
 	$('#highlighted_icao').text(highlighted.icao.toUpperCase());
+
+	$('#highlighted_pf_route').text((highlighted.pfRoute ? highlighted.pfRoute : ""));
 
 	$('#highlighted_rssi').text(highlighted.rssi.toFixed(1) + ' dBFS');
 
@@ -2372,7 +2370,7 @@ function fetchPfData() {
 					plane.registration = ac.reg;
 				if (ac.type && ac.type != "????")
 					plane.icaoType = ac.type;
-				if (plane.icaoType != plane.icaoTypeCache) {
+				if (plane.icaoType != plane.icaoTypeCache && plane.icaoType != "ZVEH") {
 					var typeData = _aircraft_type_cache[plane.icaoType];
 					if (typeData) {
 						plane.typeDescription = typeData.desc;

@@ -468,7 +468,7 @@ select.error, textarea.error, input.error {
 }
 
 .highlightedTitle {
-    height: 48px;
+    height: 50px;
     border-bottom: 1px solid #00A0E2;
     padding-left: 18px;
 	padding-top: 18px;
@@ -483,7 +483,7 @@ select.error, textarea.error, input.error {
 .identLarge {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 24px;
-    line-height: 20px;
+    line-height: 24px;
     color: #002F5D;
     color: rgb(0, 47, 93);
     font-weight: lighter;
@@ -492,7 +492,7 @@ select.error, textarea.error, input.error {
 .identMedium {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 18px;
-    line-height: 20px;
+    line-height: 22px;
     color: #002F5D;
     color: rgb(0, 47, 93);
     font-weight: lighter;
