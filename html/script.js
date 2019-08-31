@@ -49,6 +49,7 @@ var SpecialSquawks = {
 
 // Get current map settings
 var CenterLat, CenterLon, ZoomLvl, ZoomLvlCache, MapType_tar1090;
+var zoomTimeout;
 
 
 var PlaneRowTemplate = null;
@@ -851,26 +852,20 @@ function initialize_map() {
 		}
 	});
 
-	scaleFactor = getScaleFactor();
+	changeZoom();
 	OLMap.getView().on('change:resolution', function(event) {
 
 		ZoomLvl = OLMap.getView().getZoom();
 
 		// small zoomstep, no need to change aircraft scaling
-		if (Math.abs(ZoomLvl-ZoomLvlCache) < 0.3)
+		if (Math.abs(ZoomLvl-ZoomLvlCache) < 0.1)
 			return;
 
 		ZoomLvlCache = ZoomLvl;
-		localStorage['ZoomLvl'] = ZoomLvl;
 
-		scaleFactor = getScaleFactor();
-		for (var i in PlanesOrdered) {
-			var plane = PlanesOrdered[i];
-			if (plane.markerIcon) {
-				plane.scaleCache = scaleFactor * plane.baseScale;
-				plane.markerIcon.setScale(plane.scaleCache);
-			}
-		}
+		clearTimeout(zoomTimeout);
+		zoomTimeout = setTimeout(changeZoom, 30);
+
 	});
 
 	OLMap.on(['click', 'dblclick'], function(evt) {
@@ -2407,8 +2402,16 @@ function bearingFromLonLat(position1, position2) {
 	return (Math.atan2(y, x)* 180 / Math.PI + 360) % 360;
 }
 
-function getScaleFactor() {
-	return 1.2*Math.max(0.6, Math.min(1.15, 0.068 * Math.pow(1.40, ZoomLvl)));
+function changeZoom() {
+		localStorage['ZoomLvl'] = ZoomLvl;
+		scaleFactor = 1.2*Math.max(0.6, Math.min(1.15, 0.09 * Math.pow(1.35, ZoomLvl)));
+		for (var i in PlanesOrdered) {
+			var plane = PlanesOrdered[i];
+			if (plane.markerIcon) {
+				plane.scaleCache = scaleFactor * plane.baseScale;
+				plane.markerIcon.setScale(plane.scaleCache);
+			}
+		}
 }
 
 function updateCell(plane, cell, newValue, html) {
