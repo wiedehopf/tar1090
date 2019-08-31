@@ -864,7 +864,7 @@ function initialize_map() {
 		ZoomLvlCache = ZoomLvl;
 
 		clearTimeout(zoomTimeout);
-		zoomTimeout = setTimeout(changeZoom, 30);
+		zoomTimeout = setTimeout(changeZoom, 20);
 
 	});
 
@@ -990,9 +990,11 @@ function initialize_map() {
 				break;
 			case "q":
 				OLMap.getView().setZoom((ZoomLvl-1).toFixed());
+				changeZoom();
 				break;
 			case "e":
 				OLMap.getView().setZoom((ZoomLvl+1).toFixed());
+				changeZoom();
 				break;
 			case "w":
 				oldCenter = OLMap.getView().getCenter();
