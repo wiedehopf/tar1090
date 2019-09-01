@@ -2378,9 +2378,9 @@ function fetchPfData() {
 				plane.pfFlightno = ac.flightno;
 				if (ac.reg && ac.reg != "????" && ac.reg != "z.NO-REG")
 					plane.registration = ac.reg;
-				if (ac.type && ac.type != "????")
+				if (ac.type && ac.type != "????" && ac.type != "ZVEH")
 					plane.icaoType = ac.type;
-				if (plane.icaoType != plane.icaoTypeCache && plane.icaoType != "ZVEH") {
+				if (plane.icaoType != plane.icaoTypeCache) {
 					var typeData = _aircraft_type_cache[plane.icaoType];
 					if (typeData) {
 						plane.typeDescription = typeData.desc;
