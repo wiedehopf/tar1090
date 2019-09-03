@@ -24,6 +24,7 @@ then
 		echo "Exiting ..."
 		exit 1
 	fi
+	hash -r
 fi
 
 mkdir -p $ipath
