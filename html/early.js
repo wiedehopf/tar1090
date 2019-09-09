@@ -71,26 +71,28 @@ function get_history() {
 		console.log("Starting to load history (" + nHistoryItems + " items)");
 		console.time("Downloaded History");
 		// Queue up the history file downloads
-		for (var i = 0; i < nHistoryItems; i++) {
-			get_history_item(i);
+		var timeout = 42;
+		for (var i = nHistoryItems-1; i >= 0; i--) {
+			get_history_item(i, timeout);
+			timeout*=0.7;
 		}
 	}
 	configureReceiver.resolve();
 }
 
-function get_history_item(i) {
+function get_history_item(i, timeout) {
 
 	var request;
 
 	if (HistoryChunks) {
 		request = $.ajax({ url: 'chunks/' + chunkNames[i],
-			timeout: nHistoryItems * 10000, // Allow 10s load time per history chunk
+			timeout: Math.max(timeout,8) * 1000, // timeout magic
 			dataType: 'json'
 		});
 	} else {
 
 		request = $.ajax({ url: 'data/history_' + i + '.json',
-			timeout: nHistoryItems * 120, // Allow 40 ms load time per history entry
+			timeout: nHistoryItems * 80, // Allow 40 ms load time per history entry
 			cache: false,
 			dataType: 'json' });
 	}

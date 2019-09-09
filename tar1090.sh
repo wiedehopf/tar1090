@@ -22,7 +22,7 @@ new_chunk() {
 	for iterator in $(head -n-$chunks $list); do rm -f $dir/$iterator; done
 	tail -n$chunks $list > newlist
 	mv newlist $list
-	as_json="\"chunk_recent.gz\"$(for i in $(cat $list); do echo -n ", \"$i\""; done)"
+	as_json="$(for i in $(cat $list); do echo -n "\"$i\", "; done)\"chunk_recent.gz\""
 	sed -e "s/\"chunks\" : \[.*\]/\"chunks\" : [ $as_json ]/" $dir/chunks.json > $dir/chunks.tmp
 	echo "{ \"files\" : [ ] }" | gzip -1 > $cur_chunk
 	mv $dir/chunks.tmp $dir/chunks.json

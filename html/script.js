@@ -554,6 +554,7 @@ function push_history() {
 	}
 	if (!nHistoryItems) {
 		parse_history();
+		console.log("History loading failed");
 	}
 }
 
@@ -563,8 +564,10 @@ function push_history_item(i) {
 		.done(function(json) {
 
 			if (HistoryChunks) {
-				for (var i in json.files) {
-					PositionHistoryBuffer.push(json.files[i]);
+				if (json) {
+					for (var i in json.files) {
+						PositionHistoryBuffer.push(json.files[i]);
+					}
 				}
 			} else {
 				PositionHistoryBuffer.push(json);
