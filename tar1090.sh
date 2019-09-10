@@ -55,6 +55,7 @@ prune() {
 			-e 's/,"category":[^,^}]*//' \
 			-e 's/,"version":[^,^}]*//' \
 			-e 's/,"rssi":[^,^}]*//' \
+			-e 's/,"messages":[^,^}]*//' \
 			-e 's/,"emergency":[^,^}]*//' \
 			-e 's/,"sda":[^,^}]*//' \
 			-e 's/,"gva":[^,^}]*//' \
@@ -62,6 +63,7 @@ prune() {
 			-e 's/,"nav_modes":[^]^}]*\]//' \
 			-e 's/,"mlat":\[\]//' \
 			$@
+		perl -i -ne 'print if not (not /seen_pos/ and /"hex"/ and /,$/)' $@
 }
 
 while true
@@ -90,7 +92,7 @@ do
 		for i in history_*.json ; do
 			sed -i -e '$a,' $i
 		done
-		sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | gzip -9 > temp.gz
+		sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | 7za a -si temp.gz
 		mv temp.gz $cur_chunk
 	fi
 	# cleanup
@@ -126,7 +128,7 @@ do
 
 		if [[ $((i%6)) == 5 ]]
 		then
-			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | gzip -1 > temp.gz
+			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | gzip -4 > temp.gz
 			echo "{ \"files\" : [ ] }" | gzip -1 > rec_temp.gz
 			mv temp.gz $cur_chunk
 			mv rec_temp.gz chunk_recent.gz
@@ -144,7 +146,7 @@ do
 
 		if [[ $i == $CS ]]
 		then
-			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | gzip -9 > temp.gz
+			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | 7za a -si temp.gz
 			mv temp.gz $cur_chunk
 			i=0
 			rm -f *history_*.json

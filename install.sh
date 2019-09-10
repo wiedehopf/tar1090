@@ -4,7 +4,7 @@ repo="https://github.com/wiedehopf/tar1090"
 ipath=/usr/local/share/tar1090
 install=0
 
-packages="lighttpd unzip git"
+packages="lighttpd unzip git p7zip-full perl"
 
 for i in $packages
 do
