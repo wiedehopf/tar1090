@@ -629,6 +629,9 @@ PlaneObject.prototype.updateIcon = function() {
 PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	// get location data first, return early if only those are needed.
 
+	if (data.seen == null) {
+		data.seen = data.seen_pos != null ? data.seen_pos : 30;
+	}
 	this.last_message_time = receiver_timestamp - data.seen;
 
 	// remember last known position even if stale
