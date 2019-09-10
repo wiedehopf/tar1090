@@ -697,10 +697,14 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 
 	// Update all of our data
 	this.messages	= data.messages;
+	/*
+	var rssi = parseFloat(data.rssi);
 	if (!this.rssa)
-		this.rssa = [data.rssi,data.rssi,data.rssi,data.rssi];
-	this.rssa[this.rindex++%4] = data.rssi;
-	this.rssi       = (this.rssa[0] + this.rssa[1] + this.rssa[2] + this.rssa[3])/4;
+		this.rssa = [rssi,rssi,rssi,rssi];
+	this.rssa[this.rindex++%4] = rssi;
+	this.rssi = (this.rssa[0] + this.rssa[1] + this.rssa[2] + this.rssa[3])/4;
+	*/
+	this.rssi = data.rssi;
 
 	if ("gs" in data)
 		this.gs = data.gs;

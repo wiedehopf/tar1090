@@ -1609,9 +1609,9 @@ function sortByTrack()    { sortBy('track',   compareNumeric, function(x) { retu
 function sortByMsgs()     { sortBy('msgs',    compareNumeric, function(x) { return x.messages; }); }
 function sortBySeen()     { sortBy('seen',    compareNumeric, function(x) { return x.seen; }); }
 function sortByCountry()  { sortBy('country', compareAlpha,   function(x) { return x.icaorange.country; }); }
-function sortByRssi()     { sortBy('rssi',    compareNumeric, function(x) { return x.rssi }); }
-function sortByLatitude()   { sortBy('lat',   compareNumeric, function(x) { return (x.position !== null ? x.position[1] : null) }); }
-function sortByLongitude()  { sortBy('lon',   compareNumeric, function(x) { return (x.position !== null ? x.position[0] : null) }); }
+function sortByRssi()     { sortBy('rssi',    compareNumeric, function(x) { return x.rssi; }); }
+function sortByLatitude()   { sortBy('lat',   compareNumeric, function(x) { return (x.position !== null ? x.position[1] : null); }); }
+function sortByLongitude()  { sortBy('lon',   compareNumeric, function(x) { return (x.position !== null ? x.position[0] : null); }); }
 function sortByDataSource() { sortBy('data_source',     compareNumeric, function(x) { return x.getDataSourceNumber() } ); }
 function sortByBaseMarkerKey()  { sortBy('base_marker_key', compareAlpha,   function(x) { return x.baseMarkerKey; }); }
 
@@ -2429,9 +2429,9 @@ function updateCell(plane, cell, newValue, html) {
 	if (columnVis[cell] && newValue != plane.trCache[cell]) {
 		plane.trCache[cell] = newValue;
 		if (html) {
-			plane.tr.cells[cell].innerHTML = newValue
+			plane.tr.cells[cell].innerHTML = newValue;
 		} else {
-			plane.tr.cells[cell].textContent = newValue
+			plane.tr.cells[cell].textContent = newValue;
 		}
 	}
 }
