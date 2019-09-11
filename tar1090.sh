@@ -93,7 +93,7 @@ do
 		for i in history_*.json ; do
 			sed -i -e '$a,' $i
 		done
-		sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | 7za a -si temp.gz
+		sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | 7za a -si temp.gz >/dev/null
 		mv temp.gz $cur_chunk
 	fi
 	# cleanup
@@ -147,7 +147,7 @@ do
 
 		if [[ $i == $CS ]]
 		then
-			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | 7za a -si temp.gz
+			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | 7za a -si temp.gz >/dev/null
 			mv temp.gz $cur_chunk
 			i=0
 			rm -f *history_*.json
