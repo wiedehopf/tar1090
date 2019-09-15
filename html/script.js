@@ -1289,7 +1289,7 @@ function refreshSelected() {
 	$('#selected_source').text(format_data_source(selected.getDataSource()));
 	$('#selected_category').text(selected.category ? selected.category : "n/a");
 	$('#selected_sitedist').text(format_distance_long(selected.sitedist, DisplayUnits));
-	$('#selected_rssi').text(selected.rssi ? selected.rssi.toFixed(1) + ' dBFS' : "n/a");
+	$('#selected_rssi').text(selected.rssi != null ? selected.rssi.toFixed(1) + ' dBFS' : "n/a");
 	$('#selected_message_count').text(selected.messages);
 	$('#selected_photo_link').html(getFlightAwarePhotoLink(selected.registration));
 
@@ -1474,7 +1474,7 @@ function refreshHighlighted() {
 
 	$('#highlighted_pf_route').text((highlighted.pfRoute ? highlighted.pfRoute : ""));
 
-	$('#highlighted_rssi').text(highlighted.rssi.toFixed(1) + ' dBFS');
+	$('#highlighted_rssi').text(highlighted.rssi != null ? highlighted.rssi.toFixed(1) + ' dBFS' : "n/a");
 
 }
 
