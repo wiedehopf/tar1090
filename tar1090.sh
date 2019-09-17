@@ -80,7 +80,7 @@ do
 		continue
 	fi
 
-	sed -i -e "s?\"history\" *: *[0-9]*?\"pf_data\" : \"false\", \"enable_uat\" : \"false\", \"chunks\" : []?" chunks.json
+	echo '{ "pf_data" : "false", "enable_uat" : "false", "chunks" : [] }' > chunks.json
 	if [[ $ENABLE_978 == "yes" ]]; then
 		sed -i -e "s?\"enable_uat\" : \"false\"?\"enable_uat\" : \"true\"?" chunks.json
 	fi
