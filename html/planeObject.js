@@ -635,7 +635,7 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	this.last_message_time = receiver_timestamp - data.seen;
 
 	// remember last known position even if stale
-	if ("lat" in data && data.seen_pos < (receiver_timestamp - this.position_time + 2)) {
+	if (data.lat != null && data.seen_pos < (receiver_timestamp - this.position_time + 2)) {
 		this.position   = [data.lon, data.lat];
 		this.position_time = receiver_timestamp - data.seen_pos;
 	}
@@ -658,15 +658,15 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	}
 
 	// remember last known altitude even if stale
-	if ("alt_baro" in data) {
+	if (data.alt_baro != null) {
 		this.altitude = data.alt_baro;
 		this.alt_baro = data.alt_baro;
-	} else if ("altitude" in data) {
+	} else if (data.altitude != null) {
 		this.altitude = data.altitude;
 		this.alt_baro = data.altitude;
 	} else {
 		this.alt_baro = null;
-		if ("alt_geom" in data) {
+		if (data.alt_geom != null) {
 			this.altitude = data.alt_geom;
 		}
 	}
@@ -685,12 +685,12 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	this.speed = data.gs;
 
 	// don't expire the track, even display outdated track
-	if ("track" in data) {
+	if (data.track != null) {
 		this.track = data.track;
 	}
 
 	// don't expire callsigns
-	if ('flight' in data) {
+	if (data.flight != null) {
 		this.flight	= data.flight;
 	}
 
@@ -709,16 +709,16 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	*/
 	this.rssi = data.rssi;
 
-	if ("gs" in data)
+	if (data.gs != null)
 		this.gs = data.gs;
-	else if ("speed" in data)
+	else if (data.speed != null)
 		this.gs = data.speed;
 	else
 		this.gs = null;
 
-	if ("baro_rate" in data)
+	if (data.baro_rate != null)
 		this.baro_rate = data.baro_rate;
-	else if ("vert_rate" in data)
+	else if (data.vert_rate != null)
 		this.baro_rate = data.vert_rate;
 	else
 		this.baro_rate = null;
@@ -748,26 +748,26 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	this.version = data.version;
 
 	// fields with more complex behaviour
-	if ("true_heading" in data)
+	if (data.true_heading != null)
 		this.true_heading = data.true_heading;
 	else
 		this.true_heading = null;
 
-	if ('type' in data)
+	if (data.type != null)
 		this.addrtype	= data.type;
 	else
 		this.addrtype = null;
 
-	if ('lat' in data && SitePosition) {
+	if (data.lat != null && SitePosition) {
 		//var WGS84 = new ol.Sphere(6378137);
 		//this.sitedist = WGS84.haversineDistance(SitePosition, this.position);
 		this.sitedist = ol.sphere.getDistance(SitePosition, this.position);
 	}
 
 	// Pick a selected altitude
-	if ('nav_altitude_fms' in data) {
+	if (data.nav_altitude_fms != null) {
 		this.nav_altitude = data.nav_altitude_fms;
-	} else if ('nav_altitude_mcp' in data) {
+	} else if (data.nav_altitude_mcp != null){
 		this.nav_altitude = data.nav_altitude_mcp;
 	} else {
 		this.nav_altitude = null;
@@ -775,11 +775,11 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 
 	// Pick vertical rate from either baro or geom rate
 	// geometric rate is generally more reliable (smoothed etc)
-	if ('geom_rate' in data) {
+	if (data.geom_rate != null ) {
 		this.vert_rate = data.geom_rate;
-	} else if ('baro_rate' in data) {
+	} else if (data.baro_rate != null) {
 		this.vert_rate = data.baro_rate;
-	} else if ('vert_rate' in data) {
+	} else if (data.vert_rate != null) {
 		// legacy from mut v 1.15
 		this.vert_rate = data.vert_rate;
 	} else {
