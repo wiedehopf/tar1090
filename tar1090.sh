@@ -29,16 +29,10 @@ new_chunk() {
 }
 
 prune() {
-	jq -c <$1 >$1.pruned "\
-		del( \
-			.aircraft[] | \
-			.alt_geom, .ias, .tas, .track_rate, .mag_heading, .mach, .roll, \
-			.flight, .nav_qnh, .nav_altitude_mcp, .nav_altitude_fms, \
-			.nac_p, .nac_v, .nic, .nic_baro, .sil_type, .sil, .nav_heading, \
-			.baro_rate, .geom_rate, .rc, .squawk, .category, .version, .rssi, \
-			.messages, .seen, .emergency, .sda, .gva, .tisb, .nav_modes, .mlat ) \
-		| .aircraft |= map(select(has(\"seen_pos\"))) \
-		"
+	jq -c <$1 >$1.pruned '
+		.aircraft |= map(select(has("seen_pos") and .seen_pos < 15))
+		| .aircraft[] |= {hex, alt_baro, gs, track, lat, lon, seen_pos}
+		'
 	mv $1.pruned $1
 }
 
