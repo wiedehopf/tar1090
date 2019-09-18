@@ -640,23 +640,6 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.position_time = receiver_timestamp - data.seen_pos;
 	}
 
-	if (data.seen_pos < 45 && "mlat" in data && data.mlat.indexOf("lat") >= 0) {
-		this.dataSource = "mlat";
-	} else if (this.dataSource != "uat") {
-		if (data.type && data.type.substring(0,4) == "tisb")
-			this.dataSource = "tisb";
-		else if (data.type == "adsb_icao" || data.type == "adsb_other")
-			this.dataSource = "adsb";
-		else if (data.type && data.type.substring(0,4) == "adsr")
-			this.dataSource = "other";
-		else if (data.type == "adsb_icao_nt")
-			this.dataSource = "other";
-		else if (this.position)
-			this.dataSource = "adsb";
-		else
-			this.dataSource = "other";
-	}
-
 	// remember last known altitude even if stale
 	if (data.alt_baro != null) {
 		this.altitude = data.alt_baro;
@@ -689,14 +672,30 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.track = data.track;
 	}
 
+	if (init)
+		return;
+
 	// don't expire callsigns
 	if (data.flight != null) {
 		this.flight	= data.flight;
 	}
 
-	if (init)
-		return;
-
+	if (data.seen_pos < 45 && "mlat" in data && data.mlat.indexOf("lat") >= 0) {
+		this.dataSource = "mlat";
+	} else if (this.dataSource != "uat") {
+		if (this.position && data.type == null)
+			this.dataSource = "adsb";
+		else if (data.type && data.type.substring(0,4) == "tisb")
+			this.dataSource = "tisb";
+		else if (data.type == "adsb_icao" || data.type == "adsb_other")
+			this.dataSource = "adsb";
+		else if (data.type && data.type.substring(0,4) == "adsr")
+			this.dataSource = "other";
+		else if (data.type == "adsb_icao_nt")
+			this.dataSource = "other";
+		else
+			this.dataSource = "other";
+	}
 
 	// Update all of our data
 	this.messages	= data.messages;
