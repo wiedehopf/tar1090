@@ -29,42 +29,17 @@ new_chunk() {
 }
 
 prune() {
-		sed -i \
-			-e 's/,"alt_geom":[^,^}]*//' \
-			-e 's/,"ias":[^,^}]*//' \
-			-e 's/,"tas":[^,^}]*//' \
-			-e 's/,"track_rate":[^,^}]*//' \
-			-e 's/,"mag_heading":[^,^}]*//' \
-			-e 's/,"mach":[^,^}]*//' \
-			-e 's/,"roll":[^,^}]*//' \
-			-e 's/,"flight":[^,^}]*//' \
-			-e 's/,"nav_qnh":[^,^}]*//' \
-			-e 's/,"nav_altitude_mcp":[^,^}]*//' \
-			-e 's/,"nav_altitude_fms":[^,^}]*//' \
-			-e 's/,"nac_p":[^,^}]*//' \
-			-e 's/,"nac_v":[^,^}]*//' \
-			-e 's/,"nic":[^,^}]*//' \
-			-e 's/,"nic_baro":[^,^}]*//' \
-			-e 's/,"sil_type":[^,^}]*//' \
-			-e 's/,"sil":[^,^}]*//' \
-			-e 's/,"nav_heading":[^,^}]*//' \
-			-e 's/,"baro_rate":[^,^}]*//' \
-			-e 's/,"geom_rate":[^,^}]*//' \
-			-e 's/,"rc":[^,^}]*//' \
-			-e 's/,"squawk":[^,^}]*//' \
-			-e 's/,"category":[^,^}]*//' \
-			-e 's/,"version":[^,^}]*//' \
-			-e 's/,"rssi":[^,^}]*//' \
-			-e 's/,"messages":[^,^}]*//' \
-			-e 's/,"seen":[^,^}]*//' \
-			-e 's/,"emergency":[^,^}]*//' \
-			-e 's/,"sda":[^,^}]*//' \
-			-e 's/,"gva":[^,^}]*//' \
-			-e 's/,"tisb":[^]^}]*\]//' \
-			-e 's/,"nav_modes":[^]^}]*\]//' \
-			-e 's/,"mlat":\[\]//' \
-			$@
-		perl -i -ne 'print if not (not /seen_pos/ and /"hex"/ and /,$/)' $@
+	jq -c <$1 >$1.pruned "\
+		del( \
+			.aircraft[] | \
+			.alt_geom, .ias, .tas, .track_rate, .mag_heading, .mach, .roll, \
+			.flight, .nav_qnh, .nav_altitude_mcp, .nav_altitude_fms, \
+			.nac_p, .nac_v, .nic, .nic_baro, .sil_type, .sil, .nav_heading, \
+			.baro_rate, .geom_rate, .rc, .squawk, .category, .version, .rssi, \
+			.messages, .seen, .emergency, .sda, .gva, .tisb, .nav_modes, .mlat ) \
+		| .aircraft |= map(select(has(\"seen_pos\"))) \
+		"
+	mv $1.pruned $1
 }
 
 while true
@@ -91,6 +66,7 @@ do
 	if [[ -f history_0.json ]]; then
 		new_chunk
 		for i in history_*.json ; do
+			prune $i
 			sed -i -e '$a,' $i
 		done
 		sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | 7za a -si temp.gz >/dev/null
@@ -116,13 +92,13 @@ do
 			sleep 0.05
 			cp $SOURCE/aircraft.json history_$date.json
 		fi
-		sed -i -e '$a,' history_$date.json
 		prune history_$date.json
+		sed -i -e '$a,' history_$date.json
 
 		if [[ $ENABLE_978 == "yes" ]]; then
-			cp $dir/978.json $dir/978_history_$date.json
-			sed -i -e '$a,' 978_history_$date.json
+			cp 978.json 978_history_$date.json
 			prune 978_history_$date.json
+			sed -i -e '$a,' 978_history_$date.json
 		fi
 
 
