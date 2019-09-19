@@ -40,7 +40,9 @@ var columnVis = Array(30).fill(true);
 var emptyStyle = new ol.style.Style({});
 var show_squawk_warning_cache = false;
 var tableInView = false;
-
+var historyOutdated = false;
+var leftBottom = null;
+var rightTop = null;
 
 var SpecialSquawks = {
 	'7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -624,10 +626,13 @@ function parse_history() {
 		while (data = PositionHistoryBuffer.pop()) {
 
 			// process new data
-			if (PositionHistoryBuffer.length < 10)
+			if (PositionHistoryBuffer.length < 10) {
 				processReceiverUpdate(data, false);
-			else
+				if (now-new Date().getTime()/1000 > 600)
+					historyOutdated = true;
+			} else {
 				processReceiverUpdate(data, true);
+			}
 
 			// update aircraft tracks
 			if (data.uat_978 != "true") {
@@ -1503,18 +1508,20 @@ function refreshTableInfo() {
 	TrackedAircraftPositions = 0
 	TrackedHistorySize = 0
 
+	const extent = OLMap.getView().calculateExtent(OLMap.getSize());
+	leftBottom = ol.proj.toLonLat([extent[0], extent[1]], OLMap.getView().getProjection());
+	rightTop = ol.proj.toLonLat([extent[2], extent[3]], OLMap.getView().getProjection());
 	//console.time("updateCells");
 	for (var i = 0; i < PlanesOrdered.length; ++i) {
 		var tableplane = PlanesOrdered[i];
 		TrackedHistorySize += tableplane.history_size;
 		var classes;
 
-		const extent = OLMap.getView().calculateExtent(OLMap.getSize());
-		const proj = tableplane.position ? ol.proj.fromLonLat(tableplane.position) : null;
+		const pos = tableplane.position ? tableplane.position : null;
 		var inView = false;
-		if (proj && extent
-			&& proj[0] > extent[0] && proj[0] < extent[2]
-			&& proj[1] > extent[1] && proj[1] < extent[3]
+		if (pos && leftBottom && rightTop
+			&& pos[0] > leftBottom[0] && pos[0] < rightTop[0]
+			&& pos[1] > leftBottom[1] && pos[1] < rightTop[1]
 		) {
 			inView = true;
 		}
@@ -2244,6 +2251,7 @@ function followRandomPlane() {
 function toggleTableInView() {
 	tableInView = !tableInView;
 	localStorage['tableInView'] = tableInView;
+	refreshTableInfo();
 }
 
 function toggleLabels() {
