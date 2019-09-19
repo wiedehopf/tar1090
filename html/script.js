@@ -1524,6 +1524,10 @@ function refreshTableInfo() {
 		} else if (mapIsVisible && tableInView && !inView && !(tableplane.selected && !SelectedAllPlanes)) {
 			TrackedAircraft++;
 			classes = "plane_table_row hidden";
+
+			if (tableplane.position != null && tableplane.seen_pos < 60) {
+				++TrackedAircraftPositions;
+			}
 		} else {
 			TrackedAircraft++;
 			classes = "plane_table_row";
