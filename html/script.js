@@ -1508,23 +1508,15 @@ function refreshTableInfo() {
 	TrackedAircraftPositions = 0
 	TrackedHistorySize = 0
 
-	const extent = OLMap.getView().calculateExtent(OLMap.getSize());
-	leftBottom = ol.proj.toLonLat([extent[0], extent[1]], OLMap.getView().getProjection());
-	rightTop = ol.proj.toLonLat([extent[2], extent[3]], OLMap.getView().getProjection());
+	const currExtent = OLMap.getView().calculateExtent(OLMap.getSize());
 	//console.time("updateCells");
 	for (var i = 0; i < PlanesOrdered.length; ++i) {
 		var tableplane = PlanesOrdered[i];
 		TrackedHistorySize += tableplane.history_size;
 		var classes;
 
-		const pos = tableplane.position ? tableplane.position : null;
-		var inView = false;
-		if (pos && leftBottom && rightTop
-			&& pos[0] > leftBottom[0] && pos[0] < rightTop[0]
-			&& pos[1] > leftBottom[1] && pos[1] < rightTop[1]
-		) {
-			inView = true;
-		}
+		const proj = tableplane.position ? ol.proj.fromLonLat(tableplane.position) : null;
+		const inView = proj ? ol.extent.containsCoordinate(currExtent, proj) : false;
 
 		if (tableplane.seen >= 58 || tableplane.isFiltered()) {
 			classes = "plane_table_row hidden";
