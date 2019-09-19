@@ -24,7 +24,6 @@ var infoBoxOriginalPosition = {};
 var customAltitudeColors = true;
 var loadtime = "loadtime";
 var mapResizeTimeout;
-var HistoryItemsReturned = 0;
 var refresh;
 var scaleFactor;
 var debug = false;

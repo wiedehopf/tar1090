@@ -6,6 +6,7 @@ var enable_uat = false;
 var enable_pf_data = false;
 var HistoryChunks = false;
 var nHistoryItems = 0;
+var HistoryItemsReturned = 0;
 var chunkNames;
 var PositionHistoryBuffer = [];
 var	receiverJson;
@@ -56,14 +57,18 @@ function get_history() {
 		timeout: 8000,
 		cache: false,
 		dataType: 'json' }).done(function(data) {
-			PositionHistoryBuffer.push(data);
+			if (HistoryItemsReturned < nHistoryItems) {
+				PositionHistoryBuffer.push(data);
+			}
 		});
 	if (enable_uat) {
 		$.ajax({ url: 'chunks/978.json',
 			timeout: 8000,
 			cache: false,
 			dataType: 'json' }).done(function(data) {
+			if (HistoryItemsReturned < nHistoryItems) {
 				PositionHistoryBuffer.push(data);
+			}
 			});
 	}
 
