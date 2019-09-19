@@ -38,6 +38,7 @@ var extendedLabels = false;
 var mapIsVisible = false;
 var columnVis = Array(30).fill(true);
 var emptyStyle = new ol.style.Style({});
+var show_squawk_warning_cache = false;
 
 
 var SpecialSquawks = {
@@ -323,7 +324,7 @@ function fetchData() {
 				$("#update_error_detail").text("The data from dump1090 hasn't been updated in a while. Maybe dump1090 is no longer running?");
 				$("#update_error").css('display','block');
 			}
-		} else {
+		} else if (StaleReceiverCount > 0){
 			StaleReceiverCount = 0;
 			$("#update_error").css('display','none');
 		}
@@ -410,6 +411,7 @@ function init_page() {
 			refreshSelected();
 			refreshHighlighted();
 			$('#selected_infoblock').hide();
+			setSelectedInfoBlockVisibility();
 		}
 	});
 
@@ -1161,7 +1163,6 @@ function reaper(all) {
 // Page Title update function
 function refreshPageTitle() {
 	if (!PlaneCountInTitle && !MessageRateInTitle) {
-		document.title = PageName;
 		return;
 	}
 
@@ -1184,7 +1185,7 @@ function refreshSelected() {
 
 	refreshPageTitle();
 
-	$('#dump1090_infoblock').css('display','block');
+	//$('#dump1090_infoblock').css('display','block');
 	$('#dump1090_version').text(Dump1090Version);
 	$('#dump1090_total_ac').text(TrackedAircraft);
 	$('#dump1090_total_ac_positions').text(TrackedAircraftPositions);
@@ -1195,8 +1196,6 @@ function refreshSelected() {
 	} else {
 		$('#dump1090_message_rate').text("n/a");
 	}
-
-	setSelectedInfoBlockVisibility();
 
 	if (!SelectedPlane) {
 		return;
@@ -1496,11 +1495,6 @@ function refreshTableInfo() {
 	TrackedAircraftPositions = 0
 	TrackedHistorySize = 0
 
-	$(".altitudeUnit").text(get_unit_label("altitude", DisplayUnits));
-	$(".speedUnit").text(get_unit_label("speed", DisplayUnits));
-	$(".distanceUnit").text(get_unit_label("distance", DisplayUnits));
-	$(".verticalRateUnit").text(get_unit_label("verticalRate", DisplayUnits));
-
 	//console.time("updateCells");
 	for (var i = 0; i < PlanesOrdered.length; ++i) {
 		var tableplane = PlanesOrdered[i];
@@ -1558,10 +1552,13 @@ function refreshTableInfo() {
 	}
 	//console.timeEnd("updateCells");
 
-	if (show_squawk_warning) {
+	if (show_squawk_warning_cache != show_squawk_warning && show_squawk_warning ) {
 		$("#SpecialSquawkWarning").css('display','block');
-	} else {
+		show_squawk_warning_cache = show_squawk_warning;
+	}
+	if (show_squawk_warning_cache != show_squawk_warning && !show_squawk_warning ) {
 		$("#SpecialSquawkWarning").css('display','none');
+		show_squawk_warning_cache = show_squawk_warning;
 	}
 
 	resortTable();
@@ -1684,12 +1681,14 @@ function resortTable() {
 		});
 	}
 
+	//console.time("DOM");
 	var tbody = document.getElementById('tableinfo').tBodies[0];
 	fragment = document.createDocumentFragment();
 	for (var i = 0; i < PlanesOrdered.length; ++i) {
 		fragment.appendChild(PlanesOrdered[i].tr);
 	}
 	tbody.appendChild(fragment);
+	//console.timeEnd("DOM");
 }
 
 function sortBy(id,sc,se) {
@@ -1771,6 +1770,7 @@ function selectPlaneByHex(hex,autofollow) {
 
 	refreshSelected();
 	refreshHighlighted();
+	setSelectedInfoBlockVisibility();
 }
 
 function highlightPlaneByHex(hex) {
@@ -1811,6 +1811,7 @@ function selectAllPlanes() {
 
 	refreshSelected();
 	refreshHighlighted();
+	setSelectedInfoBlockVisibility();
 }
 
 // on refreshes, try to find new planes and mark them as selected
@@ -1843,6 +1844,7 @@ function deselectAllPlanes() {
 	SelectedAllPlanes = false;
 	refreshSelected();
 	refreshHighlighted();
+	setSelectedInfoBlockVisibility();
 }
 
 function toggleFollowSelected() {
@@ -2010,6 +2012,11 @@ function initializeUnitsSelector() {
 	var unitsSelector = $("#units_selector");
 	unitsSelector.val(displayUnits);
 	unitsSelector.on("change", onDisplayUnitsChanged);
+
+	$(".altitudeUnit").text(get_unit_label("altitude", DisplayUnits));
+	$(".speedUnit").text(get_unit_label("speed", DisplayUnits));
+	$(".distanceUnit").text(get_unit_label("distance", DisplayUnits));
+	$(".verticalRateUnit").text(get_unit_label("verticalRate", DisplayUnits));
 }
 
 function onDisplayUnitsChanged(e) {
@@ -2039,6 +2046,11 @@ function onDisplayUnitsChanged(e) {
 			control.setUnits(displayUnits);
 		}
 	});
+
+	$(".altitudeUnit").text(get_unit_label("altitude", DisplayUnits));
+	$(".speedUnit").text(get_unit_label("speed", DisplayUnits));
+	$(".distanceUnit").text(get_unit_label("distance", DisplayUnits));
+	$(".verticalRateUnit").text(get_unit_label("verticalRate", DisplayUnits));
 }
 
 function setAltitudeLegend(units) {
@@ -2061,6 +2073,7 @@ function onFilterByAltitude(e) {
 		SelectedPlane = null;
 		refreshSelected();
 		refreshHighlighted();
+		setSelectedInfoBlockVisibility();
 	}
 }
 
