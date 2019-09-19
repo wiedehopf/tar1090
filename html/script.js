@@ -39,6 +39,7 @@ var mapIsVisible = false;
 var columnVis = Array(30).fill(true);
 var emptyStyle = new ol.style.Style({});
 var show_squawk_warning_cache = false;
+var tableInView = false;
 
 
 var SpecialSquawks = {
@@ -354,6 +355,9 @@ function initialize() {
 	}
 	if (localStorage['trackLabels'] == "true") {
 		trackLabels = true;
+	}
+	if (localStorage['tableInView'] == "true") {
+		tableInView = true;
 	}
 
 	$.when(configureReceiver).done(function() {
@@ -681,6 +685,7 @@ function parse_history() {
 	if (enable_pf_data) {
 		window.setInterval(fetchPfData, RefreshInterval*10.314);
 	}
+	//window.setInterval(refreshTableInfo, 1000);
 
 	// And kick off one refresh immediately.
 	fetchData();
@@ -975,6 +980,9 @@ function initialize_map() {
 				break;
 			case "m":
 				toggleMultiSelect();
+				break;
+			case "v":
+				toggleTableInView();
 				break;
 			case "r":
 				followRandomPlane();
@@ -1500,8 +1508,22 @@ function refreshTableInfo() {
 		var tableplane = PlanesOrdered[i];
 		TrackedHistorySize += tableplane.history_size;
 		var classes;
+
+		const extent = OLMap.getView().calculateExtent(OLMap.getSize());
+		const proj = tableplane.position ? ol.proj.fromLonLat(tableplane.position) : null;
+		var inView = false;
+		if (proj && extent
+			&& proj[0] > extent[0] && proj[0] < extent[2]
+			&& proj[1] > extent[1] && proj[1] < extent[3]
+		) {
+			inView = true;
+		}
+
 		if (tableplane.seen >= 58 || tableplane.isFiltered()) {
-			classes = tableplane.tr.className = "plane_table_row hidden";
+			classes = "plane_table_row hidden";
+		} else if (mapIsVisible && tableInView && !inView && !(tableplane.selected && !SelectedAllPlanes)) {
+			TrackedAircraft++;
+			classes = "plane_table_row hidden";
 		} else {
 			TrackedAircraft++;
 			classes = "plane_table_row";
@@ -1935,7 +1957,6 @@ function setColumnVisibility() {
 }
 
 function setSelectedInfoBlockVisibility() {
-	var mapIsVisible = $("#map_container").is(":visible");
 
 	if (SelectedPlane && mapIsVisible) {
 		$('#selected_infoblock').show();
@@ -1945,6 +1966,7 @@ function setSelectedInfoBlockVisibility() {
 		$('#selected_infoblock').hide();
 		$('#sidebar_canvas').css('margin-bottom', 0);
 	}
+	refreshTableInfo();
 }
 
 // Reposition selected plane info box if it overlaps plane marker
@@ -2213,6 +2235,11 @@ function followRandomPlane() {
 	} while (this_one.isFiltered() || !this_one.position || (now - this_one.position_time > 30));
 	//console.log(this_one.icao);
 	selectPlaneByHex(this_one.icao, true);
+}
+
+function toggleTableInView() {
+	tableInView = !tableInView;
+	localStorage['tableInView'] = tableInView;
 }
 
 function toggleLabels() {
