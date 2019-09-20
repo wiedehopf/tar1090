@@ -110,7 +110,7 @@ ColorByAlt = {
 //SiteCirclesDistances = new Array(100,150,200,250);
 
 // Controls page title, righthand pane when nothing is selected
-//PageName = "dump1090-fa";
+//PageName = "tar1090";
 
 // Show country flags by ICAO addresses?
 //ShowFlags = true;

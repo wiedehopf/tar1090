@@ -132,7 +132,7 @@ var SiteCircles = true; // true to show circles (only shown if the center marker
 var SiteCirclesDistances = new Array(100,150,200);
 
 // Controls page title, righthand pane when nothing is selected
-var PageName = "dump1090-fa";
+var PageName = "tar1090";
 
 // Show country flags by ICAO addresses?
 var ShowFlags = true;
