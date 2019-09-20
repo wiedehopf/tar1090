@@ -6,7 +6,7 @@
 "use strict";
 // -- Title Settings --------------------------------------
 // Show number of aircraft and/or messages per second in the page title
-//PlaneCountInTitle = true;
+//PlaneCountInTitle = false;
 //MessageRateInTitle = false;
 
 // -- Output Settings -------------------------------------
