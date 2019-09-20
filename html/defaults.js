@@ -164,6 +164,7 @@ var mapOrientation = 0; // This determines what is up, normally north (0 degrees
 var labelZoom = 0;
 var labelZoomGround = 14.8;
 
+var displayUATasADSB = false;
 /*
 60
 54

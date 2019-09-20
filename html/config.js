@@ -133,3 +133,6 @@ BingMapsAPIKey = null;
 // Only display labels when zoomed in this far:
 //labelZoom = 8;
 //labelZoomGround = 12.5;
+
+
+//displayUATasADSB = false;
