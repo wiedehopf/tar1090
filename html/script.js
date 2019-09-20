@@ -41,8 +41,6 @@ var emptyStyle = new ol.style.Style({});
 var show_squawk_warning_cache = false;
 var tableInView = false;
 var historyOutdated = false;
-var leftBottom = null;
-var rightTop = null;
 
 var SpecialSquawks = {
 	'7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -226,8 +224,8 @@ function setupPlane(hex, plane) {
 
 function fetchData() {
 	var center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
-	localStorage['CenterLon'] = center[0];
-	localStorage['CenterLat'] = center[1];
+	localStorage['CenterLon'] = CenterLon = center[0];
+	localStorage['CenterLat'] = CenterLat = center[1];
 	if (FetchPending != null && FetchPending.state() == 'pending') {
 		// don't double up on fetches, let the last one resolve
 		return;
@@ -1508,15 +1506,47 @@ function refreshTableInfo() {
 	TrackedAircraftPositions = 0
 	TrackedHistorySize = 0
 
-	const currExtent = OLMap.getView().calculateExtent(OLMap.getSize());
+	var currExtent = OLMap.getView().calculateExtent(OLMap.getSize());
+	//console.log((currExtent[2]-currExtent[0])/40075016);
+	const bottomLeft = ol.proj.toLonLat([currExtent[0], currExtent[1]]);
+	const topRight = ol.proj.toLonLat([currExtent[2], currExtent[3]]);
+	//console.log([bottomLeft[0], topRight[0]]);
+	//console.log([bottomLeft[1], topRight[1]]);
+
 	//console.time("updateCells");
 	for (var i = 0; i < PlanesOrdered.length; ++i) {
 		var tableplane = PlanesOrdered[i];
 		TrackedHistorySize += tableplane.history_size;
 		var classes;
 
+		const pos = tableplane.position;
 		const proj = tableplane.position ? ol.proj.fromLonLat(tableplane.position) : null;
-		const inView = proj ? ol.extent.containsCoordinate(currExtent, proj) : false;
+		//const inView = proj ? ol.extent.containsCoordinate(currExtent, proj) : false;
+		var inView = false;
+		if (pos && currExtent[2]-currExtent[0] > 40075016) {
+			// all longtitudes in view, only check latitude
+			inView = (
+				pos[1] > bottomLeft[1]
+				&& pos[1] < topRight[1]
+			)
+		} else if (pos && bottomLeft[0] < topRight[0]) {
+			// no wraparound: view not crossing 179 to -180 transition line
+			inView = (
+				pos[0] > bottomLeft[0]
+				&& pos[0] < topRight[0]
+				&& pos[1] > bottomLeft[1]
+				&& pos[1] < topRight[1]
+			)
+		} else if (pos && bottomLeft[0] > topRight[0]) {
+			// wraparound: view crossing 179 to -180 transition line
+			inView = (
+				(pos[0] > bottomLeft[0]
+				|| pos[0] < topRight[0])
+				&& pos[1] > bottomLeft[1]
+				&& pos[1] < topRight[1]
+			)
+		}
+
 
 		if (tableplane.seen >= 58 || tableplane.isFiltered()) {
 			classes = "plane_table_row hidden";
