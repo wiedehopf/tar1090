@@ -358,6 +358,7 @@ function initialize() {
 	}
 	if (localStorage['tableInView'] == "true") {
 		tableInView = true;
+		toggleTableInView("noToggle")
 	}
 
 	$.when(configureReceiver).done(function() {
@@ -1553,10 +1554,6 @@ function refreshTableInfo() {
 		} else if (mapIsVisible && tableInView && !inView && !(tableplane.selected && !SelectedAllPlanes)) {
 			TrackedAircraft++;
 			classes = "plane_table_row hidden";
-
-			if (tableplane.position != null && tableplane.seen_pos < 60) {
-				++TrackedAircraftPositions;
-			}
 		} else {
 			TrackedAircraft++;
 			classes = "plane_table_row";
@@ -1615,6 +1612,8 @@ function refreshTableInfo() {
 		$("#SpecialSquawkWarning").css('display','none');
 		show_squawk_warning_cache = show_squawk_warning;
 	}
+
+	$('#dump1090_total_ac_positions').text(TrackedAircraftPositions);
 
 	resortTable();
 }
@@ -2270,10 +2269,17 @@ function followRandomPlane() {
 	selectPlaneByHex(this_one.icao, true);
 }
 
-function toggleTableInView() {
-	tableInView = !tableInView;
+function toggleTableInView(toggle) {
+	if (toggle != "noToggle") {
+		tableInView = !tableInView;
+		refreshTableInfo();
+	}
 	localStorage['tableInView'] = tableInView;
-	refreshTableInfo();
+	if (tableInView) {
+		$('#with_positions').text("On Screen:");
+	} else {
+		$('#with_positions').text("With Position:");
+	}
 }
 
 function toggleLabels() {
