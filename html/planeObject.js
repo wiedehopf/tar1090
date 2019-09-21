@@ -694,7 +694,7 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	if (data.mlat != null && data.mlat.indexOf("lat") >= 0) {
 		this.dataSource = "mlat";
 	} else if (this.dataSource != "uat") {
-		if (this.position && data.type == null)
+		if (data.lat != null && data.type == null)
 			this.dataSource = "adsb";
 		else if (data.type && data.type.substring(0,4) == "tisb")
 			this.dataSource = "tisb";
