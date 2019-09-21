@@ -679,6 +679,10 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.track = data.track;
 	}
 
+	if (init && data.mlat != null && data.mlat.indexOf("lat") >= 0) {
+		this.dataSource = "mlat";
+	}
+
 	if (init)
 		return;
 
