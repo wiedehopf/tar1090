@@ -46,16 +46,27 @@ then
 	fi
 fi
 
+run_dir=/run/dump1090-fa
+
 if [[ -n $1 ]] && [ $1 != "test" ] ; then
-	sed -i -e "s?/run/dump1090-fa?$1?" 88-tar1090.conf
-	sed -i -e "s?/run/dump1090-fa?$1?" tar1090.sh
+	run_dir=$1
+elif ! [[ -d /run/dump1090-fa ]] ; then
+	if [[ -d /run/dump1090 ]]; then
+		run_dir=/run/dump1090
+	elif [[ -d /run/readsb ]]; then
+		run_dir=/run/readsb
+	elif [[ -d /run/skyaware978 ]]; then
+		run_dir=/run/skyaware978
+	fi
 fi
 
+sed -i -e "s?/run/dump1090-fa?$run_dir?" 88-tar1090.conf
+sed -i -e "s?/run/dump1090-fa?$run_dir?" tar1090.sh
 
 
 
 if [ -f $ipath/html/defaults.js ]; then
-	cp $ipath/html/config.js html/
+	cp $ipath/html/config.js /tmp/tar1090_config.js
 fi
 cp $ipath/html/colors.css html/ 2>/dev/null
 
@@ -67,6 +78,8 @@ changed=$?
 
 rm -f $ipath/html/db/*.json
 cp -r * $ipath
+
+mv /tmp/tar1090_config.js $ipath/html/config.js 2>/dev/null
 
 # bust cache for all css and js files
 sed -i -e "s/__cache_version__/$(date +%s)/g" $ipath/html/index.html

@@ -830,7 +830,7 @@ PlaneObject.prototype.updateTick = function(receiver_timestamp, last_timestamp, 
 
 	// If no packet in over 58 seconds, clear the plane.
 	// Only clear the plane if it's not selected individually
-	if ((this.seen > 58 || this.position == null || this.seen_pos > 100)
+	if ((this.seen > 58 || this.position == null || this.seen_pos > 60)
 		&& (!this.selected || SelectedAllPlanes)) {
 		if (this.visible) {
 			//console.log("hiding " + this.icao);
