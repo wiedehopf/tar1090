@@ -56,13 +56,23 @@ function createBaseLayers() {
 		title: 'Terrain',
 		type: 'base',
 	}));
-
+	
+	world.push(new ol.layer.Tile({
+		source: new ol.source.OSM({
+			url: 'https://gibs-{a-c}.earthdata.nasa.gov/wmts/epsg3857/best/' +
+			'MODIS_Terra_CorrectedReflectance_TrueColor/default/2019-07-22/' +
+			'GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg',
+		}),
+		name: 'GIBS',
+		title: 'GIBS',
+		type: 'base',
+	}));
 	// carto.com basemaps, see the following URLs for details on them:
 	// http://basemaps.cartocdn.com
 	// https://github.com/CartoDB/cartodb/wiki/BaseMaps-available
 	
-	var basemaps = [ "dark_all", "dark_nolabels", "dark_only_labels",
-					"light_all", "light_nolabels", "light_only_labels"
+	var basemaps = [ "dark_all", "dark_nolabels",
+					"light_all", "light_nolabels"
 	]
 
 	for (var i in basemaps) {
