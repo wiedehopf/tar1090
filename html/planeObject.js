@@ -691,7 +691,7 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.flight	= data.flight;
 	}
 
-	if (data.seen_pos < 45 && data.mlat != null && data.mlat.indexOf("lat") >= 0) {
+	if (data.mlat != null && data.mlat.indexOf("lat") >= 0) {
 		this.dataSource = "mlat";
 	} else if (this.dataSource != "uat") {
 		if (this.position && data.type == null)
