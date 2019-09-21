@@ -127,7 +127,8 @@ function processReceiverUpdate(data, init) {
 
 	for (var j=0; j < acs.length; j++) {
 		var ac = acs[j];
-		var hex = ac.hex;
+		var isArray = Array.isArray(ac);
+		var hex = isArray ? ac[0] : ac.hex;
 		var plane = null;
 
 		// Do we already have this plane object in Planes?

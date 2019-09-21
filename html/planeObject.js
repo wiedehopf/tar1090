@@ -636,21 +636,32 @@ PlaneObject.prototype.updateIcon = function() {
 PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	// get location data first, return early if only those are needed.
 
-	if (data.seen == null) {
-		data.seen = data.seen_pos != null ? data.seen_pos : 30;
-	}
-	this.last_message_time = receiver_timestamp - data.seen;
+	var isArray = Array.isArray(data);
+	// [.hex, .alt_baro, .gs, .track, .lat, .lon, .seen_pos, .mlat]
+	//    0      1        2     3       4     5     6          7
+	// this format is only valid for chunk loading the history
+	var alt_baro = isArray? data[1] : data.alt_baro;
+	var gs = isArray? data[2] : data.gs;
+	var track = isArray? data[3] : data.track;
+	var lat = isArray? data[4] : data.lat;
+	var lon = isArray? data[5] : data.lon;
+	var seen = isArray? data[6] : data.seen;
+	seen = (seen == null) ? 30 : seen;
+	var seen_pos = isArray? data[6] : data.seen_pos;
+	var mlat = isArray? data[7] : data.mlat;
+
+	this.last_message_time = receiver_timestamp - seen;
 
 	// remember last known position even if stale
-	if (data.lat != null && data.seen_pos < (receiver_timestamp - this.position_time + 2)) {
-		this.position   = [data.lon, data.lat];
-		this.position_time = receiver_timestamp - data.seen_pos;
+	if (lat != null && seen_pos < (receiver_timestamp - this.position_time + 2)) {
+		this.position   = [lon, lat];
+		this.position_time = receiver_timestamp - seen_pos;
 	}
 
 	// remember last known altitude even if stale
-	if (data.alt_baro != null) {
-		this.altitude = data.alt_baro;
-		this.alt_baro = data.alt_baro;
+	if (alt_baro != null) {
+		this.altitude = alt_baro;
+		this.alt_baro = alt_baro;
 	} else if (data.altitude != null) {
 		this.altitude = data.altitude;
 		this.alt_baro = data.altitude;
@@ -672,14 +683,14 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	}
 
 	// needed for track labels
-	this.speed = data.gs;
+	this.speed = gs;
 
 	// don't expire the track, even display outdated track
-	if (data.track != null) {
-		this.track = data.track;
+	if (track != null) {
+		this.track = track;
 	}
 
-	if (init && data.mlat != null && data.mlat.indexOf("lat") >= 0) {
+	if (init && mlat != null && mlat.indexOf("lat") >= 0) {
 		this.dataSource = "mlat";
 	}
 
