@@ -1558,7 +1558,7 @@ function refreshTableInfo() {
 
 		if (tableplane.seen >= 58 || tableplane.isFiltered()) {
 			classes = "plane_table_row hidden";
-		} else if (mapIsVisible && tableInView && !inView && !(tableplane.selected && !SelectedAllPlanes)) {
+		} else if (mapIsVisible && tableInView && (!inView || !tableplane.visible) && !(tableplane.selected && !SelectedAllPlanes)) {
 			TrackedAircraft++;
 			classes = "plane_table_row hidden";
 		} else {
