@@ -41,6 +41,7 @@ var emptyStyle = new ol.style.Style({});
 var show_squawk_warning_cache = false;
 var tableInView = false;
 var historyOutdated = false;
+var filterMLAT = false;
 
 var SpecialSquawks = {
 	'7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -1008,6 +1009,9 @@ function initialize_map() {
 				break;
 			case "o":
 				toggleExtendedLabels();
+				break;
+			case "M":
+				toggleFilterMLAT();
 				break;
 			case "k":
 				toggleTrackLabels();
@@ -2298,6 +2302,9 @@ function toggleExtendedLabels() {
 	for (var key in PlanesOrdered) {
 		PlanesOrdered[key].updateMarker(false);
 	}
+}
+function toggleFilterMLAT() {
+	filterMLAT = !filterMLAT;
 }
 
 function toggleTrackLabels() {

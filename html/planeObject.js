@@ -140,12 +140,19 @@ PlaneObject.prototype.logSel = function(loggable) {
 }
 
 PlaneObject.prototype.isFiltered = function() {
+
+	if (filterMLAT && this.dataSource != "mlat" && this.dataSource != "other") {
+		return true;
+	}
+
 	if (this.filter.minAltitude != undefined && this.filter.maxAltitude != undefined) {
 		if (this.altitude == null) {
 			return true;
 		}
 		var planeAltitude = this.altitude === "ground" ? 0 : convert_altitude(this.altitude, this.filter.altitudeUnits);
-		return planeAltitude < this.filter.minAltitude || planeAltitude > this.filter.maxAltitude;
+		if (planeAltitude < this.filter.minAltitude || planeAltitude > this.filter.maxAltitude) {
+			return true;
+		}
 	}
 
 	// filter out ground vehicles
@@ -680,7 +687,7 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.flight	= data.flight;
 	}
 
-	if (data.seen_pos < 45 && "mlat" in data && data.mlat.indexOf("lat") >= 0) {
+	if (data.seen_pos < 45 && data.mlat != null && data.mlat.indexOf("lat") >= 0) {
 		this.dataSource = "mlat";
 	} else if (this.dataSource != "uat") {
 		if (this.position && data.type == null)
