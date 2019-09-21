@@ -72,6 +72,7 @@ cp -r * $ipath
 sed -i -e "s/__cache_version__/$(date +%s)/g" $ipath/html/index.html
 
 cp -n default /etc/default/tar1090
+sed -i -e 's/skyview978/skyaware978/' /etc/default/tar1090
 
 
 cp 88-tar1090.conf /etc/lighttpd/conf-available
