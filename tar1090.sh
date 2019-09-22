@@ -3,7 +3,7 @@
 trap "kill 0" SIGINT
 trap "kill -2 0" SIGTERM
 
-set -e
+#set -e
 
 INTERVAL=10
 HISTORY_SIZE=360
@@ -45,13 +45,6 @@ do
 	rm -f $list
 	rm -f $dir/*.gz
 	rm -f $dir/*.json
-
-	if ! cp $SOURCE/receiver.json chunks.json
-	then
-		echo "No receiver.json found in $SOURCE! Try restarting dump1090!"
-		sleep 60
-		continue
-	fi
 
 	echo '{ "pf_data" : "false", "enable_uat" : "false", "chunks" : [] }' > chunks.json
 	if [[ $ENABLE_978 == "yes" ]]; then
@@ -148,9 +141,10 @@ do
 
 	if [[ $ENABLE_978 != "yes" ]]; then sleep 30; continue; fi
 
-	wget -T 5 -q -O $dir/978.tmp $URL_978/data/aircraft.json $COMPRESS_978
-	sed -i -e 's/"now" \?:/"uat_978":"true","now":/' $dir/978.tmp
-	mv $dir/978.tmp $dir/978.json
+	if cd $dir && wget -T 5 -q -O 978.tmp $URL_978/data/aircraft.json $COMPRESS_978; then
+		sed -i -e 's/"now" \?:/"uat_978":"true","now":/' 978.tmp
+		mv 978.tmp 978.json
+	fi
 	wait
 done &
 
@@ -162,8 +156,12 @@ do
 	if cd $dir && wget -T 5 -q -O pf.tmp http://127.0.0.1:30053/ajax/aircraft 2>/dev/null; then
 		sed -i -e 's/"user_l[a-z]*":"[0-9,.,-]*",//g' pf.tmp
 		mv pf.tmp pf.json
-		sed -e "s?\"pf_data\" : \"false\"?\"pf_data\" : \"true\"?" chunks.json > chunks.json.tmp
-		mv chunks.json.tmp chunks.json
+		if grep -qs -F -e '"pf_data" : "false"' chunks.json; then
+			sleep 0.314
+			cp chunks.json chunks.json.pf_data
+			sed -i -e "s?\"pf_data\" : \"false\"?\"pf_data\" : \"true\"?" chunks.json.pf_data
+			mv chunks.json.pf_data chunks.json
+		fi
 	else
 		sleep 120
 	fi
