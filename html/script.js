@@ -344,6 +344,7 @@ function fetchData() {
 	FetchPending.fail(function(jqxhr, status, error) {
 		$("#update_error_detail").text("AJAX call failed (" + status + (error ? (": " + error) : "") + "). Maybe dump1090 is no longer running?");
 		$("#update_error").css('display','block');
+		StaleReceiverCount++;
 		fetchData();
 	});
 }
@@ -1936,6 +1937,7 @@ function resetMap() {
 	OLMap.getView().setRotation(mapOrientation);
 
 	selectPlaneByHex(null,false);
+	$("#update_error").css('display','none');
 }
 
 function updateMapSize() {

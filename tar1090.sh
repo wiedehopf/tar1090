@@ -2,6 +2,9 @@
 
 trap "kill 0" SIGINT
 trap "kill -2 0" SIGTERM
+
+set -e
+
 INTERVAL=10
 HISTORY_SIZE=360
 CS=60
