@@ -161,19 +161,21 @@ function processReceiverUpdate(data, init) {
 
 		// Call the function update
 		if (uat) {
-			if (ac.seen < 5) {
+			if (plane.receiver == "uat" || ac.seen_pos < 1.8 || init) {
 				plane.receiver = "uat";
-				if (!displayUATasADSB)
+				if (!displayUATasADSB) {
 					plane.dataSource = "uat";
+				}
+				plane.updateData(uat_now, ac, init);
 			}
-			plane.updateData(uat_now, ac, init);
 		} else {
-			if (ac.seen < 5) {
+			if (plane.receiver == "1090" || ac.seen_pos < 1.8 || init) {
 				plane.receiver = "1090";
-				if (!displayUATasADSB)
+				if (!displayUATasADSB) {
 					plane.dataSource = "adsb";
+				}
+				plane.updateData(now, ac, init);
 			}
-			plane.updateData(now, ac, init);
 		}
 	}
 }

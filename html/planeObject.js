@@ -745,7 +745,6 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.baro_rate = null;
 
 	// simple fields
-
 	this.alt_geom = data.alt_geom;
 	this.ias = data.ias;
 	this.tas = data.tas;
@@ -765,10 +764,16 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	this.geom_rate = data.geom_rate;
 	this.rc = data.rc;
 	this.squawk = data.squawk;
-	this.category = data.category;
-	this.version = data.version;
 
 	// fields with more complex behaviour
+
+	if (data.version != null) {
+		this.version = data.version;
+	}
+	if (data.category != null) {
+		this.category = data.category;
+	}
+
 	if (data.true_heading != null)
 		this.true_heading = data.true_heading;
 	else
