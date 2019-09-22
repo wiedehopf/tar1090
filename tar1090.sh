@@ -73,7 +73,7 @@ do
 	i=0
 	new_chunk
 
-	while true
+	while grep -qs -F -e chunks $dir/chunks.json
 	do
 		sleep $INTERVAL &
 
