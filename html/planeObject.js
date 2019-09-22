@@ -334,7 +334,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	// We only retain some points depending on time elapsed and track change
 	var turn_density = 6.5;
 	if (
-		since_update > 42 ||
+		since_update > 86 ||
 		(!on_ground && since_update > (100/turn_density)/track_change) ||
 		(!on_ground && isNaN(track_change) && since_update > 8) ||
 		(on_ground && since_update > (500/turn_density)/track_change && distance_traveled > 8) ||
