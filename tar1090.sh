@@ -45,6 +45,7 @@ do
 
 	if ! cp $SOURCE/receiver.json chunks.json
 	then
+		echo "No receiver.json found in $SOURCE! Try restarting dump1090!"
 		sleep 60
 		continue
 	fi
@@ -73,18 +74,22 @@ do
 	i=0
 	new_chunk
 
-	while grep -qs -F -e chunks $dir/chunks.json
+	while jq <$dir/chunks.json '.chunks' >/dev/null 2>&1
 	do
 		sleep $INTERVAL &
 
 		source <(grep -F -e INTERVAL /etc/default/tar1090)
 		date=$(date +%s)
 
-		cd $dir
-		if ! cp $SOURCE/aircraft.json history_$date.json &>/dev/null
+		if ! cd $dir || ! cp $SOURCE/aircraft.json history_$date.json &>/dev/null
 		then
-			sleep 0.05
-			cp $SOURCE/aircraft.json history_$date.json
+			sleep 0.1
+			if ! cd $dir || ! cp $SOURCE/aircraft.json history_$date.json &>/dev/null
+			then
+				echo "No aircraft.json found in $SOURCE! Try restarting dump1090!"
+				sleep 60
+				continue;
+			fi
 		fi
 		prune history_$date.json
 		sed -i -e '$a,' history_$date.json
@@ -126,7 +131,7 @@ do
 
 		wait
 	done
-	sleep 5
+	echo "$dir/chunks.json was corrupted or removed, restarting history chunk creation!"
 done &
 
 while true
@@ -151,8 +156,7 @@ sleep 3
 while true
 do
 	sleep 10 &
-	cd $dir
-	if wget -T 5 -q -O pf.tmp http://127.0.0.1:30053/ajax/aircraft 2>/dev/null; then
+	if cd $dir && wget -T 5 -q -O pf.tmp http://127.0.0.1:30053/ajax/aircraft 2>/dev/null; then
 		sed -i -e 's/"user_l[a-z]*":"[0-9,.,-]*",//g' pf.tmp
 		mv pf.tmp pf.json
 		sed -e "s?\"pf_data\" : \"false\"?\"pf_data\" : \"true\"?" chunks.json > chunks.json.tmp
