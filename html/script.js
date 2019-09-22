@@ -654,7 +654,7 @@ function parse_history() {
 			}
 
 
-			if (h==0) {
+			if (h==1) {
 				console.log("Applied history " + h + " from: "
 					+ (new Date(now * 1000)).toLocaleTimeString());
 			}
