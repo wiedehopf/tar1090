@@ -240,7 +240,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	// greater than the difference between data inputs
 	var time_difference = (this.position_time - this.prev_time) - (receiver_timestamp - last_timestamp);
 
-	var stale_timeout = 8;
+	var stale_timeout = lastseg.estimated ? 5 : 10;
 
 	// MLAT data are given some more leeway
 	if (this.dataSource == "mlat") stale_timeout = 15;
