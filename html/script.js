@@ -654,6 +654,10 @@ function parse_history() {
 			}
 
 
+			if (h==0) {
+				console.log("Applied history " + h + " from: "
+					+ (new Date(now * 1000)).toLocaleTimeString());
+			}
 			// prune aircraft list
 			if(h++ % pruneInt == pruneInt - 1) {
 
