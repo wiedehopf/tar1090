@@ -156,6 +156,8 @@ function processReceiverUpdate(data, init) {
 				plane.receiver = "uat";
 				if (!displayUATasADSB)
 					plane.dataSource = "uat";
+			} else {
+				plane.receiver = "1090";
 			}
 		}
 
@@ -1606,7 +1608,7 @@ function refreshTableInfo() {
 			//updateCell(tableplane, 17, tableplane.baseMarkerKey);
 
 
-			}
+		}
 		if (tableplane.classesCache != classes) {
 			tableplane.classesCache = classes;
 			tableplane.tr.className = classes;
