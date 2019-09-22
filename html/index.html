@@ -3,6 +3,7 @@
 
 	<head>
 		<meta charset="utf-8"/>
+		<meta name="mobile-web-app-capable" content="yes">
 
 		<link rel="stylesheet" type="text/css" href="style.css?v=__cache_version__" />
 		<link rel="stylesheet" type="text/css" href="colors.css?v=__cache_version__" />
@@ -38,10 +39,8 @@
 		</div>
 
 		<div id="header" class="infoHeading">
-			<div class="logoContainer">
-			</div>
+			<div class="dateTime" id="clock_div"></div>
 			<div class="buttonContainer">
-				<div class="dateTime" id="clock_div"></div>
 				<div title="Toggle Map (B)rightness" class="button buttonHeader" onclick="toggleMapDim();"><span class="buttonText">B</span></div>
 				<div title="Table: only show aircraft in current (V)iew" class="button buttonHeader" onclick="toggleTableInView();"><span class="buttonText">V</span></div>
 				<div title="Toggle (M)ultiSelect" class="button buttonHeader" onclick="toggleMultiSelect();"><span class="buttonText">M</span></div>
@@ -53,7 +52,7 @@
 				<div title="All (T)racks" class="button buttonHeader" onclick="selectAllPlanes();"><span class="buttonText">Show All Tracks</span></div>
 				<div title= "(C)lear tracks"class="button buttonHeader" onclick="deselectAllPlanes();"><span class="buttonText">Hide All Tracks</span></div>
 			</div>
-			<div class="settingsContainer"><img src="images/settings-icon.png" id="settingsCog" srcset="images/settings-icon.png 1x, images/settings-icon@2x.png 2x, images/settings-icon@3x.png 3x"></div>
+			<div id="settingsCog" class="settingsContainer"></div>
 		</div>
 
 		<div id="layout_container">

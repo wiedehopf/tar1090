@@ -278,21 +278,27 @@ select.error, textarea.error, input.error {
 {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: bold;
-    font-size: 14px;
-    line-height: 18px;
+    font-size: 11pt;
+    line-height: 22pt;
     color: #FFFFFF;
     color: rgb(255, 255, 255);
-    line-height: 23px;
     text-align: right;
     display: inline-block;
     padding-right: 20px;
+    padding-left: 20px;
+}
+
+@media screen and (max-width: 1000px) {
+	.dateTime {
+		display: none;
+	}
 }
 
 .infoHeading {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 12px;
+	font-size: 10pt;
 	font-weight: bold;
-    line-height: 16px;
+    line-height: 14pt;
     color: #002F5D;
 }
 
@@ -361,7 +367,7 @@ select.error, textarea.error, input.error {
 
 #header {
     width: 100%;
-    height: 25px;
+    height: 22pt;
     background: #002F5D;
     background: -webkit-linear-gradient(#002F5D, #002F5D 60%, #021624);
     background: -moz-linear-gradient(#002F5D, #002F5D 60%, #021624);
@@ -404,34 +410,35 @@ select.error, textarea.error, input.error {
 
 .buttonContainer {
     margin-left: auto;
-    margin-top: 0px;
+    margin-top: 1pt;
+    text-align: right;
 }
 
 .buttonText
 {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 10pt;
     color: #FFFFFF;
     color: rgb(255, 255, 255);
-    line-height: 23px;
-    padding-left: 10px;
-    padding-right: 10px;
+    line-height: 20pt;
+    padding-left: 3pt;
+    padding-right: 3pt;
 }
 
 .button {
     background: #00A0E2;
     background: rgba(0, 160, 226, 1);
-    min-width: 23px;
-    height: 23px;
-    border-radius: 4px;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
+    min-width: 21pt;
+    height: 19pt;
+    border-radius: 3pt;
+    -moz-border-radius: 3pt;
+    -webkit-border-radius: 3pt;
     display: inline-block;
-    margin-right: 10px;
+    margin-right: 4pt;
+    margin-left: 4pt;
     cursor: pointer;
     text-align: center;
-    margin-top: 0px;
 }
 
 .lightblue-link, .lightblue-link a {
@@ -447,11 +454,13 @@ select.error, textarea.error, input.error {
 }
 
 .settingsContainer {
-    padding-right: 60px;
-    padding-left: 2px;
-    margin-top: 0px;
-    margin-left: auto;
+	width: 40pt;
+	height: 21pt;
     cursor: pointer;
+    background-image: url('images/settings-icon@2x.png');
+    background-size: 21pt;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 #highlighted_infoblock {
