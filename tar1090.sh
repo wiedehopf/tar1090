@@ -42,9 +42,9 @@ prune() {
 while true
 do
 	cd $dir
-	rm -f $list
-	rm -f $dir/*.gz
-	rm -f $dir/*.json
+	rm -f $list || true
+	rm -f $dir/*.gz || true
+	rm -f $dir/*.json || true
 
 	echo '{ "pf_data" : "false", "enable_uat" : "false", "chunks" : [] }' > chunks.json
 	if [[ $ENABLE_978 == "yes" ]]; then
@@ -53,8 +53,7 @@ do
 	echo "{ \"files\" : [ ] }" | gzip -1 > chunk_recent.gz
 
 	# integrate original dump1090-fa history on startup so we don't start blank
-	cp $SOURCE/history_*.json $dir
-	if [[ -f history_0.json ]]; then
+	if cp $SOURCE/history_*.json $dir && [[ -f history_0.json ]]; then
 		new_chunk
 		for i in history_*.json ; do
 			prune $i
