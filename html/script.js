@@ -134,16 +134,21 @@ function processReceiverUpdate(data, init) {
 		// Do we already have this plane object in Planes?
 		// If not make it.
 
-		if (uat && ac.type && ac.type.substring(0,4) == "tisb") {
-			// drop non ADS-B planes from UAT (TIS-B)
+		if ( ac.messages < 4) {
 			continue;
 		}
 
-		if (Planes[hex]) {
-			plane = Planes[hex];
-		} else if ( ac.messages < 4) {
+		plane = Planes[hex];
+
+		if (uatNoTISB && !init && uat && ac.type && ac.type.substring(0,4) == "tisb") {
+			// drop non ADS-B planes from UAT (TIS-B)
+			if (plane) {
+				plane.last_message_time -= 999;
+			}
 			continue;
-		} else {
+		}
+
+		if (!plane) {
 			plane = new PlaneObject(hex);
 			plane.filter = PlaneFilter;
 

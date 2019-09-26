@@ -1049,6 +1049,7 @@ PlaneObject.prototype.remakeTrail = function() {
 PlaneObject.prototype.destroy = function() {
 	this.clearLines();
 	this.clearMarker();
+	this.visible = false;
 	if (this.marker) {
 		PlaneIconFeatures.remove(this.marker);
 	}

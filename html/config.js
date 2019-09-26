@@ -134,5 +134,5 @@ BingMapsAPIKey = null;
 //labelZoom = 8;
 //labelZoomGround = 12.5;
 
-
 //displayUATasADSB = false;
+//uatNoTISB = true;

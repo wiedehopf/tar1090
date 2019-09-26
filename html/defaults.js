@@ -165,6 +165,7 @@ var labelZoom = 0;
 var labelZoomGround = 14.8;
 
 var displayUATasADSB = false;
+var uatNoTISB = true;
 /*
 60
 54
