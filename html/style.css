@@ -343,7 +343,6 @@ select.error, textarea.error, input.error {
     font-size: 14px;
     line-height: 20px;
     color: #03475f;
-    color: rgb(0, 47, 93);
 }
 
 .settingsText
@@ -511,8 +510,7 @@ select.error, textarea.error, input.error {
     font-size: 12px;
     font-weight: bold;
     line-height: 20px;
-    color: #67b6c3;
-    color: rgb(0, 160, 226);
+    color: #03475f;
 }
 
 .highlightedInfo {
@@ -686,7 +684,7 @@ select.error, textarea.error, input.error {
 	background-color: #eee;
 }
 #selected_flightaware_link a {
-	background-color: #00a0e2;
+	background-color: #67b6c3;
 	color: white;
 	text-decoration: none;
 	padding: 10px;
