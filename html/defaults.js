@@ -166,49 +166,5 @@ var labelZoomGround = 14.8;
 
 var displayUATasADSB = false;
 var uatNoTISB = true;
-/*
-60
-54
-44
-38
-40
-42
-42
-42
-41
-40
-48
-59
-64
-60
-56
-50
-44
-51
-52
-58
-60
 
-old:
-69
-60
-45
-36
-39
-41
-42
-42
-40
-39
-51
-67
-74
-69
-62
-54
-45
-55
-57
-65
-69
-*/
+var noFALink = false;

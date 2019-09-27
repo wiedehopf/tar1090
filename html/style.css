@@ -377,30 +377,10 @@ select.error, textarea.error, input.error {
     z-index: 99999;
 }
 
-.flightawareLogo {
-    background-color: #FFF;
-    padding-top: 7px;
-    padding-bottom: 6px;
-    padding-left: 20px;
-    padding-right: 20px;
-    width: 121px;
-    height: 46px;
-    box-shadow:inset -12px 0 12px -12px #000000;
-}
-
 .adsbLogo {
     padding-left: 20px;
     padding-top: 30px;
     padding-bottom: 5px;
-}
-
-.piAwareLogo {
-    width: 186px;
-    height: 24px;
-}
-.flightfeederLogo {
-    width: 229px;
-    height: 24px;
 }
 
 .logoContainer {
@@ -429,9 +409,9 @@ select.error, textarea.error, input.error {
     background: #67b6c3;
     min-width: 21pt;
     height: 19pt;
-    border-radius: 3pt;
-    -moz-border-radius: 3pt;
-    -webkit-border-radius: 3pt;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
     display: inline-block;
     margin-right: 4pt;
     margin-left: 4pt;

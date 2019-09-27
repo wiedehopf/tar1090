@@ -136,3 +136,5 @@ BingMapsAPIKey = null;
 
 //displayUATasADSB = false;
 //uatNoTISB = true;
+
+//noFALink = false;
