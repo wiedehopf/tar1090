@@ -202,7 +202,7 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
 }
 
 .aircraft_table_header { 
-    background-color: #03475f;
+    background-color: #003f4b;
     color: #FFFFFF;
     cursor: pointer;
 }
@@ -299,7 +299,7 @@ select.error, textarea.error, input.error {
 	font-size: 10pt;
 	font-weight: bold;
     line-height: 14pt;
-    color: #03475f;
+    color: #003f4b;
 }
 
 .infoHeading sub {
@@ -317,7 +317,7 @@ select.error, textarea.error, input.error {
 	width: 100%;
 	text-transform: uppercase;
 	color: #fff;
-	background: #03475f;
+	background: #003f4b;
 	font-size: 14px;
 }
 
@@ -342,7 +342,7 @@ select.error, textarea.error, input.error {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 20px;
-    color: #03475f;
+    color: #003f4b;
 }
 
 .settingsText
@@ -367,11 +367,11 @@ select.error, textarea.error, input.error {
 #header {
     width: 100%;
     height: 22pt;
-    background: #03475f;
-    background: -webkit-linear-gradient(#03475f, #03475f 60%, #00151C);
-    background: -moz-linear-gradient(#03475f, #03475f 60%, #00151C);
-    background: -ms-linear-gradient(#03475f, #03475f 60%, #00151C);
-    background: linear-gradient(#03475f, #03475f 60%, #00151C);
+    background: #003f4b;
+    background: -webkit-linear-gradient(#003f4b, #003f4b 60%, #00151C);
+    background: -moz-linear-gradient(#003f4b, #003f4b 60%, #00151C);
+    background: -ms-linear-gradient(#003f4b, #003f4b 60%, #00151C);
+    background: linear-gradient(#003f4b, #003f4b 60%, #00151C);
     display: flex;
     box-shadow: -6px 0px 8px #999999;
     z-index: 99999;
@@ -471,8 +471,7 @@ select.error, textarea.error, input.error {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 24px;
     line-height: 24px;
-    color: #03475f;
-    color: rgb(0, 47, 93);
+    color: #003f4b;
     font-weight: lighter;
 }
 
@@ -480,8 +479,7 @@ select.error, textarea.error, input.error {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 18px;
     line-height: 22px;
-    color: #03475f;
-    color: rgb(0, 47, 93);
+    color: #003f4b;
     font-weight: lighter;
 }
 
@@ -490,7 +488,7 @@ select.error, textarea.error, input.error {
     font-size: 12px;
     font-weight: bold;
     line-height: 20px;
-    color: #03475f;
+    color: #003f4b;
 }
 
 .highlightedInfo {
@@ -557,7 +555,7 @@ select.error, textarea.error, input.error {
 
 .infoBlockTitleText {
     font-weight: bold;
-    color: #03475f;
+    color: #003f4b;
 }
 
 .legendBox {
@@ -677,7 +675,7 @@ select.error, textarea.error, input.error {
 	padding-top: 10px;
 	padding-bottom: 10px;
 	text-align: center;
-	color: #03475f;
+	color: #003f4b;
 	line-height: 18px;
 }
 .bottom-info-container img {
@@ -688,7 +686,7 @@ select.error, textarea.error, input.error {
 	display: inline;
 }
 .selected_airframe a {
-	color: #03475f;
+	color: #003f4b;
 }
 
 .infoblock-container-small .infoRowFluid {
