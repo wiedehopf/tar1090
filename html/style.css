@@ -138,7 +138,7 @@ html, body {
 	display: inline-block;
 	position: absolute;
 	top: 18px;
-	color: #00A0E2;
+	color: #67b6c3;
 	right: 30px;
 	margin-left: auto;
 	font-size: 75%;
@@ -202,7 +202,7 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
 }
 
 .aircraft_table_header { 
-    background-color: #002F5D;
+    background-color: #03475f;
     color: #FFFFFF;
     cursor: pointer;
 }
@@ -299,7 +299,7 @@ select.error, textarea.error, input.error {
 	font-size: 10pt;
 	font-weight: bold;
     line-height: 14pt;
-    color: #002F5D;
+    color: #03475f;
 }
 
 .infoHeading sub {
@@ -317,7 +317,7 @@ select.error, textarea.error, input.error {
 	width: 100%;
 	text-transform: uppercase;
 	color: #fff;
-	background: #002F5D;
+	background: #03475f;
 	font-size: 14px;
 }
 
@@ -342,7 +342,7 @@ select.error, textarea.error, input.error {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 20px;
-    color: #002F5D;
+    color: #03475f;
     color: rgb(0, 47, 93);
 }
 
@@ -368,11 +368,11 @@ select.error, textarea.error, input.error {
 #header {
     width: 100%;
     height: 22pt;
-    background: #002F5D;
-    background: -webkit-linear-gradient(#002F5D, #002F5D 60%, #021624);
-    background: -moz-linear-gradient(#002F5D, #002F5D 60%, #021624);
-    background: -ms-linear-gradient(#002F5D, #002F5D 60%, #021624);
-    background: linear-gradient(#002F5D, #002F5D 60%, #021624);
+    background: #03475f;
+    background: -webkit-linear-gradient(#03475f, #03475f 60%, #00151C);
+    background: -moz-linear-gradient(#03475f, #03475f 60%, #00151C);
+    background: -ms-linear-gradient(#03475f, #03475f 60%, #00151C);
+    background: linear-gradient(#03475f, #03475f 60%, #00151C);
     display: flex;
     box-shadow: -6px 0px 8px #999999;
     z-index: 99999;
@@ -427,8 +427,7 @@ select.error, textarea.error, input.error {
 }
 
 .button {
-    background: #00A0E2;
-    background: rgba(0, 160, 226, 1);
+    background: #67b6c3;
     min-width: 21pt;
     height: 19pt;
     border-radius: 3pt;
@@ -442,7 +441,7 @@ select.error, textarea.error, input.error {
 }
 
 .lightblue-link, .lightblue-link a {
-	color: #00A0E2;
+	color: #67b6c3;
 }
 
 .buttonHeader {
@@ -478,7 +477,7 @@ select.error, textarea.error, input.error {
 
 .highlightedTitle {
     height: 50px;
-    border-bottom: 1px solid #00A0E2;
+    border-bottom: 1px solid #67b6c3;
     padding-left: 18px;
 	padding-top: 18px;
 	display: inline-block;
@@ -493,7 +492,7 @@ select.error, textarea.error, input.error {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 24px;
     line-height: 24px;
-    color: #002F5D;
+    color: #03475f;
     color: rgb(0, 47, 93);
     font-weight: lighter;
 }
@@ -502,7 +501,7 @@ select.error, textarea.error, input.error {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 18px;
     line-height: 22px;
-    color: #002F5D;
+    color: #03475f;
     color: rgb(0, 47, 93);
     font-weight: lighter;
 }
@@ -512,7 +511,7 @@ select.error, textarea.error, input.error {
     font-size: 12px;
     font-weight: bold;
     line-height: 20px;
-    color: #00A0E2;
+    color: #67b6c3;
     color: rgb(0, 160, 226);
 }
 
@@ -580,7 +579,7 @@ select.error, textarea.error, input.error {
 
 .infoBlockTitleText {
     font-weight: bold;
-    color: #002F5D;
+    color: #03475f;
 }
 
 .legendBox {
@@ -700,7 +699,7 @@ select.error, textarea.error, input.error {
 	padding-top: 10px;
 	padding-bottom: 10px;
 	text-align: center;
-	color: #002F5D;
+	color: #03475f;
 	line-height: 18px;
 }
 .bottom-info-container img {
@@ -711,7 +710,7 @@ select.error, textarea.error, input.error {
 	display: inline;
 }
 .selected_airframe a {
-	color: #002F5D;
+	color: #03475f;
 }
 
 .infoblock-container-small .infoRowFluid {
