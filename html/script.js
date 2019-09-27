@@ -1246,7 +1246,11 @@ function refreshSelected() {
 	}
 
 	if (selected.registration) {
-		$('#selected_registration').html(getFlightAwareIdentLink(selected.registration, selected.registration));
+		if (!noFALink) {
+			$('#selected_registration').html(getFlightAwareIdentLink(selected.registration, selected.registration));
+		} else {
+			$('#selected_registration').text(selected.registration);
+		}
 	} else {
 		$('#selected_registration').text("n/a");
 	}
@@ -1325,7 +1329,9 @@ function refreshSelected() {
 	$('#selected_sitedist').text(format_distance_long(selected.sitedist, DisplayUnits));
 	$('#selected_rssi').text(selected.rssi != null ? selected.rssi.toFixed(1) + ' dBFS' : "n/a");
 	$('#selected_message_count').text(selected.messages);
-	$('#selected_photo_link').html(getFlightAwarePhotoLink(selected.registration));
+	if (!noFALink) {
+		$('#selected_photo_link').html(getFlightAwarePhotoLink(selected.registration));
+	}
 
 	$('#selected_altitude_geom').text(format_altitude_long(selected.alt_geom, selected.geom_rate, DisplayUnits));
 	$('#selected_mag_heading').text(format_track_long(selected.mag_heading));
@@ -2412,15 +2418,6 @@ function getFlightAwarePhotoLink(registration) {
 
 	return "";   
 }
-
-function getAirframesModeSLink(code) {
-	if (code !== null && code.length > 0 && code[0] !== '~' && code !== "000000") {
-		return "<a href=\"http://www.airframes.org/\" onclick=\"$('#airframes_post_icao').attr('value','" + code + "'); document.getElementById('horrible_hack').submit.call(document.getElementById('airframes_post')); return false;\">Airframes.org: " + code.toUpperCase() + "</a>";
-	}
-
-	return "";   
-}
-
 
 // takes in an elemnt jQuery path and the OL3 layer name and toggles the visibility based on clicking it
 function toggleLayer(element, layer) {
