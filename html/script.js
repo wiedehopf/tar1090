@@ -142,9 +142,6 @@ function processReceiverUpdate(data, init) {
 
 		if (uatNoTISB && !init && uat && ac.type && ac.type.substring(0,4) == "tisb") {
 			// drop non ADS-B planes from UAT (TIS-B)
-			if (plane) {
-				plane.last_message_time -= 999;
-			}
 			continue;
 		}
 
@@ -681,6 +678,10 @@ function parse_history() {
 
 			if (plane.position && SitePosition)
 				plane.sitedist = ol.sphere.getDistance(SitePosition, plane.position);
+
+			if (uatNoTISB && plane.receiver == "uat" && plane.type && plane.type.substring(0,4) == "tisb") {
+				plane.last_message_time -= 999;
+			}
 
 			if (plane.dataSource == "uat")
 				plane.updateTick(uat_now, uat_last, true);
