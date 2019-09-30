@@ -95,6 +95,7 @@ function getIcaoAircraftTypeData(aircraftData, defer) {
 }
 
 function lookupIcaoAircraftType(aircraftData, defer) {
+	aircraftData.vType = aircraftData.desc;
 	if (_aircraft_type_cache !== null && "t" in aircraftData) {
 		var typeDesignator = aircraftData.t.toUpperCase();
 		if (typeDesignator in _aircraft_type_cache) {

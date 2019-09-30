@@ -122,6 +122,10 @@ function PlaneObject(icao) {
 			this.typeDescription = data.desc;
 		}
 
+		if (data.vType != null) {
+			this.vType = data.vType;
+		}
+
 		if ("wtc" in data) {
 			this.wtc = data.wtc;
 		}
