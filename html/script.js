@@ -1242,12 +1242,12 @@ function refreshSelected() {
 	} else {
 		$('#selected_callsign').text('n/a');
 	}
-	if (!noFALink) {
+	if (flightawareLinks) {
 		$('#selected_flightaware_link').html(getFlightAwareModeSLink(selected.icao, selected.flight, "Visit Flight Page"));
 	}
 
 	if (selected.registration) {
-		if (!noFALink) {
+		if (flightawareLinks) {
 			$('#selected_registration').html(getFlightAwareIdentLink(selected.registration, selected.registration));
 		} else {
 			$('#selected_registration').text(selected.registration);
@@ -1330,7 +1330,7 @@ function refreshSelected() {
 	$('#selected_sitedist').text(format_distance_long(selected.sitedist, DisplayUnits));
 	$('#selected_rssi').text(selected.rssi != null ? selected.rssi.toFixed(1) + ' dBFS' : "n/a");
 	$('#selected_message_count').text(selected.messages);
-	if (!noFALink) {
+	if (flightawareLinks) {
 		$('#selected_photo_link').html(getFlightAwarePhotoLink(selected.registration));
 	}
 
@@ -1609,12 +1609,12 @@ function refreshTableInfo() {
 			}			                
 
 			// ICAO doesn't change
-			if (noFALink) {
-				updateCell(tableplane, 2, tableplane.name);
-				updateCell(tableplane, 3, tableplane.registration);
-			} else {
+			if (flightawareLinks) {
 				updateCell(tableplane, 2, getFlightAwareModeSLink(tableplane.icao, tableplane.flight, tableplane.name), true);
 				updateCell(tableplane, 3, getFlightAwareIdentLink(tableplane.registration, tableplane.registration), true);
+			} else {
+				updateCell(tableplane, 2, tableplane.name);
+				updateCell(tableplane, 3, tableplane.registration);
 			}
 			updateCell(tableplane, 4, (tableplane.icaoType != null ? tableplane.icaoType : ""));
 			updateCell(tableplane, 5, (tableplane.squawk != null ? tableplane.squawk : ""));

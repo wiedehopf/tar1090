@@ -40,6 +40,26 @@ sudo systemctl restart tar1090
 
 The duration of the history in seconds can be calculated as interval times history_size.
 
+## Configuring the web interface (optional):
+
+```
+sudo nano /usr/local/share/tar1090/html/config.js
+```
+
+Ctrl-x to exit, y (yes) and enter to save.
+Then Ctrl-F5 to refresh the web interface in the browser.
+
+## Enable (/disable) FA links in the webinterface (previously enabled by default)
+
+```
+# ENABLE:
+sudo sed -i -e 's?.*flightawareLinks.*?flightawareLinks = true;?' /usr/local/share/tar1090/html/config.js
+# DISABLE:
+sudo sed -i -e 's?.*flightawareLinks.*?flightawareLinks = false;?' /usr/local/share/tar1090/html/config.js
+```
+
+Then Ctrl-F5 to refresh the web interface in the browser.
+
 ## UAT receiver running dump978-fa and skyaware978:
 
 This is the relevant part in the configuration file:

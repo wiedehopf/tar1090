@@ -167,4 +167,4 @@ var labelZoomGround = 14.8;
 var displayUATasADSB = false;
 var uatNoTISB = true;
 
-var noFALink = false;
+var flightawareLinks = false;

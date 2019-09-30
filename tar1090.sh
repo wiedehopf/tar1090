@@ -32,11 +32,13 @@ new_chunk() {
 }
 
 prune() {
-	jq -c <$1 >$1.pruned '
+	if jq -c <$1 >$1.pruned '
 		.aircraft |= map(select(has("seen_pos") and .seen_pos < 15))
 		| .aircraft[] |= [.hex, .alt_baro, .gs, .track, .lat, .lon, .seen_pos, .mlat]
 		'
-	mv $1.pruned $1
+	then
+		mv $1.pruned $1
+	fi
 }
 
 while true
