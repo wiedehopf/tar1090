@@ -53,6 +53,8 @@ if [[ -n $1 ]] && [ $1 != "test" ] ; then
 elif ! [[ -d /run/dump1090-fa ]] ; then
 	if [[ -d /run/dump1090 ]]; then
 		run_dir=/run/dump1090
+	elif [[ -d /run/dump1090-mutability ]]; then
+		run_dir=/run/dump1090-mutability
 	elif [[ -d /run/readsb ]]; then
 		run_dir=/run/readsb
 	elif [[ -d /run/skyaware978 ]]; then
