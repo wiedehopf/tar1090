@@ -103,13 +103,13 @@ sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/tar1090
 ![Screenshot1](https://raw.githubusercontent.com/wiedehopf/tar1090/screenshots/screenshot1.png)
 ![Screenshot2](https://raw.githubusercontent.com/wiedehopf/tar1090/screenshots/screenshot2.png)
 
-## nginx configuration for readsb
+## nginx configuration for dump1090-fa
 
 If you are using another /run directory like /run/dump1090-fa, just change the path.
 
 ```
 location /tar1090/data/ {
-  alias /run/readsb/;
+  alias /run/dump1090-fa/;
 }
 
 location /tar1090/chunks/ {
@@ -121,7 +121,14 @@ location /tar1090/chunks/ {
   }
 }
 
-location /tar1090/ {
+location /tar1090 {
+  try_files $uri $uri/ =404;
   alias /usr/local/share/tar1090/html/;
 }
 ```
+
+If you are using another dump1090 fork, change `/run/dump1090-fa` in this section:
+```
+location /tar1090/data/ {
+  alias /run/dump1090-fa/;
+}
