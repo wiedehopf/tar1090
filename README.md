@@ -102,3 +102,26 @@ sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/tar1090
 ## Screenshots
 ![Screenshot1](https://raw.githubusercontent.com/wiedehopf/tar1090/screenshots/screenshot1.png)
 ![Screenshot2](https://raw.githubusercontent.com/wiedehopf/tar1090/screenshots/screenshot2.png)
+
+## nginx configuration for readsb
+
+If you are using another /run directory like /run/dump1090-fa, just change the path.
+
+```
+location /tar1090/data/ {
+  alias /run/readsb/;
+}
+
+location /tar1090/chunks/ {
+  alias /run/tar1090/;
+  location ~* \.gz$ {
+    add_header Cache-Control "must-revalidate";
+    add_header Content-Type "application/json";
+    add_header Content-Encoding "gzip";
+  }
+}
+
+location /tar1090/ {
+  alias /usr/local/share/tar1090/html/;
+}
+```
