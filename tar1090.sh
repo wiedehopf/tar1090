@@ -106,8 +106,8 @@ do
 		if [[ $((i%6)) == 5 ]]
 		then
 			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | gzip -4 > temp.gz
-			echo "{ \"files\" : [ ] }" | gzip -1 > rec_temp.gz
 			mv temp.gz $cur_chunk
+			echo "{ \"files\" : [ ] }" | gzip -1 > rec_temp.gz
 			mv rec_temp.gz chunk_recent.gz
 			rm -f *latest_*.json
 		else
@@ -127,6 +127,8 @@ do
 		then
 			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | 7za a -si temp.gz >/dev/null
 			mv temp.gz $cur_chunk
+			echo "{ \"files\" : [ ] }" | gzip -1 > rec_temp.gz
+			mv rec_temp.gz chunk_recent.gz
 			i=0
 			rm -f *history_*.json
 			rm -f *latest_*.json
