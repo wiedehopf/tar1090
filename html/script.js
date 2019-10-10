@@ -2281,6 +2281,14 @@ function toggleMapDim(switchOn) {
 		});
 
 		$('#mapdim_checkbox').removeClass('settingsCheckboxChecked');
+
+		/*
+		$('html').css('background-color', '#F8F8F8');
+		$('body').css('background-color', '#F8F8F8');
+		$('#selected_infoblock').css('background-color', '#F8F8F8');
+		$('#highlighted_infoblock').css('background-color', '#F8F8F8');
+		$('.altitudeFilterInput').css('background-color', '#F8F8F8');
+		*/
 	} else {
 		localStorage['MapDim'] = "true";
 
@@ -2291,6 +2299,7 @@ function toggleMapDim(switchOn) {
 		});
 
 		$('#mapdim_checkbox').addClass('settingsCheckboxChecked');
+
 	}
 	OLMap.render();
 }

@@ -1,6 +1,6 @@
 html, body {
 	-ms-overflow-style: -ms-autohiding-scrollbar;
-    margin: 0; padding: 0; background-color: #ffffff; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    margin: 0; padding: 0; background-color: #F8F8F8; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 10pt; overflow: hidden; height: 100%;
 }
 
@@ -13,11 +13,11 @@ html, body {
     position: absolute;
     left: 30pt;
     top: 0px;
-    background: #ffffff;
 	width: 140pt;
 	height: 100%;
 	overflow: auto;
     z-index: 9999;
+	background-color: #F8F8F8;
 }
 .infoblock-container {
 	overflow: auto;
@@ -51,7 +51,7 @@ html, body {
     display: block;
     position: absolute;
     top: 6px;
-    right: -4px;
+    right: 0px;
 }
 
 #toggle_sidebar_button {
@@ -78,7 +78,7 @@ html, body {
     display: block;
     position: absolute;
     top: 60px;
-    right: -4px;
+    right: 0px;
 }
 
 #expand_sidebar_button {
@@ -145,7 +145,6 @@ html, body {
 	font-size: 75%;
 	text-decoration: underline;
 	cursor: pointer;
-	background: #fff;
 	padding: 3px;
 	border-radius: 2px;
 }
@@ -253,6 +252,7 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
 
 .altitudeFilterInput {
     width: 50px;
+	background-color: #F8F8F8;
 }
 
 select.error, textarea.error, input.error {
@@ -453,12 +453,12 @@ select.error, textarea.error, input.error {
 }
 
 #highlighted_infoblock {
+	background-color: #F8F8F8;
     position: absolute;
     left: 40px;
     top: 60px;
     min-width: 168px;
     padding-right: 5px;
-    background: #ffffff;
     box-shadow: 4px 4px 10px #444444;
     cursor: pointer;
     z-index: 9999;
@@ -588,7 +588,6 @@ select.error, textarea.error, input.error {
     top: 60px;
     width: 398px;
     min-height: 180px;
-    background: #ffffff;
     box-shadow: 4px 4px 10px #444444;
     padding: 20px;
     z-index: 9999;
