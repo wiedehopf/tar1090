@@ -90,6 +90,7 @@ do
 				continue;
 			fi
 		fi
+
 		prune history_$date.json
 		sed -i -e '$a,' history_$date.json
 
@@ -110,9 +111,11 @@ do
 			mv rec_temp.gz chunk_recent.gz
 			rm -f *latest_*.json
 		else
-			ln -s history_$date.json latest_$date.json
-			if [[ $ENABLE_978 == "yes" ]]; then
-				cp 978_history_$date.json 978_latest_$date.json || true
+			if [ -f history_$date.json ]; then
+				ln -s history_$date.json latest_$date.json
+			fi
+			if [[ $ENABLE_978 == "yes" ]] && [ -f 978_history_$date.json ]; then
+				ln -s 978_history_$date.json 978_latest_$date.json || true
 			fi
 			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *latest_*.json | gzip -1 > temp.gz
 			mv temp.gz chunk_recent.gz
@@ -126,6 +129,7 @@ do
 			mv temp.gz $cur_chunk
 			i=0
 			rm -f *history_*.json
+			rm -f *latest_*.json
 			new_chunk
 		fi
 
