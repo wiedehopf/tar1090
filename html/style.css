@@ -584,14 +584,15 @@ select.error, textarea.error, input.error {
 
 #settings_infoblock {
     position: absolute;
-    right: 1px;
-    top: 60px;
+    left: 50px;
+    top: 10px;
     width: 398px;
     min-height: 180px;
     box-shadow: 4px 4px 10px #444444;
     padding: 20px;
     z-index: 9999;
     display: none;
+	background-color: #F8F8F8;
 }
 
 .settingsColumn {
