@@ -34,7 +34,7 @@ then
 	cd /tmp
 	git clone --depth 1 $repo $ipath/git 2>/dev/null
 	cd $ipath/git
-	git checkout -f
+	git checkout -f master
 	if ! git pull -f; then
 		cd /tmp
 		if ! wget --timeout=30 -q -O master.zip $repo/archive/master.zip || ! unzip -q -o master.zip
