@@ -103,7 +103,7 @@ html, body {
     display: block;
     position: absolute;
     top: 120px;
-    left: -25px;
+    left: -63px;
     float: right;
     width: 24px;
     height: 25px;
@@ -374,7 +374,6 @@ select.error, textarea.error, input.error {
     background: -moz-linear-gradient(#003f4b, #003f4b 60%, #00151C);
     background: -ms-linear-gradient(#003f4b, #003f4b 60%, #00151C);
     background: linear-gradient(#003f4b, #003f4b 60%, #00151C);
-    box-shadow: -6px 0px 8px #999999;
     z-index: 9998;
 }
 
