@@ -57,17 +57,19 @@ do
 	# integrate original dump1090-fa history on startup so we don't start blank
 	if cp $SOURCE/history_*.json $dir && [[ -f history_0.json ]]; then
 		new_chunk
+		sleep 1;
 		for i in history_*.json ; do
 			prune $i
 			sed -i -e '$a,' $i
 		done
+		sleep 1;
 		sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | 7za a -si temp.gz >/dev/null
 		mv temp.gz $cur_chunk
 		# cleanup
 		rm -f history_*.json
 	fi
 
-	sleep 2;
+	sleep 1;
 	i=0
 	new_chunk
 
@@ -108,7 +110,7 @@ do
 			mv rec_temp.gz chunk_recent.gz
 			rm -f *latest_*.json
 		else
-			cp history_$date.json latest_$date.json
+			ln -s history_$date.json latest_$date.json
 			if [[ $ENABLE_978 == "yes" ]]; then
 				cp 978_history_$date.json 978_latest_$date.json || true
 			fi
