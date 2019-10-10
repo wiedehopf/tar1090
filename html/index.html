@@ -279,6 +279,22 @@
 						</div>
 						<div class="infoRowLine">
 							<div class="infoHeading infoRowFluid ">
+								<span title="Time since we received a position from this aircraft.">Last Pos.</span>:
+							</div>
+							<div class="infoData infoRowFluid ">
+								<span id="selected_seen_pos">n/a</span>
+							</div>
+						</div>
+						<div class="infoRowLine">
+							<div class="infoHeading infoRowFluid">
+								<span title="Data source for the reported aircraft data (e.g., ADS-B, MLAT, Other Mode S)">Source</span>:
+							</div>
+							<div class="infoData infoRowFluid">
+								<span id="selected_source">n/a</span>
+							</div>
+						</div>
+						<div class="infoRowLine">
+							<div class="infoHeading infoRowFluid ">
 								<span title="Distance of the aircraft from your ADS-B site at its last known position.">Distance</span>:
 							</div>
 							<div class="infoData infoRowFluid ">
@@ -493,14 +509,6 @@
 					<div class="infoBlockSection">
 						<div class="infoRowLine">
 							<div class="infoHeading infoRowFluid fourColumnSection1">
-								<span title="Data source for the reported aircraft data (e.g., ADS-B, MLAT, Other Mode S)">Source</span>:
-							</div>
-							<div class="infoData infoRowFluid fourColumnSection2">
-								<span id="selected_source">n/a</span>
-							</div>
-						</div>
-						<div class="infoRowLine">
-							<div class="infoHeading infoRowFluid fourColumnSection1">
 								<span title="The total number of messages received from the aircraft by your ADS-B site.">Messages</span>:
 							</div>
 							<div class="infoData infoRowFluid fourColumnSection2">
@@ -666,7 +674,7 @@
 										<td id="flag" onclick="sortByCountry()"><!-- column for flag image --></td>
 										<td id="flight" onclick="sortByFlight();">&nbsp&nbsp&nbsp&nbsp&nbspIdent&nbsp&nbsp&nbsp&nbsp&nbsp</td>
 										<td id="registration" onclick="sortByRegistration();">Registration</td>
-										<td id="aircraft_type" onclick="sortByAircraftType();"> Aircraft type</td>
+										<td id="aircraft_type" onclick="sortByAircraftType();">Type</td>
 										<td id="squawk" onclick="sortBySquawk();">Squawk</td>
 										<td id="altitude" onclick="sortByAltitude();">Altitude (<span class="altitudeUnit"></span>)</td>
 										<td id="speed" onclick="sortBySpeed();">GS (<span class="speedUnit"></span>)</td>

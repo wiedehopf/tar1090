@@ -168,3 +168,26 @@ var displayUATasADSB = false;
 var uatNoTISB = true;
 
 var flightawareLinks = false;
+
+
+// Columns that have a // in front of them are shown.
+var HideCols = [
+	"#icao",
+//	"#flag",
+//	"#flight",
+	"#registration",
+//	"#aircraft_type",
+//	"#squawk",
+//	"#altitude",
+//	"#speed",
+	"#vert_rate",
+//	"#distance",
+	"#track",
+	"#msgs",
+	"#seen",
+//	"#rssi",
+	"#lat",
+	"#lon",
+	"#data_source",
+	"#base_marker_key",
+]

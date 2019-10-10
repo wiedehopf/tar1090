@@ -35,7 +35,7 @@ var multiSelect = false;
 var uat_data = null;
 var enableLabels = false;
 var extendedLabels = false;
-var mapIsVisible = false;
+var mapIsVisible = true;
 var columnVis = Array(30).fill(true);
 var emptyStyle = new ol.style.Style({});
 var show_squawk_warning_cache = false;
@@ -213,10 +213,12 @@ function setupPlane(hex, plane) {
 			return;
 		}
 
-		if (!$("#map_container").is(":visible")) {
+		if(!mapIsVisible) {
+			selectPlaneByHex(h, true);
 			showMap();
+		} else {
+			selectPlaneByHex(h, false);
 		}
-		selectPlaneByHex(h, false);
 		adjustSelectedInfoBlockPosition();
 		evt.preventDefault();
 	}.bind(undefined, hex);
@@ -408,7 +410,7 @@ function init_page() {
 		handles: {
 			w: '#splitter'
 		},
-		minWidth: 350
+		minWidth: 150
 	});
 
 	/*
@@ -1308,11 +1310,8 @@ function refreshSelected() {
 	$('#selected_track1').text(format_track_long(selected.track));
 	$('#selected_track2').text(format_track_long(selected.track));
 
-	if (selected.seen <= 1) {
-		$('#selected_seen').text('now');
-	} else {
-		$('#selected_seen').text(selected.seen.toFixed(1) + 's');
-	}
+	$('#selected_seen').text(selected.seen.toFixed(1) + ' s');
+	$('#selected_seen_pos').text(selected.seen_pos.toFixed(1) + ' s');
 
 	$('#selected_country').text(selected.icaorange.country.replace("special use", "special"));
 	if (ShowFlags && selected.icaorange.flag_image !== null) {
@@ -1994,6 +1993,7 @@ function toggleSidebarVisibility(e) {
 function expandSidebar(e) {
 	e.preventDefault();
 	$("#map_container").hide()
+	mapIsVisible = false;
 	$("#toggle_sidebar_control").hide();
 	$("#splitter").hide();
 	$("#sudo_buttons").hide();
@@ -2006,6 +2006,7 @@ function expandSidebar(e) {
 
 function showMap() {
 	$("#map_container").show()
+	mapIsVisible = true;
 	$("#toggle_sidebar_control").show();
 	$("#splitter").show();
 	$("#sudo_buttons").show();
@@ -2031,19 +2032,11 @@ function showColumn(table, columnId, visible) {
 }
 
 function setColumnVisibility() {
-	mapIsVisible = $("#map_container").is(":visible");
 	var infoTable = $("#tableinfo");
 
-	showColumn(infoTable, "#registration", !mapIsVisible);
-	showColumn(infoTable, "#aircraft_type", !mapIsVisible);   
-	showColumn(infoTable, "#vert_rate", !mapIsVisible);
-	showColumn(infoTable, "#track", !mapIsVisible);
-	showColumn(infoTable, "#lat", !mapIsVisible);
-	showColumn(infoTable, "#seen", !mapIsVisible);
-	showColumn(infoTable, "#msgs", !mapIsVisible);
-	showColumn(infoTable, "#lon", !mapIsVisible);
-	showColumn(infoTable, "#data_source", !mapIsVisible);
-	showColumn(infoTable, "#base_marker_key", !mapIsVisible);
+	for (var col in HideCols) {
+		showColumn(infoTable, HideCols[col], !mapIsVisible);
+	}
 }
 
 function setSelectedInfoBlockVisibility() {
