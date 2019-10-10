@@ -11,9 +11,9 @@ html, body {
 
 #selected_infoblock {
     position: absolute;
-    left: 30pt;
+    left: 0pt;
     top: 0px;
-	width: 140pt;
+	width: 150pt;
 	height: 100%;
 	overflow: auto;
     z-index: 9999;
@@ -297,22 +297,19 @@ select.error, textarea.error, input.error {
 
 .infoHeading {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 12px;
-    line-height: 16px;
-    color: #000000;
+    line-height: 13pt;
 	display: inline-block;
 }
 
 .infoHeading sub {
 	font-weight: normal;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .infoData {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 10pt;
-	font-weight: bold;
-    line-height: 14pt;
-    color: #003f4b;
+	font-size: 11pt;
+    line-height: 13pt;
 	display: inline-block;
 	float: right;
 	margin-right: 5pt;
@@ -377,7 +374,6 @@ select.error, textarea.error, input.error {
     background: -moz-linear-gradient(#003f4b, #003f4b 60%, #00151C);
     background: -ms-linear-gradient(#003f4b, #003f4b 60%, #00151C);
     background: linear-gradient(#003f4b, #003f4b 60%, #00151C);
-    display: flex;
     box-shadow: -6px 0px 8px #999999;
     z-index: 9998;
 }
