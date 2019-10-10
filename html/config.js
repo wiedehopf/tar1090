@@ -158,5 +158,4 @@ HideCols = [
 	"#lat",
 	"#lon",
 	"#data_source",
-	"#base_marker_key",
 ]

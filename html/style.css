@@ -409,11 +409,26 @@ select.error, textarea.error, input.error {
     color: #FFFFFF;
     line-height:  24pt;
     text-align: center;
+	margin: 3pt;
 }
 
 .button {
     background: #67b6c3;
     width: 22pt;
+    height: 22pt;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    display: inline-block;
+	margin: 4pt;
+	margin-top: 8pt;
+	margin-bottom: 8pt;
+    cursor: pointer;
+    text-align: center;
+}
+.button-flex {
+    background: #67b6c3;
+    width: flex;
     height: 22pt;
     border-radius: 2px;
     -moz-border-radius: 2px;
