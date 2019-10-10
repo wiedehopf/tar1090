@@ -783,7 +783,6 @@ function initialize_map() {
 	if (!ShowFlags) {
 		PlaneRowTemplate.cells[1].style.display = 'none'; // hide flag column
 		document.getElementById("flag").style.display = 'none'; // hide flag header
-		document.getElementById("infoblock_country").style.display = 'none'; // hide country row
 	}
 
 	// Initialize OL3
