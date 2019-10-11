@@ -139,6 +139,10 @@ BingMapsAPIKey = null;
 
 //flightawareLinks = false;
 
+// Filter implausible positions (required speed > Mach 3.5)
+// positionFilter = true;
+// positionFilterSpeed = 3.5; // in Mach
+
 // Columns that have a // in front of them are shown.
 HideCols = [
 	"#icao",

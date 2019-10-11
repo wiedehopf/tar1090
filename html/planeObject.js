@@ -230,26 +230,27 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 
 	var projPrev = ol.proj.fromLonLat(this.prev_position);
 	var lastseg = this.track_linesegs[this.track_linesegs.length - 1];
+
 	const distance_traveled = ol.sphere.getDistance(this.tail_position, this.prev_position);
 	const distance = ol.sphere.getDistance(this.position, this.prev_position);
-	const derivedSpeed = distance/(this.position_time - this.prev_time);
-	// discard current position for track stuff while preventing the old position to go stale
-	if (distance < 8) {
-		this.prev_time = this.position_time;
-		return true;
-	}
+	const derivedMach = (distance/(this.position_time - this.prev_time))/343;
+
 	// ignore the position if the object moves faster than mach 3.5
-	if (derivedSpeed > 1200 && this.too_fast < 3) {
+	if (positionFilter && derivedMach > positionFilterSpeed && this.too_fast < 2) {
 		this.too_fast++;
-		if (debug)
-			console.log(this.icao + " / " + this.name + ": Implausible position filtered: " + this.position[0] + ", " + this.position[1] + " (Mach " + (derivedSpeed/343).toFixed(1) + ")");
+		//selectPlaneByHex(this.icao, true);
+		this.position = this.prev_position;
+		if (debug) {
+			console.log(this.icao + " / " + this.name + ": Implausible position filtered: " + this.position[0] + ", " + this.position[1] + " (Mach " + derivedMach.toFixed(1) + ")");
+		}
 		return false;
 	} else {
-		this.too_fast = Math.max(-3, this.too_fast--);
+		this.too_fast = Math.max(-10, this.too_fast--);
 	}
 
-	if (this.dataSource == "mlat" && on_ground)
+	if (positionFilter && this.dataSource == "mlat" && on_ground) {
 		return true;
+	}
 
 	// Determine if track data are intermittent/stale
 	// Time difference between two position updates should not be much
@@ -712,6 +713,10 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 
 	if (init)
 		return;
+
+	// recompute seen and seen_pos
+	this.seen = receiver_timestamp - this.last_message_time;
+	this.seen_pos = receiver_timestamp - this.position_time;
 
 	// don't expire callsigns
 	if (data.flight != null) {

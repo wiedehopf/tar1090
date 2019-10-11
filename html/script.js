@@ -23,6 +23,7 @@ var FollowSelected = false;
 var infoBoxOriginalPosition = {};
 var customAltitudeColors = true;
 var loadtime = "loadtime";
+var loadFinished = false;
 var mapResizeTimeout;
 var refresh;
 var scaleFactor;
@@ -319,7 +320,7 @@ function fetchData() {
 		// update timestamps, visibility, history track for all planes - not only those updated
 		for (var i = 0; i < PlanesOrdered.length; ++i) {
 			var plane = PlanesOrdered[i];
-			if (plane.receiver == "uat")
+			if (plane.receiver == "uat" && uat_now)
 				plane.updateTick(uat_now, uat_last);
 			else
 				plane.updateTick(now, last);
@@ -725,6 +726,8 @@ function parse_history() {
 	sidebar_width = $("#sidebar_container").width();
 	$("#sidebar_container").width(sidebar_width);
 	updateMapSize();
+
+	loadFinished = true;
 }
 
 // Make a LineString with 'points'-number points
@@ -1310,11 +1313,15 @@ function refreshSelected() {
 	$('#selected_track1').text(format_track_long(selected.track));
 	$('#selected_track2').text(format_track_long(selected.track));
 
-	$('#selected_seen').text(selected.seen.toFixed(1) + ' s');
-	if (selected.seen_pos > 10000) {
-		$('#selected_seen_pos').text('n/a');
+	if (selected.seen && selected.seen < 1000000) {
+		$('#selected_seen').text(selected.seen.toFixed(1) + ' s');
 	} else {
+		$('#selected_seen').text('n/a');
+	}
+	if (selected.seen_pos && selected.seen_pos < 1000000) {
 		$('#selected_seen_pos').text(selected.seen_pos.toFixed(1) + ' s');
+	} else {
+		$('#selected_seen_pos').text('n/a');
 	}
 
 	$('#selected_country').text(selected.icaorange.country.replace("special use", "special"));
