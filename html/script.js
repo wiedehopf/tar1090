@@ -1232,7 +1232,6 @@ function refreshSelected() {
 	refreshPageTitle();
 
 	//$('#dump1090_infoblock').css('display','block');
-	$('#dump1090_version').text(Dump1090Version);
 	$('#dump1090_total_ac').text(TrackedAircraft);
 	$('#dump1090_total_ac_positions').text(TrackedAircraftPositions);
 	$('#dump1090_total_history').text(TrackedHistorySize);

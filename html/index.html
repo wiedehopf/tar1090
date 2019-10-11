@@ -82,75 +82,6 @@
 				</div>
 			</div>
 
-			<div id="settings_infoblock">
-				<div id="settings_close" class="settingsCloseBox"></div>
-				<div id="units_container">
-					<label for="units_selector"><span class="infoBlockTitleText">Units:</span></label>
-					<select name="units_selector" id="units_selector">
-						<option value="nautical">Aeronautical</option>
-						<option value="metric">Metric</option>
-						<option value="imperial">Imperial</option>
-					</select>
-				</div>
-				<div class="settingsColumn">
-					<div class="settingsOptionContainer">
-						<div class="infoBlockTitleText">Overlay Toggles</div>
-					</div>
-					<div class="settingsOptionContainer">
-						<div class="settingsCheckbox" id="nexrad_checkbox"></div>
-						<div class="settingsText">NEXRAD Weather</div>
-					</div>
-					<div class="settingsOptionContainer">
-						<div class="settingsCheckbox" id="sitepos_checkbox"></div>
-						<div class="settingsText">Site Position and Range Rings</div>
-					</div>
-					<div class="settingsOptionContainer">
-						<div class="settingsCheckbox" id="actrail_checkbox"></div>
-						<div class="settingsText">Selected Aircraft Trail</div>
-					</div>
-					<div class="settingsOptionContainer">
-						<div class="settingsCheckbox" id="acpositions_checkbox"></div>
-						<div class="settingsText">Aircraft Positions</div>
-					</div>
-					<div class="settingsOptionContainer" id="altitude_chart_container">
-						<div class="settingsCheckbox" id="altitude_checkbox"></div>
-						<div class="settingsText">Altitude Chart</div>
-					</div>
-					<div class="settingsOptionContainer">
-						<div class="settingsCheckbox" id="debug_checkbox"></div>
-						<div class="settingsText">Debug tracks</div>
-					</div>
-					<div class="settingsOptionContainer">
-						<div class="settingsCheckbox" id="debugAll_checkbox"></div>
-						<div class="settingsText">Debug show all </div>
-					</div>
-				</div>
-				<div class="settingsColumn">
-					<div class="settingsOptionContainer">
-						<div class="infoBlockTitleText">View Toggles</div>
-					</div>
-					<div class="settingsOptionContainer">
-						<div class="settingsCheckbox" id="blockedmlat_filter"></div>
-						<div class="settingsText">Show Anonymous MLAT Tracks</div>
-					</div>
-					<div class="settingsOptionContainer">
-						<div class="settingsCheckbox" id="groundvehicle_filter"></div>
-						<div class="settingsText">Show Ground Vehicles and Other Non-Aircraft Positions</div>
-					</div>
-					<div class="settingsOptionContainer">
-						<div class="settingsCheckbox" id="selectall_checkbox"></div>
-						<div class="settingsText">All Aircraft Trails</div>
-					</div>
-					<div class="settingsOptionContainer">
-						<div class="settingsCheckbox" id="grouptype_checkbox"></div>
-						<div class="settingsText">Group by Data Type</div>
-					</div>
-					<div class="settingsOptionContainer">
-						<div class="settingsCheckbox" id="mapdim_checkbox"></div>
-						<div class="settingsText">Dim map</div>
-					</div>
-				</div>
-			</div>
 
 			<div id="selected_infoblock" class="hidden">
 
@@ -585,6 +516,75 @@
 			</div> <!-- selected_infoblock -->
 			<div id="map_container">
 				<div id="map_canvas"></div>
+				<div id="settings_infoblock">
+					<div id="settings_close" class="settingsCloseBox"></div>
+					<div id="units_container">
+						<label for="units_selector"><span class="infoBlockTitleText">Units:</span></label>
+						<select name="units_selector" id="units_selector">
+							<option value="nautical">Aeronautical</option>
+							<option value="metric">Metric</option>
+							<option value="imperial">Imperial</option>
+						</select>
+					</div>
+					<div class="settingsColumn">
+						<div class="settingsOptionContainer">
+							<div class="infoBlockTitleText">Overlay Toggles</div>
+						</div>
+						<div class="settingsOptionContainer">
+							<div class="settingsCheckbox" id="nexrad_checkbox"></div>
+							<div class="settingsText">NEXRAD Weather</div>
+						</div>
+						<div class="settingsOptionContainer">
+							<div class="settingsCheckbox" id="sitepos_checkbox"></div>
+							<div class="settingsText">Site Position and Range Rings</div>
+						</div>
+						<div class="settingsOptionContainer">
+							<div class="settingsCheckbox" id="actrail_checkbox"></div>
+							<div class="settingsText">Selected Aircraft Trail</div>
+						</div>
+						<div class="settingsOptionContainer">
+							<div class="settingsCheckbox" id="acpositions_checkbox"></div>
+							<div class="settingsText">Aircraft Positions</div>
+						</div>
+						<div class="settingsOptionContainer" id="altitude_chart_container">
+							<div class="settingsCheckbox" id="altitude_checkbox"></div>
+							<div class="settingsText">Altitude Chart</div>
+						</div>
+						<div class="settingsOptionContainer">
+							<div class="settingsCheckbox" id="debug_checkbox"></div>
+							<div class="settingsText">Debug tracks</div>
+						</div>
+						<div class="settingsOptionContainer">
+							<div class="settingsCheckbox" id="debugAll_checkbox"></div>
+							<div class="settingsText">Debug show all </div>
+						</div>
+					</div>
+					<div class="settingsColumn">
+						<div class="settingsOptionContainer">
+							<div class="infoBlockTitleText">View Toggles</div>
+						</div>
+						<div class="settingsOptionContainer">
+							<div class="settingsCheckbox" id="blockedmlat_filter"></div>
+							<div class="settingsText">Show Anonymous MLAT Tracks</div>
+						</div>
+						<div class="settingsOptionContainer">
+							<div class="settingsCheckbox" id="groundvehicle_filter"></div>
+							<div class="settingsText">Show Ground Vehicles and Other Non-Aircraft Positions</div>
+						</div>
+						<div class="settingsOptionContainer">
+							<div class="settingsCheckbox" id="selectall_checkbox"></div>
+							<div class="settingsText">All Aircraft Trails</div>
+						</div>
+						<div class="settingsOptionContainer">
+							<div class="settingsCheckbox" id="grouptype_checkbox"></div>
+							<div class="settingsText">Group by Data Type</div>
+						</div>
+						<div class="settingsOptionContainer">
+							<div class="settingsCheckbox" id="mapdim_checkbox"></div>
+							<div class="settingsText">Dim map</div>
+						</div>
+					</div>
+				</div>
 				<div id="toggle_sidebar_control" class="ol-unselectable ol-control">
 					<button id="toggle_sidebar_button" class="hide_sidebar" title="Toggle Sidebar"></button>
 				</div>
@@ -630,7 +630,12 @@
 									<td>
 										<div class="button-flex buttonTable" id="show_map_button"><span class="buttonText">Show Map</span></div>
 									</td>
+
+									<td style="text-align: right">
+										<a href="https://github.com/wiedehopf/tar1090#tar1090" id="dump1090_version" target="_blank">tar1090 on github</a>
+									</td>
 								</tr>
+
 
 								<tr class="infoblock_body">
 									<td><span class="infoBlockTitleText">Total Aircraft:</span> <span id="dump1090_total_ac">n/a</span></td>
@@ -726,20 +731,20 @@
 
 
 			</div> <!-- sidebar_container -->
-		</div> <!-- layout_container -->
+			</div> <!-- layout_container -->
 
-		<div id="SpecialSquawkWarning" class="hidden">
-			<b>Squawk 7x00 is reported and shown.</b><br>
-			This is most likely an error in receiving or decoding.<br>
-			Please do not call the local authorities, they already know about it if it is a valid squawk.
-		</div>
+			<div id="SpecialSquawkWarning" class="hidden">
+				<b>Squawk 7x00 is reported and shown.</b><br>
+				This is most likely an error in receiving or decoding.<br>
+				Please do not call the local authorities, they already know about it if it is a valid squawk.
+			</div>
 
-		<div id="update_error" class="hidden">
-			<b>Problem fetching data from dump1090.</b><br>
-			<span id="update_error_detail"></span><br>
-			The displayed map data will be out of date.
-		</div>
+			<div id="update_error" class="hidden">
+				<b>Problem fetching data from dump1090.</b><br>
+				<span id="update_error_detail"></span><br>
+				The displayed map data will be out of date.
+			</div>
 
-		<div id="container_splitter"></div>
+			<div id="container_splitter"></div>
 	</body>
 </html>

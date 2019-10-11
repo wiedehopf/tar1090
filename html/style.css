@@ -591,9 +591,9 @@ select.error, textarea.error, input.error {
 }
 
 #settings_infoblock {
-    position: absolute;
-    left: 50px;
-    top: 10px;
+	position: absolute;
+	top: 60px;
+	right: 60px;
     width: 398px;
     min-height: 180px;
     box-shadow: 4px 4px 10px #444444;
