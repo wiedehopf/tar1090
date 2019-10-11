@@ -241,7 +241,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		//selectPlaneByHex(this.icao, true);
 		this.position = this.prev_position;
 		if (debug) {
-			console.log(this.icao + " / " + this.name + ": Implausible position filtered: " + this.position[0] + ", " + this.position[1] + " (Mach " + derivedMach.toFixed(1) + ")");
+			console.log(this.icao + " / " + this.name + " ("+ this.dataSource + "): Implausible position filtered: " + this.position[0] + ", " + this.position[1] + " (Mach " + derivedMach.toFixed(1) + ")");
 		}
 		return false;
 	} else {
