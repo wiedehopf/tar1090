@@ -240,6 +240,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	// ignore the position if the object moves faster than mach 3.5
 	if (distance/(this.position_time - this.prev_time) > 1200 && this.too_fast < 3) {
 		this.too_fast++;
+		console.log(this.icao + ": Implausible position filtered: " + this.position[0] + ", " + this.position[1]);
 		return false;
 	} else {
 		this.too_fast = Math.max(-3, this.too_fast--);

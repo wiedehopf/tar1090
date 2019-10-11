@@ -1311,7 +1311,11 @@ function refreshSelected() {
 	$('#selected_track2').text(format_track_long(selected.track));
 
 	$('#selected_seen').text(selected.seen.toFixed(1) + ' s');
-	$('#selected_seen_pos').text(selected.seen_pos.toFixed(1) + ' s');
+	if (selected.seen_pos > 10000) {
+		$('#selected_seen_pos').text('n/a');
+	} else {
+		$('#selected_seen_pos').text(selected.seen_pos.toFixed(1) + ' s');
+	}
 
 	$('#selected_country').text(selected.icaorange.country.replace("special use", "special"));
 	if (ShowFlags && selected.icaorange.flag_image !== null) {
