@@ -52,6 +52,7 @@ function PlaneObject(icao) {
 	this.prev_track = null;
 	this.position  = null;
 	this.sitedist  = null;
+	this.too_fast = 0;
 
 	// Data packet numbers
 	this.messages  = null;
@@ -230,12 +231,20 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	var projPrev = ol.proj.fromLonLat(this.prev_position);
 	var lastseg = this.track_linesegs[this.track_linesegs.length - 1];
 	var distance_traveled = ol.sphere.getDistance(this.tail_position, this.prev_position);
-
+	var distance1 = ol.sphere.getDistance(this.position, this.prev_position);
 	// discard current position for track stuff while preventing the old position to go stale
-	if (ol.sphere.getDistance(this.position, this.prev_position) < 8) {
+	if (distance < 8) {
 		this.prev_time = this.position_time;
 		return true;
 	}
+	// ignore the position if the object moves faster than mach 3.5
+	if (distance/(this.position_time - this.prev_time) > 1200 && this.too_fast < 3) {
+		this.too_fast++;
+		return false;
+	} else {
+		this.too_fast = Math.max(-3, this.too_fast--);
+	}
+
 	if (this.dataSource == "mlat" && on_ground)
 		return true;
 
