@@ -80,7 +80,7 @@ function createBaseLayers() {
 
 		world.push(new ol.layer.Tile({
 			source: new ol.source.OSM({
-				"url" : "http://{a-z}.basemaps.cartocdn.com/"+ basemap_id + "/{z}/{x}/{y}.png",
+				"url" : "https://{a-z}.basemaps.cartocdn.com/"+ basemap_id + "/{z}/{x}/{y}.png",
 				"attributions" : 'Courtesy of <a href="https://carto.com">CARTO.com</a>'
 			+ ' using data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
 			}),
