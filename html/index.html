@@ -594,30 +594,30 @@
 				<div id="altitude_chart" class="ol-unselectable ol-control altitudeFeet">
 					<button id="altitude_chart_button"></button>
 				</div>
-			</div>
-
-			<div id="header" class="infoHeading">
-				<div class="buttonContainer">
-					<div id="settingsCog" class="settingsContainer"></div>
-					<div title="(H)ome" class="button buttonHeader" onclick="resetMap();"><span class="buttonText">H</span></div>
-					<div title="Toggle Map (B)rightness" class="button buttonHeader" onclick="toggleMapDim();"><span class="buttonText">B</span></div>
-					<div title="Table: only show aircraft in current (V)iew" class="button buttonHeader" onclick="toggleTableInView();"><span class="buttonText">V</span></div>
-					<div class="buttonSpacer">
+				<div id="header" class="infoHeading">
+					<div class="buttonContainer">
+						<div id="settingsCog" class="settingsContainer"></div>
+						<div title="(H)ome" class="button buttonHeader" onclick="resetMap();"><span class="buttonText">H</span></div>
+						<div title="Toggle Map (B)rightness" class="button buttonHeader" onclick="toggleMapDim();"><span class="buttonText">B</span></div>
+						<div title="Table: only show aircraft in current (V)iew" class="button buttonHeader" onclick="toggleTableInView();"><span class="buttonText">V</span></div>
+						<div class="buttonSpacer">
+						</div>
+						<div title="All (T)racks" class="button buttonHeader" onclick="selectAllPlanes();"><span class="buttonText">T</span></div>
+						<div title= "(C)lear tracks"class="button buttonHeader" onclick="deselectAllPlanes();"><span class="buttonText">C</span></div>
+						<div title="Toggle (M)ultiSelect" class="button buttonHeader" onclick="toggleMultiSelect();"><span class="buttonText">M</span></div>
+						<div class="buttonSpacer">
+						</div>
+						<div title="Toggle (L)abels" class="button buttonHeader" onclick="toggleLabels();"><span class="buttonText">L</span></div>
+						<div title="Toggle Label Extensi(O)ns" class="button buttonHeader" onclick="toggleExtendedLabels();"><span class="buttonText">O</span></div>
+						<div title="Toggle Trac(K) Labels" class="button buttonHeader" onclick="toggleTrackLabels();"><span class="buttonText">K</span></div>
+						<div class="buttonSpacer">
+						</div>
+						<div title="Follow a (R)andom plane!" class="button buttonHeader" onclick="followRandomPlane();"><span class="buttonText">R</span></div>
+						<div title="(F)ollow" class="button buttonHeader" onclick="toggleFollowSelected();"><span class="buttonText">F</span></div>
 					</div>
-					<div title="All (T)racks" class="button buttonHeader" onclick="selectAllPlanes();"><span class="buttonText">T</span></div>
-					<div title= "(C)lear tracks"class="button buttonHeader" onclick="deselectAllPlanes();"><span class="buttonText">C</span></div>
-					<div title="Toggle (M)ultiSelect" class="button buttonHeader" onclick="toggleMultiSelect();"><span class="buttonText">M</span></div>
-					<div class="buttonSpacer">
-					</div>
-					<div title="Toggle (L)abels" class="button buttonHeader" onclick="toggleLabels();"><span class="buttonText">L</span></div>
-					<div title="Toggle Label Extensi(O)ns" class="button buttonHeader" onclick="toggleExtendedLabels();"><span class="buttonText">O</span></div>
-					<div title="Toggle Trac(K) Labels" class="button buttonHeader" onclick="toggleTrackLabels();"><span class="buttonText">K</span></div>
-					<div class="buttonSpacer">
-					</div>
-					<div title="Follow a (R)andom plane!" class="button buttonHeader" onclick="followRandomPlane();"><span class="buttonText">R</span></div>
-					<div title="(F)ollow" class="button buttonHeader" onclick="toggleFollowSelected();"><span class="buttonText">F</span></div>
 				</div>
 			</div>
+
 			<div id="sidebar_container">
 				<div id="splitter" class="ui-resizable-handle ui-resizable-w"></div>
 				<div id="sidebar_canvas">

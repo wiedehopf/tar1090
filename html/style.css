@@ -102,8 +102,8 @@ html, body {
     cursor: ew-resize;
     display: block;
     position: absolute;
-    top: 120px;
-    left: -63px;
+    top: 110px;
+    left: -24px;
     float: right;
     width: 24px;
     height: 25px;
@@ -367,14 +367,12 @@ select.error, textarea.error, input.error {
 }
 
 #header {
+	position: absolute;
+	right: 0px;
+	top: 130px;
     width: 30pt;
     height: 100%;
-    background: #003f4b;
-    background: -webkit-linear-gradient(#003f4b, #003f4b 60%, #00151C);
-    background: -moz-linear-gradient(#003f4b, #003f4b 60%, #00151C);
-    background: -ms-linear-gradient(#003f4b, #003f4b 60%, #00151C);
-    background: linear-gradient(#003f4b, #003f4b 60%, #00151C);
-    z-index: 9998;
+    z-index: 99999;
 }
 
 .adsbLogo {
