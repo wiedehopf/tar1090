@@ -230,17 +230,19 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 
 	var projPrev = ol.proj.fromLonLat(this.prev_position);
 	var lastseg = this.track_linesegs[this.track_linesegs.length - 1];
-	var distance_traveled = ol.sphere.getDistance(this.tail_position, this.prev_position);
-	var distance1 = ol.sphere.getDistance(this.position, this.prev_position);
+	const distance_traveled = ol.sphere.getDistance(this.tail_position, this.prev_position);
+	const distance = ol.sphere.getDistance(this.position, this.prev_position);
+	const derivedSpeed = distance/(this.position_time - this.prev_time);
 	// discard current position for track stuff while preventing the old position to go stale
 	if (distance < 8) {
 		this.prev_time = this.position_time;
 		return true;
 	}
 	// ignore the position if the object moves faster than mach 3.5
-	if (distance/(this.position_time - this.prev_time) > 1200 && this.too_fast < 3) {
+	if (derivedSpeed > 1200 && this.too_fast < 3) {
 		this.too_fast++;
-		console.log(this.icao + ": Implausible position filtered: " + this.position[0] + ", " + this.position[1]);
+		if (debug)
+			console.log(this.icao + " / " + this.name + ": Implausible position filtered: " + this.position[0] + ", " + this.position[1] + " (Mach " + (derivedSpeed/343).toFixed(1) + ")");
 		return false;
 	} else {
 		this.too_fast = Math.max(-3, this.too_fast--);
