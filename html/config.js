@@ -142,9 +142,9 @@ BingMapsAPIKey = null;
 
 //flightawareLinks = false;
 
-// Filter implausible positions (required speed > Mach 3.5)
+// Filter implausible positions (required speed > Mach 2.5)
 // positionFilter = true;
-// positionFilterSpeed = 3.5; // in Mach
+// positionFilterSpeed = 2.5; // in Mach
 // debugPosFilter = false; // draw red dots for filtered positions
 // Columns that have a // in front of them are shown.
 HideCols = [

@@ -172,9 +172,9 @@ var filterTISB = false;
 
 var flightawareLinks = false;
 
-// Filter implausible positions (required speed > Mach 3.5)
+// Filter implausible positions (required speed > Mach 2.5)
 var positionFilter = true;
-var positionFilterSpeed = 3.5; // in Mach
+var positionFilterSpeed = 2.5; // in Mach
 var debugPosFilter = false;
 
 // Columns that have a // in front of them are shown.

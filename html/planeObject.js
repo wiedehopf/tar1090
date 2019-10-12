@@ -256,9 +256,10 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	const distance_traveled = ol.sphere.getDistance(this.tail_position, this.prev_position);
 	const distance = ol.sphere.getDistance(this.position, this.prev_position);
 	const derivedMach = (distance/(this.position_time - this.prev_time + 0.05))/343;
+	const filterSpeed = (this.altitude === "ground") ? positionFilterSpeed/3 : positionFilterSpeed;
 
 	// ignore the position if the object moves faster than mach 3.5
-	if (positionFilter && derivedMach > positionFilterSpeed && this.too_fast < 2) {
+	if (positionFilter && derivedMach > filterSpeed && this.too_fast < 2) {
 		this.bad_position = this.position;
 		this.position = this.prev_position;
 		this.too_fast++;
