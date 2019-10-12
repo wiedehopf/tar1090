@@ -151,12 +151,30 @@
 								<span id="selected_vert_rate">n/a</span>
 							</div>
 						</div>
+						<div class="infoRowSpacer">
+						</div>
 						<div class="infoRowLine">
 							<div class="infoHeading infoRowFluid fourColumnSection1">
 								<span title="Direction the aircraft is traveling over the ground.">Track</span>:
 							</div>
 							<div class="infoData infoRowFluid fourColumnSection2">
 								<span id="selected_track1">n/a</span>
+							</div>
+						</div>
+						<div class="infoRowLine">
+							<div class="infoHeading infoRowFluid ">
+								<span title="Latitude and longitude coordinates of the aircraft's last known position.">Pos.:</span>
+							</div>
+							<div class="infoData infoRowFluid ">
+								<span id="selected_position">n/a</span>
+							</div>
+						</div>
+						<div class="infoRowLine">
+							<div class="infoHeading infoRowFluid ">
+								<span title="Distance of the aircraft from your ADS-B site at its last known position.">Distance</span>:
+							</div>
+							<div class="infoData infoRowFluid ">
+								<span id="selected_sitedist2">n/a</span>
 							</div>
 						</div>
 
@@ -180,7 +198,7 @@
 						</div>
 						<div class="infoRowLine">
 							<div class="infoHeading infoRowFluid fourColumnSection1">
-								<span title="Indicated signal strength of the signal received by your ADS-B site from the aircraft.">RSSI</span>:
+								<span title="Indicated signal strength of the signal received by your ADS-B site from the aircraft.">RSSI (dBFS)</span>:
 							</div>
 							<div class="infoData infoRowFluid fourColumnSection2">
 								<span id="selected_rssi1">n/a</span>
@@ -195,6 +213,14 @@
 							</div>
 						</div>
 						<div class="infoRowLine">
+							<div class="infoHeading infoRowFluid fourColumnSection1">
+								<span title="The last time your ADS-B site received a message from the aircraft.">Last Seen</span>:
+							</div>
+							<div class="infoData infoRowFluid fourColumnSection2">
+								<span id="selected_seen">n/a</span>
+							</div>
+						</div>
+						<div class="infoRowLine">
 							<div class="infoHeading infoRowFluid">
 								<span title="Data source for the reported aircraft data (e.g., ADS-B, MLAT, Other Mode S)">Source</span>:
 							</div>
@@ -203,29 +229,6 @@
 							</div>
 						</div>
 					</div> <!-- MISC -->
-					<div class="sectionTitle">
-						<div class="section-title-content">
-							Location
-						</div>
-					</div>
-					<div class="infoBlockSection">
-						<div class="infoRowLine">
-							<div class="infoHeading infoRowFluid ">
-								<span title="Latitude and longitude coordinates of the aircraft's last known position.">Pos.:</span>
-							</div>
-							<div class="infoData infoRowFluid ">
-								<span id="selected_position">n/a</span>
-							</div>
-						</div>
-						<div class="infoRowLine">
-							<div class="infoHeading infoRowFluid ">
-								<span title="Distance of the aircraft from your ADS-B site at its last known position.">Distance</span>:
-							</div>
-							<div class="infoData infoRowFluid ">
-								<span id="selected_sitedist2">n/a</span>
-							</div>
-						</div>
-					</div> <!-- Location -->
 
 					<div class="sectionTitle">
 						<div class="section-title-content">
@@ -388,26 +391,18 @@
 
 					<div class="sectionTitle">
 						<div class="section-title-content">
-							Navigation
+							Stuff
 						</div>
 					</div>
 					<div class="infoBlockSection">
 						<div class="infoRowLine">
 							<div class="infoHeading infoRowFluid fourColumnSection1">
-								<span title="The enabled navigation modes as reported by the aircraft (i.e., auto-pilot, Traffic Collision Avoidance System, altitude hold, approach, LNAV approach, and/or VNAV approach).">Modes</span>:
+								<span title="The enabled navigation modes as reported by the aircraft (i.e., auto-pilot, Traffic Collision Avoidance System, altitude hold, approach, LNAV approach, and/or VNAV approach).">Nav. Modes</span>:
 							</div>
 							<div class="infoData infoRowFluid fourColumnSection2">
 								<span id="selected_nav_modes">n/a</span>
 							</div>
 						</div>
-					</div>
-
-					<div class="sectionTitle">
-						<div class="section-title-content">
-							Tracking Information
-						</div>
-					</div>
-					<div class="infoBlockSection">
 						<div class="infoRowLine">
 							<div class="infoHeading infoRowFluid fourColumnSection1">
 								<span title="The total number of messages received from the aircraft by your ADS-B site.">Messages</span>:
@@ -426,34 +421,10 @@
 						</div>
 						<div class="infoRowLine">
 							<div class="infoHeading infoRowFluid fourColumnSection1">
-								<span title="Indicated signal strength of the signal received by your ADS-B site from the aircraft.">RSSI</span>:
-							</div>
-							<div class="infoData infoRowFluid fourColumnSection2">
-								<span id="selected_rssi2">n/a</span>
-							</div>
-						</div>
-						<div class="infoRowLine">
-							<div class="infoHeading infoRowFluid fourColumnSection1">
 								<span title="Aircraft category code as reported by the aircraft. This indicates the type of aircraft and, for airplanes, a relative indicator of its size.">Category</span>:
 							</div>
 							<div class="infoData infoRowFluid fourColumnSection2">
 								<span id="selected_category">n/a</span>
-							</div>
-						</div>
-						<div class="infoRowLine">
-							<div class="infoHeading infoRowFluid fourColumnSection1">
-								<span title="The last time your ADS-B site received a message from the aircraft.">Last Seen</span>:
-							</div>
-							<div class="infoData infoRowFluid fourColumnSection2">
-								<span id="selected_seen">n/a</span>
-							</div>
-						</div>
-						<div class="infoRowLine">
-							<div class="infoHeading infoRowFluid fourColumnSection1">
-								<span title="A 4-digit octal code assigned to the aircraft by Air Traffic Control.">Squawk</span>:
-							</div>
-							<div class="infoData infoRowFluid fourColumnSection2">
-								<span id="selected_squawk2"></span>
 							</div>
 						</div>
 					</div>

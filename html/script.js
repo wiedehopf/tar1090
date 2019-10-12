@@ -1313,14 +1313,14 @@ function refreshSelected() {
 	//+" "+ (selected.pfFlightno ? selected.pfFlightno : "")
 	$('#airframes_post_icao').attr('value',selected.icao);
 	$('#selected_track1').text(format_track_long(selected.track));
-	$('#selected_track2').text(format_track_long(selected.track));
+	$('#selected_track2').text(format_track_brief(selected.track));
 
-	if (selected.seen && selected.seen < 1000000) {
+	if (selected.seen != null && selected.seen < 1000000) {
 		$('#selected_seen').text(selected.seen.toFixed(1) + ' s');
 	} else {
 		$('#selected_seen').text('n/a');
 	}
-	if (selected.seen_pos && selected.seen_pos < 1000000) {
+	if (selected.seen_pos != null&& selected.seen_pos < 1000000) {
 		$('#selected_seen_pos').text(selected.seen_pos.toFixed(1) + ' s');
 	} else {
 		$('#selected_seen_pos').text('n/a');
@@ -1358,8 +1358,7 @@ function refreshSelected() {
 	$('#selected_category').text(selected.category ? selected.category : "n/a");
 	$('#selected_sitedist1').text(format_distance_long(selected.sitedist, DisplayUnits));
 	$('#selected_sitedist2').text(format_distance_long(selected.sitedist, DisplayUnits));
-	$('#selected_rssi1').text(selected.rssi != null ? selected.rssi.toFixed(1) + ' dBFS' : "n/a");
-	$('#selected_rssi2').text(selected.rssi != null ? selected.rssi.toFixed(1) + ' dBFS' : "n/a");
+	$('#selected_rssi1').text(selected.rssi != null ? selected.rssi.toFixed(1) : "n/a");
 	$('#selected_message_count').text(selected.messages);
 	if (flightawareLinks) {
 		$('#selected_photo_link').html(getFlightAwarePhotoLink(selected.registration));

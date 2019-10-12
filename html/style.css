@@ -13,7 +13,7 @@ html, body {
     position: absolute;
     left: 0pt;
     top: 0px;
-	width: 150pt;
+	width: 140pt;
 	height: 100%;
 	overflow: auto;
     z-index: 9999;
@@ -293,7 +293,6 @@ select.error, textarea.error, input.error {
 
 .infoHeading {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    line-height: 13pt;
 	display: inline-block;
 }
 
@@ -304,8 +303,6 @@ select.error, textarea.error, input.error {
 
 .infoData {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 11pt;
-    line-height: 13pt;
 	display: inline-block;
 	float: right;
 	margin-right: 5pt;
@@ -532,6 +529,11 @@ select.error, textarea.error, input.error {
 .infoRowLine {
 	padding-top: 2px;
 	padding-bottom: 2px;
+}
+
+.infoRowSpacer {
+	padding-top: 3px;
+	padding-bottom: 3px;
 }
 
 .removePadding {
