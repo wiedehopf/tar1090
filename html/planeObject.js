@@ -138,6 +138,22 @@ function PlaneObject(icao) {
 	}.bind(this));
 }
 
+const estimateStyle = new ol.style.Style({
+	stroke: new ol.style.Stroke({
+		color: '#808080',
+		width: 1.2
+	})
+});
+
+var badDot = new ol.style.Style({
+	image: new ol.style.Circle({
+		radius: 2.5,
+		fill: new ol.style.Fill({
+			color: '#FF0000',
+		})
+	}),
+});
+
 PlaneObject.prototype.logSel = function(loggable) {
 	if (debug && this.selected && !SelectedAllPlanes)
 		console.log(loggable);
@@ -211,6 +227,8 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 		return false;
 	if (this.prev_position && this.position[0] == this.prev_position[0] && this.position[1] == this.prev_position[1])
 		return false;
+	if (this.bad_position && this.position[0] == this.bad_position[0] && this.position[1] == this.bad_position[1])
+		return false;
 
 	var projHere = ol.proj.fromLonLat(this.position);
 	var on_ground = (this.altitude === "ground");
@@ -237,15 +255,23 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 
 	const distance_traveled = ol.sphere.getDistance(this.tail_position, this.prev_position);
 	const distance = ol.sphere.getDistance(this.position, this.prev_position);
-	const derivedMach = (distance/(this.position_time - this.prev_time))/343;
+	const derivedMach = (distance/(this.position_time - this.prev_time + 0.05))/343;
 
 	// ignore the position if the object moves faster than mach 3.5
 	if (positionFilter && derivedMach > positionFilterSpeed && this.too_fast < 2) {
-		this.too_fast++;
-		//selectPlaneByHex(this.icao, true);
+		this.bad_position = this.position;
 		this.position = this.prev_position;
+		this.too_fast++;
 		if (debug) {
-			console.log(this.icao + " / " + this.name + " ("+ this.dataSource + "): Implausible position filtered: " + this.position[0] + ", " + this.position[1] + " (Mach " + derivedMach.toFixed(1) + ")");
+			console.log(this.icao + " / " + this.name + " ("+ this.dataSource + "): Implausible position filtered: " + this.bad_position[0] + ", " + this.bad_position[1] + " (Mach " + derivedMach.toFixed(1) + ")");
+		}
+		if (debugPosFilter && loadFinished) {
+			OLMap.getView().setCenter(ol.proj.fromLonLat(this.position));
+			selectPlaneByHex(this.icao, false);
+			var badFeat = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.bad_position)));
+			badFeat.setStyle(badDot);
+			this.trail_features.push(badFeat);
+			return true;
 		}
 		return false;
 	} else {
@@ -965,26 +991,6 @@ PlaneObject.prototype.updateLines = function() {
 	if (this.track_linesegs.length == 0)
 		return;
 
-	var estimateStyle = new ol.style.Style({
-		stroke: new ol.style.Stroke({
-			color: '#808080',
-			width: 1.2
-		})
-	});
-
-	var airStyle = new ol.style.Style({
-		stroke: new ol.style.Stroke({
-			color: '#000000',
-			width: 2
-		})
-	});
-
-	var groundStyle = new ol.style.Style({
-		stroke: new ol.style.Stroke({
-			color: '#408040',
-			width: 2
-		})
-	});
 
 
 	// create the new elastic band feature
