@@ -50,7 +50,7 @@ html, body {
 #toggle_sidebar_control {
     display: block;
     position: absolute;
-    top: 6px;
+    top: 3px;
     right: 0px;
 }
 
@@ -77,7 +77,7 @@ html, body {
 #expand_sidebar_control {
     display: block;
     position: absolute;
-    top: 60px;
+    top: 55px;
     right: 0px;
 }
 
@@ -91,9 +91,6 @@ html, body {
     background-position: 0px;
     background-color: transparent;
     border: none;
-}
-
-#expand_sidebar_button {
     background-image: url("images/show_sidebar_active_48x40.png");
 }
 
@@ -102,12 +99,12 @@ html, body {
     cursor: ew-resize;
     display: block;
     position: absolute;
-    top: 110px;
-    left: -24px;
+    top: 108px;
+    left: -30px;
     float: right;
-    width: 24px;
-    height: 25px;
-    background-size: 24px 25px;
+    width: 30px;
+    height: 30px;
+    background-size: 30px 30px;
     background-repeat: no-repeat;
     background-position: 0px;
     background-color: transparent;
@@ -202,7 +199,7 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
 }
 
 .aircraft_table_header { 
-    background-color: #003f4b;
+    background-color: #00596b;
     color: #FFFFFF;
     cursor: pointer;
 }
@@ -260,9 +257,8 @@ select.error, textarea.error, input.error {
 }
 
 .layer-switcher {
-    top: 8px !important;
-    bottom: auto !important;
-    right: 48px !important;
+    top: 3px !important;
+    right: 47px !important;
 }
 
 /* new css */
@@ -366,13 +362,22 @@ select.error, textarea.error, input.error {
     text-decoration: underline;
 }
 
-#header {
+#header_side {
 	position: absolute;
 	right: 0px;
-	top: 130px;
+	top: 140px;
     width: 30pt;
     height: 100%;
-    z-index: 99999;
+    z-index: 9;
+}
+#header_top {
+	text-align: right;
+	position: absolute;
+	right: 90px;
+	top: 0px;
+    width: 100%;
+    height: 30pt;
+    z-index: 9;
 }
 
 .adsbLogo {
@@ -386,12 +391,10 @@ select.error, textarea.error, input.error {
 }
 
 .buttonContainer {
-    margin-top: 2pt;
-    margin-bottom: 2pt;
+	margin: 2pt;
 }
 .buttonSpacer {
-    margin-top: 6pt;
-    margin-bottom: 6pt;
+	margin: 6pt;
 }
 
 .buttonText
@@ -406,7 +409,7 @@ select.error, textarea.error, input.error {
 }
 
 .button {
-    background: #67b6c3;
+    background-color: #00596b;
     width: 22pt;
     height: 22pt;
     border-radius: 2px;
@@ -414,8 +417,6 @@ select.error, textarea.error, input.error {
     -webkit-border-radius: 2px;
     display: inline-block;
 	margin: 4pt;
-	margin-top: 8pt;
-	margin-bottom: 8pt;
     cursor: pointer;
     text-align: center;
 }
@@ -454,7 +455,7 @@ select.error, textarea.error, input.error {
 	margin: 4pt;
 	margin-top: 8pt;
 	margin-bottom: 8pt;
-    background-image: url('images/settings-icon@2x.png');
+    background-image: url('images/settings-icon.png');
     background-size: 22pt;
     background-repeat: no-repeat;
     background-position: center;

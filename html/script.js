@@ -43,6 +43,7 @@ var show_squawk_warning_cache = false;
 var tableInView = false;
 var historyOutdated = false;
 var filterMLAT = false;
+var filterTISB = false;
 var sidebar_width = 450;
 
 var SpecialSquawks = {
@@ -1041,6 +1042,9 @@ function initialize_map() {
 				break;
 			case "M":
 				toggleFilterMLAT();
+				break;
+			case "T":
+				toggleFilterTISB();
 				break;
 			case "k":
 				toggleTrackLabels();
@@ -2361,6 +2365,10 @@ function toggleLabels() {
 }
 function toggleExtendedLabels() {
 	extendedLabels = !extendedLabels;
+	if (extendedLabels && !enableLabels) {
+		enableLabels = true;
+		localStorage['enableLabels'] = enableLabels;
+	}
 	localStorage['extendedLabels'] = extendedLabels;
 	for (var key in PlanesOrdered) {
 		PlanesOrdered[key].updateMarker(false);
@@ -2368,6 +2376,10 @@ function toggleExtendedLabels() {
 }
 function toggleFilterMLAT() {
 	filterMLAT = !filterMLAT;
+}
+
+function toggleFilterTISB() {
+	filterTISB = !filterTISB;
 }
 
 function toggleTrackLabels() {

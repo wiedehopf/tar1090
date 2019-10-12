@@ -150,6 +150,10 @@ PlaneObject.prototype.isFiltered = function() {
 		return true;
 	}
 
+	if (filterTISB && this.dataSource == "tisb") {
+		return true;
+	}
+
 	if (this.filter.minAltitude != undefined && this.filter.maxAltitude != undefined) {
 		if (this.altitude == null) {
 			return true;
