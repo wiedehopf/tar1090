@@ -137,6 +137,9 @@ BingMapsAPIKey = null;
 //displayUATasADSB = false;
 //uatNoTISB = true;
 
+// Don't display any TIS-B planes
+// filterTISB = false;
+
 //flightawareLinks = false;
 
 // Filter implausible positions (required speed > Mach 3.5)

@@ -43,7 +43,6 @@ var show_squawk_warning_cache = false;
 var tableInView = false;
 var historyOutdated = false;
 var filterMLAT = false;
-var filterTISB = false;
 var sidebar_width = 450;
 
 var SpecialSquawks = {

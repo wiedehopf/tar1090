@@ -167,6 +167,9 @@ var labelZoomGround = 14.8;
 var displayUATasADSB = false;
 var uatNoTISB = true;
 
+// Don't display any TIS-B planes
+var filterTISB = false;
+
 var flightawareLinks = false;
 
 // Filter implausible positions (required speed > Mach 3.5)
