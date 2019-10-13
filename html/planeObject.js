@@ -253,35 +253,29 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	var projPrev = ol.proj.fromLonLat(this.prev_position);
 	var lastseg = this.track_linesegs[this.track_linesegs.length - 1];
 
-	const distance_traveled = ol.sphere.getDistance(this.tail_position, this.prev_position);
-	const distance = ol.sphere.getDistance(this.position, this.prev_position);
-	const derivedMach = (distance/(this.position_time - this.prev_time + 0.05))/343;
-	const filterSpeed = (this.altitude === "ground") ? positionFilterSpeed/3 : positionFilterSpeed;
+	var distance_traveled = ol.sphere.getDistance(this.tail_position, this.prev_position);
+	var distance = ol.sphere.getDistance(this.position, this.prev_position);
+	var derivedMach = (distance/(this.position_time - this.prev_time + 0.05))/343;
+	var filterSpeed = on_ground ? positionFilterSpeed/10 : positionFilterSpeed;
 
-	// ignore the position if the object moves faster than mach 3.5
-	if (positionFilter && derivedMach > filterSpeed && this.too_fast < 2) {
+	// ignore the position if the object moves faster than mach 2.5
+	if (positionFilter && derivedMach > filterSpeed && this.too_fast < 1) {
 		this.bad_position = this.position;
 		this.position = this.prev_position;
 		this.too_fast++;
 		if (debug) {
 			console.log(this.icao + " / " + this.name + " ("+ this.dataSource + "): Implausible position filtered: " + this.bad_position[0] + ", " + this.bad_position[1] + " (Mach " + derivedMach.toFixed(1) + ")");
 		}
-		if (debugPosFilter && loadFinished) {
-			OLMap.getView().setCenter(ol.proj.fromLonLat(this.position));
-			selectPlaneByHex(this.icao, false);
-			var badFeat = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.bad_position)));
-			badFeat.setStyle(badDot);
-			this.trail_features.push(badFeat);
+		if (debugPosFilter) {
+			this.focusRedDot(this.bad_position);
 			return true;
 		}
 		return false;
 	} else {
-		this.too_fast = Math.max(-10, this.too_fast--);
+		this.too_fast = Math.max(-3, this.too_fast--);
 	}
-
-	if (positionFilter && this.dataSource == "mlat" && on_ground) {
+	if (positionFilter && this.dataSource == "mlat" && on_ground)
 		return true;
-	}
 
 	// Determine if track data are intermittent/stale
 	// Time difference between two position updates should not be much
@@ -697,11 +691,16 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	seen = (seen == null) ? 30 : seen;
 	var seen_pos = isArray? data[6] : data.seen_pos;
 	var mlat = isArray? data[7] : data.mlat;
+	mlat = (mlat != null && mlat.indexOf("lat") >= 0);
 
 	this.last_message_time = receiver_timestamp - seen;
 
 	// remember last known position even if stale
-	if (lat != null && seen_pos < (receiver_timestamp - this.position_time + 2)) {
+	// and some other magic to avoid mlat positions when a current ads-b position is available
+	if (this.dataSource != "mlat" && mlat && receiver_timestamp - this.position_time < 30) {
+		mlat = false;
+		// don't use MLAT for 30 seconds after getting a valid ADS-B position
+	} else if (lat != null && seen_pos < (receiver_timestamp - this.position_time + 2)) {
 		this.position   = [lon, lat];
 		this.position_time = receiver_timestamp - seen_pos;
 	}
@@ -738,7 +737,7 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.track = track;
 	}
 
-	if (init && mlat != null && mlat.indexOf("lat") >= 0) {
+	if (init && mlat) {
 		this.dataSource = "mlat";
 	}
 
@@ -754,22 +753,22 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.flight	= data.flight;
 	}
 
-	if (data.mlat != null && data.mlat.indexOf("lat") >= 0) {
+	if (mlat)
 		this.dataSource = "mlat";
-	} else if (this.dataSource != "uat") {
-		if (data.lat != null && data.type == null)
-			this.dataSource = "adsb";
-		else if (data.type && data.type.substring(0,4) == "tisb")
-			this.dataSource = "tisb";
-		else if (data.type == "adsb_icao" || data.type == "adsb_other")
-			this.dataSource = "adsb";
-		else if (data.type && data.type.substring(0,4) == "adsr")
-			this.dataSource = "other";
-		else if (data.type == "adsb_icao_nt")
-			this.dataSource = "other";
-		else
-			this.dataSource = "other";
-	}
+	else if (data.type && data.type.substring(0,4) == "tisb")
+		this.dataSource = "tisb";
+	else if (this.dataSource == "uat")
+		true; // stays uat.
+	else if (data.lat != null && data.type == null)
+		this.dataSource = "adsb";
+	else if (data.type == "adsb_icao" || data.type == "adsb_other")
+		this.dataSource = "adsb";
+	else if (data.type && data.type.substring(0,4) == "adsr")
+		this.dataSource = "adsb";
+	else if (data.type == "adsb_icao_nt")
+		this.dataSource = "other";
+	else
+		this.dataSource = "other";
 
 	// Update all of our data
 	this.messages	= data.messages;
@@ -836,7 +835,7 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	else
 		this.addrtype = null;
 
-	if (data.lat != null && SitePosition) {
+	if (this.position && SitePosition) {
 		//var WGS84 = new ol.Sphere(6378137);
 		//this.sitedist = WGS84.haversineDistance(SitePosition, this.position);
 		this.sitedist = ol.sphere.getDistance(SitePosition, this.position);
@@ -1109,4 +1108,14 @@ function calcAltitudeRounded(altitude) {
 	} else {
 		return (altitude/500).toFixed(0)*500;
 	}
+}
+
+PlaneObject.prototype.focusRedDot = function(bad_position) {
+	if (loadFinished) {
+		OLMap.getView().setCenter(ol.proj.fromLonLat(bad_position));
+		selectPlaneByHex(this.icao, false);
+	}
+	var badFeat = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(bad_position)));
+	badFeat.setStyle(badDot);
+	this.trail_features.push(badFeat);
 }
