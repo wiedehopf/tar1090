@@ -158,8 +158,6 @@ function processReceiverUpdate(data, init) {
 			PlanesOrdered.push(plane);
 			if (uat) {
 				plane.receiver = "uat";
-				if (!displayUATasADSB)
-					plane.dataSource = "uat";
 			} else {
 				plane.receiver = "1090";
 			}
@@ -169,17 +167,11 @@ function processReceiverUpdate(data, init) {
 		if (uat) {
 			if (plane.receiver == "uat" || ac.seen_pos < 1.8 || init) {
 				plane.receiver = "uat";
-				if (!displayUATasADSB) {
-					plane.dataSource = "uat";
-				}
 				plane.updateData(uat_now, uat_last, ac, init);
 			}
 		} else {
 			if (plane.receiver == "1090" || ac.seen_pos < 1.8 || init) {
 				plane.receiver = "1090";
-				if (!displayUATasADSB) {
-					plane.dataSource = "adsb";
-				}
 				plane.updateData(now, last, ac, init);
 			}
 		}

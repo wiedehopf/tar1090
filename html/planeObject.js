@@ -759,8 +759,8 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 		this.dataSource = "mlat";
 	else if (data.type && data.type.substring(0,4) == "tisb")
 		this.dataSource = "tisb";
-	else if (this.dataSource == "uat")
-		true; // stays uat.
+	else if (!displayUATasADSB && this.receiver == "uat")
+		this.dataSource = "uat";
 	else if (data.lat != null && data.type == null)
 		this.dataSource = "adsb";
 	else if (data.type == "adsb_icao" || data.type == "adsb_other")

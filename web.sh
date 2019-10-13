@@ -7,7 +7,7 @@ mkdir -p $ipath
 
 mv $ipath/html/config.js /tmp/
 
-rm -f $ipath/html/db/*.json
+#rm -f $ipath/html/db/*.json
 cp -r html $ipath
 
 mv /tmp/config.js $ipath/html/
