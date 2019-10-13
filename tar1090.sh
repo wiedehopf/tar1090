@@ -5,30 +5,23 @@ trap "kill -2 0" SIGTERM
 
 #set -e
 
-INTERVAL=10
-HISTORY_SIZE=360
-CS=60
-SOURCE=/run/dump1090-fa
-INT_978=1
-source /etc/default/tar1090
 
-dir=/run/tar1090
 hist=$(($HISTORY_SIZE))
 chunks=$(( $hist/$CS + 2 ))
 #increase chunk size to get history size as close as we can
 CS=$(( CS - ( (CS - hist % CS)/(chunks-1) ) ))
-list="$dir/list_of_chunks"
+list="$rundir/list_of_chunks"
 
 new_chunk() {
 	cur_chunk="chunk_$(date +%s).gz"
 	echo $cur_chunk >> $list
-	for iterator in $(head -n-$chunks $list); do rm -f $dir/$iterator; done
+	for iterator in $(head -n-$chunks $list); do rm -f $rundir/$iterator; done
 	tail -n$chunks $list > newlist
 	mv newlist $list
 	as_json="$(for i in $(cat $list); do echo -n "\"$i\", "; done)\"chunk_recent.gz\""
-	sed -e "s/\"chunks\" : \[.*\]/\"chunks\" : [ $as_json ]/" $dir/chunks.json > $dir/chunks.tmp
+	sed -e "s/\"chunks\" : \[.*\]/\"chunks\" : [ $as_json ]/" $rundir/chunks.json > $rundir/chunks.tmp
 	echo "{ \"files\" : [ ] }" | gzip -1 > $cur_chunk
-	mv $dir/chunks.tmp $dir/chunks.json
+	mv $rundir/chunks.tmp $rundir/chunks.json
 }
 
 prune() {
@@ -43,10 +36,10 @@ prune() {
 
 while true
 do
-	cd $dir
+	cd $rundir
 	rm -f $list || true
-	rm -f $dir/*.gz || true
-	rm -f $dir/*.json || true
+	rm -f $rundir/*.gz || true
+	rm -f $rundir/*.json || true
 
 	echo '{ "pf_data" : "false", "enable_uat" : "false", "chunks" : [] }' > chunks.json
 	if [[ $ENABLE_978 == "yes" ]]; then
@@ -55,7 +48,7 @@ do
 	echo "{ \"files\" : [ ] }" | gzip -1 > chunk_recent.gz
 
 	# integrate original dump1090-fa history on startup so we don't start blank
-	if cp $SOURCE/history_*.json $dir && [[ -f history_0.json ]]; then
+	if cp $srcdir/history_*.json $rundir && [[ -f history_0.json ]]; then
 		new_chunk
 		sleep 1;
 		for i in history_*.json ; do
@@ -73,19 +66,19 @@ do
 	i=0
 	new_chunk
 
-	while jq <$dir/chunks.json '.chunks' >/dev/null 2>&1
+	while jq <$rundir/chunks.json '.chunks' >/dev/null 2>&1
 	do
 		sleep $INTERVAL &
 
 		source <(grep -F -e INTERVAL /etc/default/tar1090)
 		date=$(date +%s)
 
-		if ! cd $dir || ! cp $SOURCE/aircraft.json history_$date.json &>/dev/null
+		if ! cd $rundir || ! cp $srcdir/aircraft.json history_$date.json &>/dev/null
 		then
 			sleep 0.1
-			if ! cd $dir || ! cp $SOURCE/aircraft.json history_$date.json &>/dev/null
+			if ! cd $rundir || ! cp $srcdir/aircraft.json history_$date.json &>/dev/null
 			then
-				echo "No aircraft.json found in $SOURCE! Try restarting dump1090!"
+				echo "No aircraft.json found in $srcdir! Try restarting dump1090!"
 				sleep 60
 				continue;
 			fi
@@ -137,7 +130,7 @@ do
 
 		wait
 	done
-	echo "$dir/chunks.json was corrupted or removed, restarting history chunk creation!"
+	echo "$rundir/chunks.json was corrupted or removed, restarting history chunk creation!"
 done &
 
 while true
@@ -151,7 +144,7 @@ do
 
 	if [[ $ENABLE_978 != "yes" ]]; then sleep 30; continue; fi
 
-	if cd $dir && wget -T 5 -q -O 978.tmp $URL_978/data/aircraft.json $COMPRESS_978; then
+	if cd $rundir && wget -T 5 -q -O 978.tmp $URL_978/data/aircraft.json $COMPRESS_978; then
 		sed -i -e 's/"now" \?:/"uat_978":"true","now":/' 978.tmp
 		mv 978.tmp 978.json
 	fi
@@ -163,7 +156,7 @@ sleep 3
 while true
 do
 	sleep 10 &
-	if cd $dir && wget -T 5 -q -O pf.tmp http://127.0.0.1:30053/ajax/aircraft 2>/dev/null; then
+	if cd $rundir && wget -T 5 -q -O pf.tmp http://127.0.0.1:30053/ajax/aircraft 2>/dev/null; then
 		sed -i -e 's/"user_l[a-z]*":"[0-9,.,-]*",//g' pf.tmp
 		mv pf.tmp pf.json
 		if grep -qs -F -e '"pf_data" : "false"' chunks.json; then

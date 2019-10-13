@@ -1,20 +1,25 @@
 #!/bin/bash
+instance=tar1090
+if [[ -n $1 ]]; then
+	instance=$1
+else
+	rm -rf /usr/local/share/tar1090
+fi
 echo --------------
-echo "Removing tar1090!"
+echo "Removing tar1090, instance name $instance!"
 echo --------------
 
-systemctl stop tar1090
-systemctl disable tar1090
+systemctl stop $instance
+systemctl disable $instance
 
-rm -rf /usr/local/share/tar1090
 
-rm -f /etc/default/tar1090
-rm -f /lib/systemd/system/tar1090.service
+rm -f /etc/default/$instance
+rm -f /lib/systemd/system/$instance.service
 
-rm -f /etc/lighttpd/conf-available/88-tar1090.conf
-rm -f /etc/lighttpd/conf-enabled/88-tar1090.conf
-rm -f /etc/lighttpd/conf-available/99-tar1090-webroot.conf
-rm -f /etc/lighttpd/conf-enabled/99-tar1090-webroot.conf
+rm -f /etc/lighttpd/conf-available/88-$instance.conf
+rm -f /etc/lighttpd/conf-enabled/88-$instance.conf
+rm -f /etc/lighttpd/conf-available/99-$instance-webroot.conf
+rm -f /etc/lighttpd/conf-enabled/99-$instance-webroot.conf
 
 
 systemctl daemon-reload

@@ -255,7 +255,6 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 	var projPrev = ol.proj.fromLonLat(this.prev_position);
 	var lastseg = this.track_linesegs[this.track_linesegs.length - 1];
 
-	var distance_traveled = ol.sphere.getDistance(this.tail_position, this.prev_position);
 	var distance = ol.sphere.getDistance(this.position, this.prev_position);
 	var derivedMach = (distance/(this.position_time - this.prev_time + 0.2))/343;
 	var filterSpeed = on_ground ? positionFilterSpeed/10 : positionFilterSpeed;
@@ -376,6 +375,8 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 
 		return this.updateTail();
 	}
+
+	var distance_traveled = ol.sphere.getDistance(this.tail_position, this.prev_position);
 
 	// Add current position to the existing track.
 	// We only retain some points depending on time elapsed and track change

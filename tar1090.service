@@ -6,10 +6,13 @@ After=network.target
 
 [Service]
 User=dump1090
-SyslogIdentifier=tar1090
-RuntimeDirectory=tar1090
+SyslogIdentifier=INSTANCE
+RuntimeDirectory=INSTANCE
 RuntimeDirectoryMode=0755
-EnvironmentFile=/etc/default/tar1090
+EnvironmentFile=/usr/local/share/tar1090/default
+EnvironmentFile=/etc/default/INSTANCE
+Environment="rundir=/run/INSTANCE"
+EnvironMent="srcdir=SOURCE"
 ExecStart=-/usr/local/share/tar1090/tar1090.sh
 Type=simple
 Restart=always
