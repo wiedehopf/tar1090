@@ -147,7 +147,7 @@ const estimateStyle = new ol.style.Style({
 
 var badDot = new ol.style.Style({
 	image: new ol.style.Circle({
-		radius: 2.5,
+		radius: 3.5,
 		fill: new ol.style.Fill({
 			color: '#FF0000',
 		})
@@ -255,17 +255,20 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 
 	var distance_traveled = ol.sphere.getDistance(this.tail_position, this.prev_position);
 	var distance = ol.sphere.getDistance(this.position, this.prev_position);
-	var derivedMach = (distance/(this.position_time - this.prev_time + 0.05))/343;
+	var derivedMach = (distance/(this.position_time - this.prev_time + 0.2))/343;
 	var filterSpeed = on_ground ? positionFilterSpeed/10 : positionFilterSpeed;
+	filterSpeed = (this.gs != null) ? positionFilterGsFactor*this.gs/666 : filterSpeed;
 
-	// ignore the position if the object moves faster than mach 2.5
+	// ignore the position if the object moves faster than positionFilterSpeed (default Mach 3.5)
+	// or faster than twice the transmitted groundspeed
 	if (positionFilter && derivedMach > filterSpeed && this.too_fast < 1) {
 		this.bad_position = this.position;
-		this.position = this.prev_position;
 		this.too_fast++;
 		if (debug) {
-			console.log(this.icao + " / " + this.name + " ("+ this.dataSource + "): Implausible position filtered: " + this.bad_position[0] + ", " + this.bad_position[1] + " (Mach " + derivedMach.toFixed(1) + ")");
+			console.log(this.icao + " / " + this.name + " ("+ this.dataSource + "): Implausible position filtered: " + this.bad_position[0] + ", " + this.bad_position[1] + " (Mach " + derivedMach.toFixed(1) + ") (" + (this.position_time - this.prev_time + 0.2).toFixed(1) + "s)");
 		}
+		this.position = this.prev_position;
+		this.position_time = this.prev_time;
 		if (debugPosFilter) {
 			this.focusRedDot(this.bad_position);
 			return true;
@@ -743,10 +746,6 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 
 	if (init)
 		return;
-
-	// recompute seen and seen_pos
-	this.seen = receiver_timestamp - this.last_message_time;
-	this.seen_pos = receiver_timestamp - this.position_time;
 
 	// don't expire callsigns
 	if (data.flight != null) {

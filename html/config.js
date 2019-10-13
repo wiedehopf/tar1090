@@ -142,10 +142,14 @@ BingMapsAPIKey = null;
 
 //flightawareLinks = false;
 
-// Filter implausible positions (required speed > Mach 2.5)
+// Filter implausible positions (required speed > Mach 3.5)
 // positionFilter = true;
-// positionFilterSpeed = 2.5; // in Mach
+// positionFilterSpeed = 3.5; // in Mach
+// filter speed is based on transmitted ground speed if available
+// this factor is used to give the actual filter speed
+// positionFilterGsFactor = 1.8;
 // debugPosFilter = false; // draw red dots for filtered positions
+
 // Columns that have a // in front of them are shown.
 HideCols = [
 	"#icao",
