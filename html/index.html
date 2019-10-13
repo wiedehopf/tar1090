@@ -119,6 +119,14 @@
 								<span class="lightblue-link" id="selected_photo_link"></span> <span id="selected_icaotype"></span>
 							</div>
 						</div>
+						<div class="infoRowLine">
+							<div class="infoHeading infoRowFluid fourColumnSection1">
+								<span title="A 4-digit octal code assigned to the aircraft by Air Traffic Control.">Squawk</span>:
+							</div>
+							<div class="infoData infoRowFluid fourColumnSection2">
+								<span id="selected_squawk1"></span>
+							</div>
+						</div>
 					</div>
 					<div class="sectionTitle">
 						<div class="section-title-content">
@@ -185,19 +193,11 @@
 
 					<div class="sectionTitle">
 						<div class="section-title-content">
-							MISC
+							Signal
 						</div>
 					</div>
 					<div class="infoBlockSection">
 
-						<div class="infoRowLine">
-							<div class="infoHeading infoRowFluid fourColumnSection1">
-								<span title="A 4-digit octal code assigned to the aircraft by Air Traffic Control.">Squawk</span>:
-							</div>
-							<div class="infoData infoRowFluid fourColumnSection2">
-								<span id="selected_squawk1"></span>
-							</div>
-						</div>
 						<div class="infoRowLine">
 							<div class="infoHeading infoRowFluid">
 								<span title="Data source for the reported aircraft data (e.g., ADS-B, MLAT, Other Mode S)">Source</span>:
@@ -214,10 +214,6 @@
 								<span id="selected_rssi1">n/a</span>
 							</div>
 						</div>
-
-						<div class="infoRowSpacer">
-						</div>
-
 						<div class="infoRowLine">
 							<div class="infoHeading infoRowFluid ">
 								<span title="Number of messages received from this aircraft per second. (averaged over the last 2 update intervals)">Msg. Rate</span>:
@@ -226,6 +222,10 @@
 								<span id="selected_message_rate">n/a</span>
 							</div>
 						</div>
+
+						<div class="infoRowSpacer">
+						</div>
+
 						<div class="infoRowLine">
 							<div class="infoHeading infoRowFluid ">
 								<span title="Time since we received a position from this aircraft.">Last Pos.</span>:
@@ -242,7 +242,7 @@
 								<span id="selected_seen">n/a</span>
 							</div>
 						</div>
-					</div> <!-- MISC -->
+					</div> <!-- Signal -->
 
 					<div class="sectionTitle">
 						<div class="section-title-content">

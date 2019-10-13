@@ -311,13 +311,13 @@ select.error, textarea.error, input.error {
 .sectionTitle {
 	width: 100%;
 	text-transform: uppercase;
+	text-align: center;
 	color: #fff;
 	background: #003f4b;
-	font-size: 14px;
 }
 
 .section-title-content {
-	padding: 5px 20px;
+	padding: 3px 20px;
 }
 
 .legend
