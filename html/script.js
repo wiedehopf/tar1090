@@ -172,7 +172,7 @@ function processReceiverUpdate(data, init) {
 				if (!displayUATasADSB) {
 					plane.dataSource = "uat";
 				}
-				plane.updateData(uat_now, ac, init);
+				plane.updateData(uat_now, uat_last, ac, init);
 			}
 		} else {
 			if (plane.receiver == "1090" || ac.seen_pos < 1.8 || init) {
@@ -180,7 +180,7 @@ function processReceiverUpdate(data, init) {
 				if (!displayUATasADSB) {
 					plane.dataSource = "adsb";
 				}
-				plane.updateData(now, ac, init);
+				plane.updateData(now, last, ac, init);
 			}
 		}
 	}
@@ -1360,6 +1360,7 @@ function refreshSelected() {
 	$('#selected_sitedist2').text(format_distance_long(selected.sitedist, DisplayUnits));
 	$('#selected_rssi1').text(selected.rssi != null ? selected.rssi.toFixed(1) : "n/a");
 	$('#selected_message_count').text(selected.messages);
+	$('#selected_message_rate').text((selected.messageRate != null) ? (selected.messageRate.toFixed(0) + " /s") : "n/a");
 	if (flightawareLinks) {
 		$('#selected_photo_link').html(getFlightAwarePhotoLink(selected.registration));
 	}

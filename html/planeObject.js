@@ -55,10 +55,11 @@ function PlaneObject(icao) {
 	this.too_fast = 0;
 
 	// Data packet numbers
-	this.messages  = null;
+	this.messages  = 0;
 	this.rssi      = null;
-	this.rssa      = null;
-	this.rindex    = 0;
+	this.msgs1090  = 0;
+	this.msgs978   = 0;
+	this.messageRate = 0;
 
 	// Track history as a series of line segments
 	this.elastic_feature = null;
@@ -222,7 +223,7 @@ PlaneObject.prototype.updateTrackPrev = function() {
 
 // Appends data to the running track so we can get a visual tail on the plane
 // Only useful for a long running browser session.
-PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp) {
+PlaneObject.prototype.updateTrack = function(now, last) {
 	if (this.position == null)
 		return false;
 	if (this.prev_position && this.position[0] == this.prev_position[0] && this.position[1] == this.prev_position[1])
@@ -283,7 +284,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	// Determine if track data are intermittent/stale
 	// Time difference between two position updates should not be much
 	// greater than the difference between data inputs
-	var time_difference = (this.position_time - this.prev_time) - (receiver_timestamp - last_timestamp);
+	var time_difference = (this.position_time - this.prev_time) - (now - last);
 
 	var stale_timeout = lastseg.estimated ? 5 : 10;
 
@@ -298,7 +299,7 @@ PlaneObject.prototype.updateTrack = function(receiver_timestamp, last_timestamp)
 	// Also check if the position was already stale when it was exported by dump1090
 	// Makes stale check more accurate for example for 30s spaced history points
 
-	est_track = est_track || ((receiver_timestamp - this.position_time) > stale_timeout);
+	est_track = est_track || ((now - this.position_time) > stale_timeout);
 
 	if (est_track) {
 
@@ -678,7 +679,7 @@ PlaneObject.prototype.updateIcon = function() {
 };
 
 // Update our data
-PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
+PlaneObject.prototype.updateData = function(now, last, data, init) {
 	// get location data first, return early if only those are needed.
 
 	var isArray = Array.isArray(data);
@@ -696,16 +697,16 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 	var mlat = isArray? data[7] : data.mlat;
 	mlat = (mlat != null && mlat.indexOf("lat") >= 0);
 
-	this.last_message_time = receiver_timestamp - seen;
+	this.last_message_time = now - seen;
 
 	// remember last known position even if stale
 	// and some other magic to avoid mlat positions when a current ads-b position is available
-	if (this.dataSource != "mlat" && mlat && receiver_timestamp - this.position_time < 30) {
+	if (this.dataSource != "mlat" && mlat && now - this.position_time < 30) {
 		mlat = false;
 		// don't use MLAT for 30 seconds after getting a valid ADS-B position
-	} else if (lat != null && seen_pos < (receiver_timestamp - this.position_time + 2)) {
+	} else if (lat != null && seen_pos < (now - this.position_time + 2)) {
 		this.position   = [lon, lat];
-		this.position_time = receiver_timestamp - seen_pos;
+		this.position_time = now - seen_pos;
 	}
 
 	// remember last known altitude even if stale
@@ -770,14 +771,16 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 		this.dataSource = "other";
 
 	// Update all of our data
-	this.messages	= data.messages;
-	/*
-	var rssi = parseFloat(data.rssi);
-	if (!this.rssa)
-		this.rssa = [rssi,rssi,rssi,rssi];
-	this.rssa[this.rindex++%4] = rssi;
-	this.rssi = (this.rssa[0] + this.rssa[1] + this.rssa[2] + this.rssa[3])/4;
-	*/
+
+	if (this.receiver == "1090") {
+		this.messageRate = ((data.messages - this.msgs1090)/(now - last) + (this.messageRate ? this.messageRate : 0))/2;
+		this.msgs1090 = data.messages;
+	} else {
+		this.messageRate = ((data.messages - this.msgs978)/(now - last) + (this.messageRate ? this.messageRate : 0))/2;
+		this.msgs978 = data.messages;
+	}
+	this.messages = data.messages;
+
 	this.rssi = data.rssi;
 
 	if (data.gs != null)
@@ -889,10 +892,10 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, init) {
 
 };
 
-PlaneObject.prototype.updateTick = function(receiver_timestamp, last_timestamp, init) {
+PlaneObject.prototype.updateTick = function(now, last, init) {
 	// recompute seen and seen_pos
-	this.seen = receiver_timestamp - this.last_message_time;
-	this.seen_pos = receiver_timestamp - this.position_time;
+	this.seen = now - this.last_message_time;
+	this.seen_pos = now - this.position_time;
 
 	// If no packet in over 58 seconds, clear the plane.
 	// Only clear the plane if it's not selected individually
@@ -908,7 +911,7 @@ PlaneObject.prototype.updateTick = function(receiver_timestamp, last_timestamp, 
 		}
 	} else {
 		this.visible = true;
-		if (init || this.updateTrack(receiver_timestamp, last_timestamp)) {
+		if (init || this.updateTrack(now, last)) {
 			this.updateLines();
 			this.updateMarker(true);
 		} else { 
