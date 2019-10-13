@@ -35,7 +35,9 @@ then
 	git clone --depth 1 $repo $ipath/git 2>/dev/null
 	cd $ipath/git
 	git checkout -f master
-	if ! git pull -f; then
+	git fetch
+	git reset --hard origin/master
+	if ! git pull; then
 		cd /tmp
 		if ! wget --timeout=30 -q -O master.zip $repo/archive/master.zip || ! unzip -q -o master.zip
 		then
@@ -78,7 +80,7 @@ cp $ipath/html/colors.css html/ 2>/dev/null
 	|| ! diff 88-tar1090.conf /etc/lighttpd/conf-enabled/88-tar1090.conf &>/dev/null
 changed=$?
 
-rm -f $ipath/html/db/*.json
+#rm -f $ipath/html/db/*.json
 cp -r * $ipath
 
 mv /tmp/tar1090_config.js $ipath/html/config.js 2>/dev/null
