@@ -259,7 +259,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 	var distance = ol.sphere.getDistance(this.position, this.prev_position);
 	var derivedMach = (distance/(this.position_time - this.prev_time + 0.2))/343;
 	var filterSpeed = on_ground ? positionFilterSpeed/10 : positionFilterSpeed;
-	filterSpeed = (this.gs != null) ? positionFilterGsFactor*this.gs/666 : filterSpeed;
+	filterSpeed = (this.gs != null) ? positionFilterGsFactor*(this.gs+3)/666 : filterSpeed;
 
 	// ignore the position if the object moves faster than positionFilterSpeed (default Mach 3.5)
 	// or faster than twice the transmitted groundspeed
