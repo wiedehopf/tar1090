@@ -60,6 +60,7 @@ function PlaneObject(icao) {
 	this.msgs1090  = 0;
 	this.msgs978   = 0;
 	this.messageRate = 0;
+	this.messageRateOld = 0;
 
 	// Track history as a series of line segments
 	this.elastic_feature = null;
@@ -773,10 +774,14 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 	// Update all of our data
 
 	if (this.receiver == "1090") {
-		this.messageRate = ((data.messages - this.msgs1090)/(now - last) + (this.messageRate ? this.messageRate : 0))/2;
+		const messageRate = (data.messages - this.msgs1090)/(now - last);
+		this.messageRate = (messageRate + this.messageRateOld)/2;
+		this.messageRateOld = messageRate; 
 		this.msgs1090 = data.messages;
 	} else {
-		this.messageRate = ((data.messages - this.msgs978)/(now - last) + (this.messageRate ? this.messageRate : 0))/2;
+		const messageRate = (data.messages - this.msgs978)/(now - last);
+		this.messageRate = (messageRate + this.messageRateOld)/2;
+		this.messageRateOld = messageRate; 
 		this.msgs978 = data.messages;
 	}
 	this.messages = data.messages;
