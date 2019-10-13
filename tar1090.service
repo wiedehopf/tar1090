@@ -12,7 +12,7 @@ RuntimeDirectoryMode=0755
 EnvironmentFile=/usr/local/share/tar1090/default
 EnvironmentFile=/etc/default/INSTANCE
 Environment="rundir=/run/INSTANCE"
-EnvironMent="srcdir=SOURCE"
+Environment="srcdir=SOURCE"
 ExecStart=-/usr/local/share/tar1090/tar1090.sh
 Type=simple
 Restart=always
