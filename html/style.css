@@ -1,8 +1,14 @@
 html, body {
 	-ms-overflow-style: -ms-autohiding-scrollbar;
-    margin: 0; padding: 0; background-color: #F8F8F8; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    margin: 0px; padding: 0px; background-color: #F8F8F8; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 10pt; overflow: hidden; height: 100%;
+
 }
+element {
+	--fontsize-small: 9pt;
+}
+
+#tableinfo { font-size: 10pt; }
 
 #layout_container { 
     display: flex;
@@ -31,9 +37,10 @@ html, body {
 	display: flex;
 	flex-direction: column;
     width: flex;
-	left: 0 !important;
+	left: 0px !important;
 	height: 100%;
 }
+
 
 #map_container {
     flex: 1 1 auto;
@@ -184,7 +191,6 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
 #spinny { width: 128px; height: 128px; position: absolute; top: 50%; left: 50%; margin: -64px 0 0 -64px; }
 #loader_progress { width: 250px; height: 20px; position: absolute; top: 50%; left: 50%; margin: 128px 0 0 -125px; }
 
-#tableinfo { font-size: small; }
 
 #sudo_buttons {
     display: flex;
@@ -194,8 +200,8 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
 
 #units_container,
 #altitude_filter_form {
-    font-size: small;
-    margin: 10px 0 10px 0;
+    font-size: var(--fontsize-small);
+    margin: 10px 0px 10px 0px;
 }
 
 .aircraft_table_header { 
@@ -221,7 +227,6 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
 
 .plane_table_row {
 	cursor: default;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 .plane_table_row a:link, a:visited {
 	color: black;
@@ -240,7 +245,7 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
      padding: 4px 15px 4px 15px;
      color: #FFFFFF;
      font-weight: normal;
-     font-size: small;
+     font-size: var(--fontsize-small);
 }
 
 .sidebarButton:hover {
@@ -264,7 +269,6 @@ select.error, textarea.error, input.error {
 /* new css */
 .rangeRingText
 {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: bold;
     font-size: 8px;
     color: #333333;
@@ -273,7 +277,6 @@ select.error, textarea.error, input.error {
 
 .dateTime
 {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: bold;
     font-size: 11pt;
     line-height: 22pt;
@@ -292,17 +295,14 @@ select.error, textarea.error, input.error {
 }
 
 .infoHeading {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	display: inline-block;
 }
 
 .infoHeading sub {
 	font-weight: normal;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .infoData {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	display: inline-block;
 	float: right;
 	margin-right: 5pt;
@@ -322,9 +322,8 @@ select.error, textarea.error, input.error {
 
 .legend
 {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     width: 100%;
-    font-size: 12px;
+    font-size: 110%;
     color: #000000;
     color: rgb(0, 0, 0);
     display: inline-flex;
@@ -334,16 +333,14 @@ select.error, textarea.error, input.error {
 
 .settingsHeading
 {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 14px;
+    font-size: 110%;
     line-height: 20px;
     color: #003f4b;
 }
 
 .settingsText
 {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 14px;
+    font-size: 11pt;
     line-height: 20px;
     text-indent: 16px;
     color: rgb(0, 0, 0);
@@ -351,7 +348,6 @@ select.error, textarea.error, input.error {
 
 .link
 {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 10px;
     line-height: 20px;
     color: #0000C8;
@@ -396,7 +392,6 @@ select.error, textarea.error, input.error {
 
 .buttonText
 {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: bold;
     font-size: 12pt;
     color: #FFFFFF;
@@ -485,7 +480,6 @@ select.error, textarea.error, input.error {
 }
 
 .identLarge {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 24px;
     line-height: 24px;
     color: #003f4b;
@@ -493,7 +487,6 @@ select.error, textarea.error, input.error {
 }
 
 .identMedium {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 18px;
     line-height: 22px;
     color: #003f4b;
@@ -501,7 +494,6 @@ select.error, textarea.error, input.error {
 }
 
 .identSmall {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 12px;
     font-weight: bold;
     line-height: 20px;
@@ -568,7 +560,6 @@ select.error, textarea.error, input.error {
 }
 
 #dump1090_infoblock {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .infoBlockTitleText {

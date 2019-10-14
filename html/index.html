@@ -639,13 +639,14 @@
 
 						<form id="altitude_filter_form">
 							<label><span class="infoBlockTitleText">Filter by Altitude:</span></label>
+							<br>
 							<input id="altitude_filter_min" name="minAltitude" type="text" class="altitudeFilterInput" maxlength="5">
 							<label for="minAltitude" class="altitudeUnit"></label>
 							<span> to </span>
 							<input id="altitude_filter_max" name="maxAltitude" type="text" class="altitudeFilterInput" maxlength="5">
 							<label for="maxAltitude" class="altitudeUnit"></label>
-							<button type="submit">Filter</button>
-							<button id="altitude_filter_reset_button">Reset</button>
+							<button style="font: small" type="submit">Filter</button>
+							<button style="font: small" id="altitude_filter_reset_button">Reset</button>
 
 						</form>
 
@@ -659,10 +660,10 @@
 										<td id="registration" style="display: none" onclick="sortByRegistration();">Registration</td>
 										<td id="aircraft_type" onclick="sortByAircraftType();">Type</td>
 										<td id="squawk" onclick="sortBySquawk();">Squawk</td>
-										<td id="altitude" onclick="sortByAltitude();">Altitude (<span class="altitudeUnit"></span>)</td>
-										<td id="speed" onclick="sortBySpeed();">GS (<span class="speedUnit"></span>)</td>
+										<td id="altitude" onclick="sortByAltitude();">Altitude(<span class="altitudeUnit"></span>)</td>
+										<td id="speed" onclick="sortBySpeed();">GS(<span class="speedUnit"></span>)</td>
 										<td id="vert_rate" style="display: none" onclick="sortByVerticalRate();">Vertical Rate (<span class="verticalRateUnit"></span>)</td>
-										<td id="distance" onclick="sortByDistance();">Dist (<span class="distanceUnit"></span>)</td>
+										<td id="distance" onclick="sortByDistance();">Dist(<span class="distanceUnit"></span>)</td>
 										<td id="track" style="display: none" onclick="sortByTrack();">Heading</td>
 										<td id="msgs" style="display: none" onclick="sortByMsgs();">Msgs</td>
 										<td id="seen" style="display: none" onclick="sortBySeen();">Age</td>
