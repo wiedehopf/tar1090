@@ -1,4 +1,6 @@
 #!/bin/bash
+# avoid changes to this bash script affecting the running script
+{
 
 set -e
 
@@ -144,3 +146,4 @@ fi
 
 echo --------------
 echo "All done! Webinterface available at http://$(ip route | grep -m1 -o -P 'src \K[0-9,.]*')/$instance"
+}
