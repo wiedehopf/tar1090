@@ -129,7 +129,7 @@ fi
 
 if [[ $changed == yes ]]; then
 	cp tar1090.service /lib/systemd/system/$instance.service
-	systemctl daemon-reload
+	systemctl enable $instance &>/dev/null
 	echo "Restarting tar1090 ..."
 	systemctl restart $instance
 fi
@@ -137,11 +137,6 @@ if [[ $changed_lighttpd == yes ]] && systemctl status lighttpd >/dev/null; then
 	echo "Restarting lighttpd ..."
 	systemctl restart lighttpd
 fi
-
-if ! systemctl is-enabled $instance &>/dev/null; then
-	systemctl enable $instance &>/dev/null
-fi
-
 
 
 echo --------------

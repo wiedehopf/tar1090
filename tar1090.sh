@@ -166,27 +166,27 @@ do
 	echo "$RUN_DIR/chunks.json was corrupted or removed, restarting history chunk creation!"
 done &
 
-while true
-do
-	sleep $INT_978 &
-
-	if [[ $ENABLE_978 != "yes" ]]; then sleep 30; continue; fi
-
-	if cd $RUN_DIR && wget -T 5 -q -O 978.tmp $URL_978/data/aircraft.json $COMPRESS_978; then
-		sed -i -e 's/"now" \?:/"uat_978":"true","now":/' 978.tmp
-		mv 978.tmp 978.json
-	fi
-	wait
-done &
+if [[ $ENABLE_978 == "yes" ]]; then
+	while true
+	do
+		sleep $INT_978 &
+		if cd $RUN_DIR && wget -T 5 -q -O 978.tmp $URL_978/data/aircraft.json $COMPRESS_978; then
+			sed -i -e 's/"now" \?:/"uat_978":"true","now":/' 978.tmp
+			mv 978.tmp 978.json
+		fi
+		wait
+	done &
+fi
 
 sleep 3
 
 while true
 do
 	sleep 10 &
-	if cd $RUN_DIR && wget -T 5 -q -O pf.tmp http://127.0.0.1:30053/ajax/aircraft 2>/dev/null; then
-		sed -i -e 's/"user_l[a-z]*":"[0-9,.,-]*",//g' pf.tmp
-		mv pf.tmp pf.json
+	TMP="pf.$RANDOM$RANDOM"
+	if cd $RUN_DIR && wget -T 5 -q -O $TMP http://127.0.0.1:30053/ajax/aircraft 2>/dev/null; then
+		sed -i -e 's/"user_l[a-z]*":"[0-9,.,-]*",//g' $TMP
+		mv $TMP pf.json
 		if grep -qs -F -e '"pf_data" : "false"' chunks.json; then
 			sleep 0.314
 			cp chunks.json chunks.json.pf_data
@@ -198,8 +198,6 @@ do
 	fi
 	wait
 done &
+
 wait
-
 exit 0
-
-
