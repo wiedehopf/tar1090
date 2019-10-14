@@ -3,7 +3,7 @@
 trap "kill 0" SIGINT
 trap "kill -2 0" SIGTERM
 
-set -e
+#set -e
 RUN_DIR=$1
 SRC_DIR=$2
 INTERVAL=$3
