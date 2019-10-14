@@ -168,7 +168,7 @@ PlaneObject.prototype.isFiltered = function() {
 		return true;
 	}
 
-	if (filterTISB && this.dataSource == "tisb") {
+	if (filterTISB && this.dataSource == "tisb" && this.type != "tisb_icao") {
 		return true;
 	}
 

@@ -233,11 +233,11 @@ function fetchData() {
 	var center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
 	localStorage['CenterLon'] = CenterLon = center[0];
 	localStorage['CenterLat'] = CenterLat = center[1];
-	if (FetchPending != null && FetchPending.state() == 'pending') {
+	if (FetchPending != null) {
 		// don't double up on fetches, let the last one resolve
 		return;
 	}
-	if (FetchPendingUAT != null && FetchPendingUAT.state() == 'pending') {
+	if (FetchPendingUAT != null) {
 		// don't double up on fetches, let the last one resolve
 		return;
 	}
@@ -272,8 +272,12 @@ function fetchData() {
 			cache: false,
 			dataType: 'json' });
 
-		$.when(FetchPendingUAT).done(function(data) {
+		FetchPendingUAT.done(function(data) {
 			uat_data = data;
+			FetchPendingUAT = null;
+		});
+		FetchPendingUAT.fail(function(jqxhr, status, error) {
+			FetchPendingUAT = null;
 		});
 	}
 	FetchPending = $.ajax({ url: 'data/aircraft.json',
@@ -281,9 +285,10 @@ function fetchData() {
 		cache: false,
 		dataType: 'json' });
 	FetchPending.done(function(data) {
-		if (data == null)
+		if (data == null) {
+			FetchPending = null;
 			return;
-
+		}
 
 		// experimental stuff
 		/*
@@ -337,6 +342,7 @@ function fetchData() {
 			$("#update_error").css('display','none');
 		}
 
+		FetchPending = null;
 	});
 
 	FetchPending.fail(function(jqxhr, status, error) {
@@ -344,6 +350,7 @@ function fetchData() {
 		$("#update_error").css('display','block');
 		StaleReceiverCount++;
 		fetchData();
+		FetchPending = null;
 	});
 }
 
