@@ -3,38 +3,59 @@
 trap "kill 0" SIGINT
 trap "kill -2 0" SIGTERM
 
-#set -e
+set -e
+RUN_DIR=$1
+SRC_DIR=$2
+INTERVAL=$3
+HISTORY_SIZE=$4
+CHUNK_SIZE=$5
 
-if [[ -z $rundir && -z $srcdir ]]
+ENABLE_978=$6
+URL_978=$7
+INT_978=$8
+
+if ! [[ -d $RUN_DIR && -d $SRC_DIR ]]
 then
-	echo "runtime directory and source directory are not specified, fatal error!"
+	echo "runtime directory or source directory are not specified or not directories, fatal error!"
+	echo "minimal Syntax: bash tar1090.sh <runtime directory> <dump1090 source directory>"
+	echo "Syntax: bash tar1090.sh <runtime directory> <dump1090 source directory> <history interval> <history size> <chunk size> <enable 978 yes/no> <URL for 978 aircraft.json> <interval 978 is updated>"
 	exit 1
 fi
-if [[ -z $HISTORY_SIZE && -z $INTERVAL && -z $CS ]]
+if [[ -z $HISTORY_SIZE || -z $INTERVAL || -z $CHUNK_SIZE ]]
 then
-	echo "Missing some settings from environment variables, using defaults"
-	INTERVAL=10
-	HISTORY_SIZE=360
-	CS=60
+	echo "Syntax: bash tar1090.sh <runtime directory> <dump1090 source directory> <history interval> <history size> <chunk size> <enable 978 yes/no> <URL for 978 aircraft.json> <interval 978 is updated>"
+	echo "Missing some settings from environment variables, using defaults:"
+	echo "history interval: 8 seconds"
+	echo "history size: 450 entries"
+	echo "chunk size: 60 entries"
+	INTERVAL=8
+	HISTORY_SIZE=450
+	CHUNK_SIZE=60
+fi
+if [[ -z $URL_978 ]]; then
+	ENABLE_978=no
+fi
+if [[ -z $INT_978 ]]; then
+	INT_978=1
 fi
 
 
 hist=$(($HISTORY_SIZE))
-chunks=$(( $hist/$CS + 2 ))
+chunks=$(( $hist/$CHUNK_SIZE + 2 ))
 #increase chunk size to get history size as close as we can
-CS=$(( CS - ( (CS - hist % CS)/(chunks-1) ) ))
-list="$rundir/list_of_chunks"
+CHUNK_SIZE=$(( CHUNK_SIZE - ( (CHUNK_SIZE - hist % CHUNK_SIZE)/(chunks-1) ) ))
+list="$RUN_DIR/list_of_chunks"
 
 new_chunk() {
 	cur_chunk="chunk_$(date +%s).gz"
 	echo $cur_chunk >> $list
-	for iterator in $(head -n-$chunks $list); do rm -f $rundir/$iterator; done
+	for iterator in $(head -n-$chunks $list); do rm -f $RUN_DIR/$iterator; done
 	tail -n$chunks $list > newlist
 	mv newlist $list
 	as_json="$(for i in $(cat $list); do echo -n "\"$i\", "; done)\"chunk_recent.gz\""
-	sed -e "s/\"chunks\" : \[.*\]/\"chunks\" : [ $as_json ]/" $rundir/chunks.json > $rundir/chunks.tmp
+	sed -e "s/\"chunks\" : \[.*\]/\"chunks\" : [ $as_json ]/" $RUN_DIR/chunks.json > $RUN_DIR/chunks.tmp
 	echo "{ \"files\" : [ ] }" | gzip -1 > $cur_chunk
-	mv $rundir/chunks.tmp $rundir/chunks.json
+	mv $RUN_DIR/chunks.tmp $RUN_DIR/chunks.json
 }
 
 prune() {
@@ -49,10 +70,10 @@ prune() {
 
 while true
 do
-	cd $rundir
+	cd $RUN_DIR
 	rm -f $list || true
-	rm -f $rundir/*.gz || true
-	rm -f $rundir/*.json || true
+	rm -f $RUN_DIR/*.gz || true
+	rm -f $RUN_DIR/*.json || true
 
 	echo '{ "pf_data" : "false", "enable_uat" : "false", "chunks" : [] }' > chunks.json
 	if [[ $ENABLE_978 == "yes" ]]; then
@@ -61,7 +82,7 @@ do
 	echo "{ \"files\" : [ ] }" | gzip -1 > chunk_recent.gz
 
 	# integrate original dump1090-fa history on startup so we don't start blank
-	if cp $srcdir/history_*.json $rundir && [[ -f history_0.json ]]; then
+	if cp $SRC_DIR/history_*.json $RUN_DIR && [[ -f history_0.json ]]; then
 		new_chunk
 		sleep 1;
 		for i in history_*.json ; do
@@ -79,18 +100,18 @@ do
 	i=0
 	new_chunk
 
-	while jq <$rundir/chunks.json '.chunks' >/dev/null 2>&1
+	while jq <$RUN_DIR/chunks.json '.chunks' >/dev/null 2>&1
 	do
 		sleep $INTERVAL &
 
 		date=$(date +%s)
 
-		if ! cd $rundir || ! cp $srcdir/aircraft.json history_$date.json &>/dev/null
+		if ! cd $RUN_DIR || ! cp $SRC_DIR/aircraft.json history_$date.json &>/dev/null
 		then
 			sleep 0.1
-			if ! cd $rundir || ! cp $srcdir/aircraft.json history_$date.json &>/dev/null
+			if ! cd $RUN_DIR || ! cp $SRC_DIR/aircraft.json history_$date.json &>/dev/null
 			then
-				echo "No aircraft.json found in $srcdir! Try restarting dump1090!"
+				echo "No aircraft.json found in $SRC_DIR! Try restarting dump1090!"
 				sleep 60
 				continue;
 			fi
@@ -128,7 +149,7 @@ do
 
 		i=$((i+1))
 
-		if [[ $i == $CS ]]
+		if [[ $i == $CHUNK_SIZE ]]
 		then
 			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' *history_*.json | 7za a -si temp.gz >/dev/null
 			mv temp.gz $cur_chunk
@@ -142,7 +163,7 @@ do
 
 		wait
 	done
-	echo "$rundir/chunks.json was corrupted or removed, restarting history chunk creation!"
+	echo "$RUN_DIR/chunks.json was corrupted or removed, restarting history chunk creation!"
 done &
 
 while true
@@ -151,7 +172,7 @@ do
 
 	if [[ $ENABLE_978 != "yes" ]]; then sleep 30; continue; fi
 
-	if cd $rundir && wget -T 5 -q -O 978.tmp $URL_978/data/aircraft.json $COMPRESS_978; then
+	if cd $RUN_DIR && wget -T 5 -q -O 978.tmp $URL_978/data/aircraft.json $COMPRESS_978; then
 		sed -i -e 's/"now" \?:/"uat_978":"true","now":/' 978.tmp
 		mv 978.tmp 978.json
 	fi
@@ -163,7 +184,7 @@ sleep 3
 while true
 do
 	sleep 10 &
-	if cd $rundir && wget -T 5 -q -O pf.tmp http://127.0.0.1:30053/ajax/aircraft 2>/dev/null; then
+	if cd $RUN_DIR && wget -T 5 -q -O pf.tmp http://127.0.0.1:30053/ajax/aircraft 2>/dev/null; then
 		sed -i -e 's/"user_l[a-z]*":"[0-9,.,-]*",//g' pf.tmp
 		mv pf.tmp pf.json
 		if grep -qs -F -e '"pf_data" : "false"' chunks.json; then

@@ -11,9 +11,7 @@ RuntimeDirectory=INSTANCE
 RuntimeDirectoryMode=0755
 EnvironmentFile=/usr/local/share/tar1090/default
 EnvironmentFile=/etc/default/INSTANCE
-Environment="rundir=/run/INSTANCE"
-Environment="srcdir=SOURCE"
-ExecStart=-/usr/local/share/tar1090/tar1090.sh
+ExecStart=-/usr/local/share/tar1090/tar1090.sh /run/INSTANCE SOURCE_DIR $INTERVAL $HISTORY_SIZE $CHUNK_SIZE $ENABLE_978 $URL_978 $INT_978
 Type=simple
 Restart=always
 RestartSec=30

@@ -1,5 +1,5 @@
-INTERVAL=10
-HISTORY_SIZE=360
+INTERVAL=8
+HISTORY_SIZE=450
 # Change to yes to enable UAT/978 display in tar1090
 ENABLE_978=no
 # If running dump978-fa on another computer, modify the IP-address as appropriate.
@@ -7,5 +7,5 @@ ENABLE_978=no
 URL_978="http://127.0.0.1/skyaware978"
 
 # no need to change this
-CS=60
+CHUNK_SIZE=60
 INT_978=1
