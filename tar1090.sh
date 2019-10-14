@@ -5,6 +5,19 @@ trap "kill -2 0" SIGTERM
 
 #set -e
 
+if [[ -z $rundir && -z $srcdir ]]
+then
+	echo "runtime directory and source directory are not specified, fatal error!"
+	exit 1
+fi
+if [[ -z $HISTORY_SIZE && -z $INTERVAL && -z $CS ]]
+then
+	echo "Missing some settings from environment variables, using defaults"
+	INTERVAL=10
+	HISTORY_SIZE=360
+	CS=60
+fi
+
 
 hist=$(($HISTORY_SIZE))
 chunks=$(( $hist/$CS + 2 ))
@@ -70,7 +83,6 @@ do
 	do
 		sleep $INTERVAL &
 
-		source <(grep -F -e INTERVAL /etc/default/tar1090)
 		date=$(date +%s)
 
 		if ! cd $rundir || ! cp $srcdir/aircraft.json history_$date.json &>/dev/null
@@ -135,12 +147,7 @@ done &
 
 while true
 do
-	if ! [ -f /etc/default/tar1090 ]; then
-		sleep 1 &
-	else
-		source /etc/default/tar1090
-		sleep $INT_978 &
-	fi
+	sleep $INT_978 &
 
 	if [[ $ENABLE_978 != "yes" ]]; then sleep 30; continue; fi
 
