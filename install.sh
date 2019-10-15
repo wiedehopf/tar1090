@@ -80,11 +80,10 @@ if [[ -n $2 ]]; then
 fi
 
 
-sed -i -e "s?INSTANCE?$instance?g" 88-tar1090.conf
-sed -i -e "s?INSTANCE?$instance?g" tar1090.service
+sed -i -e "s?SOURCE_DIR?$srcdir?g" -e "s?INSTANCE?$instance?g" 88-tar1090.conf
+sed -i -e "s?SOURCE_DIR?$srcdir?g" -e "s?INSTANCE?$instance?g" tar1090.service
+sed -i -e "s?SOURCE_DIR?$srcdir?g" -e "s?INSTANCE?$instance?g" nginx-tar1090.conf
 
-sed -i -e "s?SOURCE_DIR?$srcdir?g" 88-tar1090.conf
-sed -i -e "s?SOURCE_DIR?$srcdir?g" tar1090.service
 
 
 
@@ -117,6 +116,7 @@ cp -n default /etc/default/$instance
 sed -i -e 's/skyview978/skyaware978/' /etc/default/$instance
 
 
+cp nginx-tar1090.conf $ipath/nginx-$instance.conf
 if [[ $lighttpd == yes ]]; then
 	cp 88-tar1090.conf /etc/lighttpd/conf-available/88-$instance.conf
 	lighty-enable-mod $instance >/dev/null
