@@ -13,6 +13,7 @@ CHUNK_SIZE=$5
 ENABLE_978=$6
 URL_978=$7
 INT_978=$8
+PF_URL=$9
 
 if ! [[ -d $RUN_DIR && -d $SRC_DIR ]]
 then
@@ -180,11 +181,11 @@ fi
 
 sleep 3
 
-while true
+while [[ -n $PF_URL ]]
 do
 	sleep 10 &
 	TMP="pf.$RANDOM$RANDOM"
-	if cd $RUN_DIR && wget -T 5 -q -O $TMP http://127.0.0.1:30053/ajax/aircraft 2>/dev/null; then
+	if cd $RUN_DIR && wget -T 5 -q -O $TMP $PF_URL 2>/dev/null; then
 		sed -i -e 's/"user_l[a-z]*":"[0-9,.,-]*",//g' $TMP
 		mv $TMP pf.json
 		if grep -qs -F -e '"pf_data" : "false"' chunks.json; then
