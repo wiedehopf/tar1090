@@ -34,7 +34,7 @@ then
 	hash -r
 fi
 
-if ! dpkg -s lighttpd 2>/dev/null | grep 'Status.*installed' &>/dev/null
+if dpkg -s lighttpd 2>/dev/null | grep 'Status.*installed' &>/dev/null
 then
 	lighttpd=yes
 fi
