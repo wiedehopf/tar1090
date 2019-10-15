@@ -42,7 +42,7 @@ fi
 
 if dpkg -s nginx 2>/dev/null | grep 'Status.*installed' &>/dev/null
 then
-	lighttpd=yes
+	nginx=yes
 fi
 
 
@@ -125,7 +125,7 @@ sed -i -e 's/skyview978/skyaware978/' /etc/default/$instance
 cp nginx.conf $ipath/nginx-$instance.conf
 if [[ $lighttpd == yes ]]; then
 	cp 88-tar1090.conf /etc/lighttpd/conf-available/88-$instance.conf
-	lighty-enable-mod $instance || true
+	lighty-enable-mod $instance >/dev/null || true
 fi
 
 if grep -q '^server.modules += ( "mod_setenv" )' /etc/lighttpd/conf-available/89-dump1090-fa.conf
@@ -145,8 +145,11 @@ if [[ $changed_lighttpd == yes ]] && systemctl status lighttpd >/dev/null; then
 fi
 
 if [[ $nginx == yes ]]; then
+	echo
 	echo "To configure nginx for tar1090, please add the following line in the server {} section:"
+	echo
 	echo "include /usr/local/share/tar1090/nginx-$instance.conf;"
+	echo
 fi
 
 echo --------------
