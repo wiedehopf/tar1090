@@ -102,11 +102,11 @@ fi
 if [ -f $ipath/html/defaults.js ]; then
 	cp $ipath/html/config.js /tmp/tar1090_config.js
 fi
-cp $ipath/html/colors.css html/ 2>/dev/null
+cp $ipath/html/colors.css html/ 2>/dev/null || true
 
 cp -r * $ipath
 
-mv /tmp/tar1090_config.js $ipath/html/config.js 2>/dev/null
+mv /tmp/tar1090_config.js $ipath/html/config.js 2>/dev/null || true
 
 # bust cache for all css and js files
 sed -i -e "s/__cache_version__/$(date +%s)/g" $ipath/html/index.html
@@ -119,7 +119,7 @@ sed -i -e 's/skyview978/skyaware978/' /etc/default/$instance
 cp nginx-tar1090.conf $ipath/nginx-$instance.conf
 if [[ $lighttpd == yes ]]; then
 	cp 88-tar1090.conf /etc/lighttpd/conf-available/88-$instance.conf
-	lighty-enable-mod $instance >/dev/null
+	lighty-enable-mod $instance || true
 fi
 
 if grep -q '^server.modules += ( "mod_setenv" )' /etc/lighttpd/conf-available/89-dump1090-fa.conf
@@ -129,7 +129,7 @@ fi
 
 if [[ $changed == yes ]]; then
 	cp tar1090.service /lib/systemd/system/$instance.service
-	systemctl enable $instance &>/dev/null
+	systemctl enable $instance
 	echo "Restarting tar1090 ..."
 	systemctl restart $instance
 fi
