@@ -157,7 +157,7 @@ var badDot = new ol.style.Style({
 });
 
 PlaneObject.prototype.logSel = function(loggable) {
-	if (debug && this.selected && !SelectedAllPlanes)
+	if (debugTracks && this.selected && !SelectedAllPlanes)
 		console.log(loggable);
 	return;
 }
@@ -265,7 +265,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 	if (positionFilter && derivedMach > filterSpeed && this.too_fast < 1) {
 		this.bad_position = this.position;
 		this.too_fast++;
-		if (debug) {
+		if (debugTracks) {
 			console.log(this.icao + " / " + this.name + " ("+ this.dataSource + "): Implausible position filtered: " + this.bad_position[0] + ", " + this.bad_position[1] + " (Mach " + derivedMach.toFixed(1) + ") (" + (this.position_time - this.prev_time + 0.2).toFixed(1) + "s)");
 		}
 		this.position = this.prev_position;
@@ -961,7 +961,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
 PlaneObject.prototype.altitudeLines = function(altitude) {
 	var colorArr = this.getAltitudeColor(altitude);
 	var color = 'hsl(' + colorArr[0].toFixed(0) + ',' + colorArr[1].toFixed(0) + '%,' + colorArr[2].toFixed(0) + '%)';
-	if (!debug) {
+	if (!debugTracks) {
 		return new ol.style.Style({
 			stroke: new ol.style.Stroke({
 				color: color,

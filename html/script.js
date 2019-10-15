@@ -27,7 +27,7 @@ var loadFinished = false;
 var mapResizeTimeout;
 var refresh;
 var scaleFactor;
-var debug = false;
+var debugTracks = false;
 var debugAll = false;
 var trackLabels = false;
 var fragment;
@@ -44,6 +44,9 @@ var tableInView = false;
 var historyOutdated = false;
 var filterMLAT = false;
 var sidebar_width = 450;
+var fetchingPf = false;
+var reaping = false;
+var debug = false;
 
 var SpecialSquawks = {
 	'7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -230,9 +233,6 @@ function setupPlane(hex, plane) {
 }
 
 function fetchData() {
-	var center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
-	localStorage['CenterLon'] = CenterLon = center[0];
-	localStorage['CenterLat'] = CenterLat = center[1];
 	if (FetchPending != null) {
 		// don't double up on fetches, let the last one resolve
 		return;
@@ -241,6 +241,10 @@ function fetchData() {
 		// don't double up on fetches, let the last one resolve
 		return;
 	}
+	FetchPending = true;
+	var center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
+	localStorage['CenterLon'] = CenterLon = center[0];
+	localStorage['CenterLat'] = CenterLat = center[1];
 
 	var item;
 	var tryAgain = [];
@@ -536,14 +540,14 @@ function init_page() {
 	}
 
 	$('#debug_checkbox').on('click', function() {
-		toggleDebug();
+		toggleDebugTracks();
 	});
 
-	if (localStorage['debug'] === "true") {
-		debug = true;
+	if (localStorage['debugTracks'] === "true") {
+		debugTracks = true;
 		$('#debug_checkbox').addClass('settingsCheckboxChecked');
 	} else {
-		debug = false;
+		debugTracks = false;
 		$('#debug_checkbox').removeClass('settingsCheckboxChecked');
 	}
 
@@ -1039,10 +1043,16 @@ function initialize_map() {
 				toggleExtendedLabels();
 				break;
 			case "M":
-				toggleFilterMLAT();
+				filterMLAT = !filterMLAT;
 				break;
 			case "T":
-				toggleFilterTISB();
+				filterTISB = !filterTISB;
+				break;
+			case "P":
+				debugPosFilter = !debugPosFilter;
+				break;
+			case "D":
+				debug = !debug;
 				break;
 			case "k":
 				toggleTrackLabels();
@@ -1188,6 +1198,9 @@ function createSiteCircleFeatures() {
 // This looks for planes to reap out of the master Planes variable
 function reaper(all) {
 	//console.log("Reaping started..");
+	if (reaping)
+		return;
+	reaping = true;
 
 	// Look for planes where we have seen no messages for >300 seconds
 	var newPlanes = [];
@@ -1206,6 +1219,7 @@ function reaper(all) {
 	};
 
 	PlanesOrdered = newPlanes;
+	reaping = false;
 }
 
 // Page Title update function
@@ -1610,7 +1624,7 @@ function refreshTableInfo() {
 		}
 
 
-		if (tableplane.seen >= 58 || tableplane.isFiltered()) {
+		if (tableplane.seen == null || tableplane.seen >= 58 || tableplane.isFiltered()) {
 			classes = "plane_table_row hidden";
 		} else if (mapIsVisible && tableInView && (!inView || !tableplane.visible) && !(tableplane.selected && !SelectedAllPlanes)) {
 			TrackedAircraft++;
@@ -2240,14 +2254,14 @@ function toggleDebugAll() {
 	}
 }
 
-function toggleDebug() {
-	if (localStorage['debug'] === "true") {
-		debug = false;
-		localStorage['debug'] = "false";
+function toggleDebugTracks() {
+	if (localStorage['debugTracks'] === "true") {
+		debugTracks = false;
+		localStorage['debugTracks'] = "false";
 		$('#debug_checkbox').removeClass('settingsCheckboxChecked');
 	} else {
-		debug = true;
-		localStorage['debug'] = "true";
+		debugTracks = true;
+		localStorage['debugTracks'] = "true";
 		$('#debug_checkbox').addClass('settingsCheckboxChecked');
 	}
 	for (var i in PlanesOrdered) {
@@ -2371,13 +2385,6 @@ function toggleExtendedLabels() {
 	for (var key in PlanesOrdered) {
 		PlanesOrdered[key].updateMarker(false);
 	}
-}
-function toggleFilterMLAT() {
-	filterMLAT = !filterMLAT;
-}
-
-function toggleFilterTISB() {
-	filterTISB = !filterTISB;
 }
 
 function toggleTrackLabels() {
@@ -2517,6 +2524,9 @@ function updatePiAwareOrFlightFeeder() {
 }
 
 function fetchPfData() {
+	if (fetchingPf)
+		return;
+	fetchingPf = true;
 	for (const i in pf_data) {
 		const req = $.ajax({ url: pf_data[i],
 			timeout: 20000,
@@ -2548,6 +2558,7 @@ function fetchPfData() {
 				}
 
 			}
+			fetchingPf = false;
 		});
 	}
 }
