@@ -10,6 +10,7 @@ repo="https://github.com/wiedehopf/tar1090"
 ipath=/usr/local/share/tar1090
 install=0
 lighttpd=no
+nginx=no
 
 packages="unzip git p7zip-full perl jq"
 
@@ -35,6 +36,11 @@ then
 fi
 
 if dpkg -s lighttpd 2>/dev/null | grep 'Status.*installed' &>/dev/null
+then
+	lighttpd=yes
+fi
+
+if dpkg -s nginx 2>/dev/null | grep 'Status.*installed' &>/dev/null
 then
 	lighttpd=yes
 fi
@@ -82,7 +88,7 @@ fi
 
 sed -i -e "s?SOURCE_DIR?$srcdir?g" -e "s?INSTANCE?$instance?g" 88-tar1090.conf
 sed -i -e "s?SOURCE_DIR?$srcdir?g" -e "s?INSTANCE?$instance?g" tar1090.service
-sed -i -e "s?SOURCE_DIR?$srcdir?g" -e "s?INSTANCE?$instance?g" nginx-tar1090.conf
+sed -i -e "s?SOURCE_DIR?$srcdir?g" -e "s?INSTANCE?$instance?g" nginx.conf
 
 
 
@@ -116,7 +122,7 @@ cp -n default /etc/default/$instance
 sed -i -e 's/skyview978/skyaware978/' /etc/default/$instance
 
 
-cp nginx-tar1090.conf $ipath/nginx-$instance.conf
+cp nginx.conf $ipath/nginx-$instance.conf
 if [[ $lighttpd == yes ]]; then
 	cp 88-tar1090.conf /etc/lighttpd/conf-available/88-$instance.conf
 	lighty-enable-mod $instance || true
@@ -138,6 +144,10 @@ if [[ $changed_lighttpd == yes ]] && systemctl status lighttpd >/dev/null; then
 	systemctl restart lighttpd
 fi
 
+if [[ $nginx == yes ]]; then
+	echo "To configure nginx for tar1090, please add the following line in the server {} section:"
+	echo "include /usr/local/share/tar1090/nginx-$instance.conf;"
+fi
 
 echo --------------
 echo "All done! Webinterface available at http://$(ip route | grep -m1 -o -P 'src \K[0-9,.]*')/$instance"
