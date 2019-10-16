@@ -7,6 +7,7 @@ instance=tar1090
 srcdir=/run/dump1090-fa
 repo="https://github.com/wiedehopf/tar1090"
 ipath=/usr/local/share/tar1090
+html_path="$ipath/html"
 install=0
 lighttpd=no
 nginx=no
@@ -82,12 +83,13 @@ fi
 
 if [[ -n $2 ]]; then
 	instance=$2
+	html_path="$ipath/$instance-html"
 fi
 
 
-sed -i -e "s?SOURCE_DIR?$srcdir?g" -e "s?INSTANCE?$instance?g" 88-tar1090.conf
+sed -i -e "s?SOURCE_DIR?$srcdir?g" -e "s?INSTANCE?$instance?g" -e "s?HTMLPATH?$html_path?g" 88-tar1090.conf
+sed -i -e "s?SOURCE_DIR?$srcdir?g" -e "s?INSTANCE?$instance?g" -e "s?HTMLPATH?$html_path?g" nginx.conf
 sed -i -e "s?SOURCE_DIR?$srcdir?g" -e "s?INSTANCE?$instance?g" tar1090.service
-sed -i -e "s?SOURCE_DIR?$srcdir?g" -e "s?INSTANCE?$instance?g" nginx.conf
 
 
 
@@ -104,17 +106,20 @@ then
 fi
 
 # keep some stuff around
-if [ -f $ipath/html/defaults.js ]; then
-	cp $ipath/html/config.js /tmp/tar1090_config.js
+if [ -f $html_path/defaults.js ]; then
+	cp $html_path/config.js /tmp/tar1090_config.js
 fi
-cp $ipath/html/colors.css html/ 2>/dev/null || true
+cp $html_path/colors.css html/ 2>/dev/null || true
 
-cp -r * $ipath
+cp -r -T html $html_path
+cp 88-tar1090.conf default install.sh nginx.conf tar1090.service \
+	uninstall.sh 99-tar1090-webroot.conf LICENSE README.md \
+	tar1090.sh $ipath
 
-mv /tmp/tar1090_config.js $ipath/html/config.js 2>/dev/null || true
+mv /tmp/tar1090_config.js $html_path/config.js 2>/dev/null || true
 
 # bust cache for all css and js files
-sed -i -e "s/__cache_version__/$(date +%s)/g" $ipath/html/index.html
+sed -i -e "s/__cache_version__/$(date +%s)/g" $html_path/index.html
 
 # don't overwrite existing configuration
 cp -n default /etc/default/$instance
