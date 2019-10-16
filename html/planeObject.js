@@ -164,7 +164,11 @@ PlaneObject.prototype.logSel = function(loggable) {
 
 PlaneObject.prototype.isFiltered = function() {
 
-	if (filterMLAT && this.dataSource != "mlat" && this.dataSource != "other") {
+	if (onlyMLAT && this.dataSource != "mlat" && this.dataSource != "other") {
+		return true;
+	}
+
+	if (onlyADSB && this.dataSource != "adsb" && this.dataSource != "uat") {
 		return true;
 	}
 

@@ -42,7 +42,8 @@ var emptyStyle = new ol.style.Style({});
 var show_squawk_warning_cache = false;
 var tableInView = false;
 var historyOutdated = false;
-var filterMLAT = false;
+var onlyMLAT = false;
+var onlyADSB = false;
 var sidebar_width = 450;
 var fetchingPf = false;
 var reaping = false;
@@ -1036,10 +1037,13 @@ function initialize_map() {
 				toggleExtendedLabels();
 				break;
 			case "M":
-				filterMLAT = !filterMLAT;
+				onlyMLAT = !onlyMLAT;
 				break;
 			case "T":
 				filterTISB = !filterTISB;
+				break;
+			case "A":
+				onlyADSB = !onlyADSB;
 				break;
 			case "P":
 				debugPosFilter = !debugPosFilter;
@@ -1241,8 +1245,6 @@ function refreshSelected() {
 	refreshPageTitle();
 
 	//$('#dump1090_infoblock').css('display','block');
-	$('#dump1090_total_ac').text(TrackedAircraft);
-	$('#dump1090_total_ac_positions').text(TrackedAircraftPositions);
 	$('#dump1090_total_history').text(TrackedHistorySize);
 
 	if (MessageRate !== null) {
@@ -1686,6 +1688,7 @@ function refreshTableInfo() {
 		show_squawk_warning_cache = show_squawk_warning;
 	}
 
+	$('#dump1090_total_ac').text(TrackedAircraft);
 	$('#dump1090_total_ac_positions').text(TrackedAircraftPositions);
 
 	resortTable();
