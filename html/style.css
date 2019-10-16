@@ -361,15 +361,15 @@ select.error, textarea.error, input.error {
 	right: 0px;
 	top: 140px;
     width: 30pt;
-    height: 100%;
+    height: flex;
     z-index: 9;
 }
 #header_top {
 	text-align: right;
 	position: absolute;
-	right: 90px;
+	right: 94px;
 	top: 0px;
-    width: 100%;
+    width: flex;
     height: 30pt;
     z-index: 9;
 }
@@ -385,7 +385,9 @@ select.error, textarea.error, input.error {
 }
 
 .buttonContainer {
-	margin: 2pt;
+	display: block;
+	margin: 1px;
+    text-align: center;
 }
 .buttonSpacer {
 	margin: 6pt;
@@ -409,7 +411,7 @@ select.error, textarea.error, input.error {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
     display: inline-block;
-	margin: 4pt;
+	margin: 2px;
     cursor: pointer;
     text-align: center;
 }
@@ -431,10 +433,6 @@ select.error, textarea.error, input.error {
 .lightblue-link, .lightblue-link a {
 	color: #67b6c3;
     font-weight: normal;
-}
-
-.buttonHeader {
-    margin-top: 0px;
 }
 
 .buttonTable {
