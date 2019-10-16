@@ -42,6 +42,10 @@ var range_outline_colored_by_altitude = false;
 
 // -- Marker settings -------------------------------------
 
+var markerScaleFactor = 1.2;
+var markerMaxSize = 1.32;
+var markerMinSize = 0.72;
+
 // These settings control the coloring of aircraft by altitude.
 // All color values are given as Hue (0-359) / Saturation (0-100) / Lightness (0-100)
 var ColorByAlt = {

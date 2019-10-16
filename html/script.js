@@ -946,23 +946,9 @@ function initialize_map() {
 
 
 	// show the hover box
-	OLMap.on('pointermove', function(evt) {
-		var hex = evt.map.forEachFeatureAtPixel(evt.pixel,
-			function(feature, layer) {
-				return feature.hex;
-			},
-			{ layerFilter: function(layer) {
-				return (layer === iconLayer);
-			}}
-		);
-
-		if (hex) {
-			highlightPlaneByHex(hex);
-		} else {
-			removeHighlight();
-		}
-
-	})
+	if (ZoomLvl > 6.5) {
+		OLMap.on('pointermove', onPointermove);
+	}
 
 	// handle the layer settings pane checkboxes
 	OLMap.once('postrender', function(e) {
@@ -2586,13 +2572,19 @@ function zoomOut() {
 }
 function changeZoom() {
 		localStorage['ZoomLvl'] = ZoomLvl;
-		scaleFactor = 1.2*Math.max(0.6, Math.min(1.15, 0.09 * Math.pow(1.35, ZoomLvl)));
+		scaleFactor = Math.max(markerMinSize, Math.min(markerMaxSize, markerScaleFactor * 0.09 * Math.pow(1.35, ZoomLvl)));
 		for (var i in PlanesOrdered) {
 			var plane = PlanesOrdered[i];
 			if (plane.markerIcon) {
 				plane.scaleCache = scaleFactor * plane.baseScale;
 				plane.markerIcon.setScale(plane.scaleCache);
 			}
+		}
+		if (ZoomLvl > 6.5) {
+			OLMap.on('pointermove', onPointermove);
+		} else {
+			OLMap.un('pointermove', onPointermove);
+			removeHighlight();
 		}
 }
 
@@ -2605,4 +2597,21 @@ function updateCell(plane, cell, newValue, html) {
 			plane.tr.cells[cell].textContent = newValue;
 		}
 	}
+}
+function onPointermove(evt) {
+	const hex = evt.map.forEachFeatureAtPixel(evt.pixel,
+		function(feature, layer) {
+			return feature.hex;
+		},
+		{ layerFilter: function(layer) {
+			return (layer == iconLayer);
+		}}
+	);
+
+	if (hex) {
+		highlightPlaneByHex(hex);
+	} else {
+		removeHighlight();
+	}
+
 }
