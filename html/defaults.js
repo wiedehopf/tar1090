@@ -184,6 +184,9 @@ var positionFilterSpeed = 2.5; // in Mach
 var positionFilterGsFactor = 1.8;
 var debugPosFilter = false;
 
+// enable/disable mouseover/hover aircraft information
+var enableMouseover = true;
+
 // Columns that have a // in front of them are shown.
 var HideCols = [
 	"#icao",

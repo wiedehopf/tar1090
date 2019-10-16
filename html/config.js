@@ -154,6 +154,9 @@ BingMapsAPIKey = null;
 // positionFilterGsFactor = 1.8;
 // debugPosFilter = false; // draw red dots for filtered positions
 
+// enable/disable mouseover/hover aircraft information
+//enableMouseover = true;
+
 // Columns that have a // in front of them are shown.
 HideCols = [
 	"#icao",
