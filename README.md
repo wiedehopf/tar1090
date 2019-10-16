@@ -11,7 +11,7 @@ Provides an improved dump1090-fa webinterface
 
 See the bottom of the page for screenshots
 
-### Installation / Update:
+## Installation / Update:
 
 ```
 sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"
@@ -103,9 +103,11 @@ sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/tar1090
 ![Screenshot1](https://raw.githubusercontent.com/wiedehopf/tar1090/screenshots/screenshot1.png)
 ![Screenshot2](https://raw.githubusercontent.com/wiedehopf/tar1090/screenshots/screenshot2.png)
 
-## nginx configuration for dump1090-fa
+## nginx configuration
 
-If you are using another /run directory like /run/dump1090-fa, just change the path.
+If nginx is installed, the install script should give you a configuration file
+you can include.  The configuration needs to go into the appropriate server { }
+section and looks something like this in case you are interested:
 
 ```
 location /tar1090/data/ {
