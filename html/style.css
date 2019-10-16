@@ -264,6 +264,7 @@ select.error, textarea.error, input.error {
 .layer-switcher {
     top: 3px !important;
     right: 47px !important;
+    z-index: 999;
 }
 
 /* new css */

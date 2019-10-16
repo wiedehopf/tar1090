@@ -13,10 +13,13 @@
 			//			"url" : "https://{a-c}.tile.openstreetmap.se/osm/{z}/{x}/{y}.png"
 
 function createBaseLayers() {
-	var layers = [];
+	var layers = new ol.Collection();
+	var layers_group = new ol.layer.Group({
+			layers: layers,
+	});
 
-	var world = [];
-	var us = [];
+	var world = new ol.Collection();
+	var us = new ol.Collection();
 
 	//		opacity: 0.9,
 	world.push(new ol.layer.Tile({
@@ -158,7 +161,8 @@ function createBaseLayers() {
 	refreshNexrad();
 	window.setInterval(refreshNexrad, 5 * 60000);
 
-	if (world.length > 0) {
+
+	if (world.getLength() > 0) {
 		layers.push(new ol.layer.Group({
 			name: 'world',
 			title: 'Worldwide',
@@ -166,7 +170,7 @@ function createBaseLayers() {
 		}));
 	}
 
-	if (us.length > 0) {
+	if (us.getLength() > 0) {
 		layers.push(new ol.layer.Group({
 			name: 'us',
 			title: 'US',
@@ -174,5 +178,5 @@ function createBaseLayers() {
 		}));
 	}
 
-	return layers;
+	return layers_group;
 }

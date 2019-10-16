@@ -79,6 +79,7 @@ var MessageRate = 0;
 var NBSP='\u00a0';
 
 var layers;
+var layers_group;
 
 // piaware vs flightfeeder
 var isFlightFeeder = false;
@@ -795,7 +796,8 @@ function initialize_map() {
 
 	// Initialize OL3
 
-	layers = createBaseLayers();
+	layers_group = createBaseLayers();
+	layers = layers_group.getLayers();
 
 	iconLayer = new ol.layer.Vector({
 		name: 'ac_positions',
@@ -830,7 +832,8 @@ function initialize_map() {
 	var foundType = false;
 	var baseCount = 0;
 
-	ol.control.LayerSwitcher.forEachRecursive(layers, function(lyr) {
+	ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
+		console.log(lyr);
 		if (!lyr.get('name'))
 			return;
 
@@ -862,7 +865,7 @@ function initialize_map() {
 	})
 
 	if (!foundType) {
-		ol.control.LayerSwitcher.forEachRecursive(layers, function(lyr) {
+		ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
 			if (foundType)
 				return;
 			if (lyr.get('type') === 'base') {
@@ -884,8 +887,8 @@ function initialize_map() {
 			new ol.control.Attribution({collapsed: true}),
 			new ol.control.ScaleLine({units: DisplayUnits})
 		],
-		//loadTilesWhileAnimating: true,
-		//loadTilesWhileInteracting: true,
+		loadTilesWhileAnimating: true,
+		loadTilesWhileInteracting: true,
 	});
 
 	OLMap.getView().setRotation(mapOrientation); // adjust orientation
@@ -2286,13 +2289,10 @@ function dim(evt) {
 }
 
 function toggleMapDim(switchOn) {
-	const maps_world = layers[0].getLayersArray();
-	const maps_US = layers[1].getLayersArray();
-	const maps = maps_world.concat(maps_US);
 	if (!switchOn && localStorage['MapDim'] === "true") {
 		localStorage['MapDim'] = "false";
 
-		ol.control.LayerSwitcher.forEachRecursive(layers, function(lyr) {
+		ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
 			if (lyr.get('type') != 'base')
 				return;
 			ol.Observable.unByKey(lyr.dimKey);
@@ -2310,10 +2310,10 @@ function toggleMapDim(switchOn) {
 	} else {
 		localStorage['MapDim'] = "true";
 
-		ol.control.LayerSwitcher.forEachRecursive(layers, function(lyr) {
+		ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
 			if (lyr.get('type') != 'base')
 				return;
-			lyr.dimKey = lyr.on('postcompose', dim);
+			lyr.dimKey = lyr.on('postrender', dim);
 		});
 
 		$('#mapdim_checkbox').addClass('settingsCheckboxChecked');
@@ -2473,7 +2473,7 @@ function getFlightAwarePhotoLink(registration) {
 // takes in an elemnt jQuery path and the OL3 layer name and toggles the visibility based on clicking it
 function toggleLayer(element, layer) {
 	// set initial checked status
-	ol.control.LayerSwitcher.forEachRecursive(layers, function(lyr) { 
+	ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) { 
 		if (lyr.get('name') === layer && lyr.getVisible()) {
 			$(element).addClass('settingsCheckboxChecked');
 		}
@@ -2483,7 +2483,7 @@ function toggleLayer(element, layer) {
 		if ($(element).hasClass('settingsCheckboxChecked')) {
 			visible = true;
 		}
-		ol.control.LayerSwitcher.forEachRecursive(layers, function(lyr) { 
+		ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) { 
 			if (lyr.get('name') === layer) {
 				if (visible) {
 					lyr.setVisible(false);
