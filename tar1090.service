@@ -1,6 +1,6 @@
 
 [Unit]
-Description=tar1090 - compress dump1090 json data
+Description=INSTANCE - compress dump1090 json data
 Wants=network.target
 After=network.target
 

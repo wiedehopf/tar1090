@@ -167,11 +167,17 @@ do
 	echo "$RUN_DIR/chunks.json was corrupted or removed, restarting history chunk creation!"
 done &
 
+if [[ $(echo $URL_978 | head -c7) == "FILE://" ]]; then
+	COMMAND_978="cp $(echo -n $URL_978 | tail -c+8) 978.tmp"
+else
+	COMMAND_978="wget -T 5 -q -O 978.tmp $URL_978/data/aircraft.json $COMPRESS_978"
+fi
+
 if [[ $ENABLE_978 == "yes" ]]; then
 	while true
 	do
 		sleep $INT_978 &
-		if cd $RUN_DIR && wget -T 5 -q -O 978.tmp $URL_978/data/aircraft.json $COMPRESS_978; then
+		if cd $RUN_DIR && $COMMAND_978; then
 			sed -i -e 's/"now" \?:/"uat_978":"true","now":/' 978.tmp
 			mv 978.tmp 978.json
 		fi
