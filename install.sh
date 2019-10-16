@@ -99,9 +99,7 @@ if ! diff tar1090.sh /usr/local/share/tar1090/tar1090.sh &>/dev/null \
 then
 	changed=yes
 fi
-if ! diff 88-tar1090.conf /etc/lighttpd/conf-available/88-$instance.conf &>/dev/null \
-	|| ! diff 88-tar1090.conf /etc/lighttpd/conf-enabled/88-$instance.conf &>/dev/null
-then
+if ! diff 88-tar1090.conf /etc/lighttpd/conf-enabled/88-$instance.conf &>/dev/null; then
 	changed_lighttpd=yes
 fi
 
@@ -130,12 +128,12 @@ cp nginx.conf $ipath/nginx-$instance.conf
 if [[ $lighttpd == yes ]]; then
 	cp 88-tar1090.conf /etc/lighttpd/conf-available/88-$instance.conf
 	lighty-enable-mod $instance >/dev/null || true
+	if grep -q '^server.modules += ( "mod_setenv" )' /etc/lighttpd/conf-available/89-dump1090-fa.conf
+	then
+		sed -i -e 's/^server.modules += ( "mod_setenv" )/#server.modules += ( "mod_setenv" )/'  $(find /etc/lighttpd/conf-available/* | grep -v dump1090-fa)
+	fi
 fi
 
-if grep -q '^server.modules += ( "mod_setenv" )' /etc/lighttpd/conf-available/89-dump1090-fa.conf
-then
-	sed -i -e 's/^server.modules += ( "mod_setenv" )/#server.modules += ( "mod_setenv" )/'  $(find /etc/lighttpd/conf-available/* | grep -v dump1090-fa)
-fi
 
 if [[ $changed == yes ]]; then
 	cp tar1090.service /lib/systemd/system/$instance.service
