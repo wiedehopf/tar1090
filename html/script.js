@@ -833,7 +833,6 @@ function initialize_map() {
 	var baseCount = 0;
 
 	ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
-		console.log(lyr);
 		if (!lyr.get('name'))
 			return;
 

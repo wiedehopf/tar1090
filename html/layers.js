@@ -162,19 +162,19 @@ function createBaseLayers() {
 	window.setInterval(refreshNexrad, 5 * 60000);
 
 
-	if (world.getLength() > 0) {
-		layers.push(new ol.layer.Group({
-			name: 'world',
-			title: 'Worldwide',
-			layers: world
-		}));
-	}
 
 	if (us.getLength() > 0) {
 		layers.push(new ol.layer.Group({
 			name: 'us',
 			title: 'US',
-			layers: us
+			layers: new ol.Collection(us.getArray().reverse())
+		}));
+	}
+	if (world.getLength() > 0) {
+		layers.push(new ol.layer.Group({
+			name: 'world',
+			title: 'Worldwide',
+			layers: new ol.Collection(world.getArray().reverse())
 		}));
 	}
 
