@@ -928,13 +928,18 @@ function initialize_map() {
 	});
 
 	OLMap.on(['click', 'dblclick'], function(evt) {
-		var hex = evt.map.forEachFeatureAtPixel(evt.pixel,
+		var hex = evt.map.forEachFeatureAtPixel(
+			evt.pixel,
 			function(feature, layer) {
 				return feature.hex;
 			},
-			{ layerFilter: function(layer) {
-				return (layer === iconLayer);
-			}});
+			{
+				layerFilter: function(layer) {
+					return (layer === iconLayer);
+				},
+				hitTolerance:5,
+			}
+		);
 		if (hex) {
 			selectPlaneByHex(hex, (evt.type === 'dblclick'));
 			adjustSelectedInfoBlockPosition();
