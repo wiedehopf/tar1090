@@ -14,6 +14,7 @@ ENABLE_978=$6
 URL_978=$7
 INT_978=$8
 PF_URL=$9
+COMPRESS_978=${10}
 
 if ! [[ -d $RUN_DIR && -d $SRC_DIR ]]
 then
