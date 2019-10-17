@@ -1129,8 +1129,12 @@ PlaneObject.prototype.focusRedDot = function(bad_position) {
 		selectPlaneByHex(this.icao, false);
 	}
 	var badFeat = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(bad_position)));
+	var geom = new ol.geom.LineString([ol.proj.fromLonLat(this.prev_position), ol.proj.fromLonLat(bad_position)]);
+	var lineFeat = new ol.Feature(geom);
+	lineFeat.setStyle(this.altitudeLines(60000));
 	badFeat.setStyle(badDot);
 	this.trail_features.push(badFeat);
+	this.trail_features.push(lineFeat);
 }
 
 /**
