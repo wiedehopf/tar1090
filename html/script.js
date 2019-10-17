@@ -49,6 +49,7 @@ var fetchingPf = false;
 var reaping = false;
 var debug = false;
 var debugJump = false;
+var noMLAT = false;
 
 var SpecialSquawks = {
 	'7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -384,6 +385,8 @@ function initialize() {
 		debug = true;
 	if (localStorage['debugPosFilter'] == "true")
 		debugPosFilter = true;
+	if (localStorage['noMLAT'] == "true")
+		noMLAT = true;
 
 	$.when(configureReceiver).done(function() {
 		configureReceiver = null;
@@ -1064,6 +1067,11 @@ function initialize_map() {
 				debugJump = !debugJump;
 				localStorage['debugJump'] = debugJump;
 				console.log('debugJump = ' + debugJump);
+				break;
+			case "N":
+				noMLAT = !noMLAT;
+				localStorage['noMLAT'] = noMLAT;
+				console.log('noMLAT = ' + noMLAT);
 				break;
 			case "k":
 				toggleTrackLabels();

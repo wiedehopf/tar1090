@@ -711,6 +711,9 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 
 	this.last_message_time = now - seen;
 
+	if (noMLAT && mlat)
+		return;
+
 	// remember last known position even if stale
 	// and some other magic to avoid mlat positions when a current ads-b position is available
 	if (lat != null && !this.wasMLAT && mlat && this.position != null && now - this.position_time < 30) {
