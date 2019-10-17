@@ -78,10 +78,20 @@ Follow the instructions in the file.
 
 ### Installation / Update to work with another folder, for example /run/combine1090
 
+
 ```
 wget -q -O /tmp/install.sh https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh
 sudo bash /tmp/install.sh /run/combine1090
 ```
+
+Or if you want it at /tar1090 but for example /my-cool-receiver :
+```
+sudo bash /tmp/install.sh /run/combine1090 my-cool-receiver
+```
+
+This way you can install multiple instances of tar1090.  Note that you still
+need to take care of different dump1090-fa instances, combine1090 for example
+will run a second instance.
 
 ## Remove / Uninstall
 
@@ -100,10 +110,6 @@ sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/tar1090
 - T selects all aircraft
 - B toggle map brightness
 
-
-## Screenshots
-![Screenshot1](https://raw.githubusercontent.com/wiedehopf/tar1090/screenshots/screenshot1.png)
-![Screenshot2](https://raw.githubusercontent.com/wiedehopf/tar1090/screenshots/screenshot2.png)
 
 ## Alternative lighttpd configuration
 
