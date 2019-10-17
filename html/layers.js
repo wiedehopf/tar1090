@@ -147,7 +147,6 @@ function createBaseLayers() {
 		opacity: 0.5,
 		visible: false
 	});
-	us.push(nexrad);
 
 	var refreshNexrad = function() {
 		// re-build the source to force a refresh of the nexrad tiles
@@ -177,6 +176,7 @@ function createBaseLayers() {
 			layers: new ol.Collection(world.getArray().reverse())
 		}));
 	}
+	layers.push(nexrad);
 
 	return layers_group;
 }
