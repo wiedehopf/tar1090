@@ -187,8 +187,6 @@ function setupPlane(hex, plane) {
 
 	plane.tr = PlaneRowTemplate.cloneNode(true);
 
-	plane.trCache = [];
-
 	if (hex[0] === '~') {
 		// Non-ICAO address
 		plane.tr.cells[0].textContent = hex.substring(1);

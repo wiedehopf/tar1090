@@ -9,6 +9,9 @@ function PlaneObject(icao) {
 	this.selected  = false;
 	this.category  = null;
 	this.dataSource = null;
+	this.wasMLAT = false;
+
+	this.trCache = [];
 
 	// Basic location information
 	this.altitude       = null;
@@ -707,9 +710,11 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 
 	// remember last known position even if stale
 	// and some other magic to avoid mlat positions when a current ads-b position is available
-	if (this.dataSource != "mlat" && mlat && now - this.position_time < 30) {
+	if (lat != null && !this.wasMLAT && mlat && this.position != null && now - this.position_time < 30) {
 		mlat = false;
-		// don't use MLAT for 30 seconds after getting a valid ADS-B position
+		// don't use MLAT for 60 seconds after getting an ADS-B position
+		// console.log(this.icao + ': mlat position ignored');
+		// this.focusRedDot([lon,lat]);
 	} else if (lat != null && seen_pos < (now - this.position_time + 2)) {
 		this.position   = [lon, lat];
 		this.position_time = now - seen_pos;
@@ -747,9 +752,11 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 		this.track = track;
 	}
 
-	if (init && mlat) {
-		this.dataSource = "mlat";
-	}
+	if (mlat)
+		this.wasMLAT = true;
+	else if (!mlat && lat != null)
+		this.wasMLAT = false;
+
 
 	if (init)
 		return;
@@ -1124,16 +1131,16 @@ function calcAltitudeRounded(altitude) {
 }
 
 PlaneObject.prototype.focusRedDot = function(bad_position) {
-	if (loadFinished) {
+	if (loadFinished && SelectedPlane != this) {
 		OLMap.getView().setCenter(ol.proj.fromLonLat(bad_position));
 		selectPlaneByHex(this.icao, false);
 	}
 	var badFeat = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(bad_position)));
+	badFeat.setStyle(badDot);
+	this.trail_features.push(badFeat);
 	var geom = new ol.geom.LineString([ol.proj.fromLonLat(this.prev_position), ol.proj.fromLonLat(bad_position)]);
 	var lineFeat = new ol.Feature(geom);
 	lineFeat.setStyle(this.altitudeLines(60000));
-	badFeat.setStyle(badDot);
-	this.trail_features.push(badFeat);
 	this.trail_features.push(lineFeat);
 }
 
