@@ -8,7 +8,7 @@ function PlaneObject(icao) {
 	this.squawk    = null;
 	this.selected  = false;
 	this.category  = null;
-	this.dataSource = null;
+	this.dataSource = "other";
 	this.wasMLAT = false;
 
 	this.trCache = [];
@@ -789,7 +789,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 		this.dataSource = "adsb";
 	else if (data.type == "adsb_icao_nt")
 		this.dataSource = "other";
-	else if (this.position == null)
+	else if (this.seen_pos > 60)
 		this.dataSource = "other";
 
 	// Update all of our data
