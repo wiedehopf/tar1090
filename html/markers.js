@@ -178,6 +178,7 @@ var TypeDesignatorIcons = {
 	'E295': ['airliner', 0.86], // 62t
 	'BCS1': ['airliner', 0.86], // 64t
 	'BCS3': ['airliner', 0.88], // 70t
+	'J328': ['airliner', 0.80], // 15t
 	'E135': ['jet_swept', 0.96], // 20t
 	'E35L': ['jet_swept', 0.96], // 24t
 	'E145': ['jet_swept', 0.96], // 22t
