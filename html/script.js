@@ -48,6 +48,7 @@ var sidebar_width = 450;
 var fetchingPf = false;
 var reaping = false;
 var debug = false;
+var debugJump = false;
 
 var SpecialSquawks = {
 	'7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -379,6 +380,10 @@ function initialize() {
 		tableInView = true;
 		toggleTableInView("noToggle")
 	}
+	if (localStorage['debug'] == "true")
+		debug = true;
+	if (localStorage['debugPosFilter'] == "true")
+		debugPosFilter = true;
 
 	$.when(configureReceiver).done(function() {
 		configureReceiver = null;
@@ -1045,9 +1050,18 @@ function initialize_map() {
 				break;
 			case "P":
 				debugPosFilter = !debugPosFilter;
+				localStorage['debugPosFilter'] = debugPosFilter;
+				console.log('debugPosFilter = ' + debugPosFilter);
 				break;
 			case "D":
 				debug = !debug;
+				localStorage['debug'] = debug;
+				console.log('debug = ' + debug);
+				break;
+			case "J":
+				debugJump = !debugJump;
+				localStorage['debugJump'] = debugJump;
+				console.log('debugJump = ' + debugJump);
 				break;
 			case "k":
 				toggleTrackLabels();
@@ -1322,12 +1336,12 @@ function refreshSelected() {
 	$('#selected_track2').text(format_track_brief(selected.track));
 
 	if (selected.seen != null && selected.seen < 1000000) {
-		$('#selected_seen').text(selected.seen.toFixed(1) + ' s');
+		$('#selected_seen').text(selected.seen.toFixed(1));
 	} else {
 		$('#selected_seen').text('n/a');
 	}
 	if (selected.seen_pos != null&& selected.seen_pos < 1000000) {
-		$('#selected_seen_pos').text(selected.seen_pos.toFixed(1) + ' s');
+		$('#selected_seen_pos').text(selected.seen_pos.toFixed(1));
 	} else {
 		$('#selected_seen_pos').text('n/a');
 	}
@@ -1366,7 +1380,7 @@ function refreshSelected() {
 	$('#selected_sitedist2').text(format_distance_long(selected.sitedist, DisplayUnits));
 	$('#selected_rssi1').text(selected.rssi != null ? selected.rssi.toFixed(1) : "n/a");
 	$('#selected_message_count').text(selected.messages);
-	$('#selected_message_rate').text((selected.messageRate != null) ? (selected.messageRate.toFixed(0) + " /s") : "n/a");
+	$('#selected_message_rate').text((selected.messageRate != null) ? (selected.messageRate.toFixed(1)) : "n/a");
 	if (flightawareLinks) {
 		$('#selected_photo_link').html(getFlightAwarePhotoLink(selected.registration));
 	}

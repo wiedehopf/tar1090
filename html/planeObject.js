@@ -272,14 +272,13 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 	if (positionFilter && derivedMach > filterSpeed && this.too_fast < 1) {
 		this.bad_position = this.position;
 		this.too_fast++;
-		if (debugTracks) {
+		if (debugPosFilter) {
 			console.log(this.icao + " / " + this.name + " ("+ this.dataSource + "): Implausible position filtered: " + this.bad_position[0] + ", " + this.bad_position[1] + " (Mach " + derivedMach.toFixed(1) + ") (" + (this.position_time - this.prev_time + 0.2).toFixed(1) + "s)");
 		}
 		this.position = this.prev_position;
 		this.position_time = this.prev_time;
 		if (debugPosFilter) {
-			this.focusRedDot(this.bad_position);
-			return true;
+			this.drawRedDot(this.bad_position);
 		}
 		return false;
 	} else {
@@ -714,7 +713,10 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 		mlat = false;
 		// don't use MLAT for 60 seconds after getting an ADS-B position
 		// console.log(this.icao + ': mlat position ignored');
-		// this.focusRedDot([lon,lat]);
+		// this.drawRedDot([lon,lat]);
+		if (debug && this.prev_position) {
+			this.drawRedDot([lon, lat]);
+		}
 	} else if (lat != null && seen_pos < (now - this.position_time + 2)) {
 		this.position   = [lon, lat];
 		this.position_time = now - seen_pos;
@@ -780,7 +782,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 		this.dataSource = "adsb";
 	else if (data.type == "adsb_icao_nt")
 		this.dataSource = "other";
-	else
+	else if (this.position == null)
 		this.dataSource = "other";
 
 	// Update all of our data
@@ -1130,8 +1132,8 @@ function calcAltitudeRounded(altitude) {
 	}
 }
 
-PlaneObject.prototype.focusRedDot = function(bad_position) {
-	if (loadFinished && SelectedPlane != this) {
+PlaneObject.prototype.drawRedDot = function(bad_position) {
+	if (debugJump && loadFinished && SelectedPlane != this) {
 		OLMap.getView().setCenter(ol.proj.fromLonLat(bad_position));
 		selectPlaneByHex(this.icao, false);
 	}
