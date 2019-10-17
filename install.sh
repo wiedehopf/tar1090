@@ -112,7 +112,7 @@ cp $html_path/colors.css html/ 2>/dev/null || true
 cp -r -T html $html_path
 cp 88-tar1090.conf default install.sh nginx.conf tar1090.service \
 	uninstall.sh 99-tar1090-webroot.conf LICENSE README.md \
-	tar1090.sh $ipath
+	tar1090.sh 95-tar1090-otherport.conf $ipath
 
 mv /tmp/tar1090_config.js $html_path/config.js 2>/dev/null || true
 

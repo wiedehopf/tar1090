@@ -103,6 +103,28 @@ sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/tar1090
 ![Screenshot1](https://raw.githubusercontent.com/wiedehopf/tar1090/screenshots/screenshot1.png)
 ![Screenshot2](https://raw.githubusercontent.com/wiedehopf/tar1090/screenshots/screenshot2.png)
 
+## Alternative lighttpd configuration
+
+Placing tar1090 on port 8504:
+```
+sudo cp /usr/local/share/tar1090/95-tar1090-otherport.conf /etc/lighttpd/conf-enabled
+sudo systemctl restart lighttpd
+```
+
+Placing tar1090 at / instead of /tar1090:
+```
+sudo cp /usr/local/share/tar1090/99-tar1090-webroot.conf /etc/lighttpd/conf-enabled
+sudo systemctl restart lighttpd
+```
+
+Note if those cause lighttpd not to start for any reason some other lighttpd configuration is conflicting.
+To solve the problem just delete the configuration you copied there:
+```
+sudo rm /etc/lighttpd/conf-enabled/95-tar1090-otherport.conf
+sudo rm /etc/lighttpd/conf-enabled/99-tar1090-webroot.conf
+sudo systemctl restart lighttpd
+```
+
 ## nginx configuration
 
 If nginx is installed, the install script should give you a configuration file
