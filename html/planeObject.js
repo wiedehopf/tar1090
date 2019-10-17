@@ -284,8 +284,10 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 	} else {
 		this.too_fast = Math.max(-3, this.too_fast--);
 	}
-	if (positionFilter && this.dataSource == "mlat" && on_ground)
+	if (positionFilter && this.wasMLAT && on_ground) {
+		this.bad_position = this.position;
 		return true;
+	}
 
 	// Determine if track data are intermittent/stale
 	// Time difference between two position updates should not be much
@@ -295,10 +297,12 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 	var stale_timeout = lastseg.estimated ? 5 : 10;
 
 	// MLAT data are given some more leeway
-	if (this.dataSource == "mlat") stale_timeout = 15;
+	if (this.wasMLAT)
+		stale_timeout = 15;
 
 	// On the ground you can't go that quick
-	if (on_ground) stale_timeout = 30;
+	if (on_ground)
+		stale_timeout = 30;
 
 	var est_track = (time_difference > stale_timeout);
 
