@@ -780,6 +780,8 @@ function initialize_map() {
 	ZoomLvl = Number(localStorage['ZoomLvl']) || DefaultZoomLvl;
 	ZoomLvlCache = ZoomLvl;
 	MapType_tar1090 = localStorage['MapType_tar1090'];
+	if (!MapType_tar1090)
+		MapType_tar1090="carto_light_all";
 
 	// Set SitePosition, initialize sorting
 	if (SiteShow && (typeof SiteLat !==  'undefined') && (typeof SiteLon !==  'undefined')) {
@@ -989,7 +991,7 @@ function initialize_map() {
 		}
 	}
 
-	if (localStorage['MapDim'] === "true") {
+	if (localStorage['MapDim'] == undefined || localStorage['MapDim'] == "true") {
 		toggleMapDim(true);
 	}
 

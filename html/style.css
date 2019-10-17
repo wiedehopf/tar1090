@@ -443,7 +443,7 @@ select.error, textarea.error, input.error {
 	width: 22pt;
 	height: 22pt;
     cursor: pointer;
-	margin: 4pt;
+	margin: 3pt;
 	margin-top: 8pt;
 	margin-bottom: 8pt;
     background-image: url('images/settings-icon.png');
