@@ -11,6 +11,7 @@ var SiteCircleFeatures = new ol.Collection();
 var PlaneIconFeatures = new ol.Collection();
 var trailGroup = new ol.Collection();
 var iconLayer;
+var trailLayers;
 var iconCache = {};
 var addToIconCache = [];
 var Planes        = {};
@@ -827,19 +828,29 @@ function initialize_map() {
 			})
 		}));
 
-	layers.push(
-		new ol.layer.Group({
-			name: 'ac_trail',
-			title: 'Aircraft trails',
-			type: 'overlay',
-			layers: trailGroup,
-		})
-	);
+	trailLayers = new ol.layer.Group({
+		name: 'ac_trail',
+		title: 'Aircraft trails',
+		type: 'overlay',
+		layers: trailGroup,
+	});
+
+	layers.push(trailLayers);
 
 	layers.push(iconLayer);
 
 	var foundType = false;
 	var baseCount = 0;
+
+	const dummyLayer = new ol.layer.Vector({
+		name: 'dummy',
+		source: new ol.source.Vector({
+			features: new ol.Collection(),
+		}),
+		renderOrder: null,
+	});
+
+	trailGroup.push(dummyLayer);
 
 	ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
 		if (!lyr.get('name'))
@@ -1938,26 +1949,27 @@ function selectAllPlanes() {
 	// if all planes are already selected, deselect them all
 	if (SelectedAllPlanes) {
 		deselectAllPlanes();
-	} else {
-		// If SelectedPlane has something in it, clear out the selected
-		if (SelectedPlane != null) {
-			SelectedPlane.selected = false;
-			SelectedPlane.clearLines();
-			SelectedPlane.updateMarker();
-			$(SelectedPlane.tr).removeClass("selected");
-		}
+		return;
+	}
+	// If SelectedPlane has something in it, clear out the selected
+	if (SelectedPlane != null) {
+		SelectedPlane.selected = false;
+		SelectedPlane.clearLines();
+		SelectedPlane.updateMarker();
+		$(SelectedPlane.tr).removeClass("selected");
+	}
 
-		SelectedPlane = null;
-		SelectedAllPlanes = true;
+	SelectedPlane = null;
+	SelectedAllPlanes = true;
 
-		for(var key in Planes) {
-			if (Planes[key].visible && !Planes[key].isFiltered()) {
-				Planes[key].selected = true;
-				Planes[key].updateLines();
-				Planes[key].updateMarker();
-			}
+	for(var key in Planes) {
+		if (Planes[key].visible && !Planes[key].isFiltered()) {
+			Planes[key].selected = true;
+			Planes[key].updateLines();
+			Planes[key].updateMarker();
 		}
 	}
+
 
 	$('#selectall_checkbox').addClass('settingsCheckboxChecked');
 
@@ -1988,7 +2000,6 @@ function deselectAllPlanes() {
 	for(var key in Planes) {
 		Planes[key].selected = false;
 		Planes[key].clearLines();
-		Planes[key].updateMarker();
 		$(Planes[key].tr).removeClass("selected");
 	}
 	$('#selectall_checkbox').removeClass('settingsCheckboxChecked');
