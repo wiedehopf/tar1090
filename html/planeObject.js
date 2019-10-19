@@ -282,7 +282,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 		}
 		return false;
 	} else {
-		this.too_fast = Math.max(-3, this.too_fast--);
+		this.too_fast = Math.max(-5, --this.too_fast);
 	}
 	if (positionFilter && this.wasMLAT && on_ground) {
 		this.bad_position = this.position;
