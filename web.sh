@@ -3,15 +3,21 @@
 # file for local testing of changes to the webinterface
 
 ipath=/usr/local/share/tar1090
-mkdir -p $ipath
 
-mv $ipath/html/config.js /tmp/
+if [ -z $1 ]; then
+	htmlpath="$ipath/html"
+else
+	htmlpath="$ipath/$1-html"
+fi
+echo $htmlpath
+mkdir -p $htmlpath
 
-#rm -f $ipath/html/db/*.json
-cp -r html $ipath
+mv $htmlpath/config.js /tmp/
 
-mv /tmp/config.js $ipath/html/
+cp -r -T html $htmlpath
+
+mv /tmp/config.js $htmlpath
 
 # bust cache for all css and js files
-sed -i -e "s/__cache_version__/$(date +%s)/g" $ipath/html/index.html
+sed -i -e "s/__cache_version__/$(date +%s)/g" $htmlpath/index.html
 
