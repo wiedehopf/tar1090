@@ -154,6 +154,10 @@ BingMapsAPIKey = null;
 // positionFilterGsFactor = 1.8;
 // debugPosFilter = false; // draw red dots for filtered positions
 
+// time in seconds before an MLAT position is accepted after receiving a
+// more reliable position
+//mlatTimeout = 30;
+
 // enable/disable mouseover/hover aircraft information
 //enableMouseover = true;
 
