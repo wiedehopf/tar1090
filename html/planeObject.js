@@ -263,9 +263,9 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 	var lastseg = this.track_linesegs[this.track_linesegs.length - 1];
 
 	var distance = ol.sphere.getDistance(this.position, this.prev_position);
-	var derivedMach = (distance/(this.position_time - this.prev_time + 0.2))/343;
+	var derivedMach = (distance/(this.position_time - this.prev_time + 0.3))/343;
 	var filterSpeed = on_ground ? positionFilterSpeed/10 : positionFilterSpeed;
-	filterSpeed = (this.gs != null) ? (positionFilterGsFactor)*(this.gs+5+this.wasMLAT*100)/666 : filterSpeed;
+	filterSpeed = (this.gs != null) ? (positionFilterGsFactor*(this.gs+5+this.wasMLAT*100)/666) : filterSpeed;
 
 	// ignore the position if the object moves faster than positionFilterSpeed (default Mach 3.5)
 	// or faster than twice the transmitted groundspeed
@@ -403,7 +403,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 		lastseg.fixed.appendCoordinate(projPrev);
 		this.history_size ++;
 
-		this.logSel("sec_elapsed: " + since_update.toFixed(1) + " " + (on_ground ? "ground" : "air") +  " dist:" + distance_traveled.toFixed(0) +  " track_change: "+ track_change.toFixed(1));
+		this.logSel("sec_elapsed: " + since_update.toFixed(1) + " " + (on_ground ? "ground" : "air") +  " dist:" + distance_traveled.toFixed(0) +  " track_change: "+ track_change.toFixed(1) + "derived_speed(kts): " + (distance_traveled/since_update*1.94384).toFixed(0));
 
 		return this.updateTail();
 	}
