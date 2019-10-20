@@ -955,7 +955,7 @@ function initialize_map() {
 			},
 			{
 				layerFilter: function(layer) {
-					return (layer === iconLayer);
+					return (layer == iconLayer || layer.get('isTrail') == true);
 				},
 				hitTolerance:5,
 			}

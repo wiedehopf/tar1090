@@ -105,6 +105,7 @@ function PlaneObject(icao) {
 
 	this.layer = new ol.layer.Vector({
 		name: this.icao,
+		isTrail: true,
 		source: new ol.source.Vector({
 			features: this.trail_features,
 		}),
@@ -1049,6 +1050,7 @@ PlaneObject.prototype.updateLines = function() {
 			} else {
 				seg.feature.setStyle(this.altitudeLines(seg.altitude));
 			}
+			seg.feature.hex = this.icao;
 			this.trail_features.push(seg.feature);
 		}
 		if (trackLabels && !seg.label && seg.alt_real != null) {
@@ -1069,6 +1071,7 @@ PlaneObject.prototype.updateLines = function() {
 					}),
 				})
 			);
+			seg.label.hex = this.icao;
 			this.trail_features.push(seg.label);
 		}
 	}
@@ -1094,6 +1097,7 @@ PlaneObject.prototype.remakeTrail = function() {
 
 	this.layer = new ol.layer.Vector({
 		name: this.icao,
+		isTrail: true,
 		source: new ol.source.Vector({
 			features: this.trail_features,
 		}),
