@@ -356,8 +356,11 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 	if (!isNaN(true_change)) {
 		track_change = isNaN(track_change) ? true_change : Math.max(track_change, true_change);
 	}
+
 	var alt_change = Math.abs(this.alt_rounded - lastseg.altitude);
 	var since_update = this.prev_time - this.tail_update;
+	var distance_traveled = ol.sphere.getDistance(this.tail_position, this.prev_position);
+
 	if (
 		this.prev_alt_rounded !== lastseg.altitude
 		//lastseg.ground != on_ground
@@ -370,7 +373,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 		// The new state is only drawn after the state has changed
 		// and we then get a new position.
 
-		this.logSel("sec_elapsed: " + since_update.toFixed(1) + " alt_change: "+ alt_change.toFixed(0));
+		this.logSel("sec_elapsed: " + since_update.toFixed(1) + " alt_change: "+ alt_change.toFixed(0) + " derived_speed(kts/Mach): " + (distance_traveled/since_update*1.94384).toFixed(0) + " / " + (distance_traveled/since_update/343).toFixed(1));
 
 		lastseg.fixed.appendCoordinate(projPrev);
 		this.track_linesegs.push({ fixed: new ol.geom.LineString([projPrev]),
@@ -387,7 +390,6 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 		return this.updateTail();
 	}
 
-	var distance_traveled = ol.sphere.getDistance(this.tail_position, this.prev_position);
 
 	// Add current position to the existing track.
 	// We only retain some points depending on time elapsed and track change
@@ -404,7 +406,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 		lastseg.fixed.appendCoordinate(projPrev);
 		this.history_size ++;
 
-		this.logSel("sec_elapsed: " + since_update.toFixed(1) + " " + (on_ground ? "ground" : "air") +  " dist:" + distance_traveled.toFixed(0) +  " track_change: "+ track_change.toFixed(1) + "derived_speed(kts): " + (distance_traveled/since_update*1.94384).toFixed(0));
+		this.logSel("sec_elapsed: " + since_update.toFixed(1) + " " + (on_ground ? "ground" : "air") +  " dist:" + distance_traveled.toFixed(0) +  " track_change: "+ track_change.toFixed(1) + " derived_speed(kts/Mach): " + (distance_traveled/since_update*1.94384).toFixed(0) + " / " + (distance_traveled/since_update/343).toFixed(1));
 
 		return this.updateTail();
 	}
