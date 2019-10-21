@@ -98,6 +98,7 @@ if ! diff tar1090.sh /usr/local/share/tar1090/tar1090.sh &>/dev/null \
 	|| ! diff tar1090.service /lib/systemd/system/$instance.service &>/dev/null
 then
 	changed=yes
+	systemctl stop tar1090
 fi
 if ! diff 88-tar1090.conf /etc/lighttpd/conf-enabled/88-$instance.conf &>/dev/null; then
 	changed_lighttpd=yes
