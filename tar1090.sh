@@ -72,7 +72,7 @@ prune() {
 
 while true
 do
-	cd $RUN_DIR
+	cd $RUN_DIR || { sleep 30; continue; }
 	rm -f $list || true
 	rm -f $RUN_DIR/*.gz || true
 	rm -f $RUN_DIR/*.json || true
