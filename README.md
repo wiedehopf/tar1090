@@ -118,7 +118,36 @@ Example file:
 /run/skyaware978 978
 ```
 
-After saving that file, just run the install script and it will install/update all instances.
+After saving that file, just run the install script and it will install/update
+all instances.
+
+The run folder and systemd service will be called tar1090-combo and tar1090-978
+in this example file.
+The main instance is the exception to that rule, having systemd service and run
+directory called just tar1090.
+
+### Removing an instance
+
+For example removing the instance with the name combo and 978:
+
+First remove the corresponding line from `/etc/default/tar1090_instances` and
+save the file so when you update it doesn't get installed again.
+
+Then run the following command adapted to your instance name, you'll need to
+include the tar1090- which is automatically added for the service names:
+
+```
+sudo bash /usr/local/share/tar1090/uninstall.sh tar1090-combo
+sudo bash /usr/local/share/tar1090/uninstall.sh tar1090-978
+```
+
+If the instance was installed with the old method without the tar1090_instances
+file, you'll have to try without the tar1090- before the combo, like this:
+
+```
+sudo bash /usr/local/share/tar1090/uninstall.sh combo
+sudo bash /usr/local/share/tar1090/uninstall.sh 978
+```
 
 
 
