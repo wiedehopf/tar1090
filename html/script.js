@@ -2404,10 +2404,6 @@ function toggleLabels() {
 }
 function toggleExtendedLabels() {
 	extendedLabels = !extendedLabels;
-	if (extendedLabels && !enableLabels) {
-		enableLabels = true;
-		localStorage['enableLabels'] = enableLabels;
-	}
 	localStorage['extendedLabels'] = extendedLabels;
 	for (var key in PlanesOrdered) {
 		PlanesOrdered[key].updateMarker(false);

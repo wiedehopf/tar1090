@@ -601,7 +601,7 @@ PlaneObject.prototype.updateIcon = function() {
 	this.scale = scaleFactor * this.baseScale;
 	var svgKey = col + '!' + outline + '!' + this.shape + '!' + add_stroke;
 	var labelText = null;
-	if ( enableLabels && (
+	if ( (enableLabels || (multiSelect && this.selected && !SelectedAllPlanes)) && (
 		(ZoomLvl >= labelZoom && this.altitude != "ground")
 		|| (ZoomLvl >= labelZoomGround-2 && this.speed > 18)
 		|| ZoomLvl >= labelZoomGround
