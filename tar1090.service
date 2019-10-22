@@ -1,17 +1,17 @@
 
 [Unit]
-Description=INSTANCE - compress dump1090 json data
+Description=SERVICE - compress dump1090 json data
 Wants=network.target
 After=network.target
 
 [Service]
 User=dump1090
-SyslogIdentifier=INSTANCE
-RuntimeDirectory=INSTANCE
+SyslogIdentifier=SERVICE
+RuntimeDirectory=SERVICE
 RuntimeDirectoryMode=0755
 EnvironmentFile=/usr/local/share/tar1090/default
-EnvironmentFile=/etc/default/INSTANCE
-ExecStart=-/usr/local/share/tar1090/tar1090.sh /run/INSTANCE SOURCE_DIR $INTERVAL $HISTORY_SIZE $CHUNK_SIZE $ENABLE_978 $URL_978 $INT_978 $PF_URL $COMPRESS_978
+EnvironmentFile=/etc/default/SERVICE
+ExecStart=-/usr/local/share/tar1090/tar1090.sh /run/SERVICE SOURCE_DIR $INTERVAL $HISTORY_SIZE $CHUNK_SIZE $ENABLE_978 $URL_978 $INT_978 $PF_URL $COMPRESS_978
 Type=simple
 Restart=always
 RestartSec=30

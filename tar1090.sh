@@ -48,8 +48,11 @@ chunks=$(( hist/CHUNK_SIZE + 2 ))
 CHUNK_SIZE=$(( CHUNK_SIZE - ( (CHUNK_SIZE - hist % CHUNK_SIZE)/(chunks-1) ) ))
 
 new_chunk() {
-	cur_chunk="chunk_$(date +%s%N | head -c-7).gz"
-	echo "$cur_chunk" >> chunk_list
+	if [[ $1 != "refresh" ]]; then
+		cur_chunk="chunk_$(date +%s%N | head -c-7).gz"
+		echo "$cur_chunk" >> chunk_list
+		echo "{ \"files\" : [ ] }" | gzip -1 > "$cur_chunk"
+	fi
 	for iterator in $(head -n-$chunks chunk_list); do rm -f "$RUN_DIR/$iterator"; done
 	tail -n$chunks chunk_list > chunk_list.tmp
 	mv chunk_list.tmp chunk_list
@@ -64,7 +67,6 @@ new_chunk() {
 	JSON="$JSON""$(while read -r i; do echo -n "\"$i\", "; done < chunk_list)"
 	JSON="$JSON"' "chunk_recent.gz" ] }'
 
-	echo "{ \"files\" : [ ] }" | gzip -1 > "$cur_chunk"
 	echo "$JSON" > "$RUN_DIR/chunks.json"
 }
 
@@ -93,10 +95,10 @@ do
 
 	if sed -e '1i{ "files" : [' -e '$a]}' -e '$d' history_*.json | 7za a -si temp.gz >/dev/null; then
 		mv temp.gz "$cur_chunk"
-		# cleanup
-		rm -f history_*.json
 		new_chunk
 	fi
+	# cleanup
+	rm -f history_*.json
 
 	i=0
 
@@ -176,15 +178,18 @@ if [[ $ENABLE_978 == "yes" ]]; then
 	done &
 fi
 
-sleep 3
+sleep 10
 
 while [[ -n $PF_URL ]]
 do
 	sleep 10 &
 	TMP="pf.$RANDOM$RANDOM"
-	if cd "$RUN_DIR" && wget -T 5 -q -O $TMP "$PF_URL" 2>/dev/null; then
+	if cd "$RUN_DIR" && wget -T 5 -q -O $TMP "$PF_URL" &>/dev/null; then
 		sed -i -e 's/"user_l[a-z]*":"[0-9,.,-]*",//g' $TMP
 		mv $TMP pf.json
+		if ! grep -qs -e pf_data chunks.json; then
+			new_chunk refresh
+		fi
 	else
 		sleep 120
 	fi
