@@ -84,15 +84,6 @@ wget -q -O /tmp/install.sh https://raw.githubusercontent.com/wiedehopf/tar1090/m
 sudo bash /tmp/install.sh /run/combine1090
 ```
 
-Or if you want it at /tar1090 but for example /my-cool-receiver :
-```
-sudo bash /tmp/install.sh /run/combine1090 my-cool-receiver
-```
-
-This way you can install multiple instances of tar1090.  Note that you still
-need to take care of different dump1090-fa instances, combine1090 for example
-will run a second instance.
-
 ## Remove / Uninstall
 
 ```
@@ -110,6 +101,26 @@ sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/tar1090
 - T selects all aircraft
 - B toggle map brightness
 
+## Multiple instances
+
+The script can install multiple instances, this is accomplished by first editing `/etc/default/tar1090_instances`:
+
+On each line there must be one instance.
+First on the line the source directory where the aircraft.json is located.
+Second on the line the name where you want to access the according website.
+
+The main instance needs to be included in this file.
+
+Example file:
+```
+/run/dump1090-fa tar1090
+/run/combine1090 combo
+/run/skyaware978 978
+```
+
+After saving that file, just run the install script and it will install/update all instances.
+
+
 
 ## Alternative lighttpd configuration
 
@@ -125,7 +136,9 @@ sudo cp /usr/local/share/tar1090/99-tar1090-webroot.conf /etc/lighttpd/conf-enab
 sudo systemctl restart lighttpd
 ```
 
-Note if those cause lighttpd not to start for any reason some other lighttpd configuration is conflicting.
+Note 1: This will only work if you are using dump1090-fa and the default install
+
+Note 2: if those cause lighttpd not to start for any reason some other lighttpd configuration is conflicting.
 To solve the problem just delete the configuration you copied there:
 ```
 sudo rm /etc/lighttpd/conf-enabled/95-tar1090-otherport.conf
