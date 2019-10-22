@@ -740,6 +740,7 @@ function parse_history() {
 	updateMapSize();
 
 	loadFinished = true;
+	processURLParams();
 }
 
 // Make a LineString with 'points'-number points
@@ -2655,4 +2656,38 @@ function onPointermove(evt) {
 		removeHighlight();
 	}
 
+}
+
+function processURLParams(){
+	const search = new URLSearchParams(window.location.search);
+
+	const icao = search.get('icao');
+	if (icao != null) {
+		if (Planes[icao.toLowerCase()]) {
+			selectPlaneByHex(icao.toLowerCase(), true)
+			console.log('Selected ICAO id: '+ icao);
+		} else {
+			console.log('ICAO id not found: ' + icao);
+		}
+	}
+
+	var callsign = search.get('callsign');
+	if (callsign != null) {
+		callsign = callsign.toUpperCase();
+		var results = [];
+		for (var i in PlanesOrdered) {
+			if (PlanesOrdered[i].flight != null && PlanesOrdered[i].flight.toUpperCase().match(callsign))
+				results.push(PlanesOrdered[i]);
+		}
+		if (results.length > 1) {
+			multiSelect = true;
+			for (var i in results)
+				results[i].selected = true;
+		} else if (results.length == 1) {
+			selectPlaneByHex(results[0].icao, true);
+			console.log("Callsign selected: " + callsign);
+		} else {
+			console.log("No match found for callsign: " + callsign);
+		}
+	}
 }
