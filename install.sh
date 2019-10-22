@@ -10,24 +10,24 @@ lighttpd=no
 nginx=no
 
 command_package="unzip unzip/git git/perl perl/jq jq/7za p7zip-full/"
-install=""
+packages=""
 
-while read -d '/' CMD PKG
+while read -r -d '/' CMD PKG
 do
 	if ! command -v "$CMD" &>/dev/null
 	then
 		echo "command $CMD not found, will try to install package $PKG"
-		install="$PKG $install"
+		packages+="$PKG "
 	fi
 done < <(echo "$command_package")
 
-if [[ -n "$install" ]]
+if [[ -n "$packages" ]]
 then
 	echo "Installing required packages: $packages"
 	apt-get update
-	if ! apt-get install -y $install
+	if ! apt-get install -y $packages
 	then
-		echo "Failed to install required packages: $install"
+		echo "Failed to install required packages: $packages"
 		echo "Exiting ..."
 		exit 1
 	fi
@@ -50,7 +50,7 @@ if [[ "$1" == "test" ]]
 then
 	rm -r /tmp/tar1090-test 2>/dev/null || true
 	mkdir -p /tmp/tar1090-test
-	cp -r * /tmp/tar1090-test
+	cp -r ./* /tmp/tar1090-test
 	cd /tmp/tar1090-test
 
 elif git clone --depth 1 $repo $ipath/git 2>/dev/null || cd $ipath/git
@@ -68,7 +68,7 @@ else
 	exit 1
 fi
 
-if [[ -n $1 ]] && [ $1 != "test" ] ; then
+if [[ -n $1 ]] && [ "$1" != "test" ] ; then
 	srcdir=$1
 elif ! [[ -d /run/dump1090-fa ]] ; then
 	if [[ -d /run/dump1090 ]]; then
@@ -87,7 +87,6 @@ if [ -f /etc/default/tar1090_instances ]; then
 else
 	instances="$srcdir tar1090"
 fi
-
 
 if ! diff tar1090.sh /usr/local/share/tar1090/tar1090.sh &>/dev/null; then
 	changed=yes
@@ -108,6 +107,8 @@ cp default install.sh uninstall.sh 99-tar1090-webroot.conf LICENSE README.md \
 	95-tar1090-otherport.conf $ipath
 
 
+services=""
+names=""
 while read -r srcdir instance
 do
 	if [[ "$instance" != "tar1090" ]]; then
@@ -117,6 +118,8 @@ do
 		html_path="$ipath/html"
 		service="tar1090"
 	fi
+	services+="$service "
+	names+="$instance "
 
 	# don't overwrite existing configuration
 	cp -n default /etc/default/$service
@@ -158,26 +161,35 @@ do
 		systemctl restart $service
 	fi
 
-	if [[ $nginx == yes ]]; then
-		echo
-		echo "To configure nginx for tar1090, please add the following line in the server {} section:"
-		echo
-		echo "include /usr/local/share/tar1090/nginx-$service.conf;"
-	fi
-
 	# restore sed modified configuration files
 	mv 88-tar1090.conf.orig 88-tar1090.conf
 	mv nginx.conf.orig nginx.conf
 	mv tar1090.service.orig tar1090.service
-
-	echo --------------
-	echo "All done! Webinterface available at http://$(ip route | grep -m1 -o -P 'src \K[0-9,.]*')/$instance"
 done < <(echo "$instances")
+
+
+
+if [[ $nginx == yes ]]; then
+	echo
+	echo "To configure nginx for tar1090, please add the following line(s) in the server {} section:"
+	echo
+	for service in $services; do
+		echo "include /usr/local/share/tar1090/nginx-$service.conf;"
+	done
+fi
+
+echo --------------
+for name in $names; do
+	echo "All done! Webinterface available at http://$(ip route | grep -m1 -o -P 'src \K[0-9,.]*')/$name"
+done
+
 
 if [[ $changed_lighttpd == yes ]] && systemctl status lighttpd >/dev/null; then
 	if grep -q '^server.modules += ( "mod_setenv" )' /etc/lighttpd/conf-available/89-dump1090-fa.conf
 	then
-		sed -i -e 's/^server.modules += ( "mod_setenv" )/#server.modules += ( "mod_setenv" )/'  $(find /etc/lighttpd/conf-available/* | grep -v dump1090-fa)
+		while read -r FILE; do
+			sed -i -e 's/^server.modules += ( "mod_setenv" )/#server.modules += ( "mod_setenv" )/'  "$FILE"
+		done < <(find /etc/lighttpd/conf-available/* | grep -v dump1090-fa)
 	fi
 	echo "Restarting lighttpd ..."
 	systemctl restart lighttpd
