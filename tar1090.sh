@@ -1,9 +1,11 @@
 #!/bin/bash
 
-trap "kill 0" SIGINT
-trap "kill -2 0" SIGTERM
+trap "exit" INT TERM
+trap "kill 0" EXIT
+trap 'echo ERROR on line number $LINENO' ERR
 
 #set -e
+
 RUN_DIR=$1
 SRC_DIR=$2
 INTERVAL=$3
@@ -180,20 +182,22 @@ fi
 
 sleep 10
 
-while [[ -n $PF_URL ]]
-do
-	sleep 10 &
-	TMP="pf.$RANDOM$RANDOM"
-	if cd "$RUN_DIR" && wget -T 5 -q -O $TMP "$PF_URL" &>/dev/null; then
-		sed -i -e 's/"user_l[a-z]*":"[0-9,.,-]*",//g' $TMP
-		mv $TMP pf.json
-		if ! grep -qs -e pf_data chunks.json; then
-			new_chunk refresh
+if [[ -n $PF_URL ]]; then
+	while true
+	do
+		sleep 10 &
+		TMP="pf.$RANDOM$RANDOM"
+		if cd "$RUN_DIR" && wget -T 5 -q -O $TMP "$PF_URL" &>/dev/null; then
+			sed -i -e 's/"user_l[a-z]*":"[0-9,.,-]*",//g' $TMP
+			mv $TMP pf.json
+			if ! grep -qs -e pf_data chunks.json; then
+				new_chunk refresh
+			fi
+		else
+			sleep 120
 		fi
-	else
-		sleep 120
-	fi
-	wait
-done &
+		wait
+	done &
+fi
 
-wait
+wait -n
