@@ -39,7 +39,7 @@ then
 	hash -r || true
 fi
 
-if command -v lighttpd &>/dev/null
+if [ -d /etc/lighttpd/conf-enabled/ ] && [ -d /etc/lighttpd/conf-available ] && command -v lighttpd &>/dev/null
 then
 	lighttpd=yes
 fi
