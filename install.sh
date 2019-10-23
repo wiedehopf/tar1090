@@ -24,14 +24,14 @@ done < <(echo "$command_package")
 if [[ -n "$packages" ]]
 then
 	echo "Installing required packages: $packages"
-	apt-get update
+	apt-get update || true
 	if ! apt-get install -y $packages
 	then
 		echo "Failed to install required packages: $packages"
 		echo "Exiting ..."
 		exit 1
 	fi
-	hash -r
+	hash -r || true
 fi
 
 if command -v lighttpd &>/dev/null
