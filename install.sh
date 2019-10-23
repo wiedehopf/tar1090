@@ -9,6 +9,8 @@ ipath=/usr/local/share/tar1090
 lighttpd=no
 nginx=no
 
+mkdir -p $ipath
+
 if ! getent passwd tar1090 >/dev/null
 then
 	adduser --system --home $ipath --no-create-home --quiet tar1090
@@ -49,7 +51,6 @@ then
 	nginx=yes
 fi
 
-mkdir -p $ipath
 
 if [[ "$1" == "test" ]]
 then
@@ -173,6 +174,20 @@ do
 done < <(echo "$instances")
 
 
+if [[ $changed_lighttpd == yes ]] && systemctl status lighttpd >/dev/null; then
+	echo "Restarting lighttpd ..."
+	systemctl restart lighttpd
+fi
+
+if grep -qs '^server.modules += ( "mod_setenv" )' /etc/lighttpd/conf-available/89-dump1090-fa.conf
+then
+	while read -r FILE; do
+		sed -i -e 's/^server.modules += ( "mod_setenv" )/#server.modules += ( "mod_setenv" )/'  "$FILE"
+	done < <(find /etc/lighttpd/conf-available/* | grep -v dump1090-fa)
+fi
+
+echo --------------
+
 
 if [[ $nginx == yes ]]; then
 	echo
@@ -184,18 +199,15 @@ if [[ $nginx == yes ]]; then
 fi
 
 echo --------------
-for name in $names; do
-	echo "All done! Webinterface available at http://$(ip route | grep -m1 -o -P 'src \K[0-9,.]*')/$name"
-done
 
-
-if [[ $changed_lighttpd == yes ]] && systemctl status lighttpd >/dev/null; then
-	if grep -qs '^server.modules += ( "mod_setenv" )' /etc/lighttpd/conf-available/89-dump1090-fa.conf
-	then
-		while read -r FILE; do
-			sed -i -e 's/^server.modules += ( "mod_setenv" )/#server.modules += ( "mod_setenv" )/'  "$FILE"
-		done < <(find /etc/lighttpd/conf-available/* | grep -v dump1090-fa)
-	fi
-	echo "Restarting lighttpd ..."
-	systemctl restart lighttpd
+if [[ $lighttpd == yes ]]; then
+	for name in $names; do
+		echo "All done! Webinterface available at http://$(ip route | grep -m1 -o -P 'src \K[0-9,.]*')/$name"
+	done
+elif [[ $nginx == yes ]]; then
+	for name in $names; do
+		echo "All done! Webinterface once nginx is configured will be available at http://$(ip route | grep -m1 -o -P 'src \K[0-9,.]*')/$name"
+	done
+else
+	echo "All done! You'll need to configure your webserver yourself, see /usr/local/share/tar1090/nginx-tar1090.conf for a reference nginx configuration"
 fi
