@@ -1,11 +1,11 @@
-
+# tar1090 systemd unit file
 [Unit]
 Description=SERVICE - compress dump1090 json data
 Wants=network.target
 After=network.target
 
 [Service]
-User=dump1090
+User=tar1090
 SyslogIdentifier=SERVICE
 RuntimeDirectory=SERVICE
 RuntimeDirectoryMode=0755

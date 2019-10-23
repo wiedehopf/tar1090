@@ -9,7 +9,12 @@ ipath=/usr/local/share/tar1090
 lighttpd=no
 nginx=no
 
-command_package="unzip unzip/git git/perl perl/jq jq/7za p7zip-full/"
+if ! getent passwd tar1090 >/dev/null
+then
+	adduser --system --home $ipath --no-create-home --quiet tar1090
+fi
+
+command_package="git git/jq jq/7za p7zip-full/"
 packages=""
 
 while read -r -d '/' CMD PKG
@@ -149,7 +154,7 @@ do
 	then
 		changed_lighttpd=yes
 		cp 88-tar1090.conf /etc/lighttpd/conf-available/88-$service.conf
-		lighty-enable-mod $service >/dev/null || true
+		ln -f -s ../conf-available/88-$service.conf /etc/lighttpd/conf-enabled/88-$service.conf
 	fi
 
 	if [[ $changed == yes ]] || ! diff tar1090.service /lib/systemd/system/$service.service &>/dev/null
@@ -185,7 +190,7 @@ done
 
 
 if [[ $changed_lighttpd == yes ]] && systemctl status lighttpd >/dev/null; then
-	if grep -q '^server.modules += ( "mod_setenv" )' /etc/lighttpd/conf-available/89-dump1090-fa.conf
+	if grep -qs '^server.modules += ( "mod_setenv" )' /etc/lighttpd/conf-available/89-dump1090-fa.conf
 	then
 		while read -r FILE; do
 			sed -i -e 's/^server.modules += ( "mod_setenv" )/#server.modules += ( "mod_setenv" )/'  "$FILE"
