@@ -45,6 +45,7 @@ var tableInView = false;
 var historyOutdated = false;
 var onlyMLAT = false;
 var onlyADSB = false;
+var onlySelected = false;
 var sidebar_width = 450;
 var fetchingPf = false;
 var reaping = false;
@@ -1054,6 +1055,9 @@ function initialize_map() {
 				break;
 			case "f":
 				toggleFollowSelected();
+				break;
+			case "F":
+				onlySelected = !onlySelected;
 				break;
 			case "l":
 				toggleLabels();

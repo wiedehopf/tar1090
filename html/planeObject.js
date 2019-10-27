@@ -168,6 +168,10 @@ PlaneObject.prototype.logSel = function(loggable) {
 
 PlaneObject.prototype.isFiltered = function() {
 
+	if (onlySelected && !this.selected) {
+		return true;
+	}
+
 	if (onlyMLAT && this.dataSource != "mlat" && this.dataSource != "other") {
 		return true;
 	}
@@ -485,7 +489,7 @@ PlaneObject.prototype.getMarkerColor = function() {
 	}
 
 	// If this marker is selected, change color
-	if (this.selected && !SelectedAllPlanes){
+	if (this.selected && !SelectedAllPlanes && !onlySelected){
 		h += ColorByAlt.selected.h;
 		s += ColorByAlt.selected.s;
 		l += ColorByAlt.selected.l;
@@ -584,7 +588,7 @@ PlaneObject.prototype.updateIcon = function() {
 	var col = this.getMarkerColor();
 	//var opacity = 1.0;
 	var outline = (this.dataSource == "mlat" ? OutlineMlatColor : OutlineADSBColor);
-	var add_stroke = (this.selected && !SelectedAllPlanes) ? (' stroke="'+outline+'" stroke-width="1px"') : '';
+	var add_stroke = (this.selected && !SelectedAllPlanes && !onlySelected) ? (' stroke="'+outline+'" stroke-width="1px"') : '';
 	var baseMarkerKey = (this.category ? this.category : "A0") + "_"
 		+ this.typeDescription + "_" + this.wtc  + "_" + this.icaoType;
 
@@ -601,7 +605,7 @@ PlaneObject.prototype.updateIcon = function() {
 	this.scale = scaleFactor * this.baseScale;
 	var svgKey = col + '!' + outline + '!' + this.shape + '!' + add_stroke;
 	var labelText = null;
-	if ( (enableLabels || (multiSelect && this.selected && !SelectedAllPlanes)) && (
+	if ( ( (enableLabels && !multiSelect) || (enableLabels && multiSelect && this.selected)) && (
 		(ZoomLvl >= labelZoom && this.altitude != "ground")
 		|| (ZoomLvl >= labelZoomGround-2 && this.speed > 18)
 		|| ZoomLvl >= labelZoomGround
