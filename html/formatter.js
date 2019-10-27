@@ -32,7 +32,7 @@ function format_track_brief(track) {
 		return "";
 	}
 
-	return Math.round(track) + DEGREES;
+	return track.toFixed(1) + DEGREES;
 }
 
 // track in degrees (0..359)
@@ -42,7 +42,7 @@ function format_track_long(track) {
 	}
 
 	var trackDir = Math.floor((360 + track % 360 + 22.5) / 45) % 8;
-	return Math.round(track) + DEGREES + NBSP + "(" + TrackDirections[trackDir] + ")";
+	return  TrackDirections[trackDir] + ":" + NBSP + track.toFixed(1) + DEGREES;
 }
 
 // alt in feet
