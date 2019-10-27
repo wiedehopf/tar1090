@@ -493,6 +493,8 @@ function init_page() {
 	// Set up altitude filter button event handlers and validation options
 	$("#altitude_filter_form").submit(onFilterByAltitude);
 
+	$("#search_form").submit(onSearch);
+
 	// check if the altitude color values are default to enable the altitude filter
 	if (ColorByAlt.air.h.length === 3 && ColorByAlt.air.h[0].alt === 2000 && ColorByAlt.air.h[0].val === 20 && ColorByAlt.air.h[1].alt === 10000 && ColorByAlt.air.h[1].val === 140 && ColorByAlt.air.h[2].alt === 40000 && ColorByAlt.air.h[2].val === 300) {
 		customAltitudeColors = false;
@@ -1013,6 +1015,9 @@ function initialize_map() {
 	window.addEventListener('keydown', function(e) {
 		if (e.defaultPrevented ) {
 			return; // Do nothing if the event was already processed
+		}
+		if (e.srcElement.nodeName == 'INPUT') {
+			return;
 		}
 
 		if( e.ctrlKey || e.altKey || e.metaKey) {
@@ -2427,6 +2432,15 @@ function toggleMultiSelect() {
 	}
 }
 
+function onSearch(e) {
+	e.preventDefault();
+	const searchTerm = $("#search_input").val().trim();
+	$("#search_input").val("");
+	$("#search_input").blur();
+	findPlanes(searchTerm, true, true, true);
+	return false;
+}
+
 function onResetAltitudeFilter(e) {
 	$("#altitude_filter_min").val("");
 	$("#altitude_filter_max").val("");
@@ -2668,22 +2682,31 @@ function processURLParams(){
 	}
 
 	var callsign = search.get('callsign');
-	if (callsign != null) {
-		callsign = callsign.toUpperCase();
-		var results = [];
-		for (var i in PlanesOrdered) {
-			if (PlanesOrdered[i].flight != null && PlanesOrdered[i].flight.toUpperCase().match(callsign))
-				results.push(PlanesOrdered[i]);
+	findPlanes(callsign, false, true, false);
+}
+
+function findPlanes(query, byIcao, byCallsign, byReg) {
+	if (query == null)
+		return;
+	query = query.toLowerCase();
+	var results = [];
+	for (var i in PlanesOrdered) {
+		if (
+			(byCallsign && PlanesOrdered[i].flight != null && PlanesOrdered[i].flight.toLowerCase().match(query))
+			|| (byIcao && PlanesOrdered[i].icao.toLowerCase().match(query))
+			|| (byReg && PlanesOrdered[i].registration != null && PlanesOrdered[i].registration.toLowerCase().match(query))
+		) {
+			results.push(PlanesOrdered[i]);
 		}
-		if (results.length > 1) {
-			multiSelect = true;
-			for (var i in results)
-				results[i].selected = true;
-		} else if (results.length == 1) {
-			selectPlaneByHex(results[0].icao, true);
-			console.log("Callsign selected: " + callsign);
-		} else {
-			console.log("No match found for callsign: " + callsign);
-		}
+	}
+	if (results.length > 1) {
+		multiSelect = true;
+		for (var i in results)
+			results[i].selected = true;
+	} else if (results.length == 1) {
+		selectPlaneByHex(results[0].icao, true);
+		console.log("query selected: " + query);
+	} else {
+		console.log("No match found for query: " + query);
 	}
 }

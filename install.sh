@@ -1,6 +1,4 @@
 #!/bin/bash
-# avoid changes to this bash script affecting the running script
-
 set -e
 
 srcdir=/run/dump1090-fa
