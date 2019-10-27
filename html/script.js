@@ -1626,6 +1626,7 @@ function refreshTableInfo() {
 	const topRight = ol.proj.toLonLat([currExtent[2], currExtent[3]]);
 	//console.log([bottomLeft[0], topRight[0]]);
 	//console.log([bottomLeft[1], topRight[1]]);
+	const sidebarVisible = $("#sidebar_container").is(":visible");
 
 	//console.time("updateCells");
 	for (var i = 0; i < PlanesOrdered.length; ++i) {
@@ -1637,28 +1638,32 @@ function refreshTableInfo() {
 		const proj = tableplane.position ? ol.proj.fromLonLat(tableplane.position) : null;
 		//const inView = proj ? ol.extent.containsCoordinate(currExtent, proj) : false;
 		var inView = false;
-		if (pos && currExtent[2]-currExtent[0] > 40075016) {
-			// all longtitudes in view, only check latitude
-			inView = (
-				pos[1] > bottomLeft[1]
-				&& pos[1] < topRight[1]
-			)
-		} else if (pos && bottomLeft[0] < topRight[0]) {
-			// no wraparound: view not crossing 179 to -180 transition line
-			inView = (
-				pos[0] > bottomLeft[0]
-				&& pos[0] < topRight[0]
-				&& pos[1] > bottomLeft[1]
-				&& pos[1] < topRight[1]
-			)
-		} else if (pos && bottomLeft[0] > topRight[0]) {
-			// wraparound: view crossing 179 to -180 transition line
-			inView = (
-				(pos[0] > bottomLeft[0]
-				|| pos[0] < topRight[0])
-				&& pos[1] > bottomLeft[1]
-				&& pos[1] < topRight[1]
-			)
+		if (tableInView && sidebarVisible) {
+			if (pos && currExtent[2]-currExtent[0] > 40075016) {
+				// all longtitudes in view, only check latitude
+				inView = (
+					pos[1] > bottomLeft[1]
+					&& pos[1] < topRight[1]
+				)
+			} else if (pos && bottomLeft[0] < topRight[0]) {
+				// no wraparound: view not crossing 179 to -180 transition line
+				inView = (
+					pos[0] > bottomLeft[0]
+					&& pos[0] < topRight[0]
+					&& pos[1] > bottomLeft[1]
+					&& pos[1] < topRight[1]
+				)
+			} else if (pos && bottomLeft[0] > topRight[0]) {
+				// wraparound: view crossing 179 to -180 transition line
+				inView = (
+					(pos[0] > bottomLeft[0]
+					|| pos[0] < topRight[0])
+					&& pos[1] > bottomLeft[1]
+					&& pos[1] < topRight[1]
+				)
+			}
+		} else {
+			inView = true;
 		}
 
 
@@ -1674,6 +1679,9 @@ function refreshTableInfo() {
 			if (tableplane.position != null && tableplane.seen_pos < 60) {
 				++TrackedAircraftPositions;
 			}
+
+			if (!mapIsVisible)
+				continue
 
 			if (tableplane.dataSource == "adsb") {
 				classes += " vPosition";
