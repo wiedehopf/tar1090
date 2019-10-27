@@ -2695,18 +2695,23 @@ function findPlanes(query, byIcao, byCallsign, byReg) {
 	query = query.toLowerCase();
 	var results = [];
 	for (var i in PlanesOrdered) {
+		const plane = PlanesOrdered[i];
 		if (
-			(byCallsign && PlanesOrdered[i].flight != null && PlanesOrdered[i].flight.toLowerCase().match(query))
-			|| (byIcao && PlanesOrdered[i].icao.toLowerCase().match(query))
-			|| (byReg && PlanesOrdered[i].registration != null && PlanesOrdered[i].registration.toLowerCase().match(query))
+			(byCallsign && plane.flight != null && plane.flight.toLowerCase().match(query))
+			|| (byIcao && plane.icao.toLowerCase().match(query))
+			|| (byReg && plane.registration != null && plane.registration.toLowerCase().match(query))
 		) {
-			results.push(PlanesOrdered[i]);
+			if (plane.seen < 70)
+				results.push(plane);
 		}
 	}
 	if (results.length > 1) {
 		multiSelect = true;
-		for (var i in results)
+		for (var i in results) {
 			results[i].selected = true;
+			results[i].updateLines();
+			results[i].updateMarker();
+		}
 	} else if (results.length == 1) {
 		selectPlaneByHex(results[0].icao, true);
 		console.log("query selected: " + query);

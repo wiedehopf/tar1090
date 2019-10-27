@@ -287,7 +287,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 		}
 		return false;
 	} else {
-		this.too_fast = Math.max(-5, --this.too_fast);
+		this.too_fast = Math.max(-5, this.too_fast-0.8);
 	}
 	if (positionFilter && this.wasMLAT && on_ground) {
 		this.bad_position = this.position;
@@ -932,7 +932,7 @@ PlaneObject.prototype.updateTick = function(now, last, init) {
 	// If no packet in over 58 seconds, clear the plane.
 	// Only clear the plane if it's not selected individually
 	if ((this.seen > 58 || this.position == null || this.seen_pos > 60)
-		&& (!this.selected || SelectedAllPlanes)) {
+		&& (!this.selected || SelectedAllPlanes || multiSelect)) {
 		if (this.visible) {
 			//console.log("hiding " + this.icao);
 			this.clearMarker();
