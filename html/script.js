@@ -438,8 +438,6 @@ function init_page() {
 
 	if (localStorage['sidebar_width'] != null)
 		$('#sidebar_container').width(localStorage['sidebar_width']);
-	if ($('#sidebar_container').width() < 800)
-		$('#selected_infoblock').addClass('infoblock-container-small');
 
 	/*
 	// Set up datablock splitter
@@ -484,11 +482,6 @@ function init_page() {
 
 	$('#sidebar_container').on('resize', function() {
 		localStorage['sidebar_width'] = $('#sidebar_container').width();
-		if ($('#sidebar_container').width() < 800) {
-			$('#selected_infoblock').addClass('infoblock-container-small');
-		} else {
-			$('#selected_infoblock').removeClass('infoblock-container-small');
-		}
 	});
 
 	// Set up event handlers for buttons
