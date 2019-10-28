@@ -15,9 +15,9 @@ function PlaneObject(icao) {
 
 	// Basic location information
 	this.altitude       = null;
-	this.altitude_cached = null;
 	this.alt_baro       = null;
 	this.alt_geom       = null;
+	this.altitudeTime   = 0;
 
 	this.speed          = null;
 	this.gs             = null;
@@ -745,18 +745,29 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 	}
 
 	// remember last known altitude even if stale
+	var altitude = null;
 	if (alt_baro != null) {
-		this.altitude = alt_baro;
+		altitude = alt_baro;
 		this.alt_baro = alt_baro;
 	} else if (data.altitude != null) {
-		this.altitude = data.altitude;
+		altitude = data.altitude;
 		this.alt_baro = data.altitude;
 	} else {
 		this.alt_baro = null;
 		if (data.alt_geom != null) {
-			this.altitude = data.alt_geom;
+			altitude = data.alt_geom;
 		}
 	}
+	// Filter anything greater than 10000 fpm
+	if (this.altitude == null || altitude == "ground") {
+		this.altitude = altitude;
+		this.altitudeTime = now;
+	} else if (altitude != null && this.altitude != altitude
+		&& (Math.abs(altitude - this.altitude) / (now - this.altitudeTime) < 160)) {
+		this.altitude = altitude;
+		this.altitudeTime = now;
+	}
+
 
 	this.alt_rounded = calcAltitudeRounded(this.altitude);
 
@@ -774,10 +785,12 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 	// don't expire the track, even display outdated track
 	if (track != null) {
 		this.track = track;
+		this.rotation = track;
 	}
 	// don't expire callsigns
 	if (flight != null) {
 		this.flight	= flight;
+		this.name = flight;
 	}
 
 
