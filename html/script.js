@@ -46,13 +46,13 @@ var historyOutdated = false;
 var onlyMLAT = false;
 var onlyADSB = false;
 var onlySelected = false;
-var sidebar_width = 450;
 var fetchingPf = false;
 var reaping = false;
 var debug = false;
 var debugJump = false;
 var noMLAT = false;
 var noVanish = false;
+var sidebarVisible = true;
 
 var SpecialSquawks = {
 	'7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -427,6 +427,7 @@ function init_page() {
 		$("#extendedData").removeClass("hidden");
 	}
 
+
 	// Set up map/sidebar splitter
 	$("#sidebar_container").resizable({
 		handles: {
@@ -434,6 +435,11 @@ function init_page() {
 		},
 		minWidth: 150
 	});
+
+	if (localStorage['sidebar_width'] != null)
+		$('#sidebar_container').width(localStorage['sidebar_width']);
+	if ($('#sidebar_container').width() < 800)
+		$('#selected_infoblock').addClass('infoblock-container-small');
 
 	/*
 	// Set up datablock splitter
@@ -476,16 +482,14 @@ function init_page() {
 	});
 	*/
 
-	/*
-	// to make the infoblock responsive 
 	$('#sidebar_container').on('resize', function() {
-		if ($('#sidebar_container').width() < 600) {
+		localStorage['sidebar_width'] = $('#sidebar_container').width();
+		if ($('#sidebar_container').width() < 800) {
 			$('#selected_infoblock').addClass('infoblock-container-small');
 		} else {
 			$('#selected_infoblock').removeClass('infoblock-container-small');
 		}
 	});
-	*/
 
 	// Set up event handlers for buttons
 	$("#toggle_sidebar_button").click(toggleSidebarVisibility);
@@ -592,6 +596,7 @@ function init_page() {
 	filterGroundVehicles(false);
 	filterBlockedMLAT(false);
 	toggleAltitudeChart(false);
+
 }
 
 
@@ -745,13 +750,14 @@ function parse_history() {
 	// And kick off one refresh immediately.
 	fetchData();
 
-
-	sidebar_width = $("#sidebar_container").width();
-	$("#sidebar_container").width(sidebar_width);
 	updateMapSize();
 
 	loadFinished = true;
 	processURLParams();
+
+
+	if (localStorage['sidebar_visible'] == "false")
+		toggleSidebarVisibility();
 }
 
 // Make a LineString with 'points'-number points
@@ -1641,7 +1647,7 @@ function refreshTableInfo() {
 	const topRight = ol.proj.toLonLat([currExtent[2], currExtent[3]]);
 	//console.log([bottomLeft[0], topRight[0]]);
 	//console.log([bottomLeft[1], topRight[1]]);
-	const sidebarVisible = $("#sidebar_container").is(":visible");
+	//sidebarVisible = $("#sidebar_container").is(":visible");
 
 	//console.time("updateCells");
 	for (var i = 0; i < PlanesOrdered.length; ++i) {
@@ -2070,11 +2076,13 @@ function updateMapSize() {
 }
 
 function toggleSidebarVisibility(e) {
-	e.preventDefault();
+	if (e)
+		e.preventDefault();
 	$("#sidebar_container").toggle();
 	$("#expand_sidebar_control").toggle();
 	$("#toggle_sidebar_button").toggleClass("show_sidebar");
 	$("#toggle_sidebar_button").toggleClass("hide_sidebar");
+	localStorage['sidebar_visible'] = sidebarVisible = $("#sidebar_container").is(":visible");
 	updateMapSize();
 }
 
@@ -2099,7 +2107,6 @@ function showMap() {
 	$("#splitter").show();
 	$("#sudo_buttons").show();
 	$("#show_map_button").hide();
-	$("#sidebar_container").width(sidebar_width);
 	setColumnVisibility();
 	setSelectedInfoBlockVisibility();
 	updateMapSize();    

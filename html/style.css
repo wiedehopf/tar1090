@@ -30,7 +30,7 @@ element {
 	height: 100%;
 }
 #sidebar_canvas { 
-    padding: 10px;
+    padding: 5px;
 	overflow: auto;
 }
 #sidebar_container {
