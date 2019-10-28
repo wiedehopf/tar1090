@@ -276,7 +276,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 	var lastseg = this.track_linesegs[this.track_linesegs.length - 1];
 
 	var distance = ol.sphere.getDistance(this.position, this.prev_position);
-	var derivedMach = (distance/(this.position_time - this.prev_time + 0.3))/343;
+	var derivedMach = (distance/(this.position_time - this.prev_time + 0.4))/343;
 	var filterSpeed = on_ground ? positionFilterSpeed/10 : positionFilterSpeed;
 	filterSpeed = (this.speed != null && this.prev_speed != null) ? (positionFilterGsFactor*(Math.max(this.speed, this.prev_speed)+10+this.wasMLAT*100)/666) : filterSpeed;
 
