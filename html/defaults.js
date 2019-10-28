@@ -191,6 +191,9 @@ var mlatTimeout = 30;
 // enable/disable mouseover/hover aircraft information
 var enableMouseover = true;
 
+// Timeout for loading the history
+var historyTimeout = 20;
+
 // Columns that have a // in front of them are shown.
 var HideCols = [
 	"#icao",

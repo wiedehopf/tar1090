@@ -54,7 +54,7 @@ $.when(get_receiver_defer).done(function(data){
 function get_history() {
 
 	$.ajax({ url: 'data/aircraft.json',
-		timeout: 8000,
+		timeout: historyTimeout-2,
 		cache: false,
 		dataType: 'json' }).done(function(data) {
 			if (HistoryItemsReturned < nHistoryItems) {
@@ -63,7 +63,7 @@ function get_history() {
 		});
 	if (enable_uat) {
 		$.ajax({ url: 'chunks/978.json',
-			timeout: 8000,
+			timeout: historyTimeout-2,
 			cache: false,
 			dataType: 'json' }).done(function(data) {
 			if (HistoryItemsReturned < nHistoryItems) {
@@ -89,7 +89,7 @@ function get_history_item(i) {
 
 	if (HistoryChunks) {
 		request = $.ajax({ url: 'chunks/' + chunkNames[i],
-			timeout: (i > nHistoryItems-5 ? 35 : 10) * 1000, // timeout magic
+			timeout: (i > nHistoryItems-5 ? historyTimeout*3 : historyTimeout) * 1000, // timeout magic
 			dataType: 'json'
 		});
 	} else {
