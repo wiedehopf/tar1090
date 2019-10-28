@@ -710,19 +710,20 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 	// get location data first, return early if only those are needed.
 
 	var isArray = Array.isArray(data);
-	// [.hex, .alt_baro, .gs, .track, .lat, .lon, .seen_pos, .mlat]
-	//    0      1        2     3       4     5     6          7
+	// [.hex, .alt_baro, .gs, .track, .lat, .lon, .seen_pos, .mlat, .flight]
+	//    0      1        2     3       4     5     6          7    8
 	// this format is only valid for chunk loading the history
-	var alt_baro = isArray? data[1] : data.alt_baro;
-	var gs = isArray? data[2] : data.gs;
-	var track = isArray? data[3] : data.track;
-	var lat = isArray? data[4] : data.lat;
-	var lon = isArray? data[5] : data.lon;
+	const alt_baro = isArray? data[1] : data.alt_baro;
+	const gs = isArray? data[2] : data.gs;
+	const track = isArray? data[3] : data.track;
+	const lat = isArray? data[4] : data.lat;
+	const lon = isArray? data[5] : data.lon;
 	var seen = isArray? data[6] : data.seen;
 	seen = (seen == null) ? 30 : seen;
-	var seen_pos = isArray? data[6] : data.seen_pos;
+	const seen_pos = isArray? data[6] : data.seen_pos;
 	var mlat = isArray? data[7] : data.mlat;
 	mlat = (mlat != null && mlat.indexOf("lat") >= 0);
+	const flight = isArray? data[8] : data.flight;
 
 	this.last_message_time = now - seen;
 
@@ -774,6 +775,11 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 	if (track != null) {
 		this.track = track;
 	}
+	// don't expire callsigns
+	if (flight != null) {
+		this.flight	= flight;
+	}
+
 
 	if (mlat)
 		this.wasMLAT = true;
@@ -783,11 +789,6 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 
 	if (init)
 		return;
-
-	// don't expire callsigns
-	if (data.flight != null) {
-		this.flight	= data.flight;
-	}
 
 	if (mlat)
 		this.dataSource = "mlat";
@@ -1003,7 +1004,7 @@ PlaneObject.prototype.altitudeLines = function(altitude) {
 		return new ol.style.Style({
 			stroke: new ol.style.Stroke({
 				color: color,
-				width: 2,
+				width: (2-noVanish),
 			})
 		});
 	} else {
