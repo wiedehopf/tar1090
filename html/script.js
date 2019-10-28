@@ -2241,6 +2241,8 @@ function setAltitudeLegend(units) {
 
 function onFilterByAltitude(e) {
 	e.preventDefault();
+	$("#altitude_filter_min").blur();
+	$("#altitude_filter_max").blur();
 
 	updatePlaneFilter();
 	refreshTableInfo();
@@ -2456,6 +2458,8 @@ function onSearch(e) {
 function onResetAltitudeFilter(e) {
 	$("#altitude_filter_min").val("");
 	$("#altitude_filter_max").val("");
+	$("#altitude_filter_min").blur();
+	$("#altitude_filter_max").blur();
 
 	updatePlaneFilter();
 	refreshTableInfo();
