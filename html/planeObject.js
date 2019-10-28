@@ -151,11 +151,19 @@ const estimateStyle = new ol.style.Style({
 	})
 });
 
-var badDot = new ol.style.Style({
+const badDot = new ol.style.Style({
 	image: new ol.style.Circle({
 		radius: 3.5,
 		fill: new ol.style.Fill({
 			color: '#FF0000',
+		})
+	}),
+});
+const badDotMlat = new ol.style.Style({
+	image: new ol.style.Circle({
+		radius: 3.5,
+		fill: new ol.style.Fill({
+			color: '#FFA500',
 		})
 	}),
 });
@@ -270,7 +278,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 	var distance = ol.sphere.getDistance(this.position, this.prev_position);
 	var derivedMach = (distance/(this.position_time - this.prev_time + 0.3))/343;
 	var filterSpeed = on_ground ? positionFilterSpeed/10 : positionFilterSpeed;
-	filterSpeed = (this.gs != null) ? (positionFilterGsFactor*(this.gs+10+this.wasMLAT*100)/666) : filterSpeed;
+	filterSpeed = (this.speed != null && this.prev_speed != null) ? (positionFilterGsFactor*(Math.max(this.speed, this.prev_speed)+10+this.wasMLAT*100)/666) : filterSpeed;
 
 	// ignore the position if the object moves faster than positionFilterSpeed (default Mach 3.5)
 	// or faster than twice the transmitted groundspeed
@@ -278,7 +286,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 		this.bad_position = this.position;
 		this.too_fast++;
 		if (debugPosFilter) {
-			console.log(this.icao + " / " + this.name + " ("+ this.dataSource + "): Implausible position filtered: " + this.bad_position[0] + ", " + this.bad_position[1] + " (Mach " + derivedMach.toFixed(1) + ") (" + (this.position_time - this.prev_time + 0.2).toFixed(1) + "s)");
+			console.log(this.icao + " / " + this.name + " ("+ this.dataSource + "): Implausible position filtered: " + this.bad_position[0] + ", " + this.bad_position[1] + " (kts/Mach " + (derivedMach*666).toFixed(0) + " > " + (filterSpeed*666).toFixed(0)   + " / " + derivedMach.toFixed(2) + " > " + filterSpeed.toFixed(2) + ") (" + (this.position_time - this.prev_time + 0.2).toFixed(1) + "s)");
 		}
 		this.position = this.prev_position;
 		this.position_time = this.prev_time;
@@ -931,8 +939,11 @@ PlaneObject.prototype.updateTick = function(now, last, init) {
 
 	// If no packet in over 58 seconds, clear the plane.
 	// Only clear the plane if it's not selected individually
-	if ((this.seen > 58 || this.position == null || this.seen_pos > 60)
-		&& (!this.selected || SelectedAllPlanes || multiSelect)) {
+	if (
+		(this.seen > 58 || this.position == null || this.seen_pos > 60)
+		&& (!this.selected || SelectedAllPlanes || multiSelect)
+		&& (!noVanish || this.position == null)
+	) {
 		if (this.visible) {
 			//console.log("hiding " + this.icao);
 			this.clearMarker();
@@ -1154,11 +1165,11 @@ PlaneObject.prototype.drawRedDot = function(bad_position) {
 		selectPlaneByHex(this.icao, false);
 	}
 	var badFeat = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(bad_position)));
-	badFeat.setStyle(badDot);
+	badFeat.setStyle(this.wasMLAT ? badDotMlat : badDot);
 	this.trail_features.push(badFeat);
 	var geom = new ol.geom.LineString([ol.proj.fromLonLat(this.prev_position), ol.proj.fromLonLat(bad_position)]);
 	var lineFeat = new ol.Feature(geom);
-	lineFeat.setStyle(this.altitudeLines(60000));
+	lineFeat.setStyle(this.altitudeLines(this.wasMLAT ? 0 : 60000));
 	this.trail_features.push(lineFeat);
 }
 

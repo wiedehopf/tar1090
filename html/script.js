@@ -52,6 +52,7 @@ var reaping = false;
 var debug = false;
 var debugJump = false;
 var noMLAT = false;
+var noVanish = false;
 
 var SpecialSquawks = {
 	'7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -387,8 +388,15 @@ function initialize() {
 		debug = true;
 	if (localStorage['debugPosFilter'] == "true")
 		debugPosFilter = true;
-	if (localStorage['noMLAT'] == "true")
+	if (localStorage['noMLAT'] == "true") {
 		noMLAT = true;
+		//localStorage['noMLAT'] = "false";
+	}
+
+	if (localStorage['noVanish'] == "true") {
+		noVanish = true;
+		//localStorage['noVanish'] = "false";
+	}
 
 	$.when(configureReceiver).done(function() {
 		configureReceiver = null;
@@ -1079,6 +1087,11 @@ function initialize_map() {
 				localStorage['debugPosFilter'] = debugPosFilter;
 				console.log('debugPosFilter = ' + debugPosFilter);
 				break;
+			case "V":
+				noVanish = !noVanish;
+				localStorage['noVanish'] = noVanish;
+				console.log('noVanish = ' + noVanish);
+				break;
 			case "D":
 				debug = !debug;
 				localStorage['debug'] = debug;
@@ -1238,6 +1251,8 @@ function createSiteCircleFeatures() {
 // This looks for planes to reap out of the master Planes variable
 function reaper(all) {
 	//console.log("Reaping started..");
+	if (debugPosFilter)
+		return;
 	if (reaping)
 		return;
 	reaping = true;
@@ -2713,7 +2728,7 @@ function findPlanes(query, byIcao, byCallsign, byReg) {
 			|| (byIcao && plane.icao.toLowerCase().match(query))
 			|| (byReg && plane.registration != null && plane.registration.toLowerCase().match(query))
 		) {
-			if (plane.seen < 70)
+			if (plane.seen < 70 || noVanish)
 				results.push(plane);
 		}
 	}
