@@ -1250,7 +1250,7 @@ function createSiteCircleFeatures() {
 // This looks for planes to reap out of the master Planes variable
 function reaper(all) {
 	//console.log("Reaping started..");
-	if (debugPosFilter)
+	if (noVanish)
 		return;
 	if (reaping)
 		return;
