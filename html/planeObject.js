@@ -759,7 +759,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 		}
 	}
 	// Filter anything greater than 10000 fpm
-	if (this.altitude == null || altitude == "ground") {
+	if (this.altitude == null || altitude == "ground" || this.altitude == "ground") {
 		this.altitude = altitude;
 		this.altitudeTime = now;
 	} else if (altitude != null && this.altitude != altitude
