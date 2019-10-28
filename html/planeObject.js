@@ -1017,7 +1017,7 @@ PlaneObject.prototype.altitudeLines = function(altitude) {
 		return new ol.style.Style({
 			stroke: new ol.style.Stroke({
 				color: color,
-				width: (2-noVanish),
+				width: (2-(noVanish*0.8)),
 			})
 		});
 	} else {
