@@ -1090,6 +1090,11 @@ function initialize_map() {
 				noVanish = !noVanish;
 				localStorage['noVanish'] = noVanish;
 				console.log('noVanish = ' + noVanish);
+				for (var i in PlanesOrdered) {
+					PlanesOrdered[i].remakeTrail();
+				}
+				if (!noVanish)
+					reaper();
 				break;
 			case "D":
 				debug = !debug;
