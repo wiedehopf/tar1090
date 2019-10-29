@@ -14,6 +14,7 @@ var iconLayer;
 var trailLayers;
 var iconCache = {};
 var addToIconCache = [];
+var lineStyleCache = {};
 var Planes        = {};
 var PlanesOrdered = [];
 var PlaneFilter   = {};

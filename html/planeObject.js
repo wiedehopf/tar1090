@@ -1014,15 +1014,20 @@ PlaneObject.prototype.altitudeLines = function(altitude) {
 	var colorArr = this.getAltitudeColor(altitude);
 	//var color = 'hsl(' + colorArr[0].toFixed(0) + ', ' + colorArr[1].toFixed(0) + '%, ' + colorArr[2].toFixed(0) + '%)';
 	var color = hslToRgb(colorArr[0], colorArr[1], colorArr[2]);
+	const lineKey = color + '_' + debugTracks + '_' + noVanish;
+
+	if (lineStyleCache[lineKey])
+		return lineStyleCache[lineKey];
+
 	if (!debugTracks) {
-		return new ol.style.Style({
+		lineStyleCache[lineKey]	= new ol.style.Style({
 			stroke: new ol.style.Stroke({
 				color: color,
 				width: (2-(noVanish*0.8)),
 			})
 		});
 	} else {
-		return [
+		lineStyleCache[lineKey] = [
 			new ol.style.Style({
 				image: new ol.style.Circle({
 					radius: 2,
@@ -1042,6 +1047,7 @@ PlaneObject.prototype.altitudeLines = function(altitude) {
 			})
 		];
 	}
+	return lineStyleCache[lineKey];
 }
 
 // Update our planes tail line,
