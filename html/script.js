@@ -146,9 +146,11 @@ function processReceiverUpdate(data, init) {
 		// Do we already have this plane object in Planes?
 		// If not make it.
 
-		if ( ac.messages < 4) {
+		/*
+		if ( ac.messages < 2) {
 			continue;
 		}
+		*/
 
 		plane = Planes[hex];
 
