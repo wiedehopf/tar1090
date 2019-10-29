@@ -1939,7 +1939,7 @@ function selectPlaneByHex(hex,autofollow) {
 		//$('.infoblock-container').scrollTop(0);
 	}
 	// multiSelect deselect
-	if (multiSelect && newPlane && newPlane.selected && !autofollow) {
+	if (multiSelect && newPlane && newPlane.selected && !autofollow && !noVanish) {
 		newPlane.selected = false;
 		newPlane.clearLines();
 		newPlane.updateMarker();
