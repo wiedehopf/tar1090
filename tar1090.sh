@@ -45,15 +45,15 @@ fi
 
 
 hist=$((HISTORY_SIZE))
-chunks=$(( hist/CHUNK_SIZE + 2 ))
+chunks=$(( hist/CHUNK_SIZE + 1 ))
 #increase chunk size to get history size as close as we can
-CHUNK_SIZE=$(( CHUNK_SIZE - ( (CHUNK_SIZE - hist % CHUNK_SIZE)/(chunks-1) ) ))
+CHUNK_SIZE=$(( CHUNK_SIZE - ( (CHUNK_SIZE - hist % CHUNK_SIZE)/chunks ) ))
 
 new_chunk() {
 	if [[ $1 != "refresh" ]]; then
 		cur_chunk="chunk_$(date +%s%N | head -c-7).gz"
 		echo "$cur_chunk" >> chunk_list
-		echo "{ \"files\" : [ ] }" | gzip -1 > "$cur_chunk"
+		cp "$1" "$cur_chunk"
 	fi
 	for iterator in $(head -n-$chunks chunk_list); do rm -f "$RUN_DIR/$iterator"; done
 	tail -n$chunks chunk_list > chunk_list.tmp
@@ -67,7 +67,7 @@ new_chunk() {
 
 	JSON="$JSON"' "chunks": [ '
 	JSON="$JSON""$(while read -r i; do echo -n "\"$i\", "; done < chunk_list)"
-	JSON="$JSON"' "chunk_recent.gz" ] }'
+	JSON="$JSON"' "current_large.gz", "current_small.gz" ] }'
 
 	echo "$JSON" > "$RUN_DIR/chunks.json"
 }
@@ -88,9 +88,12 @@ prune() {
 while true
 do
 	cd "$RUN_DIR" || { sleep 30; continue; }
-	rm -f chunk_list ./chunk_*.gz history_*.json latest_*.json || true
+	rm -f chunk_list ./chunk_*.gz ./current_*.gz history_*.json latest_*.json || true
 
-	new_chunk
+	echo "{ \"files\" : [ ] }" | gzip -1 > empty.gz
+	cp empty.gz current_small.gz
+	cp empty.gz current_large.gz
+
 
 	# integrate original dump1090-fa history on startup so we don't start blank
 	for i in "$SRC_DIR"/history_*.json
@@ -102,8 +105,9 @@ do
 	done
 
 	if sed -e '1i{ "files" : [' -e '$a]}' -e '$d' history_*.json | 7za a -si temp.gz >/dev/null; then
-		mv temp.gz "$cur_chunk"
-		new_chunk
+		new_chunk temp.gz
+	else
+		new_chunk empty.gz
 	fi
 	# cleanup
 	rm -f history_*.json
@@ -114,6 +118,10 @@ do
 	do
 		cd "$RUN_DIR" || { sleep 30; continue; }
 		sleep $INTERVAL &
+
+		if ! [ -f empty.gz ]; then
+			echo "{ \"files\" : [ ] }" | gzip -1 > empty.gz
+		fi
 
 		date=$(date +%s%N | head -c-7)
 
@@ -135,9 +143,8 @@ do
 		if [[ $((i%6)) == 5 ]]
 		then
 			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' history_*.json | gzip -4 > temp.gz
-			mv temp.gz "$cur_chunk"
-			echo "{ \"files\" : [ ] }" | gzip -1 > rec_temp.gz
-			mv rec_temp.gz chunk_recent.gz
+			mv temp.gz current_large.gz
+			cp empty.gz current_small.gz
 			rm -f latest_*.json
 		else
 			if [ -f "history_$date.json" ]; then
@@ -147,7 +154,7 @@ do
 				ln -s "history_978_$date.json" "latest_978_$date.json" || true
 			fi
 			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' latest_*.json | gzip -1 > temp.gz
-			mv temp.gz chunk_recent.gz
+			mv temp.gz current_small.gz
 		fi
 
 		i=$((i+1))
@@ -155,12 +162,11 @@ do
 		if [[ $i == "$CHUNK_SIZE" ]]
 		then
 			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' history_*.json | 7za a -si temp.gz >/dev/null
-			mv temp.gz "$cur_chunk"
-			echo "{ \"files\" : [ ] }" | gzip -1 > rec_temp.gz
-			mv rec_temp.gz chunk_recent.gz
+			new_chunk temp.gz
+			cp empty.gz current_small.gz
+			cp empty.gz current_large.gz
 			i=0
 			rm -f history_*.json latest_*.json
-			new_chunk
 		fi
 
 		wait
