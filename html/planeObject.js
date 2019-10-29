@@ -9,7 +9,6 @@ function PlaneObject(icao) {
 	this.selected  = false;
 	this.category  = null;
 	this.dataSource = "other";
-	this.wasMLAT = false;
 
 	this.trCache = [];
 
@@ -278,7 +277,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 	var distance = ol.sphere.getDistance(this.position, this.prev_position);
 	var derivedMach = (distance/(this.position_time - this.prev_time + 0.4))/343;
 	var filterSpeed = on_ground ? positionFilterSpeed/10 : positionFilterSpeed;
-	filterSpeed = (this.speed != null && this.prev_speed != null) ? (positionFilterGsFactor*(Math.max(this.speed, this.prev_speed)+10+this.wasMLAT*100)/666) : filterSpeed;
+	filterSpeed = (this.speed != null && this.prev_speed != null) ? (positionFilterGsFactor*(Math.max(this.speed, this.prev_speed)+10+(this.dataSource == "mlat")*100)/666) : filterSpeed;
 
 	// ignore the position if the object moves faster than positionFilterSpeed (default Mach 3.5)
 	// or faster than twice the transmitted groundspeed
@@ -297,7 +296,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 	} else {
 		this.too_fast = Math.max(-5, this.too_fast-0.8);
 	}
-	if (positionFilter && this.wasMLAT && on_ground) {
+	if (positionFilter && this.dataSource == "mlat" && on_ground) {
 		this.bad_position = this.position;
 		return true;
 	}
@@ -310,7 +309,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 	var stale_timeout = lastseg.estimated ? 5 : 10;
 
 	// MLAT data are given some more leeway
-	if (this.wasMLAT)
+	if (this.dataSource == "mlat")
 		stale_timeout = 15;
 
 	// On the ground you can't go that quick
@@ -732,7 +731,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 
 	// remember last known position even if stale
 	// and some other magic to avoid mlat positions when a current ads-b position is available
-	if (lat != null && !this.wasMLAT && mlat && this.position != null && now - this.position_time < mlatTimeout) {
+	if (lat != null && this.dataSource != "mlat" && mlat && this.position != null && now - this.position_time < mlatTimeout) {
 		mlat = false;
 		// don't use MLAT for mlatTimeout (default 30) seconds after getting an ADS-B position
 		// console.log(this.icao + ': mlat position ignored');
@@ -796,15 +795,6 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 
 
 	if (mlat)
-		this.wasMLAT = true;
-	else if (!mlat && lat != null)
-		this.wasMLAT = false;
-
-
-	if (init)
-		return;
-
-	if (mlat)
 		this.dataSource = "mlat";
 	else if (data.type && data.type.substring(0,4) == "tisb")
 		this.dataSource = "tisb";
@@ -818,8 +808,9 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 		this.dataSource = "adsb";
 	else if (data.type == "adsb_icao_nt")
 		this.dataSource = "other";
-	else if (this.seen_pos > 60)
-		this.dataSource = "other";
+
+	if (init)
+		return;
 
 	// Update all of our data
 
@@ -1186,11 +1177,11 @@ PlaneObject.prototype.drawRedDot = function(bad_position) {
 		selectPlaneByHex(this.icao, false);
 	}
 	var badFeat = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(bad_position)));
-	badFeat.setStyle(this.wasMLAT ? badDotMlat : badDot);
+	badFeat.setStyle(this.dataSource == "mlat"  ? badDotMlat : badDot);
 	this.trail_features.push(badFeat);
 	var geom = new ol.geom.LineString([ol.proj.fromLonLat(this.prev_position), ol.proj.fromLonLat(bad_position)]);
 	var lineFeat = new ol.Feature(geom);
-	lineFeat.setStyle(this.altitudeLines(this.wasMLAT ? 0 : 60000));
+	lineFeat.setStyle(this.altitudeLines(this.dataSource == "mlat" ? 0 : 60000));
 	this.trail_features.push(lineFeat);
 }
 

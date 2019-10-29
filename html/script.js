@@ -2047,8 +2047,14 @@ function deselectAllPlanes() {
 		$(Planes[key].tr).removeClass("selected");
 	}
 	$('#selectall_checkbox').removeClass('settingsCheckboxChecked');
-	SelectedPlane = null;
 	SelectedAllPlanes = false;
+	if (multiSelect && SelectedPlane != null) {
+		SelectedPlane.selected = true;
+		SelectedPlane.updateLines();
+		SelectedPlane.updateMarker();
+	} else {
+		SelectedPlane = null;
+	}
 	refreshSelected();
 	refreshHighlighted();
 	setSelectedInfoBlockVisibility();
