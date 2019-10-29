@@ -45,7 +45,7 @@ The duration of the history in seconds can be calculated as interval times histo
 ## Configuring the web interface (optional):
 
 ```
-sudo nano /usr/local/share/tar1090/html/config.js
+sudo nano /usr/local/share/tar1090/html/config*.js
 ```
 
 Ctrl-x to exit, y (yes) and enter to save.
@@ -55,11 +55,11 @@ Then Ctrl-F5 to refresh the web interface in the browser.
 
 ```
 # ENABLE:
-sudo sed -i -e 's?.*flightawareLinks.*?flightawareLinks = true;?' /usr/local/share/tar1090/html/config.js
+sudo sed -i -e 's?.*flightawareLinks.*?flightawareLinks = true;?' /usr/local/share/tar1090/html/config*.js
 # ENABLE if the above doesn't work (updated from previous version)
-echo 'flightawareLinks = true;' | sudo tee -a /usr/local/share/tar1090/html/config.js
+echo 'flightawareLinks = true;' | sudo tee -a /usr/local/share/tar1090/html/config*.js
 # DISABLE:
-sudo sed -i -e 's?.*flightawareLinks.*?flightawareLinks = false;?' /usr/local/share/tar1090/html/config.js
+sudo sed -i -e 's?.*flightawareLinks.*?flightawareLinks = false;?' /usr/local/share/tar1090/html/config*.js
 ```
 
 Then Ctrl-F5 to refresh the web interface in the browser.
