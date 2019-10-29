@@ -75,7 +75,13 @@ new_chunk() {
 prune() {
 	jq -c <"$1" >"$2" '
 		.aircraft |= map(select(has("seen_pos") and .seen_pos < 15))
-		| .aircraft[] |= [.hex, .alt_baro, .gs, .track, .lat, .lon, .seen_pos, .mlat, .flight]
+		| .aircraft[] |= [.hex,
+		(if .alt_baro != null then .alt_baro else .alt_geom end),
+		(if .gs != null then .gs else .tas end),
+		.track, .lat, .lon, .seen_pos,
+		(if .mlat != null and (.mlat | contains(["lat"])) then "mlat"
+		elif .tisb != null and (.tisb | contains(["lat"])) then "tisb" else .type end),
+		.flight]
 		'
 }
 

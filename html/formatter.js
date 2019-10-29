@@ -248,6 +248,7 @@ function format_data_source(source) {
 		case 'tisb_icao':
 		case 'tisb_trackfile':
 		case 'tisb_other':
+		case 'tisb':
 			return "TIS-B";
 		case 'mode_s':
 			return "Mode S";

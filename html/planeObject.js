@@ -187,7 +187,7 @@ PlaneObject.prototype.isFiltered = function() {
 		return true;
 	}
 
-	if (filterTISB && this.icao[0] == '~') {
+	if (filterTISB && this.dataSource == "tisb") {
 		return true;
 	}
 
@@ -709,7 +709,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 	// get location data first, return early if only those are needed.
 
 	var isArray = Array.isArray(data);
-	// [.hex, .alt_baro, .gs, .track, .lat, .lon, .seen_pos, .mlat, .flight]
+	// [.hex, .alt_baro, .gs, .track, .lat, .lon, .seen_pos, mlat/tisb/.type , .flight]
 	//    0      1        2     3       4     5     6          7    8
 	// this format is only valid for chunk loading the history
 	const alt_baro = isArray? data[1] : data.alt_baro;
@@ -720,8 +720,8 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 	var seen = isArray? data[6] : data.seen;
 	const seen_pos = isArray? data[6] : data.seen_pos;
 	seen = Math.min((seen == null) ? 30 : seen, seen_pos);
-	var mlat = isArray? data[7] : data.mlat;
-	mlat = (mlat != null && mlat.indexOf("lat") >= 0);
+	var mlat = isArray? (data[7] == "mlat") : (data.mlat != null && data.mlat.indexOf("lat") >= 0);
+	const type = isArray? data[7] : data.type;
 	const flight = isArray? data[8] : data.flight;
 
 	this.last_message_time = now - seen;
@@ -796,17 +796,17 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 
 	if (mlat)
 		this.dataSource = "mlat";
-	else if (data.type && data.type.substring(0,4) == "tisb")
+	else if (type && type.substring(0,4) == "tisb")
 		this.dataSource = "tisb";
 	else if (!displayUATasADSB && this.receiver == "uat")
 		this.dataSource = "uat";
-	else if (data.lat != null && data.type == null)
+	else if (lat != null && type == null)
 		this.dataSource = "adsb";
-	else if (data.type == "adsb_icao" || data.type == "adsb_other")
+	else if (type == "adsb_icao" || type == "adsb_other")
 		this.dataSource = "adsb";
-	else if (data.type && data.type.substring(0,4) == "adsr")
+	else if (type && type.substring(0,4) == "adsr")
 		this.dataSource = "adsb";
-	else if (data.type == "adsb_icao_nt")
+	else if (type == "adsb_icao_nt")
 		this.dataSource = "other";
 
 	if (init)
