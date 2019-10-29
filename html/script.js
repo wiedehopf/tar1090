@@ -1726,7 +1726,7 @@ function refreshTableInfo() {
 				updateCell(tableplane, 3, getFlightAwareIdentLink(tableplane.registration, tableplane.registration), true);
 			} else {
 				updateCell(tableplane, 2, tableplane.name);
-				updateCell(tableplane, 3, tableplane.registration);
+				updateCell(tableplane, 3, tableplane.registration ? tableplane.registration : "");
 			}
 			updateCell(tableplane, 4, (tableplane.icaoType != null ? tableplane.icaoType : ""));
 			updateCell(tableplane, 5, (tableplane.squawk != null ? tableplane.squawk : ""));
