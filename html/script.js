@@ -547,9 +547,11 @@ function init_page() {
 
 	});
 
+	/*
 	$('#altitude_checkbox').on('click', function() {
 		toggleAltitudeChart(true);
 	});
+	*/
 
 	$('#debugAll_checkbox').on('click', function() {
 		toggleDebugAll();
@@ -595,7 +597,7 @@ function init_page() {
 
 	filterGroundVehicles(false);
 	filterBlockedMLAT(false);
-	toggleAltitudeChart(false);
+	//toggleAltitudeChart(false);
 
 }
 

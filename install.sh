@@ -108,7 +108,7 @@ fi
 
 # copy over base files
 cp default install.sh uninstall.sh 99-tar1090-webroot.conf LICENSE README.md \
-	95-tar1090-otherport.conf $ipath
+	95-tar1090-otherport.conf nginx_webroot.conf $ipath
 
 
 services=""
@@ -134,18 +134,39 @@ do
 	sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" tar1090.service
 
 	# keep some stuff around
-	if [ -f $html_path/defaults.js ]; then
-		cp $html_path/config.js /tmp/tar1090_config.js
+	if [ -f $html_path/defaults_*.js ]; then
+		cp $html_path/config_*.js /tmp/tar1090_config.js
 	fi
 	cp $html_path/colors.css /tmp/tar1090_colors.css/ 2>/dev/null || true
 
+	rm -rf $html_path 2>/dev/null || true
 	cp -r -T html $html_path
 
 	mv /tmp/tar1090_config.js $html_path/config.js 2>/dev/null || true
 	mv /tmp/tar1090_colors.css $html_path/colors.css 2>/dev/null || true
 
+	epoch=$(date +%s)
 	# bust cache for all css and js files
-	sed -i -e "s/__cache_version__/$(date +%s)/g" $html_path/index.html
+	sed -i -e "s/__cache_version__/_$epoch/g" $html_path/index.html
+
+	dir=$(pwd)
+	cd $html_path
+
+	mv dbloader.js dbloader_$epoch.js
+	mv defaults.js defaults_$epoch.js
+	mv early.js early_$epoch.js
+	mv flags.js flags_$epoch.js
+	mv formatter.js formatter_$epoch.js
+	mv layers.js layers_$epoch.js
+	mv markers.js markers_$epoch.js
+	mv planeObject.js planeObject_$epoch.js
+	mv registrations.js registrations_$epoch.js
+	mv script.js script_$epoch.js
+	mv config.js config_$epoch.js
+	mv colors.css colors_$epoch.css
+	mv style.css style_$epoch.css
+
+	cd "$dir"
 
 	cp nginx.conf $ipath/nginx-$service.conf
 

@@ -647,6 +647,7 @@ select.error, textarea.error, input.error {
     background-color: transparent !important;
 }
 
+/*
 #altitude_chart_button {
     background-image: url('images/alt_legend_feet.svg');
     background-size: cover;
@@ -660,6 +661,7 @@ select.error, textarea.error, input.error {
 .altitudeMeters {
     background-image: url('images/alt_legend_meters.svg') !important;
 }
+*/
 
 /* remove the blue highlighting around the map buttons */
 .ol-control button {
