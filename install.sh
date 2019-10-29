@@ -137,13 +137,15 @@ do
 	if [ -f $html_path/defaults_*.js ]; then
 		cp $html_path/config_*.js /tmp/tar1090_config.js
 	fi
-	cp $html_path/colors.css /tmp/tar1090_colors.css/ 2>/dev/null || true
+	cp $html_path/upintheair.json /tmp/tar1090_upintheair.json 2>/dev/null || true
+	cp $html_path/color*.css /tmp/tar1090_colors.css/ 2>/dev/null || true
 
 	rm -rf $html_path 2>/dev/null || true
 	cp -r -T html $html_path
 
 	mv /tmp/tar1090_config.js $html_path/config.js 2>/dev/null || true
 	mv /tmp/tar1090_colors.css $html_path/colors.css 2>/dev/null || true
+	mv /tmp/tar1090_upintheair.json $html_path/upintheair.json 2>/dev/null || true
 
 	epoch=$(date +%s)
 	# bust cache for all css and js files
