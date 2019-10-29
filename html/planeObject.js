@@ -1060,7 +1060,7 @@ PlaneObject.prototype.updateLines = function() {
 	var geom = new ol.geom.LineString([lastfixed, ol.proj.fromLonLat(this.position)]);
 	this.elastic_feature = new ol.Feature(geom);
 	if (lastseg.estimated) {
-		this.elastic_feature.setStyle(estimateStyle);
+		this.elastic_feature.setStyle(noVanish ? new ol.style.Style({}) : estimateStyle);
 	} else {
 		this.elastic_feature.setStyle(this.altitudeLines(lastseg.altitude));
 	}
@@ -1078,7 +1078,7 @@ PlaneObject.prototype.updateLines = function() {
 		if (!seg.feature) {
 			seg.feature = new ol.Feature(seg.fixed);
 			if (seg.estimated) {
-				seg.feature.setStyle(estimateStyle);
+				seg.feature.setStyle(noVanish ? new ol.style.Style({}) : estimateStyle);
 			} else {
 				seg.feature.setStyle(this.altitudeLines(seg.altitude));
 			}
