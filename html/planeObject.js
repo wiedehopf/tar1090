@@ -719,7 +719,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 	const lon = isArray? data[5] : data.lon;
 	var seen = isArray? data[6] : data.seen;
 	const seen_pos = isArray? data[6] : data.seen_pos;
-	seen = Math.min((seen == null) ? 30 : seen, seen_pos);
+	seen = (seen == null) ? 5 : seen;
 	var mlat = isArray? (data[7] == "mlat") : (data.mlat != null && data.mlat.indexOf("lat") >= 0);
 	const type = isArray? data[7] : data.type;
 	const flight = isArray? data[8] : data.flight;
