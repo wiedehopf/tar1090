@@ -438,6 +438,7 @@ function init_page() {
 
 	if (localStorage['sidebar_width'] != null)
 		$('#sidebar_container').width(localStorage['sidebar_width']);
+	localStorage['sidebar_width'] = $('#sidebar_container').width();
 
 	/*
 	// Set up datablock splitter
@@ -1699,8 +1700,8 @@ function refreshTableInfo() {
 				++TrackedAircraftPositions;
 			}
 
-			if (!mapIsVisible)
-				continue
+			if (!sidebarVisible)
+				continue;
 
 			if (tableplane.dataSource == "adsb") {
 				classes += " vPosition";
@@ -2099,6 +2100,7 @@ function expandSidebar(e) {
 }
 
 function showMap() {
+	$('#sidebar_container').width(localStorage['sidebar_width']);
 	$("#map_container").show()
 	mapIsVisible = true;
 	$("#toggle_sidebar_control").show();
