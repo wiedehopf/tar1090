@@ -1075,12 +1075,12 @@ PlaneObject.prototype.updateLines = function() {
 	this.trail_features.setAt(0, this.elastic_feature);
 
 	// create any missing fixed line features
-	var start_i = 0;
-	if (this.track_linesegs.length > 1 && this.track_linesegs[this.track_linesegs.length-2].feature != null)
-		start_i = this.track_linesegs.length-1;
 
-	for (var i = start_i; i < this.track_linesegs.length; ++i) {
+	for (var i = this.track_linesegs.length-1; i >= 0; i--) {
 		var seg = this.track_linesegs[i];
+		if (seg.feature && (!trackLabels || seg.label))
+			break;
+
 		if (!seg.feature) {
 			seg.feature = new ol.Feature(seg.fixed);
 			if (seg.estimated) {
