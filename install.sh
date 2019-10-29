@@ -147,10 +147,25 @@ do
 
 	epoch=$(date +%s)
 	# bust cache for all css and js files
-	sed -i -e "s/__cache_version__/_$epoch/g" $html_path/index.html
 
 	dir=$(pwd)
 	cd $html_path
+
+	sed -i \
+		-e "s/dbloader.js/dbloader_$epoch.js/" \
+		-e "s/defaults.js/defaults_$epoch.js/" \
+		-e "s/early.js/early_$epoch.js/" \
+		-e "s/flags.js/flags_$epoch.js/" \
+		-e "s/formatter.js/formatter_$epoch.js/" \
+		-e "s/layers.js/layers_$epoch.js/" \
+		-e "s/markers.js/markers_$epoch.js/" \
+		-e "s/planeObject.js/planeObject_$epoch.js/" \
+		-e "s/registrations.js/registrations_$epoch.js/" \
+		-e "s/script.js/script_$epoch.js/" \
+		-e "s/config.js/config_$epoch.js/" \
+		-e "s/colors.css/colors_$epoch.css/" \
+		-e "s/style.css/style_$epoch.css/" \
+		index.html
 
 	mv dbloader.js dbloader_$epoch.js
 	mv defaults.js defaults_$epoch.js
