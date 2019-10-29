@@ -719,8 +719,8 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 	const lat = isArray? data[4] : data.lat;
 	const lon = isArray? data[5] : data.lon;
 	var seen = isArray? data[6] : data.seen;
-	seen = (seen == null) ? 30 : seen;
 	const seen_pos = isArray? data[6] : data.seen_pos;
+	seen = Math.min((seen == null) ? 30 : seen, seen_pos);
 	var mlat = isArray? data[7] : data.mlat;
 	mlat = (mlat != null && mlat.indexOf("lat") >= 0);
 	const flight = isArray? data[8] : data.flight;
@@ -761,12 +761,13 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 	// Filter anything greater than 10000 fpm
 	if (this.altitude == null || altitude == "ground" || this.altitude == "ground") {
 		this.altitude = altitude;
-		this.altitudeTime = now;
 	} else if (altitude != null && this.altitude != altitude
 		&& (Math.abs(altitude - this.altitude) / (now - this.altitudeTime) < 160)) {
 		this.altitude = altitude;
-		this.altitudeTime = now;
 	}
+	if (altitude != null && seen < 5)
+		this.altitudeTime = now;
+
 
 
 	this.alt_rounded = calcAltitudeRounded(this.altitude);
