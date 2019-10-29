@@ -435,13 +435,16 @@ function init_page() {
 		handles: {
 			w: '#splitter'
 		},
-		minWidth: 150
+		minWidth: 150,
+		maxWidth: ($(window).innerWidth() *0.8),
 	});
 
 	if (localStorage['sidebar_width'] != null)
 		$('#sidebar_container').width(localStorage['sidebar_width']);
-	localStorage['sidebar_width'] = $('#sidebar_container').width();
+	if ($('#sidebar_container').width() > $(window).innerWidth() *0.8)
+		$('#sidebar_container').width('30%');
 
+	localStorage['sidebar_width'] = $('#sidebar_container').width();
 	/*
 	// Set up datablock splitter
 	$('#selected_infoblock').resizable({
