@@ -9,7 +9,7 @@ nginx=no
 
 mkdir -p $ipath
 
-if ! getent passwd tar1090 >/dev/null
+if ! id -u tar1090 &>/dev/null
 then
 	adduser --system --home $ipath --no-create-home --quiet tar1090
 fi
