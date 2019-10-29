@@ -241,7 +241,7 @@ function format_data_source(source) {
 		case 'adsb_other':
 			return "ADS-B";
 		case 'adsb_icao_nt':
-			return "ADS-B (non transponder)";
+			return "ADS-B noTP";
 		case 'adsr_icao':
 		case 'adsr_other':
 			return "ADS-R";
