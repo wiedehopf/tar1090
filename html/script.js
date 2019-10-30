@@ -54,6 +54,7 @@ var debugJump = false;
 var noMLAT = false;
 var noVanish = false;
 var sidebarVisible = true;
+var filterTracks = false;
 
 var SpecialSquawks = {
 	'7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -393,6 +394,7 @@ function initialize() {
 
 	if (localStorage['noVanish'] == "true") {
 		noVanish = true;
+		filterTracks = noVanish;
 		//localStorage['noVanish'] = "false";
 	}
 
@@ -1097,6 +1099,7 @@ function initialize_map() {
 				break;
 			case "V":
 				noVanish = !noVanish;
+				filterTracks = noVanish;
 				localStorage['noVanish'] = noVanish;
 				console.log('noVanish = ' + noVanish);
 				for (var i in PlanesOrdered) {
@@ -2510,9 +2513,19 @@ function updatePlaneFilter() {
 	if (maxAltitude < -1e6 || maxAltitude > 1e6 || isNaN(maxAltitude))
 		maxAltitude = 1e6;
 
-	PlaneFilter.minAltitude = minAltitude;
-	PlaneFilter.maxAltitude = maxAltitude;
-	PlaneFilter.altitudeUnits = DisplayUnits;
+	if (DisplayUnits == "metric") {
+		PlaneFilter.minAltitude = minAltitude * 3.2808;
+		PlaneFilter.maxAltitude = maxAltitude * 3.2808;
+	} else {
+		PlaneFilter.minAltitude = minAltitude;
+		PlaneFilter.maxAltitude = maxAltitude;
+	}
+
+	if (filterTracks) {
+		for (var i in PlanesOrdered) {
+			PlanesOrdered[i].remakeTrail();
+		}
+	}
 
 	for (var i in PlanesOrdered) {
 		var plane = PlanesOrdered[i];

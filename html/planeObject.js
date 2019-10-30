@@ -150,6 +150,8 @@ const estimateStyle = new ol.style.Style({
 	})
 });
 
+const nullStyle = new ol.style.Style({});
+
 const badDot = new ol.style.Style({
 	image: new ol.style.Circle({
 		radius: 3.5,
@@ -191,15 +193,8 @@ PlaneObject.prototype.isFiltered = function() {
 		return true;
 	}
 
-	if (this.filter.minAltitude != undefined && this.filter.maxAltitude != undefined) {
-		if (this.altitude == null) {
+	if (!filterTracks && this.altFiltered(this.altitude))
 			return true;
-		}
-		var planeAltitude = this.altitude === "ground" ? 0 : convert_altitude(this.altitude, this.filter.altitudeUnits);
-		if (planeAltitude < this.filter.minAltitude || planeAltitude > this.filter.maxAltitude) {
-			return true;
-		}
-	}
 
 	// filter out ground vehicles
 	if (typeof this.filter.groundVehicles !== 'undefined' && this.filter.groundVehicles === 'filtered') {
@@ -215,6 +210,20 @@ PlaneObject.prototype.isFiltered = function() {
 		}
 	}
 
+	return false;
+}
+
+
+PlaneObject.prototype.altFiltered = function(altitude) {
+	if (this.filter.minAltitude == null || this.filter.maxAltitude == null)
+		return false;
+	if (altitude == null) {
+		return true;
+	}
+	const planeAltitude = altitude === "ground" ? 0 : altitude;
+	if (planeAltitude < this.filter.minAltitude || planeAltitude > this.filter.maxAltitude) {
+		return true;
+	}
 	return false;
 }
 
@@ -913,7 +922,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 
 	if (this.flight && this.flight.trim()) {
 		this.name = this.flight;
-	} else if (this.registration && this.registration != "UNKN") {
+	} else if (this.registration) {
 		this.name = '_' + this.registration;
 	} else {
 		this.name = '_' + this.icao.toUpperCase();
@@ -1050,15 +1059,15 @@ PlaneObject.prototype.updateLines = function() {
 	if (this.track_linesegs.length == 0)
 		return;
 
-
-
 	// create the new elastic band feature
 	var lastseg = this.track_linesegs[this.track_linesegs.length - 1];
 	var lastfixed = lastseg.fixed.getCoordinateAt(1.0);
 	var geom = new ol.geom.LineString([lastfixed, ol.proj.fromLonLat(this.position)]);
 	this.elastic_feature = new ol.Feature(geom);
-	if (lastseg.estimated) {
-		this.elastic_feature.setStyle(noVanish ? new ol.style.Style({}) : estimateStyle);
+	if (filterTracks && this.altFiltered(lastseg.altitude)) {
+		this.elastic_feature.setStyle(nullStyle);
+	} else if (lastseg.estimated) {
+		this.elastic_feature.setStyle(noVanish ? nullStyle : estimateStyle);
 	} else {
 		this.elastic_feature.setStyle(this.altitudeLines(lastseg.altitude));
 	}
@@ -1073,17 +1082,20 @@ PlaneObject.prototype.updateLines = function() {
 		if (seg.feature && (!trackLabels || seg.label))
 			break;
 
-		if (!seg.feature) {
+		if (filterTracks && this.altFiltered(seg.altitude)) {
+		} else if (!seg.feature) {
 			seg.feature = new ol.Feature(seg.fixed);
 			if (seg.estimated) {
-				seg.feature.setStyle(noVanish ? new ol.style.Style({}) : estimateStyle);
+				seg.feature.setStyle(noVanish ? nullStyle : estimateStyle);
 			} else {
 				seg.feature.setStyle(this.altitudeLines(seg.altitude));
 			}
 			seg.feature.hex = this.icao;
 			this.trail_features.push(seg.feature);
 		}
-		if (trackLabels && !seg.label && seg.alt_real != null) {
+
+		if (filterTracks && this.altFiltered(seg.altitude)) {
+		} else if (trackLabels && !seg.label && seg.alt_real != null) {
 			seg.label = new ol.Feature(new ol.geom.Point(seg.fixed.getFirstCoordinate()));
 			const text = seg.alt_real == "ground" ? "" :
 				(Number(seg.speed).toFixed(0).toString().padStart(6, NBSP) + " \n" + seg.alt_real.toString().padStart(6, NBSP)) + " ";
