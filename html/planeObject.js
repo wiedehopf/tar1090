@@ -809,7 +809,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 	else if (type == "adsb_icao_nt")
 		this.dataSource = "other";
 
-	if (init)
+	if (init || isArray)
 		return;
 
 	// Update all of our data
@@ -825,7 +825,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 		this.messageRateOld = messageRate; 
 		this.msgs978 = data.messages;
 	}
-	this.messages = data.messages;
+	this.messages = data.messages ? data.messages : 0;
 
 	this.rssi = data.rssi;
 
