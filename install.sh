@@ -135,7 +135,7 @@ do
 
 	# keep some stuff around
 	if [ -f $html_path/defaults_*.js ]; then
-		cp $html_path/config_*.js /tmp/tar1090_config.js
+		cp $html_path/config.js /tmp/tar1090_config.js 2>/dev/null || true
 	fi
 	cp $html_path/upintheair.json /tmp/tar1090_upintheair.json 2>/dev/null || true
 	cp $html_path/color*.css /tmp/tar1090_colors.css/ 2>/dev/null || true
@@ -164,7 +164,6 @@ do
 		-e "s/planeObject.js/planeObject_$epoch.js/" \
 		-e "s/registrations.js/registrations_$epoch.js/" \
 		-e "s/script.js/script_$epoch.js/" \
-		-e "s/config.js/config_$epoch.js/" \
 		-e "s/colors.css/colors_$epoch.css/" \
 		-e "s/style.css/style_$epoch.css/" \
 		index.html
@@ -179,7 +178,6 @@ do
 	mv planeObject.js planeObject_$epoch.js
 	mv registrations.js registrations_$epoch.js
 	mv script.js script_$epoch.js
-	mv config.js config_$epoch.js
 	mv colors.css colors_$epoch.css
 	mv style.css style_$epoch.css
 

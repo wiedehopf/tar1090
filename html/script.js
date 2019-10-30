@@ -91,11 +91,6 @@ var layers_group;
 // piaware vs flightfeeder
 var isFlightFeeder = false;
 
-// this will be needed later, get it right when the script is loaded
-$.getJSON("db/aircraft_types/icao_aircraft_types.json")
-	.done(function(typeLookupData) {
-		_aircraft_type_cache = typeLookupData;
-	})
 
 
 function processReceiverUpdate(data, init) {
@@ -409,6 +404,11 @@ function initialize() {
 
 		// Wait for history item downloads and append them to the buffer
 		push_history();
+		// this will be needed later
+		$.getJSON("db/aircraft_types/icao_aircraft_types.json")
+			.done(function(typeLookupData) {
+				_aircraft_type_cache = typeLookupData;
+			})
 	});
 
 }
