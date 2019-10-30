@@ -913,12 +913,13 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 
 	if (this.flight && this.flight.trim()) {
 		this.name = this.flight;
-	} else if (this.registration) {
-		this.name = this.registration
+	} else if (this.registration && this.registration != "UNKN") {
+		this.name = '_' + this.registration;
 	} else {
-		this.name = this.icao.toUpperCase();
+		this.name = '_' + this.icao.toUpperCase();
 	}
 	this.name = this.name.trim();
+
 	if (this.altitude == "ground" && this.true_heading != null) {
 		this.rotation = this.true_heading;
 	} else if (this.track != null) {
