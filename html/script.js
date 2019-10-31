@@ -1055,6 +1055,7 @@ function initialize_map() {
 					break;
 				}
 				console.log(SelectedPlane.icao + ": " + SelectedPlane.baseMarkerKey + "  " + SelectedPlane.shape);
+				console.log(SelectedPlane);
 				break;
 			case "m":
 				toggleMultiSelect();

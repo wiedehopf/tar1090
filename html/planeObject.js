@@ -735,9 +735,6 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 
 	this.last_message_time = now - seen;
 
-	if (noMLAT && mlat)
-		return;
-
 	// remember last known position even if stale
 	// and some other magic to avoid mlat positions when a current ads-b position is available
 	if (lat != null && this.dataSource != "mlat" && mlat && this.position != null && now - this.position_time < mlatTimeout) {
@@ -747,7 +744,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 		if (debug && this.prev_position) {
 			this.drawRedDot([lon, lat]);
 		}
-	} else if (lat != null && seen_pos < (now - this.position_time + 2)) {
+	} else if (lat != null && seen_pos < (now - this.position_time + 2) && !(noMLAT && mlat)) {
 		this.position   = [lon, lat];
 		this.position_time = now - seen_pos;
 	}
@@ -773,7 +770,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 		&& (Math.abs(altitude - this.altitude) / (now - this.altitudeTime) < 160)) {
 		this.altitude = altitude;
 	}
-	if (altitude != null && seen < 5)
+	if (altitude != null && seen < 10)
 		this.altitudeTime = now;
 
 
@@ -803,7 +800,9 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 	}
 
 
-	if (mlat)
+	if (mlat && noMLAT)
+		this.dataSource = "other";
+	else if (mlat)
 		this.dataSource = "mlat";
 	else if (type && type.substring(0,4) == "tisb")
 		this.dataSource = "tisb";
@@ -834,7 +833,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 		this.messageRateOld = messageRate; 
 		this.msgs978 = data.messages;
 	}
-	this.messages = data.messages ? data.messages : 0;
+	this.messages = data.messages;
 
 	this.rssi = data.rssi;
 
@@ -920,15 +919,6 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 		this.vert_rate = null;
 	}
 
-	if (this.flight && this.flight.trim()) {
-		this.name = this.flight;
-	} else if (this.registration) {
-		this.name = '_' + this.registration;
-	} else {
-		this.name = '_' + this.icao.toUpperCase();
-	}
-	this.name = this.name.trim();
-
 	if (this.altitude == "ground" && this.true_heading != null) {
 		this.rotation = this.true_heading;
 	} else if (this.track != null) {
@@ -952,6 +942,15 @@ PlaneObject.prototype.updateTick = function(now, last, init) {
 	// recompute seen and seen_pos
 	this.seen = now - this.last_message_time;
 	this.seen_pos = now - this.position_time;
+
+	if (this.flight && this.flight.trim()) {
+		this.name = this.flight;
+	} else if (this.registration) {
+		this.name = '_' + this.registration;
+	} else {
+		this.name = '_' + this.icao.toUpperCase();
+	}
+	this.name = this.name.trim();
 
 	// If no packet in over 58 seconds, clear the plane.
 	// Only clear the plane if it's not selected individually
