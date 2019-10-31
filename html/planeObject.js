@@ -17,6 +17,7 @@ function PlaneObject(icao) {
 	this.alt_baro       = null;
 	this.alt_geom       = null;
 	this.altitudeTime   = 0;
+	this.bad_alt        = null;
 
 	this.speed          = null;
 	this.gs             = null;
@@ -766,12 +767,15 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 	// Filter anything greater than 10000 fpm
 	if (this.altitude == null || altitude == "ground" || this.altitude == "ground") {
 		this.altitude = altitude;
+		this.altitudeTime = now;
 	} else if (altitude != null && this.altitude != altitude
 		&& (Math.abs(altitude - this.altitude) / (now - this.altitudeTime) < 160)) {
 		this.altitude = altitude;
-	}
-	if (altitude != null && seen < 10)
 		this.altitudeTime = now;
+	} else if (this.bad_alt != altitude && altitude != null && this.altitude != altitude) {
+		this.bad_alt = altitude;
+		console.log(this.name + ", altitude filtered: " + altitude + ', d: ' + Math.abs(altitude - this.altitude) + ' / ' + (now - this.altitudeTime) + ' = ' + Math.abs(altitude - this.altitude) / (now - this.altitudeTime));
+	}
 
 
 
