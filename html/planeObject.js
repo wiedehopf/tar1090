@@ -1085,7 +1085,7 @@ PlaneObject.prototype.updateLines = function() {
 	if (filterTracks && this.altFiltered(lastseg.altitude)) {
 		this.elastic_feature.setStyle(nullStyle);
 	} else if (lastseg.estimated) {
-		this.elastic_feature.setStyle(noVanish ? nullStyle : estimateStyle);
+		this.elastic_feature.setStyle(estimateStyle);
 	} else {
 		this.elastic_feature.setStyle(this.altitudeLines(lastseg.altitude));
 	}
@@ -1104,7 +1104,7 @@ PlaneObject.prototype.updateLines = function() {
 		} else if (!seg.feature) {
 			seg.feature = new ol.Feature(seg.fixed);
 			if (seg.estimated) {
-				seg.feature.setStyle(noVanish ? nullStyle : estimateStyle);
+				seg.feature.setStyle(estimateStyle);
 			} else {
 				seg.feature.setStyle(this.altitudeLines(seg.altitude));
 			}

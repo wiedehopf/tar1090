@@ -134,7 +134,7 @@ do
 	sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" tar1090.service
 
 	# keep some stuff around
-	if [ -f $html_path/defaults_*.js ]; then
+	if [ -f $html_path/defaults*.js ]; then
 		cp $html_path/config.js /tmp/tar1090_config.js 2>/dev/null || true
 	fi
 	cp $html_path/upintheair.json /tmp/tar1090_upintheair.json 2>/dev/null || true
