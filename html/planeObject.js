@@ -18,6 +18,7 @@ function PlaneObject(icao) {
 	this.alt_geom       = null;
 	this.altitudeTime   = 0;
 	this.bad_alt        = null;
+	this.jumps          = 0;
 
 	this.speed          = null;
 	this.gs             = null;
@@ -764,17 +765,33 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 			altitude = data.alt_geom;
 		}
 	}
-	// Filter anything greater than 10000 fpm
+	// Filter anything greater than 20000 fpm
+	var max_fpm = 20000;
+	if (data.geom_rate != null)
+		max_fpm = 1.3*Math.abs(data.goem_rate) + 2000;
+	else if (data.baro_rate != null)
+		max_fpm = 1.3*Math.abs(data.baro_rate) + 2000;
+
 	if (this.altitude == null || altitude == "ground" || this.altitude == "ground") {
 		this.altitude = altitude;
 		this.altitudeTime = now;
-	} else if (altitude != null && this.altitude != altitude
-		&& (Math.abs(altitude - this.altitude) / (now - this.altitudeTime) < 160)) {
-		this.altitude = altitude;
-		this.altitudeTime = now;
-	} else if (this.bad_alt != altitude && altitude != null && this.altitude != altitude) {
-		this.bad_alt = altitude;
-		console.log(this.name + ", altitude filtered: " + altitude + ', d: ' + Math.abs(altitude - this.altitude) + ' / ' + (now - this.altitudeTime) + ' = ' + Math.abs(altitude - this.altitude) / (now - this.altitudeTime));
+	} else if (altitude != null && altitude != this.bad_alt
+				&& (this.altitude != altitude || (seen_pos != null && seen_pos < 3))) {
+		const delta = Math.abs(altitude - this.altitude);
+		const fpm = (delta < 800) ? 0 : (60 * delta / (now - this.altitudeTime + 2));
+		if (this.jumps < 2 && fpm > max_fpm) {
+			this.jumps++;
+			this.bad_alt = altitude;
+			if (debugPosFilter) {
+				console.log(this.icao + " altitude filtered: " + altitude + ' d: '
+					+ (altitude - this.altitude) + ' max kfpm: ' + Math.round(max_fpm/1000)
+					+ ' actual kfpm: ' + Math.round(fpm/1000));
+			}
+		} else {
+			this.altitude = altitude;
+			this.altitudeTime = now;
+			this.jumps = 0;
+		}
 	}
 
 
@@ -895,12 +912,6 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 	else
 		this.addrtype = null;
 
-	if (this.position && SitePosition) {
-		//var WGS84 = new ol.Sphere(6378137);
-		//this.sitedist = WGS84.haversineDistance(SitePosition, this.position);
-		this.sitedist = ol.sphere.getDistance(SitePosition, this.position);
-	}
-
 	// Pick a selected altitude
 	if (data.nav_altitude_fms != null) {
 		this.nav_altitude = data.nav_altitude_fms;
@@ -947,6 +958,10 @@ PlaneObject.prototype.updateTick = function(now, last, init) {
 	this.seen = now - this.last_message_time;
 	this.seen_pos = now - this.position_time;
 
+	if (this.position && SitePosition) {
+		this.sitedist = ol.sphere.getDistance(SitePosition, this.position);
+	}
+
 	if (this.flight && this.flight.trim()) {
 		this.name = this.flight;
 	} else if (this.registration) {
@@ -959,10 +974,18 @@ PlaneObject.prototype.updateTick = function(now, last, init) {
 	// If no packet in over 58 seconds, clear the plane.
 	// Only clear the plane if it's not selected individually
 	if (
-		(this.seen > 58 || this.position == null || this.seen_pos > 60)
-		&& (!this.selected || SelectedAllPlanes || multiSelect)
-		&& (!noVanish || this.position == null)
+		(this.seen < 58 && this.position != null && this.seen_pos < 60)
+		|| (this.selected && !SelectedAllPlanes && !multiSelect)
+		|| (noVanish && this.position != null)
 	) {
+		this.visible = true;
+		if (init || this.updateTrack(now, last)) {
+			this.updateLines();
+			this.updateMarker(true);
+		} else {
+			this.updateMarker(false); // didn't move
+		}
+	} else {
 		if (this.visible) {
 			//console.log("hiding " + this.icao);
 			this.clearMarker();
@@ -970,14 +993,6 @@ PlaneObject.prototype.updateTick = function(now, last, init) {
 			this.visible = false;
 			if (SelectedPlane == this.icao)
 				selectPlaneByHex(null,false);
-		}
-	} else {
-		this.visible = true;
-		if (init || this.updateTrack(now, last)) {
-			this.updateLines();
-			this.updateMarker(true);
-		} else { 
-			this.updateMarker(false); // didn't move
 		}
 	}
 };
