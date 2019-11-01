@@ -9,6 +9,7 @@ function PlaneObject(icao) {
 	this.selected  = false;
 	this.category  = null;
 	this.dataSource = "other";
+	this.hasADSB   = false;
 
 	this.trCache = [];
 
@@ -740,7 +741,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 
 	// remember last known position even if stale
 	// and some other magic to avoid mlat positions when a current ads-b position is available
-	if (lat != null && this.dataSource == "adsb" && mlat && now - this.position_time < mlatTimeout) {
+	if (lat != null && this.hasADSB && this.dataSource != "mlat" && mlat && now - this.position_time < mlatTimeout) {
 		mlat = false;
 		// don't use MLAT for mlatTimeout (default 30) seconds after getting an ADS-B position
 		// console.log(this.icao + ': mlat position ignored');
@@ -823,22 +824,24 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 	}
 
 
-	if (mlat && noMLAT)
+	if (mlat && noMLAT) {
 		this.dataSource = "other";
-	else if (mlat)
+	} else if (mlat) {
 		this.dataSource = "mlat";
-	else if (type && type.substring(0,4) == "tisb")
+	} else if (type && type.substring(0,4) == "tisb") {
 		this.dataSource = "tisb";
-	else if (!displayUATasADSB && this.receiver == "uat")
+	} else if (!displayUATasADSB && this.receiver == "uat") {
 		this.dataSource = "uat";
-	else if (lat != null && type == null)
+	} else if (lat != null && type == null) {
 		this.dataSource = "adsb";
-	else if (type == "adsb_icao" || type == "adsb_other")
+		this.hasADSB = true;
+	} else if (type == "adsb_icao" || type == "adsb_other") {
 		this.dataSource = "adsb";
-	else if (type && type.substring(0,4) == "adsr")
+	} else if (type && type.substring(0,4) == "adsr") {
 		this.dataSource = "adsb";
-	else if (type == "adsb_icao_nt")
+	} else if (type == "adsb_icao_nt") {
 		this.dataSource = "other";
+	}
 
 	if (init || isArray)
 		return;
