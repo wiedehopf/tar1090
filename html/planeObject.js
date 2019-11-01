@@ -302,6 +302,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 		this.position_time = this.prev_time;
 		if (debugPosFilter) {
 			this.drawRedDot(this.bad_position);
+			jumpTo = this.icao;
 		}
 		return false;
 	} else {
@@ -786,6 +787,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 				console.log(this.icao + " altitude filtered: " + altitude + ' d: '
 					+ (altitude - this.altitude) + ' max kfpm: ' + Math.round(max_fpm/1000)
 					+ ' actual kfpm: ' + Math.round(fpm/1000));
+				jumpTo = this.icao;
 			}
 		} else {
 			this.altitude = altitude;

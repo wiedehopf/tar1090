@@ -51,6 +51,7 @@ var fetchingPf = false;
 var reaping = false;
 var debug = false;
 var debugJump = false;
+var jumpTo = null;
 var noMLAT = false;
 var noVanish = false;
 var sidebarVisible = true;
@@ -1113,6 +1114,9 @@ function initialize_map() {
 				debug = !debug;
 				localStorage['debug'] = debug;
 				console.log('debug = ' + debug);
+				break;
+			case "j":
+				selectPlaneByHex(jumpTo, true);
 				break;
 			case "J":
 				debugJump = !debugJump;
