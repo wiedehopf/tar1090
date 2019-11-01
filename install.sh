@@ -138,7 +138,7 @@ do
 		cp $html_path/config.js /tmp/tar1090_config.js 2>/dev/null || true
 	fi
 	cp $html_path/upintheair.json /tmp/tar1090_upintheair.json 2>/dev/null || true
-	cp $html_path/color*.css /tmp/tar1090_colors.css/ 2>/dev/null || true
+	cp $html_path/color*.css /tmp/tar1090_colors.css 2>/dev/null || true
 
 	rm -rf $html_path 2>/dev/null || true
 	cp -r -T html $html_path
