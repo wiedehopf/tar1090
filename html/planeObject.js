@@ -740,7 +740,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 
 	// remember last known position even if stale
 	// and some other magic to avoid mlat positions when a current ads-b position is available
-	if (lat != null && this.dataSource != "mlat" && mlat && this.position != null && now - this.position_time < mlatTimeout) {
+	if (lat != null && this.dataSource == "adsb" && mlat && now - this.position_time < mlatTimeout) {
 		mlat = false;
 		// don't use MLAT for mlatTimeout (default 30) seconds after getting an ADS-B position
 		// console.log(this.icao + ': mlat position ignored');
