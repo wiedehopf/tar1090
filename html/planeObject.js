@@ -1105,7 +1105,7 @@ PlaneObject.prototype.updateLines = function() {
 		if (seg.feature && (!trackLabels || seg.label))
 			break;
 
-		if (filterTracks && (this.altFiltered(lastseg.altitude) || lastseg.estimated)) {
+		if (filterTracks && (this.altFiltered(seg.altitude) || seg.estimated)) {
 		} else if (!seg.feature) {
 			seg.feature = new ol.Feature(seg.fixed);
 			if (seg.estimated) {
