@@ -96,8 +96,6 @@ var isFlightFeeder = false;
 
 
 function processReceiverUpdate(data, init) {
-
-
 	// update now and last
 	var uat = false;
 	if (data.uat_978 == "true") {
@@ -328,13 +326,8 @@ function fetchData() {
 
 		// update timestamps, visibility, history track for all planes - not only those updated
 		for (var i = 0; i < PlanesOrdered.length; ++i) {
-			var plane = PlanesOrdered[i];
-			if (plane.receiver == "uat" && uat_now)
-				plane.updateTick(uat_now, uat_last);
-			else
-				plane.updateTick(now, last);
+			PlanesOrdered[i].updateTick();
 		}
-		selectNewPlanes();
 
 
 		refreshSelected();
@@ -729,10 +722,7 @@ function parse_history() {
 				plane.last_message_time -= 999;
 			}
 
-			if (plane.dataSource == "uat")
-				plane.updateTick(uat_now, uat_last, true);
-			else
-				plane.updateTick(now, last, true);
+			plane.updateTick(true);
 		}
 
 
@@ -750,7 +740,7 @@ function parse_history() {
 	refreshHighlighted();
 
 	// Setup our timer to poll from the server.
-	window.setInterval(fetchData, RefreshInterval);
+	window.setInterval(fetchData, 5000);
 	window.setInterval(reaper, 60000);
 	if (enable_pf_data) {
 		window.setInterval(fetchPfData, RefreshInterval*10.314);
@@ -1055,90 +1045,7 @@ function initialize_map() {
 			case "Escape":
 				deselectAllPlanes();
 				break;
-			case "?":
-				if (!SelectedPlane) {
-					console.log("No plane selected");
-					break;
-				}
-				console.log(SelectedPlane.icao + ": " + SelectedPlane.baseMarkerKey + "  " + SelectedPlane.shape);
-				console.log(SelectedPlane);
-				break;
-			case "m":
-				toggleMultiSelect();
-				break;
-			case "v":
-				toggleTableInView();
-				break;
-			case "r":
-				followRandomPlane();
-				break;
-			case "t":
-				selectAllPlanes();
-				break;
-			case "h":
-				resetMap();
-				break;
-			case "f":
-				toggleFollowSelected();
-				break;
-			case "F":
-				onlySelected = !onlySelected;
-				break;
-			case "l":
-				toggleLabels();
-				break;
-			case "o":
-				toggleExtendedLabels();
-				break;
-			case "M":
-				onlyMLAT = !onlyMLAT;
-				break;
-			case "T":
-				filterTISB = !filterTISB;
-				break;
-			case "A":
-				onlyADSB = !onlyADSB;
-				break;
-			case "P":
-				debugPosFilter = !debugPosFilter;
-				localStorage['debugPosFilter'] = debugPosFilter;
-				console.log('debugPosFilter = ' + debugPosFilter);
-				break;
-			case "V":
-				noVanish = !noVanish;
-				filterTracks = noVanish;
-				localStorage['noVanish'] = noVanish;
-				console.log('noVanish = ' + noVanish);
-				for (var i in PlanesOrdered) {
-					PlanesOrdered[i].remakeTrail();
-				}
-				if (!noVanish)
-					reaper();
-				break;
-			case "D":
-				debug = !debug;
-				localStorage['debug'] = debug;
-				console.log('debug = ' + debug);
-				break;
-			case "j":
-				selectPlaneByHex(jumpTo, true);
-				break;
-			case "J":
-				debugJump = !debugJump;
-				localStorage['debugJump'] = debugJump;
-				console.log('debugJump = ' + debugJump);
-				break;
-			case "N":
-				noMLAT = !noMLAT;
-				localStorage['noMLAT'] = noMLAT;
-				console.log('noMLAT = ' + noMLAT);
-				break;
-			case "k":
-				toggleTrackLabels();
-				break;
-			case "b":
-				toggleMapDim();
-				break;
+		// zoom and movement
 			case "q":
 				zoomOut();
 				break;
@@ -1172,6 +1079,87 @@ function initialize_map() {
 				newCenter = [(oldCenter[0] + extent[2])/2,  oldCenter[1]];
 				OLMap.getView().setCenter(newCenter);
 				FollowSelected = false;
+				break;
+		// misc
+			case "b":
+				toggleMapDim();
+				break;
+			case "m":
+				toggleMultiSelect();
+				break;
+			case "v":
+				toggleTableInView();
+				break;
+			case "r":
+				followRandomPlane();
+				break;
+			case "t":
+				selectAllPlanes();
+				break;
+			case "h":
+				resetMap();
+				break;
+			case "f":
+				toggleFollowSelected();
+				break;
+		// filters
+			case "M":
+				onlyMLAT = !onlyMLAT;
+				break;
+			case "T":
+				filterTISB = !filterTISB;
+				break;
+			case "A":
+				onlyADSB = !onlyADSB;
+				break;
+		// persistance mode
+			case "i":
+				toggleIsolation();
+				break;
+			case "p":
+				togglePersistence();
+				break;
+		// Labels
+			case "l":
+				toggleLabels();
+				break;
+			case "o":
+				toggleExtendedLabels();
+				break;
+			case "k":
+				toggleTrackLabels();
+				break;
+		// debug stuff
+			case "D":
+				debug = !debug;
+				localStorage['debug'] = debug;
+				console.log('debug = ' + debug);
+				break;
+			case "P":
+				debugPosFilter = !debugPosFilter;
+				localStorage['debugPosFilter'] = debugPosFilter;
+				console.log('debugPosFilter = ' + debugPosFilter);
+				break;
+			case "?":
+				if (!SelectedPlane) {
+					console.log("No plane selected");
+					break;
+				}
+				console.log(SelectedPlane.icao + ": " + SelectedPlane.baseMarkerKey + "  " + SelectedPlane.shape);
+				console.log(SelectedPlane);
+				break;
+			case "j":
+				selectPlaneByHex(jumpTo, true);
+				break;
+			case "J":
+				debugJump = !debugJump;
+				localStorage['debugJump'] = debugJump;
+				console.log('debugJump = ' + debugJump);
+				break;
+			case "N":
+				noMLAT = !noMLAT;
+				localStorage['noMLAT'] = noMLAT;
+				console.log('noMLAT = ' + noMLAT);
 				break;
 		}
 	}, true);
@@ -2037,22 +2025,6 @@ function selectAllPlanes() {
 	setSelectedInfoBlockVisibility();
 }
 
-// on refreshes, try to find new planes and mark them as selected
-function selectNewPlanes() {
-	if (SelectedAllPlanes) {
-		for (var key in PlanesOrdered) {
-			if (!PlanesOrdered[key].visible || PlanesOrdered[key].isFiltered()) {
-				if (PlanesOrdered[key].selected) {
-					PlanesOrdered[key].selected = false;
-					PlanesOrdered[key].clearLines();
-				}
-			} else if (PlanesOrdered[key].selected !== true) {
-				PlanesOrdered[key].selected = true;
-				PlanesOrdered[key].updateLines();
-			}
-		}
-	}
-}
 
 // deselect all the planes
 function deselectAllPlanes() {
@@ -2340,6 +2312,24 @@ function filterBlockedMLAT(switchFilter) {
 	PlaneFilter.blockedMLAT = blockedMLATFilter;
 }
 
+
+function toggleIsolation() {
+	onlySelected = !onlySelected;
+	for (var i in PlanesOrdered) {
+		PlanesOrdered[i].updateTick();
+	}
+}
+function togglePersistence() {
+	noVanish = !noVanish;
+	filterTracks = noVanish;
+	for (var i in PlanesOrdered) {
+		PlanesOrdered[i].remakeTrail();
+	}
+	if (!noVanish)
+		reaper();
+	localStorage['noVanish'] = noVanish;
+	console.log('noVanish = ' + noVanish);
+}
 function toggleDebugAll() {
 	if (localStorage['debugAll'] === "true") {
 		debugAll = false;
@@ -2538,11 +2528,7 @@ function updatePlaneFilter() {
 	}
 
 	for (var i in PlanesOrdered) {
-		var plane = PlanesOrdered[i];
-		if (plane.dataSource == "uat")
-			plane.updateTick(uat_now, uat_last);
-		else
-			plane.updateTick(now, last);
+		PlanesOrdered[i].updateTick();
 	}
 }
 

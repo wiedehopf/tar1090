@@ -958,7 +958,15 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 
 };
 
-PlaneObject.prototype.updateTick = function(now, last, init) {
+PlaneObject.prototype.updateTick = function(redraw) {
+	if (this.dataSource == "uat")
+		this.updateFeatures(uat_now, uat_last, redraw);
+	else
+		this.updateFeatures(now, last, redraw);
+}
+
+PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
+
 	// recompute seen and seen_pos
 	this.seen = now - this.last_message_time;
 	this.seen_pos = now - this.position_time;
@@ -984,7 +992,13 @@ PlaneObject.prototype.updateTick = function(now, last, init) {
 		|| (noVanish && this.position != null)
 	) {
 		this.visible = true;
-		if (init || this.updateTrack(now, last)) {
+		if (SelectedAllPlanes && !this.isFiltered())
+			this.selected = true;
+
+		if (redraw) {
+			this.updateLines();
+			this.updateMarker(false); // didn't move
+		} else if (this.updateTrack(now, last)) {
 			this.updateLines();
 			this.updateMarker(true);
 		} else {
@@ -996,6 +1010,7 @@ PlaneObject.prototype.updateTick = function(now, last, init) {
 			this.clearMarker();
 			this.clearLines();
 			this.visible = false;
+			this.selected = false;
 			if (SelectedPlane == this.icao)
 				selectPlaneByHex(null,false);
 		}
@@ -1076,11 +1091,14 @@ PlaneObject.prototype.altitudeLines = function(altitude) {
 
 // Update our planes tail line,
 PlaneObject.prototype.updateLines = function() {
-	if (!this.selected)
-		return;
+	if (!this.visible || (!this.selected && !SelectedAllPlanes) || this.isFiltered())
+		return this.clearLines();
 
 	if (this.track_linesegs.length == 0)
 		return;
+
+	if (!this.layer.getVisible())
+		this.layer.setVisible(true);
 
 	// create the new elastic band feature
 	var lastseg = this.track_linesegs[this.track_linesegs.length - 1];
@@ -1142,9 +1160,6 @@ PlaneObject.prototype.updateLines = function() {
 	}
 
 
-	// after making sure everything is drawn, also show the layer
-	if (!this.layer.getVisible())
-		this.layer.setVisible(true);
 };
 
 PlaneObject.prototype.remakeTrail = function() {
@@ -1156,6 +1171,7 @@ PlaneObject.prototype.remakeTrail = function() {
 	}
 	this.elastic_feature = null;
 
+	/*
 	trailGroup.remove(this.layer);
 
 	this.trail_features = new ol.Collection();
@@ -1170,8 +1186,9 @@ PlaneObject.prototype.remakeTrail = function() {
 	});
 
 	trailGroup.push(this.layer);
+	*/
 
-	this.updateLines();
+	this.updateTick(true);
 }
 
 PlaneObject.prototype.destroy = function() {
