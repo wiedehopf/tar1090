@@ -186,6 +186,9 @@ function processReceiverUpdate(data, init) {
 			}
 		}
 	}
+	// jquery stuff might still have references to the json, so null the
+	// aircraft array to make it easier for the garbage collector.
+	data.aircraft = null;
 }
 
 function setupPlane(hex, plane) {
