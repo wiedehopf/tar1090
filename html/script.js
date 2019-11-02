@@ -1315,6 +1315,7 @@ function refreshSelected() {
 
 
 	if (!SelectedPlane) {
+		setSelectedInfoBlockVisibility();
 		return;
 	}
 	const selected = SelectedPlane;
