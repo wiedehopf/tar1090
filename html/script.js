@@ -2002,11 +2002,11 @@ function highlightPlaneByHex(hex) {
 function selectAllPlanes() {
 	HighlightedPlane = null;
 	// if all planes are already selected, deselect them all
-	buttonActive('#T', !SelectedAllPlanes);
 	if (SelectedAllPlanes) {
 		deselectAllPlanes();
 		return;
 	}
+	buttonActive('#T', true);
 	// If SelectedPlane has something in it, clear out the selected
 	if (SelectedPlane != null) {
 		SelectedPlane.selected = false;
@@ -2030,6 +2030,7 @@ function selectAllPlanes() {
 
 // deselect all the planes
 function deselectAllPlanes() {
+	buttonActive('#T', false);
 	for(var key in Planes) {
 		Planes[key].selected = false;
 		$(Planes[key].tr).removeClass("selected");
