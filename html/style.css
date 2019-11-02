@@ -10,7 +10,7 @@ element {
 
 #tableinfo { font-size: 10pt; }
 
-#layout_container { 
+#layout_container {
     display: flex;
     height: 100%;
 }
@@ -401,11 +401,19 @@ select.error, textarea.error, input.error {
 {
     font-weight: bold;
     font-size: 12pt;
-    color: #FFFFFF;
     line-height:  24pt;
     text-align: center;
 	margin: 3pt;
 }
+
+.activeButton {
+	color: #000000;
+}
+
+.inActiveButton {
+	color: #FFFFFF;
+}
+
 
 .button {
     background-color: #00596b;

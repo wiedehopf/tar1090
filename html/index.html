@@ -582,31 +582,31 @@
 				</div-->
 				<div id="header_top" class="infoHeading">
 					<div class="buttonContainer">
-						<span title="(H)ome" class="button" onclick="resetMap();"><span class="buttonText">H</span></span><!--
-						--><span title="All (T)racks" class="button" onclick="selectAllPlanes();"><span class="buttonText">T</span></span>
+						<span id="H" title="(H)ome" class="button inActiveButton" onclick="resetMap();"><span class="buttonText">H</span></span><!--
+						--><span id="T" title="All (T)racks" class="button inActiveButton" onclick="selectAllPlanes();"><span class="buttonText">T</span></span>
 					</div>
 				</div>
 				<div id="header_side" class="infoHeading">
 					<div class="buttonContainer">
 						<div id="settingsCog" class="settingsContainer"></div>
-						<div title="Toggle (L)abels" class="button" onclick="toggleLabels();"><span class="buttonText">L</span></div>
-						<div title="Toggle Label Extensi(O)ns" class="button" onclick="toggleExtendedLabels();"><span class="buttonText">O</span></div>
-						<div title="Toggle Trac(K) Labels" class="button" onclick="toggleTrackLabels();"><span class="buttonText">K</span></div>
+						<div id="L" title="Toggle (L)abels" class="button inActiveButton" onclick="toggleLabels();"><span class="buttonText">L</span></div>
+						<div id="O" title="Toggle Label Extensi(O)ns" class="button inActiveButton" onclick="toggleExtendedLabels();"><span class="buttonText">O</span></div>
+						<div id="K" title="Toggle Trac(K) Labels" class="button inActiveButton" onclick="toggleTrackLabels();"><span class="buttonText">K</span></div>
 						<div class="buttonSpacer">
 						</div>
-						<div title="Toggle Map (B)rightness" class="button" onclick="toggleMapDim();"><span class="buttonText">B</span></div>
+						<div id="B" title="Toggle Map (B)rightness" class="button inActiveButton" onclick="toggleMapDim();"><span class="buttonText">B</span></div>
 						<div class="buttonSpacer">
 						</div>
-						<div title="Table: only show aircraft in current (V)iew" class="button" onclick="toggleTableInView();"><span class="buttonText">V</span></div>
-						<div title="Toggle (M)ultiSelect" class="button" onclick="toggleMultiSelect();"><span class="buttonText">M</span></div>
+						<div id="V" title="Table: only show aircraft in current (V)iew" class="button inActiveButton" onclick="toggleTableInView();"><span class="buttonText">V</span></div>
+						<div id="M" title="Toggle (M)ultiSelect" class="button inActiveButton" onclick="toggleMultiSelect();"><span class="buttonText">M</span></div>
 						<div class="buttonSpacer">
 						</div>
-						<div title="(P)ersistence mode" class="button" onclick="togglePersistence();"><span class="buttonText">P</span></div>
-						<div title="(I)solate: only show selected aircraft" class="button" onclick="toggleIsolation();"><span class="buttonText">I</span></div>
+						<div id="P" title="(P)ersistence mode" class="button inActiveButton" onclick="togglePersistence();"><span class="buttonText">P</span></div>
+						<div id="I" title="(I)solate: only show selected aircraft" class="button inActiveButton" onclick="toggleIsolation();"><span class="buttonText">I</span></div>
 						<div class="buttonSpacer">
 						</div>
-						<div title="Follow a (R)andom plane!" class="button" onclick="followRandomPlane();"><span class="buttonText">R</span></div>
-						<div title="(F)ollow" class="button" onclick="toggleFollowSelected();"><span class="buttonText">F</span></div>
+						<div id="R" title="Follow a (R)andom plane!" class="button inActiveButton" onclick="followRandomPlane();"><span class="buttonText">R</span></div>
+						<div id="F" title="(F)ollow" class="button inActiveButton" onclick="toggleFollowSelected();"><span class="buttonText">F</span></div>
 					</div>
 				</div>
 			</div>
