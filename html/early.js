@@ -48,14 +48,14 @@ function get_history() {
 
 	nHistoryItems++;
 	var request = $.ajax({ url: 'data/aircraft.json',
-		timeout: historyTimeout*500,
+		timeout: historyTimeout*800,
 		cache: false,
 		dataType: 'json' });
 	deferHistory.push(request);
 	if (enable_uat) {
 		nHistoryItems++;
 		request = $.ajax({ url: 'chunks/978.json',
-			timeout: historyTimeout*500,
+			timeout: historyTimeout*800,
 			cache: false,
 			dataType: 'json' });
 		deferHistory.push(request);

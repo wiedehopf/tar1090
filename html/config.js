@@ -161,9 +161,6 @@ BingMapsAPIKey = null;
 // enable/disable mouseover/hover aircraft information
 //enableMouseover = true;
 
-// Timeout for loading the history
-//historyTimeout = 20;
-
 // Columns that have a // in front of them are shown.
 HideCols = [
 	"#icao",
