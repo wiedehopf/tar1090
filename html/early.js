@@ -6,7 +6,6 @@ var enable_uat = false;
 var enable_pf_data = false;
 var HistoryChunks = false;
 var nHistoryItems = 0;
-var nChunks = 0;
 var HistoryItemsReturned = 0;
 var chunkNames;
 var PositionHistoryBuffer = [];
@@ -30,10 +29,9 @@ var get_receiver_defer = $.ajax({ url: 'data/receiver.json',
 
 
 $.when(test_chunk_defer).done(function(data) {
-	test_chunk_defer = null;
 	HistoryChunks = true;
 	chunkNames = data.chunks;
-	nChunks = chunkNames.length;
+	nHistoryItems = chunkNames.length;
 	enable_uat = (data.enable_uat == "true");
 	enable_pf_data = (data.pf_data == "true");
 	if (enable_uat)
@@ -45,33 +43,29 @@ $.when(test_chunk_defer).done(function(data) {
 	get_history();
 });
 
-$.ajax({ url: 'data/aircraft.json',
-	timeout: historyTimeout-2,
-	cache: false,
-	dataType: 'json' }).done(function(data) {
-		if (HistoryItemsReturned < nHistoryItems) {
-			PositionHistoryBuffer.push(data);
-		}
-	});
 
 function get_history() {
 
+	nHistoryItems++;
+	var request = $.ajax({ url: 'data/aircraft.json',
+		timeout: historyTimeout*500,
+		cache: false,
+		dataType: 'json' });
+	deferHistory.push(request);
 	if (enable_uat) {
-		$.ajax({ url: 'chunks/978.json',
-			timeout: historyTimeout-2,
+		nHistoryItems++;
+		request = $.ajax({ url: 'chunks/978.json',
+			timeout: historyTimeout*500,
 			cache: false,
-			dataType: 'json' }).done(function(data) {
-			if (HistoryItemsReturned < nHistoryItems) {
-				PositionHistoryBuffer.push(data);
-			}
-			});
+			dataType: 'json' });
+		deferHistory.push(request);
 	}
 
 	if (HistoryChunks) {
-		if (nChunks > 0) {
-			console.log("Starting to load history (" + nChunks + " chunks)");
+		if (nHistoryItems > 0) {
+			console.log("Starting to load history (" + nHistoryItems + " chunks)");
 			console.time("Downloaded History");
-			for (var i = nChunks-1; i >= 0; i--) {
+			for (var i = chunkNames.length-1; i >= 0; i--) {
 				get_history_item(i);
 			}
 		}
@@ -80,7 +74,6 @@ function get_history() {
 			receiverJson = data;
 			Dump1090Version = data.version;
 			RefreshInterval = data.refresh;
-			nHistoryItems = nChunks;
 			configureReceiver.resolve();
 		});
 	} else {

@@ -623,10 +623,12 @@ function push_history_item(i) {
 		.done(function(json) {
 
 			if (HistoryChunks) {
-				if (json) {
+				if (json && json.files) {
 					for (var i in json.files) {
 						PositionHistoryBuffer.push(json.files[i]);
 					}
+				} else if (json && json.now) {
+					PositionHistoryBuffer.push(json);
 				}
 			} else {
 				PositionHistoryBuffer.push(json);
