@@ -739,7 +739,7 @@ function parse_history() {
 	refreshHighlighted();
 
 	// Setup our timer to poll from the server.
-	window.setInterval(fetchData, 5000);
+	window.setInterval(fetchData, RefreshInterval);
 	window.setInterval(reaper, 60000);
 	if (enable_pf_data) {
 		window.setInterval(fetchPfData, RefreshInterval*10.314);
