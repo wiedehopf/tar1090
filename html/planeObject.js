@@ -19,7 +19,8 @@ function PlaneObject(icao) {
 	this.alt_geom       = null;
 	this.altitudeTime   = 0;
 	this.bad_alt        = null;
-	this.jumps          = 0;
+	this.bad_altTime    = null;
+	this.alt_reliable   = 0;
 
 	this.speed          = null;
 	this.gs             = null;
@@ -754,46 +755,43 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 	}
 
 	// remember last known altitude even if stale
-	var altitude = null;
+	var newAlt = null;
 	if (alt_baro != null) {
-		altitude = alt_baro;
+		newAlt = alt_baro;
 		this.alt_baro = alt_baro;
 	} else if (data.altitude != null) {
-		altitude = data.altitude;
+		newAlt = data.altitude;
 		this.alt_baro = data.altitude;
 	} else {
 		this.alt_baro = null;
 		if (data.alt_geom != null) {
-			altitude = data.alt_geom;
+			newAlt = data.alt_geom;
 		}
 	}
 	// Filter anything greater than 12000 fpm
-	var max_fpm = 12000;
-	if (data.geom_rate != null)
-		max_fpm = 1.3*Math.abs(data.goem_rate) + 2000;
-	else if (data.baro_rate != null)
-		max_fpm = 1.3*Math.abs(data.baro_rate) + 2000;
 
-	if (altitude != null && (!altitudeFilter || this.altitude == null || altitude == "ground" || this.altitude == "ground")) {
-		this.altitude = altitude;
+	if (newAlt != null && (!altitudeFilter || this.altitude == null || newAlt == "ground" || this.altitude == "ground")) {
+		this.altitude = newAlt;
 		this.altitudeTime = now;
-	} else if (altitude != null && altitude != this.bad_alt
-				&& (this.altitude != altitude || (seen_pos != null && seen_pos < 3))) {
-		const delta = Math.abs(altitude - this.altitude);
-		const fpm = (delta < 800) ? 0 : (60 * delta / (now - this.altitudeTime + 2));
-		if (this.jumps < 3 && fpm > max_fpm) {
-			this.jumps++;
-			this.bad_alt = altitude;
-			if (debugPosFilter) {
-				console.log(this.icao + " altitude filtered: " + altitude + ' d: '
-					+ (altitude - this.altitude) + ' max kfpm: ' + Math.round(max_fpm/1000)
-					+ ' actual kfpm: ' + Math.round(fpm/1000));
-				jumpTo = this.icao;
+	} else if (newAlt != null && newAlt != this.bad_alt
+				&& (this.altitude != newAlt || (seen_pos != null && seen_pos < 3))) {
+		if (this.alt_reliable > 0 && this.altBad(newAlt, this.altitude, this.altitudeTime, data)) {
+			if (this.bad_alt == null || this.altBad(newAlt, this.bad_alt, this.bad_altTime, data)) {
+				this.alt_reliable--;
+				this.bad_alt = newAlt;
+				this.bad_altTime = now;
+				if (debugPosFilter) {
+					console.log((now%1000).toFixed(0) + ': AltFilter: ' + this.icao
+						+ ' oldAlt: ' + this.altitude
+						+ ' newAlt: ' + newAlt
+						+ ' elapsed: ' + (now-this.altitudeTime).toFixed(0) );
+					jumpTo = this.icao;
+				}
 			}
 		} else {
-			this.altitude = altitude;
+			this.altitude = newAlt;
 			this.altitudeTime = now;
-			this.jumps = 0;
+			this.alt_reliable = Math.min(this.alt_reliable + 1, 3);
 		}
 	}
 
@@ -1276,4 +1274,16 @@ function hslToRgb(h, s, l){
     }
 
     return 'rgb(' + Math.round(r * 255) + ', ' + Math.round(g * 255) + ', ' +  Math.round(b * 255) + ')';
+}
+
+PlaneObject.prototype.altBad = function(newAlt, oldAlt, oldTime, data) {
+	var max_fpm = 12000;
+	if (data.geom_rate != null)
+		max_fpm = 1.3*Math.abs(data.goem_rate) + 5000;
+	else if (data.baro_rate != null)
+		max_fpm = 1.3*Math.abs(data.baro_rate) + 5000;
+
+	const delta = Math.abs(newAlt - oldAlt);
+	const fpm = (delta < 800) ? 0 : (60 * delta / (now - oldTime + 2));
+	return fpm > max_fpm;
 }
