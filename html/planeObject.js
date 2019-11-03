@@ -774,7 +774,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 	else if (data.baro_rate != null)
 		max_fpm = 1.3*Math.abs(data.baro_rate) + 2000;
 
-	if (this.altitude == null || altitude == "ground" || this.altitude == "ground") {
+	if (altitude != null && (!altitudeFilter || this.altitude == null || altitude == "ground" || this.altitude == "ground")) {
 		this.altitude = altitude;
 		this.altitudeTime = now;
 	} else if (altitude != null && altitude != this.bad_alt

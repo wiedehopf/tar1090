@@ -184,6 +184,8 @@ var positionFilterSpeed = 2.5; // in Mach
 var positionFilterGsFactor = 1.8;
 var debugPosFilter = false;
 
+var altitudeFilter = true;
+
 // time in seconds before an MLAT position is accepted after receiving a
 // more reliable position
 var mlatTimeout = 30;
