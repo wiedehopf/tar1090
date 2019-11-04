@@ -2445,8 +2445,11 @@ function toggleAltitudeChart(switchToggle) {
 
 function followRandomPlane() {
 	var this_one = null;
+	var tired = 0;
 	do {
 		this_one = PlanesOrdered[Math.floor(Math.random()*PlanesOrdered.length)];
+		if (tired++ > 1000)
+			break;
 	} while (this_one.isFiltered() || !this_one.position || (now - this_one.position_time > 30));
 	//console.log(this_one.icao);
 	selectPlaneByHex(this_one.icao, true);
