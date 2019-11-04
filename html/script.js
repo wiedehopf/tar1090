@@ -329,7 +329,6 @@ function fetchData() {
 			PlanesOrdered[i].updateTick();
 		}
 
-
 		refreshSelected();
 		refreshHighlighted();
 		refreshTableInfo();
@@ -2529,11 +2528,18 @@ function onResetAltitudeFilter(e) {
 function updatePlaneFilter() {
 	var minAltitude = parseFloat($("#altitude_filter_min").val().trim());
 	var maxAltitude = parseFloat($("#altitude_filter_max").val().trim());
+	var enabled = false;
 
 	if (minAltitude < -1e6 || minAltitude > 1e6 || isNaN(minAltitude))
 		minAltitude = -1e6;
+	else
+		enabled = true;
 	if (maxAltitude < -1e6 || maxAltitude > 1e6 || isNaN(maxAltitude))
 		maxAltitude = 1e6;
+	else
+		enabled = true;
+
+	PlaneFilter.enabled = enabled;
 
 	if (DisplayUnits == "metric") {
 		PlaneFilter.minAltitude = minAltitude * 3.2808;

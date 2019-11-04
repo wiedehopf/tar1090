@@ -128,6 +128,12 @@ const estimateStyle = new ol.style.Style({
 		width: 1.2
 	})
 });
+const estimateStyleSlim = new ol.style.Style({
+	stroke: new ol.style.Stroke({
+		color: '#808080',
+		width: 0.4
+	})
+});
 
 const nullStyle = new ol.style.Style({});
 
@@ -978,7 +984,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
 		|| (noVanish && this.position != null)
 	) {
 		this.visible = true;
-		if (SelectedAllPlanes && !this.isFiltered())
+		if (SelectedAllPlanes && (!this.isFiltered() || onlySelected))
 			this.selected = true;
 
 		if (redraw) {
@@ -1035,8 +1041,18 @@ PlaneObject.prototype.updateMarker = function(moved) {
 
 
 // return the styling of the lines based on altitude
-PlaneObject.prototype.altitudeLines = function(altitude) {
-	var colorArr = this.getAltitudeColor(altitude);
+PlaneObject.prototype.altitudeLines = function(segment) {
+	if (segment.estimated == true || segment.altitude == null) {
+		if (debugTracks)
+			return estimateStyle;
+		else if (filterTracks && this.filter.enabled == true)
+			return nullStyle;
+		else if (noVanish)
+			return estimateStyleSlim;
+		else
+			return estimateStyle;
+	}
+	var colorArr = this.getAltitudeColor(segment.altitude);
 	//var color = 'hsl(' + colorArr[0].toFixed(0) + ', ' + colorArr[1].toFixed(0) + '%, ' + colorArr[2].toFixed(0) + '%)';
 	var color = hslToRgb(colorArr[0], colorArr[1], colorArr[2]);
 	const lineKey = color + '_' + debugTracks + '_' + noVanish;
@@ -1091,12 +1107,10 @@ PlaneObject.prototype.updateLines = function() {
 	var lastfixed = lastseg.fixed.getCoordinateAt(1.0);
 	var geom = new ol.geom.LineString([lastfixed, ol.proj.fromLonLat(this.position)]);
 	this.elastic_feature = new ol.Feature(geom);
-	if (filterTracks && (this.altFiltered(lastseg.altitude) || lastseg.estimated)) {
+	if (filterTracks && this.altFiltered(lastseg.altitude)) {
 		this.elastic_feature.setStyle(nullStyle);
-	} else if (lastseg.estimated) {
-		this.elastic_feature.setStyle(estimateStyle);
 	} else {
-		this.elastic_feature.setStyle(this.altitudeLines(lastseg.altitude));
+		this.elastic_feature.setStyle(this.altitudeLines(lastseg));
 	}
 
 	// elastic feature is always at index 0 for each aircraft
@@ -1109,19 +1123,17 @@ PlaneObject.prototype.updateLines = function() {
 		if (seg.feature && (!trackLabels || seg.label))
 			break;
 
-		if (filterTracks && (this.altFiltered(seg.altitude) || seg.estimated)) {
+		if ((filterTracks && this.altFiltered(seg.altitude)) || this.altitudeLines(seg) == nullStyle) {
+			seg.feature = true;
 		} else if (!seg.feature) {
 			seg.feature = new ol.Feature(seg.fixed);
-			if (seg.estimated) {
-				seg.feature.setStyle(estimateStyle);
-			} else {
-				seg.feature.setStyle(this.altitudeLines(seg.altitude));
-			}
+			seg.feature.setStyle(this.altitudeLines(seg));
 			seg.feature.hex = this.icao;
 			this.trail_features.push(seg.feature);
 		}
 
 		if (filterTracks && this.altFiltered(seg.altitude)) {
+			seg.label = true;
 		} else if (trackLabels && !seg.label && seg.alt_real != null) {
 			seg.label = new ol.Feature(new ol.geom.Point(seg.fixed.getFirstCoordinate()));
 			const text = seg.alt_real == "ground" ? "" :
