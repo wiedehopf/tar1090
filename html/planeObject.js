@@ -118,33 +118,8 @@ function PlaneObject(icao) {
 	trailGroup.push(this.layer);
 
 	// request metadata
-	getAircraftData(this.icao).done(function(data) {
-		if ("r" in data) {
-			this.registration = data.r;
-		}
+	this.getAircraftData();
 
-		if ("t" in data) {
-			this.icaoType = data.t;
-			this.icaoTypeCache = this.icaoType;
-		}
-
-		if ("desc" in data) {
-			this.typeDescription = data.desc;
-		}
-
-		if (data.vType != null) {
-			this.vType = data.vType;
-		}
-
-		if ("wtc" in data) {
-			this.wtc = data.wtc;
-		}
-
-		if (this.selected) {
-			refreshSelected();
-		}
-		data = null;
-	}.bind(this));
 }
 
 const estimateStyle = new ol.style.Style({
@@ -1286,4 +1261,53 @@ PlaneObject.prototype.altBad = function(newAlt, oldAlt, oldTime, data) {
 	const delta = Math.abs(newAlt - oldAlt);
 	const fpm = (delta < 800) ? 0 : (60 * delta / (now - oldTime + 2));
 	return fpm > max_fpm;
+}
+PlaneObject.prototype.getAircraftData = function() {
+	var req = getAircraftData(this.icao);
+	req.done(function(data) {
+		if (data == null) {
+			//console.log(this.icao + ': Not found in database!');
+			return;
+		}
+		if (data == "strange") {
+			//console.log(this.icao + ': Database malfunction!');
+			return;
+		}
+
+
+		//console.log(this.icao + ': loaded!');
+
+		if ("r" in data) {
+			this.registration = data.r;
+		}
+
+		if ("t" in data) {
+			this.icaoType = data.t;
+			this.icaoTypeCache = this.icaoType;
+		}
+
+		if ("desc" in data) {
+			this.typeDescription = data.desc;
+		}
+
+		if (data.vType != null) {
+			this.vType = data.vType;
+		}
+
+		if ("wtc" in data) {
+			this.wtc = data.wtc;
+		}
+
+		if (this.selected) {
+			refreshSelected();
+		}
+		data = null;
+	}.bind(this));
+
+	req.fail(function(jqXHR,textStatus,errorThrown) {
+		if (textStatus == 'timeout')
+			this.getAircraftData();
+		else
+			console.log(this.icao + ': Database load error: ' + textStatus + ' at URL: ' + jqXHR.url);
+	}.bind(this));
 }
