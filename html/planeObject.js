@@ -131,6 +131,19 @@ const estimateStyle = new ol.style.Style({
 
 const nullStyle = new ol.style.Style({});
 
+const badLine =  new ol.style.Style({
+	stroke: new ol.style.Stroke({
+		color: '#FF0000',
+		width: 2,
+	})
+});
+const badLineMlat =  new ol.style.Style({
+	stroke: new ol.style.Stroke({
+		color: '#FFA500',
+		width: 2,
+	})
+});
+
 const badDot = new ol.style.Style({
 	image: new ol.style.Circle({
 		radius: 3.5,
@@ -1207,7 +1220,7 @@ PlaneObject.prototype.drawRedDot = function(bad_position) {
 	this.trail_features.push(badFeat);
 	var geom = new ol.geom.LineString([ol.proj.fromLonLat(this.prev_position), ol.proj.fromLonLat(bad_position)]);
 	var lineFeat = new ol.Feature(geom);
-	lineFeat.setStyle(this.altitudeLines(this.dataSource == "mlat" ? 0 : 60000));
+	lineFeat.setStyle(this.dataSource == "mlat" ? badLineMlat : badLine);
 	this.trail_features.push(lineFeat);
 }
 
