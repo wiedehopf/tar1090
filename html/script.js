@@ -1968,8 +1968,7 @@ function selectPlaneByHex(hex,autofollow) {
 		// Assign the new selected
 		SelectedPlane = newPlane;
 		newPlane.selected = true;
-		newPlane.updateLines();
-		newPlane.updateMarker();
+		newPlane.updateTick(true);
 		$(newPlane.tr).addClass("selected");
 		newPlane.logSel(newPlane.history_size);
 		//console.log(newPlane.baseMarkerKey);
@@ -2792,8 +2791,7 @@ function findPlanes(query, byIcao, byCallsign, byReg) {
 		multiSelect = true;
 		for (var i in results) {
 			results[i].selected = true;
-			results[i].updateLines();
-			results[i].updateMarker();
+			results[i].updateTick(true);
 		}
 	} else if (results.length == 1) {
 		selectPlaneByHex(results[0].icao, true);
