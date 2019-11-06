@@ -464,7 +464,7 @@ PlaneObject.prototype.getDataSource = function() {
 	if (this.dataSource == "mlat") {
 		return 'mlat';
 	}
-	if (this.dataSource == "uat")
+	if (this.dataSource == "uat" && this.dataSource != "tisb")
 		return 'uat';
 
 	if (this.addrtype) {
@@ -473,6 +473,9 @@ PlaneObject.prototype.getDataSource = function() {
 
 	if (this.dataSource == "adsb")
 		return "adsb_icao";
+
+	if (this.dataSource == "tisb")
+		return "tisb";
 
 	// Otherwise Mode S
 	return 'mode_s';
@@ -717,7 +720,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 	// get location data first, return early if only those are needed.
 
 	var isArray = Array.isArray(data);
-	// [.hex, .alt_baro, .gs, .track, .lat, .lon, .seen_pos, mlat/tisb/.type , .flight]
+	// [.hex, .alt_baro, .gs, .track, .lat, .lon, .seen_pos, "mlat"/"tisb"/.type , .flight]
 	//    0      1        2     3       4     5     6          7    8
 	// this format is only valid for chunk loading the history
 	const alt_baro = isArray? data[1] : data.alt_baro;
@@ -728,8 +731,10 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 	var seen = isArray? data[6] : data.seen;
 	const seen_pos = isArray? data[6] : data.seen_pos;
 	seen = (seen == null) ? 5 : seen;
-	var mlat = isArray? (data[7] == "mlat") : (data.mlat != null && data.mlat.indexOf("lat") >= 0);
 	const type = isArray? data[7] : data.type;
+	var mlat = isArray? (data[7] == "mlat") : (data.mlat != null && data.mlat.indexOf("lat") >= 0);
+	var tisb = isArray? (data[7] == "tisb") : (data.tisb != null && data.tisb.indexOf("lat") >= 0);
+	tisb = tisb || (type && type.substring(0,4) == "tisb");
 	const flight = isArray? data[8] : data.flight;
 
 	this.last_message_time = now - seen;
@@ -820,19 +825,19 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 		this.dataSource = "other";
 	} else if (mlat) {
 		this.dataSource = "mlat";
-	} else if (type && type.substring(0,4) == "tisb") {
-		this.dataSource = "tisb";
-	} else if (!displayUATasADSB && this.receiver == "uat") {
+	} else if (!displayUATasADSB && this.receiver == "uat" && !tisb) {
 		this.dataSource = "uat";
-	} else if (lat != null && type == null) {
-		this.dataSource = "adsb";
-		this.hasADSB = true;
 	} else if (type == "adsb_icao" || type == "adsb_other") {
 		this.dataSource = "adsb";
 	} else if (type && type.substring(0,4) == "adsr") {
 		this.dataSource = "adsb";
 	} else if (type == "adsb_icao_nt") {
 		this.dataSource = "other";
+	} else if (tisb) {
+		this.dataSource = "tisb";
+	} else if (lat != null && type == null) {
+		this.dataSource = "adsb";
+		this.hasADSB = true;
 	}
 
 	if (init || isArray)
