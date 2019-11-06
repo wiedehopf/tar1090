@@ -290,6 +290,7 @@ function fetchData() {
 			FetchPendingUAT = null;
 		});
 	}
+	buttonActive('#F', FollowSelected);
 	FetchPending = $.ajax({ url: 'data/aircraft.json',
 		timeout: 8000,
 		cache: false,
@@ -391,6 +392,7 @@ function initialize() {
 		noVanish = true;
 		filterTracks = noVanish;
 		//localStorage['noVanish'] = "false";
+		buttonActive('#P', noVanish);
 	}
 
 	$.when(configureReceiver).done(function() {
