@@ -187,7 +187,8 @@ PlaneObject.prototype.isFiltered = function() {
 		return true;
 	}
 
-	if (filterTISB && this.dataSource == "tisb") {
+	if (filterTISB && this.dataSource == "tisb" && this.icao[0] == '~') {
+		// only filter TISB that don't correspond to a real ICAO address
 		return true;
 	}
 
@@ -790,7 +791,10 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 
 	this.alt_rounded = calcAltitudeRounded(this.altitude);
 
-	if (this.altitude == "ground") {
+	if (this.altitude == null) {
+		this.onGround = null;
+		this.zIndex = -10000;
+	} else if (this.altitude == "ground") {
 		this.onGround = true;
 		this.zIndex = -10000;
 	} else {
@@ -1008,8 +1012,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
 
 PlaneObject.prototype.clearMarker = function() {
 	if (this.marker && this.marker.visible) {
-		//PlaneIconFeatures.remove(this.marker);
-		this.marker.setStyle(emptyStyle);
+		PlaneIconFeatures.remove(this.marker);
 		this.marker.visible = false;
 	}
 };
@@ -1024,6 +1027,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
 		this.marker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
 		this.marker.hex = this.icao;
 		PlaneIconFeatures.push(this.marker);
+		this.marker.visible = true;
 	} else if (moved) {
 		this.marker.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
 	}
@@ -1032,7 +1036,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
 
 	if (!this.marker.visible) {
 		this.marker.visible = true;
-		this.marker.setStyle(this.markerStyle);
+		PlaneIconFeatures.push(this.marker);
 	}
 };
 
