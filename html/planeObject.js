@@ -490,7 +490,7 @@ PlaneObject.prototype.getMarkerColor = function() {
 
 	var h, s, l;
 
-	var colorArr = this.getAltitudeColor(this.alt_rounded);
+	var colorArr = altitudeColor(this.alt_rounded);
 
 	h = colorArr[0];
 	s = colorArr[1];
@@ -533,14 +533,6 @@ PlaneObject.prototype.getMarkerColor = function() {
 	else if (l > 95) l = 95;
 
 	return 'hsl(' + h.toFixed(0) + ',' + s.toFixed(0) + '%,' + l.toFixed(0) + '%)'
-}
-
-PlaneObject.prototype.getAltitudeColor = function(altitude) {
-
-	if (typeof altitude === 'undefined') {
-		altitude = this.alt_rounded;
-	}
-	return altitudeColor(altitude);
 }
 
 function altitudeColor(altitude) {
@@ -1057,7 +1049,7 @@ PlaneObject.prototype.altitudeLines = function(segment) {
 		else
 			return estimateStyle;
 	}
-	var colorArr = this.getAltitudeColor(segment.altitude);
+	var colorArr = altitudeColor(segment.altitude);
 	//var color = 'hsl(' + colorArr[0].toFixed(0) + ', ' + colorArr[1].toFixed(0) + '%, ' + colorArr[2].toFixed(0) + '%)';
 	var color = hslToRgb(colorArr[0], colorArr[1], colorArr[2]);
 	const lineKey = color + '_' + debugTracks + '_' + noVanish;
@@ -1218,7 +1210,9 @@ PlaneObject.prototype.destroy = function() {
 };
 
 function calcAltitudeRounded(altitude) {
-	if (altitude == "ground") {
+	if (altitude == null) {
+		return null;
+	} else if (altitude == "ground") {
 		return altitude;
 	} else if (altitude > 10000) {
 		return (altitude/1000).toFixed(0)*1000;

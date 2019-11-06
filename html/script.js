@@ -2064,7 +2064,7 @@ function resetMap() {
 	OLMap.getView().setCenter(ol.proj.fromLonLat([CenterLon, CenterLat]));
 	OLMap.getView().setRotation(mapOrientation);
 
-	selectPlaneByHex(null,false);
+	//selectPlaneByHex(null,false);
 	$("#update_error").css('display','none');
 }
 
