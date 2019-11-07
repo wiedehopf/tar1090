@@ -932,8 +932,11 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 		this.vert_rate = null;
 	}
 
-	if (this.altitude == "ground" && this.true_heading != null) {
-		this.rotation = this.true_heading;
+	if (this.altitude == "ground") {
+		if (this.true_heading != null)
+			this.rotation = this.true_heading;
+		else if (this.mag_heading != null)
+			this.rotation = this.mag_heading;
 	} else if (this.track != null) {
 		this.rotation = this.track;
 	} else if (this.true_heading != null) {

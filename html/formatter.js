@@ -29,7 +29,7 @@ function get_unit_label(quantity, systemOfMeasurement) {
 // track in degrees (0..359)
 function format_track_brief(track) {
 	if (track == null){
-		return "";
+		return "n/a";
 	}
 
 	return track.toFixed(1) + DEGREES;

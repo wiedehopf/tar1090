@@ -1437,8 +1437,8 @@ function refreshSelected() {
 	}
 
 	$('#selected_altitude_geom').text(format_altitude_long(selected.alt_geom, selected.geom_rate, DisplayUnits));
-	$('#selected_mag_heading').text(format_track_long(selected.mag_heading));
-	$('#selected_true_heading').text(format_track_long(selected.true_heading));
+	$('#selected_mag_heading').text(format_track_brief(selected.mag_heading));
+	$('#selected_true_heading').text(format_track_brief(selected.true_heading));
 	$('#selected_ias').text(format_speed_long(selected.ias, DisplayUnits));
 	$('#selected_tas').text(format_speed_long(selected.tas, DisplayUnits));
 	if (selected.mach == null) {
