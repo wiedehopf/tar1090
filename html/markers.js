@@ -121,6 +121,18 @@ var TypeDesignatorIcons = {
 	'B738': ['airliner', 0.96],
 	'B739': ['airliner', 1],
 
+	'J328': ['airliner', 0.78], // 15t
+	'E170': ['airliner', 0.82], // 38t
+	'E75S/L': ['airliner', 0.82],
+	'E75L': ['airliner', 0.82],
+	'E75S': ['airliner', 0.82],  // 40t
+	'E190': ['airliner', 0.84], // 52t
+	'E195': ['airliner', 0.84], // 52t
+	'E290': ['airliner', 0.84], // 56t
+	'E295': ['airliner', 0.86], // 62t
+	'BCS1': ['airliner', 0.86], // 64t
+	'BCS3': ['airliner', 0.88], // 70t
+
 	'B741': ['heavy_4e', 1],
 	'B742': ['heavy_4e', 1],
 	'B743': ['heavy_4e', 1],
@@ -140,6 +152,40 @@ var TypeDesignatorIcons = {
 	'B77L': ['heavy_2e', 1.06],
 	'B77W': ['heavy_2e', 1.08],
 
+	'C680': ['jet_swept', 0.91], // 14t
+	'C68A': ['jet_swept', 0.91], // 14t
+	'C750': ['jet_swept', 0.94], // 17t
+	'FA50': ['jet_swept', 0.94], // 18t
+	'CL30': ['jet_swept', 0.91], // 14t
+	'CL35': ['jet_swept', 0.92],
+	'CL60': ['jet_swept', 0.96], // 22t
+	'GLEX': ['jet_swept', 1],
+	'G200': ['jet_swept', 0.91], // 16t
+	'G280': ['jet_swept', 0.92], // 18t
+	'GL5T': ['jet_swept', 1],
+	'GLF2': ['jet_swept', 0.96], // 29t
+	'GLF3': ['jet_swept', 0.96], // 31t
+	'GLF4': ['jet_swept', 0.96], // 34t
+	'GLF5': ['jet_swept', 0.98], // 41t
+	'GLF6': ['jet_swept', 1], // 48t
+	'E135': ['jet_swept', 0.92], // 20t
+	'E35L': ['jet_swept', 0.92], // 24t
+	'E145': ['jet_swept', 0.92], // 22t
+	'E45X': ['jet_swept', 0.92], // 24t
+	'CRJ1': ['jet_swept', 0.92], // 24t
+	'CRJ2': ['jet_swept', 0.92], // 24t
+	'CRJ7': ['jet_swept', 0.94], // 34t
+	'CRJ9': ['jet_swept', 0.95], // 38t
+	'CRJX': ['jet_swept', 0.98], // 41t
+	'MD80': ['jet_swept', 1.04], // 60t
+	'MD81': ['jet_swept', 1.04],
+	'MD82': ['jet_swept', 1.04],
+	'MD83': ['jet_swept', 1.04],
+	'MD87': ['jet_swept', 1.04],
+	'MD88': ['jet_swept', 1.04], // 72t
+	'B712': ['jet_swept', 1.04], // 54t
+	'F100': ['jet_swept', 1], // 45t
+
 	'C501': ['jet_nonswept', 1],
 	'C510': ['jet_nonswept', 1],
 	'C25A': ['jet_nonswept', 1],
@@ -147,59 +193,15 @@ var TypeDesignatorIcons = {
 	'C550': ['jet_nonswept', 1],
 	'C560': ['jet_nonswept', 1],
 	'C56X': ['jet_nonswept', 1], // 9t
+	'C650': ['jet_nonswept', 1], // 11t
 	'LJ35': ['jet_nonswept', 1], // 8t
 	'LR35': ['jet_nonswept', 1], // wrong but in database
 	'LJ60': ['jet_nonswept', 1], // 10t
 	'LR45': ['jet_nonswept', 1], // 10t
-	'C650': ['jet_swept', 0.90],
-	'C680': ['jet_swept', 0.92], // 14t
-	'C68A': ['jet_swept', 0.92], // 14t
-	'C750': ['jet_swept', 0.94], // 17t
-	'FA50': ['jet_swept', 0.94], // 18t
-	'CL30': ['jet_swept', 0.92], // 14t
-	'CL35': ['jet_swept', 0.92],
-	'CL60': ['jet_swept', 0.96], // 22t
-	'GLEX': ['jet_swept', 1],
-	'G150': ['jet_swept', 0.88], // 11t
-	'G280': ['jet_swept', 0.92], // 18t
-	'GL5T': ['jet_swept', 1],
-	'GLF2': ['jet_swept', 0.92],
-	'GLF3': ['jet_swept', 0.96],
-	'GLF4': ['jet_swept', 0.96],
-	'GLF5': ['jet_swept', 0.96],
-	'GLF6': ['jet_swept', 0.96],
-	'E170': ['airliner', 0.82], // 38t
-	'E75S/L': ['airliner', 0.82],
-	'E75L': ['airliner', 0.82],
-	'E75S': ['airliner', 0.82],  // 40t
-	'E190': ['airliner', 0.84], // 52t
-	'E195': ['airliner', 0.84], // 52t
-	'E290': ['airliner', 0.84], // 56t
-	'E295': ['airliner', 0.86], // 62t
-	'BCS1': ['airliner', 0.86], // 64t
-	'BCS3': ['airliner', 0.88], // 70t
-	'J328': ['airliner', 0.80], // 15t
-	'E135': ['jet_swept', 0.96], // 20t
-	'E35L': ['jet_swept', 0.96], // 24t
-	'E145': ['jet_swept', 0.96], // 22t
-	'E45X': ['jet_swept', 0.96], // 24t
-	'CRJ1': ['jet_swept', 0.96], // 24t
-	'CRJ2': ['jet_swept', 0.96], // 24t
-	'CRJ7': ['jet_swept', 1.04], // 34t
-	'CRJ9': ['jet_swept', 1.04], // 38t
-	'CRJX': ['jet_swept', 1.04], // 41t
-	'H25A': ['jet_nonswept', 1.04],
-	'H25B': ['jet_nonswept', 1.04],
-	'H25C': ['jet_nonswept', 1.04],
-	'MD80': ['jet_swept', 1.04],
-	'MD81': ['jet_swept', 1.04],
-	'MD82': ['jet_swept', 1.04],
-	'MD83': ['jet_swept', 1.04],
-	'MD87': ['jet_swept', 1.04],
-	'MD88': ['jet_swept', 1.04],
-	'B712': ['jet_swept', 1.04], // 54t
-	'F100': ['jet_swept', 1.04], // 45t
-
+	'G150': ['jet_nonswept', 1], // 11t
+	'H25A': ['jet_nonswept', 1.04], // 11t
+	'H25B': ['jet_nonswept', 1.04], // 11t
+	'H25C': ['jet_nonswept', 1.04], // 11t
 	'PRM1': ['jet_nonswept', 0.96],
 	'E55P': ['jet_nonswept', 0.96],
 	'E50P': ['jet_nonswept', 0.96],
