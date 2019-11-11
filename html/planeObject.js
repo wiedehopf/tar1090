@@ -231,6 +231,7 @@ PlaneObject.prototype.updateTail = function() {
 
 	this.tail_update = this.prev_time;
 	this.tail_track = this.prev_track;
+	this.tail_rot = this.prev_rot;
 	this.tail_true = this.prev_true;
 	this.tail_position = this.prev_position;
 
@@ -242,6 +243,7 @@ PlaneObject.prototype.updateTrackPrev = function() {
 	this.prev_position = this.position;
 	this.prev_time = this.position_time;
 	this.prev_track = this.track;
+	this.prev_rot = this.rotation;
 	this.prev_true = this.true_head;
 	this.prev_alt = this.altitude;
 	this.prev_alt_rounded = this.alt_rounded;
@@ -311,6 +313,10 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 		return true;
 	}
 
+	if (this.request_rotation_from_track) {
+		this.rotation = bearingFromLonLat(this.prev_position, this.position);
+	}
+
 	// Determine if track data are intermittent/stale
 	// Time difference between two position updates should not be much
 	// greater than the difference between data inputs
@@ -370,6 +376,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 		return this.updateTail();
 	}
 
+	/*
 	var track_change = this.track != null ? Math.abs(this.tail_track - this.track) : NaN;
 	track_change = track_change < 180 ? track_change : Math.abs(track_change - 360);
 	var true_change =  this.trueheading != null ? Math.abs(this.tail_true - this.true_heading) : NaN;
@@ -377,6 +384,8 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 	if (!isNaN(true_change)) {
 		track_change = isNaN(track_change) ? true_change : Math.max(track_change, true_change);
 	}
+	*/
+	var track_change = Math.abs(this.tail_rot - this.rotation);
 
 	var alt_change = Math.abs(this.alt_rounded - lastseg.altitude);
 	var since_update = this.prev_time - this.tail_update;
@@ -419,8 +428,8 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 		since_update > 86 ||
 		(!on_ground && since_update > (100/turn_density)/track_change) ||
 		(!on_ground && isNaN(track_change) && since_update > 8) ||
-		(on_ground && since_update > (500/turn_density)/track_change && distance_traveled > 8) ||
-		(on_ground && distance_traveled > 40 && since_update > 4) ||
+		(on_ground && since_update > (120/turn_density)/track_change && distance_traveled > 20) ||
+		(on_ground && distance_traveled > 50 && since_update > 5) ||
 		debugAll
 	) {
 
@@ -811,6 +820,9 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 	if (track != null) {
 		this.track = track;
 		this.rotation = track;
+		this.request_rotation_from_track = false;
+	} else {
+		this.request_rotation_from_track = true;
 	}
 	// don't expire callsigns
 	if (flight != null) {
@@ -935,6 +947,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 		this.vert_rate = null;
 	}
 
+	this.request_rotation_from_track = false;
 	if (this.altitude == "ground") {
 		if (this.true_heading != null)
 			this.rotation = this.true_heading;
@@ -946,15 +959,9 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 		this.rotation = this.true_heading;
 	} else if (this.mag_heading != null) {
 		this.rotation = this.mag_heading;
-	} else if (
-		this.position && this.prev_position
-		&& this.position[0] != this.prev_position[0]
-		&& this.position[1] != this.prev_position[1]
-		&& ol.sphere.getDistance(this.position, this.prev_position) > 50
-	) {
-		this.rotation = bearingFromLonLat(this.prev_position, this.position);
+	} else {
+		this.request_rotation_from_track = true;
 	}
-
 };
 
 PlaneObject.prototype.updateTick = function(redraw) {
