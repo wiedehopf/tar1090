@@ -217,7 +217,7 @@ function setupPlane(hex, plane) {
 
 		if(!mapIsVisible) {
 			selectPlaneByHex(h, true);
-			showMap();
+			//showMap();
 		} else {
 			selectPlaneByHex(h, false);
 		}
@@ -226,7 +226,7 @@ function setupPlane(hex, plane) {
 	}.bind(undefined, hex);
 
 	plane.dblclickListener = function(h, evt) {
-		if (!$("#map_container").is(":visible")) {
+		if(!mapIsVisible) {
 			showMap();
 		}
 		selectPlaneByHex(h, true);
@@ -2097,10 +2097,11 @@ function expandSidebar(e) {
 	setColumnVisibility();
 	refreshTableInfo();
 	updateMapSize();
+	setSelectedInfoBlockVisibility();
 }
 
 function showMap() {
-	$('#sidebar_container').width(localStorage['sidebar_width']);
+	$('#sidebar_container').width(localStorage['sidebar_width']).css('margin-left', '0');
 	$("#map_container").show()
 	mapIsVisible = true;
 	$("#toggle_sidebar_control").show();
@@ -2109,7 +2110,7 @@ function showMap() {
 	$("#show_map_button").hide();
 	setColumnVisibility();
 	refreshTableInfo();
-	updateMapSize();    
+	updateMapSize();
 }
 
 function showColumn(table, columnId, visible) {
@@ -2135,12 +2136,16 @@ function setColumnVisibility() {
 
 function setSelectedInfoBlockVisibility() {
 
-	if (SelectedPlane && mapIsVisible) {
+	if (SelectedPlane) {
 		$('#selected_infoblock').show();
+		if (!mapIsVisible)
+			$("#sidebar_container").css('margin-left', '140pt');
 		//$('#sidebar_canvas').css('margin-bottom', $('#selected_infoblock').height() + 'px');
 	}
 	else {
 		$('#selected_infoblock').hide();
+		if (!mapIsVisible)
+			$("#sidebar_container").css('margin-left', '0');
 		//$('#sidebar_canvas').css('margin-bottom', 0);
 	}
 }
