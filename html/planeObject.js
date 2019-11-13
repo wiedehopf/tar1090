@@ -607,10 +607,8 @@ function altitudeColor(altitude) {
 PlaneObject.prototype.updateIcon = function() {
 
 	var col = this.getMarkerColor();
-	//var opacity = 1.0;
-	//var outline = (this.dataSource == "mlat" ? OutlineMlatColor : OutlineADSBColor);
-	const outline = OutlineADSBColor;
-	var add_stroke = (this.selected && !SelectedAllPlanes && !onlySelected) ? (' stroke="'+outline+'" stroke-width="0.5px"') : '';
+	const outline = ' stroke="'+OutlineADSBColor+'" stroke-width="0.4px"';
+	var add_stroke = (this.selected && !SelectedAllPlanes && !onlySelected) ? outline : '';
 	var baseMarkerKey = (this.category ? this.category : "A0") + "_"
 		+ this.typeDescription + "_" + this.wtc  + "_" + this.icaoType;
 
@@ -625,7 +623,7 @@ PlaneObject.prototype.updateIcon = function() {
 	}
 
 	this.scale = scaleFactor * this.baseScale;
-	var svgKey = col + '!' + outline + '!' + this.shape + '!' + add_stroke;
+	var svgKey  = col + '!' + this.shape + '!' + add_stroke;
 	var labelText = null;
 	if ( ( (enableLabels && !multiSelect) || (enableLabels && multiSelect && this.selected)) && (
 		(ZoomLvl >= labelZoom && this.altitude != "ground")
@@ -653,8 +651,14 @@ PlaneObject.prototype.updateIcon = function() {
 		this.rotationCache = this.rotation;
 
 		if (iconCache[svgKey] == undefined) {
+			var svgKey2 = col + '!' + this.shape + '!' + outline;
+			var svgKey3 = col + '!' + this.shape + '!' + '';
+			var svgURI2 = svgPathToURI(this.baseMarker.svg, outline, col, outline);
+			var svgURI3 = svgPathToURI(this.baseMarker.svg, outline, col, '');
+			addToIconCache.push([svgKey2, null, svgURI2]);
+			addToIconCache.push([svgKey3, null, svgURI3]);
+
 			var svgURI = svgPathToURI(this.baseMarker.svg, outline, col, add_stroke);
-			addToIconCache.push([svgKey, null, svgURI]);
 			this.markerIcon = new ol.style.Icon({
 				scale: this.scale,
 				imgSize: this.baseMarker.size,
