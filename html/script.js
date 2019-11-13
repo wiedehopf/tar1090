@@ -2501,7 +2501,9 @@ function toggleTrackLabels() {
 function toggleMultiSelect() {
 	if (multiSelect) {
 		multiSelect = false;
+		var plane = SelectedPlane;
 		deselectAllPlanes();
+		selectPlaneByHex(plane.icao);
 	} else {
 		multiSelect = true;
 	}
