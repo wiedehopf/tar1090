@@ -609,9 +609,8 @@ PlaneObject.prototype.updateIcon = function() {
 	var col = this.getMarkerColor();
 	//var opacity = 1.0;
 	//var outline = (this.dataSource == "mlat" ? OutlineMlatColor : OutlineADSBColor);
-	//var add_stroke = (this.selected && !SelectedAllPlanes && !onlySelected && !multiSelect) ? (' stroke="'+outline+'" stroke-width="1px"') : '';
-	const add_stroke = '';
 	const outline = OutlineADSBColor;
+	var add_stroke = (this.selected && !SelectedAllPlanes && !onlySelected) ? (' stroke="'+outline+'" stroke-width="0.5px"') : '';
 	var baseMarkerKey = (this.category ? this.category : "A0") + "_"
 		+ this.typeDescription + "_" + this.wtc  + "_" + this.icaoType;
 
