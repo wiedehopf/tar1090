@@ -1952,7 +1952,7 @@ function selectPlaneByHex(hex,autofollow) {
 		//$('.infoblock-container').scrollTop(0);
 	}
 	// multiSelect deselect
-	if (multiSelect && newPlane && newPlane.selected && !autofollow && !noVanish) {
+	if (multiSelect && newPlane && newPlane.selected && !autofollow && !onlySelected) {
 		newPlane.selected = false;
 		newPlane.clearLines();
 		newPlane.updateMarker();
@@ -2037,11 +2037,7 @@ function deselectAllPlanes() {
 	}
 	$('#selectall_checkbox').removeClass('settingsCheckboxChecked');
 	SelectedAllPlanes = false;
-	if (multiSelect && SelectedPlane != null) {
-		SelectedPlane.selected = true;
-	} else {
-		SelectedPlane = null;
-	}
+	SelectedPlane = null;
 	refreshFeatures();
 	refreshSelected();
 	refreshHighlighted();
