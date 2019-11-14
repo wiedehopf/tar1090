@@ -729,6 +729,7 @@ function parse_history() {
 		for (var i in PlanesOrdered)
 			setupPlane(PlanesOrdered[i].icao,PlanesOrdered[i]);
 	}
+	try {
 
 	PositionHistoryBuffer = null;
 	console.timeEnd("Loaded aircraft tracks from History");
@@ -758,6 +759,10 @@ function parse_history() {
 
 	if (localStorage['sidebar_visible'] == "false")
 		toggleSidebarVisibility();
+
+	} catch (error) {
+		alert(error.message);
+	}
 }
 
 // Make a LineString with 'points'-number points
@@ -2760,23 +2765,20 @@ function onPointermove(evt) {
 }
 
 function processURLParams(){
-	try {
-		const search = new URLSearchParams(window.location.search);
+	const search = new URLSearchParams(window.location.search);
 
-		const icao = search.get('icao');
-		if (icao != null) {
-			if (Planes[icao.toLowerCase()]) {
-				selectPlaneByHex(icao.toLowerCase(), true)
-				console.log('Selected ICAO id: '+ icao);
-			} else {
-				console.log('ICAO id not found: ' + icao);
-			}
+	const icao = search.get('icao');
+	if (icao != null) {
+		if (Planes[icao.toLowerCase()]) {
+			selectPlaneByHex(icao.toLowerCase(), true)
+			console.log('Selected ICAO id: '+ icao);
+		} else {
+			console.log('ICAO id not found: ' + icao);
 		}
-
-		var callsign = search.get('callsign');
-		findPlanes(callsign, false, true, false);
-	} catch(error) {
 	}
+
+	var callsign = search.get('callsign');
+	findPlanes(callsign, false, true, false);
 }
 
 function findPlanes(query, byIcao, byCallsign, byReg) {
