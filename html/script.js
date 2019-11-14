@@ -2765,20 +2765,23 @@ function onPointermove(evt) {
 }
 
 function processURLParams(){
-	const search = new URLSearchParams(window.location.search);
+	try {
+		const search = new URLSearchParams(window.location.search);
 
-	const icao = search.get('icao');
-	if (icao != null) {
-		if (Planes[icao.toLowerCase()]) {
-			selectPlaneByHex(icao.toLowerCase(), true)
-			console.log('Selected ICAO id: '+ icao);
-		} else {
-			console.log('ICAO id not found: ' + icao);
+		const icao = search.get('icao');
+		if (icao != null) {
+			if (Planes[icao.toLowerCase()]) {
+				selectPlaneByHex(icao.toLowerCase(), true)
+				console.log('Selected ICAO id: '+ icao);
+			} else {
+				console.log('ICAO id not found: ' + icao);
+			}
 		}
-	}
 
-	var callsign = search.get('callsign');
-	findPlanes(callsign, false, true, false);
+		var callsign = search.get('callsign');
+		findPlanes(callsign, false, true, false);
+	} catch (error) {
+	}
 }
 
 function findPlanes(query, byIcao, byCallsign, byReg) {
