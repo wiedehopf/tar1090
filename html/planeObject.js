@@ -607,8 +607,6 @@ function altitudeColor(altitude) {
 PlaneObject.prototype.updateIcon = function() {
 
 	var col = this.getMarkerColor();
-	const outline = ' stroke="'+OutlineADSBColor+'" stroke-width="0.4px"';
-	var add_stroke = (this.selected && !SelectedAllPlanes && !onlySelected) ? outline : '';
 	var baseMarkerKey = (this.category ? this.category : "A0") + "_"
 		+ this.typeDescription + "_" + this.wtc  + "_" + this.icaoType;
 
@@ -621,6 +619,10 @@ PlaneObject.prototype.updateIcon = function() {
 		if (!this.baseMarker)
 			console.log(baseMarkerKey);
 	}
+	var outline = (this.shape != 'md11') ?
+		' stroke="'+OutlineADSBColor+'" stroke-width="0.4px"' :
+		' stroke="'+OutlineADSBColor+'" stroke-width="2px"';
+	var add_stroke = (this.selected && !SelectedAllPlanes && !onlySelected) ? outline : '';
 
 	this.scale = scaleFactor * this.baseScale;
 	var svgKey  = col + '!' + this.shape + '!' + add_stroke;
@@ -653,12 +655,12 @@ PlaneObject.prototype.updateIcon = function() {
 		if (iconCache[svgKey] == undefined) {
 			var svgKey2 = col + '!' + this.shape + '!' + outline;
 			var svgKey3 = col + '!' + this.shape + '!' + '';
-			var svgURI2 = svgPathToURI(this.baseMarker.svg, outline, col, outline);
-			var svgURI3 = svgPathToURI(this.baseMarker.svg, outline, col, '');
+			var svgURI2 = svgPathToURI(this.baseMarker.svg, OutlineADSBColor, col, outline);
+			var svgURI3 = svgPathToURI(this.baseMarker.svg, OutlineADSBColor, col, '');
 			addToIconCache.push([svgKey2, null, svgURI2]);
 			addToIconCache.push([svgKey3, null, svgURI3]);
 
-			var svgURI = svgPathToURI(this.baseMarker.svg, outline, col, add_stroke);
+			var svgURI = svgPathToURI(this.baseMarker.svg, OutlineADSBColor, col, add_stroke);
 			this.markerIcon = new ol.style.Icon({
 				scale: this.scale,
 				imgSize: this.baseMarker.size,
