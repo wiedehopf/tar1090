@@ -195,10 +195,10 @@ fi
 sleep 10
 
 if [[ -n $PF_URL ]]; then
+	TMP="/tmp/tar1090-tmp.pf.json.$RANDOM$RANDOM"
 	while true
 	do
 		sleep 10 &
-		TMP="pf.$RANDOM$RANDOM"
 		if cd "$RUN_DIR" && wget -T 5 -q -O $TMP "$PF_URL" &>/dev/null; then
 			sed -i -e 's/"user_l[a-z]*":"[0-9,.,-]*",//g' $TMP
 			mv $TMP pf.json
@@ -206,6 +206,7 @@ if [[ -n $PF_URL ]]; then
 				new_chunk refresh
 			fi
 		else
+			rm $TMP
 			sleep 120
 		fi
 		wait
