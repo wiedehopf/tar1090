@@ -780,29 +780,38 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 	}
 	// Filter anything greater than 12000 fpm
 
-	if (newAlt != null && (!altitudeFilter || this.altitude == null || newAlt == "ground" || this.altitude == "ground")) {
+
+	if (newAlt == null || (newAlt == this.bad_alt)) {
+		// do nothing
+	} else if (
+				!altitudeFilter
+				|| this.altitude == null
+				|| newAlt == "ground"
+				|| this.altitude == "ground"
+				|| (seen_pos != null && seen_pos < 2)
+	) {
 		this.altitude = newAlt;
 		this.altitudeTime = now;
-	} else if (newAlt != null && newAlt != this.bad_alt
-				&& (this.altitude != newAlt || (seen_pos != null && seen_pos < 3))) {
-		if (this.alt_reliable > 0 && this.altBad(newAlt, this.altitude, this.altitudeTime, data)) {
-			if (this.bad_alt == null || this.altBad(newAlt, this.bad_alt, this.bad_altTime, data)) {
-				this.alt_reliable--;
-				this.bad_alt = newAlt;
-				this.bad_altTime = now;
-				if (debugPosFilter) {
-					console.log((now%1000).toFixed(0) + ': AltFilter: ' + this.icao
-						+ ' oldAlt: ' + this.altitude
-						+ ' newAlt: ' + newAlt
-						+ ' elapsed: ' + (now-this.altitudeTime).toFixed(0) );
-					jumpTo = this.icao;
-				}
-			}
-		} else {
-			this.altitude = newAlt;
-			this.altitudeTime = now;
-			this.alt_reliable = Math.min(this.alt_reliable + 1, 3);
+	} else if (
+				this.alt_reliable > 0 && this.altBad(newAlt, this.altitude, this.altitudeTime, data)
+				&& (this.bad_alt == null || this.altBad(newAlt, this.bad_alt, this.bad_altTime, data))
+	) {
+		// filter this altitude!
+		this.alt_reliable--;
+		this.bad_alt = newAlt;
+		this.bad_altTime = now;
+		if (debugPosFilter) {
+			console.log((now%1000).toFixed(0) + ': AltFilter: ' + this.icao
+				+ ' oldAlt: ' + this.altitude
+				+ ' newAlt: ' + newAlt
+				+ ' elapsed: ' + (now-this.altitudeTime).toFixed(0) );
+			jumpTo = this.icao;
 		}
+	} else {
+		// good altitude
+		this.altitude = newAlt;
+		this.altitudeTime = now;
+		this.alt_reliable = Math.min(this.alt_reliable + 1, 3);
 	}
 
 
