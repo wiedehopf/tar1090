@@ -56,6 +56,7 @@ var noMLAT = false;
 var noVanish = false;
 var sidebarVisible = true;
 var filterTracks = false;
+var refreshId = 0;
 
 var SpecialSquawks = {
 	'7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -239,6 +240,12 @@ function setupPlane(hex, plane) {
 }
 
 function fetchData() {
+	clearTimeout(refreshId);
+	if (noVanish) {
+		refreshId = setTimeout(fetchData, 5000);
+	} else {
+		refreshId = setTimeout(fetchData, RefreshInterval);
+	}
 	if (FetchPending != null) {
 		// don't double up on fetches, let the last one resolve
 		return;
@@ -741,7 +748,6 @@ function parse_history() {
 	refreshHighlighted();
 
 	// Setup our timer to poll from the server.
-	window.setInterval(fetchData, RefreshInterval);
 	window.setInterval(reaper, 60000);
 	if (enable_pf_data) {
 		window.setInterval(fetchPfData, RefreshInterval*10.314);
@@ -1710,7 +1716,7 @@ function refreshTableInfo() {
 		}
 
 
-		if (tableplane.seen == null || (tableplane.seen >= 58 && (!tableplane.selected || SelectedAllPlanes)) || tableplane.isFiltered()) {
+		if (!noVanish && (tableplane.seen == null || (tableplane.seen >= 58 && (!tableplane.selected || SelectedAllPlanes)) || tableplane.isFiltered())) {
 			classes = "plane_table_row hidden";
 		} else if (mapIsVisible && tableInView && (!inView || !tableplane.visible) && !(tableplane.selected && !SelectedAllPlanes)) {
 			TrackedAircraft++;
@@ -1719,7 +1725,7 @@ function refreshTableInfo() {
 			TrackedAircraft++;
 			classes = "plane_table_row";
 
-			if (tableplane.position != null && tableplane.seen_pos < 60) {
+			if (tableplane.position != null && (noVanish || tableplane.seen_pos < 60)) {
 				++TrackedAircraftPositions;
 			}
 
