@@ -730,8 +730,8 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 	// get location data first, return early if only those are needed.
 
 	var isArray = Array.isArray(data);
-	// [.hex, .alt_baro, .gs, .track, .lat, .lon, .seen_pos, "mlat"/"tisb"/.type , .flight]
-	//    0      1        2     3       4     5     6          7    8
+	// [.hex, .alt_baro, .gs, .track, .lat, .lon, .seen_pos, "mlat"/"tisb"/.type , .flight, .messages]
+	//    0      1        2     3       4     5     6                 7               8        9
 	// this format is only valid for chunk loading the history
 	const alt_baro = isArray? data[1] : data.alt_baro;
 	const gs = isArray? data[2] : data.gs;
@@ -867,8 +867,10 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 		this.adsbOnGround = (alt_baro == "ground");
 	}
 
-	if (init || isArray)
+	if (isArray) {
+		this.messages = data[9];
 		return;
+	}
 
 	// Update all of our data
 

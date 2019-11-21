@@ -81,7 +81,7 @@ prune() {
 		.track, .lat, .lon, .seen_pos,
 		(if .mlat != null and (.mlat | contains(["lat"])) then "mlat"
 		elif .tisb != null and (.tisb | contains(["lat"])) then "tisb" else .type end),
-		.flight]
+		.flight, .messages]
 		'
 }
 
