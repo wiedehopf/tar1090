@@ -1716,7 +1716,7 @@ function refreshTableInfo() {
 		}
 
 
-		if (!noVanish && (tableplane.seen == null || (tableplane.seen >= 58 && (!tableplane.selected || SelectedAllPlanes)) || tableplane.isFiltered())) {
+		if ((!noVanish && (tableplane.seen == null || (tableplane.seen >= 58 && (!tableplane.selected || SelectedAllPlanes))) || tableplane.isFiltered())) {
 			classes = "plane_table_row hidden";
 		} else if (mapIsVisible && tableInView && (!inView || !tableplane.visible) && !(tableplane.selected && !SelectedAllPlanes)) {
 			TrackedAircraft++;
