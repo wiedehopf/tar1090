@@ -30,9 +30,9 @@ var DefaultZoomLvl   = 7;
 // Center marker. If dump1090 provides a receiver location,
 // that location is used and these settings are ignored.
 
-var SiteShow    = false;           // true to show a center marker
-var SiteLat     = 45.0;            // position of the marker
-var SiteLon     = 9.0;
+var SiteShow    = true;           // true to show a center marker
+var SiteLat     = null;            // position of the marker
+var SiteLon     = null;
 var SiteName    = "My Radar Site"; // tooltip of the marker
 
 // Color controls for the range outline

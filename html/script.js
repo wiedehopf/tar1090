@@ -801,7 +801,6 @@ function make_geodesic_circle(center, radius, points) {
 // Initalizes the map and starts up our timers to call various functions
 function initialize_map() {
 	if (receiverJson && receiverJson.lat != null) {
-		SiteShow = true;
 		SiteLat = receiverJson.lat;
 		SiteLon = receiverJson.lon;
 		DefaultCenterLat = receiverJson.lat;
@@ -817,7 +816,7 @@ function initialize_map() {
 		MapType_tar1090="carto_light_all";
 
 	// Set SitePosition, initialize sorting
-	if (SiteShow && (typeof SiteLat !==  'undefined') && (typeof SiteLon !==  'undefined')) {
+	if (SiteLat != null && SiteLon != null) {
 		SitePosition = [SiteLon, SiteLat];
 		sortByDistance();
 	} else {
@@ -1014,20 +1013,23 @@ function initialize_map() {
 
 	// Add home marker if requested
 	if (SitePosition) {
-		var markerStyle = new ol.style.Style({
-			image: new ol.style.Circle({
-				radius: 7,
-				snapToPixel: false,
-				fill: new ol.style.Fill({color: 'black'}),
-				stroke: new ol.style.Stroke({
-					color: 'white', width: 2
-				})
-			})
-		});
 
-		var feature = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(SitePosition)));
-		feature.setStyle(markerStyle);
-		StaticFeatures.push(feature);
+		if (SiteShow) {
+			var markerStyle = new ol.style.Style({
+				image: new ol.style.Circle({
+					radius: 7,
+					snapToPixel: false,
+					fill: new ol.style.Fill({color: 'black'}),
+					stroke: new ol.style.Stroke({
+						color: 'white', width: 2
+					})
+				})
+			});
+
+			var feature = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(SitePosition)));
+			feature.setStyle(markerStyle);
+			StaticFeatures.push(feature);
+		}
 
 		if (SiteCircles) {
 			createSiteCircleFeatures();
