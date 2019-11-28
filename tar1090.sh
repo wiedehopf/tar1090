@@ -74,7 +74,7 @@ new_chunk() {
 
 prune() {
 	jq -c <"$1" >"$2" '
-		.aircraft |= map(select(has("seen_pos") and .seen_pos < 15))
+		.aircraft |= map(select(has("seen") and .seen < 15))
 		| .aircraft[] |= [.hex,
 		(if .alt_baro != null then .alt_baro else .alt_geom end),
 		(if .gs != null then .gs else .tas end),
