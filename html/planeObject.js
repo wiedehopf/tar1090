@@ -275,6 +275,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 			altitude: this.alt_rounded,
 			alt_real: this.altitude,
 			speed: this.speed,
+			ts: now,
 		};
 		this.track_linesegs.push(newseg);
 		this.history_size ++;
@@ -348,7 +349,9 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 			this.track_linesegs.push({ fixed: new ol.geom.LineString([projPrev]),
 				feature: null,
 				altitude: 0,
-				estimated: true });
+				estimated: true,
+				ts: this.prev_time,
+			});
 			this.history_size += 2;
 		} else {
 			// Keep appending to the existing dashed line; keep every point
@@ -370,6 +373,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 			altitude: this.prev_alt_rounded,
 			alt_real: this.prev_alt,
 			speed: this.prev_speed,
+			ts: this.prev_time,
 		});
 		this.history_size += 2;
 
@@ -393,6 +397,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 
 	if (
 		this.prev_alt_rounded !== lastseg.altitude
+		|| tempTrails
 		//lastseg.ground != on_ground
 		//|| (!on_ground && isNaN(alt_change))
 		//|| (alt_change > 700)
@@ -413,6 +418,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 			alt_real: this.prev_alt,
 			speed: this.prev_speed,
 			ground: on_ground,
+			ts: this.prev_time,
 		});
 
 		this.history_size += 2;
@@ -1369,4 +1375,21 @@ PlaneObject.prototype.getAircraftData = function() {
 		else
 			console.log(this.icao + ': Database load error: ' + textStatus + ' at URL: ' + jqXHR.url);
 	}.bind(this));
+}
+
+
+PlaneObject.prototype.reapTrail = function() {
+	const oldSegs = this.track_linesegs;
+	this.track_linesegs = [];
+	this.history_size = 0;
+	for (var i in oldSegs) {
+		const seg = oldSegs[i];
+		if (seg.ts + tempTrailsTimeout > now) {
+			this.history_size += seg.fixed.getCoordinates().length;
+			this.track_linesegs.push(seg);
+		}
+	}
+	if (this.track_linesegs.length != oldSegs.length) {
+		this.remakeTrail();
+	}
 }

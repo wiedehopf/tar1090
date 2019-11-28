@@ -736,7 +736,6 @@ function parse_history() {
 		for (var i in PlanesOrdered)
 			setupPlane(PlanesOrdered[i].icao,PlanesOrdered[i]);
 	}
-	try {
 
 	PositionHistoryBuffer = null;
 	console.timeEnd("Loaded aircraft tracks from History");
@@ -749,6 +748,10 @@ function parse_history() {
 
 	// Setup our timer to poll from the server.
 	window.setInterval(reaper, 60000);
+	if (tempTrails) {
+		window.setInterval(trailReaper, 10000);
+		trailReaper(now);
+	}
 	if (enable_pf_data) {
 		window.setInterval(fetchPfData, RefreshInterval*10.314);
 	}
@@ -766,9 +769,6 @@ function parse_history() {
 	if (localStorage['sidebar_visible'] == "false")
 		toggleSidebarVisibility();
 
-	} catch (error) {
-		alert(error.message);
-	}
 }
 
 // Make a LineString with 'points'-number points
@@ -2819,5 +2819,11 @@ function findPlanes(query, byIcao, byCallsign, byReg) {
 		console.log("query selected: " + query);
 	} else {
 		console.log("No match found for query: " + query);
+	}
+}
+
+function trailReaper() {
+	for (var i in PlanesOrdered) {
+		PlanesOrdered[i].reapTrail();
 	}
 }

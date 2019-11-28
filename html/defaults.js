@@ -193,6 +193,10 @@ var mlatTimeout = 30;
 // enable/disable mouseover/hover aircraft information
 var enableMouseover = true;
 
+// enable/disable temporary aircraft trails
+var tempTrails = false;
+var tempTrailsTimeout = 90;
+
 // Columns that have a // in front of them are shown.
 var HideCols = [
 	"#icao",

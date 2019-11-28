@@ -163,6 +163,10 @@ BingMapsAPIKey = null;
 // enable/disable mouseover/hover aircraft information
 //enableMouseover = true;
 
+// enable/disable temporary aircraft trails
+//tempTrails = false;
+//tempTrailsTimeout = 90;
+
 // Columns that have a // in front of them are shown.
 HideCols = [
 	"#icao",
