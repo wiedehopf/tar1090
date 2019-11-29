@@ -127,13 +127,13 @@ function PlaneObject(icao) {
 const estimateStyle = new ol.style.Style({
 	stroke: new ol.style.Stroke({
 		color: '#808080',
-		width: 1.2
+		width: 1.2 * lineWidth,
 	})
 });
 const estimateStyleSlim = new ol.style.Style({
 	stroke: new ol.style.Stroke({
 		color: '#808080',
-		width: 0.4
+		width: 0.4 * lineWidth,
 	})
 });
 
@@ -142,19 +142,19 @@ const nullStyle = new ol.style.Style({});
 const badLine =  new ol.style.Style({
 	stroke: new ol.style.Stroke({
 		color: '#FF0000',
-		width: 2,
+		width: 2 * lineWidth,
 	})
 });
 const badLineMlat =  new ol.style.Style({
 	stroke: new ol.style.Stroke({
 		color: '#FFA500',
-		width: 2,
+		width: 2 * lineWidth,
 	})
 });
 
 const badDot = new ol.style.Style({
 	image: new ol.style.Circle({
-		radius: 3.5,
+		radius: 3.5 * lineWidth,
 		fill: new ol.style.Fill({
 			color: '#FF0000',
 		})
@@ -162,7 +162,7 @@ const badDot = new ol.style.Style({
 });
 const badDotMlat = new ol.style.Style({
 	image: new ol.style.Circle({
-		radius: 3.5,
+		radius: 3.5 * lineWidth,
 		fill: new ol.style.Fill({
 			color: '#FFA500',
 		})
@@ -697,7 +697,7 @@ PlaneObject.prototype.updateIcon = function() {
 					backgroundFill: new ol.style.Stroke({color: 'rgba(0,0,0,0.4'}),
 					textAlign: 'left',
 					textBaseline: "top",
-					font: 'bold 12px tahoma',
+					font: labelFont,
 					offsetX: (this.baseMarker.size[0]*0.5*0.74*this.scale),
 					offsetY: (this.baseMarker.size[0]*0.5*0.74*this.scale),
 				}),
@@ -1103,14 +1103,14 @@ PlaneObject.prototype.altitudeLines = function(segment) {
 		lineStyleCache[lineKey]	= new ol.style.Style({
 			stroke: new ol.style.Stroke({
 				color: color,
-				width: (2-(noVanish*0.8)),
+				width: (2-(noVanish*0.8)) * lineWidth,
 			})
 		});
 	} else {
 		lineStyleCache[lineKey] = [
 			new ol.style.Style({
 				image: new ol.style.Circle({
-					radius: 2,
+					radius: 2 * lineWidth,
 					fill: new ol.style.Fill({
 						color: color
 					})
@@ -1122,7 +1122,7 @@ PlaneObject.prototype.altitudeLines = function(segment) {
 			new ol.style.Style({
 				stroke: new ol.style.Stroke({
 					color: color,
-					width: 2
+					width: 2 * lineWidth,
 				})
 			})
 		];
@@ -1185,7 +1185,7 @@ PlaneObject.prototype.updateLines = function() {
 						backgroundFill: new ol.style.Stroke({color: 'rgba(0,0,0,0.4'}),
 						textAlign: 'left',
 						textBaseline: "top",
-						font: 'bold 12px tahoma',
+						font: labelFont,
 						offsetX: 5,
 						offsetY: 5,
 					}),

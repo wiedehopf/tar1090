@@ -46,6 +46,8 @@
 //markerMaxSize = 1.32;
 //markerMinSize = 0.72;
 
+//lineWidth = 1;
+
 // These settings control the coloring of aircraft by altitude.
 // All color values are given as Hue (0-359) / Saturation (0-100) / Lightness (0-100)
 //
@@ -137,6 +139,8 @@ BingMapsAPIKey = null;
 // Only display labels when zoomed in this far:
 //labelZoom = 8;
 //labelZoomGround = 12.5;
+
+//labelFont = 'bold 12px tahoma';
 
 //displayUATasADSB = false;
 //uatNoTISB = true;

@@ -46,6 +46,8 @@ var markerScaleFactor = 1.2;
 var markerMaxSize = 1.32;
 var markerMinSize = 0.72;
 
+var lineWidth = 1;
+
 // These settings control the coloring of aircraft by altitude.
 // All color values are given as Hue (0-359) / Saturation (0-100) / Lightness (0-100)
 var ColorByAlt = {
@@ -167,6 +169,8 @@ var mapOrientation = 0; // This determines what is up, normally north (0 degrees
 // Only display labels when zoomed in this far:
 var labelZoom = 0;
 var labelZoomGround = 14.8;
+
+var labelFont = 'bold 12px tahoma';
 
 var displayUATasADSB = false;
 var uatNoTISB = true;
