@@ -158,7 +158,7 @@ function createBaseLayers() {
 	};
 
 	refreshNexrad();
-	window.setInterval(refreshNexrad, 5 * 60000);
+	window.setInterval(refreshNexrad, 3 * 60000);
 
 
 
