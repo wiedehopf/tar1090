@@ -14,6 +14,19 @@ var deferHistory = [];
 var configureReceiver = $.Deferred();
 var historyTimeout = 60;
 
+var uuid = null;
+
+try {
+	const search = new URLSearchParams(window.location.search);
+
+	const feed = search.get('feed');
+	if (feed != null) {
+		uuid = feed;
+		console.log('uuid: ' + uuid);
+	}
+} catch (error) {
+}
+
 // get configuration json files, will be used in initialize function
 var test_chunk_defer = $.ajax({
 	url:'chunks/chunks.json',
@@ -61,7 +74,14 @@ function get_history() {
 		deferHistory.push(request);
 	}
 
-	if (HistoryChunks) {
+	if (uuid != null) {
+		get_receiver_defer = null;
+		receiverJson = null;
+		Dump1090Version = 'unknown';
+		RefreshInterval = 5000;
+		configureReceiver.resolve();
+		console.time("Downloaded History");
+	} else if (HistoryChunks) {
 		if (nHistoryItems > 0) {
 			console.log("Starting to load history (" + nHistoryItems + " chunks)");
 			console.time("Downloaded History");

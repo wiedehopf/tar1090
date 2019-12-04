@@ -298,7 +298,12 @@ function fetchData() {
 		});
 	}
 	buttonActive('#F', FollowSelected);
-	FetchPending = $.ajax({ url: 'data/aircraft.json',
+
+	var ac_url = 'data/aircraft.json';
+	if (uuid != null) {
+		ac_url = 'data/?feed=' + uuid;
+	}
+	FetchPending = $.ajax({ url: ac_url,
 		timeout: 8000,
 		cache: false,
 		dataType: 'json' });
