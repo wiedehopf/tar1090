@@ -1885,9 +1885,17 @@ function resortTable() {
 		});
 	}
 	// or distance
-	if (sortId == "data_source") {
+	else if (sortId == "data_source") {
 		PlanesOrdered.sort(function(x,y) {
 			return (x.sitedist - y.sitedist);
+		});
+	}
+	// or longitude
+	else {
+		PlanesOrdered.sort(function(x,y) {
+			const xlon = x.position ? x.position[0] : 500;
+			const ylon = y.position ? y.position[0] : 500;
+			return (xlon - ylon);
 		});
 	}
 	// number the existing rows so we can do a stable sort
