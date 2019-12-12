@@ -57,6 +57,11 @@ var noVanish = false;
 var sidebarVisible = true;
 var filterTracks = false;
 var refreshId = 0;
+var globeIndex = 0;
+var globeIndexGrid = 0;
+var globeIndexNow = {};
+var PendingFetches = 0;
+var lastReqestFiles = 0;
 
 var SpecialSquawks = {
 	'7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -80,7 +85,7 @@ var SitePosition = null;
 // timestamps
 var now=0, last=0, uat_now=0, uat_last=0;
 var StaleReceiverCount = 0;
-var FetchPending = null;
+var FetchPending = [];
 var FetchPendingUAT = null;
 
 var MessageCountHistory = [];
@@ -246,15 +251,22 @@ function fetchData() {
 	} else {
 		refreshId = setTimeout(fetchData, RefreshInterval);
 	}
-	if (FetchPending != null) {
-		// don't double up on fetches, let the last one resolve
-		return;
-	}
+    if (PendingFetches > 0)
+        return;
+    for (var i in FetchPending) {
+        if (FetchPending[i] != null && FetchPending[i].state() == 'pending') {
+            // don't double up on fetches, let the last one resolve
+            return;
+        }
+    }
+    FetchPending = [];
 	if (FetchPendingUAT != null) {
 		// don't double up on fetches, let the last one resolve
 		return;
 	}
-	FetchPending = true;
+
+    PendingFetches = 1;
+
 	var center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
 	localStorage['CenterLon'] = CenterLon = center[0];
 	localStorage['CenterLat'] = CenterLat = center[1];
@@ -299,76 +311,95 @@ function fetchData() {
 	}
 	buttonActive('#F', FollowSelected);
 
-	var ac_url = 'data/aircraft.json';
-	if (uuid != null) {
-		ac_url = 'data/?feed=' + uuid;
-	}
-	FetchPending = $.ajax({ url: ac_url,
-		timeout: 8000,
-		cache: false,
-		dataType: 'json' });
-	FetchPending.done(function(data) {
-		if (data == null) {
-			FetchPending = null;
-			return;
-		}
+    var ac_url = [];
+    if (globeIndex) {
+        var indexes = globeIndexes();
+        var count = 0;
+        if (indexes.length > 4) {
+		    indexes.sort(function(x,y) {
+                if (globeIndexNow[x] && !globeIndexNow[y])
+                    return 0;
+                if (globeIndexNow[x] == null)
+                    return -1;
+                if (globeIndexNow[y] == null)
+                    return 1;
+                return (globeIndexNow[x] - globeIndexNow[y]);
+            });
+            indexes = indexes.slice(0, 4);
+        }
+        for (var i in indexes) {
+            ac_url.push('data/globe_' + indexes[i].toString().padStart(4, '0') + '.json');
+        }
+    } else {
+        ac_url[0] = 'data/aircraft.json';
+        if (uuid != null) {
+            ac_url[0] = 'data/?feed=' + uuid;
+        }
+    }
+    lastReqestFiles = ac_url.length;
+    PendingFetches = ac_url.length;
+    for (var i in ac_url) {
+        //console.log(ac_url[i]);
+        var req = $.ajax({ url: ac_url[i],
+            timeout: 8000,
+            cache: false,
+            dataType: 'json' });
+        FetchPending.push(req);
 
-		// experimental stuff
-		/*
-		var browserNow = (new Date()).getTime();
-		var diff = browserNow -  now*1000;
-		var delay = RefreshInterval;
+        req.done(function(data) {
+            if (data == null) {
+                return;
+            }
+            if (globeIndex) {
+                globeIndexNow[data.globeIndex] = data.now;
+            }
 
-		if (diff > -100)
-			delay = Math.max(RefreshInterval*1.3 - diff,100);
+            if (data.now >= now) {
+                processReceiverUpdate(data);
+            }
+            if (uat_data && uat_data.now > uat_now) {
+                processReceiverUpdate(uat_data);
+                uat_data = null;
+            }
 
-		window.setTimeout(fetchData, delay);
+            PendingFetches--;
 
-		if ((now-last)*1000 >  1.5* RefreshInterval || (now-last)*1000 < 0.5 * RefreshInterval)
-			console.log("We missed a beat: aircraft.json");
-		console.log(((now-last)*1000).toFixed(0) + " " + diff +" "+ delay + "                  "+now);
-		*/
+            if (PendingFetches < 1) {
+                // update timestamps, visibility, history track for all planes - not only those updated
+                for (var i = 0; i < PlanesOrdered.length; ++i) {
+                    PlanesOrdered[i].updateTick();
+                }
 
-		if (data.now > now) {
-			processReceiverUpdate(data);
-		}
-		if (uat_data && uat_data.now > uat_now) {
-			processReceiverUpdate(uat_data);
-			uat_data = null;
-		}
+                refreshSelected();
+                refreshHighlighted();
+                refreshTableInfo();
+                refreshClock(new Date(now * 1000));
+            }
 
-		// update timestamps, visibility, history track for all planes - not only those updated
-		for (var i = 0; i < PlanesOrdered.length; ++i) {
-			PlanesOrdered[i].updateTick();
-		}
+            // Check for stale receiver data
+            if (last == now && !globeIndex) {
+                StaleReceiverCount++;
+                if (StaleReceiverCount > 5) {
+                    $("#update_error_detail").text("The data from dump1090 hasn't been updated in a while. Maybe dump1090 is no longer running?");
+                    $("#update_error").css('display','block');
+                }
+            } else if (StaleReceiverCount > 0){
+                StaleReceiverCount = 0;
+                $("#update_error").css('display','none');
+            }
+            if (globeIndex) {
+                clearTimeout(refreshId);
+                refreshId = setTimeout(fetchData, RefreshInterval);
+            }
+        });
 
-		refreshSelected();
-		refreshHighlighted();
-		refreshTableInfo();
-		refreshClock(new Date(now * 1000));
-
-		// Check for stale receiver data
-		if (last == now) {
-			StaleReceiverCount++;
-			if (StaleReceiverCount > 5) {
-				$("#update_error_detail").text("The data from dump1090 hasn't been updated in a while. Maybe dump1090 is no longer running?");
-				$("#update_error").css('display','block');
-			}
-		} else if (StaleReceiverCount > 0){
-			StaleReceiverCount = 0;
-			$("#update_error").css('display','none');
-		}
-
-		FetchPending = null;
-	});
-
-	FetchPending.fail(function(jqxhr, status, error) {
-		$("#update_error_detail").text("AJAX call failed (" + status + (error ? (": " + error) : "") + "). Maybe dump1090 is no longer running?");
-		$("#update_error").css('display','block');
-		StaleReceiverCount++;
-		fetchData();
-		FetchPending = null;
-	});
+        req.fail(function(jqxhr, status, error) {
+            $("#update_error_detail").text("AJAX call failed (" + status + (error ? (": " + error) : "") + "). Maybe dump1090 is no longer running?");
+            $("#update_error").css('display','block');
+            StaleReceiverCount++;
+            PendingFetches--;
+        });
+    }
 }
 
 
@@ -747,7 +778,6 @@ function parse_history() {
 
 	console.log("Completing init");
 
-	refreshTableInfo();
 	refreshSelected();
 	refreshHighlighted();
 
@@ -761,6 +791,7 @@ function parse_history() {
 		window.setInterval(fetchPfData, RefreshInterval*10.314);
 	}
 	//window.setInterval(refreshTableInfo, 1000);
+	window.setInterval(function() {PendingFetches--;}, 10000);
 
 	// And kick off one refresh immediately.
 	fetchData();
@@ -774,6 +805,11 @@ function parse_history() {
 	if (localStorage['sidebar_visible'] == "false")
 		toggleSidebarVisibility();
 
+	if (SitePosition) {
+		sortByDistance();
+	} else {
+		sortByAltitude();
+	}
 }
 
 // Make a LineString with 'points'-number points
@@ -811,6 +847,10 @@ function initialize_map() {
 		DefaultCenterLat = receiverJson.lat;
 		DefaultCenterLon = receiverJson.lon;
 	}
+	if (receiverJson && receiverJson.globeIndexGrid != null) {
+        globeIndexGrid = receiverJson.globeIndexGrid;
+        globeIndex = 1;
+    }
 	// Load stored map settings if present
 	CenterLon = Number(localStorage['CenterLon']) || DefaultCenterLon;
 	CenterLat = Number(localStorage['CenterLat']) || DefaultCenterLat;
@@ -820,15 +860,13 @@ function initialize_map() {
 	if (!MapType_tar1090)
 		MapType_tar1090="carto_light_all";
 
-	// Set SitePosition, initialize sorting
+	// Set SitePosition
 	if (SiteLat != null && SiteLon != null) {
 		SitePosition = [SiteLon, SiteLat];
-		sortByDistance();
 	} else {
 		SitePosition = null;
 		PlaneRowTemplate.cells[9].style.display = 'none'; // hide distance column
 		document.getElementById("distance").style.display = 'none'; // hide distance header
-		sortByAltitude();
 	}
 
 	// Maybe hide flag info
@@ -1661,6 +1699,8 @@ function refreshFeatures() {
 function refreshTableInfo() {
 	refreshPageTitle();
 
+	resortTable(PlanesOrdered);
+
 	//$('#dump1090_infoblock').css('display','block');
 	$('#dump1090_total_history').text(TrackedHistorySize);
 
@@ -1672,9 +1712,10 @@ function refreshTableInfo() {
 
 	var show_squawk_warning = false;
 
-	TrackedAircraft = 0
-	TrackedAircraftPositions = 0
-	TrackedHistorySize = 0
+	TrackedAircraft = 0;
+	TrackedAircraftPositions = 0;
+	TrackedHistorySize = 0;
+    var nTablePlanes = 0;
 
 	var currExtent = OLMap.getView().calculateExtent(OLMap.getSize());
 	//console.log((currExtent[2]-currExtent[0])/40075016);
@@ -1722,15 +1763,20 @@ function refreshTableInfo() {
 			inView = true;
 		}
 
-
 		if ((!noVanish && (tableplane.seen == null || (tableplane.seen >= 58 && (!tableplane.selected || SelectedAllPlanes))) || tableplane.isFiltered())) {
 			classes = "plane_table_row hidden";
 		} else if (mapIsVisible && tableInView && (!inView || !tableplane.visible) && !(tableplane.selected && !SelectedAllPlanes)) {
 			TrackedAircraft++;
 			classes = "plane_table_row hidden";
+        } else if (globeIndex && nTablePlanes > 100) {
+			TrackedAircraft++;
+			classes = "plane_table_row hidden";
 		} else {
 			TrackedAircraft++;
 			classes = "plane_table_row";
+
+            nTablePlanes++;
+
 
 			if (tableplane.position != null && (noVanish || tableplane.seen_pos < 60)) {
 				++TrackedAircraftPositions;
@@ -1798,7 +1844,15 @@ function refreshTableInfo() {
 	$('#dump1090_total_ac').text(TrackedAircraft);
 	$('#dump1090_total_ac_positions').text(TrackedAircraftPositions);
 
-	resortTable();
+
+	//console.time("DOM");
+	var tbody = document.getElementById('tableinfo').tBodies[0];
+	fragment = document.createDocumentFragment();
+	for (var i = 0; i < PlanesOrdered.length; ++i) {
+		fragment.appendChild(PlanesOrdered[i].tr);
+	}
+	tbody.appendChild(fragment);
+	//console.timeEnd("DOM");
 }
 
 //
@@ -1869,13 +1923,13 @@ function sortFunction(x,y) {
 	return x._sort_pos - y._sort_pos;
 }
 
-function resortTable() {
+function resortTable(pList) {
 	// presort by dataSource
 	if (sortId == "sitedist") {
-		for (var i = 0; i < PlanesOrdered.length; ++i) {
-			PlanesOrdered[i]._sort_pos = i;
+		for (var i = 0; i < pList.length; ++i) {
+			pList[i]._sort_pos = i;
 		}
-		PlanesOrdered.sort(function(x,y) {
+		pList.sort(function(x,y) {
 			const a = x.getDataSourceNumber();
 			const b = y.getDataSourceNumber();
 			if (a == b)
@@ -1886,13 +1940,13 @@ function resortTable() {
 	}
 	// or distance
 	else if (sortId == "data_source") {
-		PlanesOrdered.sort(function(x,y) {
+		pList.sort(function(x,y) {
 			return (x.sitedist - y.sitedist);
 		});
 	}
 	// or longitude
 	else {
-		PlanesOrdered.sort(function(x,y) {
+		pList.sort(function(x,y) {
 			const xlon = x.position ? x.position[0] : 500;
 			const ylon = y.position ? y.position[0] : 500;
 			return (xlon - ylon);
@@ -1901,19 +1955,19 @@ function resortTable() {
 	// number the existing rows so we can do a stable sort
 	// regardless of whether sort() is stable or not.
 	// Also extract the sort comparison value.
-	for (var i = 0; i < PlanesOrdered.length; ++i) {
-		PlanesOrdered[i]._sort_pos = i;
-		PlanesOrdered[i]._sort_value = sortExtract(PlanesOrdered[i]);
+	for (var i = 0; i < pList.length; ++i) {
+		pList[i]._sort_pos = i;
+		pList[i]._sort_value = sortExtract(pList[i]);
 	}
 
-	PlanesOrdered.sort(sortFunction);
+	pList.sort(sortFunction);
 	// Put selected planes on top, do a stable sort!
 	// actually that's a bad idea, disable this for now
 	if (!SelectedAllPlanes && multiSelect) {
-		for (var i = 0; i < PlanesOrdered.length; ++i) {
-			PlanesOrdered[i]._sort_pos = i;
+		for (var i = 0; i < pList.length; ++i) {
+			pList[i]._sort_pos = i;
 		}
-		PlanesOrdered.sort(function(x,y) {
+		pList.sort(function(x,y) {
 			if (x.selected && y.selected) {
 				return (x._sort_pos - y._sort_pos);
 			}
@@ -1926,14 +1980,6 @@ function resortTable() {
 		});
 	}
 
-	//console.time("DOM");
-	var tbody = document.getElementById('tableinfo').tBodies[0];
-	fragment = document.createDocumentFragment();
-	for (var i = 0; i < PlanesOrdered.length; ++i) {
-		fragment.appendChild(PlanesOrdered[i].tr);
-	}
-	tbody.appendChild(fragment);
-	//console.timeEnd("DOM");
 }
 
 function sortBy(id,sc,se) {
@@ -1955,7 +2001,8 @@ function sortBy(id,sc,se) {
 	sortCompare = sc;
 	sortExtract = se;
 
-	resortTable();
+	refreshTableInfo();
+	//resortTable(PlanesTableList);
 }
 
 function selectPlaneByHex(hex,autofollow) {
@@ -2839,4 +2886,104 @@ function trailReaper() {
 	for (var i in PlanesOrdered) {
 		PlanesOrdered[i].reapTrail();
 	}
+}
+
+function globeIndexes() {
+    var proj = OLMap.getView().getProjection();
+    var extent = OLMap.getView().calculateExtent(OLMap.getSize());
+	const bottomLeft = ol.proj.toLonLat([extent[0], extent[1]]);
+	const topRight = ol.proj.toLonLat([extent[2], extent[3]]);
+    var x1 = bottomLeft[0];
+    var y1 = bottomLeft[1];
+    var x2 = topRight[0];
+    var y2 = topRight[1];
+    if (Math.abs(extent[2] - extent[0]) > 40075016) {
+        // all longtitudes in view, only check latitude
+        x1 = -180;
+        x2 = 180;
+    } else if (x1 > x2) {
+        var tmp = x1;
+        x1 = x2;
+        x2 = tmp;
+    }
+    var indexes = [];
+    //console.log(x1 + ' ' + x2);
+    var grid = globeIndexGrid;
+
+    for (var lon = x1; lon < x2 + grid; lon += grid) {
+        for (var lat = y1; lat < y2 + grid; lat += grid) {
+            if (lat > y2)
+                lat = y2 + 0.01;
+            if (lon > x2)
+                lon = x2 + 0.01;
+            var index = globe_index(lat, lon);
+            //console.log(lat + ' ' + lon + ' ' + index);
+            if (!indexes.includes(index)) {
+                indexes.push(index);
+            }
+        }
+    }
+    return indexes;
+}
+function globe_index(lat, lon) {
+    var grid = globeIndexGrid;
+
+    lat = grid * Math.floor((lat+90) / grid) - 90;
+    lon = grid * Math.floor((lon+180) / grid) - 180;
+
+    // Arctic
+    if (lat >= 60) {
+        return 1;
+    }
+
+    // Antarctic
+    if (lat <= -45) {
+        return 2;
+    }
+
+    // South Pacific
+    if (lat <= 9 && (lon >= 177 || lon <= -87)) {
+        return 3;
+    }
+
+    // North Pacific
+    if (lat >= 9 && lat <= 30 && (lon <= -122 || lon >= 144)) {
+        return 4;
+    }
+
+    if (lat >= 30 && lat <= 53 && (lon <= -134 || lon >= 146)) {
+        return 5;
+    }
+
+    if (lat >= 53 && (lon <= -155 || lon >= 146)) {
+        return 6;
+    }
+
+    // South Atlantic and Indian Ocean minus Africa
+    if (lat <= 5 && lon <= 95 && lon >= -33
+        && !(lat >= -33 && lat <= -16 && lon >= 13 && lon <= 43)
+    ) {
+        return 7;
+    }
+
+    // North Atlantic
+    if (lat >=5 && lon >= -50 && lon <= 15) {
+        return 8;
+    }
+
+    if (lat >=5 && lat <=38 && lon >= -70 && lon <= -50) {
+        return 9;
+    }
+
+    // Russia
+    if (lat >= 48 && lon >=42 && lon <= 180) {
+        return 10;
+    }
+
+
+    var i = Math.floor((lat+90) / grid);
+    var j = Math.floor((lon+180) / grid);
+
+    var lat_multiplier = 360 / grid + 1;
+    return (i * lat_multiplier + j + 1000);
 }
