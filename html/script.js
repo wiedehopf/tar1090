@@ -60,6 +60,7 @@ var refreshId = 0;
 var globeIndex = 0;
 var globeIndexGrid = 0;
 var globeIndexNow = {};
+var globeSimLoad = 4;
 var PendingFetches = 0;
 var lastReqestFiles = 0;
 
@@ -315,7 +316,7 @@ function fetchData() {
     if (globeIndex) {
         var indexes = globeIndexes();
         var count = 0;
-        if (indexes.length > 4) {
+        if (indexes.length > globeSimLoad) {
 		    indexes.sort(function(x,y) {
                 if (globeIndexNow[x] && !globeIndexNow[y])
                     return 0;
@@ -325,7 +326,7 @@ function fetchData() {
                     return 1;
                 return (globeIndexNow[x] - globeIndexNow[y]);
             });
-            indexes = indexes.slice(0, 4);
+            indexes = indexes.slice(0, globeSimLoad);
         }
         for (var i in indexes) {
             ac_url.push('data/globe_' + indexes[i].toString().padStart(4, '0') + '.json');
@@ -365,11 +366,6 @@ function fetchData() {
             PendingFetches--;
 
             if (PendingFetches < 1) {
-                // update timestamps, visibility, history track for all planes - not only those updated
-                for (var i = 0; i < PlanesOrdered.length; ++i) {
-                    PlanesOrdered[i].updateTick();
-                }
-
                 refreshSelected();
                 refreshHighlighted();
                 refreshTableInfo();
@@ -1763,6 +1759,12 @@ function refreshTableInfo() {
 		} else {
 			inView = true;
 		}
+
+
+        if (!globeIndex || inView) {
+            PlanesOrdered[i].updateTick();
+        }
+
 
 		if ((!noVanish && (tableplane.seen == null || (tableplane.seen >= 58 && (!tableplane.selected || SelectedAllPlanes))) || tableplane.isFiltered())) {
 			classes = "plane_table_row hidden";
