@@ -1763,7 +1763,10 @@ function refreshTableInfo() {
 		}
 
 
-        if (!globeIndex || inView) {
+        if (globeIndex && inView) {
+            PlanesOrdered[i].updateFeatures(now, last);
+        }
+        if (!globeIndex) {
             PlanesOrdered[i].updateTick();
         }
 

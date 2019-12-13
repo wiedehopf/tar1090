@@ -736,6 +736,8 @@ PlaneObject.prototype.updateIcon = function() {
 PlaneObject.prototype.updateData = function(now, last, data, init) {
 	// get location data first, return early if only those are needed.
 
+    this.updated = true;
+
 	var isArray = Array.isArray(data);
 	// [.hex, .alt_baro, .gs, .track, .lat, .lon, .seen_pos, "mlat"/"tisb"/.type , .flight, .messages]
 	//    0      1        2     3       4     5     6                 7               8        9
@@ -1002,18 +1004,25 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
 	this.seen = now - this.last_message_time;
 	this.seen_pos = now - this.position_time;
 
-	if (this.position && SitePosition) {
-		this.sitedist = ol.sphere.getDistance(SitePosition, this.position);
-	}
 
-	if (this.flight && this.flight.trim()) {
-		this.name = this.flight;
-	} else if (this.registration) {
-		this.name = '_' + this.registration;
-	} else {
-		this.name = '_' + this.icao.toUpperCase();
-	}
-	this.name = this.name.trim();
+
+    if (this.updated) {
+        if (this.position && SitePosition) {
+            this.sitedist = ol.sphere.getDistance(SitePosition, this.position);
+        }
+
+        if (this.flight && this.flight.trim()) {
+            this.name = this.flight;
+        } else if (this.registration) {
+            this.name = '_' + this.registration;
+        } else {
+            this.name = '_' + this.icao.toUpperCase();
+        }
+        this.name = this.name.trim();
+    }
+    if (!this.updated && !this.visible) {
+        return;
+    }
 
 	// If no packet in over 58 seconds, clear the plane.
 	// Only clear the plane if it's not selected individually
@@ -1046,6 +1055,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
 				selectPlaneByHex(null,false);
 		}
 	}
+    this.updated = false;
 };
 
 PlaneObject.prototype.clearMarker = function() {
