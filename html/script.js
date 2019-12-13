@@ -339,6 +339,12 @@ function fetchData() {
     }
     lastReqestFiles = ac_url.length;
     PendingFetches = ac_url.length;
+
+    if (globeIndex) {
+        clearTimeout(refreshId);
+        refreshId = setTimeout(fetchData, RefreshInterval);
+    }
+
     for (var i in ac_url) {
         //console.log(ac_url[i]);
         var req = $.ajax({ url: ac_url[i],
@@ -382,10 +388,6 @@ function fetchData() {
             } else if (StaleReceiverCount > 0){
                 StaleReceiverCount = 0;
                 $("#update_error").css('display','none');
-            }
-            if (globeIndex) {
-                clearTimeout(refreshId);
-                refreshId = setTimeout(fetchData, RefreshInterval);
             }
         });
 

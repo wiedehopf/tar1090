@@ -127,7 +127,7 @@ function db_ajax_request_complete() {
 	var req;
 	var ajaxreq;
 
-	if (_request_queue.length == 0 || _request_count >= 3) {
+	if (_request_queue.length == 0 || _request_count >= 1) {
 		return;
 	} else {
 		_request_count++;
