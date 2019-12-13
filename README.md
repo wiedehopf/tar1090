@@ -108,6 +108,7 @@ The script can install multiple instances, this is accomplished by first editing
 On each line there must be one instance.
 First on the line the source directory where the aircraft.json is located.
 Second on the line the name where you want to access the according website.
+(http://pi/tar1090 or http://pi/combo or http://pi/978 in this example)
 
 The main instance needs to be included in this file.
 
