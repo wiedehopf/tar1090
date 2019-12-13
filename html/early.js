@@ -28,60 +28,73 @@ try {
 }
 
 // get configuration json files, will be used in initialize function
+var get_receiver_defer = $.ajax({ url: 'data/receiver.json',
+	timeout: 15000,
+	cache: false,
+	dataType: 'json'
+});
 var test_chunk_defer = $.ajax({
 	url:'chunks/chunks.json',
 	timeout: 10000,
 	cache: false,
 	dataType: 'json'
 });
-var get_receiver_defer = $.ajax({ url: 'data/receiver.json',
-	timeout: 15000,
-	cache: false,
-	dataType: 'json'
-});
 
+if (uuid != null) {
+    get_receiver_defer = null;
+    receiverJson = null;
+    Dump1090Version = 'unknown';
+    RefreshInterval = 5000;
+    configureReceiver.resolve();
+    console.time("Downloaded History");
+} else {
+    $.when(get_receiver_defer).done(function(data){
+        get_receiver_defer = null;
+        receiverJson = data;
+        Dump1090Version = data.version;
+        RefreshInterval = data.refresh;
+        nHistoryItems = (data.history < 2) ? 0 : data.history;
+        $.when(test_chunk_defer).done(function(data) {
+            HistoryChunks = true;
+            chunkNames = data.chunks;
+            nHistoryItems = chunkNames.length;
+            enable_uat = (data.enable_uat == "true");
+            enable_pf_data = (data.pf_data == "true");
+            if (enable_uat)
+                console.log("UAT/978 enabled!");
+            console.log("Chunks enabled");
+            get_history();
+            configureReceiver.resolve();
+        }).fail(function() {
+            HistoryChunks = false;
+            get_history();
+            configureReceiver.resolve();
+        });
+    });
+}
 
-$.when(test_chunk_defer).done(function(data) {
-	HistoryChunks = true;
-	chunkNames = data.chunks;
-	nHistoryItems = chunkNames.length;
-	enable_uat = (data.enable_uat == "true");
-	enable_pf_data = (data.pf_data == "true");
-	if (enable_uat)
-		console.log("UAT/978 enabled!");
-	console.log("Chunks enabled");
-	get_history();
-}).fail(function() {
-	HistoryChunks = false;
-	get_history();
-});
 
 
 function get_history() {
 
-	nHistoryItems++;
-	var request = $.ajax({ url: 'data/aircraft.json',
-		timeout: historyTimeout*800,
-		cache: false,
-		dataType: 'json' });
-	deferHistory.push(request);
-	if (enable_uat) {
-		nHistoryItems++;
-		request = $.ajax({ url: 'chunks/978.json',
-			timeout: historyTimeout*800,
-			cache: false,
-			dataType: 'json' });
-		deferHistory.push(request);
-	}
+    if (!receiverJson.globeIndexGrid) {
+        nHistoryItems++;
+        var request = $.ajax({ url: 'data/aircraft.json',
+            timeout: historyTimeout*800,
+            cache: false,
+            dataType: 'json' });
+        deferHistory.push(request);
+        if (enable_uat) {
+            nHistoryItems++;
+            request = $.ajax({ url: 'chunks/978.json',
+                timeout: historyTimeout*800,
+                cache: false,
+                dataType: 'json' });
+            deferHistory.push(request);
+        }
+    }
 
-	if (uuid != null) {
-		get_receiver_defer = null;
-		receiverJson = null;
-		Dump1090Version = 'unknown';
-		RefreshInterval = 5000;
-		configureReceiver.resolve();
-		console.time("Downloaded History");
-	} else if (HistoryChunks) {
+    if (HistoryChunks) {
 		if (nHistoryItems > 0) {
 			console.log("Starting to load history (" + nHistoryItems + " chunks)");
 			console.time("Downloaded History");
@@ -89,31 +102,14 @@ function get_history() {
 				get_history_item(i);
 			}
 		}
-		$.when(get_receiver_defer).done(function(data){
-			get_receiver_defer = null;
-			receiverJson = data;
-			Dump1090Version = data.version;
-			RefreshInterval = data.refresh;
-			configureReceiver.resolve();
-		});
-	} else {
-		$.when(get_receiver_defer).done(function(data){
-			get_receiver_defer = null;
-			receiverJson = data;
-			Dump1090Version = data.version;
-			RefreshInterval = data.refresh;
-			nHistoryItems = data.history;
-			if (nHistoryItems > 0) {
-				console.log("Starting to load history (" + nHistoryItems + " items)");
-				console.time("Downloaded History");
-				// Queue up the history file downloads
-				for (var i = nHistoryItems-1; i >= 0; i--) {
-					get_history_item(i);
-				}
-			}
-			configureReceiver.resolve();
-		});
-	}
+    } else if (nHistoryItems > 0) {
+        console.log("Starting to load history (" + nHistoryItems + " items)");
+        console.time("Downloaded History");
+        // Queue up the history file downloads
+        for (var i = nHistoryItems-1; i >= 0; i--) {
+            get_history_item(i);
+        }
+    }
 }
 
 function get_history_item(i) {

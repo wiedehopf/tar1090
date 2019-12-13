@@ -850,6 +850,7 @@ function initialize_map() {
 	if (receiverJson && receiverJson.globeIndexGrid != null) {
         globeIndexGrid = receiverJson.globeIndexGrid;
         globeIndex = 1;
+        toggleTableInView(true);
     }
 	// Load stored map settings if present
 	CenterLon = Number(localStorage['CenterLon']) || DefaultCenterLon;
@@ -1771,6 +1772,9 @@ function refreshTableInfo() {
         } else if (globeIndex && nTablePlanes > 100) {
 			TrackedAircraft++;
 			classes = "plane_table_row hidden";
+			if (tableplane.position != null && (noVanish || tableplane.seen_pos < 60)) {
+				++TrackedAircraftPositions;
+			}
 		} else {
 			TrackedAircraft++;
 			classes = "plane_table_row";
@@ -2530,7 +2534,7 @@ function followRandomPlane() {
 }
 
 function toggleTableInView(switchOn) {
-	if (switchOn) {
+	if (switchOn || globeIndex) {
 		tableInView = true;
 	} else {
 		tableInView = !tableInView;
@@ -2901,22 +2905,29 @@ function globeIndexes() {
         // all longtitudes in view, only check latitude
         x1 = -180;
         x2 = 180;
-    } else if (x1 > x2) {
-        var tmp = x1;
-        x1 = x2;
-        x2 = tmp;
     }
+    if (y1 < -90)
+        y1 = -90;
+    if (y2 > 90)
+        y2 = 90;
     var indexes = [];
     //console.log(x1 + ' ' + x2);
     var grid = globeIndexGrid;
 
-    for (var lon = x1; lon < x2 + grid; lon += grid) {
+    var x3 = (x1 < x2) ? x2 : 300;
+    var count = 0;
+
+    for (var lon = x1; lon < x3 + grid; lon += grid) {
+        if (x1 >= x2 && lon > 180) {
+            lon -= 360;
+            x3 = x2;
+        }
         for (var lat = y1; lat < y2 + grid; lat += grid) {
-            if (lat > y2)
-                lat = y2 + 0.01;
-            if (lon > x2)
-                lon = x2 + 0.01;
             var index = globe_index(lat, lon);
+            if (lat > y2)
+                index = globe_index(y2 , lon);
+            if (lon > x2)
+                index = globe_index(lat , x2);
             //console.log(lat + ' ' + lon + ' ' + index);
             if (!indexes.includes(index)) {
                 indexes.push(index);
@@ -2967,7 +2978,7 @@ function globe_index(lat, lon) {
     }
 
     // North Atlantic
-    if (lat >=5 && lon >= -50 && lon <= 15) {
+    if (lat >=5 && lon >= -50 && lon <= -15) {
         return 8;
     }
 
