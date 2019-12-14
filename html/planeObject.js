@@ -324,11 +324,15 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 	// greater than the difference between data inputs
 	var time_difference = (this.position_time - this.prev_time) - (now - last);
 
-	var stale_timeout = lastseg.estimated ? 5 : 10;
+	//var stale_timeout = lastseg.estimated ? 5 : 10;
+	var stale_timeout = 15;
 
 	// MLAT data are given some more leeway
 	if (this.dataSource == "mlat")
 		stale_timeout = 15;
+
+    if (globeIndex)
+        stale_timeout = 30;
 
 	// On the ground you can't go that quick
 	if (on_ground)
@@ -515,7 +519,7 @@ PlaneObject.prototype.getMarkerColor = function() {
 	l = colorArr[2];
 
 	// If we have not seen a recent position update, change color
-	if (this.seen_pos > 15)  {
+	if (this.seen_pos > 15 && !globeIndex)  {
 		h += ColorByAlt.stale.h;
 		s += ColorByAlt.stale.s;
 		l += ColorByAlt.stale.l;

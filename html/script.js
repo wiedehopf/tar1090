@@ -60,6 +60,7 @@ var refreshId = 0;
 var globeIndex = 0;
 var globeIndexGrid = 0;
 var globeIndexNow = {};
+var globeIndexSpecialTiles;
 var globeSimLoad = 4;
 var PendingFetches = 0;
 var lastReqestFiles = 0;
@@ -358,6 +359,39 @@ function fetchData() {
                 return;
             }
             if (globeIndex) {
+                if (globeIndexNow[data.globeIndex] == null) {
+                    var southWest = ol.proj.fromLonLat([data.west, data.south]);
+                    var south180p = ol.proj.fromLonLat([180, data.south]);
+                    var south180m = ol.proj.fromLonLat([-180, data.south]);
+                    var southEast = ol.proj.fromLonLat([data.east, data.south]);
+                    var northEast = ol.proj.fromLonLat([data.east, data.north]);
+                    var north180p = ol.proj.fromLonLat([180, data.north]);
+                    var north180m = ol.proj.fromLonLat([-180, data.north]);
+                    var northWest = ol.proj.fromLonLat([data.west, data.north]);
+                    const estimateStyle = new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            color: '#808080',
+                            width: 1,
+                        })
+                    });
+                    if (data.west < data.east) {
+                        var tile = new ol.geom.LineString([southWest, southEast, northEast, northWest, southWest]);
+                        var tileFeature = new ol.Feature(tile);
+                        tileFeature.setStyle(estimateStyle);
+                        StaticFeatures.push(tileFeature);
+                    } else {
+                        var west = new ol.geom.LineString([south180p, southWest, northWest, north180p]);
+                        var east = new ol.geom.LineString([south180m, southEast, northEast, north180m]);
+                        var westF = new ol.Feature(west);
+                        var eastF = new ol.Feature(east);
+                        westF.setStyle(estimateStyle);
+                        eastF.setStyle(estimateStyle);
+                        StaticFeatures.push(westF);
+                        StaticFeatures.push(eastF);
+                    }
+
+
+                }
                 globeIndexNow[data.globeIndex] = data.now;
             }
 
@@ -848,6 +882,7 @@ function initialize_map() {
 	if (receiverJson && receiverJson.globeIndexGrid != null) {
         globeIndexGrid = receiverJson.globeIndexGrid;
         globeIndex = 1;
+        globeIndexSpecialTiles = receiverJson.globeIndexSpecialTiles;
         toggleTableInView(true);
     }
 	// Load stored map settings if present
@@ -1776,7 +1811,7 @@ function refreshTableInfo() {
 		} else if (mapIsVisible && tableInView && (!inView || !tableplane.visible) && !(tableplane.selected && !SelectedAllPlanes)) {
 			TrackedAircraft++;
 			classes = "plane_table_row hidden";
-        } else if (globeIndex && nTablePlanes > 100) {
+        } else if (globeIndex && nTablePlanes > 84) {
 			TrackedAircraft++;
 			classes = "plane_table_row hidden";
 			if (tableplane.position != null && (noVanish || tableplane.seen_pos < 60)) {
@@ -2929,12 +2964,16 @@ function globeIndexes() {
             lon -= 360;
             x3 = x2;
         }
+        if (lon > x3)
+            lon = x3 + 0.01;
         for (var lat = y1; lat < y2 + grid; lat += grid) {
-            var index = globe_index(lat, lon);
             if (lat > y2)
-                index = globe_index(y2 , lon);
-            if (lon > x2)
-                index = globe_index(lat , x2);
+                lat = y2 + 0.01;
+            if (count++ > 2000) {
+                console.log("globeIndexes fail, lon: " + lon + ", lat: " + lat);
+                break;
+            }
+            var index = globe_index(lat, lon);
             //console.log(lat + ' ' + lon + ' ' + index);
             if (!indexes.includes(index)) {
                 indexes.push(index);
@@ -2946,62 +2985,24 @@ function globeIndexes() {
 function globe_index(lat, lon) {
     var grid = globeIndexGrid;
 
-    lat = grid * Math.floor((lat+90) / grid) - 90;
-    lon = grid * Math.floor((lon+180) / grid) - 180;
+    lat = grid * Math.floor((lat + 90) / grid) - 90;
+    lon = grid * Math.floor((lon + 180) / grid) - 180;
 
-    // Arctic
-    if (lat >= 60) {
-        return 1;
+    for (var i = 0; i < globeIndexSpecialTiles.length; i++) {
+        var tile = globeIndexSpecialTiles[i];
+        if (lat >= tile.south && lat < tile.north) {
+            if (tile.west < tile.east && lon >= tile.west && lon < tile.east) {
+                return i;
+            }
+            if (tile.west > tile.east && (lon >= tile.west || lon < tile.east)) {
+                return i;
+            }
+        }
     }
-
-    // Antarctic
-    if (lat <= -45) {
-        return 2;
-    }
-
-    // South Pacific
-    if (lat <= 9 && (lon >= 177 || lon <= -87)) {
-        return 3;
-    }
-
-    // North Pacific
-    if (lat >= 9 && lat <= 30 && (lon <= -122 || lon >= 144)) {
-        return 4;
-    }
-
-    if (lat >= 30 && lat <= 53 && (lon <= -134 || lon >= 146)) {
-        return 5;
-    }
-
-    if (lat >= 53 && (lon <= -155 || lon >= 146)) {
-        return 6;
-    }
-
-    // South Atlantic and Indian Ocean minus Africa
-    if (lat <= 5 && lon <= 95 && lon >= -33
-        && !(lat >= -33 && lat <= -16 && lon >= 13 && lon <= 43)
-    ) {
-        return 7;
-    }
-
-    // North Atlantic
-    if (lat >=5 && lon >= -50 && lon <= -15) {
-        return 8;
-    }
-
-    if (lat >=5 && lat <=38 && lon >= -70 && lon <= -50) {
-        return 9;
-    }
-
-    // Russia
-    if (lat >= 48 && lon >=42 && lon <= 180) {
-        return 10;
-    }
-
 
     var i = Math.floor((lat+90) / grid);
     var j = Math.floor((lon+180) / grid);
 
-    var lat_multiplier = 360 / grid + 1;
+    var lat_multiplier = Math.floor(360 / grid + 1);
     return (i * lat_multiplier + j + 1000);
 }
