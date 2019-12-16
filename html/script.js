@@ -320,18 +320,16 @@ function fetchData() {
     if (globeIndex) {
         var indexes = globeIndexes();
         var count = 0;
-        if (indexes.length > globeSimLoad) {
-		    indexes.sort(function(x,y) {
-                if (globeIndexNow[x] && !globeIndexNow[y])
-                    return 0;
-                if (globeIndexNow[x] == null)
-                    return -1;
-                if (globeIndexNow[y] == null)
-                    return 1;
-                return (globeIndexNow[x] - globeIndexNow[y]);
-            });
-            indexes = indexes.slice(0, globeSimLoad);
-        }
+        indexes.sort(function(x,y) {
+            if (globeIndexNow[x] && !globeIndexNow[y])
+                return 0;
+            if (globeIndexNow[x] == null)
+                return -1;
+            if (globeIndexNow[y] == null)
+                return 1;
+            return (globeIndexNow[x] - globeIndexNow[y]);
+        });
+        indexes = indexes.slice(0, mapIsVisible ? globeSimLoad : globeSimLoad * 10);
         for (var i in indexes) {
             ac_url.push('data/globe_' + indexes[i].toString().padStart(4, '0') + '.json');
         }
@@ -346,7 +344,11 @@ function fetchData() {
 
     if (globeIndex) {
         clearTimeout(refreshId);
-        refreshId = setTimeout(fetchData, RefreshInterval);
+        if (mapIsVisible) {
+            refreshId = setTimeout(fetchData, RefreshInterval);
+        } else {
+            refreshId = setTimeout(fetchData, 55000);
+        }
     }
 
     for (var i in ac_url) {
@@ -1820,7 +1822,7 @@ function refreshTableInfo() {
         } else if ((mapIsVisible || globeIndex) && tableInView && (!tableplane.inView || !tableplane.visible) && !(tableplane.selected && !SelectedAllPlanes)) {
             TrackedAircraft++;
             tableplane.showInTable = false;
-        } else if (globeIndex && ((nTablePlanes > 100 && mapIsVisible) || (nTablePlanes > 500 && !mapIsVisible))) {
+        } else if (globeIndex && ((nTablePlanes > 100 && mapIsVisible) || (nTablePlanes > 15000 && !mapIsVisible))) {
             TrackedAircraft++;
             tableplane.showInTable = false;
             if (tableplane.position != null && (noVanish || tableplane.seen_pos < 60)) {
@@ -2228,6 +2230,8 @@ function expandSidebar(e) {
 	$("#show_map_button").show();
 	$("#sidebar_container").width("100%");
 	setColumnVisibility();
+    clearTimeout(refreshId);
+    fetchData();
 	refreshTableInfo();
 	updateMapSize();
 	setSelectedInfoBlockVisibility();
@@ -2242,6 +2246,8 @@ function showMap() {
 	$("#sudo_buttons").show();
 	$("#show_map_button").hide();
 	setColumnVisibility();
+    clearTimeout(refreshId);
+    fetchData();
 	refreshTableInfo();
 	updateMapSize();
 }
