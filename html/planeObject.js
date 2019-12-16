@@ -1008,8 +1008,6 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
 	this.seen = now - this.last_message_time;
 	this.seen_pos = now - this.position_time;
 
-
-
     if (this.updated) {
         if (this.position && SitePosition) {
             this.sitedist = ol.sphere.getDistance(SitePosition, this.position);

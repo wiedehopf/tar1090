@@ -62,8 +62,10 @@ var globeIndexGrid = 0;
 var globeIndexNow = {};
 var globeIndexSpecialTiles;
 var globeSimLoad = 4;
+var lastExtent;
 var PendingFetches = 0;
 var lastReqestFiles = 0;
+var debugCounter = 0;
 
 var SpecialSquawks = {
 	'7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -77,6 +79,7 @@ var zoomTimeout;
 
 
 var PlaneRowTemplate = null;
+var tableinfoFragment = null;
 
 var TrackedAircraft = 0;
 var TrackedAircraftPositions = 0;
@@ -1751,7 +1754,12 @@ function refreshTableInfo() {
 	TrackedHistorySize = 0;
     var nTablePlanes = 0;
 
-	var currExtent = OLMap.getView().calculateExtent(OLMap.getSize());
+	var currExtent;
+    if (globeIndex) {
+        currExtent = lastExtent;
+    } else {
+        currExtent = OLMap.getView().calculateExtent(OLMap.getSize());
+    }
 	//console.log((currExtent[2]-currExtent[0])/40075016);
 	const bottomLeft = ol.proj.toLonLat([currExtent[0], currExtent[1]]);
 	const topRight = ol.proj.toLonLat([currExtent[2], currExtent[3]]);
@@ -1767,18 +1775,17 @@ function refreshTableInfo() {
 
 		const pos = tableplane.position;
 		const proj = tableplane.position ? ol.proj.fromLonLat(tableplane.position) : null;
-		//const inView = proj ? ol.extent.containsCoordinate(currExtent, proj) : false;
-		var inView = false;
+		//const tableplane.inView = proj ? ol.extent.containsCoordinate(currExtent, proj) : false;
 		if (tableInView && sidebarVisible) {
 			if (pos && currExtent[2]-currExtent[0] > 40075016) {
 				// all longtitudes in view, only check latitude
-				inView = (
+				tableplane.inView = (
 					pos[1] > bottomLeft[1]
 					&& pos[1] < topRight[1]
 				)
 			} else if (pos && bottomLeft[0] < topRight[0]) {
 				// no wraparound: view not crossing 179 to -180 transition line
-				inView = (
+				tableplane.inView = (
 					pos[0] > bottomLeft[0]
 					&& pos[0] < topRight[0]
 					&& pos[1] > bottomLeft[1]
@@ -1786,7 +1793,7 @@ function refreshTableInfo() {
 				)
 			} else if (pos && bottomLeft[0] > topRight[0]) {
 				// wraparound: view crossing 179 to -180 transition line
-				inView = (
+				tableplane.inView = (
 					(pos[0] > bottomLeft[0]
 					|| pos[0] < topRight[0])
 					&& pos[1] > bottomLeft[1]
@@ -1794,42 +1801,45 @@ function refreshTableInfo() {
 				)
 			}
 		} else {
-			inView = true;
+			tableplane.inView = true;
 		}
 
 
-        if (globeIndex && inView) {
-            PlanesOrdered[i].updateFeatures(now, last);
+        if (globeIndex && tableplane.inView) {
+            tableplane.updateFeatures(now, last);
         }
         if (!globeIndex) {
-            PlanesOrdered[i].updateTick();
+            tableplane.updateTick();
         }
 
 
-		if ((!noVanish && (tableplane.seen == null || (tableplane.seen >= 58 && (!tableplane.selected || SelectedAllPlanes))) || tableplane.isFiltered())) {
-			classes = "plane_table_row hidden";
-		} else if (mapIsVisible && tableInView && (!inView || !tableplane.visible) && !(tableplane.selected && !SelectedAllPlanes)) {
-			TrackedAircraft++;
-			classes = "plane_table_row hidden";
-        } else if (globeIndex && nTablePlanes > 84) {
-			TrackedAircraft++;
-			classes = "plane_table_row hidden";
+        tableplane.showInTable = false;
+        classes = "plane_table_row";
+        if ((!noVanish && (tableplane.seen == null || (tableplane.seen >= 58 && (!tableplane.selected || SelectedAllPlanes))) || tableplane.isFiltered())) {
+            tableplane.showInTable = false;
+        } else if ((mapIsVisible || globeIndex) && tableInView && (!tableplane.inView || !tableplane.visible) && !(tableplane.selected && !SelectedAllPlanes)) {
+            TrackedAircraft++;
+            tableplane.showInTable = false;
+        } else if (globeIndex && ((nTablePlanes > 100 && mapIsVisible) || (nTablePlanes > 500 && !mapIsVisible))) {
+            TrackedAircraft++;
+            tableplane.showInTable = false;
+            if (tableplane.position != null && (noVanish || tableplane.seen_pos < 60)) {
+                ++TrackedAircraftPositions;
+            }
+        } else {
+            TrackedAircraft++;
+
 			if (tableplane.position != null && (noVanish || tableplane.seen_pos < 60)) {
 				++TrackedAircraftPositions;
 			}
-		} else {
-			TrackedAircraft++;
-			classes = "plane_table_row";
+
+			if (!sidebarVisible) {
+                tableplane.showInTable = false;
+				continue;
+            }
 
             nTablePlanes++;
-
-
-			if (tableplane.position != null && (noVanish || tableplane.seen_pos < 60)) {
-				++TrackedAircraftPositions;
-			}
-
-			if (!sidebarVisible)
-				continue;
+            tableplane.showInTable = true;
 
 			if (tableplane.dataSource == "adsb") {
 				classes += " vPosition";
@@ -1892,13 +1902,21 @@ function refreshTableInfo() {
 
 
 	//console.time("DOM");
+	//tableinfoFragment = document.createDocumentFragment();
 	var tbody = document.getElementById('tableinfo').tBodies[0];
-	fragment = document.createDocumentFragment();
 	for (var i = 0; i < PlanesOrdered.length; ++i) {
-		fragment.appendChild(PlanesOrdered[i].tr);
+        tableplane = PlanesOrdered[i];
+        if (tableplane.showInTable) {
+            tbody.appendChild(tableplane.tr);
+            tableplane.inTable = true;
+        } else if (tableplane.inTable) {
+            tbody.removeChild(tableplane.tr);
+            tableplane.inTable = false;
+        }
 	}
-	tbody.appendChild(fragment);
+	//tbody.appendChild(tableinfoFragment);
 	//console.timeEnd("DOM");
+    //console.log(tableinfo);
 }
 
 //
@@ -2243,6 +2261,13 @@ function showColumn(table, columnId, visible) {
 
 function setColumnVisibility() {
 	var infoTable = $("#tableinfo");
+
+	var tbody = document.getElementById('tableinfo').tBodies[0];
+	for (var i = 0; i < PlanesOrdered.length; ++i) {
+        var tableplane = PlanesOrdered[i];
+        tbody.appendChild(tableplane.tr);
+        tableplane.inTable = true;
+    }
 
 	for (var col in HideCols) {
 		showColumn(infoTable, HideCols[col], !mapIsVisible);
@@ -2936,7 +2961,10 @@ function trailReaper() {
 
 function globeIndexes() {
     var proj = OLMap.getView().getProjection();
-    var extent = OLMap.getView().calculateExtent(OLMap.getSize());
+    if (mapIsVisible || lastExtent == null) {
+        lastExtent = OLMap.getView().calculateExtent(OLMap.getSize());
+    }
+    var extent = lastExtent;
 	const bottomLeft = ol.proj.toLonLat([extent[0], extent[1]]);
 	const topRight = ol.proj.toLonLat([extent[2], extent[3]]);
     var x1 = bottomLeft[0];
