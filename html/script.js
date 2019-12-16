@@ -329,7 +329,7 @@ function fetchData() {
                 return 1;
             return (globeIndexNow[x] - globeIndexNow[y]);
         });
-        indexes = indexes.slice(0, mapIsVisible ? globeSimLoad : globeSimLoad * 10);
+        indexes = indexes.slice(0, mapIsVisible ? globeSimLoad : 60);
         for (var i in indexes) {
             ac_url.push('data/globe_' + indexes[i].toString().padStart(4, '0') + '.json');
         }
