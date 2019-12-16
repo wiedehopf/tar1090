@@ -17,27 +17,27 @@ var historyTimeout = 60;
 var uuid = null;
 
 try {
-	const search = new URLSearchParams(window.location.search);
+    const search = new URLSearchParams(window.location.search);
 
-	const feed = search.get('feed');
-	if (feed != null) {
-		uuid = feed;
-		console.log('uuid: ' + uuid);
-	}
+    const feed = search.get('feed');
+    if (feed != null) {
+        uuid = feed;
+        console.log('uuid: ' + uuid);
+    }
 } catch (error) {
 }
 
 // get configuration json files, will be used in initialize function
 var get_receiver_defer = $.ajax({ url: 'data/receiver.json',
-	timeout: 15000,
-	cache: false,
-	dataType: 'json'
+    timeout: 15000,
+    cache: false,
+    dataType: 'json'
 });
 var test_chunk_defer = $.ajax({
-	url:'chunks/chunks.json',
-	timeout: 10000,
-	cache: false,
-	dataType: 'json'
+    url:'chunks/chunks.json',
+    timeout: 10000,
+    cache: false,
+    dataType: 'json'
 });
 
 if (uuid != null) {
@@ -95,13 +95,13 @@ function get_history() {
     }
 
     if (HistoryChunks) {
-		if (nHistoryItems > 0) {
-			console.log("Starting to load history (" + nHistoryItems + " chunks)");
-			console.time("Downloaded History");
-			for (var i = chunkNames.length-1; i >= 0; i--) {
-				get_history_item(i);
-			}
-		}
+        if (nHistoryItems > 0) {
+            console.log("Starting to load history (" + nHistoryItems + " chunks)");
+            console.time("Downloaded History");
+            for (var i = chunkNames.length-1; i >= 0; i--) {
+                get_history_item(i);
+            }
+        }
     } else if (nHistoryItems > 0) {
         console.log("Starting to load history (" + nHistoryItems + " items)");
         console.time("Downloaded History");
@@ -114,19 +114,19 @@ function get_history() {
 
 function get_history_item(i) {
 
-	var request;
+    var request;
 
-	if (HistoryChunks) {
-		request = $.ajax({ url: 'chunks/' + chunkNames[i],
-			timeout: historyTimeout * 1000,
-			dataType: 'json'
-		});
-	} else {
+    if (HistoryChunks) {
+        request = $.ajax({ url: 'chunks/' + chunkNames[i],
+            timeout: historyTimeout * 1000,
+            dataType: 'json'
+        });
+    } else {
 
-		request = $.ajax({ url: 'data/history_' + i + '.json',
-			timeout: nHistoryItems * 80, // Allow 40 ms load time per history entry
-			cache: false,
-			dataType: 'json' });
-	}
-	deferHistory.push(request);
+        request = $.ajax({ url: 'data/history_' + i + '.json',
+            timeout: nHistoryItems * 80, // Allow 40 ms load time per history entry
+            cache: false,
+            dataType: 'json' });
+    }
+    deferHistory.push(request);
 }
