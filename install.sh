@@ -39,6 +39,12 @@ then
 	hash -r || true
 fi
 
+if [ -d /etc/lighttpd/conf.d/ ] && ! [ -d /etc/lighttpd/conf-enabled/ ] && ! [ -d /etc/lighttpd/conf-available ] && command -v lighttpd &>/dev/null
+then
+    ln -s /etc/lighttpd/conf.d /etc/lighttpd/conf-enabled/
+    mkdir -p /etc/lighttpd/conf-available
+fi
+
 if [ -d /etc/lighttpd/conf-enabled/ ] && [ -d /etc/lighttpd/conf-available ] && command -v lighttpd &>/dev/null
 then
 	lighttpd=yes
@@ -208,16 +214,28 @@ do
 done < <(echo "$instances")
 
 
+if [ -d /etc/lighttpd/conf-enabled/ ]
+then
+	while read -r FILE; do
+        if grep -qs '^server.modules += ( "mod_setenv" )' $FILE; then
+            changed_lighttpd=yes
+        fi
+		sed -i -e 's/^server.modules += ( "mod_setenv" )/#server.modules += ( "mod_setenv" )/'  "$FILE"
+	done < <(find /etc/lighttpd/conf-enabled/* | grep -v dump1090-fa)
+
+    # add mod_setenv to lighttpd modules, check if it's one too much
+    echo 'server.modules += ( "mod_setenv" )' > /etc/lighttpd/conf-enabled/87-mod_setenv.conf
+    if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep mod_setenv >/dev/null
+    then
+        rm /etc/lighttpd/conf-enabled/87-mod_setenv.conf
+    else
+        changed_lighttpd=yes
+    fi
+fi
+
 if [[ $changed_lighttpd == yes ]] && systemctl status lighttpd >/dev/null; then
 	echo "Restarting lighttpd ..."
 	systemctl restart lighttpd
-fi
-
-if grep -qs '^server.modules += ( "mod_setenv" )' /etc/lighttpd/conf-available/89-dump1090-fa.conf
-then
-	while read -r FILE; do
-		sed -i -e 's/^server.modules += ( "mod_setenv" )/#server.modules += ( "mod_setenv" )/'  "$FILE"
-	done < <(find /etc/lighttpd/conf-available/* | grep -v dump1090-fa)
 fi
 
 echo --------------
