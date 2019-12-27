@@ -189,8 +189,7 @@ PlaneObject.prototype.isFiltered = function() {
         return true;
     }
 
-    if (filterTISB && this.dataSource == "tisb" && this.icao[0] == '~') {
-        // only filter TISB that don't correspond to a real ICAO address
+    if (filterTISB && this.dataSource == "tisb") {
         return true;
     }
 
