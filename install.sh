@@ -226,12 +226,20 @@ then
 	done < <(find /etc/lighttpd/conf-available/* | grep -v dump1090-fa)
 
     # add mod_setenv to lighttpd modules, check if it's one too much
+    if [ -f /etc/lighttpd/conf-enabled/87-mod_setenv.conf ]; then
+        setenv_file="present"
+    fi
     echo 'server.modules += ( "mod_setenv" )' > /etc/lighttpd/conf-available/87-mod_setenv.conf
     if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep mod_setenv >/dev/null
     then
         rm /etc/lighttpd/conf-enabled/87-mod_setenv.conf
+        if [[ "$setenv_file" == "present" ]]; then
+            changed_lighttpd=yes
+        fi
     else
-        changed_lighttpd=yes
+        if [[ "$setenv_file" != "present" ]]; then
+            changed_lighttpd=yes
+        fi
     fi
 fi
 
