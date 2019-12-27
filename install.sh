@@ -195,7 +195,11 @@ do
 	then
 		changed_lighttpd=yes
 		cp 88-tar1090.conf /etc/lighttpd/conf-available/88-$service.conf
-		ln -f -s /etc/lighttpd/conf-available/88-$service.conf /etc/lighttpd/conf-enabled/88-$service.conf
+        if [ -f /etc/lighttpd/conf.d/69-skybup.conf ]; then
+            ln -f -s /etc/lighttpd/conf-available/88-$service.conf /etc/lighttpd/conf-enabled/66-$service.conf
+        else
+            ln -f -s /etc/lighttpd/conf-available/88-$service.conf /etc/lighttpd/conf-enabled/88-$service.conf
+        fi
 	fi
 
 	if [[ $changed == yes ]] || ! diff tar1090.service /lib/systemd/system/$service.service &>/dev/null
