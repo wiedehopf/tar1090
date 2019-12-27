@@ -41,7 +41,7 @@ fi
 
 if [ -d /etc/lighttpd/conf.d/ ] && ! [ -d /etc/lighttpd/conf-enabled/ ] && ! [ -d /etc/lighttpd/conf-available ] && command -v lighttpd &>/dev/null
 then
-    ln -s /etc/lighttpd/conf.d /etc/lighttpd/conf-enabled/
+    ln -s /etc/lighttpd/conf.d /etc/lighttpd/conf-enabled
     mkdir -p /etc/lighttpd/conf-available
 fi
 
