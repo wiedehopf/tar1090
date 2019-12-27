@@ -221,7 +221,7 @@ then
             changed_lighttpd=yes
         fi
 		sed -i -e 's/^server.modules += ( "mod_setenv" )/#server.modules += ( "mod_setenv" )/'  "$FILE"
-	done < <(find /etc/lighttpd/conf-enabled/* | grep -v dump1090-fa)
+	done < <(find /etc/lighttpd/conf-available/* | grep -v dump1090-fa)
 
     # add mod_setenv to lighttpd modules, check if it's one too much
     echo 'server.modules += ( "mod_setenv" )' > /etc/lighttpd/conf-enabled/87-mod_setenv.conf
