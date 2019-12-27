@@ -195,7 +195,7 @@ do
 	then
 		changed_lighttpd=yes
 		cp 88-tar1090.conf /etc/lighttpd/conf-available/88-$service.conf
-		ln -f -s ../conf-available/88-$service.conf /etc/lighttpd/conf-enabled/88-$service.conf
+		ln -f -s /etc/lighttpd/conf-available/88-$service.conf /etc/lighttpd/conf-enabled/88-$service.conf
 	fi
 
 	if [[ $changed == yes ]] || ! diff tar1090.service /lib/systemd/system/$service.service &>/dev/null
@@ -218,13 +218,15 @@ if [ -d /etc/lighttpd/conf-enabled/ ]
 then
 	while read -r FILE; do
         if grep -qs '^server.modules += ( "mod_setenv" )' $FILE; then
-            changed_lighttpd=yes
+            if [[ "$FILE" != "/etc/lighttpd/conf-available/87-mod_setenv.conf" ]]; then
+                changed_lighttpd=yes
+            fi
         fi
 		sed -i -e 's/^server.modules += ( "mod_setenv" )/#server.modules += ( "mod_setenv" )/'  "$FILE"
 	done < <(find /etc/lighttpd/conf-available/* | grep -v dump1090-fa)
 
     # add mod_setenv to lighttpd modules, check if it's one too much
-    echo 'server.modules += ( "mod_setenv" )' > /etc/lighttpd/conf-enabled/87-mod_setenv.conf
+    echo 'server.modules += ( "mod_setenv" )' > /etc/lighttpd/conf-available/87-mod_setenv.conf
     if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep mod_setenv >/dev/null
     then
         rm /etc/lighttpd/conf-enabled/87-mod_setenv.conf
