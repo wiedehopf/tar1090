@@ -81,12 +81,12 @@ fi
 if [[ -n $1 ]] && [ "$1" != "test" ] ; then
 	srcdir=$1
 elif ! [[ -d /run/dump1090-fa ]] ; then
-	if [[ -d /run/dump1090 ]]; then
+	if [[ -d /run/readsb ]]; then
+		srcdir=/run/readsb
+	elif [[ -d /run/dump1090 ]]; then
 		srcdir=/run/dump1090
 	elif [[ -d /run/dump1090-mutability ]]; then
 		srcdir=/run/dump1090-mutability
-	elif [[ -d /run/readsb ]]; then
-		srcdir=/run/readsb
 	elif [[ -d /run/skyaware978 ]]; then
 		srcdir=/run/skyaware978
 	fi
