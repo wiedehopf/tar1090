@@ -40,6 +40,12 @@ var range_outline_color = '#0000DD';
 var range_outline_width = 1.7;
 var range_outline_colored_by_altitude = false;
 
+// which map is displayed to new visitors
+var MapType_tar1090 = "carto_light_all";
+
+// Default map dim state
+var MapDim = true;
+
 // -- Marker settings -------------------------------------
 
 var markerScaleFactor = 1.2;

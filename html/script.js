@@ -74,7 +74,7 @@ var SpecialSquawks = {
 };
 
 // Get current map settings
-var CenterLat, CenterLon, ZoomLvl, ZoomLvlCache, MapType_tar1090;
+var CenterLat, CenterLon, ZoomLvl, ZoomLvlCache;
 var zoomTimeout;
 
 
@@ -895,9 +895,9 @@ function initialize_map() {
     CenterLat = Number(localStorage['CenterLat']) || DefaultCenterLat;
     ZoomLvl = Number(localStorage['ZoomLvl']) || DefaultZoomLvl;
     ZoomLvlCache = ZoomLvl;
-    MapType_tar1090 = localStorage['MapType_tar1090'];
-    if (!MapType_tar1090)
-        MapType_tar1090="carto_light_all";
+    if (localStorage['MapType_tar1090']) {
+        MapType_tar1090 = localStorage['MapType_tar1090'];
+    }
 
     // Set SitePosition
     if (SiteLat != null && SiteLon != null) {
@@ -1118,7 +1118,7 @@ function initialize_map() {
         }
     }
 
-    if (localStorage['MapDim'] == undefined || localStorage['MapDim'] == "true") {
+    if (localStorage['MapDim'] === "true" || MapDim) {
         toggleMapDim(true);
     }
 
@@ -2538,6 +2538,7 @@ function dim(evt) {
 function toggleMapDim(switchOn) {
     if (!switchOn && localStorage['MapDim'] === "true") {
         localStorage['MapDim'] = "false";
+        MapDim = false;
 
         ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
             if (lyr.get('type') != 'base')
@@ -2556,6 +2557,7 @@ function toggleMapDim(switchOn) {
         */
     } else {
         localStorage['MapDim'] = "true";
+        MapDim = true;
 
         ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
             if (lyr.get('type') != 'base')

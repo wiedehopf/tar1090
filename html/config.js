@@ -40,6 +40,28 @@
 //range_outline_width = 1.7;
 //range_outline_colored_by_altitude = false;
 
+// which map is displayed to new visitors
+// valid values:
+// terrain_roads
+// osm
+// wikimedia
+// terrain_roads
+// terrain
+// carto_light_all
+// carto_light_nolabels
+// carto_dark_all
+// carto_dark_nolabels
+// only with bing key:
+// bing_aerial
+// bing_roads
+
+// which map is displayed to new visitors
+//MapType_tar1090 = "carto_light_all";
+
+// Default map dim state, true or false.
+//MapDim = true;
+
+
 // -- Marker settings -------------------------------------
 
 //markerScaleFactor = 1.2;
