@@ -174,6 +174,8 @@ do
 		-e "s/style.css/style_$epoch.css/" \
 		index.html
 
+    sed -i -e "s/tar1090 on github/tar1090 on github ($(date +%y%m%d))/" index.html
+
 	mv dbloader.js dbloader_$epoch.js
 	mv defaults.js defaults_$epoch.js
 	mv early.js early_$epoch.js
