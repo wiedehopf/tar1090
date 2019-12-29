@@ -114,14 +114,16 @@ function processReceiverUpdate(data, init) {
         uat_last = uat_now;
         uat_now = data.now;
     } else {
-        last = now;
-        now = data.now;
+        if (data.now > now) {
+            last = now;
+            now = data.now;
+        }
     }
 
     // Loop through all the planes in the data packet
     var acs = data.aircraft;
 
-    if (!uat && !init) {
+    if (!uat && !init && !globeIndex) {
         // Detect stats reset
         if (MessageCountHistory.length > 0 && MessageCountHistory[MessageCountHistory.length-1].messages > data.messages) {
             MessageCountHistory = [{'time' : MessageCountHistory[MessageCountHistory.length-1].time,
@@ -400,7 +402,7 @@ function fetchData() {
                 globeIndexNow[data.globeIndex] = data.now;
             }
 
-            if (data.now >= now) {
+            if (data.now >= now || globeIndex) {
                 processReceiverUpdate(data);
             }
             if (uat_data && uat_data.now > uat_now) {
