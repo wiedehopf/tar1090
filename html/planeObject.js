@@ -73,6 +73,7 @@ function PlaneObject(icao) {
     this.elastic_feature = null;
     this.track_linesegs = [];
     this.history_size = 0;
+    this.trace = []; // save last 30 seconds of positions
 
     // Track (direction) at the time we last appended to the track history
     this.tail_track = null;
@@ -279,7 +280,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
         };
         this.track_linesegs.push(newseg);
         this.history_size ++;
-        this.prev_position = this.position;
+        this.updateTrackPrev();
         return this.updateTail();
     }
 
@@ -735,11 +736,89 @@ PlaneObject.prototype.updateIcon = function() {
     return true;
 };
 
+PlaneObject.prototype.processTrace = function(data) {
+    if (!data || !data.trace)
+        return;
+    const trace = data.trace;
+    const timeZero = data.timestamp;
+
+    var tempPlane = {};
+    const oldSegs = this.track_linesegs;
+    this.track_linesegs = [];
+
+    Object.assign(tempPlane, this);
+
+    var _now = timeZero;
+    var _last = timeZero;
+    this.prev_position = null;
+
+    for (var i = 0; i < trace.length; i++) {
+        const state = trace[i];
+        const timestamp = timeZero + state[0];
+        const lat = state[1];
+        const lon = state[2];
+        const altitude = state[3];
+        const gs = state[4];
+        const track = state[5];
+
+        _now = timestamp;
+        this.position = [lon, lat];
+        this.position_time = _now;
+        this.altitude = altitude;
+        this.alt_rounded = calcAltitudeRounded(this.altitude);
+        this.speed = gs;
+        this.track = track;
+        this.rotation = track;
+
+        this.updateTrack(_now, _last);
+        _last = _now;
+        //console.log(this.position);
+    }
+
+    for (var i = 0; i < this.trace.length; i++) {
+        const state = this.trace[i];
+        if (_now > state.now)
+            continue;
+
+        _now = state.now;
+        this.position = state.position;
+        this.position_time = _now;
+        this.altitude = state.altitude;
+        this.alt_rounded = state.alt_rounded;
+        this.speed = state.speed;
+        this.track = state.track;
+        this.rotation = state.rotation;
+
+        if (_now - _last > 80)
+            _last = _now - 1;
+
+        this.updateTrack(_now, _last);
+        _last = _now;
+    }
+
+    if (!tempPlane.prev_position) {
+        tempPlane.prev_position = this.position;
+    }
+
+    if (now < _now) {
+        var newSegs = this.track_linesegs;
+        Object.assign(this, tempPlane);
+        this.track_linesegs = newSegs;
+        this.updateTrack(now, _last);
+    } else {
+        this.updateMarker(true);
+    }
+
+
+    this.remakeTrail();
+}
+
 // Update our data
 PlaneObject.prototype.updateData = function(now, last, data, init) {
     // get location data first, return early if only those are needed.
 
     this.updated = true;
+    var newPos = false;
 
     var isArray = Array.isArray(data);
     // [.hex, .alt_baro, .gs, .track, .lat, .lon, .seen_pos, "mlat"/"tisb"/.type , .flight, .messages]
@@ -774,6 +853,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     } else if (lat != null && seen_pos < (now - this.position_time + 2) && !(noMLAT && mlat)) {
         this.position   = [lon, lat];
         this.position_time = now - seen_pos;
+        newPos = true;
     }
 
     // remember last known altitude even if stale
@@ -991,6 +1071,21 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.rotation = this.mag_heading;
     } else {
         this.request_rotation_from_track = true;
+    }
+
+    if (globeIndex && newPos) {
+        var state = {};
+        state.now = this.position_time;
+        state.position = this.position;
+        state.altitude = this.altitude;
+        state.alt_rounded = this.alt_rounded;
+        state.speed = this.speed;
+        state.track = this.track;
+        state.rotation = this.rotation;
+        this.trace.push(state);
+        if (this.trace.length > 35) {
+            this.trace.slice(-30,);
+        }
     }
 };
 

@@ -2127,6 +2127,16 @@ function selectPlaneByHex(hex,autofollow) {
         FollowSelected = false;
     }
 
+    if (newPlane && globeIndex) {
+        var req = $.ajax({ url: 'data/icao_' + newPlane.icao + '.json',
+            timeout: 5000,
+            dataType: 'json' });
+        req.done(function(data) {
+            Planes[data.icao].processTrace(data);
+        });
+
+    }
+
     refreshSelected();
     refreshHighlighted();
     refreshTableInfo();
