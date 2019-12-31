@@ -115,7 +115,7 @@ function PlaneObject(icao) {
             features: this.trail_features,
         }),
         renderOrder: null,
-        declutter: true,
+        //declutter: true,
     });
 
     trailGroup.push(this.layer);
@@ -779,7 +779,6 @@ PlaneObject.prototype.processTrace = function(data) {
 
         this.updateTrack(_now, _last);
         _last = _now;
-        //console.log(this.position);
     }
 
     for (var i = 0; i < this.trace.length; i++) {
@@ -814,6 +813,7 @@ PlaneObject.prototype.processTrace = function(data) {
     }
 
 
+    console.log(this.history_size);
     this.remakeTrail();
 }
 

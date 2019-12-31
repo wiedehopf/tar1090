@@ -264,6 +264,13 @@ if [[ $nginx == yes ]]; then
 	for service in $services; do
 		echo "include /usr/local/share/tar1090/nginx-$service.conf;"
 	done
+    if [[ "$1" == "test" ]]
+    then
+        if [ -d /run/readsb ]; then
+            sed -i -e 's/dump1090-fa/readsb/g' /usr/local/share/tar1090/nginx_webroot.conf
+        fi
+        systemctl restart nginx
+    fi
 fi
 
 echo --------------
@@ -279,3 +286,4 @@ elif [[ $nginx == yes ]]; then
 else
 	echo "All done! You'll need to configure your webserver yourself, see /usr/local/share/tar1090/nginx-tar1090.conf for a reference nginx configuration"
 fi
+

@@ -305,7 +305,6 @@ function fetchData() {
     if (enable_uat) {
         FetchPendingUAT = $.ajax({ url: 'chunks/978.json',
             timeout: 7000,
-            cache: false,
             dataType: 'json' });
 
         FetchPendingUAT.done(function(data) {
@@ -357,7 +356,6 @@ function fetchData() {
         //console.log(ac_url[i]);
         var req = $.ajax({ url: ac_url[i],
             timeout: 8000,
-            cache: globeIndex,
             dataType: 'json' });
         FetchPending.push(req);
 
@@ -2823,7 +2821,6 @@ function fetchPfData() {
     for (const i in pf_data) {
         const req = $.ajax({ url: pf_data[i],
             timeout: 20000,
-            cache: false,
             dataType: 'json' });
         $.when(req).done(function(data) {
             for (const i in PlanesOrdered) {
