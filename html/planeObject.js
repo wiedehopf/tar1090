@@ -759,7 +759,10 @@ PlaneObject.prototype.processTrace = function(data) {
         const lon = state[2];
         const altitude = state[3];
         const gs = state[4];
-        const track = state[5];
+        var track = state[5];
+        if (track >= 1000) {
+            track -= 1000;
+        }
 
         _now = timestamp;
         this.position = [lon, lat];
@@ -769,6 +772,9 @@ PlaneObject.prototype.processTrace = function(data) {
         this.speed = gs;
         this.track = track;
         this.rotation = track;
+
+        if (_now - _last > 80 || state[5] >= 1000)
+            _last = _now - 1;
 
         this.updateTrack(_now, _last);
         _last = _now;
@@ -788,9 +794,6 @@ PlaneObject.prototype.processTrace = function(data) {
         this.speed = state.speed;
         this.track = state.track;
         this.rotation = state.rotation;
-
-        if (_now - _last > 80)
-            _last = _now - 1;
 
         this.updateTrack(_now, _last);
         _last = _now;

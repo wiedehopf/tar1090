@@ -2133,6 +2133,7 @@ function selectPlaneByHex(hex,autofollow) {
             dataType: 'json' });
         req.done(function(data) {
             Planes[data.icao].processTrace(data);
+            refreshSelected();
         });
 
     }
