@@ -402,6 +402,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 
     if (
         this.prev_alt_rounded !== lastseg.altitude
+        || this.prev_time > lastseg.ts + 300
         || tempTrails
         //lastseg.ground != on_ground
         //|| (!on_ground && isNaN(alt_change))
