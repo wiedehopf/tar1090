@@ -357,7 +357,7 @@ function fetchData() {
         //console.log(ac_url[i]);
         var req = $.ajax({ url: ac_url[i],
             timeout: 8000,
-            cache: false,
+            cache: globeIndex,
             dataType: 'json' });
         FetchPending.push(req);
 
