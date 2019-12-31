@@ -115,7 +115,7 @@ function PlaneObject(icao) {
             features: this.trail_features,
         }),
         renderOrder: null,
-        //declutter: true,
+        declutter: true,
     });
 
     trailGroup.push(this.layer);
