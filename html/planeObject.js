@@ -107,6 +107,7 @@ function PlaneObject(icao) {
     this.wtc = null;
 
     this.trail_features = new ol.Collection();
+    this.trail_labels = new ol.Collection();
 
     this.layer = new ol.layer.Vector({
         name: this.icao,
@@ -115,10 +116,21 @@ function PlaneObject(icao) {
             features: this.trail_features,
         }),
         renderOrder: null,
+        declutter: false,
+    });
+
+    this.layer_labels = new ol.layer.Vector({
+        name: this.icao + '_labels',
+        isTrail: true,
+        source: new ol.source.Vector({
+            features: this.trail_labels,
+        }),
+        renderOrder: null,
         declutter: true,
     });
 
     trailGroup.push(this.layer);
+    trailGroup.push(this.layer_labels);
 
     // request metadata
     this.getAircraftData();
@@ -458,8 +470,10 @@ PlaneObject.prototype.updateTrack = function(now, last) {
 
 // This is to remove the line from the screen if we deselect the plane
 PlaneObject.prototype.clearLines = function() {
-    if (this.layer.getVisible())
+    if (this.layer.getVisible()) {
         this.layer.setVisible(false);
+        this.layer_labels.setVisible(false);
+    }
 };
 
 PlaneObject.prototype.getDataSourceNumber = function() {
@@ -1248,8 +1262,10 @@ PlaneObject.prototype.updateLines = function() {
     if (this.track_linesegs.length == 0)
         return;
 
-    if (!this.layer.getVisible())
+    if (!this.layer.getVisible()) {
         this.layer.setVisible(true);
+        this.layer_labels.setVisible(true);
+    }
 
     // create the new elastic band feature
     var lastseg = this.track_linesegs[this.track_linesegs.length - 1];
@@ -1299,10 +1315,11 @@ PlaneObject.prototype.updateLines = function() {
                         offsetX: 5,
                         offsetY: 5,
                     }),
+                    zIndex: -1,
                 })
             );
             seg.label.hex = this.icao;
-            this.trail_features.push(seg.label);
+            this.trail_labels.push(seg.label);
         }
     }
 
@@ -1312,6 +1329,7 @@ PlaneObject.prototype.updateLines = function() {
 PlaneObject.prototype.remakeTrail = function() {
 
     this.trail_features.clear();
+    this.trail_labels.clear();
     for (var i in this.track_linesegs) {
         this.track_linesegs[i].feature = undefined;
         this.track_linesegs[i].label = undefined;
@@ -1347,6 +1365,7 @@ PlaneObject.prototype.destroy = function() {
     }
     trailGroup.remove(this.layer);
     this.trail_features.clear();
+    this.trail_labels.clear();
     if (this.tr) {
         this.tr.removeEventListener('click', this.clickListener);
         this.tr.removeEventListener('dblclick', this.dblclickListener);
