@@ -322,7 +322,7 @@ function fetchData() {
         var indexes = globeIndexes();
         var count = 0;
         indexes.sort(function(x,y) {
-            if (globeIndexNow[x] && !globeIndexNow[y])
+            if (!globeIndexNow[x] && !globeIndexNow[y])
                 return 0;
             if (globeIndexNow[x] == null)
                 return -1;
