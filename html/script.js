@@ -1016,8 +1016,8 @@ function initialize_map() {
             new ol.control.Attribution({collapsed: true}),
             new ol.control.ScaleLine({units: DisplayUnits})
         ],
-        //loadTilesWhileAnimating: true,
-        //loadTilesWhileInteracting: true,
+        loadTilesWhileAnimating: false,
+        loadTilesWhileInteracting: false,
     });
 
     OLMap.getView().setRotation(mapOrientation); // adjust orientation

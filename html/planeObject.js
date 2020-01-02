@@ -343,9 +343,6 @@ PlaneObject.prototype.updateTrack = function(now, last) {
     if (this.dataSource == "mlat")
         stale_timeout = 15;
 
-    if (globeIndex)
-        stale_timeout = 30;
-
     // On the ground you can't go that quick
     if (on_ground)
         stale_timeout = 30;
@@ -756,6 +753,7 @@ PlaneObject.prototype.processTrace = function(data) {
         return;
     const trace = data.trace;
     const timeZero = data.timestamp;
+    this.history_size = 0;
 
     var tempPlane = {};
     const oldSegs = this.track_linesegs;
@@ -788,7 +786,7 @@ PlaneObject.prototype.processTrace = function(data) {
         this.track = track;
         this.rotation = track;
 
-        if (_now - _last > 80 || state[5] >= 1000)
+        if (state[5] >= 1000)
             _last = _now - 1;
 
         this.updateTrack(_now, _last);
@@ -827,7 +825,7 @@ PlaneObject.prototype.processTrace = function(data) {
     }
 
 
-    console.log(this.history_size);
+    console.log(this.history_size + ' ' + trace.length);
     this.remakeTrail();
 }
 
