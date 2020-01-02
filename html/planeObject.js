@@ -1301,8 +1301,15 @@ PlaneObject.prototype.updateLines = function() {
             seg.label = true;
         } else if (trackLabels && !seg.label && seg.alt_real != null) {
             seg.label = new ol.Feature(new ol.geom.Point(seg.fixed.getFirstCoordinate()));
-            const text = seg.alt_real == "ground" ? "" :
-                (Number(seg.speed).toFixed(0).toString().padStart(6, NBSP) + " \n" + seg.alt_real.toString().padStart(6, NBSP)) + " ";
+            const date = new Date(seg.ts * 1000);
+            const timestamp = date.getHours().toString().padStart(2,'0')
+                + ":" + date.getMinutes().toString().padStart(2,'0')
+                + ":" + date.getSeconds().toString().padStart(2,'0');
+            const text =
+                NBSP + Number(seg.speed).toFixed(0).toString().padStart(3, NBSP) + "  "
+                + (seg.alt_real == "ground" ? ("Ground" + NBSP) : (seg.alt_real.toString().padStart(6, NBSP) + NBSP))
+                + "\n"
+                + "".padStart(4, NBSP) + timestamp + "".padStart(4, NBSP)
             seg.label.setStyle(
                 new ol.style.Style({
                     text: new ol.style.Text({
