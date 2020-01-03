@@ -3,6 +3,7 @@ set -e
 
 srcdir=/run/dump1090-fa
 repo="https://github.com/wiedehopf/tar1090"
+db_repo="https://github.com/wiedehopf/tar1090-db"
 ipath=/usr/local/share/tar1090
 lighttpd=no
 nginx=no
@@ -55,6 +56,17 @@ then
 	nginx=yes
 fi
 
+dir=$(pwd)
+
+if git clone --depth 1 $db_repo $ipath/git-db || cd $ipath/git-db
+then
+	cd $ipath/git-db
+	git checkout -f master
+	git fetch --depth 1
+	git reset --hard origin/master
+fi
+
+cd "$dir"
 
 if [[ "$1" == "test" ]]
 then
@@ -148,6 +160,7 @@ do
 
 	rm -rf $html_path 2>/dev/null || true
 	cp -r -T html $html_path
+    cp -r $ipath/git-db/db $html_path
 
 	mv /tmp/tar1090_config.js $html_path/config.js 2>/dev/null || true
 	mv /tmp/tar1090_colors.css $html_path/colors.css 2>/dev/null || true
