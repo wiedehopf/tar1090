@@ -45,6 +45,7 @@ var show_squawk_warning_cache = false;
 var tableInView = false;
 var historyOutdated = false;
 var onlyMLAT = false;
+var onlyMilitary = false;
 var onlyADSB = false;
 var onlySelected = false;
 var fetchingPf = false;
@@ -1212,6 +1213,8 @@ function initialize_map() {
             case "T":
                 filterTISB = !filterTISB;
                 break;
+            case "u":
+                toggleMilitary();
             case "A":
                 onlyADSB = !onlyADSB;
                 break;
@@ -2518,6 +2521,12 @@ function toggleIsolation() {
 
     refreshFeatures();
 }
+
+function toggleMilitary() {
+    onlyMilitary = !onlyMilitary;
+    buttonActive('#U', onlyMilitary);
+}
+
 function togglePersistence() {
     noVanish = !noVanish;
     filterTracks = noVanish;
@@ -2532,6 +2541,7 @@ function togglePersistence() {
     localStorage['noVanish'] = noVanish;
     console.log('noVanish = ' + noVanish);
 }
+
 function toggleDebugAll() {
     if (localStorage['debugAll'] === "true") {
         debugAll = false;

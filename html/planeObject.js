@@ -198,6 +198,10 @@ PlaneObject.prototype.isFiltered = function() {
         return true;
     }
 
+    if (onlyMilitary && !this.military) {
+        return true;
+    }
+
     if (onlyADSB && this.dataSource != "adsb" && this.dataSource != "uat") {
         return true;
     }
@@ -1503,9 +1507,15 @@ PlaneObject.prototype.getAircraftData = function() {
             this.wtc = data.wtc;
         }
 
+        if ("f" in data) {
+            this.military = (data["f"][0] == '1');
+            this.interesting = (data["f"][1] == '1');
+        }
+
         if (this.selected) {
             refreshSelected();
         }
+
         data = null;
     }.bind(this));
 
