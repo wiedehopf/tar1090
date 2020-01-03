@@ -61,8 +61,7 @@ dir=$(pwd)
 if { ! [ -d "$ipath/git-db" ] && git clone --depth 1 $db_repo $ipath/git-db; } || cd $ipath/git-db
 then
 	cd $ipath/git-db
-	git checkout -f master
-	git fetch --depth 1
+	git fetch --depth 1 origin master
 	git reset --hard origin/master
 fi
 
@@ -75,10 +74,9 @@ then
 	cp -r ./* /tmp/tar1090-test
 	cd /tmp/tar1090-test
 
-elif { ! [ -d "$ipath/git" ] && git clone --depth 1 $repo $ipath/git; } || cd $ipath/git
+elif { ! [ -d "$ipath/git" ] && git clone --single-branch -b master --depth 1 $repo $ipath/git; } || cd $ipath/git
 then
 	cd $ipath/git
-	git checkout -f master
 	git fetch origin master
 	git reset --hard origin/master
 
