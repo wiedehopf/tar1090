@@ -1,0 +1,754 @@
+html, body {
+	-ms-overflow-style: -ms-autohiding-scrollbar;
+    margin: 0px; padding: 0px; background-color: #F8F8F8; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 10pt; overflow: hidden; height: 100%;
+
+}
+element {
+	--fontsize-small: 9pt;
+}
+
+#tableinfo { font-size: 10pt; }
+
+#layout_container {
+    display: flex;
+    height: 100%;
+}
+
+#selected_infoblock {
+    position: absolute;
+    left: 0pt;
+    top: 0px;
+	width: 140pt;
+	height: 100%;
+	overflow: auto;
+    z-index: 9999;
+	background-color: #F8F8F8;
+}
+.infoblock-container {
+	overflow: auto;
+	height: 100%;
+}
+#sidebar_canvas { 
+    padding: 5px;
+	overflow: auto;
+}
+#sidebar_container {
+	display: flex;
+	flex-direction: column;
+    width: flex;
+	left: 0px !important;
+	height: 100%;
+}
+
+
+#map_container {
+    flex: 1 1 auto;
+    position: relative;
+    height: 100%;
+}
+
+#map_canvas {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+#toggle_sidebar_control {
+    display: block;
+    position: absolute;
+    top: 3px;
+    right: 0px;
+}
+
+#toggle_sidebar_button {
+    cursor: pointer;
+    float: right;
+    width: 30px;
+    height: 36px;
+    background-size: 24px 25px;
+    background-repeat: no-repeat;
+    background-position: 0px;
+    background-color: transparent;
+    border: none;
+}
+
+#toggle_sidebar_button.show_sidebar {
+    background-image: url("images/show_sidebar_active_48x40.png");
+}
+
+#toggle_sidebar_button.hide_sidebar {
+    background-image: url("images/hide_sidebar_active_48x40.png");
+}
+
+#expand_sidebar_control {
+    display: block;
+    position: absolute;
+    top: 55px;
+    right: 0px;
+}
+
+#expand_sidebar_button {
+    cursor: pointer;
+    float: right;
+    width: 30px;
+    height: 36px;
+    background-size: 24px 25px;
+    background-repeat: no-repeat;
+    background-position: 0px;
+    background-color: transparent;
+    border: none;
+    background-image: url("images/show_sidebar_active_48x40.png");
+}
+
+
+#splitter {
+    cursor: ew-resize;
+    display: block;
+    position: absolute;
+    top: 108px;
+    left: -30px;
+    float: right;
+    width: 30px;
+    height: 30px;
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    background-position: 0px;
+    background-color: transparent;
+    border: none;
+    background-image: url("images/toggle-width@2x.png");
+    background-size: cover;
+}
+
+#splitter-infoblock {
+	cursor: ns-resize;
+	display: inline-block;
+	position: absolute	;
+	top: 0px;
+	right: 0;
+	margin-left: auto;
+	width: 24px;
+	height: 4px;
+	background-size: 24px 25px;
+	background-repeat: no-repeat;
+	background-position: 0px;
+	border: none;
+	width: 100%;
+	border-bottom: #234c75;
+	background-color: #65819e;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+#close-button {
+	display: inline-block;
+	position: absolute;
+	top: 18px;
+	color: #67b6c3;
+	right: 30px;
+	margin-left: auto;
+	font-size: 75%;
+	text-decoration: underline;
+	cursor: pointer;
+	padding: 3px;
+	border-radius: 2px;
+}
+
+.ol-zoom-in {
+    background-image: url("images/zoom-in.png");
+    background-size: cover;
+    color:transparent !important;
+    width: 19px !important;
+    height: 19px !important;
+    background-color: transparent !important;
+    margin-bottom: 5px !important;
+}
+
+.ol-zoom-out {
+    background-image: url("images/zoom-out.png");
+    background-size: cover;
+    color:transparent !important;
+    width: 19px !important;
+    height: 19px !important;
+    background-color: transparent !important;
+}
+
+.ol-zoom {
+    background-color: transparent !important;
+    left: 10px !important;
+}
+
+
+
+div#SpecialSquawkWarning { position: absolute; bottom: 25px; right: 430px; border: 2px solid red;
+    background-color: #FFFFA3; opacity: 0.75; filter:alpha(opacity=75); padding: 5px;
+    text-align: center; }
+
+div#update_error { position: absolute; bottom: 25px; left: 25px; border: 2px solid red;
+    background-color: #FFFFA3; opacity: 0.75; filter:alpha(opacity=75); padding: 5px;
+    text-align: center; }
+
+div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right: 0; background: #000; opacity: 0.8; filter: alpha(opacity=80); }
+#spinny { width: 128px; height: 128px; position: absolute; top: 50%; left: 50%; margin: -64px 0 0 -64px; }
+#loader_progress { width: 250px; height: 20px; position: absolute; top: 50%; left: 50%; margin: 128px 0 0 -125px; }
+
+
+#sudo_buttons {
+    display: flex;
+    padding: 0px 40px 0px 40px;
+    justify-content: space-between;
+}
+
+#units_container,
+#altitude_filter_form {
+    font-size: var(--fontsize-small);
+    margin: 10px 0px 10px 0px;
+}
+
+.aircraft_table_header { 
+    background-color: #00596b;
+    color: #FFFFFF;
+    cursor: pointer;
+}
+.aircraft_table_header td {
+    font-size: smaller;
+    padding: 5px;
+    text-align: center;
+}
+
+.verticalRateTriangle {
+    font-family: "Courier New",monospace;
+}
+
+.icaoCodeColumn {
+    font-family: monospace;
+    text-transform: uppercase;
+}
+
+
+.plane_table_row {
+	cursor: default;
+}
+.plane_table_row a:link, a:visited {
+	color: black;
+}
+.hidden { display: none; }
+
+.infoblock_heading    { font-size: larger; }
+.infoblock_heading a  { text-decoration: none; color: blue; font-size: x-small;}
+
+.dim    { opacity: 0.3; filter:alpha(opacity=30); /* For IE8 and earlier */ }
+
+.pointer { cursor: pointer; }
+
+.sidebarButton {
+     background-color: #409EDF;
+     padding: 4px 15px 4px 15px;
+     color: #FFFFFF;
+     font-weight: normal;
+     font-size: var(--fontsize-small);
+}
+
+.sidebarButton:hover {
+     background-color: #3c6ea3;
+}
+
+.altitudeFilterInput {
+    width: 50px;
+	background-color: #F8F8F8;
+}
+.searchInput {
+    width: 80px;
+	background-color: #F8F8F8;
+}
+
+select.error, textarea.error, input.error {
+    color: #FF0000;
+}
+
+.layer-switcher {
+    top: 3px !important;
+    right: 47px !important;
+    z-index: 999;
+}
+
+/* new css */
+.rangeRingText
+{
+    font-weight: bold;
+    font-size: 8px;
+    color: #333333;
+    color: rgb(51, 51, 51);
+}
+
+.dateTime
+{
+    font-weight: bold;
+    font-size: 11pt;
+    line-height: 22pt;
+    color: #FFFFFF;
+    color: rgb(255, 255, 255);
+    text-align: right;
+    display: inline-block;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+@media screen and (max-width: 1000px) {
+	.dateTime {
+		display: none;
+	}
+}
+
+.sectionTitle {
+	width: 100%;
+	text-transform: uppercase;
+	text-align: center;
+	color: #fff;
+	background: #003f4b;
+}
+
+.section-title-content {
+	padding: 3px 20px;
+}
+
+.legend
+{
+    width: 100%;
+    font-size: 110%;
+    color: #000000;
+    color: rgb(0, 0, 0);
+    display: inline-flex;
+    justify-content: flex-end;
+    padding-top: 10px;
+}
+
+.settingsHeading
+{
+    font-size: 110%;
+    line-height: 20px;
+    color: #003f4b;
+}
+
+.settingsText
+{
+    font-size: 11pt;
+    line-height: 20px;
+    text-indent: 16px;
+    color: rgb(0, 0, 0);
+}
+
+.link
+{
+    font-size: 10px;
+    line-height: 20px;
+    color: #0000C8;
+    color: rgb(0, 0, 200);
+    text-decoration: underline;
+}
+
+#header_side {
+	position: absolute;
+	right: 0px;
+	top: 140px;
+    width: 30pt;
+    height: flex;
+    z-index: 9;
+}
+#header_top {
+	text-align: right;
+	position: absolute;
+	right: 94px;
+	top: 0px;
+    width: flex;
+    height: 30pt;
+    z-index: 9;
+}
+
+.adsbLogo {
+    padding-left: 20px;
+    padding-top: 30px;
+    padding-bottom: 5px;
+}
+
+.logoContainer {
+    flex: 1;
+}
+
+.buttonContainer {
+	display: block;
+	margin: 1px;
+    text-align: center;
+}
+.buttonSpacer {
+	margin: 6pt;
+}
+
+.buttonText
+{
+    font-weight: bold;
+    font-size: 12pt;
+    line-height:  24pt;
+    text-align: center;
+	margin: 3pt;
+}
+
+.activeButton {
+	color: #000000;
+}
+
+.inActiveButton {
+	color: #FFFFFF;
+}
+
+
+.button {
+    background-color: #00596b;
+    width: 22pt;
+    height: 22pt;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    display: inline-block;
+	margin: 2px;
+    cursor: pointer;
+    text-align: center;
+}
+.button-flex {
+    background: #67b6c3;
+    width: flex;
+    height: 22pt;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    display: inline-block;
+	margin: 4pt;
+	margin-top: 8pt;
+	margin-bottom: 8pt;
+    cursor: pointer;
+    text-align: center;
+}
+
+.lightblue-link, .lightblue-link a {
+	color: #67b6c3;
+    font-weight: normal;
+}
+
+.buttonTable {
+    margin-bottom: 0px;
+}
+
+.settingsContainer {
+	width: 22pt;
+	height: 22pt;
+    cursor: pointer;
+	margin: 3pt;
+	margin-top: 8pt;
+	margin-bottom: 8pt;
+    background-image: url('images/settings-icon.png');
+    background-size: 22pt;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#highlighted_infoblock {
+	background-color: #F8F8F8;
+    position: absolute;
+    left: 40px;
+    top: 60px;
+    min-width: 168px;
+    padding-right: 5px;
+    box-shadow: 4px 4px 10px #444444;
+    cursor: pointer;
+    z-index: 9999;
+    display: none;
+}
+
+.highlightedTitle {
+    height: 50px;
+    border-bottom: 1px solid #67b6c3;
+    padding-left: 18px;
+	padding-top: 18px;
+	display: inline-block;
+	width: 83%;
+}
+
+.highlightedInfo {
+    padding-left: 10px;
+}
+
+.identLarge {
+    font-size: 24px;
+    line-height: 24px;
+    color: #003f4b;
+    font-weight: lighter;
+}
+
+.identMedium {
+    font-size: 18px;
+    line-height: 22px;
+    color: #003f4b;
+    font-weight: lighter;
+}
+
+.identSmall {
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 20px;
+    color: #003f4b;
+}
+
+.highlightedInfo {
+    padding-bottom: 12px;
+}
+
+.infoRowTitle {
+}
+
+.infoRowContent {
+}
+
+.infoRowFluid {
+	display: inline-block;
+}
+
+.infoRow {
+    padding-top: 10px;
+}
+
+.infoRowLine {
+}
+
+.infoRowSpacer {
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
+.infoHeading {
+	margin-top: 2px;
+	margin-bottom: 2px;
+}
+
+.infoHeading sub {
+	font-weight: normal;
+}
+
+.infoData {
+	margin-top: 2px;
+	margin-bottom: 2px;
+	float: right;
+	text-align: right;
+}
+
+
+.removePadding {
+    padding: 0;
+}
+
+.rightLink {
+    float: right;
+    padding-right: 5px;
+}
+
+.infoBlockTopSection {
+    padding-top: 14px;
+    padding-bottom: 14px;
+    padding-left: 8px;
+}
+
+.infoBlock45pxSection {
+    height: 45px;
+    line-height: 45px;
+    padding-left: 10px;
+}
+
+.infoBlockSection {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 10px;
+    padding-right: 5px;
+}
+
+.lightGreyBackground {
+    background-color: #efefef;
+}
+
+#dump1090_infoblock {
+}
+
+.infoBlockTitleText {
+    font-weight: bold;
+    color: #003f4b;
+}
+
+.legendBox {
+    width: 15px;
+    height: 15px;
+    border: 1px solid #efefef;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+}
+
+
+.legendTitle {
+    line-height: 19px;
+    display: inline-block;
+    padding-right: 20px;
+    padding-left: 5px;
+}
+
+#settings_infoblock {
+	position: absolute;
+	top: 60px;
+	right: 60px;
+    width: 398px;
+    min-height: 180px;
+    box-shadow: 4px 4px 10px #444444;
+    padding: 20px;
+    z-index: 9999;
+    display: none;
+	background-color: #F8F8F8;
+}
+
+.settingsColumn {
+    display: table-cell;
+    width: 199px;
+}
+.settingsOptionContainer {
+    display: table;
+    padding-bottom: 10px;
+}
+
+.settingsCheckbox {
+    width: 20px;
+    height: 11px;
+    background-image: url('images/box-empty.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+}
+
+.settingsCheckboxChecked {
+    background-image: url('images/box-checked.png') !important;
+}
+
+.settingsCloseBox {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    background-image: url('images/close-settings.png');
+    background-size: cover;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.settingsText {
+    line-height: 20px;
+    display: table-cell;
+}
+
+#altitude_chart {
+    float: right;
+    width: calc(100% - 5px);
+    max-width: 800px;
+    right: 5px;
+    bottom: 35px;
+    background-color: transparent !important;
+}
+
+/*
+#altitude_chart_button {
+    background-image: url('images/alt_legend_feet.svg');
+    background-size: cover;
+    background-color: transparent;
+    width: 100%;
+    height: 0;
+    padding: 0;
+    padding-bottom: calc(100% * 56 / 1815);
+}
+
+.altitudeMeters {
+    background-image: url('images/alt_legend_meters.svg') !important;
+}
+*/
+
+/* remove the blue highlighting around the map buttons */
+.ol-control button {
+    outline: none;
+}
+
+.bottom-container {
+	width: 100%;
+	margin-top: 8px;
+	padding: 40px 0px;
+	text-align: center;
+	background-color: #eee;
+}
+#selected_flightaware_link a {
+	background-color: #67b6c3;
+	color: white;
+	text-decoration: none;
+	padding: 4px;
+	line-height: 16pt;
+	border-radius: 4px;
+}
+.bottom-info-container {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	text-align: center;
+	color: #003f4b;
+	line-height: 18px;
+}
+.bottom-info-container img {
+	vertical-align: middle;
+}
+.bottom-info-container .bottom-info-text {
+	vertical-align: middle;
+	display: inline;
+}
+.selected_airframe a {
+	color: #003f4b;
+}
+
+.infoblock-container-small .infoRowFluid {
+	display: block;
+}
+
+/* Retina 2x images */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { 
+    .settingsCloseBox {
+        background-image: url('images/close-settings@2x.png');
+    }
+    .settingsCheckboxChecked {
+        background-image: url('images/box-checked@2x.png') !important;
+    }
+    .settingsCheckbox {
+        background-image: url('images/box-empty@2x.png');
+    }
+    .ol-zoom-out {
+        background-image: url("images/zoom-out@2x.png");
+    }
+    .ol-zoom-in {
+        background-image: url("images/zoom-in@2x.png");
+    }
+}
+
+/* Retina 3x images */
+@media (-webkit-min-device-pixel-ratio: 3), (min-resolution: 192dpi) { 
+    .settingsCloseBox {
+        background-image: url('images/close-settings@3x.png');
+    }
+    .settingsCheckboxChecked {
+        background-image: url('images/box-checked@3x.png') !important;
+    }
+    .settingsCheckbox {
+        background-image: url('images/box-empty@3x.png');
+    }
+    .ol-zoom-out {
+        background-image: url("images/zoom-out@3x.png");
+    }
+    .ol-zoom-in {
+        background-image: url("images/zoom-in@3x.png");
+    }
+}

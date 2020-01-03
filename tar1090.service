@@ -1,0 +1,21 @@
+# tar1090 systemd unit file
+[Unit]
+Description=SERVICE - compress dump1090 json data
+Wants=network.target
+After=network.target
+
+[Service]
+User=tar1090
+SyslogIdentifier=SERVICE
+RuntimeDirectory=SERVICE
+RuntimeDirectoryMode=0755
+EnvironmentFile=/usr/local/share/tar1090/default
+EnvironmentFile=/etc/default/SERVICE
+ExecStart=/usr/local/share/tar1090/tar1090.sh /run/SERVICE SOURCE_DIR "$INTERVAL" "$HISTORY_SIZE" "$CHUNK_SIZE" "$ENABLE_978" "$URL_978" "$INT_978" "$PF_URL" "$COMPRESS_978"
+Type=simple
+Restart=always
+RestartSec=30
+Nice=19
+
+[Install]
+WantedBy=default.target
