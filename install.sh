@@ -269,7 +269,6 @@ if [[ $nginx == yes ]]; then
         if [ -d /run/readsb ]; then
             sed -i -e 's/dump1090-fa/readsb/g' /usr/local/share/tar1090/nginx_webroot.conf
         fi
-        systemctl restart nginx
     fi
 fi
 

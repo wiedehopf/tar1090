@@ -13,6 +13,7 @@ var	receiverJson;
 var deferHistory = [];
 var configureReceiver = $.Deferred();
 var historyTimeout = 60;
+var globeIndex = 0;
 
 var uuid = null;
 
@@ -54,22 +55,30 @@ if (uuid != null) {
         Dump1090Version = data.version;
         RefreshInterval = data.refresh;
         nHistoryItems = (data.history < 2) ? 0 : data.history;
-        $.when(test_chunk_defer).done(function(data) {
-            HistoryChunks = true;
-            chunkNames = data.chunks;
-            nHistoryItems = chunkNames.length;
-            enable_uat = (data.enable_uat == "true");
-            enable_pf_data = (data.pf_data == "true");
-            if (enable_uat)
-                console.log("UAT/978 enabled!");
-            console.log("Chunks enabled");
-            get_history();
-            configureReceiver.resolve();
-        }).fail(function() {
-            HistoryChunks = false;
-            get_history();
-            configureReceiver.resolve();
-        });
+        if (data.globeIndexGrid != null) {
+                HistoryChunks = false;
+                nHistoryItems = 0;
+                globeIndex = 1;
+                get_history();
+                configureReceiver.resolve();
+        } else {
+            $.when(test_chunk_defer).done(function(data) {
+                HistoryChunks = true;
+                chunkNames = data.chunks;
+                nHistoryItems = chunkNames.length;
+                enable_uat = (data.enable_uat == "true");
+                enable_pf_data = (data.pf_data == "true");
+                if (enable_uat)
+                    console.log("UAT/978 enabled!");
+                console.log("Chunks enabled");
+                get_history();
+                configureReceiver.resolve();
+            }).fail(function() {
+                HistoryChunks = false;
+                get_history();
+                configureReceiver.resolve();
+            });
+        }
     });
 }
 

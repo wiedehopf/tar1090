@@ -748,7 +748,7 @@ PlaneObject.prototype.updateIcon = function() {
     return true;
 };
 
-PlaneObject.prototype.processTrace = function(data) {
+PlaneObject.prototype.processTrace = function(data, show) {
     if (!data || !data.trace)
         return;
     const trace = data.trace;
@@ -780,6 +780,7 @@ PlaneObject.prototype.processTrace = function(data) {
         _now = timestamp;
         this.position = [lon, lat];
         this.position_time = _now;
+        this.last_message_time = _now;
         this.altitude = altitude;
         this.alt_rounded = calcAltitudeRounded(this.altitude);
         this.speed = gs;
@@ -815,7 +816,7 @@ PlaneObject.prototype.processTrace = function(data) {
         tempPlane.prev_position = this.position;
     }
 
-    if (now < _now) {
+    if (now < _now && !show) {
         var newSegs = this.track_linesegs;
         Object.assign(this, tempPlane);
         this.track_linesegs = newSegs;
@@ -823,7 +824,11 @@ PlaneObject.prototype.processTrace = function(data) {
     } else {
         this.updateMarker(true);
     }
-
+    if (show) {
+        this.selected = true;
+        this.visible = true;
+        this.updated = true;
+    }
 
     console.log(this.history_size + ' ' + trace.length);
     this.remakeTrail();

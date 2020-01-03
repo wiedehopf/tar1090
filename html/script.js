@@ -57,7 +57,6 @@ var noVanish = false;
 var sidebarVisible = true;
 var filterTracks = false;
 var refreshId = 0;
-var globeIndex = 0;
 var globeIndexGrid = 0;
 var globeIndexNow = {};
 var globeIndexSpecialTiles;
@@ -105,6 +104,56 @@ var layers_group;
 var isFlightFeeder = false;
 
 
+function processAircraft(ac, init, uat) {
+    var isArray = Array.isArray(ac);
+    var hex = isArray ? ac[0] : ac.hex;
+    var plane = null;
+
+    // Do we already have this plane object in Planes?
+    // If not make it.
+
+    /*
+        if ( ac.messages < 2) {
+            return;
+        }
+        */
+
+    plane = Planes[hex];
+
+    if (uatNoTISB && !init && uat && ac.type && ac.type.substring(0,4) == "tisb") {
+        // drop non ADS-B planes from UAT (TIS-B)
+        return;
+    }
+
+    if (!plane) {
+        plane = new PlaneObject(hex);
+        plane.filter = PlaneFilter;
+
+        if (!init)
+            setupPlane(hex,plane);
+
+        Planes[hex] = plane;
+        PlanesOrdered.push(plane);
+        if (uat) {
+            plane.receiver = "uat";
+        } else {
+            plane.receiver = "1090";
+        }
+    }
+
+    // Call the function update
+    if (uat) {
+        if (plane.receiver == "uat" || ac.seen_pos < 1.8 || init) {
+            plane.receiver = "uat";
+            plane.updateData(uat_now, uat_last, ac, init);
+        }
+    } else {
+        if (plane.receiver == "1090" || ac.seen_pos < 1.8 || init) {
+            plane.receiver = "1090";
+            plane.updateData(now, last, ac, init);
+        }
+    }
+}
 
 function processReceiverUpdate(data, init) {
     // update now and last
@@ -147,55 +196,7 @@ function processReceiverUpdate(data, init) {
     }
 
     for (var j=0; j < acs.length; j++) {
-        var ac = acs[j];
-        var isArray = Array.isArray(ac);
-        var hex = isArray ? ac[0] : ac.hex;
-        var plane = null;
-
-        // Do we already have this plane object in Planes?
-        // If not make it.
-
-        /*
-        if ( ac.messages < 2) {
-            continue;
-        }
-        */
-
-        plane = Planes[hex];
-
-        if (uatNoTISB && !init && uat && ac.type && ac.type.substring(0,4) == "tisb") {
-            // drop non ADS-B planes from UAT (TIS-B)
-            continue;
-        }
-
-        if (!plane) {
-            plane = new PlaneObject(hex);
-            plane.filter = PlaneFilter;
-
-            if (!init)
-                setupPlane(hex,plane);
-
-            Planes[hex] = plane;
-            PlanesOrdered.push(plane);
-            if (uat) {
-                plane.receiver = "uat";
-            } else {
-                plane.receiver = "1090";
-            }
-        }
-
-        // Call the function update
-        if (uat) {
-            if (plane.receiver == "uat" || ac.seen_pos < 1.8 || init) {
-                plane.receiver = "uat";
-                plane.updateData(uat_now, uat_last, ac, init);
-            }
-        } else {
-            if (plane.receiver == "1090" || ac.seen_pos < 1.8 || init) {
-                plane.receiver = "1090";
-                plane.updateData(now, last, ac, init);
-            }
-        }
+        processAircraft(acs[j], init, uat);
     }
     // jquery stuff might still have references to the json, so null the
     // aircraft array to make it easier for the garbage collector.
@@ -687,7 +688,9 @@ function push_history() {
     for (var i = 0; i < nHistoryItems; i++) {
         push_history_item(i);
     }
-    if (!nHistoryItems) {
+    if (globeIndex) {
+        parse_history();
+    } else if (!nHistoryItems) {
         parse_history();
         console.log("History loading failed");
     }
@@ -733,9 +736,12 @@ function push_history_item(i) {
 
 
 function parse_history() {
-    console.timeEnd("Downloaded History");
 
-    console.time("Loaded aircraft tracks from History");
+    if (nHistoryItems) {
+        console.timeEnd("Downloaded History");
+        console.time("Loaded aircraft tracks from History");
+    }
+
     $("#loader").addClass("hidden");
 
     for (i in deferHistory)
@@ -811,7 +817,9 @@ function parse_history() {
     }
 
     PositionHistoryBuffer = null;
-    console.timeEnd("Loaded aircraft tracks from History");
+
+    if (nHistoryItems)
+        console.timeEnd("Loaded aircraft tracks from History");
 
     console.log("Completing init");
 
@@ -1274,45 +1282,47 @@ function initialize_map() {
     // NB: altitudes are in _meters_, you can specify a list of altitudes
 
     // kick off an ajax request that will add the rings when it's done
-    var request = $.ajax({ url: 'upintheair.json',
-        timeout: 15000,
-        cache: true,
-        dataType: 'json' });
-    request.done(function(data) {
-        for (var i = 0; i < data.rings.length; ++i) {
-            var geom = null;
-            var points = data.rings[i].points;
-            var altitude = (3.28084 * data.rings[i].alt).toFixed(0);
-            var color = range_outline_color;
-            if (range_outline_colored_by_altitude) {
-                var colorArr = altitudeColor(altitude);
-                color = 'hsl(' + colorArr[0].toFixed(0) + ',' + colorArr[1].toFixed(0) + '%,' + colorArr[2].toFixed(0) + '%)';
-            }
-            var ringStyle = new ol.style.Style({
-                fill: null,
-                stroke: new ol.style.Stroke({
-                    color: color,
-                    width: range_outline_width,
-                })
-            });
-            if (points.length > 0) {
-                geom = new ol.geom.LineString([[ points[0][1], points[0][0] ]]);
-                for (var j = 0; j < points.length; ++j) {
-                    geom.appendCoordinate([ points[j][1], points[j][0] ]);
+    if (!globeIndex) {
+        var request = $.ajax({ url: 'upintheair.json',
+            timeout: 15000,
+            cache: true,
+            dataType: 'json' });
+        request.done(function(data) {
+            for (var i = 0; i < data.rings.length; ++i) {
+                var geom = null;
+                var points = data.rings[i].points;
+                var altitude = (3.28084 * data.rings[i].alt).toFixed(0);
+                var color = range_outline_color;
+                if (range_outline_colored_by_altitude) {
+                    var colorArr = altitudeColor(altitude);
+                    color = 'hsl(' + colorArr[0].toFixed(0) + ',' + colorArr[1].toFixed(0) + '%,' + colorArr[2].toFixed(0) + '%)';
                 }
-                geom.appendCoordinate([ points[0][1], points[0][0] ]);
-                geom.transform('EPSG:4326', 'EPSG:3857');
+                var ringStyle = new ol.style.Style({
+                    fill: null,
+                    stroke: new ol.style.Stroke({
+                        color: color,
+                        width: range_outline_width,
+                    })
+                });
+                if (points.length > 0) {
+                    geom = new ol.geom.LineString([[ points[0][1], points[0][0] ]]);
+                    for (var j = 0; j < points.length; ++j) {
+                        geom.appendCoordinate([ points[j][1], points[j][0] ]);
+                    }
+                    geom.appendCoordinate([ points[0][1], points[0][0] ]);
+                    geom.transform('EPSG:4326', 'EPSG:3857');
 
-                var feature = new ol.Feature(geom);
-                feature.setStyle(ringStyle);
-                StaticFeatures.push(feature);
+                    var feature = new ol.Feature(geom);
+                    feature.setStyle(ringStyle);
+                    StaticFeatures.push(feature);
+                }
             }
-        }
-    });
+        });
 
-    request.fail(function(jqxhr, status, error) {
-        // no rings available, do nothing
-    });
+        request.fail(function(jqxhr, status, error) {
+            // no rings available, do nothing
+        });
+    }
 }
 
 function createSiteCircleFeatures() {
@@ -2082,6 +2092,35 @@ function selectPlaneByHex(hex,autofollow) {
     // plane to be selected
     var newPlane = Planes[hex];
 
+
+    if (globeIndex) {
+        if (newPlane) {
+            var req = $.ajax({ url: 'data/icao_' + newPlane.icao + '.json',
+                timeout: 5000,
+                dataType: 'json' });
+            req.done(function(data) {
+                Planes[data.icao].processTrace(data);
+                refreshSelected();
+            });
+
+        } else {
+            var req = $.ajax({ url: 'data/icao_' + hex + '.json',
+                timeout: 5000,
+                dataType: 'json' });
+            req.done(function(data) {
+                var ac = {};
+                ac.hex = data.icao;
+                console.log(icao);
+                processAircraft(ac);
+                Planes[data.icao].processTrace(data, "show");
+                console.log(Planes[data.icao]);
+                selectPlaneByHex(data.icao, true)
+                refreshSelected();
+            });
+
+        }
+    }
+
     if (!multiSelect && oldPlane) {
         oldPlane.selected = false;
         oldPlane.clearLines();
@@ -2125,16 +2164,6 @@ function selectPlaneByHex(hex,autofollow) {
         FollowSelected = false;
     }
 
-    if (newPlane && globeIndex) {
-        var req = $.ajax({ url: 'data/icao_' + newPlane.icao + '.json',
-            timeout: 5000,
-            dataType: 'json' });
-        req.done(function(data) {
-            Planes[data.icao].processTrace(data);
-            refreshSelected();
-        });
-
-    }
 
     refreshSelected();
     refreshHighlighted();
@@ -2927,9 +2956,9 @@ function processURLParams(){
 
         const icao = search.get('icao');
         if (icao != null) {
-            if (Planes[icao.toLowerCase()]) {
-                selectPlaneByHex(icao.toLowerCase(), true)
+            if (Planes[icao.toLowerCase()] || globeIndex) {
                 console.log('Selected ICAO id: '+ icao);
+                selectPlaneByHex(icao.toLowerCase(), true)
             } else {
                 console.log('ICAO id not found: ' + icao);
             }
