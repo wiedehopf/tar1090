@@ -58,7 +58,7 @@ fi
 
 dir=$(pwd)
 
-if { ! [ -d "$ipath/git-db" ] && git clone --depth 1 $db_repo $ipath/git-db; } || cd $ipath/git-db
+if { ! [ -d "$ipath/git-db" ] && git clone --depth 1 $db_repo $ipath/git-db; } || { cd $ipath/git-db && ! [[ "$1" == "test" ]] ; }
 then
 	cd $ipath/git-db
 	git fetch --depth 1 origin master

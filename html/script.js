@@ -62,7 +62,10 @@ var globeIndexGrid = 0;
 var globeIndexNow = {};
 var globeIndexSpecialTiles;
 var globeSimLoad = 4;
-var lastExtent;
+var lastRealExtent;
+var lastGlobeExtent;
+var lastRenderExtent;
+var globeIndexExtent;
 var PendingFetches = 0;
 var lastReqestFiles = 0;
 var debugCounter = 0;
@@ -1769,18 +1772,14 @@ function refreshTableInfo() {
     TrackedHistorySize = 0;
     var nTablePlanes = 0;
 
-    var currExtent;
-    if (globeIndex) {
-        currExtent = lastExtent;
-    } else {
-        currExtent = OLMap.getView().calculateExtent(OLMap.getSize());
+    if (mapIsVisible || lastRealExtent == null) {
+        var mapSize = OLMap.getSize();
+
+        lastRealExtent = OLMap.getView().calculateExtent(mapSize);
+
+        var size = [mapSize[0] * 3, mapSize[1] * 3];
+        lastRenderExtent = OLMap.getView().calculateExtent(size);
     }
-    //console.log((currExtent[2]-currExtent[0])/40075016);
-    const bottomLeft = ol.proj.toLonLat([currExtent[0], currExtent[1]]);
-    const topRight = ol.proj.toLonLat([currExtent[2], currExtent[3]]);
-    //console.log([bottomLeft[0], topRight[0]]);
-    //console.log([bottomLeft[1], topRight[1]]);
-    //sidebarVisible = $("#sidebar_container").is(":visible");
 
     //console.time("updateCells");
     for (var i = 0; i < PlanesOrdered.length; ++i) {
@@ -1788,40 +1787,17 @@ function refreshTableInfo() {
         TrackedHistorySize += tableplane.history_size;
         var classes;
 
-        const pos = tableplane.position;
-        const proj = tableplane.position ? ol.proj.fromLonLat(tableplane.position) : null;
-        //const tableplane.inView = proj ? ol.extent.containsCoordinate(currExtent, proj) : false;
-        if (tableInView && sidebarVisible) {
-            if (pos && currExtent[2]-currExtent[0] > 40075016) {
-                // all longtitudes in view, only check latitude
-                tableplane.inView = (
-                    pos[1] > bottomLeft[1]
-                    && pos[1] < topRight[1]
-                )
-            } else if (pos && bottomLeft[0] < topRight[0]) {
-                // no wraparound: view not crossing 179 to -180 transition line
-                tableplane.inView = (
-                    pos[0] > bottomLeft[0]
-                    && pos[0] < topRight[0]
-                    && pos[1] > bottomLeft[1]
-                    && pos[1] < topRight[1]
-                )
-            } else if (pos && bottomLeft[0] > topRight[0]) {
-                // wraparound: view crossing 179 to -180 transition line
-                tableplane.inView = (
-                    (pos[0] > bottomLeft[0]
-                        || pos[0] < topRight[0])
-                    && pos[1] > bottomLeft[1]
-                    && pos[1] < topRight[1]
-                )
+
+        tableplane.inView = inView(tableplane, lastRealExtent);
+
+        if (globeIndex) {
+            if (inView(tableplane, lastRenderExtent) || tableplane.selected) {
+                tableplane.updateFeatures(now, last);
+            } else {
+                tableplane.clearMarker();
+                tableplane.clearLines();
+                tableplane.visible = false;
             }
-        } else {
-            tableplane.inView = true;
-        }
-
-
-        if (globeIndex && tableplane.inView) {
-            tableplane.updateFeatures(now, last);
         }
         if (!globeIndex) {
             tableplane.updateTick();
@@ -3017,11 +2993,12 @@ function trailReaper() {
 }
 
 function globeIndexes() {
-    var proj = OLMap.getView().getProjection();
-    if (mapIsVisible || lastExtent == null) {
-        lastExtent = OLMap.getView().calculateExtent(OLMap.getSize());
+    if (mapIsVisible || lastGlobeExtent == null) {
+        var mapSize = OLMap.getSize();
+        var size = [mapSize[0] * 1.1, mapSize[1] * 1.1];
+        lastGlobeExtent = OLMap.getView().calculateExtent(size);
     }
-    var extent = lastExtent;
+    var extent = lastGlobeExtent;
     const bottomLeft = ol.proj.toLonLat([extent[0], extent[1]]);
     const topRight = ol.proj.toLonLat([extent[2], extent[3]]);
     var x1 = bottomLeft[0];
@@ -3090,4 +3067,43 @@ function globe_index(lat, lon) {
 
     var lat_multiplier = Math.floor(360 / grid + 1);
     return (i * lat_multiplier + j + 1000);
+}
+
+function inView(tableplane, currExtent) {
+
+    var inView;
+
+    //console.log((currExtent[2]-currExtent[0])/40075016);
+    const bottomLeft = ol.proj.toLonLat([currExtent[0], currExtent[1]]);
+    const topRight = ol.proj.toLonLat([currExtent[2], currExtent[3]]);
+    //console.log([bottomLeft[0], topRight[0]]);
+    //console.log([bottomLeft[1], topRight[1]]);
+    //sidebarVisible = $("#sidebar_container").is(":visible");
+    const pos = tableplane.position;
+    const proj = tableplane.position ? ol.proj.fromLonLat(tableplane.position) : null;
+
+    if (pos && currExtent[2]-currExtent[0] > 40075016) {
+        // all longtitudes in view, only check latitude
+        inView = (
+            pos[1] > bottomLeft[1]
+            && pos[1] < topRight[1]
+        )
+    } else if (pos && bottomLeft[0] < topRight[0]) {
+        // no wraparound: view not crossing 179 to -180 transition line
+        inView = (
+            pos[0] > bottomLeft[0]
+            && pos[0] < topRight[0]
+            && pos[1] > bottomLeft[1]
+            && pos[1] < topRight[1]
+        )
+    } else if (pos && bottomLeft[0] > topRight[0]) {
+        // wraparound: view crossing 179 to -180 transition line
+        inView = (
+            (pos[0] > bottomLeft[0]
+                || pos[0] < topRight[0])
+            && pos[1] > bottomLeft[1]
+            && pos[1] < topRight[1]
+        )
+    }
+    return inView;
 }
