@@ -256,7 +256,7 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
 	background-color: #F8F8F8;
 }
 .searchInput {
-    width: 80px;
+    width: 100px;
 	background-color: #F8F8F8;
 }
 

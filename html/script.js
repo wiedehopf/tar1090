@@ -2706,7 +2706,7 @@ function onSearch(e) {
     const searchTerm = $("#search_input").val().trim();
     $("#search_input").val("");
     $("#search_input").blur();
-    findPlanes(searchTerm, true, true, true);
+    findPlanes(searchTerm, true, true, true, true);
     return false;
 }
 
@@ -3017,12 +3017,12 @@ function processURLParams(){
         }
 
         var callsign = search.get('callsign');
-        findPlanes(callsign, false, true, false);
+        findPlanes(callsign, false, true, false, false);
     } catch (error) {
     }
 }
 
-function findPlanes(query, byIcao, byCallsign, byReg) {
+function findPlanes(query, byIcao, byCallsign, byReg, byType) {
     if (query == null)
         return;
     query = query.toLowerCase();
@@ -3033,6 +3033,7 @@ function findPlanes(query, byIcao, byCallsign, byReg) {
             (byCallsign && plane.flight != null && plane.flight.toLowerCase().match(query))
             || (byIcao && plane.icao.toLowerCase().match(query))
             || (byReg && plane.registration != null && plane.registration.toLowerCase().match(query))
+            || (byType && plane.icaoType != null && plane.icaoType.toLowerCase().match(query))
         ) {
             if (plane.seen < 70 || noVanish)
                 results.push(plane);
