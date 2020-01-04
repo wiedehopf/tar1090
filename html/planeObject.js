@@ -343,6 +343,77 @@ PlaneObject.prototype.updateTrack = function(now, last) {
         this.rotation = bearingFromLonLat(this.prev_position, this.position);
     }
 
+
+    // special case crossing the 180 -180 longitude line by just starting a new track
+    if ((this.position[0] < -90 && this.prev_position[0] > 90)
+        || (this.position[0] > 90 && this.prev_position[0] < -90)
+    ) {
+        lastseg.fixed.appendCoordinate(projPrev);
+        var sign1 = Math.sign(this.prev_position[0]);
+        var sign2 = Math.sign(this.position[0]);
+        var londiff1 = 180 - Math.abs(this.prev_position[0]);
+        var londiff2 = 180 - Math.abs(this.position[0]);
+        var ratio1 = londiff1 / (londiff1 + londiff2);
+        var ratio2 = londiff2 / (londiff1 + londiff2);
+        var tryLat = ratio1 * this.prev_position[1] + ratio2 *this.position[1];
+        var minDistance = 50 * 1000* 1000;
+        var midLat = 0;
+        for (var i = 1; i < 100; i += 1) {
+            var distance1 = ol.sphere.getDistance(this.prev_position, [sign1 * 180, tryLat - i]);
+            var distance2 = ol.sphere.getDistance(this.position, [sign2 * 180, tryLat - i]);
+
+            var distance = distance1 + distance2;
+            if (distance < minDistance) {
+                minDistance = distance;
+                midLat = tryLat - i;
+            } else {
+                break;
+            }
+        }
+        for (var i = 1; i < 100; i+= 1) {
+            var distance1 = ol.sphere.getDistance(this.prev_position, [sign1 * 180, tryLat + i]);
+            var distance2 = ol.sphere.getDistance(this.position, [sign2 * 180, tryLat + i]);
+
+            var distance = distance1 + distance2;
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                midLat = tryLat + i;
+            } else {
+                break;
+            }
+        }
+        var midPoint1 = ol.proj.fromLonLat([sign1 * 180, midLat]);
+        var midPoint2 = ol.proj.fromLonLat([sign2 * 180, midLat]);
+        this.track_linesegs.push({ fixed: new ol.geom.LineString([projPrev, midPoint1]),
+            feature: null,
+            altitude: 0,
+            estimated: true,
+            ts: this.prev_time,
+        });
+        this.track_linesegs.push({ fixed: new ol.geom.LineString([midPoint2, projHere]),
+            feature: null,
+            altitude: 0,
+            estimated: true,
+            ts: NaN,
+        });
+        var newseg = { fixed: new ol.geom.LineString([projHere]),
+            feature: null,
+            estimated: false,
+            ground: on_ground,
+            altitude: this.alt_rounded,
+            alt_real: this.altitude,
+            speed: this.speed,
+            ts: now,
+        };
+        this.track_linesegs.push(newseg);
+        this.history_size += 2;
+
+        this.updateTrackPrev();
+        return this.updateTail();
+    }
+
+
     // Determine if track data are intermittent/stale
     // Time difference between two position updates should not be much
     // greater than the difference between data inputs
@@ -425,6 +496,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
         this.prev_alt_rounded !== lastseg.altitude
         || this.prev_time > lastseg.ts + 300
         || tempTrails
+        || debugAll
         //lastseg.ground != on_ground
         //|| (!on_ground && isNaN(alt_change))
         //|| (alt_change > 700)
