@@ -631,16 +631,17 @@
 					<div id="sidebar-table">
 						<div id="dump1090_infoblock">
 							<table style="width: 100%">
+                                <td>
+                                    <div class="button-flex buttonTable" id="show_map_button"><span class="buttonText">Show Map</span></div>
+                                </td>
 								<tr class="infoblock_heading">
-									<td>
-										<form id="search_form">
-											<input id="search_input" name="searchBox" type="text" class="searchInput" maxlength="8">
+                                    <td>
+                                        <form id="search_form">
+                                            <span class="infoBlockTitleText">Search:</span><!--
+                                            --><input id="search_input" name="searchBox" type="text" class="searchInput" maxlength="8">
 										</form>
 									</td>
 
-									<td>
-										<div class="button-flex buttonTable" id="show_map_button"><span class="buttonText">Show Map</span></div>
-									</td>
 									<td style="text-align: right">
 										<a href="https://github.com/wiedehopf/tar1090#tar1090" id="dump1090_version" target="_blank">tar1090 on github</a>
 									</td>
@@ -660,7 +661,7 @@
 						</div> <!-- dump1090_infoblock -->
 
 						<form id="altitude_filter_form">
-							<label><span class="infoBlockTitleText">Filter by Altitude:</span></label>
+							<label><span class="infoBlockTitleText">Filter by altitude:</span></label>
 							<br>
 							<input id="altitude_filter_min" name="minAltitude" type="text" class="altitudeFilterInput" maxlength="5">
 							<label for="minAltitude" class="altitudeUnit"></label>
@@ -669,6 +670,23 @@
 							<label for="maxAltitude" class="altitudeUnit"></label>
 							<button style="font: small" type="submit">Filter</button>
 							<button style="font: small" id="altitude_filter_reset_button">Reset</button>
+
+						</form>
+						<form id="callsign_filter_form">
+							<label><span class="infoBlockTitleText">Filter by callsign/ident:</span></label>
+							<br>
+							<input id="callsign_filter" name="callsign" type="text" class="altitudeFilterInput" maxlength="8">
+							<button style="font: small" type="submit">Filter</button>
+							<button style="font: small" id="callsign_filter_reset_button">Reset</button>
+
+						</form>
+
+						<form id="type_filter_form">
+							<label><span class="infoBlockTitleText">Filter by type:</span></label>
+							<br>
+							<input id="type_filter" name="type" type="text" class="altitudeFilterInput" maxlength="8">
+							<button style="font: small" type="submit">Filter</button>
+							<button style="font: small" id="type_filter_reset_button">Reset</button>
 
 						</form>
 

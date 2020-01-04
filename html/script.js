@@ -589,6 +589,8 @@ $('#sidebar_container').on('resize', function() {
 
     // Set up altitude filter button event handlers and validation options
     $("#altitude_filter_form").submit(onFilterByAltitude);
+    $("#type_filter_form").submit(updateTypeFilter);
+    $("#callsign_filter_form").submit(updateCallsignFilter);
 
     $("#search_form").submit(onSearch);
 
@@ -599,6 +601,8 @@ $('#sidebar_container').on('resize', function() {
 
 
 $("#altitude_filter_reset_button").click(onResetAltitudeFilter);
+$("#callsign_filter_reset_button").click(onResetCallsignFilter);
+$("#type_filter_reset_button").click(onResetTypeFilter);
 
 $('#settingsCog').on('click', function() {
     $('#settings_infoblock').toggle();
@@ -1138,6 +1142,9 @@ function initialize_map() {
         if (e.defaultPrevented ) {
             return; // Do nothing if the event was already processed
         }
+        if (e.target.type == "text") {
+            return;
+        }
         if (e.srcElement.nodeName == 'INPUT') {
             return;
         }
@@ -1425,6 +1432,12 @@ function refreshPageTitle() {
 // Refresh the detail window about the plane
 function refreshSelected() {
 
+
+    if (SelectedPlane && SelectedPlane.isFiltered()) {
+        SelectedPlane.selected = false;
+        SelectedPlane.clearLines();
+        SelectedPlane = null;
+    }
 
     if (!SelectedPlane) {
         setSelectedInfoBlockVisibility();
@@ -2697,6 +2710,48 @@ function onSearch(e) {
     return false;
 }
 
+function onResetCallsignFilter(e) {
+    $("#callsign_filter").val("");
+    $("#callsign_filter").blur();
+
+    updateCallsignFilter();
+}
+
+function updateCallsignFilter(e) {
+    if (e)
+        e.preventDefault();
+
+    $("#callsign_filter").blur();
+
+    PlaneFilter.callsign = $("#callsign_filter").val().trim().toUpperCase();
+
+    refreshSelected();
+    refreshHighlighted();
+    refreshTableInfo();
+}
+
+
+function onResetTypeFilter(e) {
+    $("#type_filter").val("");
+    $("#type_filter").blur();
+
+    updateTypeFilter();
+}
+
+function updateTypeFilter(e) {
+    if (e)
+        e.preventDefault();
+
+    $("#type_filter").blur();
+    var type = $("#type_filter").val().trim();
+
+    PlaneFilter.type = type.toUpperCase();
+
+    refreshSelected();
+    refreshHighlighted();
+    refreshTableInfo();
+}
+
 function onResetAltitudeFilter(e) {
     $("#altitude_filter_min").val("");
     $("#altitude_filter_max").val("");
@@ -2704,6 +2759,17 @@ function onResetAltitudeFilter(e) {
     $("#altitude_filter_max").blur();
 
     updatePlaneFilter();
+    refreshTableInfo();
+}
+
+function onFilterByAltitude(e) {
+    e.preventDefault();
+    $("#type_filter").blur();
+
+    updatePlaneFilter();
+
+    refreshSelected();
+    refreshHighlighted();
     refreshTableInfo();
 }
 

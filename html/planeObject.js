@@ -213,6 +213,14 @@ PlaneObject.prototype.isFiltered = function() {
     if (!filterTracks && this.altFiltered(this.altitude))
         return true;
 
+    if (this.filter.type && (!this.icaoType || !this.icaoType.match(this.filter.type)) ) {
+        return true;
+    }
+
+    if (this.filter.callsign && (!this.flight || !this.flight.match(this.filter.callsign)) ) {
+        return true;
+    }
+
     // filter out ground vehicles
     if (typeof this.filter.groundVehicles !== 'undefined' && this.filter.groundVehicles === 'filtered') {
         if (typeof this.category === 'string' && this.category.startsWith('C')) {
@@ -1149,6 +1157,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
     // Only clear the plane if it's not selected individually
     if (
         (this.seen < 58 && this.position != null && this.seen_pos < 60)
+        || (globeIndex && this.position != null && this.seen_pos < 180)
         || (this.selected && !SelectedAllPlanes && !multiSelect)
         || (noVanish && this.position != null)
     ) {
