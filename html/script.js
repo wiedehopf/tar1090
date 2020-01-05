@@ -85,6 +85,7 @@ var PlaneRowTemplate = null;
 var tableinfoFragment = null;
 
 var TrackedAircraft = 0;
+var globeTrackedAircraft = 0;
 var TrackedAircraftPositions = 0;
 var TrackedHistorySize = 0;
 
@@ -369,6 +370,7 @@ function fetchData() {
                 return;
             }
             if (globeIndex) {
+                globeTrackedAircraft = data.global_ac_count_withpos;
                 if (globeIndexNow[data.globeIndex] == null) {
                     var southWest = ol.proj.fromLonLat([data.west, data.south]);
                     var south180p = ol.proj.fromLonLat([180, data.south]);
@@ -905,6 +907,8 @@ function initialize_map() {
         globeIndex = 1;
         globeIndexSpecialTiles = receiverJson.globeIndexSpecialTiles;
         toggleTableInView(true);
+        $('#dump1090_total_history_td').hide();
+        $('#dump1090_message_rate_td').hide();
     }
     // Load stored map settings if present
     CenterLon = Number(localStorage['CenterLon']) || DefaultCenterLon;
@@ -1901,7 +1905,10 @@ function refreshTableInfo() {
         show_squawk_warning_cache = show_squawk_warning;
     }
 
-    $('#dump1090_total_ac').text(TrackedAircraft);
+    if (!globeIndex)
+        $('#dump1090_total_ac').text(TrackedAircraft);
+    else
+        $('#dump1090_total_ac').text(globeTrackedAircraft);
     $('#dump1090_total_ac_positions').text(TrackedAircraftPositions);
 
 
