@@ -279,7 +279,7 @@ PlaneObject.prototype.updateTrackPrev = function() {
 
 // Appends data to the running track so we can get a visual tail on the plane
 // Only useful for a long running browser session.
-PlaneObject.prototype.updateTrack = function(now, last) {
+PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
     if (this.position == null)
         return false;
     if (this.prev_position && this.position[0] == this.prev_position[0] && this.position[1] == this.prev_position[1])
@@ -430,52 +430,10 @@ PlaneObject.prototype.updateTrack = function(now, last) {
     if (on_ground)
         stale_timeout = 30;
 
-    var est_track = (time_difference > stale_timeout);
-
     // Also check if the position was already stale when it was exported by dump1090
     // Makes stale check more accurate for example for 30s spaced history points
 
-    est_track = est_track || ((now - this.position_time) > stale_timeout);
-
-    if (est_track) {
-
-        if (!lastseg.estimated) {
-            // >5s gap in data, create a new estimated segment
-            //console.log(this.icao + " switching to estimated");
-            lastseg.fixed.appendCoordinate(projPrev);
-            this.track_linesegs.push({ fixed: new ol.geom.LineString([projPrev]),
-                feature: null,
-                altitude: 0,
-                estimated: true,
-                ts: this.prev_time,
-            });
-            this.history_size += 2;
-        } else {
-            // Keep appending to the existing dashed line; keep every point
-            lastseg.fixed.appendCoordinate(projPrev);
-            this.history_size++;
-        }
-
-        return this.updateTail();
-    }
-
-    if (lastseg.estimated) {
-        // We are back to good data (we got two points close in time), switch back to
-        // solid lines.
-        lastseg.fixed.appendCoordinate(projPrev);
-        this.track_linesegs.push({ fixed: new ol.geom.LineString([projPrev]),
-            feature: null,
-            estimated: false,
-            ground: on_ground,
-            altitude: this.prev_alt_rounded,
-            alt_real: this.prev_alt,
-            speed: this.prev_speed,
-            ts: this.prev_time,
-        });
-        this.history_size += 2;
-
-        return this.updateTail();
-    }
+    const estimated = (time_difference > stale_timeout) || ((now - this.position_time) > stale_timeout);
 
     /*
     var track_change = this.track != null ? Math.abs(this.tail_track - this.track) : NaN;
@@ -495,8 +453,10 @@ PlaneObject.prototype.updateTrack = function(now, last) {
     if (
         this.prev_alt_rounded !== lastseg.altitude
         || this.prev_time > lastseg.ts + 300
+        || estimated != lastseg.estimated
         || tempTrails
         || debugAll
+        || serverTrack
         //lastseg.ground != on_ground
         //|| (!on_ground && isNaN(alt_change))
         //|| (alt_change > 700)
@@ -512,7 +472,7 @@ PlaneObject.prototype.updateTrack = function(now, last) {
         lastseg.fixed.appendCoordinate(projPrev);
         this.track_linesegs.push({ fixed: new ol.geom.LineString([projPrev]),
             feature: null,
-            estimated: false,
+            estimated: estimated,
             altitude: this.prev_alt_rounded,
             alt_real: this.prev_alt,
             speed: this.prev_speed,
@@ -874,7 +834,7 @@ PlaneObject.prototype.processTrace = function(data, show) {
         if (state[5] >= 1000)
             _last = _now - 1;
 
-        this.updateTrack(_now, _last);
+        this.updateTrack(_now, _last, true);
         _last = _now;
     }
 
@@ -1294,29 +1254,23 @@ PlaneObject.prototype.updateMarker = function(moved) {
 
 // return the styling of the lines based on altitude
 PlaneObject.prototype.altitudeLines = function(segment) {
-    if (segment.estimated == true || segment.altitude == null) {
-        if (debugTracks)
-            return estimateStyle;
-        else if (filterTracks && this.filter.enabled == true)
-            return nullStyle;
-        else if (noVanish)
-            return estimateStyleSlim;
-        else
-            return estimateStyle;
-    }
     var colorArr = altitudeColor(segment.altitude);
+    if (segment.estimated)
+        colorArr = [colorArr[0], colorArr[1], colorArr[2] * 0.7];
     //var color = 'hsl(' + colorArr[0].toFixed(0) + ', ' + colorArr[1].toFixed(0) + '%, ' + colorArr[2].toFixed(0) + '%)';
     var color = hslToRgb(colorArr[0], colorArr[1], colorArr[2]);
-    const lineKey = color + '_' + debugTracks + '_' + noVanish;
+    const lineKey = color + '_' + debugTracks + '_' + noVanish + '_' + segment.estimated;
 
     if (lineStyleCache[lineKey])
         return lineStyleCache[lineKey];
+
+    var estimatedMult = segment.estimated ? 0.3 : 1
 
     if (!debugTracks) {
         lineStyleCache[lineKey]	= new ol.style.Style({
             stroke: new ol.style.Stroke({
                 color: color,
-                width: (2-(noVanish*0.8)) * lineWidth,
+                width: (2-(noVanish*0.8)) * lineWidth * estimatedMult,
             })
         });
     } else {
@@ -1335,7 +1289,7 @@ PlaneObject.prototype.altitudeLines = function(segment) {
             new ol.style.Style({
                 stroke: new ol.style.Stroke({
                     color: color,
-                    width: 2 * lineWidth,
+                    width: 2 * lineWidth * estimatedMult,
                 })
             })
         ];
