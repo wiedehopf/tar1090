@@ -849,13 +849,13 @@ function parse_history() {
     window.setInterval(function() {PendingFetches--;}, 10000);
 
     // And kick off one refresh immediately.
+    processURLParams();
+
     fetchData();
 
     updateMapSize();
 
     loadFinished = true;
-    processURLParams();
-
 
     if (localStorage['sidebar_visible'] == "false")
         toggleSidebarVisibility();
@@ -2093,10 +2093,11 @@ function selectPlaneByHex(hex,autofollow) {
 
 
     if (globeIndex) {
-        var URL = 'data/traces/'+ newPlane.icao.slice(-2) + '/trace_' + newPlane.icao + '.json';
+        var URL = 'data/traces/'+ hex.slice(-2) + '/trace_' + hex + '.json';
+        console.log('Requesting trace: ' + hex);
         if (newPlane) {
             var req = $.ajax({ url: URL,
-                timeout: 5000,
+                timeout: 15000,
                 dataType: 'json' });
             req.done(function(data) {
                 Planes[data.icao].processTrace(data);
@@ -2105,19 +2106,17 @@ function selectPlaneByHex(hex,autofollow) {
 
         } else {
             var req = $.ajax({ url: URL,
-                timeout: 5000,
+                timeout: 15000,
                 dataType: 'json' });
             req.done(function(data) {
                 var ac = {};
                 ac.hex = data.icao;
-                console.log(icao);
                 processAircraft(ac);
                 Planes[data.icao].processTrace(data, "show");
                 console.log(Planes[data.icao]);
                 selectPlaneByHex(data.icao, true)
                 refreshSelected();
             });
-
         }
     }
 
@@ -3058,6 +3057,10 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
         console.log("query selected: " + query);
     } else {
         console.log("No match found for query: " + query);
+        if (globeIndex && query.length == 6) {
+            console.log("maybe it's an icao, let's try to fetch the history for it!");
+            selectPlaneByHex(query, true)
+        }
     }
 }
 
