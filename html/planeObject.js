@@ -1228,8 +1228,9 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
     // If no packet in over 58 seconds, clear the plane.
     // Only clear the plane if it's not selected individually
     if (
-        (this.seen < 58 && this.position != null && this.seen_pos < 60)
-        || (globeIndex && this.position != null && this.seen_pos < 180)
+        (this.icao[0] != '~' && this.seen < 58 && this.position != null && this.seen_pos < 60)
+        || (globeIndex && this.icao[0] != '~' && this.position != null && this.seen_pos < 120)
+        || (this.icao[0] == '~' && this.seen < 28 && this.position != null && this.seen_pos < 30)
         || (this.selected && !SelectedAllPlanes && !multiSelect)
         || (noVanish && this.position != null)
     ) {
