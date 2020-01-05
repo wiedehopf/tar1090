@@ -2086,8 +2086,9 @@ function selectPlaneByHex(hex,autofollow) {
 
 
     if (globeIndex) {
+        var URL = 'data/traces/'+ newPlane.icao.slice(-2) + '/trace_' + newPlane.icao + '.json';
         if (newPlane) {
-            var req = $.ajax({ url: 'data/icao_' + newPlane.icao + '.json',
+            var req = $.ajax({ url: URL,
                 timeout: 5000,
                 dataType: 'json' });
             req.done(function(data) {
@@ -2096,7 +2097,7 @@ function selectPlaneByHex(hex,autofollow) {
             });
 
         } else {
-            var req = $.ajax({ url: 'data/icao_' + hex + '.json',
+            var req = $.ajax({ url: URL,
                 timeout: 5000,
                 dataType: 'json' });
             req.done(function(data) {
