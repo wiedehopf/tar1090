@@ -140,6 +140,17 @@ function createBaseLayers() {
         }
     }
 
+    world.push(new ol.layer.Tile({
+        source: new ol.source.OSM({
+            "url" : "https://map.adsbexchange.com/mapproxy/tiles/1.0.0/osm/osm_grid/{z}/{x}/{y}.png",
+            "attributions" : 'Courtesy of ADS-B Exchange <a href="https://adsbexchange.com/">adsbexchange.com</a>'
+            + ' using data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
+        }),
+        name: 'osm_adsbx',
+        title: 'OSM by ADSBx',
+        type: 'base',
+    }));
+
     var nexrad = new ol.layer.Tile({
         name: 'nexrad',
         title: 'NEXRAD',
