@@ -1032,6 +1032,8 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         return;
     }
 
+    if (data.jaero)
+        this.jaero = true;
     // Update all of our data
 
     if (this.receiver == "1090") {
@@ -1191,9 +1193,10 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
     // If no packet in over 58 seconds, clear the plane.
     // Only clear the plane if it's not selected individually
     if (
-        (this.icao[0] != '~' && this.seen < 58 && this.position != null && this.seen_pos < 60)
-        || (globeIndex && this.icao[0] != '~' && this.position != null && this.seen_pos < 120)
-        || (this.icao[0] == '~' && this.seen < 28 && this.position != null && this.seen_pos < 30)
+        (!globeIndex && this.icao[0] != '~' && this.seen < 58 && this.position != null && this.seen_pos < 60)
+        || (globeIndex && this.icao[0] != '~' && this.position != null && this.seen_pos < 30)
+        || (this.jaero && this.icao[0] != '~' && this.position != null && this.seen_pos < 700)
+        || (this.icao[0] == '~' && this.position != null && this.seen_pos < 45 / (1 + 2 * globeIndex))
         || (this.selected && !SelectedAllPlanes && !multiSelect)
         || (noVanish && this.position != null)
     ) {
