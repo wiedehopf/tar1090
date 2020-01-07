@@ -2101,7 +2101,7 @@ function selectPlaneByHex(hex,autofollow) {
     var newPlane = Planes[hex];
 
 
-    if (globeIndex) {
+    if (globeIndex && hex) {
         var URL = 'data/traces/'+ hex.slice(-2) + '/trace_' + hex + '.json';
         console.log('Requesting trace: ' + hex);
         if (newPlane) {
