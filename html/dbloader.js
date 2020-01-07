@@ -85,17 +85,19 @@ function getIcaoAircraftTypeData(aircraftData, defer) {
 	}
 }
 
+// format [r:0, t:1, f:2]
+// 3: desc
+// 4: wtc
 function lookupIcaoAircraftType(aircraftData, defer) {
-	aircraftData.vType = aircraftData.desc;
-	if (_aircraft_type_cache !== null && "t" in aircraftData) {
-		var typeDesignator = aircraftData.t.toUpperCase();
+	if (_aircraft_type_cache !== null && aircraftData[1]) {
+		var typeDesignator = aircraftData[1].toUpperCase();
 		if (typeDesignator in _aircraft_type_cache) {
 			var typeData = _aircraft_type_cache[typeDesignator];
 			if (typeData.desc != null && typeData.desc.length == 3) {
-				aircraftData.desc = typeData.desc;
+				aircraftData[3] = typeData.desc;
 			}
 			if (typeData.wtc != undefined && aircraftData.wtc === undefined) {
-				aircraftData.wtc = typeData.wtc;
+				aircraftData[4] = typeData.wtc;
 			}
 		}
 	}

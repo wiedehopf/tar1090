@@ -1529,31 +1529,28 @@ PlaneObject.prototype.getAircraftData = function() {
 
 
         //console.log(this.icao + ': loaded!');
+        // format [r:0, t:1, f:2]
 
-        if ("r" in data) {
+        if (data[0]) {
             this.registration = data.r;
         }
 
-        if ("t" in data) {
-            this.icaoType = data.t;
+        if (data[1]) {
+            this.icaoType = data[1];
             this.icaoTypeCache = this.icaoType;
         }
 
-        if ("desc" in data) {
-            this.typeDescription = data.desc;
+        if (data[3]) {
+            this.typeDescription = data[3];
         }
 
-        if (data.vType != null) {
-            this.vType = data.vType;
+        if (data[4]) {
+            this.wtc = data[4];
         }
 
-        if ("wtc" in data) {
-            this.wtc = data.wtc;
-        }
-
-        if ("f" in data) {
-            this.military = (data["f"][0] == '1');
-            this.interesting = (data["f"][1] == '1');
+        if (data[2]) {
+            this.military = (data[2][0] == '1');
+            this.interesting = (data[2][1] == '1');
         }
 
         if (this.selected) {
