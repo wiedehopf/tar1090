@@ -3097,6 +3097,7 @@ function globeIndexes() {
         x1 = -180;
         x2 = 180;
     }
+    console.log(y1 + ' ' + y2);
     if (y1 < -90)
         y1 = -90;
     if (y2 > 90)
@@ -3122,6 +3123,8 @@ function globeIndexes() {
                 console.log("globeIndexes fail, lon: " + lon + ", lat: " + lat);
                 break;
             }
+            if (lat > 90)
+                break;
             var index = globe_index(lat, lon);
             //console.log(lat + ' ' + lon + ' ' + index);
             if (!indexes.includes(index)) {
