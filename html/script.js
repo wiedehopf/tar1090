@@ -27,6 +27,7 @@ var customAltitudeColors = true;
 var loadtime = "loadtime";
 var loadFinished = false;
 var mapResizeTimeout;
+var pointerMoveTimeout;
 var refresh;
 var scaleFactor;
 var debugTracks = false;
@@ -1110,7 +1111,7 @@ function initialize_map() {
 
 
     // show the hover box
-    if (!globeIndex && ZoomLvl > (6.5 + 2 * globeIndex) && enableMouseover) {
+    if (!globeIndex && ZoomLvl > 5.5 && enableMouseover) {
         OLMap.on('pointermove', onPointermove);
     }
 
@@ -2186,12 +2187,6 @@ function selectPlaneByHex(hex, options) {
     refreshTableInfo();
 }
 
-function highlightPlaneByHex(hex) {
-
-    if (hex != null) {
-        HighlightedPlane = hex;
-    }
-}
 
 // loop through the planes and mark them as selected to show the paths for all planes
 function selectAllPlanes() {
@@ -2991,7 +2986,7 @@ function changeZoom() {
             plane.markerIcon.setScale(plane.scaleCache);
         }
     }
-    if (ZoomLvl > (6.5 + 2 * globeIndex) && enableMouseover) {
+    if (ZoomLvl > 5.5 && enableMouseover) {
         OLMap.on('pointermove', onPointermove);
     } else {
         OLMap.un('pointermove', onPointermove);
@@ -3009,22 +3004,34 @@ function updateCell(plane, cell, newValue, html) {
         }
     }
 }
+
 function onPointermove(evt) {
+    //clearTimeout(pointerMoveTimeout);
+    //pointerMoveTimeout = setTimeout(highlight(evt), 100);
+    highlight(evt);
+}
+
+function highlight(evt) {
     const hex = evt.map.forEachFeatureAtPixel(evt.pixel,
         function(feature, layer) {
             return feature.hex;
         },
-        { layerFilter: function(layer) {
-            return (layer == iconLayer);
-        }}
+        {
+            layerFilter: function(layer) {
+                return (layer == iconLayer);
+            },
+            hitTolerance:5,
+        }
     );
 
+    clearTimeout(pointerMoveTimeout);
     if (hex) {
-        highlightPlaneByHex(hex);
+        HighlightedPlane = hex;
+        pointerMoveTimeout = setTimeout(refreshHighlighted(), 300);
     } else {
-        removeHighlight();
+        HighlightedPlane = null;
+        pointerMoveTimeout = setTimeout(removeHighlight(), 300);
     }
-
 }
 
 function processURLParams(){
