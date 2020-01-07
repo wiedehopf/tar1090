@@ -235,10 +235,10 @@ function setupPlane(hex, plane) {
         }
 
         if(!mapIsVisible) {
-            selectPlaneByHex(h, {autofollow: true});
+            selectPlaneByHex(h, {follow: true});
             //showMap();
         } else {
-            selectPlaneByHex(h, {autofollow: false});
+            selectPlaneByHex(h, {follow: false});
         }
         adjustSelectedInfoBlockPosition();
         evt.preventDefault();
@@ -248,7 +248,7 @@ function setupPlane(hex, plane) {
         if(!mapIsVisible) {
             showMap();
         }
-        selectPlaneByHex(h, {autofollow: true});
+        selectPlaneByHex(h, {follow: true});
         adjustSelectedInfoBlockPosition();
         evt.preventDefault();
     }.bind(undefined, hex);
@@ -1100,7 +1100,7 @@ function initialize_map() {
             }
         );
         if (hex) {
-            selectPlaneByHex(hex, {autofollow: (evt.type === 'dblclick')});
+            selectPlaneByHex(hex, {follow: (evt.type === 'dblclick')});
             adjustSelectedInfoBlockPosition();
         } else if (!multiSelect) {
             deselectAllPlanes();
@@ -1278,7 +1278,7 @@ function initialize_map() {
                 console.log(SelectedPlane);
                 break;
             case "j":
-                selectPlaneByHex(jumpTo, {autofollow: true});
+                selectPlaneByHex(jumpTo, {follow: true});
                 break;
             case "J":
                 debugJump = !debugJump;
@@ -2092,9 +2092,6 @@ function sortBy(id,sc,se) {
 function selectPlaneByHex(hex, options) {
     console.log("SELECTING", hex, options);
     options = options || {};
-    if (options.zoom == undefined) {
-        options.zoom = "auto";
-    }
     //console.log("select: " + hex);
     // If SelectedPlane has something in it, clear out the selected
     if (SelectedAllPlanes) {
@@ -2143,7 +2140,7 @@ function selectPlaneByHex(hex, options) {
         //$('.infoblock-container').scrollTop(0);
     }
     // multiSelect deselect
-    if (multiSelect && newPlane && newPlane.selected && !options.autofollow && !onlySelected) {
+    if (multiSelect && newPlane && newPlane.selected && !options.follow && !onlySelected) {
         newPlane.selected = false;
         newPlane.clearLines();
         newPlane.updateMarker();
@@ -2153,7 +2150,7 @@ function selectPlaneByHex(hex, options) {
 
     // If we are clicking the same plane, we are deselecting it.
     // (unless it was a doubleclick..)
-    if (oldPlane == newPlane && !options.autofollow) {
+    if (oldPlane == newPlane && !options.follow) {
         newPlane = null;
     }
 
@@ -2169,11 +2166,17 @@ function selectPlaneByHex(hex, options) {
         SelectedPlane = null;
     }
 
-    FollowSelected = newPlane && options.autofollow;
+    if (newPlane && newPlane.position && options.follow) {
+        FollowSelected = true;
+        if (!options.zoom)
+            options.zoom = 'follow';
+    } else {
+        FollowSelected = false;
+    }
 
-    if (options.zoom == 'auto') {
-        if (OLMap.getView().getZoom() < 9)
-            OLMap.getView().setZoom(9);
+    if (options.zoom == 'follow') {
+        if (OLMap.getView().getZoom() < 8)
+            OLMap.getView().setZoom(8);
     } else if (options.zoom) {
         OLMap.getView().setZoom(options.zoom);
     }
@@ -2665,7 +2668,7 @@ function followRandomPlane() {
             break;
     } while (this_one.isFiltered() || !this_one.position || (now - this_one.position_time > 30));
     //console.log(this_one.icao);
-    selectPlaneByHex(this_one.icao, {autofollow: true});
+    selectPlaneByHex(this_one.icao, {follow: true});
 }
 
 function toggleTableInView(switchOn) {
@@ -3025,6 +3028,7 @@ function onPointermove(evt) {
 }
 
 function processURLParams(){
+    try {
     const search = new URLSearchParams(window.location.search);
     const icao = search.get('icao');
     var zoom;
@@ -3039,7 +3043,7 @@ function processURLParams(){
     if (icao != null) {
         if (Planes[icao.toLowerCase()] || globeIndex) {
             console.log('Selected ICAO id: '+ icao);
-            var selectOptions = {autofollow: true};
+            var selectOptions = {follow: true};
             if (zoom) {
                 selectOptions.zoom = zoom;
             }
@@ -3065,6 +3069,9 @@ function processURLParams(){
 
     var callsign = search.get('callsign');
     findPlanes(callsign, false, true, false, false);
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 function findPlanes(query, byIcao, byCallsign, byReg, byType) {
@@ -3091,13 +3098,13 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
             results[i].updateTick(true);
         }
     } else if (results.length == 1) {
-        selectPlaneByHex(results[0].icao, {autofollow: true});
+        selectPlaneByHex(results[0].icao, {follow: true});
         console.log("query selected: " + query);
     } else {
         console.log("No match found for query: " + query);
         if (globeIndex && query.length == 6) {
             console.log("maybe it's an icao, let's try to fetch the history for it!");
-            selectPlaneByHex(query, {autofollow: true})
+            selectPlaneByHex(query, {follow: true})
         }
     }
 }
