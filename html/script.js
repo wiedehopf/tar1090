@@ -235,10 +235,10 @@ function setupPlane(hex, plane) {
         }
 
         if(!mapIsVisible) {
-            selectPlaneByHex(h, true);
+            selectPlaneByHex(h, {autofollow: true});
             //showMap();
         } else {
-            selectPlaneByHex(h, false);
+            selectPlaneByHex(h, {autofollow: false});
         }
         adjustSelectedInfoBlockPosition();
         evt.preventDefault();
@@ -248,7 +248,7 @@ function setupPlane(hex, plane) {
         if(!mapIsVisible) {
             showMap();
         }
-        selectPlaneByHex(h, true);
+        selectPlaneByHex(h, {autofollow: true});
         adjustSelectedInfoBlockPosition();
         evt.preventDefault();
     }.bind(undefined, hex);
@@ -1100,7 +1100,7 @@ function initialize_map() {
             }
         );
         if (hex) {
-            selectPlaneByHex(hex, (evt.type === 'dblclick'));
+            selectPlaneByHex(hex, {autofollow: (evt.type === 'dblclick')});
             adjustSelectedInfoBlockPosition();
         } else if (!multiSelect) {
             deselectAllPlanes();
@@ -1278,7 +1278,7 @@ function initialize_map() {
                 console.log(SelectedPlane);
                 break;
             case "j":
-                selectPlaneByHex(jumpTo, true);
+                selectPlaneByHex(jumpTo, {autofollow: true});
                 break;
             case "J":
                 debugJump = !debugJump;
@@ -2089,7 +2089,12 @@ function sortBy(id,sc,se) {
     //resortTable(PlanesTableList);
 }
 
-function selectPlaneByHex(hex,autofollow) {
+function selectPlaneByHex(hex, options) {
+    console.log("SELECTING", hex, options);
+    options = options || {};
+    if (options.zoom == undefined) {
+        options.zoom = "auto";
+    }
     //console.log("select: " + hex);
     // If SelectedPlane has something in it, clear out the selected
     if (SelectedAllPlanes) {
@@ -2123,7 +2128,7 @@ function selectPlaneByHex(hex,autofollow) {
                 processAircraft(ac);
                 Planes[data.icao].processTrace(data, "show");
                 console.log(Planes[data.icao]);
-                selectPlaneByHex(data.icao, true)
+                selectPlaneByHex(data.icao, options)
                 refreshSelected();
             });
         }
@@ -2138,7 +2143,7 @@ function selectPlaneByHex(hex,autofollow) {
         //$('.infoblock-container').scrollTop(0);
     }
     // multiSelect deselect
-    if (multiSelect && newPlane && newPlane.selected && !autofollow && !onlySelected) {
+    if (multiSelect && newPlane && newPlane.selected && !options.autofollow && !onlySelected) {
         newPlane.selected = false;
         newPlane.clearLines();
         newPlane.updateMarker();
@@ -2148,7 +2153,7 @@ function selectPlaneByHex(hex,autofollow) {
 
     // If we are clicking the same plane, we are deselecting it.
     // (unless it was a doubleclick..)
-    if (oldPlane == newPlane && !autofollow) {
+    if (oldPlane == newPlane && !options.autofollow) {
         newPlane = null;
     }
 
@@ -2164,14 +2169,14 @@ function selectPlaneByHex(hex,autofollow) {
         SelectedPlane = null;
     }
 
-    if (newPlane && autofollow) {
-        FollowSelected = true;
-        if (OLMap.getView().getZoom() < 8)
-            OLMap.getView().setZoom(8);
-    } else {
-        FollowSelected = false;
-    }
+    FollowSelected = newPlane && options.autofollow;
 
+    if (options.zoom == 'auto') {
+        if (OLMap.getView().getZoom() < 9)
+            OLMap.getView().setZoom(9);
+    } else if (options.zoom) {
+        OLMap.getView().setZoom(options.zoom);
+    }
 
     refreshSelected();
     refreshHighlighted();
@@ -2660,7 +2665,7 @@ function followRandomPlane() {
             break;
     } while (this_one.isFiltered() || !this_one.position || (now - this_one.position_time > 30));
     //console.log(this_one.icao);
-    selectPlaneByHex(this_one.icao, true);
+    selectPlaneByHex(this_one.icao, {autofollow: true});
 }
 
 function toggleTableInView(switchOn) {
@@ -3019,23 +3024,46 @@ function onPointermove(evt) {
 }
 
 function processURLParams(){
-    try {
-        const search = new URLSearchParams(window.location.search);
+    const search = new URLSearchParams(window.location.search);
+    const icao = search.get('icao');
+    var zoom;
+    if (search.get("zoom")) {
+        try {
+            zoom = parseInt(search.get("zoom"));
+        } catch (error) {
+            console.log("Error parsing zoom:", error);
+        }
+    }
 
-        const icao = search.get('icao');
-        if (icao != null) {
-            if (Planes[icao.toLowerCase()] || globeIndex) {
-                console.log('Selected ICAO id: '+ icao);
-                selectPlaneByHex(icao.toLowerCase(), true)
-            } else {
-                console.log('ICAO id not found: ' + icao);
+    if (icao != null) {
+        if (Planes[icao.toLowerCase()] || globeIndex) {
+            console.log('Selected ICAO id: '+ icao);
+            var selectOptions = {autofollow: true};
+            if (zoom) {
+                selectOptions.zoom = zoom;
+            }
+            selectPlaneByHex(icao.toLowerCase(), selectOptions)
+        } else {
+            console.log('ICAO id not found: ' + icao);
+        }
+    } else {
+        if (search.get("lat") && search.get("lon")) {
+            try {
+                const lat = parseFloat(search.get("lat"));
+                const lon = parseFloat(search.get("lon"));
+                OLMap.getView().setCenter(ol.proj.fromLonLat([lon, lat]));
+            }
+            catch (error) {
+                console.log("Error parsing lat/lon:", error);
             }
         }
-
-        var callsign = search.get('callsign');
-        findPlanes(callsign, false, true, false, false);
-    } catch (error) {
+        if (zoom) {
+            OLMap.getView().setZoom(zoom);
+        }
     }
+
+    var callsign = search.get('callsign');
+    findPlanes(callsign, false, true, false, false);
 }
 
 function findPlanes(query, byIcao, byCallsign, byReg, byType) {
@@ -3062,13 +3090,13 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
             results[i].updateTick(true);
         }
     } else if (results.length == 1) {
-        selectPlaneByHex(results[0].icao, true);
+        selectPlaneByHex(results[0].icao, {autofollow: true});
         console.log("query selected: " + query);
     } else {
         console.log("No match found for query: " + query);
         if (globeIndex && query.length == 6) {
             console.log("maybe it's an icao, let's try to fetch the history for it!");
-            selectPlaneByHex(query, true)
+            selectPlaneByHex(query, {autofollow: true})
         }
     }
 }
