@@ -2715,7 +2715,8 @@ function toggleMultiSelect() {
         multiSelect = false;
         var plane = SelectedPlane;
         deselectAllPlanes();
-        selectPlaneByHex(plane.icao);
+        if (plane)
+            selectPlaneByHex(plane.icao);
     } else {
         multiSelect = true;
     }
