@@ -1110,7 +1110,7 @@ function initialize_map() {
 
 
     // show the hover box
-    if (ZoomLvl > 6.5 && enableMouseover) {
+    if (!globeIndex && ZoomLvl > (6.5 + 2 * globeIndex) && enableMouseover) {
         OLMap.on('pointermove', onPointermove);
     }
 
@@ -2982,7 +2982,7 @@ function changeZoom() {
             plane.markerIcon.setScale(plane.scaleCache);
         }
     }
-    if (ZoomLvl > 6.5 && enableMouseover) {
+    if (ZoomLvl > (6.5 + 2 * globeIndex) && enableMouseover) {
         OLMap.on('pointermove', onPointermove);
     } else {
         OLMap.un('pointermove', onPointermove);
