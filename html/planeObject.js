@@ -459,7 +459,6 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
         || estimated != lastseg.estimated
         || tempTrails
         || debugAll
-        || serverTrack
         //lastseg.ground != on_ground
         //|| (!on_ground && isNaN(alt_change))
         //|| (alt_change > 700)
