@@ -424,6 +424,15 @@ function fetchData() {
                 refreshClock(new Date(now * 1000));
             }
 
+            if (globeIndex) {
+                clearTimeout(refreshId);
+                if (mapIsVisible) {
+                    refreshId = setTimeout(fetchData, RefreshInterval);
+                } else {
+                    refreshId = setTimeout(fetchData, 55000);
+                }
+            }
+
             // Check for stale receiver data
             if (last == now && !globeIndex) {
                 StaleReceiverCount++;
