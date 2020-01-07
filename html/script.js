@@ -3097,7 +3097,6 @@ function globeIndexes() {
         x1 = -180;
         x2 = 180;
     }
-    console.log(y1 + ' ' + y2);
     if (y1 < -90)
         y1 = -90;
     if (y2 > 90)
