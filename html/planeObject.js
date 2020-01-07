@@ -298,7 +298,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
         //console.log(this.icao + " new track");
         var newseg = { fixed: new ol.geom.LineString([projHere]),
             feature: null,
-            estimated: false,
+            estimated: true,
             ground: on_ground,
             altitude: this.alt_rounded,
             alt_real: this.altitude,
@@ -342,7 +342,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
         return true;
     }
 
-    if (this.request_rotation_from_track) {
+    if (this.request_rotation_from_track && this.prev_position) {
         this.rotation = bearingFromLonLat(this.prev_position, this.position);
     }
 
@@ -819,10 +819,8 @@ PlaneObject.prototype.processTrace = function(data, show) {
         const lon = state[2];
         const altitude = state[3];
         const gs = state[4];
-        var track = state[5];
-        if (track >= 1000) {
-            track -= 1000;
-        }
+        const track = state[5];
+        const stale = state[6];
 
         _now = timestamp;
         this.position = [lon, lat];
@@ -832,9 +830,8 @@ PlaneObject.prototype.processTrace = function(data, show) {
         this.alt_rounded = calcAltitudeRounded(this.altitude);
         this.speed = gs;
         this.track = track;
-        this.rotation = track;
 
-        if (state[5] >= 1000)
+        if (stale)
             _last = _now - 1;
 
         this.updateTrack(_now, _last, true);
@@ -843,7 +840,7 @@ PlaneObject.prototype.processTrace = function(data, show) {
 
     for (var i = 0; i < this.trace.length; i++) {
         const state = this.trace[i];
-        if (_now > state.now)
+        if (_now >= state.now)
             continue;
 
         _now = state.now;
@@ -863,7 +860,7 @@ PlaneObject.prototype.processTrace = function(data, show) {
         tempPlane.prev_position = this.position;
     }
 
-    if (now < _now && !show) {
+    if (_now >= now && !show) {
         var newSegs = this.track_linesegs;
         Object.assign(this, tempPlane);
         this.track_linesegs = newSegs;
@@ -974,8 +971,6 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.alt_reliable = Math.min(this.alt_reliable + 1, 3);
     }
 
-
-
     this.alt_rounded = calcAltitudeRounded(this.altitude);
 
     if (this.altitude == null) {
@@ -997,6 +992,8 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.track = track;
         this.rotation = track;
         this.request_rotation_from_track = false;
+    } else if (data.calc_track) {
+        this.rotation = data.calc_track;
     } else {
         this.request_rotation_from_track = true;
     }
@@ -1133,12 +1130,16 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
             this.rotation = this.true_heading;
         else if (this.mag_heading != null)
             this.rotation = this.mag_heading;
+        else if (data.calc_track)
+            this.rotation = data.calc_track;
     } else if (this.track != null) {
         this.rotation = this.track;
     } else if (this.true_heading != null) {
         this.rotation = this.true_heading;
     } else if (this.mag_heading != null) {
         this.rotation = this.mag_heading;
+    } else if (data.calc_track) {
+        this.rotation = data.calc_track;
     } else {
         this.request_rotation_from_track = true;
     }
@@ -1196,7 +1197,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
     if (
         (!globeIndex && this.icao[0] != '~' && this.seen < 58 && this.position != null && this.seen_pos < 60)
         || (globeIndex && this.icao[0] != '~' && this.position != null && this.seen_pos < (30 + zoomedOut))
-        || (this.jaero && this.icao[0] != '~' && this.position != null && this.seen_pos < 700)
+        || (this.jaero && this.icao[0] != '~' && this.position != null && this.seen_pos < 900)
         || (this.icao[0] == '~' && this.position != null && this.seen_pos < 45 / (1 + 2 * globeIndex))
         || (this.selected && !SelectedAllPlanes && !multiSelect)
         || (noVanish && this.position != null)
