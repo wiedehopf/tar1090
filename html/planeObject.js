@@ -829,6 +829,8 @@ PlaneObject.prototype.processTrace = function(data, show) {
         this.alt_rounded = calcAltitudeRounded(this.altitude);
         this.speed = gs;
         this.track = track;
+        if (track)
+            this.rotation = track
 
         if (stale)
             _last = _now - 1;
