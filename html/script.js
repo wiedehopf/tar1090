@@ -2104,7 +2104,7 @@ function selectPlaneByHex(hex, options) {
     var newPlane = Planes[hex];
 
 
-    if (globeIndex && hex) {
+    if (!options.noFetch && globeIndex && hex) {
         var URL = 'data/traces/'+ hex.slice(-2) + '/trace_' + hex + '.json';
         //console.log('Requesting trace: ' + hex);
         if (newPlane) {
@@ -2113,7 +2113,7 @@ function selectPlaneByHex(hex, options) {
                 dataType: 'json' });
             req.done(function(data) {
                 Planes[data.icao].processTrace(data);
-                selectPlaneByHex(data.icao, options)
+                Planes[data.icao].updateLines();
             });
 
         } else {
@@ -2126,6 +2126,7 @@ function selectPlaneByHex(hex, options) {
                 processAircraft(ac);
                 Planes[data.icao].processTrace(data, "show");
                 console.log(Planes[data.icao]);
+                const options = { noFetch: true, follow: true }
                 selectPlaneByHex(data.icao, options)
             });
         }
@@ -2170,10 +2171,12 @@ function selectPlaneByHex(hex, options) {
         FollowSelected = true;
         if (!options.zoom)
             options.zoom = 'follow';
-        newPlane.updateLines();
-        newPlane.updateMarker(true);
     } else {
         FollowSelected = false;
+    }
+    if (newPlane && newPlane.position) {
+        newPlane.updateLines();
+        newPlane.updateMarker(true);
     }
 
     if (options.zoom == 'follow') {
@@ -2184,8 +2187,7 @@ function selectPlaneByHex(hex, options) {
     }
 
     refreshSelected();
-    refreshHighlighted();
-    refreshTableInfo();
+    //refreshTableInfo();
 }
 
 
