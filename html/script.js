@@ -2091,7 +2091,7 @@ function sortBy(id,sc,se) {
 }
 
 function selectPlaneByHex(hex, options) {
-    console.log("SELECTING", hex, options);
+    //console.log("SELECTING", hex, options);
     options = options || {};
     //console.log("select: " + hex);
     // If SelectedPlane has something in it, clear out the selected
@@ -2106,14 +2106,14 @@ function selectPlaneByHex(hex, options) {
 
     if (globeIndex && hex) {
         var URL = 'data/traces/'+ hex.slice(-2) + '/trace_' + hex + '.json';
-        console.log('Requesting trace: ' + hex);
+        //console.log('Requesting trace: ' + hex);
         if (newPlane) {
             var req = $.ajax({ url: URL,
                 timeout: 15000,
                 dataType: 'json' });
             req.done(function(data) {
                 Planes[data.icao].processTrace(data);
-                refreshSelected();
+                selectPlaneByHex(data.icao, options)
             });
 
         } else {
@@ -2127,7 +2127,6 @@ function selectPlaneByHex(hex, options) {
                 Planes[data.icao].processTrace(data, "show");
                 console.log(Planes[data.icao]);
                 selectPlaneByHex(data.icao, options)
-                refreshSelected();
             });
         }
     }
@@ -2171,6 +2170,8 @@ function selectPlaneByHex(hex, options) {
         FollowSelected = true;
         if (!options.zoom)
             options.zoom = 'follow';
+        newPlane.updateLines();
+        newPlane.updateMarker(true);
     } else {
         FollowSelected = false;
     }
