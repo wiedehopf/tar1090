@@ -503,6 +503,10 @@ function initialize() {
             .done(function(typeLookupData) {
                 _aircraft_type_cache = typeLookupData;
             })
+        $.getJSON("db/airport-coords.json")
+            .done(function(data) {
+                _airport_coords_cache = data;
+            })
     });
 
 }
@@ -603,6 +607,7 @@ $('#sidebar_container').on('resize', function() {
     $("#callsign_filter_form").submit(updateCallsignFilter);
 
     $("#search_form").submit(onSearch);
+    $("#jump_form").submit(onJump);
 
     // check if the altitude color values are default to enable the altitude filter
     if (ColorByAlt.air.h.length === 3 && ColorByAlt.air.h[0].alt === 2000 && ColorByAlt.air.h[0].val === 20 && ColorByAlt.air.h[1].alt === 10000 && ColorByAlt.air.h[1].val === 140 && ColorByAlt.air.h[2].alt === 40000 && ColorByAlt.air.h[2].val === 300) {
@@ -2650,6 +2655,18 @@ function toggleMultiSelect() {
         multiSelect = true;
     }
     buttonActive('#M', multiSelect);
+}
+
+function onJump(e) {
+    e.preventDefault();
+    const searchTerm = $("#jump_input").val().trim().toUpperCase();
+    $("#jump_input").val("");
+    $("#jump_input").blur();
+    const coords = _airport_coords_cache[searchTerm];
+    if (coords) {
+        OLMap.getView().setCenter(ol.proj.fromLonLat([coords[1], coords[0]]));
+    }
+    return false;
 }
 
 function onSearch(e) {

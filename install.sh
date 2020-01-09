@@ -158,7 +158,9 @@ do
 
 	rm -rf $html_path 2>/dev/null || true
 	cp -r -T html $html_path
-    cp -r $ipath/git-db/db $html_path
+    mkdir -p $html_path/db
+    cp -r -T $ipath/git-db/db $html_path/db
+    cp $ipath/git-db/airport-coords.json $html_path/db
 
 	mv /tmp/tar1090_config.js $html_path/config.js 2>/dev/null || true
 	mv /tmp/tar1090_colors.css $html_path/colors.css 2>/dev/null || true

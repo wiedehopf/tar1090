@@ -637,28 +637,40 @@
                                 <td>
                                     <div class="button-flex buttonTable" id="show_map_button"><span class="buttonText">Show Map</span></div>
                                 </td>
-								<tr class="infoblock_heading">
-                                    <td>
-                                        <form id="search_form">
-                                            <span class="infoBlockTitleText">Search:</span><!--
-                                            --><input id="search_input" name="searchBox" type="text" class="searchInput" maxlength="8">
-										</form>
-									</td>
 
+								<tr class="infoblock_heading">
+									<td><span class="infoBlockTitleText">Total Aircraft:</span> <span id="dump1090_total_ac">n/a</span></td>
+									<td id="dump1090_message_rate_td"><span class="infoBlockTitleText">Messages:</span> <span id="dump1090_message_rate">n/a</span>/sec</td>
 									<td style="text-align: right">
 										<a href="https://github.com/wiedehopf/tar1090#tar1090" id="dump1090_version" target="_blank">tar1090 on github</a>
 									</td>
 								</tr>
 
-
-								<tr class="infoblock_body">
-									<td><span class="infoBlockTitleText">Total Aircraft:</span> <span id="dump1090_total_ac">n/a</span></td>
-									<td id="dump1090_message_rate_td"><span class="infoBlockTitleText">Messages:</span> <span id="dump1090_message_rate">n/a</span>/sec</td>
-								</tr>
-
 								<tr class="infoblock_body">
 									<td><span id="with_positions" class="infoBlockTitleText">With Positions:</span> <span id="dump1090_total_ac_positions">n/a</span></td>
 									<td id="dump1090_total_history_td"><span class="infoBlockTitleText">History:</span> <span id="dump1090_total_history">n/a</span> positions</td>
+								</tr>
+
+								<tr class="infoblock_heading">
+                                    <td>
+                                        <form id="search_form">
+                                            <span class="infoBlockTitleText">Search:</span>
+                                            <br>
+                                            <input id="search_input" name="searchBox" type="text" class="searchInput" maxlength="8">
+										</form>
+									</td>
+
+								</tr>
+
+
+								<tr class="infoblock_body">
+                                    <td>
+                                        <form id="jump_form">
+                                            <span class="infoBlockTitleText">Jump to airport:</span>
+                                            <br>
+                                            <input id="jump_input" name="jumpBox" type="text" class="searchInput" maxlength="4">
+                                        </form>
+                                    </td>
 								</tr>
 							</table>
 						</div> <!-- dump1090_infoblock -->

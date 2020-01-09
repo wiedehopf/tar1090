@@ -23,6 +23,7 @@
 
 var _aircraft_cache = {};
 var _aircraft_type_cache = null;
+var _airport_coords_cache = null;
 
 function getAircraftData(icao) {
 	var defer = $.Deferred();
@@ -84,6 +85,7 @@ function getIcaoAircraftTypeData(aircraftData, defer) {
 		lookupIcaoAircraftType(aircraftData, defer);
 	}
 }
+
 
 // format [r:0, t:1, f:2]
 // 3: desc
