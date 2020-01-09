@@ -2210,8 +2210,6 @@ function deselectAllPlanes() {
     }
     $('#selectall_checkbox').removeClass('settingsCheckboxChecked');
     SelectedAllPlanes = false;
-    SelectedPlane.clearLines();
-    SelectedPlane.updateMarker();
     SelectedPlane = null;
     refreshFeatures();
     refreshSelected();
