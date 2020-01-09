@@ -1732,9 +1732,7 @@ function refreshHighlighted() {
 
     $("#highlighted_altitude").text(format_altitude_long(highlighted.altitude, highlighted.vert_rate, DisplayUnits));
 
-    $('#highlighted_icao').text(highlighted.icao.toUpperCase());
-
-    $('#highlighted_pf_route').text((highlighted.pfRoute ? highlighted.pfRoute : ""));
+    $('#highlighted_pf_route').text((highlighted.pfRoute ? highlighted.pfRoute : highlighted.icao.toUpperCase()));
 
     $('#highlighted_rssi').text(highlighted.rssi != null ? highlighted.rssi.toFixed(1) + ' dBFS' : "n/a");
 
