@@ -1404,10 +1404,8 @@ function reaper(all) {
     var newPlanes = [];
     var plane;
     while (plane = PlanesOrdered.pop()) {
-        if (plane.selected)
-            continue;
         plane.seen = now - plane.last_message_time;
-        if (all || plane.seen > 600) {
+        if (!plane.selected && (all || plane.seen > 600)) {
             // Reap it.                                
             //console.log("Removed " + plane.icao);
             delete Planes[plane.icao];
