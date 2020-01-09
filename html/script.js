@@ -1145,7 +1145,7 @@ function initialize_map() {
         }
     }
 
-    if (localStorage['MapDim'] === "true" || MapDim) {
+    if (localStorage['MapDim'] === "true" || (MapDim && localStorage['MapDim'] == null)) {
         toggleMapDim(true);
     }
 
