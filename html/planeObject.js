@@ -1185,9 +1185,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
             this.name = '_' + this.icao.toUpperCase();
         }
         this.name = this.name.trim();
-    }
-    if (!redraw && !this.updated && !this.visible) {
-        return;
+        this.updated = false;
     }
 
     const zoomedOut = 30 * Math.max(0, -1 * (ZoomLvl - 6));
@@ -1227,7 +1225,6 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
                 selectPlaneByHex(null,false);
         }
     }
-    this.updated = false;
 };
 
 PlaneObject.prototype.clearMarker = function() {

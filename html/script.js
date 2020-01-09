@@ -1796,7 +1796,7 @@ function refreshTableInfo() {
         if (globeIndex) {
             if (inView(tableplane, lastRenderExtent) || tableplane.selected) {
                 tableplane.updateFeatures(now, last);
-            } else {
+            } else if (tableplane.visible) {
                 tableplane.clearMarker();
                 tableplane.clearLines();
                 tableplane.visible = false;
