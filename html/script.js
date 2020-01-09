@@ -1407,6 +1407,8 @@ function reaper(all) {
     var newPlanes = [];
     var plane;
     while (plane = PlanesOrdered.pop()) {
+        if (plane.selected)
+            continue;
         plane.seen = now - plane.last_message_time;
         if (all || plane.seen > 600) {
             // Reap it.                                
@@ -2230,6 +2232,8 @@ function deselectAllPlanes() {
     }
     $('#selectall_checkbox').removeClass('settingsCheckboxChecked');
     SelectedAllPlanes = false;
+    SelectedPlane.clearLines();
+    SelectedPlane.updateMarker();
     SelectedPlane = null;
     refreshFeatures();
     refreshSelected();

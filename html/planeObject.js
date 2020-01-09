@@ -1533,7 +1533,7 @@ PlaneObject.prototype.getAircraftData = function() {
         // format [r:0, t:1, f:2]
 
         if (data[0]) {
-            this.registration = data.r;
+            this.registration = data[0];
         }
 
         if (data[1]) {
