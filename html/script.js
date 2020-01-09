@@ -2167,7 +2167,7 @@ function selectPlaneByHex(hex, options) {
     }
 
     refreshSelected();
-    //refreshTableInfo();
+    refreshTableInfo();
 }
 
 
@@ -2462,6 +2462,7 @@ function toggleIsolation() {
     buttonActive('#I', onlySelected);
 
     refreshFeatures();
+    refreshTableInfo();
 }
 
 function toggleMilitary() {
