@@ -2115,7 +2115,9 @@ function selectPlaneByHex(hex, options) {
                 dataType: 'json' });
             req.done(function(data) {
                 Planes[data.icao].processTrace(data);
-                Planes[data.icao].updateLines();
+                if (Planes[data.icao] && Planes[data.icao].selected)
+                    Planes[data.icao].updateMarker(true);
+                    Planes[data.icao].updateLines();
             });
 
         } else {
@@ -2127,7 +2129,7 @@ function selectPlaneByHex(hex, options) {
                 ac.hex = data.icao;
                 processAircraft(ac);
                 Planes[data.icao].processTrace(data, "show");
-                console.log(Planes[data.icao]);
+                //console.log(Planes[data.icao]);
                 const options = { noFetch: true, follow: true }
                 selectPlaneByHex(data.icao, options)
             });

@@ -866,9 +866,8 @@ PlaneObject.prototype.processTrace = function(data, show) {
         Object.assign(this, tempPlane);
         this.track_linesegs = newSegs;
         this.updateTrack(now, _last);
-    } else {
-        this.updateMarker(true);
     }
+
     if (show) {
         this.selected = true;
         this.visible = true;
@@ -1188,20 +1187,22 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
         }
         this.name = this.name.trim();
     }
-    if (!this.updated && !this.visible) {
+    if (!redraw && !this.updated && !this.visible) {
         return;
     }
 
     const zoomedOut = 30 * Math.max(0, -1 * (ZoomLvl - 6));
     // If no packet in over 58 seconds, clear the plane.
     // Only clear the plane if it's not selected individually
-    if (
-        (!globeIndex && this.icao[0] != '~' && this.seen < 58 && this.position != null && this.seen_pos < 60)
-        || (globeIndex && this.icao[0] != '~' && this.position != null && this.seen_pos < (30 + zoomedOut))
-        || (this.jaero && this.icao[0] != '~' && this.position != null && this.seen_pos < 900)
-        || (this.icao[0] == '~' && this.position != null && this.seen_pos < 45 / (1 + 2 * globeIndex))
-        || (this.selected && !SelectedAllPlanes && !multiSelect)
-        || (noVanish && this.position != null)
+    if ( (!onlySelected || this.selected) &&
+        (
+            (!globeIndex && this.icao[0] != '~' && this.seen < 58 && this.position != null && this.seen_pos < 60)
+            || (globeIndex && this.icao[0] != '~' && this.position != null && this.seen_pos < (30 + zoomedOut))
+            || (this.jaero && this.icao[0] != '~' && this.position != null && this.seen_pos < 900)
+            || (this.icao[0] == '~' && this.position != null && this.seen_pos < 45 / (1 + 2 * globeIndex))
+            || (this.selected && !SelectedAllPlanes && !multiSelect)
+            || (noVanish && this.position != null)
+        )
     ) {
         this.visible = true;
         if (SelectedAllPlanes && (!this.isFiltered() || onlySelected))
