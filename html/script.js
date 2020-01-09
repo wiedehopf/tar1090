@@ -1486,6 +1486,12 @@ function refreshSelected() {
         $('#selected_icaotype').text("n/a");
     }
 
+    if (globeIndex && selected.icaoType && imageExist('/aircraft_sil/' + selected.icaoType + '.bmp')){
+        $('#selected_photo').html("<img width='150px' src='/aircraft_sil/" + selected.icaoType + ".bmp' />");
+    } else {
+        $('#selected_photo').text("");
+    }
+
     // Not using this logic for the redesigned info panel at the time, but leaving it in  if/when adding it back
     // var emerg = document.getElementById('selected_emergency');
     // if (selected.squawk in SpecialSquawks) {
@@ -2117,7 +2123,7 @@ function selectPlaneByHex(hex, options) {
                 Planes[data.icao].processTrace(data);
                 if (Planes[data.icao] && Planes[data.icao].selected)
                     Planes[data.icao].updateMarker(true);
-                    Planes[data.icao].updateLines();
+                Planes[data.icao].updateLines();
             });
 
         } else {
@@ -3045,46 +3051,46 @@ function highlight(evt) {
 
 function processURLParams(){
     try {
-    const search = new URLSearchParams(window.location.search);
-    const icao = search.get('icao');
-    var zoom;
-    if (search.get("zoom")) {
-        try {
-            zoom = parseInt(search.get("zoom"));
-        } catch (error) {
-            console.log("Error parsing zoom:", error);
-        }
-    }
-
-    if (icao != null) {
-        if (Planes[icao.toLowerCase()] || globeIndex) {
-            console.log('Selected ICAO id: '+ icao);
-            var selectOptions = {follow: true};
-            if (zoom) {
-                selectOptions.zoom = zoom;
-            }
-            selectPlaneByHex(icao.toLowerCase(), selectOptions)
-        } else {
-            console.log('ICAO id not found: ' + icao);
-        }
-    } else {
-        if (search.get("lat") && search.get("lon")) {
+        const search = new URLSearchParams(window.location.search);
+        const icao = search.get('icao');
+        var zoom;
+        if (search.get("zoom")) {
             try {
-                const lat = parseFloat(search.get("lat"));
-                const lon = parseFloat(search.get("lon"));
-                OLMap.getView().setCenter(ol.proj.fromLonLat([lon, lat]));
-            }
-            catch (error) {
-                console.log("Error parsing lat/lon:", error);
+                zoom = parseInt(search.get("zoom"));
+            } catch (error) {
+                console.log("Error parsing zoom:", error);
             }
         }
-        if (zoom) {
-            OLMap.getView().setZoom(zoom);
-        }
-    }
 
-    var callsign = search.get('callsign');
-    findPlanes(callsign, false, true, false, false);
+        if (icao != null) {
+            if (Planes[icao.toLowerCase()] || globeIndex) {
+                console.log('Selected ICAO id: '+ icao);
+                var selectOptions = {follow: true};
+                if (zoom) {
+                    selectOptions.zoom = zoom;
+                }
+                selectPlaneByHex(icao.toLowerCase(), selectOptions)
+            } else {
+                console.log('ICAO id not found: ' + icao);
+            }
+        } else {
+            if (search.get("lat") && search.get("lon")) {
+                try {
+                    const lat = parseFloat(search.get("lat"));
+                    const lon = parseFloat(search.get("lon"));
+                    OLMap.getView().setCenter(ol.proj.fromLonLat([lon, lat]));
+                }
+                catch (error) {
+                    console.log("Error parsing lat/lon:", error);
+                }
+            }
+            if (zoom) {
+                OLMap.getView().setZoom(zoom);
+            }
+        }
+
+        var callsign = search.get('callsign');
+        findPlanes(callsign, false, true, false, false);
     } catch (error) {
         console.log(error);
     }
@@ -3247,4 +3253,11 @@ function inView(tableplane, currExtent) {
         )
     }
     return inView;
+}
+
+function imageExist(url)
+{
+    var img = new Image();
+    img.src = url;
+    return img.height != 0;
 }

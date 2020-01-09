@@ -867,7 +867,6 @@ PlaneObject.prototype.processTrace = function(data, show) {
         this.track_linesegs = newSegs;
         this.updateTrack(now, _last);
     }
-
     if (show) {
         this.selected = true;
         this.visible = true;
