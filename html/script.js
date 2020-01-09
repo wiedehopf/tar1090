@@ -241,7 +241,6 @@ function setupPlane(hex, plane) {
         } else {
             selectPlaneByHex(h, {follow: false});
         }
-        adjustSelectedInfoBlockPosition();
         evt.preventDefault();
     }.bind(undefined, hex);
 
@@ -250,7 +249,6 @@ function setupPlane(hex, plane) {
             showMap();
         }
         selectPlaneByHex(h, {follow: true});
-        adjustSelectedInfoBlockPosition();
         evt.preventDefault();
     }.bind(undefined, hex);
 
@@ -1102,7 +1100,6 @@ function initialize_map() {
         );
         if (hex) {
             selectPlaneByHex(hex, {follow: (evt.type === 'dblclick')});
-            adjustSelectedInfoBlockPosition();
         } else if (!multiSelect) {
             deselectAllPlanes();
         }
@@ -1693,22 +1690,8 @@ function refreshHighlighted() {
 
     $('#highlighted_infoblock').show();
 
-    // Get info box position and size
     var infoBox = $('#highlighted_infoblock');
-    var infoBoxPosition = infoBox.position();
-    if (typeof infoBoxOriginalPosition.top === 'undefined') {
-        infoBoxOriginalPosition.top = infoBoxPosition.top;
-        infoBoxOriginalPosition.left = infoBoxPosition.left;
-    } else {
-        infoBox.css("left", infoBoxOriginalPosition.left);
-        infoBox.css("top", infoBoxOriginalPosition.top);
-        infoBoxPosition = infoBox.position();
-    }
-    var infoBoxExtent = getExtent(infoBoxPosition.left, infoBoxPosition.top, infoBox.outerWidth(), infoBox.outerHeight());
 
-    // Get map size
-    var mapCanvas = $('#map_canvas');
-    var mapExtent = getExtent(0, 0, mapCanvas.width(), mapCanvas.height());
 
     var marker = highlighted.marker;
     var geom;
@@ -1719,26 +1702,15 @@ function refreshHighlighted() {
     }
     var markerPosition = OLMap.getPixelFromCoordinate(markerCoordinates);
 
-    // Check for overlap
-    //FIXME TODO: figure out this/remove this check
-    if (true || isPointInsideExtent(markerPosition[0], markerPosition[1], infoBoxExtent)) {
-        // Array of possible new positions for info box
-        var candidatePositions = [];
-        candidatePositions.push( { x: 40, y: 80 } );
-        candidatePositions.push( { x: markerPosition[0] + 20, y: markerPosition[1] + 60 } );
-
-        // Find new position
-        for (var i = 0; i < candidatePositions.length; i++) {
-            var candidatePosition = candidatePositions[i];
-            var candidateExtent = getExtent(candidatePosition.x, candidatePosition.y, infoBox.outerWidth(), infoBox.outerHeight());
-
-            if (!isPointInsideExtent(markerPosition[0],  markerPosition[1], candidateExtent) && isPointInsideExtent(candidatePosition.x, candidatePosition.y, mapExtent)) {
-                // Found a new position that doesn't overlap marker - move box to that position
-                infoBox.css("left", candidatePosition.x);
-                infoBox.css("top", candidatePosition.y);
-            }
-        }
-    }
+    var mapSize = OLMap.getSize();
+    if (markerPosition[0] + 200 < mapSize[0])
+        infoBox.css("left", markerPosition[0] + 20);
+    else
+        infoBox.css("left", markerPosition[0] - 200);
+    if (markerPosition[1] + 250 < mapSize[1])
+        infoBox.css("top", markerPosition[1] + 50);
+    else
+        infoBox.css("top", markerPosition[1] - 250);
 
     $('#highlighted_callsign').text(highlighted.name);
 
@@ -2360,57 +2332,6 @@ function setSelectedInfoBlockVisibility() {
             $("#sidebar_container").css('margin-left', '0');
         //$('#sidebar_canvas').css('margin-bottom', 0);
     }
-}
-
-// Reposition selected plane info box if it overlaps plane marker
-function adjustSelectedInfoBlockPosition() {
-    if (true)
-        return; // this function is probably obsolete
-    if (!SelectedPlane || !SelectedPlane.marker) {
-        return;
-    }
-    // Get marker position
-    var marker = SelectedPlane.marker;
-    var markerCoordinates = SelectedPlane.marker.getGeometry().getCoordinates();
-    var markerPosition = OLMap.getPixelFromCoordinate(markerCoordinates);
-
-    // Get map size
-    var mapCanvas = $('#map_canvas');
-    var mapExtent = getExtent(0, 0, mapCanvas.width(), mapCanvas.height());
-
-    // Check for overlap
-    if (isPointInsideExtent(markerPosition[0], markerPosition[1], infoBoxExtent)) {
-        // Array of possible new positions for info box
-        var candidatePositions = [];
-        candidatePositions.push( { x: 40, y: 60 } );
-        candidatePositions.push( { x: 40, y: markerPosition[1] + 80 } );
-
-        // Find new position
-        for (var i = 0; i < candidatePositions.length; i++) {
-            var candidatePosition = candidatePositions[i];
-            var candidateExtent = getExtent(candidatePosition.x, candidatePosition.y, infoBox.outerWidth(), infoBox.outerHeight());
-
-            if (!isPointInsideExtent(markerPosition[0],  markerPosition[1], candidateExtent) && isPointInsideExtent(candidatePosition.x, candidatePosition.y, mapExtent)) {
-                // Found a new position that doesn't overlap marker - move box to that position
-                infoBox.css("left", candidatePosition.x);
-                infoBox.css("top", candidatePosition.y);
-                return;
-            }
-        }
-    }
-}
-
-function getExtent(x, y, width, height) {
-    return {
-        xMin: x,
-        yMin: y,
-        xMax: x + width - 1,
-        yMax: y + height - 1,
-    };
-}
-
-function isPointInsideExtent(x, y, extent) {
-    return x >= extent.xMin && x <= extent.xMax && y >= extent.yMin && y <= extent.yMax;
 }
 
 function initializeUnitsSelector() {
