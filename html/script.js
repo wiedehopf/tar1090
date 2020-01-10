@@ -2102,14 +2102,21 @@ function selectPlaneByHex(hex, options) {
         } else {
             var req = $.ajax({ url: URL,
                 timeout: 15000,
-                dataType: 'json' });
+                dataType: 'json',
+                zoom: options.zoom,
+                follow: options.follow,
+            });
             req.done(function(data) {
                 var ac = {};
                 ac.hex = data.icao;
                 processAircraft(ac);
                 Planes[data.icao].processTrace(data, "show");
                 //console.log(Planes[data.icao]);
-                const options = { noFetch: true, follow: true }
+                var options = {
+                    noFetch: true,
+                    follow: this.follow,
+                    zoom: this.zoom
+                }
                 selectPlaneByHex(data.icao, options)
             });
         }
@@ -2986,19 +2993,36 @@ function processURLParams(){
     try {
         const search = new URLSearchParams(window.location.search);
         const icao = search.get('icao');
+        const callsign = search.get('callsign');
         var zoom;
+        var follow = true;
         if (search.get("zoom")) {
             try {
                 zoom = parseInt(search.get("zoom"));
+                if (zoom === 0)
+                    zoom = 1;
             } catch (error) {
                 console.log("Error parsing zoom:", error);
             }
         }
 
+        if (search.get("lat") && search.get("lon")) {
+            try {
+                const lat = parseFloat(search.get("lat"));
+                const lon = parseFloat(search.get("lon"));
+                OLMap.getView().setCenter(ol.proj.fromLonLat([lon, lat]));
+                follow = false;
+            }
+            catch (error) {
+                console.log("Error parsing lat/lon:", error);
+            }
+        }
+
         if (icao != null) {
+            toggleIsolation();
             if (Planes[icao.toLowerCase()] || globeIndex) {
                 console.log('Selected ICAO id: '+ icao);
-                var selectOptions = {follow: true};
+                var selectOptions = {follow: follow};
                 if (zoom) {
                     selectOptions.zoom = zoom;
                 }
@@ -3006,24 +3030,14 @@ function processURLParams(){
             } else {
                 console.log('ICAO id not found: ' + icao);
             }
-        } else {
-            if (search.get("lat") && search.get("lon")) {
-                try {
-                    const lat = parseFloat(search.get("lat"));
-                    const lon = parseFloat(search.get("lon"));
-                    OLMap.getView().setCenter(ol.proj.fromLonLat([lon, lat]));
-                }
-                catch (error) {
-                    console.log("Error parsing lat/lon:", error);
-                }
-            }
-            if (zoom) {
-                OLMap.getView().setZoom(zoom);
-            }
+        } else if (callsign != null) {
+            findPlanes(callsign, false, true, false, false);
         }
 
-        var callsign = search.get('callsign');
-        findPlanes(callsign, false, true, false, false);
+        if (zoom) {
+            OLMap.getView().setZoom(zoom);
+        }
+
     } catch (error) {
         console.log(error);
     }
