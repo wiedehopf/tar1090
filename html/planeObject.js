@@ -797,8 +797,8 @@ PlaneObject.prototype.updateIcon = function() {
 PlaneObject.prototype.processTrace = function(data, show) {
     if (!data || !data.trace)
         return;
-    const trace = data.trace;
-    const timeZero = data.timestamp;
+    var trace;
+    var timeZero, _now, _last = 0;
     this.history_size = 0;
 
     var tempPlane = {};
@@ -807,36 +807,48 @@ PlaneObject.prototype.processTrace = function(data, show) {
 
     Object.assign(tempPlane, this);
 
-    var _now = timeZero;
-    var _last = timeZero;
-    this.prev_position = null;
+    for (var j = 0; j < 2; j++) {
+        if (j == 0) {
+            trace = this.fullTrace.trace;
+            timeZero = this.fullTrace.timestamp;
+            _last = timeZero - 1;
+            this.prev_position = null;
+        } else {
+            trace = data.trace;
+            timeZero = data.timestamp;
+        }
 
-    for (var i = 0; i < trace.length; i++) {
-        const state = trace[i];
-        const timestamp = timeZero + state[0];
-        const lat = state[1];
-        const lon = state[2];
-        const altitude = state[3];
-        const gs = state[4];
-        const track = state[5];
-        const stale = state[6];
+        for (var i = 0; i < trace.length; i++) {
+            const state = trace[i];
+            const timestamp = timeZero + state[0];
+            const lat = state[1];
+            const lon = state[2];
+            const altitude = state[3];
+            const gs = state[4];
+            const track = state[5];
+            const stale = state[6];
 
-        _now = timestamp;
-        this.position = [lon, lat];
-        this.position_time = _now;
-        this.last_message_time = _now;
-        this.altitude = altitude;
-        this.alt_rounded = calcAltitudeRounded(this.altitude);
-        this.speed = gs;
-        this.track = track;
-        if (track)
-            this.rotation = track
+            _now = timestamp;
 
-        if (stale)
-            _last = _now - 1;
+            if (_now <= _last)
+                continue;
 
-        this.updateTrack(_now, _last, true);
-        _last = _now;
+            this.position = [lon, lat];
+            this.position_time = _now;
+            this.last_message_time = _now;
+            this.altitude = altitude;
+            this.alt_rounded = calcAltitudeRounded(this.altitude);
+            this.speed = gs;
+            this.track = track;
+            if (track)
+                this.rotation = track
+
+            if (stale)
+                _last = _now - 1;
+
+            this.updateTrack(_now, _last, true);
+            _last = _now;
+        }
     }
 
     for (var i = 0; i < this.trace.length; i++) {

@@ -2091,38 +2091,48 @@ function selectPlaneByHex(hex, options) {
 
 
     if (!options.noFetch && globeIndex && hex) {
-        var URL = 'data/traces/'+ hex.slice(-2) + '/trace_' + hex + '.json';
+        var URL1 = 'data/traces/'+ hex.slice(-2) + '/trace_recent_' + hex + '.json';
+        var URL2 = 'data/traces/'+ hex.slice(-2) + '/trace_full_' + hex + '.json';
         //console.log('Requesting trace: ' + hex);
+
+        var req1 = $.ajax({ url: URL1,
+            timeout: 15000,
+            dataType: 'json',
+            zoom: options.zoom,
+            follow: options.follow,
+        });
+        var req2 = $.ajax({ url: URL2,
+            timeout: 15000,
+            dataType: 'json',
+            req1: req1,
+        });
         if (newPlane) {
-            var req = $.ajax({ url: URL,
-                timeout: 15000,
-                dataType: 'json' });
-            req.done(function(data) {
-                Planes[data.icao].processTrace(data);
-                if (Planes[data.icao] && Planes[data.icao].selected)
-                    Planes[data.icao].updateMarker(true);
-                Planes[data.icao].updateLines();
+            req2.done(function(data) {
+                Planes[data.icao].fullTrace = data;
+                this.req1.done(function(data) {
+                    Planes[data.icao].processTrace(data);
+                    if (Planes[data.icao] && Planes[data.icao].selected)
+                        Planes[data.icao].updateMarker(true);
+                    Planes[data.icao].updateLines();
+                });
             });
 
         } else {
-            var req = $.ajax({ url: URL,
-                timeout: 15000,
-                dataType: 'json',
-                zoom: options.zoom,
-                follow: options.follow,
-            });
-            req.done(function(data) {
+            req2.done(function(data) {
                 var ac = {};
                 ac.hex = data.icao;
                 processAircraft(ac);
-                Planes[data.icao].processTrace(data, "show");
-                //console.log(Planes[data.icao]);
-                var options = {
-                    noFetch: true,
-                    follow: this.follow,
-                    zoom: this.zoom
-                }
-                selectPlaneByHex(data.icao, options)
+                Planes[data.icao].fullTrace = data;
+                this.req1.done(function(data) {
+                    Planes[data.icao].processTrace(data, "show");
+                    //console.log(Planes[data.icao]);
+                    var options = {
+                        noFetch: true,
+                        follow: this.follow,
+                        zoom: this.zoom
+                    }
+                    selectPlaneByHex(data.icao, options)
+                });
             });
         }
     }
