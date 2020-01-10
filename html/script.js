@@ -1486,8 +1486,8 @@ function refreshSelected() {
         $('#selected_icaotype').text("n/a");
     }
 
-    if (globeIndex && selected.icaoType && imageExist('/aircraft_sil/' + selected.icaoType + '.bmp')){
-        $('#selected_photo').html("<img width='150px' src='/aircraft_sil/" + selected.icaoType + ".bmp' />");
+    if (globeIndex && showPictures && selected.icaoType){
+        $('#selected_photo').html("<img width='150px' src='aircraft_sil/" + selected.icaoType + ".bmp' />");
     } else {
         $('#selected_photo').text("");
     }
@@ -3186,11 +3186,4 @@ function inView(tableplane, currExtent) {
         )
     }
     return inView;
-}
-
-function imageExist(url)
-{
-    var img = new Image();
-    img.src = url;
-    return img.height != 0;
 }

@@ -227,3 +227,6 @@ var HideCols = [
 	"#lon",
 	"#data_source",
 ]
+
+
+var showPictures = false;
