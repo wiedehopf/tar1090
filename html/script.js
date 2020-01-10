@@ -70,6 +70,7 @@ var globeIndexExtent;
 var PendingFetches = 0;
 var lastReqestFiles = 0;
 var debugCounter = 0;
+var selectedPhotoCache = null;
 
 var SpecialSquawks = {
     '7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -1487,7 +1488,11 @@ function refreshSelected() {
     }
 
     if (globeIndex && showPictures && selected.icaoType){
-        $('#selected_photo').html("<img width='150px' src='aircraft_sil/" + selected.icaoType + ".bmp' />");
+        var new_html = "<img width='150px' src='aircraft_sil/" + selected.icaoType + ".bmp' />";
+        if (new_html != selectedPhotoCache) {
+            $('#selected_photo').html(new_html);
+            selectedPhotoCache = new_html;
+        }
     } else {
         $('#selected_photo').text("");
     }
