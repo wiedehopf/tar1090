@@ -71,6 +71,7 @@ var PendingFetches = 0;
 var lastReqestFiles = 0;
 var debugCounter = 0;
 var selectedPhotoCache = null;
+var pathName = null;
 
 var SpecialSquawks = {
     '7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -879,6 +880,8 @@ function parse_history() {
     } else {
         sortByAltitude();
     }
+    pathName = window.location.pathname;
+    window.setInterval(updateAddressBar, 1000);
 }
 
 // Make a LineString with 'points'-number points
@@ -1062,8 +1065,10 @@ function initialize_map() {
 
     // Listeners for newly created Map
     OLMap.getView().on('change:center', function(event) {
+        const center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
+        CenterLat = center[1];
+        CenterLon = center[0];
         if (FollowSelected) {
-            const center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
             // On manual navigation, disable follow
             if (!SelectedPlane || !SelectedPlane.position ||
                 (Math.abs(center[0] - SelectedPlane.position[0]) > 0.0001 &&
@@ -1083,6 +1088,8 @@ function initialize_map() {
         // small zoomstep, no need to change aircraft scaling
         if (Math.abs(ZoomLvl-ZoomLvlCache) < 0.1)
             return;
+
+        localStorage['ZoomLvl'] = ZoomLvl;
 
         ZoomLvlCache = ZoomLvl;
 
@@ -3215,4 +3222,22 @@ function inView(tableplane, currExtent) {
         )
     }
     return inView;
+}
+function updateAddressBar() {
+    var posString = 'lat=' + CenterLat.toFixed(3) + '&lon=' + CenterLon.toFixed(3) + '&zoom=' + ZoomLvl.toFixed(1);
+    var string;
+    if (true || !globeIndex)
+        posString = ""
+    else if (SelectedPlane)
+        posString = "&" + posString;
+    else
+        posString = "?" + posString;
+
+
+    if (SelectedPlane)
+        string = pathName + '?icao=' + SelectedPlane.icao + posString;
+    else
+        string = pathName + posString;
+
+    window.history.replaceState("object or string", "Title", string);
 }
