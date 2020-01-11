@@ -795,11 +795,12 @@ PlaneObject.prototype.updateIcon = function() {
 };
 
 PlaneObject.prototype.processTrace = function(data, show) {
-    if (!data || !data.trace)
+    if (!data || !data.trace || !this.fullTrace || !this.fullTrace.trace)
         return;
     var trace;
     var timeZero, _now, _last = 0;
     this.history_size = 0;
+    var points_in_trace = 0;
 
     var tempPlane = {};
     const oldSegs = this.track_linesegs;
@@ -832,6 +833,8 @@ PlaneObject.prototype.processTrace = function(data, show) {
 
             if (_now <= _last)
                 continue;
+
+            points_in_trace++;
 
             this.position = [lon, lat];
             this.position_time = _now;
@@ -885,7 +888,7 @@ PlaneObject.prototype.processTrace = function(data, show) {
         this.updated = true;
     }
 
-    console.log(this.history_size + ' ' + trace.length);
+    console.log(this.history_size + ' ' + points_in_trace);
     this.remakeTrail();
 }
 
