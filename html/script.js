@@ -1999,6 +1999,8 @@ function sortFunction(x,y) {
 }
 
 function resortTable(pList) {
+    if (!sortExtract)
+        return;
     // presort by dataSource
     if (sortId == "sitedist") {
         for (var i = 0; i < pList.length; ++i) {
