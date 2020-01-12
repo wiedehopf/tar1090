@@ -459,6 +459,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
         || estimated != lastseg.estimated
         || tempTrails
         || debugAll
+        || serverTrack
         //lastseg.ground != on_ground
         //|| (!on_ground && isNaN(alt_change))
         //|| (alt_change > 700)
@@ -857,7 +858,7 @@ PlaneObject.prototype.processTrace = function(data, show) {
             if (stale)
                 _last = _now - 1;
 
-            this.updateTrack(_now, _last, true);
+            this.updateTrack(_now, _last, { serverTrack: true });
             _last = _now;
         }
     }
@@ -884,7 +885,7 @@ PlaneObject.prototype.processTrace = function(data, show) {
         tempPlane.prev_position = this.position;
     }
 
-    if (_now >= now && !show) {
+    if (false && _now >= now && !show) {
         var newSegs = this.track_linesegs;
         Object.assign(this, tempPlane);
         this.track_linesegs = newSegs;
