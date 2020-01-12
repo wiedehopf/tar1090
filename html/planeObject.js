@@ -521,6 +521,8 @@ PlaneObject.prototype.clearLines = function() {
 
 PlaneObject.prototype.getDataSourceNumber = function() {
     // MLAT
+    if (this.jaero || this.sbs)
+        return 5;
     if (this.dataSource == "mlat") {
         return 3;
     }
@@ -541,6 +543,12 @@ PlaneObject.prototype.getDataSourceNumber = function() {
 
 PlaneObject.prototype.getDataSource = function() {
     // MLAT
+    if (this.jaero)
+        return 'jaero';
+
+    if (this.sbs)
+        return 'unknown';
+
     if (this.dataSource == "mlat") {
         return 'mlat';
     }
@@ -1001,9 +1009,8 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     // needed for track labels
     this.speed = gs;
 
-    // don't expire the track, even display outdated track
+    this.track = track;
     if (track != null) {
-        this.track = track;
         this.rotation = track;
         this.request_rotation_from_track = false;
     } else if (data.calc_track) {
@@ -1016,7 +1023,6 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.flight	= flight;
         this.name = flight;
     }
-
 
     if (mlat && noMLAT) {
         this.dataSource = "other";
@@ -1043,8 +1049,12 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         return;
     }
 
-    if (data.jaero)
-        this.jaero = true;
+    this.jaero = data.jaero;
+    this.sbs = data.sbs_other;
+
+    if (this.jaero || this.sbs)
+        this.dataSource = "other";
+
     // Update all of our data
 
     if (this.receiver == "1090") {
@@ -1206,14 +1216,15 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
     const zoomedOut = 30 * Math.max(0, -1 * (ZoomLvl - 6));
     // If no packet in over 58 seconds, clear the plane.
     // Only clear the plane if it's not selected individually
+
     if ( (!onlySelected || this.selected) &&
         (
-            (!globeIndex && this.icao[0] != '~' && this.seen < 58 && this.position != null && this.seen_pos < 60)
+            (!globeIndex && this.icao[0] != '~' && this.seen < 58)
             || (globeIndex && this.icao[0] != '~' && this.position != null && this.seen_pos < (30 + zoomedOut))
-            || (this.jaero && this.icao[0] != '~' && this.position != null && this.seen_pos < 900)
+            || (this.jaero && this.icao[0] != '~' && this.position != null && this.seen_pos < 35*60)
             || (this.icao[0] == '~' && this.position != null && this.seen_pos < 45 / (1 + 2 * globeIndex))
             || (this.selected && !SelectedAllPlanes && !multiSelect)
-            || (noVanish && this.position != null)
+            || noVanish
         )
     ) {
         this.visible = true;

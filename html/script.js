@@ -1826,31 +1826,28 @@ function refreshTableInfo() {
 
         tableplane.showInTable = false;
         classes = "plane_table_row";
-        if ((!noVanish && (tableplane.seen == null || (tableplane.seen >= 58 && (!tableplane.selected || SelectedAllPlanes))) || tableplane.isFiltered())) {
-            tableplane.showInTable = false;
-        } else if ((mapIsVisible || globeIndex) && tableInView && (!tableplane.inView || !tableplane.visible) && !(tableplane.selected && !SelectedAllPlanes)) {
-            TrackedAircraft++;
-            tableplane.showInTable = false;
-        } else if (globeIndex && ((nTablePlanes > 100 && mapIsVisible) || (nTablePlanes > 15000 && !mapIsVisible))) {
-            TrackedAircraft++;
-            tableplane.showInTable = false;
-            if (tableplane.position != null && (noVanish || tableplane.seen_pos < 60)) {
-                ++TrackedAircraftPositions;
-            }
-        } else {
-            TrackedAircraft++;
 
-            if (tableplane.position != null && (noVanish || tableplane.seen_pos < 60)) {
-                ++TrackedAircraftPositions;
-            }
-
-            if (!sidebarVisible) {
-                tableplane.showInTable = false;
-                continue;
-            }
-
-            nTablePlanes++;
+        if (tableplane.visible &&
+            (tableplane.inView || tableplane.selected || !tableInView)
+        ) {
+            ++TrackedAircraftPositions;
             tableplane.showInTable = true;
+        }
+
+        if (tableplane.seen < 58 || noVanish) {
+            if (!tableInView) {
+                tableplane.showInTable = true;
+            }
+            TrackedAircraft++;
+        }
+
+        if (!sidebarVisible) {
+            tableplane.showInTable = false;
+            continue;
+        }
+
+        if (tableplane.showInTable) {
+            nTablePlanes++;
 
             if (tableplane.dataSource == "adsb") {
                 classes += " vPosition";
@@ -3186,6 +3183,9 @@ function globe_index(lat, lon) {
 }
 
 function inView(tableplane, currExtent) {
+
+    if (tableplane.position == null)
+        return false;
 
     var inView;
 
