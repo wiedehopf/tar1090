@@ -1196,6 +1196,7 @@ function initialize_map() {
                 newCenter = [oldCenter[0], (oldCenter[1] + extent[3])/2];
                 OLMap.getView().setCenter(newCenter);
                 FollowSelected = false;
+                buttonActive('#F', FollowSelected);
                 break;
             case "s":
                 oldCenter = OLMap.getView().getCenter();
@@ -1203,6 +1204,7 @@ function initialize_map() {
                 newCenter = [oldCenter[0], (oldCenter[1] + extent[1])/2];
                 OLMap.getView().setCenter(newCenter);
                 FollowSelected = false;
+                buttonActive('#F', FollowSelected);
                 break;
             case "a":
                 oldCenter = OLMap.getView().getCenter();
@@ -1210,6 +1212,7 @@ function initialize_map() {
                 newCenter = [(oldCenter[0] + extent[0])/2, oldCenter[1]];
                 OLMap.getView().setCenter(newCenter);
                 FollowSelected = false;
+                buttonActive('#F', FollowSelected);
                 break;
             case "d":
                 oldCenter = OLMap.getView().getCenter();
@@ -1217,6 +1220,7 @@ function initialize_map() {
                 newCenter = [(oldCenter[0] + extent[2])/2,  oldCenter[1]];
                 OLMap.getView().setCenter(newCenter);
                 FollowSelected = false;
+                buttonActive('#F', FollowSelected);
                 break;
                 // misc
             case "b":
@@ -1457,6 +1461,7 @@ function refreshPageTitle() {
 // Refresh the detail window about the plane
 function refreshSelected() {
 
+    buttonActive('#F', FollowSelected);
 
     if (SelectedPlane && SelectedPlane.isFiltered()) {
         SelectedPlane.selected = false;
@@ -2255,9 +2260,12 @@ function deselectAllPlanes() {
 
 function toggleFollowSelected() {
     FollowSelected = !FollowSelected;
+    if (!SelectedPlane && FollowSelected)
+        FollowSelected = false;
     if (FollowSelected && OLMap.getView().getZoom() < 8)
         OLMap.getView().setZoom(8);
     refreshSelected();
+    buttonActive('#F', FollowSelected);
 }
 
 function resetMap() {
