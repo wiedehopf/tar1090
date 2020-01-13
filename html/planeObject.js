@@ -823,6 +823,7 @@ PlaneObject.prototype.processTrace = function(data, show) {
     var tempPlane = {};
     const oldSegs = this.track_linesegs;
     this.track_linesegs = [];
+    this.remakeTrail();
 
     Object.assign(tempPlane, this);
 
@@ -907,7 +908,6 @@ PlaneObject.prototype.processTrace = function(data, show) {
     }
 
     console.log(this.history_size + ' ' + points_in_trace);
-    this.remakeTrail();
 }
 
 // Update our data
