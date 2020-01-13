@@ -1243,6 +1243,7 @@ function initialize_map() {
                 // filters
             case "M":
                 onlyMLAT = !onlyMLAT;
+                refreshTableInfo();
                 break;
             case "T":
                 filterTISB = !filterTISB;
@@ -2501,6 +2502,7 @@ function toggleIsolation() {
 function toggleMilitary() {
     onlyMilitary = !onlyMilitary;
     buttonActive('#U', onlyMilitary);
+    refreshTableInfo();
 }
 
 function togglePersistence() {
@@ -2516,6 +2518,7 @@ function togglePersistence() {
         reaper();
     localStorage['noVanish'] = noVanish;
     console.log('noVanish = ' + noVanish);
+    refreshTableInfo();
 }
 
 function toggleDebugAll() {
@@ -2697,6 +2700,7 @@ function onJump(e) {
     const coords = _airport_coords_cache[searchTerm];
     if (coords) {
         OLMap.getView().setCenter(ol.proj.fromLonLat([coords[1], coords[0]]));
+        refreshTableInfo();
     }
     return false;
 }
