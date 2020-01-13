@@ -1827,18 +1827,22 @@ function refreshTableInfo() {
         tableplane.showInTable = false;
         classes = "plane_table_row";
 
-        if (tableplane.visible &&
-            (tableplane.inView || tableplane.selected || !tableInView)
+        if (tableInView && tableplane.visible &&
+            (tableplane.inView || tableplane.selected)
         ) {
-            ++TrackedAircraftPositions;
             tableplane.showInTable = true;
+            ++TrackedAircraftPositions;
         }
 
-        if (tableplane.seen < 58 || noVanish) {
-            if (!tableInView) {
-                tableplane.showInTable = true;
-            }
+        if (!tableplane.isFiltered() && (tableplane.seen < 58 || noVanish)) {
+
             TrackedAircraft++;
+
+            if (!tableInView && tableplane.position != null)
+                ++TrackedAircraftPositions;
+
+            if (!tableInView)
+                tableplane.showInTable = true;
         }
 
         if (!sidebarVisible) {

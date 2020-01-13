@@ -194,7 +194,7 @@ PlaneObject.prototype.isFiltered = function() {
         return true;
     }
 
-    if (onlyMLAT && this.dataSource != "mlat" && this.dataSource != "other") {
+    if (onlyMLAT && !(this.dataSource == "mlat" || (this.dataSource == "other" && this.position == null))) {
         return true;
     }
 
@@ -1062,8 +1062,10 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     this.jaero = data.jaero;
     this.sbs = data.sbs_other;
 
-    if (this.jaero || this.sbs)
-        this.dataSource = "other";
+    if (this.jaero)
+        this.dataSource = "jaero";
+    if (this.sbs)
+        this.dataSource = "unknown";
 
     // Update all of our data
 
@@ -1227,7 +1229,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
     // If no packet in over 58 seconds, clear the plane.
     // Only clear the plane if it's not selected individually
 
-    if ( (!onlySelected || this.selected) &&
+    if ( !this.isFiltered() && (!onlySelected || this.selected) &&
         (
             (!globeIndex && this.icao[0] != '~' && this.seen < 58)
             || (globeIndex && this.icao[0] != '~' && this.position != null && this.seen_pos < (30 + zoomedOut))
@@ -1238,7 +1240,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
         )
     ) {
         this.visible = true;
-        if (SelectedAllPlanes && (!this.isFiltered() || onlySelected))
+        if (SelectedAllPlanes)
             this.selected = true;
 
         if (redraw) {
