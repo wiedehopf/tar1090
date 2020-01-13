@@ -191,7 +191,7 @@ var positionFilter = true;
 var positionFilterSpeed = 2.5; // in Mach
 // filter speed is based on transmitted ground speed if available
 // this factor is used to give the actual filter speed
-var positionFilterGsFactor = 1.8;
+var positionFilterGsFactor = 2.2;
 var debugPosFilter = false;
 
 var altitudeFilter = true;

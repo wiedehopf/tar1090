@@ -970,7 +970,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     // Filter anything greater than 12000 fpm
 
 
-    if (newAlt == null || (newAlt == this.bad_alt)) {
+    if (newAlt == null || (newAlt == this.bad_alt && this.seen_pos > 5)) {
         // do nothing
     } else if (
         !altitudeFilter
