@@ -2710,7 +2710,8 @@ function onSearch(e) {
     const searchTerm = $("#search_input").val().trim();
     $("#search_input").val("");
     $("#search_input").blur();
-    findPlanes(searchTerm, true, true, true, true);
+    if (searchTerm)
+        findPlanes(searchTerm, true, true, true, true);
     return false;
 }
 
@@ -2763,17 +2764,6 @@ function onResetAltitudeFilter(e) {
     $("#altitude_filter_max").blur();
 
     updatePlaneFilter();
-    refreshTableInfo();
-}
-
-function onFilterByAltitude(e) {
-    e.preventDefault();
-    $("#type_filter").blur();
-
-    updatePlaneFilter();
-
-    refreshSelected();
-    refreshHighlighted();
     refreshTableInfo();
 }
 
