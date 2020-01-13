@@ -1589,6 +1589,9 @@ PlaneObject.prototype.getAircraftData = function() {
             this.interesting = (data[2][1] == '1');
         }
 
+        if (this.icao.slice(0, 2) == "ae")
+            this.military = true;
+
         if (this.selected) {
             refreshSelected();
         }
