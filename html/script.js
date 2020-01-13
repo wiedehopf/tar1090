@@ -1254,6 +1254,7 @@ function initialize_map() {
                 break;
             case "u":
                 toggleMilitary();
+                break;
             case "A":
                 onlyADSB = !onlyADSB;
                 break;
