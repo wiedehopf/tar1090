@@ -128,7 +128,7 @@
 						</div>
 						<div class="infoRowLine ">
 							<div class="infoHeading infoRowFluid">
-								<span>Type: </span>
+								<span title="ICAO type description (L/S/H Landplane/Seaplane/Helicoper 1/2/3/4 Number of P/T/J Reciprocating/Turboprop/Jet Engines - ICAO type short hand (A320/B738)">Desc. - Type: </span>
 							</div>
 							<div class="infoData infoRowFluid">
 								<span class="lightblue-link" id="selected_photo_link"></span> <span id="selected_icaotype"></span>
@@ -675,35 +675,49 @@
 							</table>
 						</div> <!-- dump1090_infoblock -->
 
-						<form id="altitude_filter_form">
-							<label><span class="infoBlockTitleText">Filter by altitude:</span></label>
-							<br>
-							<input id="altitude_filter_min" name="minAltitude" type="text" class="altitudeFilterInput" maxlength="5">
-							<label for="minAltitude" class="altitudeUnit"></label>
-							<span> to </span>
-							<input id="altitude_filter_max" name="maxAltitude" type="text" class="altitudeFilterInput" maxlength="5">
-							<label for="maxAltitude" class="altitudeUnit"></label>
-							<button style="font: small" type="submit">Filter</button>
-							<button style="font: small" id="altitude_filter_reset_button">Reset</button>
+                        <div id="filter_block">
 
-						</form>
-						<form id="callsign_filter_form">
-							<label><span class="infoBlockTitleText">Filter by callsign or squawk:</span></label>
-							<br>
-							<input id="callsign_filter" name="callsign" type="text" class="searchInput" maxlength="16">
-							<button style="font: small" type="submit">Filter</button>
-							<button style="font: small" id="callsign_filter_reset_button">Reset</button>
+                            <form id="altitude_filter_form">
+                                <label><span class="infoBlockTitleText">Filter by altitude:</span></label>
+                                <br>
+                                <input id="altitude_filter_min" name="minAltitude" type="text" class="altitudeFilterInput" maxlength="5">
+                                <label for="minAltitude" class="altitudeUnit"></label>
+                                <span> to </span>
+                                <input id="altitude_filter_max" name="maxAltitude" type="text" class="altitudeFilterInput" maxlength="5">
+                                <label for="maxAltitude" class="altitudeUnit"></label>
+                                <button style="font: small" type="submit">Filter</button>
+                                <button style="font: small" id="altitude_filter_reset_button">Reset</button>
 
-						</form>
+                            </form>
 
-						<form id="type_filter_form">
-							<label><span class="infoBlockTitleText">Filter by type:</span></label>
-							<br>
-							<input id="type_filter" name="type" type="text" class="searchInput" maxlength="16">
-							<button style="font: small" type="submit">Filter</button>
-							<button style="font: small" id="type_filter_reset_button">Reset</button>
+                            <form id="callsign_filter_form">
+                                <label><span class="infoBlockTitleText">Filter by callsign or squawk:</span></label>
+                                <br>
+                                <input id="callsign_filter" name="callsign" type="text" class="searchInput" maxlength="128">
+                                <button style="font: small" type="submit">Filter</button>
+                                <button style="font: small" id="callsign_filter_reset_button">Reset</button>
 
-						</form>
+                            </form>
+
+                            <form id="type_filter_form">
+                                <label><span class="infoBlockTitleText">Filter by type:</span></label>
+                                <br>
+                                <input id="type_filter" name="type" type="text" class="searchInput" maxlength="128">
+                                <button style="font: small" type="submit">Filter</button>
+                                <button style="font: small" id="type_filter_reset_button">Reset</button>
+
+                            </form>
+
+                            <form id="description_filter_form">
+                                <label><span class="infoBlockTitleText">Filter by type description:</span></label>
+                                <br>
+                                <input id="description_filter" name="description" type="text" class="searchInput" maxlength="128">
+                                <button style="font: small" type="submit">Filter</button>
+                                <button style="font: small" id="description_filter_reset_button">Reset</button>
+
+                            </form>
+
+                        </div> <!-- filter_block -->
 
 						<div id="planes_table">
 							<table id="tableinfo" style="width: 100%">

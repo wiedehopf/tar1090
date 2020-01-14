@@ -413,9 +413,9 @@ function fetchData() {
             }
 
             if (data.now >= now || globeIndex) {
-                console.time("Process " + data.globeIndex);
+                //console.time("Process " + data.globeIndex);
                 processReceiverUpdate(data);
-                console.timeEnd("Process " + data.globeIndex);
+                //console.timeEnd("Process " + data.globeIndex);
             }
             if (uat_data && uat_data.now > uat_now) {
                 processReceiverUpdate(uat_data);
@@ -427,9 +427,9 @@ function fetchData() {
             if (PendingFetches < 1) {
                 refreshSelected();
                 refreshHighlighted();
-                console.time("refreshTable");
+                //console.time("refreshTable");
                 refreshTableInfo();
-                console.timeEnd("refreshTable");
+                //console.timeEnd("refreshTable");
                 refreshClock(new Date(now * 1000));
             }
 
@@ -596,9 +596,9 @@ function init_page() {
     });
     */
 
-$('#sidebar_container').on('resize', function() {
-    localStorage['sidebar_width'] = $('#sidebar_container').width();
-});
+    $('#sidebar_container').on('resize', function() {
+        localStorage['sidebar_width'] = $('#sidebar_container').width();
+    });
 
     // Set up event handlers for buttons
     $("#toggle_sidebar_button").click(toggleSidebarVisibility);
@@ -614,104 +614,107 @@ $('#sidebar_container').on('resize', function() {
 
     // Set up altitude filter button event handlers and validation options
     $("#altitude_filter_form").submit(onFilterByAltitude);
-    $("#type_filter_form").submit(updateTypeFilter);
     $("#callsign_filter_form").submit(updateCallsignFilter);
+    $("#type_filter_form").submit(updateTypeFilter);
+    $("#description_filter_form").submit(updateDescriptionFilter);
 
     $("#search_form").submit(onSearch);
     $("#jump_form").submit(onJump);
+
+
+
+    $("#altitude_filter_reset_button").click(onResetAltitudeFilter);
+    $("#callsign_filter_reset_button").click(onResetCallsignFilter);
+    $("#type_filter_reset_button").click(onResetTypeFilter);
+    $("#description_filter_reset_button").click(onResetDescriptionFilter);
 
     // check if the altitude color values are default to enable the altitude filter
     if (ColorByAlt.air.h.length === 3 && ColorByAlt.air.h[0].alt === 2000 && ColorByAlt.air.h[0].val === 20 && ColorByAlt.air.h[1].alt === 10000 && ColorByAlt.air.h[1].val === 140 && ColorByAlt.air.h[2].alt === 40000 && ColorByAlt.air.h[2].val === 300) {
         customAltitudeColors = false;
     }
 
+    $('#settingsCog').on('click', function() {
+        $('#settings_infoblock').toggle();
+    });
 
-$("#altitude_filter_reset_button").click(onResetAltitudeFilter);
-$("#callsign_filter_reset_button").click(onResetCallsignFilter);
-$("#type_filter_reset_button").click(onResetTypeFilter);
+    $('#settings_close').on('click', function() {
+        $('#settings_infoblock').hide();
+    });
 
-$('#settingsCog').on('click', function() {
-    $('#settings_infoblock').toggle();
-});
+    $('#groundvehicle_filter').on('click', function() {
+        filterGroundVehicles(true);
+        refreshSelected();
+        refreshHighlighted();
+        refreshTableInfo();
+    });
 
-$('#settings_close').on('click', function() {
-    $('#settings_infoblock').hide();
-});
+    $('#blockedmlat_filter').on('click', function() {
+        filterBlockedMLAT(true);
+        refreshSelected();
+        refreshHighlighted();
+        refreshTableInfo();
+    });
 
-$('#groundvehicle_filter').on('click', function() {
-    filterGroundVehicles(true);
-    refreshSelected();
-    refreshHighlighted();
-    refreshTableInfo();
-});
+    $('#grouptype_checkbox').on('click', function() {
+        if ($('#grouptype_checkbox').hasClass('settingsCheckboxChecked')) {
+            sortByDistance();
+        } else {
+            sortByDataSource();
+        }
 
-$('#blockedmlat_filter').on('click', function() {
-    filterBlockedMLAT(true);
-    refreshSelected();
-    refreshHighlighted();
-    refreshTableInfo();
-});
+    });
 
-$('#grouptype_checkbox').on('click', function() {
-    if ($('#grouptype_checkbox').hasClass('settingsCheckboxChecked')) {
-        sortByDistance();
-    } else {
-        sortByDataSource();
-    }
-
-});
-
-/*
+    /*
     $('#altitude_checkbox').on('click', function() {
         toggleAltitudeChart(true);
     });
     */
 
-$('#debugAll_checkbox').on('click', function() {
-    toggleDebugAll();
-});
+    $('#debugAll_checkbox').on('click', function() {
+        toggleDebugAll();
+    });
 
-if (localStorage['debugAll'] === "true") {
-    debugAll = true;
-    $('#debugAll_checkbox').addClass('settingsCheckboxChecked');
-} else {
-    debugAll = false;
-    $('#debugAll_checkbox').removeClass('settingsCheckboxChecked');
-}
-
-$('#debug_checkbox').on('click', function() {
-    toggleDebugTracks();
-});
-
-if (localStorage['debugTracks'] === "true") {
-    debugTracks = true;
-    $('#debug_checkbox').addClass('settingsCheckboxChecked');
-} else {
-    debugTracks = false;
-    $('#debug_checkbox').removeClass('settingsCheckboxChecked');
-}
-
-
-$('#selectall_checkbox').on('click', function() {
-    if ($('#selectall_checkbox').hasClass('settingsCheckboxChecked')) {
-        deselectAllPlanes();
+    if (localStorage['debugAll'] === "true") {
+        debugAll = true;
+        $('#debugAll_checkbox').addClass('settingsCheckboxChecked');
     } else {
-        selectAllPlanes();
+        debugAll = false;
+        $('#debugAll_checkbox').removeClass('settingsCheckboxChecked');
     }
-})
-$('#mapdim_checkbox').on('click', function() {
-    toggleMapDim();
-});
 
-// Force map to redraw if sidebar container is resized - use a timer to debounce
-$("#sidebar_container").on("resize", function() {
-    clearTimeout(mapResizeTimeout);
-    mapResizeTimeout = setTimeout(updateMapSize, 10);
-});
+    $('#debug_checkbox').on('click', function() {
+        toggleDebugTracks();
+    });
 
-filterGroundVehicles(false);
-filterBlockedMLAT(false);
-//toggleAltitudeChart(false);
+    if (localStorage['debugTracks'] === "true") {
+        debugTracks = true;
+        $('#debug_checkbox').addClass('settingsCheckboxChecked');
+    } else {
+        debugTracks = false;
+        $('#debug_checkbox').removeClass('settingsCheckboxChecked');
+    }
+
+
+    $('#selectall_checkbox').on('click', function() {
+        if ($('#selectall_checkbox').hasClass('settingsCheckboxChecked')) {
+            deselectAllPlanes();
+        } else {
+            selectAllPlanes();
+        }
+    })
+    $('#mapdim_checkbox').on('click', function() {
+        toggleMapDim();
+    });
+
+    // Force map to redraw if sidebar container is resized - use a timer to debounce
+    $("#sidebar_container").on("resize", function() {
+        clearTimeout(mapResizeTimeout);
+        mapResizeTimeout = setTimeout(updateMapSize, 10);
+    });
+
+    filterGroundVehicles(false);
+    filterBlockedMLAT(false);
+    //toggleAltitudeChart(false);
 
 }
 
@@ -1508,7 +1511,7 @@ function refreshSelected() {
     }
 
     if (selected.icaoType) {
-        $('#selected_icaotype').text(selected.icaoType);
+        $('#selected_icaotype').text(selected.typeDescription + ' - ' + selected.icaoType);
     } else {
         $('#selected_icaotype').text("n/a");
     }
@@ -2782,6 +2785,26 @@ function updateTypeFilter(e) {
     refreshTableInfo();
 }
 
+function onResetDescriptionFilter(e) {
+    $("#description_filter").val("");
+    $("#description_filter").blur();
+
+    updateTypeFilter();
+}
+
+function updateDescriptionFilter(e) {
+    if (e)
+        e.preventDefault();
+
+    $("#description_filter").blur();
+    var description = $("#description_filter").val().trim();
+
+    PlaneFilter.description = description.toUpperCase();
+
+    refreshSelected();
+    refreshHighlighted();
+    refreshTableInfo();
+}
 function onResetAltitudeFilter(e) {
     $("#altitude_filter_min").val("");
     $("#altitude_filter_max").val("");

@@ -219,6 +219,10 @@ PlaneObject.prototype.isFiltered = function() {
         return true;
     }
 
+    if (this.filter.description && (!this.typeDescription || !this.typeDescription.match(this.filter.description)) ) {
+        return true;
+    }
+
     if (this.filter.callsign
         && (!this.flight || !this.flight.match(this.filter.callsign))
         && (!this.squawk || !this.squawk.match(this.filter.callsign))
