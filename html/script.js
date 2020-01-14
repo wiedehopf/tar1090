@@ -337,7 +337,7 @@ function fetchData() {
                 return 1;
             return (globeIndexNow[x] - globeIndexNow[y]);
         });
-        indexes = indexes.slice(0, mapIsVisible ? globeSimLoad : 60);
+        indexes = indexes.slice(0, mapIsVisible ? globeSimLoad : 80);
         for (var i in indexes) {
             ac_url.push('data/globe_' + indexes[i].toString().padStart(4, '0') + '.json');
         }
@@ -421,10 +421,8 @@ function fetchData() {
             PendingFetches--;
 
             if (PendingFetches < 1) {
-                console.time("RefreshH+S");
                 refreshSelected();
                 refreshHighlighted();
-                console.timeEnd("RefreshH+S");
                 console.time("refreshTable");
                 refreshTableInfo();
                 console.timeEnd("refreshTable");
@@ -1858,7 +1856,7 @@ function refreshTableInfo() {
                 tableplane.showInTable = true;
         }
 
-        if (!sidebarVisible) {
+        if (!sidebarVisible || (nTablePlanes > 100 && mapIsVisible)) {
             tableplane.showInTable = false;
             continue;
         }
