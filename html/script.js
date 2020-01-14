@@ -409,7 +409,9 @@ function fetchData() {
             }
 
             if (data.now >= now || globeIndex) {
+                console.time("Process " + data.globeIndex);
                 processReceiverUpdate(data);
+                console.timeEnd("Process " + data.globeIndex);
             }
             if (uat_data && uat_data.now > uat_now) {
                 processReceiverUpdate(uat_data);
@@ -419,9 +421,13 @@ function fetchData() {
             PendingFetches--;
 
             if (PendingFetches < 1) {
+                console.time("RefreshH+S");
                 refreshSelected();
                 refreshHighlighted();
+                console.timeEnd("RefreshH+S");
+                console.time("refreshTable");
                 refreshTableInfo();
+                console.timeEnd("refreshTable");
                 refreshClock(new Date(now * 1000));
             }
 
