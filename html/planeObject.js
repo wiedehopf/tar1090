@@ -85,6 +85,8 @@ function PlaneObject(icao) {
     this.last_message_time = 0;
     this.position_time = 0;
 
+    this.last = 0; // last json this plane was included in
+
     // When was this last updated (seconds before last update)
     this.seen = null;
     this.seen_pos = null;
@@ -1069,16 +1071,18 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 
     // Update all of our data
 
-    if (this.receiver == "1090") {
-        const messageRate = (data.messages - this.msgs1090)/(now - last);
-        this.messageRate = (messageRate + this.messageRateOld)/2;
-        this.messageRateOld = messageRate; 
-        this.msgs1090 = data.messages;
-    } else {
-        const messageRate = (data.messages - this.msgs978)/(now - last);
-        this.messageRate = (messageRate + this.messageRateOld)/2;
-        this.messageRateOld = messageRate; 
-        this.msgs978 = data.messages;
+    if (now - this.last > 0) {
+        if (this.receiver == "1090") {
+            const messageRate = (data.messages - this.msgs1090)/(now - this.last);
+            this.messageRate = (messageRate + this.messageRateOld)/2;
+            this.messageRateOld = messageRate; 
+            this.msgs1090 = data.messages;
+        } else {
+            const messageRate = (data.messages - this.msgs978)/(uat_now - uat_last);
+            this.messageRate = (messageRate + this.messageRateOld)/2;
+            this.messageRateOld = messageRate; 
+            this.msgs978 = data.messages;
+        }
     }
     this.messages = data.messages;
 
@@ -1194,6 +1198,8 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
             this.trace.slice(-30);
         }
     }
+
+    this.last = now;
 };
 
 PlaneObject.prototype.updateTick = function(redraw) {

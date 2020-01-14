@@ -171,7 +171,7 @@ function processReceiverUpdate(data, init) {
         uat_last = uat_now;
         uat_now = data.now;
     } else {
-        if (data.now > now) {
+        if (data.now > now || globeIndex) {
             last = now;
             now = data.now;
         }
