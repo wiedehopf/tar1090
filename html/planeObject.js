@@ -1228,19 +1228,18 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
             this.name = '_' + this.icao.toUpperCase();
         }
         this.name = this.name.trim();
-        this.updated = false;
     }
 
     const zoomedOut = 30 * Math.max(0, -1 * (ZoomLvl - 6));
+    const jaeroTime = this.jaero ? 35*60 : 0;
+    const tisbReduction = (this.icao[0] == '~') ? 15 : 0;
     // If no packet in over 58 seconds, clear the plane.
     // Only clear the plane if it's not selected individually
 
     if ( !this.isFiltered() && (!onlySelected || this.selected) &&
         (
-            (!globeIndex && this.icao[0] != '~' && this.seen < 58)
-            || (globeIndex && this.icao[0] != '~' && this.position != null && this.seen_pos < (30 + zoomedOut))
-            || (this.jaero && this.icao[0] != '~' && this.position != null && this.seen_pos < 35*60)
-            || (this.icao[0] == '~' && this.position != null && this.seen_pos < 45 / (1 + 2 * globeIndex))
+            (!globeIndex && this.seen < (58 - tisbReduction))
+            || (globeIndex && this.seen_pos < (30 + zoomedOut + jaeroTime - tisbReduction))
             || (this.selected && !SelectedAllPlanes && !multiSelect)
             || noVanish
         )
@@ -1255,7 +1254,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
         } else if (this.updateTrack(now, last)) {
             this.updateLines();
             this.updateMarker(true);
-        } else {
+        } else if (this.updated) {
             this.updateMarker(false); // didn't move
         }
     } else {
@@ -1269,6 +1268,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
                 selectPlaneByHex(null,false);
         }
     }
+    this.updated = false;
 };
 
 PlaneObject.prototype.clearMarker = function() {

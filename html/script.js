@@ -63,6 +63,7 @@ var globeIndexGrid = 0;
 var globeIndexNow = {};
 var globeIndexSpecialTiles;
 var globeSimLoad = 4;
+var globeTableLimit = 100;
 var lastRealExtent;
 var lastGlobeExtent;
 var lastRenderExtent;
@@ -1856,7 +1857,7 @@ function refreshTableInfo() {
                 tableplane.showInTable = true;
         }
 
-        if (!sidebarVisible || (nTablePlanes > 100 && mapIsVisible)) {
+        if (!sidebarVisible || (nTablePlanes > globeTableLimit && mapIsVisible)) {
             tableplane.showInTable = false;
             continue;
         }
