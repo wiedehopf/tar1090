@@ -38,7 +38,7 @@ var grouptype_checkbox;
 var multiSelect = false;
 var uat_data = null;
 var enableLabels = false;
-var extendedLabels = false;
+var extendedLabels = 0;
 var mapIsVisible = true;
 var columnVis = Array(30).fill(true);
 var emptyStyle = new ol.style.Style({});
@@ -475,7 +475,8 @@ function initialize() {
     if (localStorage['enableLabels'] == 'true'){
         toggleLabels();
     }
-    if (localStorage['extendedLabels'] == 'true'){
+    if (localStorage['extendedLabels']){
+        extendedLabels = parseInt(localStorage['extendedLabels']) + 2;
         toggleExtendedLabels();
     }
     if (localStorage['trackLabels'] == "true") {
@@ -2681,7 +2682,12 @@ function toggleLabels(switchOn) {
     buttonActive('#L', enableLabels);
 }
 function toggleExtendedLabels() {
-    extendedLabels = !extendedLabels;
+    if (isNaN(extendedLabels))
+        extendedLabels = 0;
+
+    extendedLabels++;
+    extendedLabels %= 3;
+    console.log(extendedLabels);
     localStorage['extendedLabels'] = extendedLabels;
     for (var key in PlanesOrdered) {
         PlanesOrdered[key].updateMarker(false);
