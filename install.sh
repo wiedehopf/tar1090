@@ -220,10 +220,13 @@ do
 	if [[ $changed == yes ]] || ! diff tar1090.service /lib/systemd/system/$service.service &>/dev/null
 	then
 		cp tar1090.service /lib/systemd/system/$service.service
-		systemctl enable $service
-		echo
-		echo "Restarting $service ..."
-		systemctl restart $service
+		if systemctl enable $service
+        then
+            echo "Restarting $service ..."
+            systemctl restart $service
+        else
+            echo "$service.service is masked, could not start it!"
+        fi
 	fi
 
 	# restore sed modified configuration files
