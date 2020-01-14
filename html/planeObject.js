@@ -306,6 +306,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
             alt_real: this.altitude,
             speed: this.speed,
             ts: now,
+            track: this.rotation,
         };
         this.track_linesegs.push(newseg);
         this.history_size ++;
@@ -410,6 +411,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
             alt_real: this.altitude,
             speed: this.speed,
             ts: now,
+            track: this.rotation,
         };
         this.track_linesegs.push(newseg);
         this.history_size += 2;
@@ -492,6 +494,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
             speed: this.prev_speed,
             ground: on_ground,
             ts: this.prev_time,
+            track: this.prev_rot,
         });
 
         this.history_size += 2;
@@ -1402,7 +1405,8 @@ PlaneObject.prototype.updateLines = function() {
                 NBSP + Number(seg.speed).toFixed(0).toString().padStart(3, NBSP) + "  "
                 + (seg.alt_real == "ground" ? ("Ground" + NBSP) : (seg.alt_real.toString().padStart(6, NBSP) + NBSP))
                 + "\n"
-                + "".padStart(4, NBSP) + timestamp + "".padStart(4, NBSP)
+                //+ NBSP + format_track_arrow(seg.track)
+                + "".padStart(3, NBSP) + timestamp + "".padStart(3, NBSP);
             seg.label.setStyle(
                 new ol.style.Style({
                     text: new ol.style.Text({

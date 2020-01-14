@@ -73,6 +73,7 @@ var lastReqestFiles = 0;
 var debugCounter = 0;
 var selectedPhotoCache = null;
 var pathName = null;
+var icaoFilter = null;
 
 var SpecialSquawks = {
     '7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -126,6 +127,8 @@ function processAircraft(ac, init, uat) {
             return;
         }
         */
+    if (icaoFilter && !icaoFilter.includes(hex))
+        return;
 
     plane = Planes[hex];
 
@@ -871,6 +874,10 @@ function parse_history() {
     // And kick off one refresh immediately.
     processURLParams();
 
+
+    if (!icaoFilter && globeIndex)
+        toggleTableInView(true);
+
     fetchData();
 
     updateMapSize();
@@ -928,7 +935,6 @@ function initialize_map() {
         globeIndexGrid = receiverJson.globeIndexGrid;
         globeIndex = 1;
         globeIndexSpecialTiles = receiverJson.globeIndexSpecialTiles;
-        toggleTableInView(true);
         $('#dump1090_total_history_td').hide();
         $('#dump1090_message_rate_td').hide();
     }
@@ -1822,7 +1828,7 @@ function refreshTableInfo() {
 
         tableplane.inView = inView(tableplane, lastRealExtent);
 
-        if (globeIndex) {
+        if (globeIndex && !icaoFilter) {
             if (inView(tableplane, lastRenderExtent) || tableplane.selected) {
                 tableplane.updateFeatures(now, last);
             } else if (tableplane.visible) {
@@ -1830,8 +1836,7 @@ function refreshTableInfo() {
                 tableplane.clearLines();
                 tableplane.visible = false;
             }
-        }
-        if (!globeIndex) {
+        } else {
             tableplane.updateTick();
         }
 
@@ -2652,7 +2657,7 @@ function followRandomPlane() {
 }
 
 function toggleTableInView(switchOn) {
-    if (switchOn || globeIndex) {
+    if (switchOn || (globeIndex && !icaoFilter)) {
         tableInView = true;
     } else {
         tableInView = !tableInView;
@@ -3025,6 +3030,11 @@ function highlight(evt) {
 function processURLParams(){
     try {
         const search = new URLSearchParams(window.location.search);
+
+        icaoFilter = search.get('icaoFilter');
+        if (icaoFilter)
+            icaoFilter = icaoFilter.toLowerCase().split(',');
+
         const icao = search.get('icao');
         const callsign = search.get('callsign');
         var zoom;

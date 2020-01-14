@@ -7,6 +7,7 @@ var UP_TRIANGLE='\u25b2'; // U+25B2 BLACK UP-POINTING TRIANGLE
 var DOWN_TRIANGLE='\u25bc'; // U+25BC BLACK DOWN-POINTING TRIANGLE
 
 var TrackDirections = ["North","NE","East","SE","South","SW","West","NW"];
+var TrackDirectionArrows = ["\u21e7","\u2b00","\u21e8","\u2b02","\u21e9","\u2b03","\u21e6","\u2b01"];
 
 var UnitLabels = {
 	'altitude': { metric: "m", imperial: "ft", nautical: "ft"},
@@ -43,6 +44,14 @@ function format_track_long(track) {
 
 	var trackDir = Math.floor((360 + track % 360 + 22.5) / 45) % 8;
 	return  TrackDirections[trackDir] + ":" + NBSP + track.toFixed(1) + DEGREES;
+}
+function format_track_arrow(track) {
+	if (track == null){
+		return "";
+	}
+
+	var trackDir = Math.floor((360 + track % 360 + 22.5) / 45) % 8;
+	return  TrackDirectionArrows[trackDir];
 }
 
 // alt in feet
