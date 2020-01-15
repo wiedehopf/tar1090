@@ -1495,6 +1495,9 @@ function refreshSelected() {
     }
     const selected = SelectedPlane;
 
+    if (SelectedPlane.position && SelectedPlane.seen_pos > 25)
+        SelectedPlane.updateMarker(true);
+
     if (selected.flight && selected.flight.trim()) {
         $('#selected_callsign').text(selected.flight);
     } else {
