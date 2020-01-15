@@ -729,13 +729,12 @@ PlaneObject.prototype.updateIcon = function() {
         || ZoomLvl >= labelZoomGround
         || (this.selected && !SelectedAllPlanes)
     )) {
-        if (extendedLabels > 0) {
+        if (extendedLabels == 2) {
+            labelText = NBSP + (this.icaoType ? this.icaoType : "  ?  ") + NBSP + "\n" + NBSP + this.name + NBSP;
+        } else if (extendedLabels == 1 ) {
             if (this.altitude && (!this.onGround || (this.speed && this.speed > 15) || (this.selected && !SelectedAllPlanes))) {
-                if (extendedLabels == 1)
-                    labelText =  Number(this.speed).toFixed(0).toString().padStart(4, NBSP)+ "  "
-                        + this.altitude.toString().padStart(5, NBSP) + " \n " + this.name + " ";
-                if (extendedLabels == 2)
-                    labelText = NBSP + (this.icaoType ? this.icaoType : "  ?  ") + NBSP + "\n" + NBSP + this.name + NBSP;
+                labelText =  Number(this.speed).toFixed(0).toString().padStart(4, NBSP)+ "  "
+                    + this.altitude.toString().padStart(5, NBSP) + " \n " + this.name + " ";
             } else {
                 labelText =  " " + this.name + " ";
             }
