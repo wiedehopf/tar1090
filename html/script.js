@@ -457,6 +457,10 @@ function fetchData() {
 
         req.fail(function(jqxhr, status, error) {
             $("#update_error_detail").text("AJAX call failed (" + status + (error ? (": " + error) : "") + "). Maybe dump1090 is no longer running?");
+            console.log("AJAX call failed (" + status + (error ? (": " + error) : "") + "). Maybe dump1090 is no longer running?");
+            console.log(jqxhr);
+            console.log(status);
+            console.log(error);
             $("#update_error").css('display','block');
             StaleReceiverCount++;
             PendingFetches--;
