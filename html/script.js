@@ -264,11 +264,7 @@ function setupPlane(hex, plane) {
 
 function fetchData() {
     clearTimeout(refreshId);
-    if (noVanish) {
-        refreshId = setTimeout(fetchData, 5000);
-    } else {
-        refreshId = setTimeout(fetchData, RefreshInterval);
-    }
+    refreshId = setTimeout(fetchData, RefreshInterval);
     if (PendingFetches > 0)
         return;
     for (var i in FetchPending) {
@@ -713,7 +709,7 @@ function init_page() {
     // Force map to redraw if sidebar container is resized - use a timer to debounce
     $("#sidebar_container").on("resize", function() {
         clearTimeout(mapResizeTimeout);
-        mapResizeTimeout = setTimeout(updateMapSize, 10);
+        mapResizeTimeout = setTimeout(updateMapSize, 20);
     });
 
     filterGroundVehicles(false);
