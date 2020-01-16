@@ -1869,7 +1869,7 @@ function refreshTableInfo() {
                 tableplane.showInTable = true;
         }
 
-        if (!sidebarVisible || (nTablePlanes > globeTableLimit && mapIsVisible)) {
+        if (!sidebarVisible || (nTablePlanes > globeTableLimit && mapIsVisible && globeIndex)) {
             tableplane.showInTable = false;
             continue;
         }
