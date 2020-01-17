@@ -551,6 +551,9 @@ function init_page() {
 
     if (localStorage['sidebar_width'] != null)
         $('#sidebar_container').width(localStorage['sidebar_width']);
+    else
+        $('#sidebar_container').width('25%');
+
     if ($('#sidebar_container').width() > $(window).innerWidth() *0.8)
         $('#sidebar_container').width('30%');
 
