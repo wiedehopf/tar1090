@@ -66,7 +66,7 @@ element {
     float: right;
     width: 30px;
     height: 36px;
-    background-size: 24px 25px;
+    background-size: 28px 32px;
     background-repeat: no-repeat;
     background-position: 0px;
     background-color: transparent;
@@ -74,11 +74,11 @@ element {
 }
 
 #toggle_sidebar_button.show_sidebar {
-    background-image: url("images/show_sidebar_active_48x40.png");
+    background-image: url("images/show_sidebar.png");
 }
 
 #toggle_sidebar_button.hide_sidebar {
-    background-image: url("images/hide_sidebar_active_48x40.png");
+    background-image: url("images/hide_sidebar.png");
 }
 
 #expand_sidebar_control {
@@ -93,12 +93,12 @@ element {
     float: right;
     width: 30px;
     height: 36px;
-    background-size: 24px 25px;
+    background-size: 28px 32px;
     background-repeat: no-repeat;
     background-position: 0px;
     background-color: transparent;
     border: none;
-    background-image: url("images/show_sidebar_active_48x40.png");
+    background-image: url("images/show_sidebar.png");
 }
 
 
