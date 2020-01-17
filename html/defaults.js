@@ -29,10 +29,10 @@ var DisplayUnits = "nautical";
 // degrees.
 
 // Default center of the map.
-var DefaultCenterLat = 45.0;
-var DefaultCenterLon = 9.0;
+var DefaultCenterLat = 40.56;
+var DefaultCenterLon = -73.66
 // The google maps zoom level, 0 - 16, lower is further out
-var DefaultZoomLvl   = 7;
+var DefaultZoomLvl   = 9;
 
 // Center marker. If dump1090 provides a receiver location,
 // that location is used and these settings are ignored.
