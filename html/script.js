@@ -69,7 +69,7 @@ var lastGlobeExtent;
 var lastRenderExtent;
 var globeIndexExtent;
 var PendingFetches = 0;
-var lastReqestFiles = 0;
+var lastRequestFiles = 0;
 var debugCounter = 0;
 var selectedPhotoCache = null;
 var pathName = null;
@@ -264,7 +264,7 @@ function setupPlane(hex, plane) {
 
 function fetchData() {
     clearTimeout(refreshId);
-    refreshId = setTimeout(fetchData, RefreshInterval);
+    refreshId = setTimeout(fetchData, refreshInt());
     if (PendingFetches > 0)
         return;
     for (var i in FetchPending) {
@@ -337,7 +337,7 @@ function fetchData() {
                 return 1;
             return (globeIndexNow[x] - globeIndexNow[y]);
         });
-        indexes = indexes.slice(0, mapIsVisible ? globeSimLoad : 80);
+        indexes = indexes.slice(0, globeSimLoad);
         for (var i in indexes) {
             ac_url.push('data/globe_' + indexes[i].toString().padStart(4, '0') + '.json');
         }
@@ -347,16 +347,12 @@ function fetchData() {
             ac_url[0] = 'data/?feed=' + uuid;
         }
     }
-    lastReqestFiles = ac_url.length;
+    lastRequestFiles = ac_url.length;
     PendingFetches = ac_url.length;
 
     if (globeIndex) {
         clearTimeout(refreshId);
-        if (mapIsVisible) {
-            refreshId = setTimeout(fetchData, RefreshInterval);
-        } else {
-            refreshId = setTimeout(fetchData, 55000);
-        }
+        refreshId = setTimeout(fetchData, refreshInt());
     }
 
     for (var i in ac_url) {
@@ -431,11 +427,7 @@ function fetchData() {
 
             if (globeIndex) {
                 clearTimeout(refreshId);
-                if (mapIsVisible) {
-                    refreshId = setTimeout(fetchData, RefreshInterval);
-                } else {
-                    refreshId = setTimeout(fetchData, 55000);
-                }
+                refreshId = setTimeout(fetchData, refreshInt());
             }
 
             // Check for stale receiver data
@@ -1065,6 +1057,7 @@ function initialize_map() {
         view: new ol.View({
             center: ol.proj.fromLonLat([CenterLon, CenterLat]),
             zoom: ZoomLvl,
+            minZoom: 2,
         }),
         controls: [new ol.control.Zoom({delta: 1,}),
             new ol.control.Rotate(),
@@ -3299,4 +3292,18 @@ function updateAddressBar() {
         string = pathName + posString;
 
     window.history.replaceState("object or string", "Title", string);
+}
+
+function refreshInt() {
+    var refresh = RefreshInterval;
+    if (!globeIndex)
+        return refresh;
+
+    if (!mapIsVisible)
+        refresh *= 2;
+
+    if (lastRequestFiles >= 4)
+        return 1.6 * refresh;
+
+    return refresh * (1 + 0.6/4 * lastRequestFiles);
 }
