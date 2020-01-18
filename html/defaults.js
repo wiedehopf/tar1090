@@ -55,9 +55,9 @@ var MapDim = true;
 
 // -- Marker settings -------------------------------------
 
-var markerScaleFactor = 1.2;
+var markerScaleFactor = 1.25;
 var markerMaxSize = 1.32;
-var markerMinSize = 0.72;
+var markerMinSize = 0.9;
 
 var lineWidth = 1;
 
