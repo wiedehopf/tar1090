@@ -13,7 +13,16 @@ Provides an improved dump1090-fa webinterface
 
 See the bottom of the page for screenshots
 
-## Installation / Update:
+## NO WARRANTY
+
+See the bottom of this page or the LICENSE for details.
+While striving not to disrupt an existing Raspbian / Debian / Ubuntu installation, this can't be guaranteed.
+This install script assumes Raspbian / Debian / Ubunutu and will not work on systems without apt.
+
+tar1090 is not a dump1090 replacement, it merely adds an additional webinterface for an existing dump1090-fa or readsb installation.
+dump1090-mutability installations should work as well, aircraft details will be limited though.
+
+## Installation
 
 ```
 sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"
@@ -26,6 +35,15 @@ Click the following URL and replace the IP address with address of your Raspberr
 http://192.168.x.yy/tar1090
 
 Check further down or keyboard shortcuts.
+
+## Update
+
+```
+sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"
+```
+
+Configuration should be preserved.
+
 
 ## Configuration (optional):
 
@@ -50,6 +68,25 @@ sudo nano /usr/local/share/tar1090/html/config.js
 
 Ctrl-x to exit, y (yes) and enter to save.
 Then Ctrl-F5 to refresh the web interface in the browser.
+
+## Change Log
+
+The commit log on the github page is the only form of change log.
+If you can't find the commit log or don't understand what it means, you have 3 options:
+- Assume there is no update and use the currently installed version.
+- Run the update script as provided above and let it surprise you!
+- Complain about the lack of a change log and be mocked.
+
+While i make this interface available for others to install and hope you like it,
+i maintain this interface mainly for users who are curious and can figure it out themselves.
+Documentation and explanation is time consuming to do and as such i choose to limit it to the essential.
+
+## Reporting a bug
+
+If you think you have found a bug, open an issue here on github.
+Please check all the buttons and read all the tooltips before you do.
+Try deleting the browser cache for the tar1090 page.
+
 
 ## Enable (/disable) FA links in the webinterface (previously enabled by default)
 
@@ -224,3 +261,15 @@ for i in *; do if [ -f "../conf-available/$i" ]; then sudo ln -s -f "../conf-ava
 
 After that rerun the install script.
 If you still have history loading issues, get back to me via the github issues or the various forums i frequent.
+
+## NO WARRANTY - Excerpt from the License:
+
+  11. BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
+FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.  EXCEPT WHEN
+OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
+PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED
+OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE ENTIRE RISK AS
+TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.  SHOULD THE
+PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING,
+REPAIR OR CORRECTION.
