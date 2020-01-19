@@ -220,7 +220,10 @@ do
 
 	cp nginx.conf $ipath/nginx-$service.conf
 
-	if [[ $lighttpd == yes ]] && ! diff 88-tar1090.conf /etc/lighttpd/conf-enabled/88-$service.conf &>/dev/null
+	if [[ $lighttpd == yes ]] && diff 88-tar1090.conf /etc/lighttpd/conf-enabled/99-$service.conf &>/dev/null
+    then
+        true
+	elif [[ $lighttpd == yes ]] && ! diff 88-tar1090.conf /etc/lighttpd/conf-enabled/88-$service.conf &>/dev/null
 	then
 		changed_lighttpd=yes
         if [ -f /etc/lighttpd/conf.d/69-skybup.conf ] && [[ "$instance" == "webroot" ]]; then

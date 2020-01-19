@@ -2284,6 +2284,8 @@ function selectAllPlanes() {
 
 // deselect all the planes
 function deselectAllPlanes() {
+    if (!multiSelect && SelectedPlane)
+        toggleIsolation(false, "off");
     buttonActive('#T', false);
     for(var key in Planes) {
         Planes[key].selected = false;
@@ -2538,8 +2540,12 @@ function buttonActive(id, state) {
     }
 }
 
-function toggleIsolation() {
+function toggleIsolation(on, off) {
     onlySelected = !onlySelected;
+    if (on)
+        onlySelected = true;
+    if (off)
+        onlySelected = false;
 
     buttonActive('#I', onlySelected);
 
@@ -2732,16 +2738,24 @@ function toggleTrackLabels() {
     buttonActive('#K', trackLabels);
 }
 
-function toggleMultiSelect() {
-    if (multiSelect) {
+function toggleMultiSelect(on, off) {
+    multiSelect = !multiSelect;
+
+    if (on)
+        multiSelect = true;
+    if (off)
         multiSelect = false;
+
+    if (!multiSelect) {
+        if (!SelectedPlane)
+            toggleIsolation(false, "off");
         var plane = SelectedPlane;
+        SelectedPlane = null;
         deselectAllPlanes();
         if (plane)
             selectPlaneByHex(plane.icao);
-    } else {
-        multiSelect = true;
     }
+
     buttonActive('#M', multiSelect);
 }
 
@@ -3165,7 +3179,7 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
         }
     }
     if (results.length > 1) {
-        multiSelect = true;
+        toggleMultiSelect("on");
         for (var i in results) {
             results[i].selected = true;
             results[i].updateTick(true);
