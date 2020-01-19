@@ -123,8 +123,8 @@ fi
 
 
 # copy over base files
-cp default install.sh uninstall.sh 99-tar1090-webroot.conf LICENSE README.md \
-	95-tar1090-otherport.conf nginx_webroot.conf $ipath
+cp default install.sh uninstall.sh LICENSE README.md \
+	95-tar1090-otherport.conf $ipath
 
 
 services=""
@@ -145,8 +145,22 @@ do
 	cp -n default /etc/default/$service
 	sed -i -e 's/skyview978/skyaware978/' /etc/default/$service
 
-	sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" -e "s?INSTANCE?$instance?g" -e "s?HTMLPATH?$html_path?g" 88-tar1090.conf
-	sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" -e "s?INSTANCE?$instance?g" -e "s?HTMLPATH?$html_path?g" nginx.conf
+    if [[ "$instance" == "webroot" ]]
+    then
+        sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" \
+            -e "s?/INSTANCE??g" -e "s?HTMLPATH?$html_path?g" 88-tar1090.conf
+        sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" \
+            -e "s?/INSTANCE??g" -e "s?HTMLPATH?$html_path?g" nginx.conf
+
+    else
+
+        sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" \
+            -e "s?INSTANCE?$instance?g" -e "s?HTMLPATH?$html_path?g" 88-tar1090.conf
+        sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" \
+            -e "s?INSTANCE?$instance?g" -e "s?HTMLPATH?$html_path?g" nginx.conf
+
+    fi
+
 	sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" tar1090.service
 
 	# keep some stuff around
@@ -209,11 +223,19 @@ do
 	if [[ $lighttpd == yes ]] && ! diff 88-tar1090.conf /etc/lighttpd/conf-enabled/88-$service.conf &>/dev/null
 	then
 		changed_lighttpd=yes
-		cp 88-tar1090.conf /etc/lighttpd/conf-available/88-$service.conf
-        if [ -f /etc/lighttpd/conf.d/69-skybup.conf ]; then
-            ln -f -s /etc/lighttpd/conf-available/88-$service.conf /etc/lighttpd/conf-enabled/66-$service.conf
+        if [ -f /etc/lighttpd/conf.d/69-skybup.conf ] && [[ "$instance" == "webroot" ]]; then
+            true
+        elif [[ "$instance" == "webroot" ]]
+        then
+            cp 88-tar1090.conf /etc/lighttpd/conf-available/99-$service.conf
+            ln -f -s /etc/lighttpd/conf-available/99-$service.conf /etc/lighttpd/conf-enabled/99-$service.conf
         else
-            ln -f -s /etc/lighttpd/conf-available/88-$service.conf /etc/lighttpd/conf-enabled/88-$service.conf
+            cp 88-tar1090.conf /etc/lighttpd/conf-available/88-$service.conf
+            if [ -f /etc/lighttpd/conf.d/69-skybup.conf ]; then
+                ln -f -s /etc/lighttpd/conf-available/88-$service.conf /etc/lighttpd/conf-enabled/66-$service.conf
+            else
+                ln -f -s /etc/lighttpd/conf-available/88-$service.conf /etc/lighttpd/conf-enabled/88-$service.conf
+            fi
         fi
 	fi
 
