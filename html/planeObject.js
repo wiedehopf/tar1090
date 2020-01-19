@@ -823,10 +823,8 @@ PlaneObject.prototype.updateIcon = function() {
     return true;
 };
 
-PlaneObject.prototype.processTrace = function(data, show) {
-    if (!data || !data.trace || !this.fullTrace || !this.fullTrace.trace)
-        return;
-    var trace;
+PlaneObject.prototype.processTrace = function(show) {
+    var trace = null;
     var timeZero, _now, _last = 0;
     this.history_size = 0;
     var points_in_trace = 0;
@@ -840,13 +838,21 @@ PlaneObject.prototype.processTrace = function(data, show) {
 
     for (var j = 0; j < 2; j++) {
         if (j == 0) {
+            if (!this.fullTrace || !this.fullTrace.trace)
+                continue;
             trace = this.fullTrace.trace;
             timeZero = this.fullTrace.timestamp;
             _last = timeZero - 1;
             this.prev_position = null;
         } else {
-            trace = data.trace;
-            timeZero = data.timestamp;
+            if (!this.recentTrace || !this.recentTrace.trace)
+                continue;
+            if (!trace) {
+                _last = timeZero - 1;
+                this.prev_position = null;
+            }
+            trace = this.recentTrace.trace;
+            timeZero = this.recentTrace.timestamp;
         }
 
         for (var i = 0; i < trace.length; i++) {
@@ -917,6 +923,8 @@ PlaneObject.prototype.processTrace = function(data, show) {
         this.visible = true;
         this.updated = true;
     }
+    this.updateMarker(true);
+    this.updateLines();
 
     console.log(this.history_size + ' ' + points_in_trace);
 }
@@ -1611,6 +1619,8 @@ PlaneObject.prototype.getAircraftData = function() {
         if (this.selected) {
             refreshSelected();
         }
+
+        this.updateMarker(true);
 
         data = null;
     }.bind(this));

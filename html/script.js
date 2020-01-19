@@ -74,6 +74,7 @@ var debugCounter = 0;
 var selectedPhotoCache = null;
 var pathName = null;
 var icaoFilter = null;
+var showTrace = null;
 
 var SpecialSquawks = {
     '7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -877,7 +878,8 @@ function parse_history() {
     if (!icaoFilter && globeIndex)
         toggleTableInView(true);
 
-    fetchData();
+    if (!showTrace)
+        fetchData();
 
     updateMapSize();
 
@@ -892,7 +894,8 @@ function parse_history() {
         sortByAltitude();
     }
     pathName = window.location.pathname;
-    window.setInterval(updateAddressBar, 1000);
+    if (!showTrace)
+        window.setInterval(updateAddressBar, 1000);
 }
 
 // Make a LineString with 'points'-number points
@@ -2125,45 +2128,68 @@ function selectPlaneByHex(hex, options) {
         var URL2 = 'data/traces/'+ hex.slice(-2) + '/trace_full_' + hex + '.json.gz';
         //console.log('Requesting trace: ' + hex);
 
+
+        if (showTrace) {
+            URL1 = 'globe_history/' + showTrace + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json.gz';
+        }
+
         var req1 = $.ajax({ url: URL1,
             timeout: 15000,
             dataType: 'json',
             zoom: options.zoom,
             follow: options.follow,
         });
-        var req2 = $.ajax({ url: URL2,
-            timeout: 15000,
-            dataType: 'json',
-            req1: req1,
-        });
-        if (newPlane) {
-            req2.done(function(data) {
-                Planes[data.icao].fullTrace = data;
-                this.req1.done(function(data) {
-                    Planes[data.icao].processTrace(data);
-                    if (Planes[data.icao] && Planes[data.icao].selected)
-                        Planes[data.icao].updateMarker(true);
-                    Planes[data.icao].updateLines();
-                });
+        var req2 = null;
+        if (!showTrace) {
+            req2 = $.ajax({ url: URL2,
+                timeout: 15000,
+                dataType: 'json',
+                zoom: options.zoom,
+                follow: options.follow,
             });
+        }
+        if (newPlane) {
+            req1.done(function(data) {
+                Planes[data.icao].recentTrace = data;
+                Planes[data.icao].processTrace();
+            });
+            if (req2) {
+                req2.done(function(data) {
+                    Planes[data.icao].fullTrace = data;
+                    Planes[data.icao].processTrace();
+                });
+            }
 
         } else {
-            req2.done(function(data) {
+            req1.done(function(data) {
                 var ac = {};
                 ac.hex = data.icao;
                 processAircraft(ac);
-                Planes[data.icao].fullTrace = data;
-                this.req1.done(function(data) {
-                    Planes[data.icao].processTrace(data, "show");
-                    //console.log(Planes[data.icao]);
+                Planes[data.icao].recentTrace = data;
+                Planes[data.icao].processTrace();
+                //console.log(Planes[data.icao]);
+                var options = {
+                    noFetch: true,
+                    follow: this.follow,
+                    zoom: this.zoom
+                }
+                selectPlaneByHex(data.icao, options);
+            });
+            if (req2) {
+                req2.done(function(data) {
+                    var ac = {};
+                    ac.hex = data.icao;
+                    processAircraft(ac);
+                    Planes[data.icao].fullTrace = data;
+                    Planes[data.icao].processTrace();
                     var options = {
                         noFetch: true,
                         follow: this.follow,
                         zoom: this.zoom
                     }
-                    selectPlaneByHex(data.icao, options)
+                    selectPlaneByHex(data.icao, options);
                 });
-            });
+            }
         }
     }
 
@@ -3064,6 +3090,7 @@ function processURLParams(){
             icaoFilter = icaoFilter.toLowerCase().split(',');
 
         const icao = search.get('icao');
+        showTrace = search.get('showTrace');
         const callsign = search.get('callsign');
         var zoom;
         var follow = true;
@@ -3089,8 +3116,14 @@ function processURLParams(){
             }
         }
 
+        if (icao == null)
+            showTrace = null;
         if (icao != null) {
-            toggleIsolation();
+            if (showTrace != null) {
+                console.log(icao + ': ' + showTrace);
+            } else {
+                toggleIsolation();
+            }
             if (Planes[icao.toLowerCase()] || globeIndex) {
                 console.log('Selected ICAO id: '+ icao);
                 var selectOptions = {follow: follow};
