@@ -1851,7 +1851,7 @@ function refreshTableInfo() {
         classes = "plane_table_row";
 
         if (tableInView && tableplane.visible &&
-            (tableplane.inView || tableplane.selected)
+            (tableplane.inView || (tableplane.selected && !SelectedAllPlanes))
         ) {
             tableplane.showInTable = true;
             ++TrackedAircraftPositions;
