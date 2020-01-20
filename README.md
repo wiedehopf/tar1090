@@ -244,6 +244,7 @@ If you are using another dump1090 fork, change `/run/dump1090-fa` in this sectio
 location /tar1090/data/ {
   alias /run/dump1090-fa/;
 }
+```
 
 
 ## history not loading issue (possible fix)
