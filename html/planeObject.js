@@ -1411,16 +1411,25 @@ PlaneObject.prototype.updateLines = function() {
             seg.label = true;
         } else if (trackLabels && !seg.label && seg.alt_real != null) {
             seg.label = new ol.Feature(new ol.geom.Point(seg.fixed.getFirstCoordinate()));
-            const date = new Date(seg.ts * 1000);
-            const timestamp = date.getHours().toString().padStart(2,'0')
-                + ":" + date.getMinutes().toString().padStart(2,'0')
-                + ":" + date.getSeconds().toString().padStart(2,'0');
+            var timestamp;
+                const date = new Date(seg.ts * 1000);
+            if (showTrace) {
+                timestamp = date.getUTCHours().toString().padStart(2,'0')
+                    + ":" + date.getUTCMinutes().toString().padStart(2,'0')
+                    + ":" + date.getUTCSeconds().toString().padStart(2,'0');
+                timestamp = "".padStart(1, NBSP) + timestamp + NBSP + "Z" + "".padStart(1, NBSP);
+            } else {
+                timestamp = date.getHours().toString().padStart(2,'0')
+                    + ":" + date.getMinutes().toString().padStart(2,'0')
+                    + ":" + date.getSeconds().toString().padStart(2,'0');
+                timestamp = "".padStart(3, NBSP) + timestamp + "".padStart(3, NBSP);
+            }
             const text =
                 NBSP + Number(seg.speed).toFixed(0).toString().padStart(3, NBSP) + "  "
                 + (seg.alt_real == "ground" ? ("Ground" + NBSP) : (seg.alt_real.toString().padStart(6, NBSP) + NBSP))
                 + "\n"
                 //+ NBSP + format_track_arrow(seg.track)
-                + "".padStart(3, NBSP) + timestamp + "".padStart(3, NBSP);
+                + timestamp;
             seg.label.setStyle(
                 new ol.style.Style({
                     text: new ol.style.Text({
