@@ -840,19 +840,21 @@ PlaneObject.prototype.processTrace = function(show) {
         if (j == 0) {
             if (!this.fullTrace || !this.fullTrace.trace)
                 continue;
-            trace = this.fullTrace.trace;
             timeZero = this.fullTrace.timestamp;
+
             _last = timeZero - 1;
             this.prev_position = null;
+
+            trace = this.fullTrace.trace;
         } else {
             if (!this.recentTrace || !this.recentTrace.trace)
                 continue;
+            timeZero = this.recentTrace.timestamp;
             if (!trace) {
                 _last = timeZero - 1;
                 this.prev_position = null;
             }
             trace = this.recentTrace.trace;
-            timeZero = this.recentTrace.timestamp;
         }
 
         for (var i = 0; i < trace.length; i++) {
