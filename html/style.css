@@ -751,3 +751,61 @@ select.error, textarea.error, input.error {
         background-image: url("images/zoom-in@3x.png");
     }
 }
+
+.greyButton {
+  background-color: #ddd;
+  cursor: pointer;
+  padding: 4px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+  font-weight: bold;
+  color: #003f4b;
+}
+.greyButton:after {
+  content: '\02795\FE0E'; /* Unicode character for "plus" sign (+) */
+  font: Arial;
+  float: right;
+  margin-left: 5px;
+}
+
+/* Style the button that is used to open and close the collapsible content */
+.collapseButton {
+  background-color: #ddd;
+  cursor: pointer;
+  padding: 4px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+  font-weight: bold;
+  color: #003f4b;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .collapseButton:hover {
+  background-color: #ccc;
+}
+
+/* Style the collapsible content. Note: hidden by default */
+.collapse {
+  padding: 0 14px;
+  display: none;
+  overflow: hidden;
+  background-color: #f1f1f1;
+  margin-bottom: 8px;
+}
+
+.collapseButton:after {
+  content: '\02795\FE0E'; /* Unicode character for "plus" sign (+) */
+  font: Arial;
+  float: right;
+  margin-left: 5px;
+}
+
+.active:after {
+  content: "\2796\FE0E"; /* Unicode character for "minus" sign (-) */
+}

@@ -146,6 +146,7 @@ var OutlineADSBColor = '#000000';
 // Outline color for aircraft icons with a mlat position
 var OutlineMlatColor = '#001F66';
 
+// Also called range rings :)
 var SiteCircles = true; // true to show circles (only shown if the center marker is shown)
 // In miles, nautical miles, or km (depending settings value 'DisplayUnits')
 var SiteCirclesDistances = new Array(100,150,200);

@@ -74,7 +74,10 @@ var debugCounter = 0;
 var selectedPhotoCache = null;
 var pathName = null;
 var icaoFilter = null;
-var showTrace = null;
+var showTrace = false
+var traceDate = null;
+var traceDateString = null;
+var icaoParam = '000000';
 
 var SpecialSquawks = {
     '7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -266,6 +269,8 @@ function setupPlane(hex, plane) {
 function fetchData() {
     clearTimeout(refreshId);
     refreshId = setTimeout(fetchData, refreshInt());
+    if (showTrace)
+        return;
     if (PendingFetches > 0)
         return;
     for (var i in FetchPending) {
@@ -513,6 +518,20 @@ function initialize() {
             })
     });
 
+    var coll = document.getElementsByClassName("collapseButton");
+
+    for (var i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+                content.style.display = "block";
+            }
+        });
+    }
+
 }
 
 function init_page() {
@@ -617,6 +636,9 @@ function init_page() {
     $("#search_form").submit(onSearch);
     $("#jump_form").submit(onJump);
 
+    $("#show_trace").click(toggleShowTrace);
+    $("#trace_back_1d").click(function() {shiftTrace(-1)});
+    $("#trace_jump_1d").click(function() {shiftTrace(1)});
 
 
     $("#altitude_filter_reset_button").click(onResetAltitudeFilter);
@@ -871,6 +893,7 @@ function parse_history() {
     //window.setInterval(refreshTableInfo, 1000);
     window.setInterval(function() {PendingFetches--;}, 10000);
 
+    pathName = window.location.pathname;
     // And kick off one refresh immediately.
     processURLParams();
 
@@ -878,8 +901,11 @@ function parse_history() {
     if (!icaoFilter && globeIndex)
         toggleTableInView(true);
 
-    if (!showTrace)
-        fetchData();
+    fetchData();
+
+    if (!globeIndex) {
+        $('#show_trace').hide();
+    }
 
     updateMapSize();
 
@@ -893,9 +919,7 @@ function parse_history() {
     } else {
         sortByAltitude();
     }
-    pathName = window.location.pathname;
-    if (!showTrace)
-        window.setInterval(updateAddressBar, 1000);
+    window.setInterval(updateAddressBar, 1000);
 }
 
 // Make a LineString with 'points'-number points
@@ -2130,7 +2154,7 @@ function selectPlaneByHex(hex, options) {
 
 
         if (showTrace) {
-            URL1 = 'globe_history/' + showTrace + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json.gz';
+            URL1 = 'globe_history/' + traceDateString + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json.gz';
         }
 
         var req1 = $.ajax({ url: URL1,
@@ -2284,6 +2308,8 @@ function selectAllPlanes() {
 
 // deselect all the planes
 function deselectAllPlanes() {
+    if (showTrace)
+        return;
     if (!multiSelect && SelectedPlane)
         toggleIsolation(false, "off");
     buttonActive('#T', false);
@@ -3103,8 +3129,11 @@ function processURLParams(){
         if (icaoFilter)
             icaoFilter = icaoFilter.toLowerCase().split(',');
 
-        const icao = search.get('icao');
-        showTrace = search.get('showTrace');
+        var icao = search.get('icao');
+        if (icao)
+            icaoParam = icao = icao.toLowerCase();
+
+        traceDateString = search.get('showTrace');
         const callsign = search.get('callsign');
         var zoom;
         var follow = true;
@@ -3130,21 +3159,18 @@ function processURLParams(){
             }
         }
 
-        if (icao == null)
-            showTrace = null;
         if (icao != null) {
-            if (showTrace != null) {
-                console.log(icao + ': ' + showTrace);
-            } else {
-                toggleIsolation();
+            if (traceDateString != null) {
+                toggleShowTrace();
             }
-            if (Planes[icao.toLowerCase()] || globeIndex) {
+            toggleIsolation("on", false);
+            if (Planes[icao] || globeIndex) {
                 console.log('Selected ICAO id: '+ icao);
                 var selectOptions = {follow: follow};
                 if (zoom) {
                     selectOptions.zoom = zoom;
                 }
-                selectPlaneByHex(icao.toLowerCase(), selectOptions)
+                selectPlaneByHex(icao, selectOptions)
             } else {
                 console.log('ICAO id not found: ' + icao);
             }
@@ -3323,6 +3349,9 @@ function inView(tableplane, currExtent) {
     return inView;
 }
 function updateAddressBar() {
+    if (showTrace)
+        return;
+
     var posString = 'lat=' + CenterLat.toFixed(3) + '&lon=' + CenterLon.toFixed(3) + '&zoom=' + ZoomLvl.toFixed(1);
     var string;
     if (true || !globeIndex)
@@ -3353,4 +3382,45 @@ function refreshInt() {
         return 1.6 * refresh;
 
     return refresh * (1 + 0.6/4 * lastRequestFiles);
+}
+
+function toggleShowTrace() {
+    if (!showTrace) {
+        showTrace = true;
+        toggleIsolation("on", false);
+        shiftTrace();
+        $('#history_collapse')[0].style.display = "block";
+        $('#show_trace').addClass("active");
+    } else {
+        showTrace = false;
+        toggleIsolation(false, "off");
+        var string = pathName + '?icao=' + SelectedPlane.icao;
+        window.history.replaceState("object or string", "Title", string);
+        $('#history_collapse')[0].style.display = "none";
+        $('#show_trace').removeClass("active");
+    }
+}
+
+function shiftTrace(offset) {
+    if (!traceDate || offset == "today") {
+        traceDate = new Date();
+    } else if (offset) {
+        var sinceEpoch = traceDate.getTime();
+        traceDate.setTime(sinceEpoch + offset * 86400 * 1000);
+    }
+    traceDateString = traceDate.getUTCFullYear() + '-'
+        + (traceDate.getUTCMonth() + 1).toString().padStart(2, '0') + '-'
+        + traceDate.getUTCDate().toString().padStart(2, '0')
+
+    $('#trace_date').text('UTC day:' + traceDateString);
+
+    var hex = SelectedPlane ? SelectedPlane.icao : icaoParam;
+    var string = pathName + '?icao=' + hex + '&showTrace=' + traceDateString;
+
+    window.history.replaceState("object or string", "Title", string);
+
+    if (offset) {
+        var selectOptions = {follow: true};
+        selectPlaneByHex(hex, selectOptions)
+    }
 }
