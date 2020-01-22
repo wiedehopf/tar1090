@@ -927,6 +927,7 @@ PlaneObject.prototype.processTrace = function(show) {
     }
     this.updateMarker(true);
     this.updateLines();
+    refreshSelected();
 
     console.log(this.history_size + ' ' + points_in_trace);
 }
@@ -1416,10 +1417,13 @@ PlaneObject.prototype.updateLines = function() {
             var timestamp;
                 const date = new Date(seg.ts * 1000);
             if (showTrace) {
-                timestamp = date.getUTCHours().toString().padStart(2,'0')
+                timestamp =
+                    date.getUTCHours().toString().padStart(2,'0')
                     + ":" + date.getUTCMinutes().toString().padStart(2,'0')
                     + ":" + date.getUTCSeconds().toString().padStart(2,'0');
                 timestamp = "".padStart(1, NBSP) + timestamp + NBSP + "Z" + "".padStart(1, NBSP);
+
+                timestamp = ' ' + getDateString(date) + ' \n' + timestamp;
             } else {
                 timestamp = date.getHours().toString().padStart(2,'0')
                     + ":" + date.getMinutes().toString().padStart(2,'0')

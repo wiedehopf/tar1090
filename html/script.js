@@ -2154,58 +2154,46 @@ function selectPlaneByHex(hex, options) {
 
 
         if (showTrace) {
-            URL1 = 'globe_history/' + traceDateString + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json.gz';
+            URL1 = null;
+            URL2 = 'globe_history/' + traceDateString + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json.gz';
         }
 
-        var req1 = $.ajax({ url: URL1,
-            timeout: 15000,
-            dataType: 'json',
-            zoom: options.zoom,
-            follow: options.follow,
-        });
-        var req2 = null;
-        if (!showTrace) {
-            req2 = $.ajax({ url: URL2,
+        if (URL1) {
+            var req1 = $.ajax({ url: URL1,
                 timeout: 15000,
                 dataType: 'json',
                 zoom: options.zoom,
                 follow: options.follow,
             });
         }
+        var req2 = null;
+        req2 = $.ajax({ url: URL2,
+            timeout: 15000,
+            dataType: 'json',
+            zoom: options.zoom,
+            follow: options.follow,
+        });
         if (newPlane) {
-            req1.done(function(data) {
-                Planes[data.icao].recentTrace = data;
-                Planes[data.icao].processTrace();
-            });
-            if (req2) {
-                req2.done(function(data) {
-                    Planes[data.icao].fullTrace = data;
+            if (req1) {
+                req1.done(function(data) {
+                    Planes[data.icao].recentTrace = data;
                     Planes[data.icao].processTrace();
                 });
             }
+            req2.done(function(data) {
+                Planes[data.icao].fullTrace = data;
+                Planes[data.icao].processTrace();
+            });
 
         } else {
-            req1.done(function(data) {
-                var ac = {};
-                ac.hex = data.icao;
-                processAircraft(ac);
-                Planes[data.icao].recentTrace = data;
-                Planes[data.icao].processTrace();
-                //console.log(Planes[data.icao]);
-                var options = {
-                    noFetch: true,
-                    follow: this.follow,
-                    zoom: this.zoom
-                }
-                selectPlaneByHex(data.icao, options);
-            });
-            if (req2) {
-                req2.done(function(data) {
+            if (req1) {
+                req1.done(function(data) {
                     var ac = {};
                     ac.hex = data.icao;
                     processAircraft(ac);
-                    Planes[data.icao].fullTrace = data;
+                    Planes[data.icao].recentTrace = data;
                     Planes[data.icao].processTrace();
+                    //console.log(Planes[data.icao]);
                     var options = {
                         noFetch: true,
                         follow: this.follow,
@@ -2214,6 +2202,19 @@ function selectPlaneByHex(hex, options) {
                     selectPlaneByHex(data.icao, options);
                 });
             }
+            req2.done(function(data) {
+                var ac = {};
+                ac.hex = data.icao;
+                processAircraft(ac);
+                Planes[data.icao].fullTrace = data;
+                Planes[data.icao].processTrace();
+                var options = {
+                    noFetch: true,
+                    follow: this.follow,
+                    zoom: this.zoom
+                }
+                selectPlaneByHex(data.icao, options);
+            });
         }
     }
 
@@ -3162,6 +3163,8 @@ function processURLParams(){
         if (icao != null) {
             if (traceDateString != null) {
                 toggleShowTrace();
+                if (!zoom)
+                    zoom = 5;
             }
             toggleIsolation("on", false);
             if (Planes[icao] || globeIndex) {
@@ -3402,15 +3405,21 @@ function toggleShowTrace() {
 }
 
 function shiftTrace(offset) {
+    if (traceDateString && !traceDate) {
+        var numbers = traceDateString.split('-');
+        traceDate = new Date();
+        traceDate.setUTCFullYear(numbers[0]);
+        traceDate.setUTCMonth(numbers[1] - 1);
+        traceDate.setUTCDate(numbers[2]);
+    }
     if (!traceDate || offset == "today") {
         traceDate = new Date();
     } else if (offset) {
         var sinceEpoch = traceDate.getTime();
         traceDate.setTime(sinceEpoch + offset * 86400 * 1000);
     }
-    traceDateString = traceDate.getUTCFullYear() + '-'
-        + (traceDate.getUTCMonth() + 1).toString().padStart(2, '0') + '-'
-        + traceDate.getUTCDate().toString().padStart(2, '0')
+
+    traceDateString = getDateString(traceDate);
 
     $('#trace_date').text('UTC day:' + traceDateString);
 
@@ -3420,7 +3429,20 @@ function shiftTrace(offset) {
     window.history.replaceState("object or string", "Title", string);
 
     if (offset) {
-        var selectOptions = {follow: true};
-        selectPlaneByHex(hex, selectOptions)
+        var plane = Planes[hex];
+        if (plane) {
+            plane.trace = [];
+            plane.recentTrace = null;
+            plane.fullTrace = null;
+        }
+        var selectOptions = {follow: true, zoom: ZoomLvl};
+        selectPlaneByHex(hex, selectOptions);
     }
+}
+
+function getDateString(date) {
+    var string = date.getUTCFullYear() + '-'
+        + (date.getUTCMonth() + 1).toString().padStart(2, '0') + '-'
+        + date.getUTCDate().toString().padStart(2, '0')
+    return string;
 }
