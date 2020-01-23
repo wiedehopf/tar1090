@@ -508,11 +508,11 @@ function initialize() {
         // Wait for history item downloads and append them to the buffer
         push_history();
         // this will be needed later
-        $.getJSON("db/aircraft_types/icao_aircraft_types.json")
+        $.getJSON("db2/aircraft_types/icao_aircraft_types.json")
             .done(function(typeLookupData) {
                 _aircraft_type_cache = typeLookupData;
             })
-        $.getJSON("db/airport-coords.json")
+        $.getJSON("db2/airport-coords.json")
             .done(function(data) {
                 _airport_coords_cache = data;
             })
