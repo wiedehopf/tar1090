@@ -350,7 +350,7 @@ function fetchData() {
     } else {
         ac_url[0] = 'data/aircraft.json';
         if (uuid != null) {
-            ac_url[0] = 'data/?feed=' + uuid;
+            ac_url[0] = 'data/?feed=' + encodeURIComponent(uuid);
         }
     }
     lastRequestFiles = ac_url.length;
