@@ -153,28 +153,34 @@ element {
 	border-radius: 2px;
 }
 
+/* remove the blue highlighting around the map buttons */
+.ol-control button {
+    outline: none;
+}
+
 .ol-zoom-in {
-    background-image: url("images/zoom-in.png");
+    background-image: url("images/zoom-in@2x.png");
     background-size: cover;
     color:transparent !important;
-    width: 19px !important;
-    height: 19px !important;
+    width: 25px !important;
+    height: 25px !important;
     background-color: transparent !important;
     margin-bottom: 5px !important;
 }
 
 .ol-zoom-out {
-    background-image: url("images/zoom-out.png");
+    background-image: url("images/zoom-out@2x.png");
     background-size: cover;
     color:transparent !important;
-    width: 19px !important;
-    height: 19px !important;
+    width: 25px !important;
+    height: 25px !important;
     background-color: transparent !important;
 }
 
 .ol-zoom {
     background-color: transparent !important;
-    left: 10px !important;
+    left: calc(100% - 65px);
+    top: calc(100% - 85px);
 }
 
 
@@ -672,10 +678,6 @@ select.error, textarea.error, input.error {
 }
 */
 
-/* remove the blue highlighting around the map buttons */
-.ol-control button {
-    outline: none;
-}
 
 .bottom-container {
 	width: 100%;

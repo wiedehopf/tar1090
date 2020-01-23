@@ -919,7 +919,6 @@ function parse_history() {
     } else {
         sortByAltitude();
     }
-    window.setInterval(updateAddressBar, 1000);
 }
 
 // Make a LineString with 'points'-number points
@@ -1086,8 +1085,7 @@ function initialize_map() {
             zoom: ZoomLvl,
             minZoom: 2,
         }),
-        controls: [new ol.control.Zoom({delta: 1,}),
-            new ol.control.Rotate(),
+        controls: [new ol.control.Zoom({delta: 1, duration: 0,}),
             new ol.control.Attribution({collapsed: true}),
             new ol.control.ScaleLine({units: DisplayUnits})
         ],
@@ -2274,6 +2272,7 @@ function selectPlaneByHex(hex, options) {
 
     refreshSelected();
     refreshTableInfo();
+    updateAddressBar();
 }
 
 
@@ -2325,6 +2324,8 @@ function deselectAllPlanes() {
     refreshSelected();
     refreshHighlighted();
     refreshTableInfo();
+
+    updateAddressBar();
 }
 
 function toggleFollowSelected() {
