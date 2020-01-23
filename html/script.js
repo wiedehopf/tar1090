@@ -3355,6 +3355,8 @@ function inView(tableplane, currExtent) {
 function updateAddressBar() {
     if (showTrace)
         return;
+    if (uuid)
+        return;
 
     var posString = 'lat=' + CenterLat.toFixed(3) + '&lon=' + CenterLon.toFixed(3) + '&zoom=' + ZoomLvl.toFixed(1);
     var string;
