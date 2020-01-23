@@ -238,3 +238,6 @@ var HideCols = [
 
 
 var showPictures = false;
+
+// enable DWD Radolan (NEXRAD like weather for Germany)
+var enableDWD = true;
