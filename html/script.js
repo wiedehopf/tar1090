@@ -891,7 +891,7 @@ function parse_history() {
         window.setInterval(fetchPfData, RefreshInterval*10.314);
     }
     //window.setInterval(refreshTableInfo, 1000);
-    window.setInterval(function() {PendingFetches--;}, 10000);
+    //window.setInterval(function() {PendingFetches--;}, 10000);
 
     pathName = window.location.pathname;
     // And kick off one refresh immediately.
