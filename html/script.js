@@ -320,7 +320,6 @@ function fetchData() {
     addToIconCache = tryAgain;
     if (enable_uat) {
         FetchPendingUAT = $.ajax({ url: 'chunks/978.json',
-            timeout: 20000,
             dataType: 'json' });
 
         FetchPendingUAT.done(function(data) {
@@ -367,7 +366,6 @@ function fetchData() {
     for (var i in ac_url) {
         //console.log(ac_url[i]);
         var req = $.ajax({ url: ac_url[i],
-            timeout: 20000,
             dataType: 'json' });
         FetchPending.push(req);
 
@@ -1366,7 +1364,6 @@ function initialize_map() {
     // kick off an ajax request that will add the rings when it's done
     if (!globeIndex) {
         var request = $.ajax({ url: 'upintheair.json',
-            timeout: 20000,
             cache: true,
             dataType: 'json' });
         request.done(function(data) {
@@ -2161,7 +2158,6 @@ function selectPlaneByHex(hex, options) {
 
         if (URL1) {
             var req1 = $.ajax({ url: URL1,
-                timeout: 20000,
                 dataType: 'json',
                 zoom: options.zoom,
                 follow: options.follow,
@@ -2169,7 +2165,6 @@ function selectPlaneByHex(hex, options) {
         }
         var req2 = null;
         req2 = $.ajax({ url: URL2,
-            timeout: 20000,
             dataType: 'json',
             zoom: options.zoom,
             follow: options.follow,
@@ -3013,7 +3008,6 @@ function fetchPfData() {
     fetchingPf = true;
     for (const i in pf_data) {
         const req = $.ajax({ url: pf_data[i],
-            timeout: 20000,
             dataType: 'json' });
         $.when(req).done(function(data) {
             for (const i in PlanesOrdered) {

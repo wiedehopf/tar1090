@@ -30,13 +30,11 @@ try {
 
 // get configuration json files, will be used in initialize function
 var get_receiver_defer = $.ajax({ url: 'data/receiver.json',
-    timeout: 15000,
     cache: false,
     dataType: 'json'
 });
 var test_chunk_defer = $.ajax({
     url:'chunks/chunks.json',
-    timeout: 10000,
     cache: false,
     dataType: 'json'
 });
