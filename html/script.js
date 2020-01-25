@@ -287,6 +287,9 @@ function fetchData() {
 
     PendingFetches = 1;
 
+    console.timeEnd("Starting Fetch");
+    console.time("Starting Fetch");
+
     var center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
     localStorage['CenterLon'] = CenterLon = center[0];
     localStorage['CenterLat'] = CenterLat = center[1];
@@ -317,7 +320,7 @@ function fetchData() {
     addToIconCache = tryAgain;
     if (enable_uat) {
         FetchPendingUAT = $.ajax({ url: 'chunks/978.json',
-            timeout: 7000,
+            timeout: 20000,
             dataType: 'json' });
 
         FetchPendingUAT.done(function(data) {
@@ -364,7 +367,7 @@ function fetchData() {
     for (var i in ac_url) {
         //console.log(ac_url[i]);
         var req = $.ajax({ url: ac_url[i],
-            timeout: 8000,
+            timeout: 20000,
             dataType: 'json' });
         FetchPending.push(req);
 
@@ -440,7 +443,7 @@ function fetchData() {
             if (last == now && !globeIndex) {
                 StaleReceiverCount++;
                 if (StaleReceiverCount > 5) {
-                    $("#update_error_detail").text("The data from dump1090 hasn't been updated in a while. Maybe dump1090 is no longer running?");
+                    $("#update_error_detail").text("The data from the server hasn't been updated in a while.");
                     $("#update_error").css('display','block');
                 }
             } else if (StaleReceiverCount > 0){
@@ -450,8 +453,8 @@ function fetchData() {
         });
 
         req.fail(function(jqxhr, status, error) {
-            $("#update_error_detail").text("AJAX call failed (" + status + (error ? (": " + error) : "") + "). Maybe dump1090 is no longer running?");
-            console.log("AJAX call failed (" + status + (error ? (": " + error) : "") + "). Maybe dump1090 is no longer running?");
+            $("#update_error_detail").text("AJAX call failed (" + status + (error ? (": " + error) : "") + ").");
+            console.log("AJAX call failed (" + status + (error ? (": " + error) : "") + ").");
             console.log(jqxhr);
             console.log(status);
             console.log(error);
@@ -1355,7 +1358,7 @@ function initialize_map() {
     //
     // fetch a json file from the API for the altitudes you want to see:
     //
-    //  wget -O /usr/share/dump1090-mutability/html/upintheair.json \
+    //  wget -O /usr/local/share/tar1090/html/upintheair.json \
     //    'http://www.heywhatsthat.com/api/upintheair.json?id=XXXX&refraction=0.25&alts=3048,9144'
     //
     // NB: altitudes are in _meters_, you can specify a list of altitudes
@@ -1363,7 +1366,7 @@ function initialize_map() {
     // kick off an ajax request that will add the rings when it's done
     if (!globeIndex) {
         var request = $.ajax({ url: 'upintheair.json',
-            timeout: 15000,
+            timeout: 20000,
             cache: true,
             dataType: 'json' });
         request.done(function(data) {
@@ -2158,7 +2161,7 @@ function selectPlaneByHex(hex, options) {
 
         if (URL1) {
             var req1 = $.ajax({ url: URL1,
-                timeout: 15000,
+                timeout: 20000,
                 dataType: 'json',
                 zoom: options.zoom,
                 follow: options.follow,
@@ -2166,7 +2169,7 @@ function selectPlaneByHex(hex, options) {
         }
         var req2 = null;
         req2 = $.ajax({ url: URL2,
-            timeout: 15000,
+            timeout: 20000,
             dataType: 'json',
             zoom: options.zoom,
             follow: options.follow,
