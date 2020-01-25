@@ -896,7 +896,6 @@ function parse_history() {
     }
     //window.setInterval(refreshTableInfo, 1000);
     //window.setInterval(function() {PendingFetches--;}, 10000);
-    window.setInterval(changeZoom, 500);
 
     pathName = window.location.pathname;
     // And kick off one refresh immediately.
@@ -907,6 +906,7 @@ function parse_history() {
         toggleTableInView(true);
 
     changeZoom("init");
+    changeCenter("init");
 
     fetchData();
 
@@ -3056,11 +3056,20 @@ function zoomIn() {
 function zoomOut() {
     OLMap.getView().setZoom((ZoomLvl-1).toFixed());
 }
-function changeZoom(init) {
-    var center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
+
+function changeCenter(init) {
+    const center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
+    if (CenterLon == center[0] && CenterLat == center[1]) {
+        setTimeout(changeCenter, 200);
+        return;
+    } else {
+        setTimeout(changeCenter, 500);
+    }
+
     localStorage['CenterLon'] = CenterLon = center[0];
     localStorage['CenterLat'] = CenterLat = center[1];
-    ZoomLvl = OLMap.getView().getZoom();
+
+    refreshTableInfo();
 
     if (FollowSelected) {
         // On manual navigation, disable follow
@@ -3072,10 +3081,18 @@ function changeZoom(init) {
             refreshHighlighted();
         }
     }
+}
+
+function changeZoom(init) {
+    ZoomLvl = OLMap.getView().getZoom();
 
     // small zoomstep, no need to change aircraft scaling
-    if (!init && Math.abs(ZoomLvl-ZoomLvlCache) < 0.1)
+    if (!init && Math.abs(ZoomLvl-ZoomLvlCache) < 0.1) {
+        setTimeout(changeZoom, 200);
         return;
+    } else {
+        setTimeout(changeZoom, 500);
+    }
 
     localStorage['ZoomLvl'] = ZoomLvl;
     ZoomLvlCache = ZoomLvl;
