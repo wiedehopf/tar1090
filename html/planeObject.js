@@ -1265,7 +1265,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
         (
             (!globeIndex && this.seen < (58 - tisbReduction))
             || (globeIndex && this.seen_pos < (30 + zoomedOut + jaeroTime - tisbReduction))
-            || (this.selected && !SelectedAllPlanes && !multiSelect)
+            || (this.selected && (onlySelected || (!SelectedAllPlanes && !multiSelect)))
             || noVanish
         )
     ) {

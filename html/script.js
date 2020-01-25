@@ -3063,13 +3063,14 @@ function changeCenter(init) {
         setTimeout(changeCenter, 200);
         return;
     } else {
-        setTimeout(changeCenter, 500);
+        setTimeout(changeCenter, 1000);
     }
 
     localStorage['CenterLon'] = CenterLon = center[0];
     localStorage['CenterLat'] = CenterLat = center[1];
 
-    refreshTableInfo();
+    if (!onlySelected)
+        refreshTableInfo();
 
     if (FollowSelected) {
         // On manual navigation, disable follow
@@ -3091,13 +3092,14 @@ function changeZoom(init) {
         setTimeout(changeZoom, 200);
         return;
     } else {
-        setTimeout(changeZoom, 500);
+        setTimeout(changeZoom, 1000);
     }
 
     localStorage['ZoomLvl'] = ZoomLvl;
     ZoomLvlCache = ZoomLvl;
 
-    refreshTableInfo();
+    if (!onlySelected)
+        refreshTableInfo();
 
     scaleFactor = Math.max(markerMinSize, Math.min(markerMaxSize, markerScaleFactor * 0.09 * Math.pow(1.35, ZoomLvl)));
     for (var i in PlanesOrdered) {
