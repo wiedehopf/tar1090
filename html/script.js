@@ -287,8 +287,8 @@ function fetchData() {
 
     PendingFetches = 1;
 
-    console.timeEnd("Starting Fetch");
-    console.time("Starting Fetch");
+    //console.timeEnd("Starting Fetch");
+    //console.time("Starting Fetch");
 
     var center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
     localStorage['CenterLon'] = CenterLon = center[0];
@@ -358,10 +358,8 @@ function fetchData() {
     lastRequestFiles = ac_url.length;
     PendingFetches = ac_url.length;
 
-    if (globeIndex) {
-        clearTimeout(refreshId);
-        refreshId = setTimeout(fetchData, refreshInt());
-    }
+    clearTimeout(refreshId);
+    refreshId = setTimeout(fetchData, 25000);
 
     for (var i in ac_url) {
         //console.log(ac_url[i]);
@@ -421,9 +419,8 @@ function fetchData() {
                 uat_data = null;
             }
 
-            PendingFetches--;
 
-            if (PendingFetches < 1) {
+            if (PendingFetches <= 1) {
                 refreshSelected();
                 refreshHighlighted();
                 //console.time("refreshTable");
@@ -436,6 +433,7 @@ function fetchData() {
                 clearTimeout(refreshId);
                 refreshId = setTimeout(fetchData, refreshInt());
             }
+            PendingFetches--;
 
             // Check for stale receiver data
             if (last == now && !globeIndex) {
@@ -459,6 +457,8 @@ function fetchData() {
             $("#update_error").css('display','block');
             StaleReceiverCount++;
             PendingFetches--;
+            clearTimeout(refreshId);
+            refreshId = setTimeout(fetchData, refreshInt());
         });
     }
 }
