@@ -1235,6 +1235,8 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
     this.seen = now - this.last_message_time;
     this.seen_pos = now - this.position_time;
 
+    var moved = false;
+
     if (this.updated) {
         if (this.position && SitePosition) {
             this.sitedist = ol.sphere.getDistance(SitePosition, this.position);
@@ -1248,6 +1250,8 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
             this.name = '_' + this.icao.toUpperCase();
         }
         this.name = this.name.trim();
+
+        moved = this.updateTrack(now, last);
     }
 
     const zoomedOut = 45 * Math.max(0, 7 - ZoomLvl);
@@ -1255,6 +1259,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
     const tisbReduction = (this.icao[0] == '~') ? 15 : 0;
     // If no packet in over 58 seconds, clear the plane.
     // Only clear the plane if it's not selected individually
+
 
     if ( !this.isFiltered() && (!onlySelected || this.selected) &&
         (
@@ -1264,16 +1269,17 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
             || noVanish
         )
     ) {
+        const lastVisible = this.visible;
         this.visible = true;
         if (SelectedAllPlanes)
             this.selected = true;
 
-        if (redraw) {
-            this.updateLines();
-            this.updateMarker(false); // didn't move
-        } else if (this.updateTrack(now, last)) {
+        if (moved) {
             this.updateLines();
             this.updateMarker(true);
+        } else if (redraw || lastVisible != this.visible) {
+            this.updateLines();
+            this.updateMarker(false); // didn't move
         } else if (this.updated) {
             this.updateMarker(false); // didn't move
         }
