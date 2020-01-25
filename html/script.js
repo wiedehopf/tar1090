@@ -88,6 +88,9 @@ var SpecialSquawks = {
 // Get current map settings
 var CenterLat, CenterLon, ZoomLvl, ZoomLvlCache;
 var zoomTimeout;
+var noMovement;
+var checkMoveZoom;
+var checkMoveCenter = [0, 0];
 
 
 var PlaneRowTemplate = null;
@@ -907,6 +910,11 @@ function parse_history() {
 
     changeZoom("init");
     changeCenter("init");
+
+    if (globeIndex)
+        setInterval(checkMovement, 100);
+    else
+        setInterval(checkMovement, 30);
 
     fetchData();
 
@@ -3050,21 +3058,17 @@ function bearingFromLonLat(position1, position2) {
     return (Math.atan2(y, x)* 180 / Math.PI + 360) % 360;
 }
 function zoomIn() {
-    OLMap.getView().setZoom((ZoomLvl+1).toFixed());
+    const zoom = OLMap.getView().getZoom();
+    OLMap.getView().setZoom((zoom+1).toFixed());
 }
 
 function zoomOut() {
-    OLMap.getView().setZoom((ZoomLvl-1).toFixed());
+    const zoom = OLMap.getView().getZoom();
+    OLMap.getView().setZoom((zoom-1).toFixed());
 }
 
 function changeCenter(init) {
     const center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
-    if (CenterLon == center[0] && CenterLat == center[1]) {
-        setTimeout(changeCenter, 200);
-        return;
-    } else {
-        setTimeout(changeCenter, 1000);
-    }
 
     localStorage['CenterLon'] = CenterLon = center[0];
     localStorage['CenterLat'] = CenterLat = center[1];
@@ -3084,16 +3088,39 @@ function changeCenter(init) {
     }
 }
 
+function checkMovement() {
+    const zoom = OLMap.getView().getZoom();
+    const center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
+
+    if (
+        checkMoveZoom != zoom ||
+        checkMoveCenter[0] != center[0] ||
+        checkMoveCenter[1] != center[1]
+    ) {
+        noMovement = 0;
+    }
+
+    checkMoveZoom = zoom;
+    checkMoveCenter[0] = center[0];
+    checkMoveCenter[1] = center[1];
+
+    if (noMovement++ != 3)
+        return;
+
+    // no zoom/pan inputs for 450 ms after a zoom/pan input
+    //
+    //console.time("fire!");
+    changeZoom();
+    changeCenter();
+    //console.timeEnd("fire!");
+}
+
 function changeZoom(init) {
     ZoomLvl = OLMap.getView().getZoom();
 
     // small zoomstep, no need to change aircraft scaling
-    if (!init && Math.abs(ZoomLvl-ZoomLvlCache) < 0.1) {
-        setTimeout(changeZoom, 200);
+    if (!init && Math.abs(ZoomLvl-ZoomLvlCache) < 0.1)
         return;
-    } else {
-        setTimeout(changeZoom, 1000);
-    }
 
     localStorage['ZoomLvl'] = ZoomLvl;
     ZoomLvlCache = ZoomLvl;
@@ -3102,13 +3129,18 @@ function changeZoom(init) {
         refreshTableInfo();
 
     scaleFactor = Math.max(markerMinSize, Math.min(markerMaxSize, markerScaleFactor * 0.09 * Math.pow(1.35, ZoomLvl)));
+
     for (var i in PlanesOrdered) {
         var plane = PlanesOrdered[i];
-        if (plane.markerIcon && plane.scaleCache != plane.scale) {
+        plane.scale = scaleFactor * plane.baseScale;
+        if (plane.visible && plane.markerIcon && plane.scaleCache != plane.scale) {
             plane.scaleCache = scaleFactor * plane.baseScale;
             plane.markerIcon.setScale(plane.scaleCache);
         }
     }
+
+
+
     if (ZoomLvl > 5.5 && enableMouseover) {
         OLMap.on('pointermove', onPointermove);
     } else {
