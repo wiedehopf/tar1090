@@ -358,8 +358,10 @@ function fetchData() {
     lastRequestFiles = ac_url.length;
     PendingFetches = ac_url.length;
 
-    clearTimeout(refreshId);
-    refreshId = setTimeout(fetchData, 25000);
+    if (globeIndex) {
+        clearTimeout(refreshId);
+        refreshId = setTimeout(fetchData, 25000);
+    }
 
     for (var i in ac_url) {
         //console.log(ac_url[i]);
