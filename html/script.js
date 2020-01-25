@@ -267,6 +267,10 @@ function setupPlane(hex, plane) {
 }
 
 function fetchData() {
+    ZoomLvl = OLMap.getView().getZoom();
+    var center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
+    localStorage['CenterLon'] = CenterLon = center[0];
+    localStorage['CenterLat'] = CenterLat = center[1];
     clearTimeout(refreshId);
     refreshId = setTimeout(fetchData, refreshInt());
     if (showTrace)
@@ -290,9 +294,6 @@ function fetchData() {
     //console.timeEnd("Starting Fetch");
     //console.time("Starting Fetch");
 
-    var center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
-    localStorage['CenterLon'] = CenterLon = center[0];
-    localStorage['CenterLat'] = CenterLat = center[1];
 
     var item;
     var tryAgain = [];
@@ -895,6 +896,7 @@ function parse_history() {
     }
     //window.setInterval(refreshTableInfo, 1000);
     //window.setInterval(function() {PendingFetches--;}, 10000);
+    window.setInterval(changeZoom, 500);
 
     pathName = window.location.pathname;
     // And kick off one refresh immediately.
@@ -903,6 +905,8 @@ function parse_history() {
 
     if (!icaoFilter && globeIndex)
         toggleTableInView(true);
+
+    changeZoom("init");
 
     fetchData();
 
@@ -1102,6 +1106,7 @@ function initialize_map() {
         OLMap.addControl(new ol.control.LayerSwitcher());
     }
 
+    /*
     // Listeners for newly created Map
     OLMap.getView().on('change:center', function(event) {
         const center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
@@ -1118,24 +1123,13 @@ function initialize_map() {
             }
         }
     });
+    */
 
-    changeZoom();
+    /*
     OLMap.getView().on('change:resolution', function(event) {
-
         ZoomLvl = OLMap.getView().getZoom();
-
-        // small zoomstep, no need to change aircraft scaling
-        if (Math.abs(ZoomLvl-ZoomLvlCache) < 0.1)
-            return;
-
-        localStorage['ZoomLvl'] = ZoomLvl;
-
-        ZoomLvlCache = ZoomLvl;
-
-        clearTimeout(zoomTimeout);
-        zoomTimeout = setTimeout(changeZoom, 20);
-
     });
+    */
 
     OLMap.on(['click', 'dblclick'], function(evt) {
         var hex = evt.map.forEachFeatureAtPixel(
@@ -1845,7 +1839,7 @@ function refreshTableInfo() {
 
         lastRealExtent = OLMap.getView().calculateExtent(mapSize);
 
-        var size = [mapSize[0] * 3, mapSize[1] * 3];
+        var size = [mapSize[0] * 1.2, mapSize[1] * 1.2];
         lastRenderExtent = OLMap.getView().calculateExtent(size);
     }
 
@@ -3057,19 +3051,41 @@ function bearingFromLonLat(position1, position2) {
 }
 function zoomIn() {
     OLMap.getView().setZoom((ZoomLvl+1).toFixed());
-    changeZoom();
 }
 
 function zoomOut() {
     OLMap.getView().setZoom((ZoomLvl-1).toFixed());
-    changeZoom();
 }
-function changeZoom() {
+function changeZoom(init) {
+    var center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
+    localStorage['CenterLon'] = CenterLon = center[0];
+    localStorage['CenterLat'] = CenterLat = center[1];
+    ZoomLvl = OLMap.getView().getZoom();
+
+    if (FollowSelected) {
+        // On manual navigation, disable follow
+        if (!SelectedPlane || !SelectedPlane.position ||
+            (Math.abs(center[0] - SelectedPlane.position[0]) > 0.0001 &&
+                Math.abs(center[1] - SelectedPlane.position[1]) > 0.0001)){
+            FollowSelected = false;
+            refreshSelected();
+            refreshHighlighted();
+        }
+    }
+
+    // small zoomstep, no need to change aircraft scaling
+    if (!init && Math.abs(ZoomLvl-ZoomLvlCache) < 0.1)
+        return;
+
     localStorage['ZoomLvl'] = ZoomLvl;
+    ZoomLvlCache = ZoomLvl;
+
+    refreshTableInfo();
+
     scaleFactor = Math.max(markerMinSize, Math.min(markerMaxSize, markerScaleFactor * 0.09 * Math.pow(1.35, ZoomLvl)));
     for (var i in PlanesOrdered) {
         var plane = PlanesOrdered[i];
-        if (plane.markerIcon) {
+        if (plane.markerIcon && plane.scaleCache != plane.scale) {
             plane.scaleCache = scaleFactor * plane.baseScale;
             plane.markerIcon.setScale(plane.scaleCache);
         }
