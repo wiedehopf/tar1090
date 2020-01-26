@@ -3125,21 +3125,10 @@ function changeZoom(init) {
     localStorage['ZoomLvl'] = ZoomLvl;
     ZoomLvlCache = ZoomLvl;
 
-    if (!onlySelected)
-        refreshTableInfo();
-
     scaleFactor = Math.max(markerMinSize, Math.min(markerMaxSize, markerScaleFactor * 0.09 * Math.pow(1.35, ZoomLvl)));
 
-    for (var i in PlanesOrdered) {
-        var plane = PlanesOrdered[i];
-        plane.scale = scaleFactor * plane.baseScale;
-        if (plane.visible && plane.markerIcon && plane.scaleCache != plane.scale) {
-            plane.scaleCache = scaleFactor * plane.baseScale;
-            plane.markerIcon.setScale(plane.scaleCache);
-        }
-    }
-
-
+    if (!onlySelected)
+        refreshTableInfo();
 
     if (ZoomLvl > 5.5 && enableMouseover) {
         OLMap.on('pointermove', onPointermove);

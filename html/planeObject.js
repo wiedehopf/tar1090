@@ -1274,15 +1274,19 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
         if (SelectedAllPlanes)
             this.selected = true;
 
-        if (moved) {
+        var lines = false;
+        var marker = false;
+
+        this.scale = scaleFactor * this.baseScale;
+        if (this.scaleCache != this.scale)
+            marker = true;
+        if (redraw || moved || lastVisible != this.visible)
+            marker = lines = true;
+
+        if (lines)
             this.updateLines();
+        if (marker)
             this.updateMarker(true);
-        } else if (redraw || lastVisible != this.visible) {
-            this.updateLines();
-            this.updateMarker(false); // didn't move
-        } else if (this.updated) {
-            this.updateMarker(false); // didn't move
-        }
     } else {
         if (this.visible) {
             //console.log("hiding " + this.icao);
