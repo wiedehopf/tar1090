@@ -925,6 +925,13 @@ PlaneObject.prototype.processTrace = function(show) {
         this.visible = true;
         this.updated = true;
     }
+
+    now = new Date().getTime()/1000;
+    this.updateFeatures(now, _last);
+
+    if (showTrace && this.position && !inView(this, OLMap.getView().calculateExtent(OLMap.getSize())))
+        FollowSelected = true;
+
     this.updateMarker(true);
     this.updateLines();
     refreshSelected();
@@ -1379,7 +1386,7 @@ PlaneObject.prototype.altitudeLines = function(segment) {
 
 // Update our planes tail line,
 PlaneObject.prototype.updateLines = function() {
-    if (!this.visible || (!this.selected && !SelectedAllPlanes) || this.isFiltered())
+    if (!this.visible || this.position == null || (!this.selected && !SelectedAllPlanes) || this.isFiltered())
         return this.clearLines();
 
     if (this.track_linesegs.length == 0)

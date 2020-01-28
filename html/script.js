@@ -2143,6 +2143,10 @@ function selectPlaneByHex(hex, options) {
     if (SelectedAllPlanes) {
         deselectAllPlanes();
     }
+    if (showTrace || options.redraw) {
+        processAircraft({hex: hex, });
+        SelectedPlane = null;
+    }
     // already selected plane
     var oldPlane = SelectedPlane;
     // plane to be selected
@@ -2158,6 +2162,20 @@ function selectPlaneByHex(hex, options) {
         if (showTrace) {
             URL1 = null;
             URL2 = 'globe_history/' + traceDateString + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json.gz';
+        }
+        if (newPlane && (showTrace || options.redraw)) {
+            newPlane.trace = [];
+            newPlane.recentTrace = null;
+            newPlane.fullTrace = null;
+            newPlane.position = null;
+            newPlane.callsign = null;
+            newPlane.track = null;
+            newPlane.rotation = null;
+            newPlane.altitude = null;
+            newPlane.seen = NaN;
+            newPlane.last_message_time = NaN;
+            newPlane.seen_pos = NaN;
+            newPlane.position_time = NaN;
         }
 
         if (URL1) {
@@ -2188,9 +2206,7 @@ function selectPlaneByHex(hex, options) {
         } else {
             if (req1) {
                 req1.done(function(data) {
-                    var ac = {};
-                    ac.hex = data.icao;
-                    processAircraft(ac);
+                    processAircraft({hex: data.icao, });
                     Planes[data.icao].recentTrace = data;
                     Planes[data.icao].processTrace();
                     //console.log(Planes[data.icao]);
@@ -2203,9 +2219,7 @@ function selectPlaneByHex(hex, options) {
                 });
             }
             req2.done(function(data) {
-                var ac = {};
-                ac.hex = data.icao;
-                processAircraft(ac);
+                processAircraft({hex: data.icao, });
                 Planes[data.icao].fullTrace = data;
                 Planes[data.icao].processTrace();
                 var options = {
@@ -2332,6 +2346,8 @@ function deselectAllPlanes() {
 
 function toggleFollowSelected() {
     FollowSelected = !FollowSelected;
+    if (FollowSelected && (!SelectedPlane || !SelectedPlane.position))
+        FollowSelected = false;
     if (!SelectedPlane && FollowSelected)
         FollowSelected = false;
     if (FollowSelected && OLMap.getView().getZoom() < 8)
@@ -2714,11 +2730,12 @@ function followRandomPlane() {
     var tired = 0;
     do {
         this_one = PlanesOrdered[Math.floor(Math.random()*PlanesOrdered.length)];
-        if (tired++ > 1000)
+        if (!this_one || tired++ > 1000)
             break;
     } while (this_one.isFiltered() || !this_one.position || (now - this_one.position_time > 30));
     //console.log(this_one.icao);
-    selectPlaneByHex(this_one.icao, {follow: true});
+    if (this_one)
+        selectPlaneByHex(this_one.icao, {follow: true});
 }
 
 function toggleTableInView(switchOn) {
@@ -3450,17 +3467,20 @@ function refreshInt() {
 function toggleShowTrace() {
     if (!showTrace) {
         showTrace = true;
-        toggleIsolation("on", false);
+        toggleIsolation("on", null);
         shiftTrace();
         $('#history_collapse')[0].style.display = "block";
         $('#show_trace').addClass("active");
     } else {
         showTrace = false;
-        toggleIsolation(false, "off");
+        toggleIsolation(null, "off");
         var string = pathName + '?icao=' + SelectedPlane.icao;
         window.history.replaceState("object or string", "Title", string);
         $('#history_collapse')[0].style.display = "none";
         $('#show_trace').removeClass("active");
+        const hex = SelectedPlane.icao;
+        SelectedPlane = null;
+        selectPlaneByHex(hex, {follow: true, zoom: ZoomLvl, redraw: true,});
     }
 }
 
@@ -3488,16 +3508,9 @@ function shiftTrace(offset) {
 
     window.history.replaceState("object or string", "Title", string);
 
-    if (offset) {
-        var plane = Planes[hex];
-        if (plane) {
-            plane.trace = [];
-            plane.recentTrace = null;
-            plane.fullTrace = null;
-        }
-        var selectOptions = {follow: true, zoom: ZoomLvl};
-        selectPlaneByHex(hex, selectOptions);
-    }
+    var plane = Planes[hex];
+    var selectOptions = {follow: true, zoom: ZoomLvl};
+    selectPlaneByHex(hex, selectOptions);
 }
 
 function getDateString(date) {
