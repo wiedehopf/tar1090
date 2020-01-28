@@ -318,3 +318,16 @@ function format_nac_v (value) {
 			return "n/a";
 	}
 }
+
+function format_duration(seconds) {
+    if (seconds == null)
+        return "n/a";
+    if (seconds < 20)
+        return seconds.toFixed(1) + ' s';
+    if (seconds < 5 * 60)
+        return seconds.toFixed(0) + ' s';
+    if (seconds < 3 * 60 * 60)
+        return (seconds/60).toFixed(0) + ' min';
+    return (seconds/60/60).toFixed(0) + ' h';
+
+}

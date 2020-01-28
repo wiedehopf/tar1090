@@ -834,6 +834,8 @@ PlaneObject.prototype.processTrace = function(show) {
     this.track_linesegs = [];
     this.remakeTrail();
 
+    const last_message_time = this.last_message_time;
+
     Object.assign(tempPlane, this);
 
     for (var j = 0; j < 2; j++) {
@@ -843,7 +845,6 @@ PlaneObject.prototype.processTrace = function(show) {
             timeZero = this.fullTrace.timestamp;
 
             _last = timeZero - 1;
-            this.prev_position = null;
 
             trace = this.fullTrace.trace;
         } else {
@@ -852,7 +853,6 @@ PlaneObject.prototype.processTrace = function(show) {
             timeZero = this.recentTrace.timestamp;
             if (!trace) {
                 _last = timeZero - 1;
-                this.prev_position = null;
             }
             trace = this.recentTrace.trace;
         }
@@ -914,11 +914,10 @@ PlaneObject.prototype.processTrace = function(show) {
         tempPlane.prev_position = this.position;
     }
 
-    if (false && _now >= now && !show) {
+    if (last_message_time > this.last_message_time) {
         var newSegs = this.track_linesegs;
         Object.assign(this, tempPlane);
         this.track_linesegs = newSegs;
-        this.updateTrack(now, _last);
     }
     if (show) {
         this.selected = true;
@@ -926,11 +925,16 @@ PlaneObject.prototype.processTrace = function(show) {
         this.updated = true;
     }
 
-    now = new Date().getTime()/1000;
+    if (showTrace)
+        now = new Date().getTime()/1000;
     this.updateFeatures(now, _last);
 
-    if (showTrace && this.position && !inView(this, OLMap.getView().calculateExtent(OLMap.getSize())))
+    var mapSize = OLMap.getSize();
+    var size = [Math.max(5, mapSize[0] - 280), mapSize[1]];
+    if ((showTrace || showTraceExit) && !inView(this, OLMap.getView().calculateExtent(size)))
         FollowSelected = true;
+
+    showTraceExit = false;
 
     this.updateMarker(true);
     this.updateLines();
@@ -1239,8 +1243,8 @@ PlaneObject.prototype.updateTick = function(redraw) {
 PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
 
     // recompute seen and seen_pos
-    this.seen = now - this.last_message_time;
-    this.seen_pos = now - this.position_time;
+    this.seen = Math.max(0, now - this.last_message_time)
+    this.seen_pos = Math.max(0, now - this.position_time);
 
     var moved = false;
 

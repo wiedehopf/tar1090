@@ -74,7 +74,8 @@ var debugCounter = 0;
 var selectedPhotoCache = null;
 var pathName = null;
 var icaoFilter = null;
-var showTrace = false
+var showTrace = false;
+var showTraceExit = false;
 var traceDate = null;
 var traceDateString = null;
 var icaoParam = '000000';
@@ -1595,12 +1596,12 @@ function refreshSelected() {
     $('#selected_track2').text(format_track_brief(selected.track));
 
     if (selected.seen != null && selected.seen < 1000000) {
-        $('#selected_seen').text(selected.seen.toFixed(1));
+        $('#selected_seen').text(format_duration(selected.seen));
     } else {
         $('#selected_seen').text('n/a');
     }
     if (selected.seen_pos != null&& selected.seen_pos < 1000000) {
-        $('#selected_seen_pos').text(selected.seen_pos.toFixed(1));
+        $('#selected_seen_pos').text(format_duration(selected.seen_pos));
     } else {
         $('#selected_seen_pos').text('n/a');
     }
@@ -1628,7 +1629,8 @@ function refreshSelected() {
         $('#selected_follow').removeClass('hidden');
         if (FollowSelected) {
             $('#selected_follow').css('font-weight', 'bold');
-            OLMap.getView().setCenter(ol.proj.fromLonLat(selected.position));
+            if (selected.position)
+                OLMap.getView().setCenter(ol.proj.fromLonLat(selected.position));
         } else {
             $('#selected_follow').css('font-weight', 'normal');
         }
@@ -2143,7 +2145,7 @@ function selectPlaneByHex(hex, options) {
     if (SelectedAllPlanes) {
         deselectAllPlanes();
     }
-    if (showTrace || options.redraw) {
+    if (showTrace || showTraceExit) {
         processAircraft({hex: hex, });
         SelectedPlane = null;
     }
@@ -2163,7 +2165,7 @@ function selectPlaneByHex(hex, options) {
             URL1 = null;
             URL2 = 'globe_history/' + traceDateString + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json.gz';
         }
-        if (newPlane && (showTrace || options.redraw)) {
+        if (newPlane && (showTrace || showTraceExit)) {
             newPlane.trace = [];
             newPlane.recentTrace = null;
             newPlane.fullTrace = null;
@@ -2726,6 +2728,8 @@ function toggleAltitudeChart(switchToggle) {
 }
 
 function followRandomPlane() {
+    if (showTrace)
+        return;
     var this_one = null;
     var tired = 0;
     do {
@@ -3480,7 +3484,8 @@ function toggleShowTrace() {
         $('#show_trace').removeClass("active");
         const hex = SelectedPlane.icao;
         SelectedPlane = null;
-        selectPlaneByHex(hex, {follow: true, zoom: ZoomLvl, redraw: true,});
+        showTraceExit = true;
+        selectPlaneByHex(hex, {follow: true, zoom: ZoomLvl,});
     }
 }
 
