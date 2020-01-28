@@ -834,8 +834,6 @@ PlaneObject.prototype.processTrace = function(show) {
     this.track_linesegs = [];
     this.remakeTrail();
 
-    const last_message_time = this.last_message_time;
-
     Object.assign(tempPlane, this);
 
     for (var j = 0; j < 2; j++) {
@@ -914,7 +912,7 @@ PlaneObject.prototype.processTrace = function(show) {
         tempPlane.prev_position = this.position;
     }
 
-    if (last_message_time > this.last_message_time) {
+    if (tempPlane.last_message_time > this.last_message_time) {
         var newSegs = this.track_linesegs;
         Object.assign(this, tempPlane);
         this.track_linesegs = newSegs;

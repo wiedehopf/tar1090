@@ -2145,10 +2145,6 @@ function selectPlaneByHex(hex, options) {
     if (SelectedAllPlanes) {
         deselectAllPlanes();
     }
-    if (showTrace || showTraceExit) {
-        processAircraft({hex: hex, });
-        SelectedPlane = null;
-    }
     // already selected plane
     var oldPlane = SelectedPlane;
     // plane to be selected
@@ -2166,6 +2162,8 @@ function selectPlaneByHex(hex, options) {
             URL2 = 'globe_history/' + traceDateString + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json.gz';
         }
         if (newPlane && (showTrace || showTraceExit)) {
+            SelectedPlane = oldPlane = null;
+            processAircraft({hex: hex, });
             newPlane.trace = [];
             newPlane.recentTrace = null;
             newPlane.fullTrace = null;
@@ -2174,6 +2172,7 @@ function selectPlaneByHex(hex, options) {
             newPlane.track = null;
             newPlane.rotation = null;
             newPlane.altitude = null;
+            newPlane.messages = NaN;
             newPlane.seen = NaN;
             newPlane.last_message_time = NaN;
             newPlane.seen_pos = NaN;
@@ -2209,6 +2208,7 @@ function selectPlaneByHex(hex, options) {
             if (req1) {
                 req1.done(function(data) {
                     processAircraft({hex: data.icao, });
+                    Planes[data.icao].last_message_time = 0;
                     Planes[data.icao].recentTrace = data;
                     Planes[data.icao].processTrace();
                     //console.log(Planes[data.icao]);
@@ -2222,6 +2222,7 @@ function selectPlaneByHex(hex, options) {
             }
             req2.done(function(data) {
                 processAircraft({hex: data.icao, });
+                Planes[data.icao].last_message_time = 0;
                 Planes[data.icao].fullTrace = data;
                 Planes[data.icao].processTrace();
                 var options = {
