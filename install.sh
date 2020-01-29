@@ -175,7 +175,6 @@ do
 	cp -r -T html $html_path
     mkdir -p $html_path/db2
     cp -r -T $ipath/git-db/db $html_path/db2
-    cp $ipath/git-db/airport-coords.json $html_path/db2
 
 	mv /tmp/tar1090_config.js $html_path/config.js 2>/dev/null || true
 	mv /tmp/tar1090_colors.css $html_path/colors.css 2>/dev/null || true
