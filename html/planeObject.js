@@ -923,8 +923,25 @@ PlaneObject.prototype.processTrace = function(show) {
         this.updated = true;
     }
 
-    if (showTrace)
+    if (showTrace) {
+
+        if (this.track_linesegs.length > 0) {
+            const proj = ol.proj.fromLonLat(this.position);
+            this.track_linesegs[this.track_linesegs.length - 1].fixed.appendCoordinate(proj);
+            this.track_linesegs.push({ fixed: new ol.geom.LineString([proj]),
+                feature: null,
+                estimated: false,
+                altitude: this.alt_rounded,
+                alt_real: this.altitude,
+                speed: this.speed,
+                ground: (this.altitude == "ground"),
+                ts: this.position_time,
+                track: this.rotation,
+            });
+        }
+
         now = new Date().getTime()/1000;
+    }
     this.updateFeatures(now, _last);
 
     var mapSize = OLMap.getSize();
