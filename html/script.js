@@ -2152,14 +2152,14 @@ function selectPlaneByHex(hex, options) {
 
 
     if (!options.noFetch && globeIndex && hex) {
-        var URL1 = 'data/traces/'+ hex.slice(-2) + '/trace_recent_' + hex + '.json.gz';
-        var URL2 = 'data/traces/'+ hex.slice(-2) + '/trace_full_' + hex + '.json.gz';
+        var URL1 = 'data/traces/'+ hex.slice(-2) + '/trace_recent_' + hex + '.json';
+        var URL2 = 'data/traces/'+ hex.slice(-2) + '/trace_full_' + hex + '.json';
         //console.log('Requesting trace: ' + hex);
 
 
         if (showTrace) {
             URL1 = null;
-            URL2 = 'globe_history/' + traceDateString + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json.gz';
+            URL2 = 'globe_history/' + traceDateString + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json';
         }
         if (newPlane && (showTrace || showTraceExit)) {
             SelectedPlane = oldPlane = null;
