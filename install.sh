@@ -216,6 +216,25 @@ do
 	mv colors.css colors_$epoch.css
 	mv style.css style_$epoch.css
 
+    if [[ $nginx == yes ]]; then
+        gzip -k -9 dbloader_$epoch.js
+        gzip -k -9 defaults_$epoch.js
+        gzip -k -9 early_$epoch.js
+        gzip -k -9 flags_$epoch.js
+        gzip -k -9 formatter_$epoch.js
+        gzip -k -9 layers_$epoch.js
+        gzip -k -9 markers_$epoch.js
+        gzip -k -9 planeObject_$epoch.js
+        gzip -k -9 registrations_$epoch.js
+        gzip -k -9 script_$epoch.js
+        gzip -k -9 colors_$epoch.css
+        gzip -k -9 style_$epoch.css
+
+        gzip -k -9 jquery/*.js
+        gzip -k -9 ol/*.js
+        #gzip -k -9 db2/*.json .... already exists compressed
+    fi
+
 	cd "$dir"
 
 	cp nginx.conf $ipath/nginx-$service.conf

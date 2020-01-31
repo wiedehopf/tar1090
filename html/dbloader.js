@@ -73,7 +73,7 @@ function request_from_db(icao, level, defer) {
 
 function getIcaoAircraftTypeData(aircraftData, defer) {
 	if (_aircraft_type_cache === null) {
-		$.getJSON("db2/aircraft_types/icao_aircraft_types.json")
+		$.getJSON("db2/icao_aircraft_types.json")
 			.done(function(typeLookupData) {
 				_aircraft_type_cache = typeLookupData;
 			})
