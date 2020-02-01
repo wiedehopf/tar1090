@@ -730,7 +730,7 @@ PlaneObject.prototype.updateIcon = function() {
         || (this.selected && !SelectedAllPlanes)
     )) {
         if (extendedLabels == 2) {
-            labelText = NBSP + (this.icaoType ? this.icaoType : "  ?  ") + NBSP + "\n" + NBSP + this.name + NBSP;
+            labelText = NBSP + (this.icaoType ? this.icaoType : "  ?  ") + NBSP + "\n" + NBSP + (this.registration ? this.registration : "  ?  ")+ NBSP + "\n" + NBSP + this.name + NBSP;
         } else if (extendedLabels == 1 ) {
             if (this.altitude && (!this.onGround || (this.speed && this.speed > 15) || (this.selected && !SelectedAllPlanes))) {
                 labelText =  Number(this.speed).toFixed(0).toString().padStart(4, NBSP)+ "  "
