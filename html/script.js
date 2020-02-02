@@ -2820,6 +2820,8 @@ function onJump(e) {
     if (coords) {
         OLMap.getView().setCenter(ol.proj.fromLonLat([coords[1], coords[0]]));
         refreshTableInfo();
+        if (ZoomLvl >= 7)
+            fetchData();
     }
     return false;
 }
