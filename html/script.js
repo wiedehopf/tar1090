@@ -2197,45 +2197,21 @@ function selectPlaneByHex(hex, options) {
             zoom: options.zoom,
             follow: options.follow,
         });
-        if (newPlane) {
-            if (req1) {
-                req1.done(function(data) {
-                    Planes[data.icao].recentTrace = data;
-                    Planes[data.icao].processTrace();
-                });
-            }
-            req2.done(function(data) {
-                Planes[data.icao].fullTrace = data;
-                Planes[data.icao].processTrace();
-            });
 
-        } else {
-            if (req1) {
-                req1.done(function(data) {
-                    Planes[data.icao].recentTrace = data;
-                    Planes[data.icao].processTrace();
-                    //console.log(Planes[data.icao]);
-                    var options = {
-                        noFetch: true,
-                        follow: this.follow,
-                        zoom: this.zoom
-                    }
-                    selectPlaneByHex(data.icao, options);
-                });
-            }
-            req2.done(function(data) {
-                //processAircraft({hex: data.icao, });
-                Planes[data.icao].last_message_time = 0;
-                Planes[data.icao].fullTrace = data;
+        if (req1) {
+            req1.done(function(data) {
+                Planes[data.icao].recentTrace = data;
                 Planes[data.icao].processTrace();
-                var options = {
-                    noFetch: true,
-                    follow: this.follow,
-                    zoom: this.zoom
-                }
-                selectPlaneByHex(data.icao, options);
+                if (this.follow)
+                    FollowSelected = true;
             });
         }
+        req2.done(function(data) {
+            Planes[data.icao].fullTrace = data;
+            Planes[data.icao].processTrace();
+            if (this.follow)
+                FollowSelected = true;
+        });
     }
 
     if (!multiSelect && oldPlane) {
