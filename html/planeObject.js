@@ -725,14 +725,14 @@ PlaneObject.prototype.updateIcon = function() {
     var labelText = null;
     if ( ( (enableLabels && !multiSelect) || (enableLabels && multiSelect && this.selected)) && (
         (ZoomLvl >= labelZoom && this.altitude != "ground")
-        || (ZoomLvl >= labelZoomGround-2 && this.speed > 18)
+        || (ZoomLvl >= labelZoomGround-2 && this.speed > 5)
         || ZoomLvl >= labelZoomGround
         || (this.selected && !SelectedAllPlanes)
     )) {
         if (extendedLabels == 2) {
             labelText = NBSP + (this.icaoType ? this.icaoType : "  ?  ") + NBSP + "\n" + NBSP + (this.registration ? this.registration : "  ?  ")+ NBSP + "\n" + NBSP + this.name + NBSP;
         } else if (extendedLabels == 1 ) {
-            if (this.altitude && (!this.onGround || (this.speed && this.speed > 15) || (this.selected && !SelectedAllPlanes))) {
+            if (this.altitude && (!this.onGround || (this.speed && this.speed > 18) || (this.selected && !SelectedAllPlanes))) {
                 labelText =  Number(this.speed).toFixed(0).toString().padStart(4, NBSP)+ "  "
                     + this.altitude.toString().padStart(5, NBSP) + " \n " + this.name + " ";
             } else {
@@ -1303,9 +1303,13 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
         var lines = false;
         var marker = false;
 
+
+        marker = true;
+        /*
         this.scale = scaleFactor * this.baseScale;
         if (this.scaleCache != this.scale)
             marker = true;
+        */
         if (redraw || moved || lastVisible != this.visible)
             marker = lines = true;
 

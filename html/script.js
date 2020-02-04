@@ -3146,7 +3146,7 @@ function changeZoom(init) {
     ZoomLvl = OLMap.getView().getZoom();
 
     // small zoomstep, no need to change aircraft scaling
-    if (!init && Math.abs(ZoomLvl-ZoomLvlCache) < 0.1)
+    if (!init && Math.abs(ZoomLvl-ZoomLvlCache) < 0.4)
         return;
 
     localStorage['ZoomLvl'] = ZoomLvl;

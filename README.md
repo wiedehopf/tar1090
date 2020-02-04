@@ -25,7 +25,7 @@ dump1090-mutability installations should work as well, aircraft details will be 
 ## Installation
 
 ```
-sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"
+sudo bash -c "$(wget -nv -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"
 ```
 
 ## View the added webinterface
