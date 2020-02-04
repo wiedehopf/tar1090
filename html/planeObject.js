@@ -837,6 +837,7 @@ PlaneObject.prototype.processTrace = function(show) {
     Object.assign(tempPlane, this);
 
     for (var j = 0; j < 2; j++) {
+        var start = 0;
         if (j == 0) {
             if (!this.fullTrace || !this.fullTrace.trace)
                 continue;
@@ -845,6 +846,14 @@ PlaneObject.prototype.processTrace = function(show) {
             _last = timeZero - 1;
 
             trace = this.fullTrace.trace;
+            if (lastLeg) {
+                for (var i = trace.length - 1; i >= 0; i--) {
+                    if (trace[i][6] & 2) {
+                        start = i;
+                        break;
+                    }
+                }
+            }
         } else {
             if (!this.recentTrace || !this.recentTrace.trace)
                 continue;
@@ -855,7 +864,7 @@ PlaneObject.prototype.processTrace = function(show) {
             trace = this.recentTrace.trace;
         }
 
-        for (var i = 0; i < trace.length; i++) {
+        for (var i = start; i < trace.length; i++) {
             const state = trace[i];
             const timestamp = timeZero + state[0];
             const lat = state[1];
@@ -863,7 +872,8 @@ PlaneObject.prototype.processTrace = function(show) {
             const altitude = state[3];
             const gs = state[4];
             const track = state[5];
-            const stale = state[6];
+            const stale = state[6] & 1;
+            const leg_marker = state[6] & 2;
 
             _now = timestamp;
 

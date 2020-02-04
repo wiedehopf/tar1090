@@ -219,3 +219,6 @@ HideCols = [
 
 
 //enableDWD = true;
+
+// Display only the last leg of a flight in globeIndex mode.
+//lastLeg = false;

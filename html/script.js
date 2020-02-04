@@ -696,6 +696,18 @@ function init_page() {
     });
     */
 
+    $('#lastLeg_checkbox').on('click', function() {
+        toggleLastLeg();
+    });
+
+    if (localStorage['lastLeg'] === "true") {
+        lastLeg = true;
+        $('#lastLeg_checkbox').addClass('settingsCheckboxChecked');
+    } else if (localStorage['lastLeg'] === "false") {
+        lastLeg = false;
+        $('#lastLeg_checkbox').removeClass('settingsCheckboxChecked');
+    }
+
     $('#debugAll_checkbox').on('click', function() {
         toggleDebugAll();
     });
@@ -1318,6 +1330,9 @@ function initialize_map() {
                 toggleTrackLabels();
                 break;
                 // debug stuff
+            case "L":
+                toggleLastLeg();
+                break;
             case "D":
                 debug = !debug;
                 localStorage['debug'] = debug;
@@ -2601,6 +2616,20 @@ function togglePersistence() {
     localStorage['noVanish'] = noVanish;
     console.log('noVanish = ' + noVanish);
     refreshTableInfo();
+}
+
+function toggleLastLeg() {
+    if (localStorage['lastLeg'] === "true") {
+        lastLeg = false;
+        localStorage['lastLeg'] = "false";
+        $('#lastLeg_checkbox').removeClass('settingsCheckboxChecked');
+    } else {
+        lastLeg = true;
+        localStorage['lastLeg'] = "true";
+        $('#lastLeg_checkbox').addClass('settingsCheckboxChecked');
+    }
+    if (SelectedPlane)
+        SelectedPlane.processTrace();
 }
 
 function toggleDebugAll() {
