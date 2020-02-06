@@ -836,24 +836,30 @@ PlaneObject.prototype.processTrace = function(show) {
 
     Object.assign(tempPlane, this);
 
+    var onlyRecent = 0;
+
+    if (lastLeg && this.recentTrace && this.recentTrace.trace) {
+        trace = this.recentTrace.trace;
+        for (var i = trace.length - 1; i >= 0; i--) {
+            if (trace[i][6] & 2) {
+                onlyRecent = 1;
+                break;
+            }
+        }
+    }
+
     for (var j = 0; j < 2; j++) {
         var start = 0;
         if (j == 0) {
             if (!this.fullTrace || !this.fullTrace.trace)
+                continue;
+            if (onlyRecent)
                 continue;
             timeZero = this.fullTrace.timestamp;
 
             _last = timeZero - 1;
 
             trace = this.fullTrace.trace;
-            if (lastLeg) {
-                for (var i = trace.length - 1; i >= 0; i--) {
-                    if (trace[i][6] & 2) {
-                        start = i;
-                        break;
-                    }
-                }
-            }
         } else {
             if (!this.recentTrace || !this.recentTrace.trace)
                 continue;
@@ -862,6 +868,15 @@ PlaneObject.prototype.processTrace = function(show) {
                 _last = timeZero - 1;
             }
             trace = this.recentTrace.trace;
+        }
+
+        if (lastLeg) {
+            for (var i = trace.length - 1; i >= 0; i--) {
+                if (trace[i][6] & 2) {
+                    start = i;
+                    break;
+                }
+            }
         }
 
         for (var i = start; i < trace.length; i++) {
