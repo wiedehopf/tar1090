@@ -838,7 +838,7 @@ PlaneObject.prototype.processTrace = function(show) {
 
     var onlyRecent = 0;
 
-    if (lastLeg && this.recentTrace && this.recentTrace.trace) {
+    if (lastLeg && !showTrace && this.recentTrace && this.recentTrace.trace) {
         trace = this.recentTrace.trace;
         for (var i = trace.length - 1; i >= 0; i--) {
             if (trace[i][6] & 2) {
@@ -870,7 +870,7 @@ PlaneObject.prototype.processTrace = function(show) {
             trace = this.recentTrace.trace;
         }
 
-        if (lastLeg) {
+        if (lastLeg && !showTrace) {
             for (var i = trace.length - 1; i >= 0; i--) {
                 if (trace[i][6] & 2) {
                     start = i;
