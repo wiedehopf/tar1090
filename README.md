@@ -36,7 +36,7 @@ http://192.168.x.yy/tar1090
 
 Check further down or keyboard shortcuts.
 
-## Update
+## Update (same command as installation)
 
 ```
 sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"
