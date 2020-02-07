@@ -59,6 +59,8 @@ var markerScaleFactor = 1.25;
 var markerMaxSize = 1.32;
 var markerMinSize = 0.9;
 
+var largeMode = 1;
+
 var lineWidth = 1;
 
 // These settings control the coloring of aircraft by altitude.

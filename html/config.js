@@ -68,6 +68,8 @@
 //markerMaxSize = 1.32;
 //markerMinSize = 0.72;
 
+//largeMode = 1;
+
 //lineWidth = 1;
 
 // These settings control the coloring of aircraft by altitude.

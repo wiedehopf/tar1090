@@ -139,50 +139,6 @@ function PlaneObject(icao) {
 
 }
 
-const estimateStyle = new ol.style.Style({
-    stroke: new ol.style.Stroke({
-        color: '#808080',
-        width: 1.2 * lineWidth,
-    })
-});
-const estimateStyleSlim = new ol.style.Style({
-    stroke: new ol.style.Stroke({
-        color: '#808080',
-        width: 0.4 * lineWidth,
-    })
-});
-
-const nullStyle = new ol.style.Style({});
-
-const badLine =  new ol.style.Style({
-    stroke: new ol.style.Stroke({
-        color: '#FF0000',
-        width: 2 * lineWidth,
-    })
-});
-const badLineMlat =  new ol.style.Style({
-    stroke: new ol.style.Stroke({
-        color: '#FFA500',
-        width: 2 * lineWidth,
-    })
-});
-
-const badDot = new ol.style.Style({
-    image: new ol.style.Circle({
-        radius: 3.5 * lineWidth,
-        fill: new ol.style.Fill({
-            color: '#FF0000',
-        })
-    }),
-});
-const badDotMlat = new ol.style.Style({
-    image: new ol.style.Circle({
-        radius: 3.5 * lineWidth,
-        fill: new ol.style.Fill({
-            color: '#FFA500',
-        })
-    }),
-});
 
 PlaneObject.prototype.logSel = function(loggable) {
     if (debugTracks && this.selected && !SelectedAllPlanes)
@@ -1394,7 +1350,10 @@ PlaneObject.prototype.altitudeLines = function(segment) {
         colorArr = [colorArr[0], colorArr[1], colorArr[2] * 0.7];
     //var color = 'hsl(' + colorArr[0].toFixed(0) + ', ' + colorArr[1].toFixed(0) + '%, ' + colorArr[2].toFixed(0) + '%)';
     var color = hslToRgb(colorArr[0], colorArr[1], colorArr[2]);
-    const lineKey = color + '_' + debugTracks + '_' + noVanish + '_' + segment.estimated;
+
+    var newWidth = largeMode * lineWidth;
+
+    const lineKey = color + '_' + debugTracks + '_' + noVanish + '_' + segment.estimated + '_' + newWidth;
 
     if (lineStyleCache[lineKey])
         return lineStyleCache[lineKey];
@@ -1405,14 +1364,14 @@ PlaneObject.prototype.altitudeLines = function(segment) {
         lineStyleCache[lineKey]	= new ol.style.Style({
             stroke: new ol.style.Stroke({
                 color: color,
-                width: (2-(noVanish*0.8)) * lineWidth * estimatedMult,
+                width: (2-(noVanish*0.8)) * newWidth * estimatedMult,
             })
         });
     } else {
         lineStyleCache[lineKey] = [
             new ol.style.Style({
                 image: new ol.style.Circle({
-                    radius: 2 * lineWidth,
+                    radius: 2 * newWidth,
                     fill: new ol.style.Fill({
                         color: color
                     })
@@ -1424,7 +1383,7 @@ PlaneObject.prototype.altitudeLines = function(segment) {
             new ol.style.Style({
                 stroke: new ol.style.Stroke({
                     color: color,
-                    width: 2 * lineWidth * estimatedMult,
+                    width: 2 * newWidth * estimatedMult,
                 })
             })
         ];

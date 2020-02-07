@@ -121,6 +121,51 @@ var layers_group;
 // piaware vs flightfeeder
 var isFlightFeeder = false;
 
+var estimateStyle = new ol.style.Style({
+    stroke: new ol.style.Stroke({
+        color: '#808080',
+        width: 1.2 * lineWidth,
+    })
+});
+var estimateStyleSlim = new ol.style.Style({
+    stroke: new ol.style.Stroke({
+        color: '#808080',
+        width: 0.4 * lineWidth,
+    })
+});
+
+const nullStyle = new ol.style.Style({});
+
+var badLine =  new ol.style.Style({
+    stroke: new ol.style.Stroke({
+        color: '#FF0000',
+        width: 2 * lineWidth,
+    })
+});
+var badLineMlat =  new ol.style.Style({
+    stroke: new ol.style.Stroke({
+        color: '#FFA500',
+        width: 2 * lineWidth,
+    })
+});
+
+var badDot = new ol.style.Style({
+    image: new ol.style.Circle({
+        radius: 3.5 * lineWidth,
+        fill: new ol.style.Fill({
+            color: '#FF0000',
+        })
+    }),
+});
+var badDotMlat = new ol.style.Style({
+    image: new ol.style.Circle({
+        radius: 3.5 * lineWidth,
+        fill: new ol.style.Fill({
+            color: '#FFA500',
+        })
+    }),
+});
+
 
 function processAircraft(ac, init, uat) {
     var isArray = Array.isArray(ac);
@@ -628,6 +673,8 @@ function init_page() {
     $("#expand_sidebar_button").click(expandSidebar);
     $("#show_map_button").click(showMap);
 
+    $("#large_mode_button").click(toggleLargeMode);
+
     // Set initial element visibility
     $("#show_map_button").hide();
     setColumnVisibility();
@@ -699,6 +746,16 @@ function init_page() {
     $('#lastLeg_checkbox').on('click', function() {
         toggleLastLeg();
     });
+
+    if (localStorage['largeMode'] === "2") {
+        largeMode = 1;
+        toggleLargeMode();
+        //$('#largeMode_checkbox').addClass('settingsCheckboxChecked');
+    } else if (localStorage['largeMode'] === "3") {
+        largeMode = 2;
+        toggleLargeMode();
+        //$('#largeMode_checkbox').removeClass('settingsCheckboxChecked');
+    }
 
     if (localStorage['lastLeg'] === "true") {
         lastLeg = true;
@@ -3148,6 +3205,9 @@ function checkMovement() {
 }
 
 function changeZoom(init) {
+    if (!OLMap)
+        return;
+
     ZoomLvl = OLMap.getView().getZoom();
 
     // small zoomstep, no need to change aircraft scaling
@@ -3157,7 +3217,12 @@ function changeZoom(init) {
     localStorage['ZoomLvl'] = ZoomLvl;
     ZoomLvlCache = ZoomLvl;
 
-    scaleFactor = Math.max(markerMinSize, Math.min(markerMaxSize, markerScaleFactor * 0.09 * Math.pow(1.35, ZoomLvl)));
+    if (largeMode == 3)
+        scaleFactor = 2.4
+    else if (largeMode == 2)
+        scaleFactor = 1.9
+    else
+        scaleFactor = Math.max(markerMinSize, Math.min(markerMaxSize, markerScaleFactor * 0.09 * Math.pow(1.35, ZoomLvl)));
 
     if (!onlySelected)
         refreshTableInfo();
@@ -3479,6 +3544,26 @@ function refreshInt() {
     return refresh * (1 + 0.6/4 * lastRequestFiles);
 }
 
+function toggleLargeMode() {
+
+    largeMode++;
+    if (largeMode > 3)
+        largeMode = 1;
+
+    let root = document.documentElement;
+
+    root.style.setProperty("--FS2", (8.7 + largeMode * 1.3) + 'pt');
+    $('#selected_infoblock').css('width', ( 125 + largeMode * 15 ) + 'pt');
+
+    labelFont = "bold " + ( 10 + 2 * largeMode ) + "px tahoma";
+
+    localStorage['largeMode'] = largeMode;
+
+    changeZoom("init");
+    setLineWidth();
+    refreshFeatures();
+}
+
 function toggleShowTrace() {
     if (!showTrace) {
         showTrace = true;
@@ -3534,4 +3619,53 @@ function getDateString(date) {
         + (date.getUTCMonth() + 1).toString().padStart(2, '0') + '-'
         + date.getUTCDate().toString().padStart(2, '0')
     return string;
+}
+
+function setLineWidth() {
+
+    var newWidth = lineWidth * largeMode;
+
+    estimateStyle = new ol.style.Style({
+        stroke: new ol.style.Stroke({
+            color: '#808080',
+            width: 1.2 * newWidth,
+        })
+    });
+    estimateStyleSlim = new ol.style.Style({
+        stroke: new ol.style.Stroke({
+            color: '#808080',
+            width: 0.4 * newWidth,
+        })
+    });
+
+    badLine =  new ol.style.Style({
+        stroke: new ol.style.Stroke({
+            color: '#FF0000',
+            width: 2 * newWidth,
+        })
+    });
+    badLineMlat =  new ol.style.Style({
+        stroke: new ol.style.Stroke({
+            color: '#FFA500',
+            width: 2 * newWidth,
+        })
+    });
+
+    badDot = new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: 3.5 * newWidth,
+            fill: new ol.style.Fill({
+                color: '#FF0000',
+            })
+        }),
+    });
+    badDotMlat = new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: 3.5 * newWidth,
+            fill: new ol.style.Fill({
+                color: '#FFA500',
+            })
+        }),
+    });
+
 }

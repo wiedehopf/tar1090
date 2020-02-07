@@ -1,14 +1,17 @@
+:root {
+	--FS1: 9pt;
+	--FS2: 10pt;
+	--FS3: 12pt;
+}
+
 html, body {
 	-ms-overflow-style: -ms-autohiding-scrollbar;
     margin: 0px; padding: 0px; background-color: #F8F8F8; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 10pt; overflow: hidden; height: 100%;
+    font-size: var(--FS2); overflow: hidden; height: 100%;
 
 }
-element {
-	--fontsize-small: 9pt;
-}
 
-#tableinfo { font-size: 10pt; }
+#tableinfo { font-size: var(--FS2); }
 
 #layout_container {
     display: flex;
@@ -79,6 +82,25 @@ element {
 
 #toggle_sidebar_button.hide_sidebar {
     background-image: url("images/hide_sidebar.png");
+}
+#large_mode_control {
+    display: block;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
+#large_mode_button {
+    cursor: pointer;
+    float: left;
+    width: 30px;
+    height: 30px;
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    background-position: 0px;
+    background-color: transparent;
+    border: none;
+    background-image: url("images/zoom-in@3x.png");
 }
 
 #expand_sidebar_control {
@@ -206,7 +228,7 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
 
 #units_container,
 #altitude_filter_form {
-    font-size: var(--fontsize-small);
+    font-size: var(--FS1);
     margin: 10px 0px 10px 0px;
 }
 
@@ -250,7 +272,7 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
      padding: 4px 15px 4px 15px;
      color: #FFFFFF;
      font-weight: normal;
-     font-size: var(--fontsize-small);
+     font-size: var(--FS1);
 }
 
 .sidebarButton:hover {
@@ -344,7 +366,7 @@ select.error, textarea.error, input.error {
 
 .link
 {
-    font-size: 10px;
+    font-size: var(--FS2);
     line-height: 20px;
     color: #0000C8;
     color: rgb(0, 0, 200);
