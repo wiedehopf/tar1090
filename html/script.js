@@ -2507,12 +2507,16 @@ function setSelectedInfoBlockVisibility() {
         if (!mapIsVisible)
             $("#sidebar_container").css('margin-left', '140pt');
         //$('#sidebar_canvas').css('margin-bottom', $('#selected_infoblock').height() + 'px');
+
+        $('#large_mode_control').css('left', ( 130 + largeMode * 15 ) + 'pt');
     }
     else {
         $('#selected_infoblock').hide();
         if (!mapIsVisible)
             $("#sidebar_container").css('margin-left', '0');
         //$('#sidebar_canvas').css('margin-bottom', 0);
+
+        $('#large_mode_control').css('left', '5pt');
     }
 }
 
@@ -3562,6 +3566,7 @@ function toggleLargeMode() {
     changeZoom("init");
     setLineWidth();
     refreshFeatures();
+    refreshSelected();
 }
 
 function toggleShowTrace() {
