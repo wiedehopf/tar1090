@@ -25,6 +25,13 @@ try {
         uuid = feed;
         console.log('uuid: ' + uuid);
     }
+
+    const customTiles = search.get('customTiles');
+    if (customTiles)
+        localStorage['customTiles'] = customTiles;
+    if (customTiles == 'remove')
+        localStorage.removeItem('customTiles');
+
 } catch (error) {
 }
 

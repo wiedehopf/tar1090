@@ -20,7 +20,18 @@ function createBaseLayers() {
 
     var world = new ol.Collection();
     var us = new ol.Collection();
+    var custom = new ol.Collection();
 
+    if (localStorage['customTiles'] != undefined) {
+        custom.push(new ol.layer.Tile({
+            source: new ol.source.OSM({
+                "url" : localStorage['customTiles'],
+            }),
+            name: 'custom_tiles',
+            title: 'Custom tiles',
+            type: 'base',
+        }));
+    }
     /*
     world.push(new ol.layer.Tile({
         source: new ol.source.OSM({
@@ -198,6 +209,13 @@ function createBaseLayers() {
 
 
 
+    if (custom.getLength() > 0) {
+        layers.push(new ol.layer.Group({
+            name: 'custom',
+            title: 'Custom',
+            layers: new ol.Collection(custom.getArray().reverse())
+        }));
+    }
 
     if (us.getLength() > 0) {
         layers.push(new ol.layer.Group({
