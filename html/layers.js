@@ -21,7 +21,7 @@ function createBaseLayers() {
     var world = new ol.Collection();
     var us = new ol.Collection();
 
-    //		opacity: 0.9,
+    /*
     world.push(new ol.layer.Tile({
         source: new ol.source.OSM({
             "url" : "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"
@@ -30,6 +30,7 @@ function createBaseLayers() {
         title: 'OpenStreetMap Wikimedia',
         type: 'base',
     }));
+    */
 
     world.push(new ol.layer.Tile({
         source: new ol.source.OSM(),
