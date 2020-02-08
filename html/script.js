@@ -568,6 +568,16 @@ function initialize() {
         $.getJSON("db2/airport-coords.json")
             .done(function(data) {
                 _airport_coords_cache = data;
+                const search = new URLSearchParams(window.location.search);
+                var airport = search.get('airport');
+                if (airport) {
+                    const coords = _airport_coords_cache[airport.trim().toUpperCase()];
+                    if (coords) {
+                        OLMap.getView().setCenter(ol.proj.fromLonLat([coords[1], coords[0]]));
+                        if (!search.get('zoom'))
+                            OLMap.getView().setZoom(11);
+                    }
+                }
             })
     });
 
