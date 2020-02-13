@@ -113,6 +113,18 @@ URL_978="http://127.0.0.1/skyaware978"
 Open and save as described above in the Configuration section.
 Follow the instructions in the file.
 
+### UAT only configuration
+
+tar1090 running on the same pi as the skyaware978/dump978-fa:
+
+```
+echo /run/skyaware978 tar1090 | sudo tee /etc/default/tar1090_instances
+```
+
+After that run the install script and it should work.
+978 should be disabled in the config file for this configuration.
+UAT traffic will be displayed as ADS-B, this can't be avoided.
+
 ### Installation / Update to work with another folder, for example /run/combine1090
 
 
