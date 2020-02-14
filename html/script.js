@@ -984,6 +984,8 @@ function parse_history() {
     // And kick off one refresh immediately.
     processURLParams();
 
+    if (globeIndex)
+        geoFindMe();
 
     if (!icaoFilter && globeIndex)
         toggleTableInView(true);
@@ -2421,6 +2423,10 @@ function toggleFollowSelected() {
 }
 
 function resetMap() {
+
+    if (globeIndex)
+        geoFindMe();
+
     // Reset localStorage values and map settings
     localStorage['CenterLat'] = CenterLat = DefaultCenterLat;
     localStorage['CenterLon'] = CenterLon = DefaultCenterLon;
@@ -3682,5 +3688,29 @@ function setLineWidth() {
             })
         }),
     });
+
+}
+
+function geoFindMe() {
+
+    function success(position) {
+        CenterLat = DefaultCenterLat = position.coords.latitude;
+        CenterLon = DefaultCenterLon = position.coords.longitude;
+        if (localStorage['geoFindMeFirstVisit'] == undefined) {
+            OLMap.getView().setCenter(ol.proj.fromLonLat([CenterLon, CenterLat]));
+            localStorage['geoFindMeFirstVisit'] = 'no';
+        }
+    }
+
+    function error() {
+        console.log("Unable to query location.");
+    }
+
+    if (!navigator.geolocation) {
+        console.log('Geolocation is not supported by your browser');
+    } else {
+        console.log('Locating…');
+        navigator.geolocation.getCurrentPosition(success, error);
+    }
 
 }
