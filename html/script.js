@@ -383,6 +383,9 @@ function fetchData() {
     buttonActive('#F', FollowSelected);
 
     var ac_url = [];
+    if (SiteName != "adsbexchange.com tar1090") {
+        $('#adsbexchange_header').hide();
+    }
     if (globeIndex) {
         var indexes = globeIndexes();
         var count = 0;
@@ -1852,6 +1855,8 @@ function refreshHighlighted() {
         return;
     }
     var markerPosition = OLMap.getPixelFromCoordinate(markerCoordinates);
+    if (!markerPosition)
+        return;
 
     var mapSize = OLMap.getSize();
     if (markerPosition[0] + 200 < mapSize[0])

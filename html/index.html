@@ -649,36 +649,53 @@
 					<div id="sidebar-table">
 						<div id="dump1090_infoblock">
 							<table style="width: 100%">
-                                <td>
+                                <tr>
                                     <div class="button-flex buttonTable" id="show_map_button"><span class="buttonText">Show Map</span></div>
-                                </td>
+                                </tr>
 
+                                <tr class="infoRowSpacer">
+                                </tr>
+
+								<tr class="infoblock_row">
+                                    <td style="text-align: center">
+                                    <div id='adsbexchange_header'>
+                                        <span class="largeText">Improve Coverage: <a class="largeText" href="https://adsbexchange.com/how-to-feed/">adsbexchange.com</a></span>
+                                    </div>
+                                    </td>
+                                </tr>
+                                <tr class="infoRowSpacer">
+                                </tr>
+
+                                <tr class="infoblock_heading">
+                                    <td style="text-align: right">
+                                        <a href="https://github.com/wiedehopf/tar1090#tar1090" id="dump1090_version" target="_blank">tar1090 on github</a>
+                                    </td>
+                                </tr>
+                                <tr class="infoRowSpacer">
+                                </tr>
+                                <table style="width: 100%">
+                                    <tr class="infoblock_heading">
+                                        <td><span class="infoBlockTitleText">Total Aircraft:</span> <span id="dump1090_total_ac">n/a</span></td>
+                                        <td id="dump1090_message_rate_td"><span class="infoBlockTitleText">Messages:</span> <span id="dump1090_message_rate">n/a</span>/sec</td>
+                                    </tr>
+
+                                    <tr class="infoblock_body">
+                                        <td><span id="with_positions" class="infoBlockTitleText">With Positions:</span> <span id="dump1090_total_ac_positions">n/a</span></td>
+                                        <td id="dump1090_total_history_td"><span class="infoBlockTitleText">History:</span> <span id="dump1090_total_history">n/a</span> positions</td>
+                                    </tr>
+                                </table>
+
+                                <tr class="infoRowSpacer">
+                                </tr>
 								<tr class="infoblock_heading">
-									<td><span class="infoBlockTitleText">Total Aircraft:</span> <span id="dump1090_total_ac">n/a</span></td>
-									<td id="dump1090_message_rate_td"><span class="infoBlockTitleText">Messages:</span> <span id="dump1090_message_rate">n/a</span>/sec</td>
-									<td style="text-align: right">
-										<a href="https://github.com/wiedehopf/tar1090#tar1090" id="dump1090_version" target="_blank">tar1090 on github</a>
-									</td>
-								</tr>
-
-								<tr class="infoblock_body">
-									<td><span id="with_positions" class="infoBlockTitleText">With Positions:</span> <span id="dump1090_total_ac_positions">n/a</span></td>
-									<td id="dump1090_total_history_td"><span class="infoBlockTitleText">History:</span> <span id="dump1090_total_history">n/a</span> positions</td>
-								</tr>
-
-								<tr class="infoblock_heading">
+                                    <table style="width: 100%">
                                     <td>
                                         <form id="search_form">
                                             <span class="infoBlockTitleText">Search:</span>
                                             <br>
                                             <input id="search_input" name="searchBox" type="text" class="searchInput" maxlength="8">
 										</form>
-									</td>
-
-								</tr>
-
-
-								<tr class="infoblock_body">
+                                    </td>
                                     <td>
                                         <form id="jump_form">
                                             <span class="infoBlockTitleText">Jump to airport:</span>
@@ -686,7 +703,11 @@
                                             <input id="jump_input" name="jumpBox" type="text" class="searchInput" maxlength="4">
                                         </form>
                                     </td>
+                                    </table>
 								</tr>
+
+                                <tr class="infoRowSpacer">
+                                </tr>
 							</table>
 						</div> <!-- dump1090_infoblock -->
 

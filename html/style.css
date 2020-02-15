@@ -256,6 +256,7 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
 .plane_table_row {
 	cursor: default;
 }
+
 .plane_table_row a:link, a:visited {
 	color: black;
 }
@@ -600,6 +601,12 @@ select.error, textarea.error, input.error {
 }
 
 #dump1090_infoblock {
+}
+
+.largeText {
+    font-weight: bold;
+    color: #003f4b;
+    font-size: var(--FS3);
 }
 
 .infoBlockTitleText {
