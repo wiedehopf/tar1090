@@ -244,4 +244,4 @@ var showPictures = false;
 // enable DWD Radolan (NEXRAD like weather for Germany)
 var enableDWD = true;
 
-var lastLeg = false;
+var lastLeg = true;

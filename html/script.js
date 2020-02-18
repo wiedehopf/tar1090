@@ -769,7 +769,6 @@ function init_page() {
         toggleLargeMode();
         //$('#largeMode_checkbox').removeClass('settingsCheckboxChecked');
     }
-
     if (localStorage['lastLeg'] === "true") {
         lastLeg = true;
         $('#lastLeg_checkbox').addClass('settingsCheckboxChecked');
@@ -2701,7 +2700,7 @@ function togglePersistence() {
 }
 
 function toggleLastLeg() {
-    if (localStorage['lastLeg'] === "true") {
+    if (lastLeg) {
         lastLeg = false;
         localStorage['lastLeg'] = "false";
         $('#lastLeg_checkbox').removeClass('settingsCheckboxChecked');
