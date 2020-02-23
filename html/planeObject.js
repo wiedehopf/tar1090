@@ -863,8 +863,11 @@ PlaneObject.prototype.processTrace = function(show) {
             if (track)
                 this.rotation = track
 
-            if (stale)
+            if (stale || _last - _now > 320) {
                 _last = _now - 1;
+                //var time_difference = (this.position_time - this.prev_time) - (now - last);
+                //console.log(new Date(1000*this.position_time) + ' ' + new Date(1000*this.prev_time));
+            }
 
             this.updateTrack(_now, _last, { serverTrack: true });
             _last = _now;
@@ -884,6 +887,10 @@ PlaneObject.prototype.processTrace = function(show) {
         this.speed = state.speed;
         this.track = state.track;
         this.rotation = state.rotation;
+
+        if (_last - _now > 30) {
+            _last = _now - 1;
+        }
 
         this.updateTrack(_now, _last);
         _last = _now;
