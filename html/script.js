@@ -383,8 +383,8 @@ function fetchData() {
     buttonActive('#F', FollowSelected);
 
     var ac_url = [];
-    if (SiteName != "adsbexchange.com tar1090") {
-        $('#adsbexchange_header').hide();
+    if (SiteName == "adsbexchange.com tar1090") {
+        $('#adsbexchange_header').show();
     }
     if (globeIndex) {
         var indexes = globeIndexes();
