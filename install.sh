@@ -176,7 +176,6 @@ do
 
 	rm -rf $html_path 2>/dev/null || true
 	cp -r -T html $html_path
-    mkdir -p $html_path/db2
     cp -r -T $ipath/git-db/db $html_path/db-$DB_VERSION
     sed -i -e "s/var databaseFolder = .*/var databaseFolder = \"db-$DB_VERSION\";/" $html_path/early.js
 
