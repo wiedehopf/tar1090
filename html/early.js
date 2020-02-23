@@ -15,6 +15,8 @@ var configureReceiver = $.Deferred();
 var historyTimeout = 60;
 var globeIndex = 0;
 
+var databaseFolder = "db2";
+
 var uuid = null;
 
 try {

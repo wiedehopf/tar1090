@@ -73,7 +73,7 @@ function request_from_db(icao, level, defer) {
 
 function getIcaoAircraftTypeData(aircraftData, defer) {
 	if (_aircraft_type_cache === null) {
-		$.getJSON("db2/icao_aircraft_types.json")
+		$.getJSON(databaseFolder + "/icao_aircraft_types.json")
 			.done(function(typeLookupData) {
 				_aircraft_type_cache = typeLookupData;
 			})
@@ -136,7 +136,7 @@ function db_ajax_request_complete() {
 	} else {
 		_request_count++;
 		req = _request_queue.shift();
-		const req_url = 'db2/' + req.bkey + '.json';
+		const req_url = databaseFolder + '/' + req.bkey + '.json';
 		ajaxreq = $.ajax({ url: req_url,
 			cache: true,
 			timeout: 30000,

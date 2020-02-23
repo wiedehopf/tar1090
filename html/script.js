@@ -564,11 +564,11 @@ function initialize() {
         // Wait for history item downloads and append them to the buffer
         push_history();
         // this will be needed later
-        $.getJSON("db2/icao_aircraft_types.json")
+        $.getJSON(databaseFolder + "/icao_aircraft_types.json")
             .done(function(typeLookupData) {
                 _aircraft_type_cache = typeLookupData;
             })
-        $.getJSON("db2/airport-coords.json")
+        $.getJSON(databaseFolder + "/airport-coords.json")
             .done(function(data) {
                 _airport_coords_cache = data;
                 const search = new URLSearchParams(window.location.search);

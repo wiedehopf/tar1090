@@ -65,6 +65,9 @@ then
 	git reset --hard origin/master
 fi
 
+cd $ipath/git-db
+DB_VERSION=$(git rev-parse --short HEAD)
+
 cd "$dir"
 
 if [[ "$1" == "test" ]]
@@ -174,7 +177,8 @@ do
 	rm -rf $html_path 2>/dev/null || true
 	cp -r -T html $html_path
     mkdir -p $html_path/db2
-    cp -r -T $ipath/git-db/db $html_path/db2
+    cp -r -T $ipath/git-db/db $html_path/db-$DB_VERSION
+    sed -i -e "s/var databaseFolder = .*/var databaseFolder = \"db-$DB_VERSION\";/" $html_path/early.js
 
 	mv /tmp/tar1090_config.js $html_path/config.js 2>/dev/null || true
 	mv /tmp/tar1090_colors.css $html_path/colors.css 2>/dev/null || true
