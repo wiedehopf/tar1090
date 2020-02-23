@@ -136,7 +136,7 @@ function db_ajax_request_complete() {
 	} else {
 		_request_count++;
 		req = _request_queue.shift();
-		const req_url = databaseFolder + '/' + req.bkey + '.json';
+		const req_url = databaseFolder + '/' + req.bkey + '.js';
 		ajaxreq = $.ajax({ url: req_url,
 			cache: true,
 			timeout: 30000,
