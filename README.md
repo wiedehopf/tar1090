@@ -62,12 +62,21 @@ The duration of the history in seconds can be calculated as interval times histo
 
 ## Configuring the web interface (optional):
 
+Remove the // at the start of a line, otherwise the setting will not be used.
+
 ```
 sudo nano /usr/local/share/tar1090/html/config.js
 ```
 
 Ctrl-x to exit, y (yes) and enter to save.
 Then Ctrl-F5 to refresh the web interface in the browser.
+
+If you somehow broke the interface or want the default config back:
+```
+sudo rm /usr/local/share/tar1090/html/config.js
+```
+Then run the install script again.
+
 
 ## Change Log
 
