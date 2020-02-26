@@ -1631,7 +1631,7 @@ function refreshSelected() {
         $('#selected_icaotype').text("n/a");
     }
 
-    if (globeIndex && showPictures && selected.icaoType){
+    if (showPictures && selected.icaoType){
         var new_html = "<img width='150px' src='aircraft_sil/" + selected.icaoType + ".bmp' />";
         if (new_html != selectedPhotoCache) {
             $('#selected_photo').html(new_html);
