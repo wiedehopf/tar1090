@@ -567,7 +567,24 @@ function initialize() {
         $.getJSON(databaseFolder + "/icao_aircraft_types.js")
             .done(function(typeLookupData) {
                 _aircraft_type_cache = typeLookupData;
-            })
+            });
+        $.getJSON(databaseFolder + "/files.js")
+            .done(function(data) {
+                for (var i in data) {
+                    const icao = data[i].padEnd(6, 0);
+                    //console.log(icao);
+                    var req = getAircraftData(icao);
+                    req.icao = icao;
+                    req.fail(function(jqXHR,textStatus,errorThrown) {
+                        if (textStatus == 'timeout') {
+                            getAircraftData(this.icao);
+                            console.log('Database load timeout:' + this.icao);
+                        } else {
+                            console.log(this.icao + ': Database load error: ' + textStatus + ' at URL: ' + jqXHR.url);
+                        }
+                    });
+                }
+            });
         $.getJSON(databaseFolder + "/airport-coords.js")
             .done(function(data) {
                 _airport_coords_cache = data;
@@ -3372,6 +3389,10 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
         return;
     query = query.toLowerCase();
     var results = [];
+    if (byReg && regCache[query.toUpperCase()]) {
+        selectPlaneByHex(regCache[query.toUpperCase()].toLowerCase(), {follow: true});
+        return;
+    }
     for (var i in PlanesOrdered) {
         const plane = PlanesOrdered[i];
         if (
