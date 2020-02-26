@@ -141,7 +141,18 @@ function db_ajax_request_complete() {
 			cache: true,
 			timeout: 30000,
 			dataType : 'json' });
-		ajaxreq.done(function(data) { req.resolve(data); });
+		ajaxreq.done(function(data) {
+            req.resolve(data);
+            const keys = Object.keys(data);
+            for (var i in keys) {
+                if (keys[i] == 'children')
+                    continue;
+                const icao = req.bkey + keys[i];
+                const reg = data[keys[i]][0];
+                //console.log(reg);
+                regCache[reg] = icao;
+            }
+        });
 		ajaxreq.fail(function(jqxhr, status, error) {
 			if (status == 'timeout') {
 				delete _request_cache[req.bkey];

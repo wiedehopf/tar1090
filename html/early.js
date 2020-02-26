@@ -14,6 +14,7 @@ var deferHistory = [];
 var configureReceiver = $.Deferred();
 var historyTimeout = 60;
 var globeIndex = 0;
+var regCache = {};
 
 var databaseFolder = "db2";
 
