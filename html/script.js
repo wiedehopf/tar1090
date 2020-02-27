@@ -1022,6 +1022,11 @@ function parse_history() {
     if (!globeIndex) {
         $('#show_trace').hide();
     }
+    if (globeIndex) {
+        $('#V').hide();
+        $('#uat1').hide();
+        $('#uat2').hide();
+    }
 
     updateMapSize();
 
