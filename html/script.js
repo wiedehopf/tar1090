@@ -1198,6 +1198,8 @@ function initialize_map() {
         });
     }
 
+    var interactions = ol.interaction.defaults({altShiftDragRotate:false, pinchRotate:false});
+
     OLMap = new ol.Map({
         target: 'map_canvas',
         layers: layers,
@@ -1206,10 +1208,11 @@ function initialize_map() {
             zoom: ZoomLvl,
             minZoom: 2,
         }),
-        controls: [new ol.control.Zoom({delta: 1, duration: 0,}),
+        controls: [new ol.control.Zoom({delta: 1, duration: 0}),
             new ol.control.Attribution({collapsed: true}),
             new ol.control.ScaleLine({units: DisplayUnits})
         ],
+        interactions: interactions,
         loadTilesWhileAnimating: false,
         loadTilesWhileInteracting: false,
     });
