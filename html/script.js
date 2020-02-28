@@ -1212,6 +1212,7 @@ function initialize_map() {
         ],
         loadTilesWhileAnimating: false,
         loadTilesWhileInteracting: false,
+        interactions: new ol.interaction.defaults({altShiftDragRotate:false, pinchRotate:false,}),
     });
 
     OLMap.getView().setRotation(mapOrientation); // adjust orientation
