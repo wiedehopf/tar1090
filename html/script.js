@@ -78,7 +78,11 @@ var showTrace = false;
 var showTraceExit = false;
 var traceDate = null;
 var traceDateString = null;
-var icaoParam = '000000';
+var icaoParam = null;
+
+var adsbexchange = false;
+if (SiteName == "adsbexchange.com tar1090")
+    adsbexchange = true;
 
 var SpecialSquawks = {
     '7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -383,7 +387,7 @@ function fetchData() {
     buttonActive('#F', FollowSelected);
 
     var ac_url = [];
-    if (SiteName == "adsbexchange.com tar1090") {
+    if (adsbexchange) {
         $('#adsbexchange_header').show();
     }
     if (globeIndex) {
@@ -588,15 +592,19 @@ function initialize() {
         $.getJSON(databaseFolder + "/airport-coords.js")
             .done(function(data) {
                 _airport_coords_cache = data;
-                const search = new URLSearchParams(window.location.search);
-                var airport = search.get('airport');
-                if (airport) {
-                    const coords = _airport_coords_cache[airport.trim().toUpperCase()];
-                    if (coords) {
-                        OLMap.getView().setCenter(ol.proj.fromLonLat([coords[1], coords[0]]));
-                        if (!search.get('zoom'))
-                            OLMap.getView().setZoom(11);
+                try {
+                    const search = new URLSearchParams(window.location.search);
+                    var airport = search.get('airport');
+                    if (airport) {
+                        const coords = _airport_coords_cache[airport.trim().toUpperCase()];
+                        if (coords) {
+                            OLMap.getView().setCenter(ol.proj.fromLonLat([coords[1], coords[0]]));
+                            if (!search.get('zoom'))
+                                OLMap.getView().setZoom(11);
+                        }
                     }
+                } catch (error) {
+                    console.log(error);
                 }
             })
     });
@@ -1697,7 +1705,13 @@ function refreshSelected() {
     }
     $('#selected_baro_rate').text(format_vert_rate_long(selected.baro_rate, DisplayUnits));
     $('#selected_geom_rate').text(format_vert_rate_long(selected.geom_rate, DisplayUnits));
-    $('#selected_icao').text(selected.icao.toUpperCase());
+    if (adsbexchange) {
+        var icao_link = "<a style=\"color: blue\" target=\"_blank\" href=\"https://tar1090.adsbexchange.com/?icao=" + selected.icao +  "\">Share</a>";
+        icao_link = NBSP +NBSP +NBSP +NBSP +NBSP +NBSP + icao_link;
+        $('#selected_icao').html(selected.icao.toUpperCase() + icao_link);
+    } else {
+        $('#selected_icao').text(selected.icao.toUpperCase());
+    }
     $('#selected_pf_info').text((selected.pfRoute ? selected.pfRoute : "") );
     //+" "+ (selected.pfFlightno ? selected.pfFlightno : "")
     $('#airframes_post_icao').attr('value',selected.icao);
@@ -3331,8 +3345,10 @@ function processURLParams(){
             icaoFilter = icaoFilter.toLowerCase().split(',');
 
         var icao = search.get('icao');
-        if (icao)
+        if (icao && icao.length == 6 && icao.toLowerCase().match(/[a-f,0-9]{6}/))
             icaoParam = icao = icao.toLowerCase();
+        else
+            icao = null;
 
         traceDateString = search.get('showTrace');
         const callsign = search.get('callsign');
@@ -3422,7 +3438,7 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
         console.log("query selected: " + query);
     } else {
         console.log("No match found for query: " + query);
-        if (globeIndex && query.length == 6) {
+        if (globeIndex && query.length == 6 && query.toLowerCase().match(/[a-f,0-9]{6}/)) {
             console.log("maybe it's an icao, let's try to fetch the history for it!");
             selectPlaneByHex(query, {follow: true})
         }
@@ -3656,7 +3672,7 @@ function shiftTrace(offset) {
 
     $('#trace_date').text('UTC day:' + traceDateString);
 
-    var hex = SelectedPlane ? SelectedPlane.icao : icaoParam;
+    var hex = SelectedPlane.icao;
     var string = pathName + '?icao=' + hex + '&showTrace=' + traceDateString;
 
     window.history.replaceState("object or string", "Title", string);
