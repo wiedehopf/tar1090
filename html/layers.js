@@ -51,6 +51,17 @@ function createBaseLayers() {
     }));
 
     world.push(new ol.layer.Tile({
+        source: new ol.source.XYZ({
+            "url" : "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+            "attributions" : "Tiles © Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+        }),
+        name: 'esri',
+        title: 'ESRI Sat.',
+        type: 'base',
+    }));
+
+    /*
+    world.push(new ol.layer.Tile({
         source: new ol.source.OSM({
             "url" : "http://{a-d}.tile.stamen.com/terrain/{z}/{x}/{y}.png", 
             "attributions" : 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. ' 
@@ -71,6 +82,7 @@ function createBaseLayers() {
         title: 'Terrain',
         type: 'base',
     }));
+    */
 
     world.push(new ol.layer.Tile({
         source: new ol.source.OSM({
@@ -167,7 +179,7 @@ function createBaseLayers() {
         name: 'nexrad',
         title: 'NEXRAD',
         type: 'overlay',
-        opacity: 0.5,
+        opacity: 0.3,
         visible: false
     });
 
@@ -232,6 +244,18 @@ function createBaseLayers() {
             layers: new ol.Collection(world.getArray().reverse())
         }));
     }
+
+    layers.push(new ol.layer.Tile({
+        source: new ol.source.XYZ({
+            "url" : "https://map.adsbexchange.com/mapproxy/tiles/1.0.0/openaip/ul_grid/{z}/{x}/{y}.png",
+            "attributions" : "openAIP.net",
+        }),
+        name: 'openaip',
+        title: 'openAIP TMS',
+        type: 'overlay',
+        opacity: 0.7,
+    }));
+
 
     if (enableDWD) {
         layers.push(dwd);
