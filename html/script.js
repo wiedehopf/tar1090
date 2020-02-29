@@ -534,8 +534,8 @@ function fetchData() {
 // kicks off the whole rabbit hole
 function initialize() {
 
-    var largeModeStorage = localStorage['largeMode']
-    if ( largeModeStorage != undefined && parseInt(largeModeStorage, 10)) {
+    var largeModeStorage = localStorage['largeMode'];
+    if (largeModeStorage != undefined && parseInt(largeModeStorage, 10)) {
         largeMode = parseInt(largeModeStorage, 10);
     }
 
@@ -838,6 +838,8 @@ function init_page() {
     if (onMobile) {
         $('#large_mode_button').css('width', 'calc( 45px * var(--SCALE))');
         $('#large_mode_button').css('height', 'calc( 45px * var(--SCALE))');
+        if (localStorage['largeMode'] == undefined && largeMode == 1)
+            largeMode = 2;
     }
 
     largeMode--;
