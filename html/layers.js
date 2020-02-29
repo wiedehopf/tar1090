@@ -254,6 +254,7 @@ function createBaseLayers() {
         title: 'openAIP TMS',
         type: 'overlay',
         opacity: 0.7,
+        visible: false,
     }));
 
 
