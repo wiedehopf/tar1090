@@ -86,6 +86,8 @@ var adsbexchange = false;
 if (SiteName == "adsbexchange.com tar1090")
     adsbexchange = true;
 
+var shareLink = '';
+
 var onMobile = false;
 
 var SpecialSquawks = {
@@ -1748,7 +1750,7 @@ function refreshSelected() {
     $('#selected_baro_rate').text(format_vert_rate_long(selected.baro_rate, DisplayUnits));
     $('#selected_geom_rate').text(format_vert_rate_long(selected.geom_rate, DisplayUnits));
     if (adsbexchange) {
-        var icao_link = "<a style=\"color: blue\" target=\"_blank\" href=\"https://tar1090.adsbexchange.com/?icao=" + selected.icao +  "\">Share</a>";
+        var icao_link = "<a style=\"color: blue\" target=\"_blank\" href=\"" + shareLink + "\">Share</a>";
         icao_link = NBSP +NBSP +NBSP +NBSP +NBSP +NBSP + icao_link;
         $('#selected_icao').html(selected.icao.toUpperCase() + icao_link);
     } else {
@@ -3636,7 +3638,8 @@ function updateAddressBar() {
     else
         string = pathName + posString;
 
-    window.history.replaceState("object or string", "Title", string);
+    shareLink = string;
+    //window.history.replaceState("object or string", "Title", string);
 }
 
 function refreshInt() {
@@ -3689,7 +3692,8 @@ function toggleShowTrace() {
         showTrace = false;
         toggleIsolation(null, "off");
         var string = pathName + '?icao=' + SelectedPlane.icao;
-        window.history.replaceState("object or string", "Title", string);
+        //window.history.replaceState("object or string", "Title", string);
+        shareLink = string;
         $('#history_collapse')[0].style.display = "none";
         $('#show_trace').removeClass("active");
         const hex = SelectedPlane.icao;
@@ -3721,7 +3725,8 @@ function shiftTrace(offset) {
     var hex = SelectedPlane.icao;
     var string = pathName + '?icao=' + hex + '&showTrace=' + traceDateString;
 
-    window.history.replaceState("object or string", "Title", string);
+    //window.history.replaceState("object or string", "Title", string);
+    shareLink = string;
 
     var plane = Planes[hex];
     var selectOptions = {follow: true, zoom: ZoomLvl};
