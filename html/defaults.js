@@ -249,3 +249,5 @@ var showPictures = false;
 var enableDWD = true;
 
 var lastLeg = true;
+
+var hideButtons = false;

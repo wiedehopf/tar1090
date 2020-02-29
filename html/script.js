@@ -572,6 +572,13 @@ function initialize() {
             if (!isNaN(tmp))
                 largeMode = tmp;
         }
+
+        if (search.has('hideSidebar'))
+            localStorage['sidebar_visible'] = "false";
+        if (search.has('sidebarWidth')) {
+            localStorage['sidebar_width'] = search.get('sidebarWidth');
+            localStorage['sidebar_visible'] = "true";
+        }
     } catch (error) {
         console.log(error);
     }
@@ -1098,6 +1105,17 @@ function parse_history() {
         sortByDistance();
     } else {
         sortByAltitude();
+    }
+
+
+    if (hideButtons) {
+        $('#large_mode_control').hide();
+        $('#header_top').hide();
+        $('#header_side').hide();
+        $('#splitter').hide();
+        $('#jumpSearch').hide();
+        $('#filterButton').hide();
+        $('.ol-control').hide();
     }
 }
 
@@ -3428,7 +3446,8 @@ function processURLParams(){
         }
 
         if (icao != null) {
-            toggleIsolation("on", false);
+            if (!search.has('noIsolation'))
+                toggleIsolation("on", false);
             if (Planes[icao] || globeIndex) {
                 console.log('Selected ICAO id: '+ icao);
                 var selectOptions = {follow: follow};
@@ -3451,6 +3470,9 @@ function processURLParams(){
         if (zoom) {
             OLMap.getView().setZoom(zoom);
         }
+
+        if (search.has('hideButtons'))
+            hideButtons = true;
 
     } catch (error) {
         console.log(error);

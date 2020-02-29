@@ -228,3 +228,5 @@ HideCols = [
 
 // Display only the last leg of a flight in globeIndex mode.
 //lastLeg = true;
+//
+//hideButtons = false;
