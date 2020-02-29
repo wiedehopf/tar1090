@@ -835,6 +835,11 @@ function init_page() {
 
     onMobile = window.mobilecheck();
 
+    if (onMobile) {
+        $('#large_mode_button').css('width', 'calc( 45px * var(--SCALE))');
+        $('#large_mode_button').css('height', 'calc( 45px * var(--SCALE))');
+    }
+
     largeMode--;
     toggleLargeMode();
 

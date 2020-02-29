@@ -89,6 +89,7 @@ html, body {
     position: absolute;
     top: calc( 5px * var(--SCALE));
     left: calc( 5px * var(--SCALE));
+    background-color: transparent;
 }
 
 #large_mode_button {
