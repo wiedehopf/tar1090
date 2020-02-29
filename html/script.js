@@ -531,6 +531,21 @@ function fetchData() {
 // this function is called from index.html on body load
 // kicks off the whole rabbit hole
 function initialize() {
+    try {
+        const search = new URLSearchParams(window.location.search);
+        if (search.get('monochromeTracks') != undefined) {
+            monochromeTracks = parseInt(search.get('monochromeTracks'));
+            if (isNaN(monochromeTracks) || !(monochromeTracks >= 0 && monochromeTracks <= 100))
+                monochromeTracks = 5;
+        }
+        if (search.get('monochromeMarkers') != undefined) {
+            monochromeMarkers = parseInt(search.get('monochromeMarkers'));
+            if (isNaN(monochromeMarkers) || !(monochromeMarkers >= 0 && monochromeMarkers <= 100))
+                monochromeMarkers = 95;
+        }
+    } catch (error) {
+        console.log(error);
+    }
 
     mapOrientation *= (Math.PI/180); // adjust to radians
 
@@ -3343,6 +3358,7 @@ function highlight(evt) {
 function processURLParams(){
     try {
         const search = new URLSearchParams(window.location.search);
+
 
         icaoFilter = search.get('icaoFilter');
         if (icaoFilter)

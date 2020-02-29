@@ -361,7 +361,7 @@ select.error, textarea.error, input.error {
 
 .settingsText
 {
-    font-size: calc( 12px * var(--SCALE));
+    font-size: calc( 14px * var(--SCALE));
     line-height: calc( 20px * var(--SCALE));
     text-indent: calc( 16px * var(--SCALE));
     color: rgb(0, 0, 0);
