@@ -57,7 +57,7 @@ var MapDim = true;
 
 var markerScaleFactor = 1.25;
 var markerMaxSize = 1.32;
-var markerMinSize = 0.9;
+var markerMinSize = 0.96;
 
 var largeMode = 1;
 

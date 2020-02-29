@@ -1,12 +1,13 @@
 :root {
-	--FS1: 10px;
-	--FS2: 13px;
-	--FS3: 17px;
+    --SCALE: 1;
+	--FS1: calc( 10px * var(--SCALE));
+	--FS2: calc( 13px * var(--SCALE));
+	--FS3: calc( 17px * var(--SCALE));
 }
 
 html, body {
 	-ms-overflow-style: -ms-autohiding-scrollbar;
-    margin: 0px; padding: 0px; background-color: #F8F8F8; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    margin: calc( 0px * var(--SCALE)); padding: calc( 0px * var(--SCALE)); background-color: #F8F8F8; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: var(--FS2); overflow: hidden; height: 100%;
 
 }
@@ -20,9 +21,9 @@ html, body {
 
 #selected_infoblock {
     position: absolute;
-    left: 0px;
-    top: 0px;
-	width: 180px;
+    left: calc( 0px * var(--SCALE));
+    top: calc( 0px * var(--SCALE));
+	width:  calc(180px * var(--SCALE));
 	height: 100%;
 	overflow: auto;
     z-index: 9999;
@@ -33,14 +34,14 @@ html, body {
 	height: 100%;
 }
 #sidebar_canvas { 
-    padding: 5px;
+    padding: calc( 5px * var(--SCALE));
 	overflow: auto;
 }
 #sidebar_container {
 	display: flex;
 	flex-direction: column;
     width: flex;
-	left: 0px !important;
+	left: calc( 0px * var(--SCALE)) !important;
 	height: 100%;
 }
 
@@ -60,18 +61,18 @@ html, body {
 #toggle_sidebar_control {
     display: block;
     position: absolute;
-    top: 3px;
-    right: 0px;
+    top: calc( 3px * var(--SCALE));
+    right: calc( 0px * var(--SCALE));
 }
 
 #toggle_sidebar_button {
     cursor: pointer;
     float: right;
-    width: 30px;
-    height: 36px;
-    background-size: 28px 32px;
+    width: calc( 30px * var(--SCALE));
+    height: calc( 36px * var(--SCALE));
+    background-size: calc( 28px * var(--SCALE)) calc( 32px * var(--SCALE));
     background-repeat: no-repeat;
-    background-position: 0px;
+    background-position: calc( 0px * var(--SCALE));
     background-color: transparent;
     border: none;
 }
@@ -86,18 +87,18 @@ html, body {
 #large_mode_control {
     display: block;
     position: absolute;
-    top: 8px;
-    left: 8px;
+    top: calc( 5px * var(--SCALE));
+    left: calc( 5px * var(--SCALE));
 }
 
 #large_mode_button {
     cursor: pointer;
     float: left;
-    width: 30px;
-    height: 30px;
-    background-size: 30px 30px;
+    width: calc( 30px * var(--SCALE));
+    height: calc( 30px * var(--SCALE));
+    background-size: calc( 30px * var(--SCALE)) calc( 30px * var(--SCALE));
     background-repeat: no-repeat;
-    background-position: 0px;
+    background-position: calc( 0px * var(--SCALE));
     background-color: transparent;
     border: none;
     background-image: url("images/zoom-in@3x.png");
@@ -106,18 +107,18 @@ html, body {
 #expand_sidebar_control {
     display: block;
     position: absolute;
-    top: 55px;
-    right: 0px;
+    top: calc( 55px * var(--SCALE));
+    right: calc( 0px * var(--SCALE));
 }
 
 #expand_sidebar_button {
     cursor: pointer;
     float: right;
-    width: 30px;
-    height: 36px;
-    background-size: 28px 32px;
+    width: calc( 30px * var(--SCALE));
+    height: calc( 36px * var(--SCALE));
+    background-size: calc( 28px * var(--SCALE)) calc( 32px * var(--SCALE));
     background-repeat: no-repeat;
-    background-position: 0px;
+    background-position: calc( 0px * var(--SCALE));
     background-color: transparent;
     border: none;
     background-image: url("images/show_sidebar.png");
@@ -128,14 +129,14 @@ html, body {
     cursor: ew-resize;
     display: block;
     position: absolute;
-    top: 108px;
-    left: -30px;
+    top:  calc(108px * var(--SCALE));
+    left: calc( -30px * var(--SCALE));
     float: right;
-    width: 30px;
-    height: 30px;
-    background-size: 30px 30px;
+    width: calc( 30px * var(--SCALE));
+    height: calc( 30px * var(--SCALE));
+    background-size: calc( 30px * var(--SCALE)) calc( 30px * var(--SCALE));
     background-repeat: no-repeat;
-    background-position: 0px;
+    background-position: calc( 0px * var(--SCALE));
     background-color: transparent;
     border: none;
     background-image: url("images/toggle-width@2x.png");
@@ -146,33 +147,33 @@ html, body {
 	cursor: ns-resize;
 	display: inline-block;
 	position: absolute	;
-	top: 0px;
+	top: calc( 0px * var(--SCALE));
 	right: 0;
 	margin-left: auto;
-	width: 24px;
-	height: 4px;
-	background-size: 24px 25px;
+	width: calc( 24px * var(--SCALE));
+	height: calc( 4px * var(--SCALE));
+	background-size: calc( 24px * var(--SCALE)) calc( 25px * var(--SCALE));
 	background-repeat: no-repeat;
-	background-position: 0px;
+	background-position: calc( 0px * var(--SCALE));
 	border: none;
 	width: 100%;
 	border-bottom: #234c75;
 	background-color: #65819e;
-	border-bottom-width: 1px;
+	border-bottom-width: calc( 1px * var(--SCALE));
 	border-bottom-style: solid;
 }
 #close-button {
 	display: inline-block;
 	position: absolute;
-	top: 18px;
+	top: calc( 18px * var(--SCALE));
 	color: #67b6c3;
-	right: 30px;
+	right: calc( 30px * var(--SCALE));
 	margin-left: auto;
 	font-size: 75%;
 	text-decoration: underline;
 	cursor: pointer;
-	padding: 3px;
-	border-radius: 2px;
+	padding: calc( 3px * var(--SCALE));
+	border-radius: calc( 2px * var(--SCALE));
 }
 
 /* remove the blue highlighting around the map buttons */
@@ -184,53 +185,48 @@ html, body {
     background-image: url("images/zoom-in@2x.png");
     background-size: cover;
     color:transparent !important;
-    width: 25px !important;
-    height: 25px !important;
+    width: calc( 25px * var(--SCALE)) !important;
+    height: calc( 25px * var(--SCALE)) !important;
     background-color: transparent !important;
-    margin-bottom: 5px !important;
+    margin-bottom: calc( 5px * var(--SCALE)) !important;
 }
 
 .ol-zoom-out {
     background-image: url("images/zoom-out@2x.png");
     background-size: cover;
     color:transparent !important;
-    width: 25px !important;
-    height: 25px !important;
+    width: calc( 25px * var(--SCALE)) !important;
+    height: calc( 25px * var(--SCALE)) !important;
     background-color: transparent !important;
 }
 
 .ol-zoom {
     background-color: transparent !important;
-    left: calc(100% - 65px);
-    top: calc(100% - 85px);
+    left: calc(100% - calc( 65px * var(--SCALE)));
+    top: calc(100% - calc( 85px * var(--SCALE)));
 }
 
 
 
-div#SpecialSquawkWarning { position: absolute; bottom: 25px; right: 430px; border: 2px solid red;
-    background-color: #FFFFA3; opacity: 0.75; filter:alpha(opacity=75); padding: 5px;
+div#SpecialSquawkWarning { position: absolute; bottom: calc( 25px * var(--SCALE)); right:  calc(430px * var(--SCALE)); border: calc( 2px * var(--SCALE)) solid red;
+    background-color: #FFFFA3; opacity: 0.75; filter:alpha(opacity=75); padding: calc( 5px * var(--SCALE));
     text-align: center; }
 
-div#update_error { position: absolute; bottom: 25px; left: 25px; border: 2px solid red;
-    background-color: #FFFFA3; opacity: 0.75; filter:alpha(opacity=75); padding: 5px;
+div#update_error { position: absolute; bottom: calc( 25px * var(--SCALE)); left: calc( 25px * var(--SCALE)); border: calc( 2px * var(--SCALE)) solid red;
+    background-color: #FFFFA3; opacity: 0.75; filter:alpha(opacity=75); padding: calc( 5px * var(--SCALE));
     text-align: center; }
 
 div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right: 0; background: #000; opacity: 0.8; filter: alpha(opacity=80); }
-#spinny { width: 128px; height: 128px; position: absolute; top: 50%; left: 50%; margin: -64px 0 0 -64px; }
-#loader_progress { width: 250px; height: 20px; position: absolute; top: 50%; left: 50%; margin: 128px 0 0 -125px; }
+#spinny { width:  calc(128px * var(--SCALE)); height:  calc(128px * var(--SCALE)); position: absolute; top: 50%; left: 50%; margin: calc( -64px * var(--SCALE)) 0 0 calc( -64px * var(--SCALE)); }
+#loader_progress { width:  calc(250px * var(--SCALE)); height: calc( 20px * var(--SCALE)); position: absolute; top: 50%; left: 50%; margin:  calc(128px * var(--SCALE)) 0 0 - calc(125px * var(--SCALE)); }
 
 
 #sudo_buttons {
     display: flex;
-    padding: 0px 40px 0px 40px;
+    padding: calc( 0px * var(--SCALE)) calc( 40px * var(--SCALE)) calc( 0px * var(--SCALE)) calc( 40px * var(--SCALE));
     justify-content: space-between;
 }
 
-#units_container,
-#altitude_filter_form {
-    font-size: var(--FS1);
-    margin: 10px 0px 10px 0px;
-}
 
 .aircraft_table_header { 
     background-color: #00596b;
@@ -239,7 +235,7 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
 }
 .aircraft_table_header td {
     font-size: smaller;
-    padding: 5px;
+    padding: calc( 5px * var(--SCALE));
     text-align: center;
 }
 
@@ -270,7 +266,7 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
 
 .sidebarButton {
      background-color: #409EDF;
-     padding: 4px 15px 4px 15px;
+     padding: calc( 4px * var(--SCALE)) calc( 15px * var(--SCALE)) calc( 4px * var(--SCALE)) calc( 15px * var(--SCALE));
      color: #FFFFFF;
      font-weight: normal;
      font-size: var(--FS1);
@@ -281,12 +277,18 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
 }
 
 .altitudeFilterInput {
-    width: 50px;
+    width: calc( 50px * var(--SCALE));
+    height:  calc(15px * var(--SCALE));
 	background-color: #F8F8F8;
 }
 .searchInput {
-    width: 100px;
+    width:  calc(100px * var(--SCALE));
+    height:  calc(15px * var(--SCALE));
 	background-color: #F8F8F8;
+}
+
+.formButton {
+     font-size: var(--FS1);
 }
 
 select.error, textarea.error, input.error {
@@ -294,8 +296,8 @@ select.error, textarea.error, input.error {
 }
 
 .layer-switcher {
-    top: 3px !important;
-    right: 47px !important;
+    top: calc( 3px * var(--SCALE)) !important;
+    right: calc( 47px * var(--SCALE)) !important;
     z-index: 999;
 }
 
@@ -303,7 +305,7 @@ select.error, textarea.error, input.error {
 .rangeRingText
 {
     font-weight: bold;
-    font-size: 8px;
+    font-size: calc( 8px * var(--SCALE));
     color: #333333;
     color: rgb(51, 51, 51);
 }
@@ -311,17 +313,17 @@ select.error, textarea.error, input.error {
 .dateTime
 {
     font-weight: bold;
-    font-size: 12px;
-    line-height: 26px;
+    font-size: calc( 12px * var(--SCALE));
+    line-height: calc( 26px * var(--SCALE));
     color: #FFFFFF;
     color: rgb(255, 255, 255);
     text-align: right;
     display: inline-block;
-    padding-right: 20px;
-    padding-left: 20px;
+    padding-right: calc( 20px * var(--SCALE));
+    padding-left: calc( 20px * var(--SCALE));
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1 calc(000px * var(--SCALE))) {
 	.dateTime {
 		display: none;
 	}
@@ -336,7 +338,7 @@ select.error, textarea.error, input.error {
 }
 
 .section-title-content {
-	padding: 3px 20px;
+	padding: calc( 3px * var(--SCALE)) calc( 20px * var(--SCALE));
 }
 
 .legend
@@ -347,28 +349,28 @@ select.error, textarea.error, input.error {
     color: rgb(0, 0, 0);
     display: inline-flex;
     justify-content: flex-end;
-    padding-top: 10px;
+    padding-top: calc( 10px * var(--SCALE));
 }
 
 .settingsHeading
 {
     font-size: 110%;
-    line-height: 20px;
+    line-height: calc( 20px * var(--SCALE));
     color: #003f4b;
 }
 
 .settingsText
 {
-    font-size: 12px;
-    line-height: 20px;
-    text-indent: 16px;
+    font-size: calc( 12px * var(--SCALE));
+    line-height: calc( 20px * var(--SCALE));
+    text-indent: calc( 16px * var(--SCALE));
     color: rgb(0, 0, 0);
 }
 
 .link
 {
     font-size: var(--FS2);
-    line-height: 20px;
+    line-height: calc( 20px * var(--SCALE));
     color: #0000C8;
     color: rgb(0, 0, 200);
     text-decoration: underline;
@@ -376,26 +378,26 @@ select.error, textarea.error, input.error {
 
 #header_side {
 	position: absolute;
-	right: 0px;
-	top: 140px;
-    width: 38px;
+	right: calc( 0px * var(--SCALE));
+	top:  calc(140px * var(--SCALE));
+    width: calc( 38px * var(--SCALE));
     height: flex;
     z-index: 9;
 }
 #header_top {
 	text-align: right;
 	position: absolute;
-	right: 94px;
-	top: 0px;
+	right: calc( 94px * var(--SCALE));
+	top: calc( 0px * var(--SCALE));
     width: flex;
-    height: 38px;
+    height: calc( 38px * var(--SCALE));
     z-index: 9;
 }
 
 .adsbLogo {
-    padding-left: 20px;
-    padding-top: 30px;
-    padding-bottom: 5px;
+    padding-left: calc( 20px * var(--SCALE));
+    padding-top: calc( 30px * var(--SCALE));
+    padding-bottom: calc( 5px * var(--SCALE));
 }
 
 .logoContainer {
@@ -404,20 +406,20 @@ select.error, textarea.error, input.error {
 
 .buttonContainer {
 	display: block;
-	margin: 1px;
+	margin: calc( 1px * var(--SCALE));
     text-align: center;
 }
 .buttonSpacer {
-	margin: 9px;
+	margin: calc( 9px * var(--SCALE));
 }
 
 .buttonText
 {
     font-weight: bold;
-    font-size: 15px;
-    line-height:  30px;
+    font-size: calc( 15px * var(--SCALE));
+    line-height:  calc( 30px * var(--SCALE));
     text-align: center;
-	margin: 5px;
+	margin: calc( 5px * var(--SCALE));
 }
 
 .activeButton {
@@ -431,27 +433,27 @@ select.error, textarea.error, input.error {
 
 .button {
     background-color: #00596b;
-    width: 28px;
-    height: 28px;
-    border-radius: 2px;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
+    width: calc( 28px * var(--SCALE));
+    height: calc( 28px * var(--SCALE));
+    border-radius: calc( 2px * var(--SCALE));
+    -moz-border-radius: calc( 2px * var(--SCALE));
+    -webkit-border-radius: calc( 2px * var(--SCALE));
     display: inline-block;
-	margin: 2px;
+	margin: calc( 2px * var(--SCALE));
     cursor: pointer;
     text-align: center;
 }
 .button-flex {
     background: #67b6c3;
     width: flex;
-    height: 28px;
-    border-radius: 2px;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
+    height: calc( 28px * var(--SCALE));
+    border-radius: calc( 2px * var(--SCALE));
+    -moz-border-radius: calc( 2px * var(--SCALE));
+    -webkit-border-radius: calc( 2px * var(--SCALE));
     display: inline-block;
-	margin: 6px;
-	margin-top: 11px;
-	margin-bottom: 11px;
+	margin: calc( 6px * var(--SCALE));
+	margin-top: calc( 11px * var(--SCALE));
+	margin-bottom: calc( 11px * var(--SCALE));
     cursor: pointer;
     text-align: center;
 }
@@ -462,18 +464,18 @@ select.error, textarea.error, input.error {
 }
 
 .buttonTable {
-    margin-bottom: 0px;
+    margin-bottom: calc( 0px * var(--SCALE));
 }
 
 .settingsContainer {
-	width: 29px;
-	height: 29px;
+	width: calc( 29px * var(--SCALE));
+	height: calc( 29px * var(--SCALE));
     cursor: pointer;
-	margin: 5px;
-	margin-top: 11px;
-	margin-bottom: 11px;
+	margin: calc( 5px * var(--SCALE));
+	margin-top: calc( 11px * var(--SCALE));
+	margin-bottom: calc( 11px * var(--SCALE));
     background-image: url('images/settings-icon.png');
-    background-size: 28px;
+    background-size: calc( 28px * var(--SCALE));
     background-repeat: no-repeat;
     background-position: center;
 }
@@ -481,52 +483,52 @@ select.error, textarea.error, input.error {
 #highlighted_infoblock {
 	background-color: #F8F8F8;
     position: absolute;
-    left: 40px;
-    top: 60px;
-    min-width: 168px;
-    padding-right: 5px;
-    box-shadow: 4px 4px 10px #444444;
+    left: calc( 40px * var(--SCALE));
+    top: calc( 60px * var(--SCALE));
+    min-width:  calc(168px * var(--SCALE));
+    padding-right: calc( 5px * var(--SCALE));
+    box-shadow: calc( 4px * var(--SCALE)) calc( 4px * var(--SCALE)) calc( 10px * var(--SCALE)) #444444;
     cursor: pointer;
     z-index: 9999;
     display: none;
 }
 
 .highlightedTitle {
-    height: 50px;
-    border-bottom: 1px solid #67b6c3;
-    padding-left: 18px;
-	padding-top: 18px;
+    height: calc( 50px * var(--SCALE));
+    border-bottom: calc( 1px * var(--SCALE)) solid #67b6c3;
+    padding-left: calc( 18px * var(--SCALE));
+	padding-top: calc( 18px * var(--SCALE));
 	display: inline-block;
 	width: 83%;
 }
 
 .highlightedInfo {
-    padding-left: 10px;
+    padding-left: calc( 10px * var(--SCALE));
 }
 
 .identLarge {
-    font-size: 24px;
-    line-height: 24px;
+    font-size: calc( 24px * var(--SCALE));
+    line-height: calc( 24px * var(--SCALE));
     color: #003f4b;
     font-weight: lighter;
 }
 
 .identMedium {
-    font-size: 18px;
-    line-height: 22px;
+    font-size: calc( 18px * var(--SCALE));
+    line-height: calc( 22px * var(--SCALE));
     color: #003f4b;
     font-weight: lighter;
 }
 
 .identSmall {
-    font-size: 12px;
+    font-size: calc( 12px * var(--SCALE));
     font-weight: bold;
-    line-height: 20px;
+    line-height: calc( 20px * var(--SCALE));
     color: #003f4b;
 }
 
 .highlightedInfo {
-    padding-bottom: 12px;
+    padding-bottom: calc( 12px * var(--SCALE));
 }
 
 .infoRowTitle {
@@ -540,20 +542,20 @@ select.error, textarea.error, input.error {
 }
 
 .infoRow {
-    padding-top: 10px;
+    padding-top: calc( 10px * var(--SCALE));
 }
 
 .infoRowLine {
 }
 
 .infoRowSpacer {
-	padding-top: 3px;
-	padding-bottom: 3px;
+	padding-top: calc( 3px * var(--SCALE));
+	padding-bottom: calc( 3px * var(--SCALE));
 }
 
 .infoHeading {
-	margin-top: 2px;
-	margin-bottom: 2px;
+	margin-top: calc( 2px * var(--SCALE));
+	margin-bottom: calc( 2px * var(--SCALE));
 }
 
 .infoHeading sub {
@@ -561,8 +563,8 @@ select.error, textarea.error, input.error {
 }
 
 .infoData {
-	margin-top: 2px;
-	margin-bottom: 2px;
+	margin-top: calc( 2px * var(--SCALE));
+	margin-bottom: calc( 2px * var(--SCALE));
 	float: right;
 	text-align: right;
 }
@@ -574,26 +576,26 @@ select.error, textarea.error, input.error {
 
 .rightLink {
     float: right;
-    padding-right: 5px;
+    padding-right: calc( 5px * var(--SCALE));
 }
 
 .infoBlockTopSection {
-    padding-top: 14px;
-    padding-bottom: 14px;
-    padding-left: 8px;
+    padding-top: calc( 14px * var(--SCALE));
+    padding-bottom: calc( 14px * var(--SCALE));
+    padding-left: calc( 8px * var(--SCALE));
 }
 
 .infoBlock45pxSection {
-    height: 45px;
-    line-height: 45px;
-    padding-left: 10px;
+    height: calc( 45px * var(--SCALE));
+    line-height: calc( 45px * var(--SCALE));
+    padding-left: calc( 10px * var(--SCALE));
 }
 
 .infoBlockSection {
-    padding-top: 8px;
-    padding-bottom: 8px;
-    padding-left: 10px;
-    padding-right: 5px;
+    padding-top: calc( 8px * var(--SCALE));
+    padding-bottom: calc( 8px * var(--SCALE));
+    padding-left: calc( 10px * var(--SCALE));
+    padding-right: calc( 5px * var(--SCALE));
 }
 
 .lightGreyBackground {
@@ -615,30 +617,30 @@ select.error, textarea.error, input.error {
 }
 
 .legendBox {
-    width: 15px;
-    height: 15px;
-    border: 1px solid #efefef;
-    border-radius: 4px;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
+    width: calc( 15px * var(--SCALE));
+    height: calc( 15px * var(--SCALE));
+    border: calc( 1px * var(--SCALE)) solid #efefef;
+    border-radius: calc( 4px * var(--SCALE));
+    -moz-border-radius: calc( 4px * var(--SCALE));
+    -webkit-border-radius: calc( 4px * var(--SCALE));
 }
 
 
 .legendTitle {
-    line-height: 19px;
+    line-height: calc( 19px * var(--SCALE));
     display: inline-block;
-    padding-right: 20px;
-    padding-left: 5px;
+    padding-right: calc( 20px * var(--SCALE));
+    padding-left: calc( 5px * var(--SCALE));
 }
 
 #settings_infoblock {
 	position: absolute;
-	top: 60px;
-	right: 60px;
-    width: 398px;
-    min-height: 180px;
-    box-shadow: 4px 4px 10px #444444;
-    padding: 20px;
+	top: calc( 60px * var(--SCALE));
+	right: calc( 60px * var(--SCALE));
+    width:  calc(398px * var(--SCALE));
+    min-height:  calc(180px * var(--SCALE));
+    box-shadow: calc( 4px * var(--SCALE)) calc( 4px * var(--SCALE)) calc( 10px * var(--SCALE)) #444444;
+    padding: calc( 20px * var(--SCALE));
     z-index: 9999;
     display: none;
 	background-color: #F8F8F8;
@@ -646,16 +648,16 @@ select.error, textarea.error, input.error {
 
 .settingsColumn {
     display: table-cell;
-    width: 199px;
+    width:  calc(199px * var(--SCALE));
 }
 .settingsOptionContainer {
     display: table;
-    padding-bottom: 10px;
+    padding-bottom: calc( 10px * var(--SCALE));
 }
 
 .settingsCheckbox {
-    width: 20px;
-    height: 11px;
+    width: calc( 20px * var(--SCALE));
+    height: calc( 11px * var(--SCALE));
     background-image: url('images/box-empty.png');
     background-repeat: no-repeat;
     background-position: center;
@@ -668,26 +670,26 @@ select.error, textarea.error, input.error {
 
 .settingsCloseBox {
     position: absolute;
-    right: 8px;
-    top: 8px;
+    right: calc( 8px * var(--SCALE));
+    top: calc( 8px * var(--SCALE));
     background-image: url('images/close-settings.png');
     background-size: cover;
-    width: 20px;
-    height: 20px;
+    width: calc( 20px * var(--SCALE));
+    height: calc( 20px * var(--SCALE));
     cursor: pointer;
 }
 
 .settingsText {
-    line-height: 20px;
+    line-height: calc( 20px * var(--SCALE));
     display: table-cell;
 }
 
 #altitude_chart {
     float: right;
-    width: calc(100% - 5px);
-    max-width: 800px;
-    right: 5px;
-    bottom: 35px;
+    width: calc(100% - calc( 5px * var(--SCALE)));
+    max-width:  calc(800px * var(--SCALE));
+    right: calc( 5px * var(--SCALE));
+    bottom: calc( 35px * var(--SCALE));
     background-color: transparent !important;
 }
 
@@ -710,8 +712,8 @@ select.error, textarea.error, input.error {
 
 .bottom-container {
 	width: 100%;
-	margin-top: 8px;
-	padding: 40px 0px;
+	margin-top: calc( 8px * var(--SCALE));
+	padding: calc( 40px * var(--SCALE)) calc( 0px * var(--SCALE));
 	text-align: center;
 	background-color: #eee;
 }
@@ -719,16 +721,16 @@ select.error, textarea.error, input.error {
 	background-color: #67b6c3;
 	color: white;
 	text-decoration: none;
-	padding: 4px;
-	line-height: 22px;
-	border-radius: 4px;
+	padding: calc( 4px * var(--SCALE));
+	line-height: calc( 22px * var(--SCALE));
+	border-radius: calc( 4px * var(--SCALE));
 }
 .bottom-info-container {
-	padding-top: 10px;
-	padding-bottom: 10px;
+	padding-top: calc( 10px * var(--SCALE));
+	padding-bottom: calc( 10px * var(--SCALE));
 	text-align: center;
 	color: #003f4b;
-	line-height: 18px;
+	line-height: calc( 18px * var(--SCALE));
 }
 .bottom-info-container img {
 	vertical-align: middle;
@@ -786,12 +788,12 @@ select.error, textarea.error, input.error {
 .greyButton {
   background-color: #ddd;
   cursor: pointer;
-  padding: 4px;
+  padding: calc( 4px * var(--SCALE));
   width: 100%;
   border: none;
   text-align: left;
   outline: none;
-  font-size: 15px;
+  font-size: calc( 15px * var(--SCALE));
   font-weight: bold;
   color: #003f4b;
 }
@@ -799,19 +801,19 @@ select.error, textarea.error, input.error {
   content: '\02795\FE0E'; /* Unicode character for "plus" sign (+) */
   font: Arial;
   float: right;
-  margin-left: 5px;
+  margin-left: calc( 5px * var(--SCALE));
 }
 
 /* Style the button that is used to open and close the collapsible content */
 .collapseButton {
   background-color: #ddd;
   cursor: pointer;
-  padding: 4px;
+  padding: calc( 4px * var(--SCALE));
   width: 100%;
   border: none;
   text-align: left;
   outline: none;
-  font-size: 15px;
+  font-size: calc( 15px * var(--SCALE));
   font-weight: bold;
   color: #003f4b;
 }
@@ -823,18 +825,18 @@ select.error, textarea.error, input.error {
 
 /* Style the collapsible content. Note: hidden by default */
 .collapse {
-  padding: 0 14px;
+  padding: 0 calc( 14px * var(--SCALE));
   display: none;
   overflow: hidden;
   background-color: #f1f1f1;
-  margin-bottom: 8px;
+  margin-bottom: calc( 8px * var(--SCALE));
 }
 
 .collapseButton:after {
   content: '\02795\FE0E'; /* Unicode character for "plus" sign (+) */
   font: Arial;
   float: right;
-  margin-left: 5px;
+  margin-left: calc( 5px * var(--SCALE));
 }
 
 .active:after {

@@ -1358,8 +1358,6 @@ PlaneObject.prototype.altitudeLines = function(segment) {
     //var color = 'hsl(' + colorArr[0].toFixed(0) + ', ' + colorArr[1].toFixed(0) + '%, ' + colorArr[2].toFixed(0) + '%)';
     var color = hslToRgb(colorArr[0], colorArr[1], colorArr[2]);
 
-    var newWidth = largeMode * lineWidth;
-
     const lineKey = color + '_' + debugTracks + '_' + noVanish + '_' + segment.estimated + '_' + newWidth;
 
     if (lineStyleCache[lineKey])
