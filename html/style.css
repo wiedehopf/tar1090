@@ -1,7 +1,7 @@
 :root {
-	--FS1: 9pt;
-	--FS2: 10pt;
-	--FS3: 12pt;
+	--FS1: 10px;
+	--FS2: 13px;
+	--FS3: 17px;
 }
 
 html, body {
@@ -20,9 +20,9 @@ html, body {
 
 #selected_infoblock {
     position: absolute;
-    left: 0pt;
+    left: 0px;
     top: 0px;
-	width: 140pt;
+	width: 180px;
 	height: 100%;
 	overflow: auto;
     z-index: 9999;
@@ -86,8 +86,8 @@ html, body {
 #large_mode_control {
     display: block;
     position: absolute;
-    top: 5pt;
-    left: 5pt;
+    top: 8px;
+    left: 8px;
 }
 
 #large_mode_button {
@@ -311,8 +311,8 @@ select.error, textarea.error, input.error {
 .dateTime
 {
     font-weight: bold;
-    font-size: 11pt;
-    line-height: 22pt;
+    font-size: 12px;
+    line-height: 26px;
     color: #FFFFFF;
     color: rgb(255, 255, 255);
     text-align: right;
@@ -359,7 +359,7 @@ select.error, textarea.error, input.error {
 
 .settingsText
 {
-    font-size: 11pt;
+    font-size: 12px;
     line-height: 20px;
     text-indent: 16px;
     color: rgb(0, 0, 0);
@@ -378,7 +378,7 @@ select.error, textarea.error, input.error {
 	position: absolute;
 	right: 0px;
 	top: 140px;
-    width: 30pt;
+    width: 38px;
     height: flex;
     z-index: 9;
 }
@@ -388,7 +388,7 @@ select.error, textarea.error, input.error {
 	right: 94px;
 	top: 0px;
     width: flex;
-    height: 30pt;
+    height: 38px;
     z-index: 9;
 }
 
@@ -408,16 +408,16 @@ select.error, textarea.error, input.error {
     text-align: center;
 }
 .buttonSpacer {
-	margin: 6pt;
+	margin: 9px;
 }
 
 .buttonText
 {
     font-weight: bold;
-    font-size: 12pt;
-    line-height:  24pt;
+    font-size: 15px;
+    line-height:  30px;
     text-align: center;
-	margin: 3pt;
+	margin: 5px;
 }
 
 .activeButton {
@@ -431,8 +431,8 @@ select.error, textarea.error, input.error {
 
 .button {
     background-color: #00596b;
-    width: 22pt;
-    height: 22pt;
+    width: 28px;
+    height: 28px;
     border-radius: 2px;
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
@@ -444,14 +444,14 @@ select.error, textarea.error, input.error {
 .button-flex {
     background: #67b6c3;
     width: flex;
-    height: 22pt;
+    height: 28px;
     border-radius: 2px;
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
     display: inline-block;
-	margin: 4pt;
-	margin-top: 8pt;
-	margin-bottom: 8pt;
+	margin: 6px;
+	margin-top: 11px;
+	margin-bottom: 11px;
     cursor: pointer;
     text-align: center;
 }
@@ -466,14 +466,14 @@ select.error, textarea.error, input.error {
 }
 
 .settingsContainer {
-	width: 22pt;
-	height: 22pt;
+	width: 29px;
+	height: 29px;
     cursor: pointer;
-	margin: 3pt;
-	margin-top: 8pt;
-	margin-bottom: 8pt;
+	margin: 5px;
+	margin-top: 11px;
+	margin-bottom: 11px;
     background-image: url('images/settings-icon.png');
-    background-size: 22pt;
+    background-size: 28px;
     background-repeat: no-repeat;
     background-position: center;
 }
@@ -720,7 +720,7 @@ select.error, textarea.error, input.error {
 	color: white;
 	text-decoration: none;
 	padding: 4px;
-	line-height: 16pt;
+	line-height: 22px;
 	border-radius: 4px;
 }
 .bottom-info-container {
