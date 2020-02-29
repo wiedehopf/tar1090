@@ -531,6 +531,13 @@ function fetchData() {
 // this function is called from index.html on body load
 // kicks off the whole rabbit hole
 function initialize() {
+
+    var largeModeStorage = localStorage['largeMode']
+    if ( largeModeStorage != undefined && parseInt(largeModeStorage, 10)) {
+        largeMode = parseInt(largeModeStorage, 10);
+    }
+
+
     try {
         const search = new URLSearchParams(window.location.search);
         if (search.get('monochromeTracks') != undefined) {
@@ -542,6 +549,12 @@ function initialize() {
             monochromeMarkers = parseInt(search.get('monochromeMarkers'));
             if (isNaN(monochromeMarkers) || !(monochromeMarkers >= 0 && monochromeMarkers <= 100))
                 monochromeMarkers = 95;
+        }
+        if (search.get('largeMode') != undefined) {
+            var tmp = parseInt(search.get('largeMode'));
+            console.log(tmp);
+            if (!isNaN(tmp))
+                largeMode = tmp;
         }
     } catch (error) {
         console.log(error);
@@ -805,11 +818,6 @@ function init_page() {
     });
 
     onMobile = window.mobilecheck();
-
-    var largeModeStorage = localStorage['largeMode']
-    if ( largeModeStorage != undefined && parseInt(largeModeStorage, 10)) {
-        largeMode = parseInt(largeModeStorage, 10);
-    }
 
     largeMode--;
     toggleLargeMode();
