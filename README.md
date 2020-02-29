@@ -295,3 +295,26 @@ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE ENTIRE RISK AS
 TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.  SHOULD THE
 PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING,
 REPAIR OR CORRECTION.
+
+## History function as used for tar1090.adsbexchange.com
+
+This is not in any way or form officially supported and you should consider it experimental.
+To accomplish this, you need to use the dev branch of my readsb repository.
+
+The following options need to be used:
+```
+--write-json-globe-index --write-globe-history /var/globe_history
+```
+
+This will obviously write data to the hard drive, be aware of that.
+The data format is subject to change, don't expect this to be stable.
+Be aware of that when upgrading either tar1090 or readsb to a new commit.
+
+For these features i only maintain the nginx configuration, not the lighttpd configuration.
+Thus you'll need to use nginx with the config file provided by the tar1090 install script
+or change the lighttpd configuration yourself.
+
+If you can't figure out how to make it work with the above information, please don't ask.
+I don't support this feature for the general user base.
+This information is only for people who could figure it out from the source code anyhow,
+so that they don't have to spend as much time figuring it out.
