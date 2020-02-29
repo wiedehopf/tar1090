@@ -551,6 +551,9 @@ PlaneObject.prototype.getMarkerColor = function() {
     if (this.squawk in SpecialSquawks)
         return SpecialSquawks[this.squawk].markerColor;
 
+    if (monochromeMarkers) {
+        return monochromeMarkers;
+    }
 
     var h, s, l;
 
@@ -559,11 +562,6 @@ PlaneObject.prototype.getMarkerColor = function() {
     h = colorArr[0];
     s = colorArr[1];
     l = colorArr[2];
-
-    if (monochromeMarkers >= 0) {
-        s = 0;
-        l = monochromeMarkers;
-    }
 
     // If we have not seen a recent position update, change color
     if (this.seen_pos > 15 && !globeIndex)  {
@@ -1363,11 +1361,10 @@ PlaneObject.prototype.altitudeLines = function(segment) {
         colorArr = [colorArr[0], colorArr[1], colorArr[2] * 0.7];
     //var color = 'hsl(' + colorArr[0].toFixed(0) + ', ' + colorArr[1].toFixed(0) + '%, ' + colorArr[2].toFixed(0) + '%)';
 
-    if (monochromeTracks >= 0)
-        colorArr = [colorArr[0], 0, monochromeTracks];
-
     var color = hslToRgb(colorArr[0], colorArr[1], colorArr[2]);
 
+    if (monochromeTracks)
+        color = monochromeTracks;
 
     const lineKey = color + '_' + debugTracks + '_' + noVanish + '_' + segment.estimated + '_' + newWidth;
 

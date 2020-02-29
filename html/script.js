@@ -540,16 +540,30 @@ function initialize() {
 
     try {
         const search = new URLSearchParams(window.location.search);
-        if (search.get('monochromeTracks') != undefined) {
-            monochromeTracks = parseInt(search.get('monochromeTracks'));
-            if (isNaN(monochromeTracks) || !(monochromeTracks >= 0 && monochromeTracks <= 100))
-                monochromeTracks = 5;
+        var tracks = search.get('monochromeTracks');
+        if (tracks != undefined) {
+            if (tracks.length == 6)
+                monochromeTracks = '#' + tracks;
+            else
+                monochromeTracks = "#000000";
         }
-        if (search.get('monochromeMarkers') != undefined) {
-            monochromeMarkers = parseInt(search.get('monochromeMarkers'));
-            if (isNaN(monochromeMarkers) || !(monochromeMarkers >= 0 && monochromeMarkers <= 100))
-                monochromeMarkers = 95;
+
+        var markers = search.get('monochromeMarkers');
+        if (markers != undefined) {
+            if (markers.length == 6)
+                monochromeMarkers = '#' + markers;
+            else
+                monochromeMarkers = "#FFFFFF";
         }
+
+        var outlineColor = search.get('outlineColor');
+        if (outlineColor != undefined) {
+            if (markers.length == 6)
+                OutlineADSBColor = '#' + outlineColor;
+            else
+                OutlineADSBColor = "#000000";
+        }
+
         if (search.get('largeMode') != undefined) {
             var tmp = parseInt(search.get('largeMode'));
             console.log(tmp);

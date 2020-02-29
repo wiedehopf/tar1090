@@ -72,10 +72,9 @@
 
 //lineWidth = 1;
 
-// 0 to 100 to set a brightness for and enable monochrome aircraft markers / tracks
-// -1 to use colored markers / tracks (default)
-//monochromeMarkers = -1;
-//monochromeTracks = -1;
+// constant html color for markers / tracks
+//monochromeMarkers = "#FFFFFF";
+//monochromeTracks = "#000000";
 
 // These settings control the coloring of aircraft by altitude.
 // All color values are given as Hue (0-359) / Saturation (0-100) / Lightness (0-100)
