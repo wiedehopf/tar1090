@@ -1466,6 +1466,29 @@ function initialize_map() {
             case "h":
                 resetMap();
                 break;
+            case "H":
+                if (!hideButtons) {
+                    $('#large_mode_control').hide();
+                    $('#header_top').hide();
+                    $('#header_side').hide();
+                    $('#splitter').hide();
+                    $('#jumpSearch').hide();
+                    $('#filterButton').hide();
+                    $('.ol-control').hide();
+                } else {
+                    $('#large_mode_control').show();
+                    $('#header_top').show();
+                    $('#header_side').show();
+                    $('#splitter').show();
+                    $('#jumpSearch').show();
+                    $('#filterButton').show();
+                    $('.ol-control').show();
+                    $('#expand_sidebar_control').hide();
+                    toggleSidebarVisibility();
+                    toggleSidebarVisibility();
+                }
+                hideButtons = !hideButtons;
+                break;
             case "f":
                 toggleFollowSelected();
                 break;
