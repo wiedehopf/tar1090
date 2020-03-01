@@ -20,6 +20,7 @@ function createBaseLayers() {
 
     var world = new ol.Collection();
     var us = new ol.Collection();
+    var uk = new ol.Collection();
     var custom = new ol.Collection();
 
     if (localStorage['customTiles'] != undefined) {
@@ -219,7 +220,33 @@ function createBaseLayers() {
         window.setInterval(refreshDwd, 4 * 60000);
     }
 
+    var createGeoJsonLayer = function (title, name, url, fill, stroke) {
+        return new ol.layer.Vector({
+            type: 'overlay',
+            title: title,
+            name: name,
+            source: new ol.source.Vector({
+              url: url,
+              format: new ol.format.GeoJSON({
+                defaultDataProjection :'EPSG:4326', 
+                    projection: 'EPSG:3857'
+              })
+            }),
+            style: new ol.style.Style({
+                fill: new ol.style.Fill({
+                      color : fill
+                }),
+                stroke: new ol.style.Stroke({
+                        color: stroke,
+                        width: 1
+                }),
+            })
+        });
+    }
 
+    // Taken from https://github.com/alkissack/Dump1090-OpenLayers3-html
+    uk.push(createGeoJsonLayer('Radar Corridors', 'ukradarcorridors', 'layers/UK_Mil_RC.geojson', 'rgba(22, 171, 22, 0.3)', 'rgba(22, 171, 22, 1)'));
+    uk.push(createGeoJsonLayer('A2A Refuleing', 'uka2arefueling', 'layers/UK_Mil_AAR_Zones.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
 
     if (custom.getLength() > 0) {
         layers.push(new ol.layer.Group({
@@ -242,6 +269,14 @@ function createBaseLayers() {
             name: 'world',
             title: 'Worldwide',
             layers: new ol.Collection(world.getArray().reverse())
+        }));
+    }
+
+    if (uk.getLength() > 0) {
+        layers.push(new ol.layer.Group({
+            name: 'uk',
+            title: 'UK',
+            layers: new ol.Collection(uk.getArray())
         }));
     }
 
