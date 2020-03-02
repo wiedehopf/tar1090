@@ -3251,11 +3251,11 @@ function fetchPfData() {
     if (fetchingPf)
         return;
     fetchingPf = true;
-    for (const i in pf_data) {
+    for (var i in pf_data) {
         const req = $.ajax({ url: pf_data[i],
             dataType: 'json' });
         $.when(req).done(function(data) {
-            for (const i in PlanesOrdered) {
+            for (var i in PlanesOrdered) {
                 const plane = PlanesOrdered[i];
                 const ac = data.aircraft[plane.icao.toUpperCase()];
                 if (!ac) {
