@@ -537,6 +537,9 @@ function initialize() {
 
     onMobile = window.mobilecheck();
 
+    if (onMobile)
+        enableMouseover = false;
+
     var largeModeStorage = localStorage['largeMode'];
     if (largeModeStorage != undefined && parseInt(largeModeStorage, 10)) {
         largeMode = parseInt(largeModeStorage, 10);
@@ -3354,6 +3357,14 @@ function changeZoom(init) {
         return;
 
     ZoomLvl = OLMap.getView().getZoom();
+
+    if (onMobile) {
+        if (ZoomLvl < 7.5) {
+            iconLayer.setVisible(false);
+        } else {
+            iconLayer.setVisible(true);
+        }
+    }
 
     // small zoomstep, no need to change aircraft scaling
     if (!init && Math.abs(ZoomLvl-ZoomLvlCache) < 0.4)
