@@ -253,17 +253,28 @@ function createBaseLayers() {
                     projection: 'EPSG:3857'
               })
             }),
-            style: new ol.style.Style({
+            style: (feature) => new ol.style.Style({
                 fill: new ol.style.Fill({
-                      color : fill
+                    color : fill
                 }),
                 stroke: new ol.style.Stroke({
-                        color: stroke,
-                        width: 1
+                    color: stroke,
+                    width: 1
                 }),
+                text: new ol.style.Text({
+                    text: feature.get("name"),
+                    scale: 1.25,
+                    fill: new ol.style.Fill({
+                        color: '#000000'
+                    }),
+                    stroke: new ol.style.Stroke({
+                        color: '#FFFFFF',
+                        width: 2
+                    })
+                })
             })
         });
-    }
+    };
 
     // Taken from https://github.com/alkissack/Dump1090-OpenLayers3-html
     europe.push(createGeoJsonLayer('UK Radar Corridors', 'ukradarcorridors', 'geojson/UK_Mil_RC.geojson', 'rgba(22, 171, 22, 0.3)', 'rgba(22, 171, 22, 1)'));
