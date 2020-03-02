@@ -1295,7 +1295,9 @@ function initialize_map() {
     OLMap.getView().setRotation(mapOrientation); // adjust orientation
 
     if (baseCount > 1) {
-        OLMap.addControl(new ol.control.LayerSwitcher());
+        OLMap.addControl(new ol.control.LayerSwitcher({
+            groupSelectStyle: 'none'
+        }));
     }
 
     /*

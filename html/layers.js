@@ -20,7 +20,7 @@ function createBaseLayers() {
 
     var world = new ol.Collection();
     var us = new ol.Collection();
-    var uk = new ol.Collection();
+    var europe = new ol.Collection();
     var custom = new ol.Collection();
 
     if (localStorage['customTiles'] != undefined) {
@@ -176,12 +176,26 @@ function createBaseLayers() {
         type: 'base',
     }));
 
+    world.push(new ol.layer.Tile({
+        source: new ol.source.XYZ({
+            "url" : "https://map.adsbexchange.com/mapproxy/tiles/1.0.0/openaip/ul_grid/{z}/{x}/{y}.png",
+            "attributions" : "openAIP.net",
+        }),
+        name: 'openaip',
+        title: 'openAIP TMS',
+        type: 'overlay',
+        opacity: 0.7,
+        visible: false,
+        zIndex: 99,
+    }));
+
     var nexrad = new ol.layer.Tile({
         name: 'nexrad',
         title: 'NEXRAD',
         type: 'overlay',
         opacity: 0.3,
-        visible: false
+        visible: false,
+        zIndex: 99,
     });
 
     var refreshNexrad = function() {
@@ -209,7 +223,8 @@ function createBaseLayers() {
             title: 'DWD RADOLAN',
             type: 'overlay',
             opacity: 0.3,
-            visible: false
+            visible: false,
+            zIndex: 99,
         });
 
 
@@ -218,13 +233,19 @@ function createBaseLayers() {
         };
         refreshDwd();
         window.setInterval(refreshDwd, 4 * 60000);
+
+        europe.push(dwd);
     }
+
+    us.push(nexrad);
 
     var createGeoJsonLayer = function (title, name, url, fill, stroke) {
         return new ol.layer.Vector({
             type: 'overlay',
             title: title,
             name: name,
+            zIndex: 99,
+            visible: false,
             source: new ol.source.Vector({
               url: url,
               format: new ol.format.GeoJSON({
@@ -245,14 +266,23 @@ function createBaseLayers() {
     }
 
     // Taken from https://github.com/alkissack/Dump1090-OpenLayers3-html
-    uk.push(createGeoJsonLayer('Radar Corridors', 'ukradarcorridors', 'layers/UK_Mil_RC.geojson', 'rgba(22, 171, 22, 0.3)', 'rgba(22, 171, 22, 1)'));
-    uk.push(createGeoJsonLayer('A2A Refuleing', 'uka2arefueling', 'layers/UK_Mil_AAR_Zones.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
+    europe.push(createGeoJsonLayer('UK Radar Corridors', 'ukradarcorridors', 'geojson/UK_Mil_RC.geojson', 'rgba(22, 171, 22, 0.3)', 'rgba(22, 171, 22, 1)'));
+    europe.push(createGeoJsonLayer('UK A2A Refuleing', 'uka2arefueling', 'geojson/UK_Mil_AAR_Zones.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
 
     if (custom.getLength() > 0) {
         layers.push(new ol.layer.Group({
             name: 'custom',
             title: 'Custom',
-            layers: new ol.Collection(custom.getArray().reverse())
+            layers: new ol.Collection(custom.getArray().reverse()),
+        }));
+    }
+
+    if (europe.getLength() > 0) {
+        layers.push(new ol.layer.Group({
+            name: 'europe',
+            title: 'Europe',
+            layers: new ol.Collection(europe.getArray().reverse()),
+            //fold: 'close',
         }));
     }
 
@@ -260,7 +290,8 @@ function createBaseLayers() {
         layers.push(new ol.layer.Group({
             name: 'us',
             title: 'US',
-            layers: new ol.Collection(us.getArray().reverse())
+            layers: new ol.Collection(us.getArray().reverse()),
+            //fold: 'close',
         }));
     }
 
@@ -268,36 +299,13 @@ function createBaseLayers() {
         layers.push(new ol.layer.Group({
             name: 'world',
             title: 'Worldwide',
-            layers: new ol.Collection(world.getArray().reverse())
+            layers: new ol.Collection(world.getArray().reverse()),
+            //fold: 'open',
         }));
     }
 
-    if (uk.getLength() > 0) {
-        layers.push(new ol.layer.Group({
-            name: 'uk',
-            title: 'UK',
-            layers: new ol.Collection(uk.getArray())
-        }));
-    }
-
-    layers.push(new ol.layer.Tile({
-        source: new ol.source.XYZ({
-            "url" : "https://map.adsbexchange.com/mapproxy/tiles/1.0.0/openaip/ul_grid/{z}/{x}/{y}.png",
-            "attributions" : "openAIP.net",
-        }),
-        name: 'openaip',
-        title: 'openAIP TMS',
-        type: 'overlay',
-        opacity: 0.7,
-        visible: false,
-    }));
 
 
-    if (enableDWD) {
-        layers.push(dwd);
-    }
-
-    layers.push(nexrad);
 
     return layers_group;
 }
