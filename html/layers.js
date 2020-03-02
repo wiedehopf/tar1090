@@ -253,27 +253,29 @@ function createBaseLayers() {
                     projection: 'EPSG:3857'
               })
             }),
-            style: (feature) => new ol.style.Style({
-                fill: new ol.style.Fill({
-                    color : fill
-                }),
-                stroke: new ol.style.Stroke({
-                    color: stroke,
-                    width: 1
-                }),
-                text: new ol.style.Text({
-                    text: feature.get("name"),
-                    overflow: OLMap.getView().getZoom() > 5,
-                    scale: 1.25,
+            style: function style(feature) { 
+                return new ol.style.Style({
                     fill: new ol.style.Fill({
-                        color: '#000000'
+                        color : fill
                     }),
                     stroke: new ol.style.Stroke({
-                        color: '#FFFFFF',
-                        width: 2
+                        color: stroke,
+                        width: 1
+                    }),
+                    text: new ol.style.Text({
+                        text: feature.get("name"),
+                        overflow: OLMap.getView().getZoom() > 5,
+                        scale: 1.25,
+                        fill: new ol.style.Fill({
+                            color: '#000000'
+                        }),
+                        stroke: new ol.style.Stroke({
+                            color: '#FFFFFF',
+                            width: 2
+                        })
                     })
-                })
-            })
+                });
+            }
         });
     };
 
