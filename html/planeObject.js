@@ -252,6 +252,10 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
     if (this.bad_position && this.position[0] == this.bad_position[0] && this.position[1] == this.bad_position[1])
         return false;
 
+    if (this.position && SitePosition) {
+        this.sitedist = ol.sphere.getDistance(SitePosition, this.position);
+    }
+
     var projHere = ol.proj.fromLonLat(this.position);
     var on_ground = (this.altitude === "ground");
 
@@ -277,10 +281,16 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
     var projPrev = ol.proj.fromLonLat(this.prev_position);
     var lastseg = this.track_linesegs[this.track_linesegs.length - 1];
 
-    var distance = ol.sphere.getDistance(this.position, this.prev_position);
-    var derivedMach = (distance/(this.position_time - this.prev_time + 0.4))/343;
-    var filterSpeed = on_ground ? positionFilterSpeed/10 : positionFilterSpeed;
-    filterSpeed = (this.speed != null && this.prev_speed != null) ? (positionFilterGsFactor*(Math.max(this.speed, this.prev_speed)+10+(this.dataSource == "mlat")*100)/666) : filterSpeed;
+    var distance = 1000;
+    var derivedMach = 0.01;
+    var filterSpeed = 10000;
+
+    if (positionFilter) {
+        distance = ol.sphere.getDistance(this.position, this.prev_position);
+        derivedMach = (distance/(this.position_time - this.prev_time + 0.4))/343;
+        filterSpeed = on_ground ? positionFilterSpeed/10 : positionFilterSpeed;
+        filterSpeed = (this.speed != null && this.prev_speed != null) ? (positionFilterGsFactor*(Math.max(this.speed, this.prev_speed)+10+(this.dataSource == "mlat")*100)/666) : filterSpeed;
+    }
 
     // ignore the position if the object moves faster than positionFilterSpeed (default Mach 3.5)
     // or faster than twice the transmitted groundspeed
@@ -1256,10 +1266,6 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
     var moved = false;
 
     if (this.updated) {
-        if (this.position && SitePosition) {
-            this.sitedist = ol.sphere.getDistance(SitePosition, this.position);
-        }
-
         if (this.flight && this.flight.trim()) {
             this.name = this.flight;
         } else if (this.registration) {

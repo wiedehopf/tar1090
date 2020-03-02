@@ -3878,7 +3878,7 @@ function initSitePos() {
     if (SitePosInitialized)
         return;
 
-    if (SitePosition) {
+    if (SitePosition && !onMobile) {
         sortByDistance();
     } else {
         sortByAltitude();
