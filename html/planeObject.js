@@ -1629,6 +1629,10 @@ PlaneObject.prototype.altBad = function(newAlt, oldAlt, oldTime, data) {
 }
 PlaneObject.prototype.getAircraftData = function() {
     var req = getAircraftData(this.icao);
+
+    if (this.icao.match(/^a(e|df[cdef]|f)/g))
+        this.military = true;
+
     req.done(function(data) {
         if (data == null) {
             //console.log(this.icao + ': Not found in database!');
@@ -1664,10 +1668,6 @@ PlaneObject.prototype.getAircraftData = function() {
             this.military = (data[2][0] == '1');
             this.interesting = (data[2][1] == '1');
         }
-
-        if (this.icao.match(/^a(e|df[cdef]|f)/g))
-            this.military = true;
-
         if (this.selected) {
             refreshSelected();
         }
