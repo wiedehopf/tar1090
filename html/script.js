@@ -63,7 +63,7 @@ var globeIndexGrid = 0;
 var globeIndexNow = {};
 var globeIndexSpecialTiles;
 var globeSimLoad = 4;
-var globeTableLimit = 100;
+var globeTableLimit = 75;
 var lastRealExtent;
 var lastGlobeExtent;
 var lastRenderExtent;
@@ -535,6 +535,8 @@ function fetchData() {
 // kicks off the whole rabbit hole
 function initialize() {
 
+    onMobile = window.mobilecheck();
+
     var largeModeStorage = localStorage['largeMode'];
     if (largeModeStorage != undefined && parseInt(largeModeStorage, 10)) {
         largeMode = parseInt(largeModeStorage, 10);
@@ -628,23 +630,25 @@ function initialize() {
             .done(function(typeLookupData) {
                 _aircraft_type_cache = typeLookupData;
             });
-        $.getJSON(databaseFolder + "/files.js")
-            .done(function(data) {
-                for (var i in data) {
-                    const icao = data[i].padEnd(6, 0);
-                    //console.log(icao);
-                    var req = getAircraftData(icao);
-                    req.icao = icao;
-                    req.fail(function(jqXHR,textStatus,errorThrown) {
-                        if (textStatus == 'timeout') {
-                            getAircraftData(this.icao);
-                            console.log('Database load timeout:' + this.icao);
-                        } else {
-                            console.log(this.icao + ': Database load error: ' + textStatus + ' at URL: ' + jqXHR.url);
-                        }
-                    });
-                }
-            });
+        if (!onMobile) {
+            $.getJSON(databaseFolder + "/files.js")
+                .done(function(data) {
+                    for (var i in data) {
+                        const icao = data[i].padEnd(6, 0);
+                        //console.log(icao);
+                        var req = getAircraftData(icao);
+                        req.icao = icao;
+                        req.fail(function(jqXHR,textStatus,errorThrown) {
+                            if (textStatus == 'timeout') {
+                                getAircraftData(this.icao);
+                                console.log('Database load timeout:' + this.icao);
+                            } else {
+                                console.log(this.icao + ': Database load error: ' + textStatus + ' at URL: ' + jqXHR.url);
+                            }
+                        });
+                    }
+                });
+        }
         $.getJSON(databaseFolder + "/airport-coords.js")
             .done(function(data) {
                 _airport_coords_cache = data;
@@ -841,13 +845,12 @@ function init_page() {
         toggleLastLeg();
     });
 
-    onMobile = window.mobilecheck();
-
     if (onMobile) {
         $('#large_mode_button').css('width', 'calc( 45px * var(--SCALE))');
         $('#large_mode_button').css('height', 'calc( 45px * var(--SCALE))');
         if (localStorage['largeMode'] == undefined && largeMode == 1)
             largeMode = 2;
+        globeTableLimit = 25;
     }
 
     largeMode--;
@@ -3690,6 +3693,9 @@ function refreshInt() {
 
     if (!mapIsVisible)
         refresh *= 2;
+
+    if (onMobile)
+        refresh *= 1.5;
 
     if (lastRequestFiles >= 4)
         return 1.6 * refresh;
