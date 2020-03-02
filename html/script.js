@@ -63,7 +63,7 @@ var globeIndexGrid = 0;
 var globeIndexNow = {};
 var globeIndexSpecialTiles;
 var globeSimLoad = 4;
-var globeTableLimit = 75;
+var globeTableLimit = 80;
 var lastRealExtent;
 var lastGlobeExtent;
 var lastRenderExtent;
@@ -853,7 +853,7 @@ function init_page() {
         $('#large_mode_button').css('height', 'calc( 45px * var(--SCALE))');
         if (localStorage['largeMode'] == undefined && largeMode == 1)
             largeMode = 2;
-        globeTableLimit = 25;
+        globeTableLimit = 40;
     }
 
     largeMode--;
@@ -2055,6 +2055,7 @@ function refreshTableInfo() {
     TrackedAircraftPositions = 0;
     TrackedHistorySize = 0;
     var nTablePlanes = 0;
+    var nMapPlanes = 0;
 
     if (mapIsVisible || lastRealExtent == null) {
         var mapSize = OLMap.getSize();
@@ -2075,8 +2076,11 @@ function refreshTableInfo() {
         tableplane.inView = inView(tableplane, lastRealExtent);
 
         if (globeIndex && !icaoFilter) {
-            if (inView(tableplane, lastRenderExtent) || tableplane.selected) {
+            if ((nMapPlanes < 100 || !onMobile)
+                && (!onMobile || ZoomLvl > 10 || !tableplane.onGround)
+                && (inView(tableplane, lastRenderExtent) || tableplane.selected)) {
                 tableplane.updateFeatures(now, last);
+                nMapPlanes++;
             } else if (tableplane.visible) {
                 tableplane.clearMarker();
                 tableplane.clearLines();
@@ -3358,14 +3362,6 @@ function changeZoom(init) {
 
     ZoomLvl = OLMap.getView().getZoom();
 
-    if (onMobile) {
-        if (ZoomLvl < 7.5) {
-            iconLayer.setVisible(false);
-        } else {
-            iconLayer.setVisible(true);
-        }
-    }
-
     // small zoomstep, no need to change aircraft scaling
     if (!init && Math.abs(ZoomLvl-ZoomLvlCache) < 0.4)
         return;
@@ -3860,6 +3856,7 @@ function geoFindMe() {
 
     function error() {
         console.log("Unable to query location.");
+        initSitePos();
     }
 
     if (!navigator.geolocation) {
