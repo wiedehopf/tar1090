@@ -1363,7 +1363,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
 
 
 // return the styling of the lines based on altitude
-PlaneObject.prototype.altitudeLines = function(segment) {
+function altitudeLines (segment) {
     var colorArr = altitudeColor(segment.altitude);
     if (segment.estimated)
         colorArr = [colorArr[0], colorArr[1], colorArr[2] * 0.7];
@@ -1386,6 +1386,8 @@ PlaneObject.prototype.altitudeLines = function(segment) {
             stroke: new ol.style.Stroke({
                 color: color,
                 width: (2-(noVanish*0.8)) * newWidth * estimatedMult,
+                lineJoin: 'miter',
+                lineCap: 'square',
             })
         });
     } else {
@@ -1433,7 +1435,7 @@ PlaneObject.prototype.updateLines = function() {
     if (filterTracks && this.altFiltered(lastseg.altitude)) {
         this.elastic_feature.setStyle(nullStyle);
     } else {
-        this.elastic_feature.setStyle(this.altitudeLines(lastseg));
+        this.elastic_feature.setStyle(altitudeLines(lastseg));
     }
 
     // elastic feature is always at index 0 for each aircraft
@@ -1446,11 +1448,11 @@ PlaneObject.prototype.updateLines = function() {
         if (seg.feature && (!trackLabels || seg.label))
             break;
 
-        if ((filterTracks && this.altFiltered(seg.altitude)) || this.altitudeLines(seg) == nullStyle) {
+        if ((filterTracks && this.altFiltered(seg.altitude)) || altitudeLines(seg) == nullStyle) {
             seg.feature = true;
         } else if (!seg.feature) {
             seg.feature = new ol.Feature(seg.fixed);
-            seg.feature.setStyle(this.altitudeLines(seg));
+            seg.feature.setStyle(altitudeLines(seg));
             seg.feature.hex = this.icao;
             this.trail_features.push(seg.feature);
         }

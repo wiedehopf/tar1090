@@ -1108,6 +1108,8 @@ function parse_history() {
 
     loadFinished = true;
 
+    //drawAlt();
+
     if (localStorage['sidebar_visible'] == "false")
         toggleSidebarVisibility();
 
@@ -3898,5 +3900,17 @@ function initSitePos() {
         SitePosition = null;
         PlaneRowTemplate.cells[9].style.display = 'none'; // hide distance column
         document.getElementById("distance").style.display = 'none'; // hide distance header
+    }
+}
+
+function drawAlt() {
+    processAircraft({hex: 'c0ffee', });
+    var plane = Planes['c0ffee'];
+    newWidth = 4;
+    for (var i = 0; i <= 50000; i += 500) {
+        plane.position = [i/10000, 0];
+        plane.altitude = i;
+        plane.alt_rounded = calcAltitudeRounded(plane.altitude);
+        plane.updateTrack(now - i, now - i - 5000, { serverTrack: true });
     }
 }
