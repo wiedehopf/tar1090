@@ -1191,6 +1191,7 @@ function initialize_map() {
         source: new ol.source.Vector({
             features: PlaneIconFeatures,
         }),
+        zIndex: 200,
     });
 
     layers.push(
@@ -1202,6 +1203,7 @@ function initialize_map() {
                 features: StaticFeatures,
             }),
             visible: !adsbexchange,
+            zIndex: 100,
         }));
 
     trailLayers = new ol.layer.Group({
@@ -1209,6 +1211,7 @@ function initialize_map() {
         title: 'Aircraft trails',
         type: 'overlay',
         layers: trailGroup,
+        zIndex: 150,
     });
 
     layers.push(trailLayers);

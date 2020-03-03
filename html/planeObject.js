@@ -119,6 +119,7 @@ function PlaneObject(icao) {
         }),
         renderOrder: null,
         declutter: false,
+        zIndex: 150,
     });
 
     this.layer_labels = new ol.layer.Vector({
@@ -129,6 +130,7 @@ function PlaneObject(icao) {
         }),
         renderOrder: null,
         declutter: true,
+        zIndex: 151,
     });
 
     trailGroup.push(this.layer);
