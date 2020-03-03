@@ -3632,6 +3632,8 @@ function inView(tableplane, currExtent) {
 
     if (tableplane.position == null)
         return false;
+    if (tableplane.isFiltered())
+        return false;
 
     var inView;
 
