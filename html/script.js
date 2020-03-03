@@ -2085,7 +2085,6 @@ function refreshTableInfo() {
                 && (!onMobile || ZoomLvl > 10 || !tableplane.onGround)
                 && (inView(tableplane, lastRenderExtent) || tableplane.selected)) {
                 tableplane.updateFeatures(now, last);
-                nMapPlanes++;
             } else if (tableplane.visible) {
                 tableplane.clearMarker();
                 tableplane.clearLines();
@@ -2104,10 +2103,10 @@ function refreshTableInfo() {
         ) {
             tableplane.showInTable = true;
             ++TrackedAircraftPositions;
+            nMapPlanes++;
         }
 
         if (!tableplane.isFiltered() && (tableplane.seen < 58 || noVanish)) {
-
             TrackedAircraft++;
 
             if (!tableInView && tableplane.position != null)
