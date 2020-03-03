@@ -3803,7 +3803,7 @@ function getDateString(date) {
 
 function setLineWidth() {
 
-    newWidth = lineWidth * Math.pow(1.4, globalScale) / 1.4 * globalScale
+    newWidth = lineWidth * Math.pow(2, globalScale) / 2 * globalScale
     estimateStyle = new ol.style.Style({
         stroke: new ol.style.Stroke({
             color: '#808080',
