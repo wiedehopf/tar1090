@@ -2092,7 +2092,7 @@ function refreshTableInfo() {
         tableplane.inView = inView(tableplane, lastRealExtent);
 
         if (globeIndex && !icaoFilter) {
-            if ((nMapPlanes < 150 || !onMobile)
+            if ((nMapPlanes < 100 || !onMobile)
                 && (!onMobile || ZoomLvl > 10 || !tableplane.onGround)
                 && (inView(tableplane, lastRenderExtent) || tableplane.selected)) {
                 tableplane.updateFeatures(now, last);
