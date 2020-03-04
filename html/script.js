@@ -537,15 +537,6 @@ function initialize() {
 
     onMobile = window.mobilecheck();
 
-    if (onMobile)
-        enableMouseover = false;
-
-    if (onMobile && adsbexchange) {
-        setTimeout(function(){
-            getElementById('adsense').style.display='none';
-        }, 23);
-    }
-
     var largeModeStorage = localStorage['largeMode'];
     if (largeModeStorage != undefined && parseInt(largeModeStorage, 10)) {
         largeMode = parseInt(largeModeStorage, 10);
@@ -585,6 +576,11 @@ function initialize() {
                 largeMode = tmp;
         }
 
+        if (search.has('mobile'))
+            onMobile = true;
+        if (search.has('desktop'))
+            onMobile = false;
+
         if (search.has('hideSidebar'))
             localStorage['sidebar_visible'] = "false";
         if (search.has('sidebarWidth')) {
@@ -593,6 +589,15 @@ function initialize() {
         }
     } catch (error) {
         console.log(error);
+    }
+
+    if (onMobile)
+        enableMouseover = false;
+
+    if (onMobile && adsbexchange) {
+        setTimeout(function(){
+            document.getElementById('adsense').style.display='none';
+        }, 20000);
     }
 
     mapOrientation *= (Math.PI/180); // adjust to radians
