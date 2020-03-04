@@ -966,6 +966,9 @@ PlaneObject.prototype.processTrace = function(show) {
 PlaneObject.prototype.updateData = function(now, last, data, init) {
     // get location data first, return early if only those are needed.
 
+    if (globeIndex && onlyMilitary && !this.military)
+        return;
+
     this.updated = true;
     var newPos = false;
 
@@ -1265,6 +1268,9 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
     this.seen = Math.max(0, now - this.last_message_time)
     this.seen_pos = Math.max(0, now - this.position_time);
 
+    if (globeIndex && this.isFiltered())
+        return;
+
     var moved = false;
 
     if (this.updated) {
@@ -1287,7 +1293,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
     // Only clear the plane if it's not selected individually
 
 
-    if ( !this.isFiltered() && (!onlySelected || this.selected) &&
+    if ( !this.isFiltered() &&
         (
             (!globeIndex && this.seen < (58 - tisbReduction))
             || (globeIndex && this.seen_pos < (30 + zoomedOut + jaeroTime - tisbReduction))
