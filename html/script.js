@@ -540,6 +540,12 @@ function initialize() {
     if (onMobile)
         enableMouseover = false;
 
+    if (onMobile && adsbexchange) {
+        setTimeout(function(){
+            getElementById('adsense').style.display='none';
+        }, 23);
+    }
+
     var largeModeStorage = localStorage['largeMode'];
     if (largeModeStorage != undefined && parseInt(largeModeStorage, 10)) {
         largeMode = parseInt(largeModeStorage, 10);

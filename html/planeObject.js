@@ -1640,7 +1640,11 @@ PlaneObject.prototype.altBad = function(newAlt, oldAlt, oldTime, data) {
 PlaneObject.prototype.getAircraftData = function() {
     var req = getAircraftData(this.icao);
 
+    // us military
     if (this.icao.match(/^a(e|df[cdef]|f)/g))
+        this.military = true;
+    // german military
+    if (this.icao.match(/^3(e|f)/g))
         this.military = true;
 
     req.done(function(data) {
