@@ -90,6 +90,7 @@ html, body {
     top: calc( 5px * var(--SCALE));
     left: calc( 5px * var(--SCALE));
     background-color: transparent;
+    z-index: 99;
 }
 
 #large_mode_button {
@@ -103,6 +104,7 @@ html, body {
     background-color: transparent;
     border: none;
     background-image: url("images/zoom-in@3x.png");
+    z-index: 99;
 }
 
 #expand_sidebar_control {

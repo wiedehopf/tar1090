@@ -3736,8 +3736,8 @@ function toggleLargeMode() {
     let root = document.documentElement;
 
     const base = 1.2;
-    globalScale = Math.pow(base, largeMode + 2 * onMobile) / base;
-    root.style.setProperty("--SCALE", globalScale * (1 + 0.3 * onMobile));
+    globalScale = Math.pow(base, largeMode) / base;
+    root.style.setProperty("--SCALE", globalScale);
 
     labelFont = "bold " + ( 12 * globalScale ) + "px Tahoma, Verdana, Helvetica, sans-serif";
 
