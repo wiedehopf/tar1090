@@ -440,7 +440,7 @@ function fetchData() {
             }
             if (globeIndex) {
                 globeTrackedAircraft = data.global_ac_count_withpos;
-                if (globeIndexNow[data.globeIndex] == null) {
+                if (localStorage['globeGrid'] == 'true' && globeIndexNow[data.globeIndex] == null) {
                     var southWest = ol.proj.fromLonLat([data.west, data.south]);
                     var south180p = ol.proj.fromLonLat([180, data.south]);
                     var south180m = ol.proj.fromLonLat([-180, data.south]);
