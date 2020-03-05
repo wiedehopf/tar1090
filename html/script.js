@@ -82,6 +82,7 @@ var icaoParam = null;
 var globalScale = 1;
 var newWidth = lineWidth;
 var SitePosInitialized = false;
+var SiteOverride = false;
 
 var adsbexchange = false;
 if (SiteName == "adsbexchange.com tar1090")
@@ -569,7 +570,7 @@ function initialize() {
                 OutlineADSBColor = "#000000";
         }
 
-        if (search.get('largeMode') != undefined) {
+        if (search.has('largeMode')) {
             var tmp = parseInt(search.get('largeMode'));
             console.log(tmp);
             if (!isNaN(tmp))
@@ -586,6 +587,23 @@ function initialize() {
         if (search.has('sidebarWidth')) {
             localStorage['sidebar_width'] = search.get('sidebarWidth');
             localStorage['sidebar_visible'] = "true";
+        }
+
+        if (search.has('SiteLat') && search.has('SiteLon')) {
+            localStorage['SiteLat'] = search.get('SiteLat');
+            localStorage['SiteLon'] = search.get('SiteLon');
+        }
+        if (localStorage['SiteLat'] != null && localStorage['SiteLon'] != null) {
+            if (search.has('SiteClear')
+                || isNaN(parseFloat(localStorage['SiteLat']))
+                || isNaN(parseFloat(localStorage['SiteLat']))) {
+                localStorage.removeItem('SiteLat');
+                localStorage.removeItem('SiteLon');
+            } else {
+                SiteLat = CenterLat = DefaultCenterLat = parseFloat(localStorage['SiteLat']);
+                SiteLon = CenterLon = DefaultCenterLon = parseFloat(localStorage['SiteLon']);
+                SiteOverride = true;
+            }
         }
     } catch (error) {
         console.log(error);
@@ -2571,9 +2589,6 @@ function toggleFollowSelected() {
 
 function resetMap() {
 
-    if (globeIndex)
-        geoFindMe();
-
     // Reset localStorage values and map settings
     localStorage['CenterLat'] = CenterLat = DefaultCenterLat;
     localStorage['CenterLon'] = CenterLon = DefaultCenterLon;
@@ -3864,8 +3879,10 @@ function setLineWidth() {
 function geoFindMe() {
 
     function success(position) {
-        SiteLat = CenterLat = DefaultCenterLat = position.coords.latitude;
-        SiteLon = CenterLon = DefaultCenterLon = position.coords.longitude;
+        if (!SiteOverride) {
+            SiteLat = CenterLat = DefaultCenterLat = position.coords.latitude;
+            SiteLon = CenterLon = DefaultCenterLon = position.coords.longitude;
+        }
         if (localStorage['geoFindMeFirstVisit'] == undefined) {
             OLMap.getView().setCenter(ol.proj.fromLonLat([CenterLon, CenterLat]));
             localStorage['geoFindMeFirstVisit'] = 'no';
@@ -3897,12 +3914,6 @@ function initSitePos() {
     if (SitePosInitialized)
         return;
 
-    if (SitePosition && !onMobile) {
-        sortByDistance();
-    } else {
-        sortByAltitude();
-    }
-
     // Set SitePosition
     if (SiteLat != null && SiteLon != null) {
         SitePosition = [SiteLon, SiteLat];
@@ -3912,6 +3923,12 @@ function initSitePos() {
         SitePosition = null;
         PlaneRowTemplate.cells[9].style.display = 'none'; // hide distance column
         document.getElementById("distance").style.display = 'none'; // hide distance header
+    }
+
+    if (SitePosition && !onMobile) {
+        sortByDistance();
+    } else {
+        sortByAltitude();
     }
 }
 
