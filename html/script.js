@@ -219,7 +219,10 @@ function processAircraft(ac, init, uat) {
     }
 
     // Call the function update
-    if (uat) {
+    if (globeIndex) {
+        if (!onlyMilitary || plane.military)
+            plane.updateData(now, last, ac, init);
+    } else if (uat) {
         if (plane.receiver == "uat" || ac.seen_pos < 1.8 || init) {
             plane.receiver = "uat";
             plane.updateData(uat_now, uat_last, ac, init);
@@ -315,16 +318,19 @@ function setupPlane(hex, plane) {
         evt.preventDefault();
     }.bind(undefined, hex);
 
-    plane.dblclickListener = function(h, evt) {
-        if(!mapIsVisible) {
-            showMap();
-        }
-        selectPlaneByHex(h, {follow: true});
-        evt.preventDefault();
-    }.bind(undefined, hex);
+    if (!globeIndex) {
+        plane.dblclickListener = function(h, evt) {
+            if(!mapIsVisible) {
+                showMap();
+            }
+            selectPlaneByHex(h, {follow: true});
+            evt.preventDefault();
+        }.bind(undefined, hex);
+
+        plane.tr.addEventListener('dblclick', plane.dblclickListener);
+    }
 
     plane.tr.addEventListener('click', plane.clickListener);
-    plane.tr.addEventListener('dblclick', plane.dblclickListener);
 }
 
 function fetchData() {

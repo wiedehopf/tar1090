@@ -966,9 +966,6 @@ PlaneObject.prototype.processTrace = function(show) {
 PlaneObject.prototype.updateData = function(now, last, data, init) {
     // get location data first, return early if only those are needed.
 
-    if (globeIndex && onlyMilitary && !this.military)
-        return;
-
     this.updated = true;
     var newPos = false;
 
