@@ -1142,6 +1142,9 @@ function parse_history() {
     if (localStorage['sidebar_visible'] == "false")
         toggleSidebarVisibility();
 
+    if (onMobile && localStorage['sidebar_visible'] == undefined)
+        toggleSidebarVisibility();
+
     if (hideButtons) {
         $('#large_mode_control').hide();
         $('#header_top').hide();
