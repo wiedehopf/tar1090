@@ -3491,11 +3491,12 @@ function processURLParams(){
                 if (zoom) {
                     selectOptions.zoom = zoom;
                 }
-                selectPlaneByHex(icao, selectOptions)
                 if (traceDateString != null) {
                     toggleShowTrace();
                     if (!zoom)
                         zoom = 5;
+                } else {
+                    selectPlaneByHex(icao, selectOptions)
                 }
             } else {
                 console.log('ICAO id not found: ' + icao);
@@ -3684,13 +3685,6 @@ function inView(tableplane, currExtent) {
     return inView;
 }
 function updateAddressBar() {
-    if (showTrace)
-        return;
-    if (uuid)
-        return;
-    if (icaoFilter)
-        return;
-
     var posString = 'lat=' + CenterLat.toFixed(3) + '&lon=' + CenterLon.toFixed(3) + '&zoom=' + ZoomLvl.toFixed(1);
     var string;
     if (true || !globeIndex)
@@ -3706,8 +3700,18 @@ function updateAddressBar() {
     else
         string = pathName + posString;
 
+    if (SelectedPlane && showTrace) {
+        string += '&showTrace=' + traceDateString;
+    }
+
     shareLink = string;
-    //window.history.replaceState("object or string", "Title", string);
+
+    if (uuid)
+        return;
+    if (icaoFilter)
+        return;
+
+    window.history.replaceState("object or string", "Title", string);
 }
 
 function refreshInt() {
@@ -3762,9 +3766,10 @@ function toggleShowTrace() {
     } else {
         showTrace = false;
         toggleIsolation(null, "off");
-        var string = pathName + '?icao=' + SelectedPlane.icao;
+        //var string = pathName + '?icao=' + SelectedPlane.icao;
         //window.history.replaceState("object or string", "Title", string);
-        shareLink = string;
+        //shareLink = string;
+        updateAddressBar();
         $('#history_collapse')[0].style.display = "none";
         $('#show_trace').removeClass("active");
         const hex = SelectedPlane.icao;
@@ -3793,15 +3798,12 @@ function shiftTrace(offset) {
 
     $('#trace_date').text('UTC day:' + traceDateString);
 
-    var hex = SelectedPlane.icao;
-    var string = pathName + '?icao=' + hex + '&showTrace=' + traceDateString;
+    var hex = SelectedPlane ? SelectedPlane.icao : icaoParam;
 
-    //window.history.replaceState("object or string", "Title", string);
-    shareLink = string;
-
-    var plane = Planes[hex];
     var selectOptions = {follow: true, zoom: ZoomLvl};
     selectPlaneByHex(hex, selectOptions);
+
+    updateAddressBar();
 }
 
 function getDateString(date) {
