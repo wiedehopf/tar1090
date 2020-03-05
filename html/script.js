@@ -3929,6 +3929,7 @@ function initSitePos() {
         sortByDistance();
     } else {
         sortByAltitude();
+        sortByAltitude();
     }
 }
 
