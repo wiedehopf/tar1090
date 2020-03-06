@@ -576,6 +576,12 @@ function initialize() {
                 OutlineADSBColor = "#000000";
         }
 
+        if (search.has('kiosk')) {
+            tempTrails = true;
+            hideButtons = true;
+            largeMode = 2;
+        }
+
         if (search.has('largeMode')) {
             var tmp = parseInt(search.get('largeMode'));
             console.log(tmp);
@@ -611,12 +617,17 @@ function initialize() {
                 SiteOverride = true;
             }
         }
+
         if (search.has('tempTrails')) {
             tempTrails = true;
             var tmp = parseInt(search.get('tempTrails'));
             if (tmp > 0)
                 tempTrailsTimeout = tmp;
         }
+
+        if (search.has('hideButtons'))
+            hideButtons = true;
+
     } catch (error) {
         console.log(error);
     }
@@ -3568,10 +3579,6 @@ function processURLParams(){
         if (zoom) {
             OLMap.getView().setZoom(zoom);
         }
-
-        if (search.has('hideButtons'))
-            hideButtons = true;
-
     } catch (error) {
         console.log(error);
     }
