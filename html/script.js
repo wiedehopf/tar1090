@@ -1779,7 +1779,11 @@ function refreshPageTitle() {
     var subtitle = "";
 
     if (PlaneCountInTitle) {
-        subtitle += TrackedAircraftPositions + '/' + TrackedAircraft;
+        if (globeIndex) {
+            subtitle += 'tracking ' + globeTrackedAircraft + ' aircraft';
+        } else {
+            subtitle += TrackedAircraftPositions + '/' + TrackedAircraft;
+        }
     }
 
     if (MessageRateInTitle && MessageRate != null) {
