@@ -625,14 +625,36 @@ function initialize() {
         enableMouseover = false;
 
     if (adsbexchange) {
-        var timeout = 1000;
-        if (onMobile)
-            timeout *= 20;
-        if (hideButtons)
-            timeout *= 60;
-        setTimeout(function(){
+        if (onMobile || hideButtons) {
             document.getElementById('adsense').style.display='none';
-        }, timeout);
+        } else {
+            setTimeout(function() {
+                (adsbygoogle = window.adsbygoogle || []).push({});
+
+                var countDown = 20;
+                var i = setInterval(function () {
+
+                    var b1 = document.getElementById('waittohide');
+                    var b2 = document.getElementById('letuserhide');
+
+
+                    if(countDown === 1) {
+                        if(b1['style'].display == 'none') {
+                            b1['style'].display = 'block';
+                            b2['style'].display = 'none';
+                        } else {
+                            b1['style'].display = 'none';
+                            b2['style'].display = 'block';
+                        }
+                        clearInterval(i);
+                    }
+                    countDown--;
+                    b1.innerHTML = 'Hide in ' + countDown + ' seconds';
+
+
+                }, 1000);
+            }, 1000);
+        }
     }
 
     mapOrientation *= (Math.PI/180); // adjust to radians
