@@ -1155,12 +1155,6 @@ function parse_history() {
     // And kick off one refresh immediately.
     processURLParams();
 
-    if (globeIndex)
-        geoFindMe();
-    else {
-        initSitePos();
-    }
-
     if (!icaoFilter && globeIndex)
         toggleTableInView(true);
 
@@ -1622,6 +1616,12 @@ function initialize_map() {
                 break;
         }
     }, true);
+
+    if (globeIndex)
+        geoFindMe();
+    else {
+        initSitePos();
+    }
 
     // Add terrain-limit rings. To enable this:
     //
