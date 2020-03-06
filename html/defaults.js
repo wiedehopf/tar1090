@@ -251,3 +251,4 @@ var enableDWD = true;
 var lastLeg = true;
 
 var hideButtons = false;
+var adsbexchange = false;

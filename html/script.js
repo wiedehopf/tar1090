@@ -84,10 +84,6 @@ var newWidth = lineWidth;
 var SitePosInitialized = false;
 var SiteOverride = false;
 
-var adsbexchange = false;
-if (SiteName == "adsbexchange.com tar1090")
-    adsbexchange = true;
-
 var shareLink = '';
 
 var onMobile = false;
