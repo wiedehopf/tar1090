@@ -611,6 +611,12 @@ function initialize() {
                 SiteOverride = true;
             }
         }
+        if (search.has('tempTrails')) {
+            tempTrails = true;
+            var tmp = parseInt(search.get('tempTrails'));
+            if (tmp > 0)
+                tempTrailsTimeout = tmp;
+        }
     } catch (error) {
         console.log(error);
     }
@@ -618,10 +624,15 @@ function initialize() {
     if (onMobile)
         enableMouseover = false;
 
-    if (onMobile && adsbexchange) {
+    if (adsbexchange) {
+        var timeout = 1000;
+        if (onMobile)
+            timeout *= 20;
+        if (hideButtons)
+            timeout *= 60;
         setTimeout(function(){
             document.getElementById('adsense').style.display='none';
-        }, 20000);
+        }, timeout);
     }
 
     mapOrientation *= (Math.PI/180); // adjust to radians
@@ -1160,6 +1171,9 @@ function parse_history() {
         $('#filterButton').hide();
         $('.ol-control').hide();
     }
+
+    if (tempTrails)
+        selectAllPlanes();
 }
 
 // Make a LineString with 'points'-number points
