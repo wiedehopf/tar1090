@@ -268,7 +268,12 @@ var TypeDesignatorIcons = {
     // 'BE20': [_b200, 1],
 
     // 'C130': [_c130, 1],
-    // 'C30J': [_c130
+    //
+    'GND': ['ground_unknown', 1],
+    'GRND': ['ground_unknown', 1],
+    'SERV': ['ground_service', 1],
+    'EMER': ['ground_emergency', 1],
+    'TWR': ['ground_fixed', 1],
 };
 
 // Maps ICAO aircraft type description codes (e.g. "L2J") to aircraft icons. This is used if the ICAO type designator (e.g. "B731")
