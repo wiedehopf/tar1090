@@ -91,6 +91,14 @@ else
 	exit 1
 fi
 
+if git rev-parse --short HEAD &>/dev/null; then
+    TAR_VERSION=$(git rev-parse --short HEAD)
+else
+    TAR_VERSION=$(date +%s)
+fi
+
+
+
 if [[ -n $1 ]] && [ "$1" != "test" ] ; then
 	srcdir=$1
 elif ! [[ -d /run/dump1090-fa ]] ; then
@@ -183,55 +191,54 @@ do
 	mv /tmp/tar1090_colors.css $html_path/colors.css 2>/dev/null || true
 	mv /tmp/tar1090_upintheair.json $html_path/upintheair.json 2>/dev/null || true
 
-	epoch=$(date +%s)
 	# bust cache for all css and js files
 
 	dir=$(pwd)
 	cd $html_path
 
 	sed -i \
-		-e "s/dbloader.js/dbloader_$epoch.js/" \
-		-e "s/defaults.js/defaults_$epoch.js/" \
-		-e "s/early.js/early_$epoch.js/" \
-		-e "s/flags.js/flags_$epoch.js/" \
-		-e "s/formatter.js/formatter_$epoch.js/" \
-		-e "s/layers.js/layers_$epoch.js/" \
-		-e "s/markers.js/markers_$epoch.js/" \
-		-e "s/planeObject.js/planeObject_$epoch.js/" \
-		-e "s/registrations.js/registrations_$epoch.js/" \
-		-e "s/script.js/script_$epoch.js/" \
-		-e "s/colors.css/colors_$epoch.css/" \
-		-e "s/style.css/style_$epoch.css/" \
+		-e "s/dbloader.js/dbloader_$TAR_VERSION.js/" \
+		-e "s/defaults.js/defaults_$TAR_VERSION.js/" \
+		-e "s/early.js/early_$TAR_VERSION.js/" \
+		-e "s/flags.js/flags_$TAR_VERSION.js/" \
+		-e "s/formatter.js/formatter_$TAR_VERSION.js/" \
+		-e "s/layers.js/layers_$TAR_VERSION.js/" \
+		-e "s/markers.js/markers_$TAR_VERSION.js/" \
+		-e "s/planeObject.js/planeObject_$TAR_VERSION.js/" \
+		-e "s/registrations.js/registrations_$TAR_VERSION.js/" \
+		-e "s/script.js/script_$TAR_VERSION.js/" \
+		-e "s/colors.css/colors_$TAR_VERSION.css/" \
+		-e "s/style.css/style_$TAR_VERSION.css/" \
 		index.html
 
     sed -i -e "s/tar1090 on github/tar1090 on github ($(date +%y%m%d))/" index.html
 
-	mv dbloader.js dbloader_$epoch.js
-	mv defaults.js defaults_$epoch.js
-	mv early.js early_$epoch.js
-	mv flags.js flags_$epoch.js
-	mv formatter.js formatter_$epoch.js
-	mv layers.js layers_$epoch.js
-	mv markers.js markers_$epoch.js
-	mv planeObject.js planeObject_$epoch.js
-	mv registrations.js registrations_$epoch.js
-	mv script.js script_$epoch.js
-	mv colors.css colors_$epoch.css
-	mv style.css style_$epoch.css
+	mv dbloader.js dbloader_$TAR_VERSION.js
+	mv defaults.js defaults_$TAR_VERSION.js
+	mv early.js early_$TAR_VERSION.js
+	mv flags.js flags_$TAR_VERSION.js
+	mv formatter.js formatter_$TAR_VERSION.js
+	mv layers.js layers_$TAR_VERSION.js
+	mv markers.js markers_$TAR_VERSION.js
+	mv planeObject.js planeObject_$TAR_VERSION.js
+	mv registrations.js registrations_$TAR_VERSION.js
+	mv script.js script_$TAR_VERSION.js
+	mv colors.css colors_$TAR_VERSION.css
+	mv style.css style_$TAR_VERSION.css
 
     if [[ $nginx == yes ]]; then
-        gzip -k -9 dbloader_$epoch.js
-        gzip -k -9 defaults_$epoch.js
-        gzip -k -9 early_$epoch.js
-        gzip -k -9 flags_$epoch.js
-        gzip -k -9 formatter_$epoch.js
-        gzip -k -9 layers_$epoch.js
-        gzip -k -9 markers_$epoch.js
-        gzip -k -9 planeObject_$epoch.js
-        gzip -k -9 registrations_$epoch.js
-        gzip -k -9 script_$epoch.js
-        gzip -k -9 colors_$epoch.css
-        gzip -k -9 style_$epoch.css
+        gzip -k -9 dbloader_$TAR_VERSION.js
+        gzip -k -9 defaults_$TAR_VERSION.js
+        gzip -k -9 early_$TAR_VERSION.js
+        gzip -k -9 flags_$TAR_VERSION.js
+        gzip -k -9 formatter_$TAR_VERSION.js
+        gzip -k -9 layers_$TAR_VERSION.js
+        gzip -k -9 markers_$TAR_VERSION.js
+        gzip -k -9 planeObject_$TAR_VERSION.js
+        gzip -k -9 registrations_$TAR_VERSION.js
+        gzip -k -9 script_$TAR_VERSION.js
+        gzip -k -9 colors_$TAR_VERSION.css
+        gzip -k -9 style_$TAR_VERSION.css
 
         gzip -k -9 jquery/*.js
         gzip -k -9 ol/*.js
