@@ -239,7 +239,7 @@ function createBaseLayers() {
 
     us.push(nexrad);
 
-    var createGeoJsonLayer = function (title, name, url, fill, stroke) {
+    var createGeoJsonLayer = function (title, name, url, fill, stroke, showLabel = true) {
         return new ol.layer.Vector({
             type: 'overlay',
             title: title,
@@ -263,7 +263,7 @@ function createBaseLayers() {
                         width: 1
                     }),
                     text: new ol.style.Text({
-                        text: feature.get("name"),
+                        text: showLabel ? feature.get("name") : "",
                         overflow: OLMap.getView().getZoom() > 5,
                         scale: 1.25,
                         fill: new ol.style.Fill({
@@ -281,7 +281,8 @@ function createBaseLayers() {
 
     // Taken from https://github.com/alkissack/Dump1090-OpenLayers3-html
     europe.push(createGeoJsonLayer('UK Radar Corridors', 'ukradarcorridors', 'geojson/UK_Mil_RC.geojson', 'rgba(22, 171, 22, 0.3)', 'rgba(22, 171, 22, 1)'));
-    europe.push(createGeoJsonLayer('UK A2A Refueling', 'uka2arefueling', 'geojson/UK_Mil_AAR_Zones.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
+    europe.push(createGeoJsonLayer('UK A2A Refuleing', 'uka2arefueling', 'geojson/UK_Mil_AAR_Zones.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
+    europe.push(createGeoJsonLayer('UK AWACS Orbits', 'uka2awacsorbits', 'geojson/UK_Mil_AWACS_Orbits.geojson', 'rgba(252, 186, 3, 0.3)', 'rgba(252, 186, 3, 1)', false));
 
     us.push(createGeoJsonLayer('US A2A Refueling', 'usa2arefueling', 'geojson/US-refueling-zones.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
 
