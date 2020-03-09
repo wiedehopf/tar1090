@@ -636,7 +636,11 @@ function initialize() {
             document.getElementById('adsense').style.display='none';
         } else {
             setTimeout(function() {
-                (adsbygoogle = window.adsbygoogle || []).push({});
+                try {
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                } catch (error) {
+                    console.log(error);
+                }
 
                 var countDown = 20;
                 var i = setInterval(function () {
@@ -2955,8 +2959,8 @@ function toggleDebugTracks() {
 }
 
 function dim(evt) {
-    const dim = 0.3;
-    const contrast = 0.1;
+    const dim = 0.35;
+    const contrast = 0.13;
     evt.context.globalCompositeOperation = 'multiply';
     if (evt.context.globalCompositeOperation == 'multiply') {
         evt.context.fillStyle = 'rgba(0,0,0,'+dim+')';
