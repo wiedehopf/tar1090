@@ -1,0 +1,397 @@
+{
+
+  "type": "FeatureCollection",
+
+  "features": [
+
+    {
+
+      "type": "Feature",
+
+      "properties": {
+
+        "stroke": "#555555",
+
+        "stroke-width": 2,
+
+        "stroke-opacity": 1,
+
+        "Name": "AR-111 East"
+
+      },
+
+      "geometry": {
+
+        "type": "LineString",
+
+        "coordinates": [
+
+          [
+
+            -92.1666670175,
+
+            36.25005833
+
+          ],
+
+          [
+
+            -90.066667,
+
+            36.70058333
+
+          ],
+
+          [
+
+            -88.466667,
+
+            37
+
+          ],
+
+          [
+
+            -86.383333,
+
+            36.9333333
+
+          ]
+
+        ]
+
+      }
+
+    },
+
+    {
+
+      "type": "Feature",
+
+      "properties": {
+
+        "stroke": "#555555",
+
+        "stroke-width": 2,
+
+        "stroke-opacity": 1,
+
+        "Name": "AR-110"
+
+      },
+
+      "geometry": {
+
+        "type": "LineString",
+
+        "coordinates": [
+
+          [
+
+            -94.783333,
+
+            37.0133333
+
+          ],
+
+          [
+
+            -93,
+
+            37.633333013889
+
+          ],
+
+          [
+
+            -91.416667,
+
+            38.066667
+
+          ],
+
+          [
+
+            -89,
+
+            38.45
+
+          ]
+
+        ]
+
+      }
+
+    },
+
+    {
+
+      "type": "Feature",
+
+      "properties": {
+
+        "stroke": "#555555",
+
+        "stroke-width": 2,
+
+        "stroke-opacity": 1,
+
+        "Name": "AR-016"
+
+      },
+
+      "geometry": {
+
+        "type": "LineString",
+
+        "coordinates": [
+
+          [
+
+            -96.313889,
+
+            39.4
+
+          ],
+
+          [
+
+            -90.916667013889,
+
+            40.71667013889
+
+          ]
+
+        ]
+
+      }
+
+    },
+
+    {
+
+      "type": "Feature",
+
+      "properties": {
+
+        "stroke": "#555555",
+
+        "stroke-width": 2,
+
+        "stroke-opacity": 1,
+
+        "Name": "AR-101"
+
+      },
+
+      "geometry": {
+
+        "type": "LineString",
+
+        "coordinates": [
+
+          [
+
+            -90.833333,
+
+            31.203404950917395
+
+          ],
+
+          [
+
+            -90.5,
+
+            36
+
+          ],
+
+          [
+
+            -90.5,
+
+            36
+
+          ]
+
+        ]
+
+      }
+
+    },
+
+    {
+
+      "type": "Feature",
+
+      "properties": {
+
+        "stroke": "#555555",
+
+        "stroke-width": 2,
+
+        "stroke-opacity": 1,
+
+        "Name": "AR-105"
+
+      },
+
+      "geometry": {
+
+        "type": "LineString",
+
+        "coordinates": [
+
+          [
+
+            -98.4375,
+
+            42.09822241118974
+
+          ],
+
+          [
+
+            -94.7021484375,
+
+            42.74701217318067
+
+          ]
+
+        ]
+
+      }
+
+    },
+
+    {
+
+      "type": "Feature",
+
+      "properties": {
+
+        "stroke": "#555555",
+
+        "stroke-width": 2,
+
+        "stroke-opacity": 1,
+
+        "Name": "AR-197"
+
+      },
+
+      "geometry": {
+
+        "type": "LineString",
+
+        "coordinates": [
+
+          [
+
+            -101.783333026,
+
+            34.18333302222
+
+          ],
+
+          [
+
+            -102.3166670102,
+
+            33.216667024
+
+          ],
+
+          [
+
+            -104.05024167,
+
+            29.8009722
+
+          ],
+
+          [
+
+            -104.7501889,
+
+            30.8166670055
+
+          ],
+
+          [
+
+            -103.5666670025,
+
+            32.616667
+
+          ],
+
+          [
+
+            -102.3333330175,
+
+            34.4005833
+
+          ]
+
+        ]
+
+      }
+
+    },
+
+    {
+
+      "type": "Feature",
+
+      "properties": {
+
+        "stroke": "#555555",
+
+        "stroke-width": 2,
+
+        "stroke-opacity": 1,
+
+        "Name": "AR-406"
+
+      },
+
+      "geometry": {
+
+        "type": "LineString",
+
+        "coordinates": [
+
+          [
+
+            -98.316667025,
+
+            39.85022222
+
+          ],
+
+          [
+
+            -96.2010556,
+
+            40.2000556
+
+          ],
+
+          [
+
+            -93.9666670016,
+
+            40.58333302222
+
+          ]
+
+        ]
+
+      }
+
+    }
+
+  ]
+
+}
