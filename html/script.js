@@ -631,7 +631,7 @@ function initialize() {
     if (onMobile)
         enableMouseover = false;
 
-    if (adsbexchange) {
+    if (document.getElementById('adsense') != null || adsbexchange) {
         if (onMobile || hideButtons) {
             document.getElementById('adsense').style.display='none';
         } else {
