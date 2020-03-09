@@ -3522,7 +3522,7 @@ function processURLParams(){
             icaoFilter = icaoFilter.toLowerCase().split(',');
 
         var icao = search.get('icao');
-        if (icao && icao.length == 6 && icao.toLowerCase().match(/[a-f,0-9]{6}/))
+        if (icao && (icao.length == 7 || icao.length == 6) && icao.toLowerCase().match(/[a-f,0-9]{6}/))
             icaoParam = icao = icao.toLowerCase();
         else
             icao = null;
