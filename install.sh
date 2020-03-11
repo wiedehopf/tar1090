@@ -254,7 +254,6 @@ do
         true
 	elif [[ $lighttpd == yes ]] && ! diff 88-tar1090.conf /etc/lighttpd/conf-enabled/88-$service.conf &>/dev/null
 	then
-		changed_lighttpd=yes
         if [ -f /etc/lighttpd/conf.d/69-skybup.conf ] && [[ "$instance" == "webroot" ]]; then
             true
         elif [[ "$instance" == "webroot" ]]
@@ -293,29 +292,29 @@ done < <(echo "$instances")
 if [ -d /etc/lighttpd/conf-enabled/ ]
 then
 	while read -r FILE; do
-		sed -i -e 's/^server.modules += ( "mod_setenv" )/#server.modules += ( "mod_setenv" )/'  "$FILE"
-	done < <(find /etc/lighttpd/conf-available/* | grep -v dump1090-fa)
+		sed -i -e 's/^server.modules.*mod_setenv.*/#\0/'  "$FILE"
+		sed -i -e 's/^server.stat-cache-engine.*disable.*/#\0/'  "$FILE"
+	done < <(find /etc/lighttpd/conf-available/* | grep -v dump1090 | grep -v readsb)
 
     # add mod_setenv to lighttpd modules, check if it's one too much
-    if [ -f /etc/lighttpd/conf-enabled/87-mod_setenv.conf ]; then
-        setenv_file="present"
-    fi
     echo 'server.modules += ( "mod_setenv" )' > /etc/lighttpd/conf-available/87-mod_setenv.conf
+    echo 'server.stat-cache-engine = "disable"' > /etc/lighttpd/conf-available/47-stat-cache.conf
+
     ln -s -f /etc/lighttpd/conf-available/87-mod_setenv.conf /etc/lighttpd/conf-enabled/87-mod_setenv.conf
+    ln -s -f /etc/lighttpd/conf-available/47-stat-cache.conf /etc/lighttpd/conf-enabled/47-stat-cache.conf
+
     if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep mod_setenv >/dev/null
     then
         rm /etc/lighttpd/conf-enabled/87-mod_setenv.conf
-        if [[ "$setenv_file" == "present" ]]; then
-            changed_lighttpd=yes
-        fi
-    else
-        if [[ "$setenv_file" != "present" ]]; then
-            changed_lighttpd=yes
-        fi
+    fi
+
+    if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep stat-cache >/dev/null
+    then
+        rm /etc/lighttpd/conf-enabled/47-stat-cache.conf
     fi
 fi
 
-if [[ $changed_lighttpd == yes ]] && systemctl status lighttpd >/dev/null; then
+if systemctl status lighttpd >/dev/null; then
 	echo "Restarting lighttpd ..."
 	systemctl restart lighttpd
 fi
