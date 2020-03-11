@@ -2172,7 +2172,7 @@ function refreshTableInfo() {
         if (globeIndex && !icaoFilter) {
             if ((nMapPlanes < 100 || !onMobile)
                 && (!onMobile || ZoomLvl > 10 || !tableplane.onGround)
-                && (inView(tableplane, lastRenderExtent) || tableplane.selected)) {
+                && (inView(tableplane, lastRenderExtent) || (tableplane.selected && !SelectedAllPlanes))) {
                 tableplane.updateFeatures(now, last);
             } else if (tableplane.visible) {
                 tableplane.clearMarker();
