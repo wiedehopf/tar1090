@@ -276,7 +276,7 @@ function processReceiverUpdate(data, init) {
     }
     // jquery stuff might still have references to the json, so null the
     // aircraft array to make it easier for the garbage collector.
-    data.aircraft = null;
+    //data.aircraft = null;
 }
 
 function setupPlane(hex, plane) {
@@ -1759,7 +1759,9 @@ function reaper(all) {
     var plane;
     while (plane = PlanesOrdered.pop()) {
         plane.seen = now - plane.last_message_time;
-        if (!plane.selected && (all || plane.seen > 600)) {
+        if ( (!plane.selected || SelectedAllPlanes)
+            && (all || plane.seen > 600 || (globeIndex && plane.seen > 180))
+        ) {
             // Reap it.                                
             //console.log("Removed " + plane.icao);
             delete Planes[plane.icao];
