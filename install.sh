@@ -294,7 +294,7 @@ then
 	while read -r FILE; do
 		sed -i -e 's/^server.modules.*mod_setenv.*/#\0/'  "$FILE"
 		sed -i -e 's/^server.stat-cache-engine.*disable.*/#\0/'  "$FILE"
-	done < <(find /etc/lighttpd/conf-available/* | grep -v dump1090 | grep -v readsb)
+	done < <(find /etc/lighttpd/conf-available/* | grep -v dump1090-fa | grep -v readsb)
 
     # add mod_setenv to lighttpd modules, check if it's one too much
     echo 'server.modules += ( "mod_setenv" )' > /etc/lighttpd/conf-available/87-mod_setenv.conf
@@ -311,6 +311,11 @@ then
     if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep stat-cache >/dev/null
     then
         rm /etc/lighttpd/conf-enabled/47-stat-cache.conf
+    fi
+
+    if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep mod_setenv >/dev/null
+    then
+        rm /etc/lighttpd/conf-enabled/87-mod_setenv.conf
     fi
 fi
 
