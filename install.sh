@@ -289,7 +289,7 @@ do
 done < <(echo "$instances")
 
 
-if [ -d /etc/lighttpd/conf-enabled/ ]
+if [ -d /etc/lighttpd/conf-enabled/ ] && [ -f /etc/lighttpd/lighttpd.conf ]
 then
 	while read -r FILE; do
 		sed -i -e 's/^server.modules.*mod_setenv.*/#\0/'  "$FILE"
