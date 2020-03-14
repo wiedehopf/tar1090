@@ -186,6 +186,7 @@ do
 	cp -r -T html $html_path
     cp -r -T $ipath/git-db/db $html_path/db-$DB_VERSION
     sed -i -e "s/var databaseFolder = .*/var databaseFolder = \"db-$DB_VERSION\";/" $html_path/early.js
+    echo "{ \"tar1090Version\": \"$TAR_VERSION\", \"databaseVersion\": \"$DB_VERSION\" }" > $html_path/version.json
 
 	mv /tmp/tar1090_config.js $html_path/config.js 2>/dev/null || true
 	mv /tmp/tar1090_colors.css $html_path/colors.css 2>/dev/null || true
