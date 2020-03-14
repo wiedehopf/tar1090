@@ -346,11 +346,11 @@ echo --------------
 
 if [[ $lighttpd == yes ]]; then
 	for name in $names; do
-		echo "All done! Webinterface available at http://$(ip route | grep -m1 -o -P 'src \K[0-9,.]*')/$name"
+		echo "All done! Webinterface available at http://$(ip route get 1.2.3.4 | grep -m1 -o -P 'src \K[0-9,.]*')/$name"
 	done
 elif [[ $nginx == yes ]]; then
 	for name in $names; do
-		echo "All done! Webinterface once nginx is configured will be available at http://$(ip route | grep -m1 -o -P 'src \K[0-9,.]*')/$name"
+		echo "All done! Webinterface once nginx is configured will be available at http://$(ip route get 1.2.3.4 | grep -m1 -o -P 'src \K[0-9,.]*')/$name"
 	done
 else
 	echo "All done! You'll need to configure your webserver yourself, see /usr/local/share/tar1090/nginx-tar1090.conf for a reference nginx configuration"
