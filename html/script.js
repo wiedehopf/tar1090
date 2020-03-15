@@ -3585,6 +3585,10 @@ function processURLParams(){
         if (zoom) {
             OLMap.getView().setZoom(zoom);
         }
+
+        if (search.has('mil'))
+            toggleMilitary();
+
     } catch (error) {
         console.log(error);
     }
