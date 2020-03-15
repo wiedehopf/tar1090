@@ -4,6 +4,8 @@ if [[ -n $1 ]]; then
 	instance=$1
 else
 	rm -rf /usr/local/share/tar1090
+    rm -f /etc/lighttpd/conf-available/*tar1090*
+    rm -f /etc/lighttpd/conf-enabled/*tar1090*
 fi
 echo --------------
 echo "Removing tar1090, instance name $instance!"

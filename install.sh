@@ -161,6 +161,8 @@ do
         sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" \
             -e "s?/INSTANCE??g" -e "s?HTMLPATH?$html_path?g" 88-tar1090.conf
         sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" \
+            -e "s?/INSTANCE??g" -e "s?HTMLPATH?$html_path?g" 95-tar1090-otherport.conf
+        sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" \
             -e "s?/INSTANCE/?/?g" -e "s?HTMLPATH?$html_path?g" nginx.conf
         sed -i -e "s?/INSTANCE?/?g" nginx.conf
 
@@ -250,10 +252,7 @@ do
 
 	cp nginx.conf $ipath/nginx-$service.conf
 
-	if [[ $lighttpd == yes ]] && diff 88-tar1090.conf /etc/lighttpd/conf-enabled/99-$service.conf &>/dev/null
-    then
-        true
-	elif [[ $lighttpd == yes ]] && ! diff 88-tar1090.conf /etc/lighttpd/conf-enabled/88-$service.conf &>/dev/null
+	if [[ $lighttpd == yes ]] &>/dev/null
 	then
         if [ -f /etc/lighttpd/conf.d/69-skybup.conf ] && [[ "$instance" == "webroot" ]]; then
             true
@@ -261,6 +260,8 @@ do
         then
             cp 88-tar1090.conf /etc/lighttpd/conf-available/99-$service.conf
             ln -f -s /etc/lighttpd/conf-available/99-$service.conf /etc/lighttpd/conf-enabled/99-$service.conf
+            cp 95-tar1090-otherport.conf /etc/lighttpd/conf-available/
+            ln -f -s /etc/lighttpd/conf-available/95-tar1090-otherport.conf /etc/lighttpd/conf-enabled/95-tar1090-otherport.conf
         else
             cp 88-tar1090.conf /etc/lighttpd/conf-available/88-$service.conf
             if [ -f /etc/lighttpd/conf.d/69-skybup.conf ]; then
@@ -335,12 +336,6 @@ if [[ $nginx == yes ]]; then
 	for service in $services; do
 		echo "include /usr/local/share/tar1090/nginx-$service.conf;"
 	done
-    if [[ "$1" == "test" ]]
-    then
-        if [ -d /run/readsb ]; then
-            sed -i -e 's/dump1090-fa/readsb/g' /usr/local/share/tar1090/nginx_webroot.conf
-        fi
-    fi
 fi
 
 echo --------------
