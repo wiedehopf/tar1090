@@ -723,14 +723,10 @@ PlaneObject.prototype.updateIcon = function() {
         this.rotationCache = this.rotation;
 
         if (iconCache[svgKey] == undefined) {
-            var svgKey2 = col + '!' + this.shape + '!' + outline;
-            var svgKey3 = col + '!' + this.shape + '!' + '';
-            var svgURI2 = svgPathToURI(this.baseMarker.svg, OutlineADSBColor, col, outline);
-            var svgURI3 = svgPathToURI(this.baseMarker.svg, OutlineADSBColor, col, '');
-            addToIconCache.push([svgKey2, null, svgURI2]);
-            addToIconCache.push([svgKey3, null, svgURI3]);
-
             var svgURI = svgPathToURI(this.baseMarker.svg, OutlineADSBColor, col, add_stroke);
+
+            addToIconCache.push([svgKey, null, svgURI]);
+
             this.markerIcon = new ol.style.Icon({
                 scale: this.scale,
                 imgSize: this.baseMarker.size,
