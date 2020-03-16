@@ -286,6 +286,10 @@ function setupPlane(hex, plane) {
 
     plane.tr = PlaneRowTemplate.cloneNode(true);
 
+    var tbody = document.getElementById('tableinfo').tBodies[0];
+    tbody.appendChild(plane.tr);
+    plane.inTable = true;
+
     if (hex[0] === '~') {
         // Non-ICAO address
         plane.tr.cells[0].textContent = hex.substring(1);
@@ -302,29 +306,29 @@ function setupPlane(hex, plane) {
         $('img', plane.tr.cells[1]).css('display', 'none');
     }
 
-    plane.clickListener = function(h, evt) {
+    plane.clickListener = function(evt) {
         if (evt.srcElement instanceof HTMLAnchorElement) {
             evt.stopPropagation();
             return;
         }
 
         if(!mapIsVisible) {
-            selectPlaneByHex(h, {follow: true});
+            selectPlaneByHex(this.icao, {follow: true});
             //showMap();
         } else {
-            selectPlaneByHex(h, {follow: false});
+            selectPlaneByHex(this.icao, {follow: false});
         }
         evt.preventDefault();
-    }.bind(undefined, hex);
+    }.bind(plane);
 
     if (!globeIndex) {
-        plane.dblclickListener = function(h, evt) {
+        plane.dblclickListener = function(evt) {
             if(!mapIsVisible) {
                 showMap();
             }
-            selectPlaneByHex(h, {follow: true});
+            selectPlaneByHex(this.icao, {follow: true});
             evt.preventDefault();
-        }.bind(undefined, hex);
+        }.bind(plane);
 
         plane.tr.addEventListener('dblclick', plane.dblclickListener);
     }
@@ -1143,7 +1147,7 @@ function parse_history() {
     refreshHighlighted();
 
     // Setup our timer to poll from the server.
-    window.setInterval(reaper, 60000);
+    window.setInterval(reaper, 20000);
     if (tempTrails) {
         window.setInterval(trailReaper, 10000);
         trailReaper(now);
@@ -1753,8 +1757,10 @@ function reaper(all) {
     //console.log("Reaping started..");
     if (noVanish)
         return;
-    if (reaping)
+    if (reaping) {
+        console.log("already reaping");
         return;
+    }
     reaping = true;
 
     // Look for planes where we have seen no messages for >300 seconds
@@ -1766,7 +1772,7 @@ function reaper(all) {
             continue;
         plane.seen = now - plane.last_message_time;
         if ( (!plane.selected || SelectedAllPlanes)
-            && (all || plane.seen > 600 || (globeIndex && plane.seen > 180))
+            && (all || plane.seen > 300 || (globeIndex && plane.seen > 180))
         ) {
             // Reap it.                                
             //console.log("Removed " + plane.icao);
@@ -1779,6 +1785,8 @@ function reaper(all) {
     };
 
     reaping = false;
+    //console.log(length - PlanesOrdered.length);
+    return (length - PlanesOrdered.length);
 }
 
 // Page Title update function
@@ -2216,6 +2224,7 @@ function refreshTableInfo() {
             tableplane.showInTable = false;
             continue;
         }
+
 
         if (tableplane.showInTable) {
             nTablePlanes++;

@@ -1546,8 +1546,16 @@ PlaneObject.prototype.destroy = function() {
     this.trail_features.clear();
     this.trail_labels.clear();
     if (this.tr) {
+        var tbody = document.getElementById('tableinfo').tBodies[0];
+        if (!this.inTable) {
+            tbody.appendChild(this.tr);
+        }
+
         this.tr.removeEventListener('click', this.clickListener);
         this.tr.removeEventListener('dblclick', this.dblclickListener);
+
+        tbody.removeChild(this.tr);
+
         if (this.tr.parentNode)
             this.tr.parentNode.removeChild(this.tr);
         this.tr = null;
