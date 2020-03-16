@@ -1758,9 +1758,12 @@ function reaper(all) {
     reaping = true;
 
     // Look for planes where we have seen no messages for >300 seconds
-    var newPlanes = [];
     var plane;
-    while (plane = PlanesOrdered.pop()) {
+    var length = PlanesOrdered.length;
+    for (var i = 0; i < length; i++) {
+        plane = PlanesOrdered.shift()
+        if (plane == null)
+            continue;
         plane.seen = now - plane.last_message_time;
         if ( (!plane.selected || SelectedAllPlanes)
             && (all || plane.seen > 600 || (globeIndex && plane.seen > 180))
@@ -1771,11 +1774,10 @@ function reaper(all) {
             plane.destroy();
         } else {
             // Keep it.
-            newPlanes.push(plane);
+            PlanesOrdered.push(plane);
         }
     };
 
-    PlanesOrdered = newPlanes;
     reaping = false;
 }
 
