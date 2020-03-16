@@ -6,9 +6,8 @@
 
 // Define our global variables
 var OLMap         = null;
-var StaticFeatures = new ol.Collection();
-var SiteCircleFeatures = new ol.Collection();
-var PlaneIconFeatures = new ol.Collection();
+var StaticFeatures = new ol.source.Vector();
+var PlaneIconFeatures = new ol.source.Vector();
 var trailGroup = new ol.Collection();
 var iconLayer;
 var trailLayers;
@@ -410,7 +409,7 @@ function fetchData() {
                         var tile = new ol.geom.LineString([southWest, southEast, northEast, northWest, southWest]);
                         var tileFeature = new ol.Feature(tile);
                         tileFeature.setStyle(estimateStyle);
-                        StaticFeatures.push(tileFeature);
+                        StaticFeatures.addFeature(tileFeature);
                     } else {
                         var west = new ol.geom.LineString([south180p, southWest, northWest, north180p]);
                         var east = new ol.geom.LineString([south180m, southEast, northEast, north180m]);
@@ -418,8 +417,8 @@ function fetchData() {
                         var eastF = new ol.Feature(east);
                         westF.setStyle(estimateStyle);
                         eastF.setStyle(estimateStyle);
-                        StaticFeatures.push(westF);
-                        StaticFeatures.push(eastF);
+                        StaticFeatures.addFeature(westF);
+                        StaticFeatures.addFeature(eastF);
                     }
 
 
@@ -1214,9 +1213,7 @@ function initialize_map() {
         name: 'ac_positions',
         type: 'overlay',
         title: 'Aircraft positions',
-        source: new ol.source.Vector({
-            features: PlaneIconFeatures,
-        }),
+        source: PlaneIconFeatures,
         zIndex: 200,
     });
 
@@ -1225,9 +1222,7 @@ function initialize_map() {
             name: 'site_pos',
             type: 'overlay',
             title: 'Site position and range rings',
-            source: new ol.source.Vector({
-                features: StaticFeatures,
-            }),
+            source: StaticFeatures,
             visible: !adsbexchange,
             zIndex: 100,
         }));
@@ -1614,7 +1609,7 @@ function initialize_map() {
 
                     var feature = new ol.Feature(geom);
                     feature.setStyle(ringStyle);
-                    StaticFeatures.push(feature);
+                    StaticFeatures.addFeature(feature);
                 }
             }
         });
@@ -1644,16 +1639,11 @@ function createSiteCircleFeatures() {
 
         var feature = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(SitePosition)));
         feature.setStyle(markerStyle);
-        StaticFeatures.push(feature);
+        StaticFeatures.addFeature(feature);
     }
 
     if (!SiteCircles)
         return;
-
-    SiteCircleFeatures.forEach(function(circleFeature) {
-        StaticFeatures.remove(circleFeature); 
-    });
-    SiteCircleFeatures.clear();
 
     var circleStyle = function(distance) {
         return new ol.style.Style({
@@ -1685,8 +1675,7 @@ function createSiteCircleFeatures() {
         circle.transform('EPSG:4326', 'EPSG:3857');
         var feature = new ol.Feature(circle);
         feature.setStyle(circleStyle(distance));
-        StaticFeatures.push(feature);
-        SiteCircleFeatures.push(feature);
+        StaticFeatures.addFeature(feature);
     }
 }
 
@@ -1695,10 +1684,6 @@ function reaper(all) {
     //console.log("Reaping started..");
     if (noVanish)
         return;
-    if (reaping) {
-        console.log("already reaping");
-        return;
-    }
     reaping = true;
 
     // Look for planes where we have seen no messages for >300 seconds
@@ -1722,7 +1707,6 @@ function reaper(all) {
         }
     };
 
-    reaping = false;
     //console.log(length - PlanesOrdered.length);
     return (length - PlanesOrdered.length);
 }

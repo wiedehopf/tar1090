@@ -1333,7 +1333,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
 
 PlaneObject.prototype.clearMarker = function() {
     if (this.marker && this.marker.visible) {
-        PlaneIconFeatures.remove(this.marker);
+        PlaneIconFeatures.removeFeature(this.marker);
         this.marker.visible = false;
     }
 };
@@ -1347,7 +1347,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
     if (!this.marker) {
         this.marker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
         this.marker.hex = this.icao;
-        PlaneIconFeatures.push(this.marker);
+        PlaneIconFeatures.addFeature(this.marker);
         this.marker.visible = true;
     } else if (moved) {
         this.marker.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
@@ -1357,7 +1357,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
 
     if (!this.marker.visible) {
         this.marker.visible = true;
-        PlaneIconFeatures.push(this.marker);
+        PlaneIconFeatures.addFeature(this.marker);
     }
 };
 
@@ -1592,13 +1592,13 @@ PlaneObject.prototype.destroy = function() {
     this.clearLines();
     this.clearMarker();
     this.visible = false;
-    if (this.marker) {
-        PlaneIconFeatures.remove(this.marker);
-    }
     if (this.layer) {
         trailGroup.remove(this.layer);
+        trailGroup.remove(this.layer_labels);
         this.trail_features.clear();
         this.trail_labels.clear();
+        this.layer = null;
+        this.layer_labels = null;
     }
     if (this.tr) {
         var tbody = document.getElementById('tableinfo').tBodies[0];
