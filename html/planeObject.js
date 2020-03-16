@@ -99,7 +99,6 @@ function PlaneObject(icao) {
     this.markerStyleKey = null;
     this.markerSvgKey = null;
     this.baseScale = 1;
-    this.filter = {};
 
     // start from a computed registration, let the DB override it
     // if it has something else.
@@ -108,6 +107,13 @@ function PlaneObject(icao) {
     this.typeDescription = null;
     this.wtc = null;
 
+
+    // request metadata
+    this.getAircraftData();
+
+}
+
+PlaneObject.prototype.createLayer = function() {
     this.trail_features = new ol.Collection();
     this.trail_labels = new ol.Collection();
 
@@ -135,12 +141,7 @@ function PlaneObject(icao) {
 
     trailGroup.push(this.layer);
     trailGroup.push(this.layer_labels);
-
-    // request metadata
-    this.getAircraftData();
-
 }
-
 
 PlaneObject.prototype.logSel = function(loggable) {
     if (debugTracks && this.selected && !SelectedAllPlanes)
@@ -173,30 +174,30 @@ PlaneObject.prototype.isFiltered = function() {
     if (!filterTracks && this.altFiltered(this.altitude))
         return true;
 
-    if (this.filter.type && (!this.icaoType || !this.icaoType.match(this.filter.type)) ) {
+    if (PlaneFilter.type && (!this.icaoType || !this.icaoType.match(PlaneFilter.type)) ) {
         return true;
     }
 
-    if (this.filter.description && (!this.typeDescription || !this.typeDescription.match(this.filter.description)) ) {
+    if (PlaneFilter.description && (!this.typeDescription || !this.typeDescription.match(PlaneFilter.description)) ) {
         return true;
     }
 
-    if (this.filter.callsign
-        && (!this.flight || !this.flight.match(this.filter.callsign))
-        && (!this.squawk || !this.squawk.match(this.filter.callsign))
+    if (PlaneFilter.callsign
+        && (!this.flight || !this.flight.match(PlaneFilter.callsign))
+        && (!this.squawk || !this.squawk.match(PlaneFilter.callsign))
     ) {
         return true;
     }
 
     // filter out ground vehicles
-    if (typeof this.filter.groundVehicles !== 'undefined' && this.filter.groundVehicles === 'filtered') {
+    if (typeof PlaneFilter.groundVehicles !== 'undefined' && PlaneFilter.groundVehicles === 'filtered') {
         if (typeof this.category === 'string' && this.category.startsWith('C')) {
             return true;
         }
     }
 
     // filter out blocked MLAT flights
-    if (typeof this.filter.blockedMLAT !== 'undefined' && this.filter.blockedMLAT === 'filtered') {
+    if (typeof PlaneFilter.blockedMLAT !== 'undefined' && PlaneFilter.blockedMLAT === 'filtered') {
         if (typeof this.icao === 'string' && this.icao.startsWith('~')) {
             return true;
         }
@@ -207,13 +208,13 @@ PlaneObject.prototype.isFiltered = function() {
 
 
 PlaneObject.prototype.altFiltered = function(altitude) {
-    if (this.filter.minAltitude == null || this.filter.maxAltitude == null)
+    if (PlaneFilter.minAltitude == null || PlaneFilter.maxAltitude == null)
         return false;
     if (altitude == null) {
         return true;
     }
     const planeAltitude = altitude === "ground" ? 0 : altitude;
-    if (planeAltitude < this.filter.minAltitude || planeAltitude > this.filter.maxAltitude) {
+    if (planeAltitude < PlaneFilter.minAltitude || planeAltitude > PlaneFilter.maxAltitude) {
         return true;
     }
     return false;
@@ -500,7 +501,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
 
 // This is to remove the line from the screen if we deselect the plane
 PlaneObject.prototype.clearLines = function() {
-    if (this.layer.getVisible()) {
+    if (this.layer && this.layer.getVisible()) {
         this.layer.setVisible(false);
         this.layer_labels.setVisible(false);
     }
@@ -1421,6 +1422,8 @@ PlaneObject.prototype.updateLines = function() {
     if (this.track_linesegs.length == 0)
         return;
 
+    if (!this.layer)
+        this.createLayer();
     if (!this.layer.getVisible()) {
         this.layer.setVisible(true);
         this.layer_labels.setVisible(true);
@@ -1592,9 +1595,11 @@ PlaneObject.prototype.destroy = function() {
     if (this.marker) {
         PlaneIconFeatures.remove(this.marker);
     }
-    trailGroup.remove(this.layer);
-    this.trail_features.clear();
-    this.trail_labels.clear();
+    if (this.layer) {
+        trailGroup.remove(this.layer);
+        this.trail_features.clear();
+        this.trail_labels.clear();
+    }
     if (this.tr) {
         var tbody = document.getElementById('tableinfo').tBodies[0];
         if (!this.inTable) {

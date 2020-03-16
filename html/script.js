@@ -203,7 +203,6 @@ function processAircraft(ac, init, uat) {
 
     if (!plane) {
         plane = new PlaneObject(hex);
-        plane.filter = PlaneFilter;
 
         Planes[hex] = plane;
         PlanesOrdered.push(plane);
