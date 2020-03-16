@@ -793,6 +793,8 @@ PlaneObject.prototype.updateIcon = function() {
 };
 
 PlaneObject.prototype.processTrace = function(show) {
+    if (!this.layer)
+        this.createLayer();
     var trace = null;
     var timeZero, _now, _last = 0;
     this.history_size = 0;
@@ -1510,8 +1512,10 @@ PlaneObject.prototype.updateLines = function() {
 
 PlaneObject.prototype.remakeTrail = function() {
 
-    this.trail_features.clear();
-    this.trail_labels.clear();
+    if (this.layer) {
+        this.trail_features.clear();
+        this.trail_labels.clear();
+    }
     for (var i in this.track_linesegs) {
         this.track_linesegs[i].feature = undefined;
         this.track_linesegs[i].label = undefined;
