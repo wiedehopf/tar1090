@@ -113,7 +113,10 @@ var TrackedHistorySize = 0;
 var SitePosition = null;
 
 // timestamps
-var now=0, last=0, uat_now=0, uat_last=0;
+var now = 0;
+var last=0;
+var uat_now=0;
+var uat_last=0;
 var StaleReceiverCount = 0;
 var FetchPending = [];
 var FetchPendingUAT = null;
@@ -2283,12 +2286,13 @@ function refreshTableInfo() {
     var tbody = document.getElementById('tableinfo').tBodies[0];
     for (var i = 0; i < PlanesOrdered.length; ++i) {
         tableplane = PlanesOrdered[i];
+        if (tableplane.inTable) {
+            tbody.removeChild(tableplane.tr);
+            tableplane.inTable = false;
+        }
         if (tableplane.showInTable) {
             tbody.appendChild(tableplane.tr);
             tableplane.inTable = true;
-        } else if (tableplane.inTable) {
-            tbody.removeChild(tableplane.tr);
-            tableplane.inTable = false;
         }
     }
     //tbody.appendChild(tableinfoFragment);
