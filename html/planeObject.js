@@ -1241,8 +1241,8 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         state.track = this.track;
         state.rotation = this.rotation;
         this.trace.push(state);
-        if (this.trace.length > 35) {
-            this.trace.slice(-30);
+        if (this.trace.length > 20) {
+            this.trace.slice(-15);
         }
     }
 
