@@ -168,6 +168,8 @@ First on the line the source directory where the aircraft.json is located.
 Second on the line the name where you want to access the according website.
 (http://pi/tar1090 or http://pi/combo or http://pi/978 in this example)
 
+If you want the instance at http://pi/, use webroot as a name.
+
 The main instance needs to be included in this file.
 
 Example file:
@@ -175,6 +177,7 @@ Example file:
 /run/dump1090-fa tar1090
 /run/combine1090 combo
 /run/skyaware978 978
+/run/dump1090-fa webroot
 ```
 
 After saving that file, just run the install script and it will install/update
@@ -208,31 +211,12 @@ sudo bash /usr/local/share/tar1090/uninstall.sh combo
 sudo bash /usr/local/share/tar1090/uninstall.sh 978
 ```
 
+## lighttpd
 
+tar1090 is now available at :8504 by default when using lighttpd. (port 8504)
 
-## Alternative lighttpd configuration
-
-Placing tar1090 on port 8504:
-```
-sudo cp /usr/local/share/tar1090/95-tar1090-otherport.conf /etc/lighttpd/conf-enabled
-sudo systemctl restart lighttpd
-```
-
-Placing tar1090 at / instead of /tar1090:
-```
-sudo cp /usr/local/share/tar1090/99-tar1090-webroot.conf /etc/lighttpd/conf-enabled
-sudo systemctl restart lighttpd
-```
-
-Note 1: This will only work if you are using dump1090-fa and the default install
-
-Note 2: if those cause lighttpd not to start for any reason some other lighttpd configuration is conflicting.
-To solve the problem just delete the configuration you copied there:
-```
-sudo rm /etc/lighttpd/conf-enabled/95-tar1090-otherport.conf
-sudo rm /etc/lighttpd/conf-enabled/99-tar1090-webroot.conf
-sudo systemctl restart lighttpd
-```
+To display tar1090 at /, add an instance as described above that has the name webroot.
+It will be available at /
 
 ## nginx configuration
 

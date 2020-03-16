@@ -135,11 +135,13 @@ fi
 
 # copy over base files
 cp default install.sh uninstall.sh LICENSE README.md \
-	95-tar1090-otherport.conf $ipath
+    $ipath
 
 
 services=""
 names=""
+otherport=""
+
 while read -r srcdir instance
 do
 	if [[ "$instance" != "tar1090" ]]; then
@@ -156,12 +158,13 @@ do
 	cp -n default /etc/default/$service
 	sed -i -e 's/skyview978/skyaware978/' /etc/default/$service
 
+    sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" \
+        -e "s?/INSTANCE??g" -e "s?HTMLPATH?$html_path?g" 95-tar1090-otherport.conf
+
     if [[ "$instance" == "webroot" ]]
     then
         sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" \
             -e "s?/INSTANCE??g" -e "s?HTMLPATH?$html_path?g" 88-tar1090.conf
-        sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" \
-            -e "s?/INSTANCE??g" -e "s?HTMLPATH?$html_path?g" 95-tar1090-otherport.conf
         sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" \
             -e "s?/INSTANCE/?/?g" -e "s?HTMLPATH?$html_path?g" nginx.conf
         sed -i -e "s?/INSTANCE?/?g" nginx.conf
@@ -254,14 +257,17 @@ do
 
 	if [[ $lighttpd == yes ]] &>/dev/null
 	then
+        if [[ "$otherport" != "done" ]]; then
+            cp 95-tar1090-otherport.conf /etc/lighttpd/conf-available/
+            ln -f -s /etc/lighttpd/conf-available/95-tar1090-otherport.conf /etc/lighttpd/conf-enabled/95-tar1090-otherport.conf
+            otherport="done"
+        fi
         if [ -f /etc/lighttpd/conf.d/69-skybup.conf ] && [[ "$instance" == "webroot" ]]; then
             true
         elif [[ "$instance" == "webroot" ]]
         then
             cp 88-tar1090.conf /etc/lighttpd/conf-available/99-$service.conf
             ln -f -s /etc/lighttpd/conf-available/99-$service.conf /etc/lighttpd/conf-enabled/99-$service.conf
-            cp 95-tar1090-otherport.conf /etc/lighttpd/conf-available/
-            ln -f -s /etc/lighttpd/conf-available/95-tar1090-otherport.conf /etc/lighttpd/conf-enabled/95-tar1090-otherport.conf
         else
             cp 88-tar1090.conf /etc/lighttpd/conf-available/88-$service.conf
             if [ -f /etc/lighttpd/conf.d/69-skybup.conf ]; then
@@ -286,6 +292,7 @@ do
 
 	# restore sed modified configuration files
 	mv 88-tar1090.conf.orig 88-tar1090.conf
+    mv 95-tar1090-otherport.conf.orig 95-tar1090-otherport.conf
 	mv nginx.conf.orig nginx.conf
 	mv tar1090.service.orig tar1090.service
 done < <(echo "$instances")
