@@ -205,9 +205,6 @@ function processAircraft(ac, init, uat) {
         plane = new PlaneObject(hex);
         plane.filter = PlaneFilter;
 
-        if (!init)
-            setupPlane(hex,plane);
-
         Planes[hex] = plane;
         PlanesOrdered.push(plane);
         if (uat) {
@@ -280,60 +277,6 @@ function processReceiverUpdate(data, init) {
     // jquery stuff might still have references to the json, so null the
     // aircraft array to make it easier for the garbage collector.
     //data.aircraft = null;
-}
-
-function setupPlane(hex, plane) {
-
-    plane.tr = PlaneRowTemplate.cloneNode(true);
-
-    var tbody = document.getElementById('tableinfo').tBodies[0];
-    tbody.appendChild(plane.tr);
-    plane.inTable = true;
-
-    if (hex[0] === '~') {
-        // Non-ICAO address
-        plane.tr.cells[0].textContent = hex.substring(1);
-        $(plane.tr).css('font-style', 'italic');
-    } else {
-        plane.tr.cells[0].textContent = hex;
-    }
-
-    // set flag image if available
-    if (ShowFlags && plane.icaorange.flag_image !== null) {
-        $('img', plane.tr.cells[1]).attr('src', FlagPath + plane.icaorange.flag_image);
-        $('img', plane.tr.cells[1]).attr('title', plane.icaorange.country);
-    } else {
-        $('img', plane.tr.cells[1]).css('display', 'none');
-    }
-
-    plane.clickListener = function(evt) {
-        if (evt.srcElement instanceof HTMLAnchorElement) {
-            evt.stopPropagation();
-            return;
-        }
-
-        if(!mapIsVisible) {
-            selectPlaneByHex(this.icao, {follow: true});
-            //showMap();
-        } else {
-            selectPlaneByHex(this.icao, {follow: false});
-        }
-        evt.preventDefault();
-    }.bind(plane);
-
-    if (!globeIndex) {
-        plane.dblclickListener = function(evt) {
-            if(!mapIsVisible) {
-                showMap();
-            }
-            selectPlaneByHex(this.icao, {follow: true});
-            evt.preventDefault();
-        }.bind(plane);
-
-        plane.tr.addEventListener('dblclick', plane.dblclickListener);
-    }
-
-    plane.tr.addEventListener('click', plane.clickListener);
 }
 
 function fetchData() {
@@ -1130,10 +1073,6 @@ function parse_history() {
         }
 
         refreshFeatures();
-
-
-        for (var i in PlanesOrdered)
-            setupPlane(PlanesOrdered[i].icao,PlanesOrdered[i]);
     }
 
     PositionHistoryBuffer = null;
@@ -2229,6 +2168,9 @@ function refreshTableInfo() {
         if (tableplane.showInTable) {
             nTablePlanes++;
 
+            if (tableplane.tr == null)
+                tableplane.makeTR();
+
             if (tableplane.dataSource == "adsb") {
                 classes += " vPosition";
             } else {
@@ -2269,7 +2211,7 @@ function refreshTableInfo() {
 
 
         }
-        if (tableplane.classesCache != classes) {
+        if (tableplane.tr && tableplane.classesCache != classes) {
             tableplane.classesCache = classes;
             tableplane.tr.className = classes;
         }

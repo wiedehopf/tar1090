@@ -1535,6 +1535,56 @@ PlaneObject.prototype.remakeTrail = function() {
     this.updateTick(true);
 }
 
+PlaneObject.prototype.makeTR = function() {
+
+    this.tr = PlaneRowTemplate.cloneNode(true);
+
+    if (this.icao[0] === '~') {
+        // Non-ICAO address
+        this.tr.cells[0].textContent = this.icao.substring(1);
+        $(this.tr).css('font-style', 'italic');
+    } else {
+        this.tr.cells[0].textContent = this.icao;
+    }
+
+    // set flag image if available
+    if (ShowFlags && this.icaorange.flag_image !== null) {
+        $('img', this.tr.cells[1]).attr('src', FlagPath + this.icaorange.flag_image);
+        $('img', this.tr.cells[1]).attr('title', this.icaorange.country);
+    } else {
+        $('img', this.tr.cells[1]).css('display', 'none');
+    }
+
+    this.clickListener = function(evt) {
+        if (evt.srcElement instanceof HTMLAnchorElement) {
+            evt.stopPropagation();
+            return;
+        }
+
+        if(!mapIsVisible) {
+            selectPlaneByHex(this.icao, {follow: true});
+            //showMap();
+        } else {
+            selectPlaneByHex(this.icao, {follow: false});
+        }
+        evt.preventDefault();
+    }.bind(this);
+
+    if (!globeIndex) {
+        this.dblclickListener = function(evt) {
+            if(!mapIsVisible) {
+                showMap();
+            }
+            selectPlaneByHex(this.icao, {follow: true});
+            evt.preventDefault();
+        }.bind(this);
+
+        this.tr.addEventListener('dblclick', this.dblclickListener);
+    }
+
+    this.tr.addEventListener('click', this.clickListener);
+}
+
 PlaneObject.prototype.destroy = function() {
     this.clearLines();
     this.clearMarker();
