@@ -236,10 +236,12 @@ function processReceiverUpdate(data, init) {
     var uat = false;
     if (data.uat_978 == "true") {
         uat = true;
+        // Are uat_now and uat_last intended to be undeclared globals?
         uat_last = uat_now;
         uat_now = data.now;
     } else {
         if (data.now > now || globeIndex) {
+         //   same with last and now ..
             last = now;
             now = data.now;
         }
@@ -387,6 +389,7 @@ function fetchData() {
             dataType: 'json' });
 
         FetchPendingUAT.done(function(data) {
+            // undeclared so global and no GC
             uat_data = data;
             FetchPendingUAT = null;
         });
