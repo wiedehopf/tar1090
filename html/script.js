@@ -373,6 +373,8 @@ function fetchData() {
         if (uuid != null) {
             ac_url[0] = 'data/?feed=' + encodeURIComponent(uuid);
         }
+
+        $("#lastLeg_checkbox").hide();
     }
     lastRequestFiles = ac_url.length;
     PendingFetches = ac_url.length;
