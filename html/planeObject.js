@@ -112,34 +112,40 @@ function PlaneObject(icao) {
     this.getAircraftData();
 
 }
+PlaneObject.prototype.checkLayers = function() {
+    if (!this.trail_features)
+        this.createFeatures();
+    if (trackLabels && !this.trail_labels)
+        this.createLabels();
+}
 
-PlaneObject.prototype.createLayer = function() {
-    this.trail_features = new ol.Collection();
-    this.trail_labels = new ol.Collection();
+PlaneObject.prototype.createFeatures = function() {
+    this.trail_features = new ol.source.Vector();
 
     this.layer = new ol.layer.Vector({
         name: this.icao,
         isTrail: true,
-        source: new ol.source.Vector({
-            features: this.trail_features,
-        }),
+        source: this.trail_features,
         renderOrder: null,
         declutter: false,
         zIndex: 150,
     });
 
+    trailGroup.push(this.layer);
+}
+
+PlaneObject.prototype.createLabels = function() {
+    this.trail_labels = new ol.source.Vector();
+
     this.layer_labels = new ol.layer.Vector({
         name: this.icao + '_labels',
         isTrail: true,
-        source: new ol.source.Vector({
-            features: this.trail_labels,
-        }),
+        source: this.trail_labels,
         renderOrder: null,
         declutter: true,
         zIndex: 151,
     });
 
-    trailGroup.push(this.layer);
     trailGroup.push(this.layer_labels);
 }
 
@@ -503,8 +509,9 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
 PlaneObject.prototype.clearLines = function() {
     if (this.layer && this.layer.getVisible()) {
         this.layer.setVisible(false);
-        this.layer_labels.setVisible(false);
     }
+    if (this.layer_labels && this.layer_labels.getVisible())
+        this.layer_labels.setVisible(false);
 };
 
 PlaneObject.prototype.getDataSourceNumber = function() {
@@ -793,8 +800,7 @@ PlaneObject.prototype.updateIcon = function() {
 };
 
 PlaneObject.prototype.processTrace = function(show) {
-    if (!this.layer)
-        this.createLayer();
+    this.checkLayers();
     var trace = null;
     var timeZero, _now, _last = 0;
     this.history_size = 0;
@@ -806,6 +812,8 @@ PlaneObject.prototype.processTrace = function(show) {
     this.remakeTrail();
 
     Object.assign(tempPlane, this);
+
+    this.position = null;
 
     var onlyRecent = 0;
 
@@ -1424,17 +1432,28 @@ PlaneObject.prototype.updateLines = function() {
     if (this.track_linesegs.length == 0)
         return;
 
-    if (!this.layer)
-        this.createLayer();
-    if (!this.layer.getVisible()) {
+    this.checkLayers();
+
+    var trail_add = [];
+    var label_add = [];
+
+    if (!this.layer.getVisible())
         this.layer.setVisible(true);
+
+    if (trackLabels && !this.layer_labels.getVisible())
         this.layer_labels.setVisible(true);
-    }
+    if (!trackLabels && this.layer_labels && this.layer_labels.getVisible())
+        this.layer_labels.setVisible(false);
 
     // create the new elastic band feature
+    if (this.elastic_feature)
+        this.trail_features.removeFeature(this.elastic_feature);
+
     var lastseg = this.track_linesegs[this.track_linesegs.length - 1];
     var lastfixed = lastseg.fixed.getCoordinateAt(1.0);
     var geom = new ol.geom.LineString([lastfixed, ol.proj.fromLonLat(this.position)]);
+
+
     this.elastic_feature = new ol.Feature(geom);
     if (filterTracks && this.altFiltered(lastseg.altitude)) {
         this.elastic_feature.setStyle(nullStyle);
@@ -1442,8 +1461,7 @@ PlaneObject.prototype.updateLines = function() {
         this.elastic_feature.setStyle(altitudeLines(lastseg));
     }
 
-    // elastic feature is always at index 0 for each aircraft
-    this.trail_features.setAt(0, this.elastic_feature);
+    trail_add.push(this.elastic_feature);
 
     // create any missing fixed line features
 
@@ -1458,7 +1476,7 @@ PlaneObject.prototype.updateLines = function() {
             seg.feature = new ol.Feature(seg.fixed);
             seg.feature.setStyle(altitudeLines(seg));
             seg.feature.hex = this.icao;
-            this.trail_features.push(seg.feature);
+            trail_add.push(seg.feature);
         }
 
         if (filterTracks && this.altFiltered(seg.altitude)) {
@@ -1503,19 +1521,24 @@ PlaneObject.prototype.updateLines = function() {
                 })
             );
             seg.label.hex = this.icao;
-            this.trail_labels.push(seg.label);
+            label_add.push(seg.label)
         }
     }
 
+    if (trail_add.length > 0)
+        this.trail_features.addFeatures(trail_add);
+    if (trackLabels && label_add.length > 0)
+        this.trail_labels.addFeatures(label_add);
 
 };
 
 PlaneObject.prototype.remakeTrail = function() {
 
-    if (this.layer) {
+    if (this.trail_features)
         this.trail_features.clear();
+    if (this.trail_labels)
         this.trail_labels.clear();
-    }
+
     for (var i in this.track_linesegs) {
         this.track_linesegs[i].feature = undefined;
         this.track_linesegs[i].label = undefined;
@@ -1598,10 +1621,12 @@ PlaneObject.prototype.destroy = function() {
     this.visible = false;
     if (this.layer) {
         trailGroup.remove(this.layer);
-        trailGroup.remove(this.layer_labels);
         this.trail_features.clear();
-        this.trail_labels.clear();
         this.layer = null;
+    }
+    if (this.layer_labels) {
+        trailGroup.remove(this.layer_labels);
+        this.trail_labels.clear();
         this.layer_labels = null;
     }
     if (this.tr) {
@@ -1639,17 +1664,18 @@ function calcAltitudeRounded(altitude) {
 }
 
 PlaneObject.prototype.drawRedDot = function(bad_position) {
+    this.checkLayers();
     if (debugJump && loadFinished && SelectedPlane != this) {
         OLMap.getView().setCenter(ol.proj.fromLonLat(bad_position));
         selectPlaneByHex(this.icao, false);
     }
     var badFeat = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(bad_position)));
     badFeat.setStyle(this.dataSource == "mlat"  ? badDotMlat : badDot);
-    this.trail_features.push(badFeat);
+    this.trail_features.addFeature(badFeat);
     var geom = new ol.geom.LineString([ol.proj.fromLonLat(this.prev_position), ol.proj.fromLonLat(bad_position)]);
     var lineFeat = new ol.Feature(geom);
     lineFeat.setStyle(this.dataSource == "mlat" ? badLineMlat : badLine);
-    this.trail_features.push(lineFeat);
+    this.trail_features.addFeature(lineFeat);
 }
 
 /**

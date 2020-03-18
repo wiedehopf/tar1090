@@ -1227,9 +1227,6 @@ function initialize_map() {
 
     const dummyLayer = new ol.layer.Vector({
         name: 'dummy',
-        source: new ol.source.Vector({
-            features: new ol.Collection(),
-        }),
         renderOrder: null,
     });
 
