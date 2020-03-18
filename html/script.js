@@ -82,6 +82,7 @@ var globalScale = 1;
 var newWidth = lineWidth;
 var SitePosInitialized = false;
 var SiteOverride = false;
+var airport = null;
 
 var shareLink = '';
 
@@ -660,7 +661,7 @@ function initialize() {
             .done(function(typeLookupData) {
                 _aircraft_type_cache = typeLookupData;
             });
-        if (!onMobile) {
+        if (!onMobile && !hideButtons) {
             $.getJSON(databaseFolder + "/files.js")
                 .done(function(data) {
                     for (var i in data) {
@@ -679,24 +680,6 @@ function initialize() {
                     }
                 });
         }
-        $.getJSON(databaseFolder + "/airport-coords.js")
-            .done(function(data) {
-                _airport_coords_cache = data;
-                try {
-                    const search = new URLSearchParams(window.location.search);
-                    var airport = search.get('airport');
-                    if (airport) {
-                        const coords = _airport_coords_cache[airport.trim().toUpperCase()];
-                        if (coords) {
-                            OLMap.getView().setCenter(ol.proj.fromLonLat([coords[1], coords[0]]));
-                            if (!search.get('zoom'))
-                                OLMap.getView().setZoom(11);
-                        }
-                    }
-                } catch (error) {
-                    console.log(error);
-                }
-            })
     });
 
     var coll = document.getElementsByClassName("collapseButton");
@@ -3066,18 +3049,27 @@ function toggleMultiSelect(on, off) {
 }
 
 function onJump(e) {
-    e.preventDefault();
-    const searchTerm = $("#jump_input").val().trim().toUpperCase();
-    $("#jump_input").val("");
-    $("#jump_input").blur();
-    const coords = _airport_coords_cache[searchTerm];
-    if (coords) {
-        OLMap.getView().setCenter(ol.proj.fromLonLat([coords[1], coords[0]]));
-        refreshTableInfo();
-        if (ZoomLvl >= 7)
-            fetchData();
+    if (e) {
+        e.preventDefault();
+        airport = $("#jump_input").val().trim().toUpperCase();
+        $("#jump_input").val("");
+        $("#jump_input").blur();
     }
-    return false;
+    if (!_airport_coords_cache) {
+        $.getJSON(databaseFolder + "/airport-coords.js")
+            .done(function(data) {
+                _airport_coords_cache = data;
+                onJump();
+            });
+    } else {
+        const coords = _airport_coords_cache[airport];
+        if (coords) {
+            OLMap.getView().setCenter(ol.proj.fromLonLat([coords[1], coords[0]]));
+            refreshTableInfo();
+            if (ZoomLvl >= 7)
+                fetchData();
+        }
+    }
 }
 
 function onSearch(e) {
@@ -3533,6 +3525,11 @@ function processURLParams(){
 
         if (search.has('mil'))
             toggleMilitary();
+
+        if (search.has('airport')) {
+            airport = search.get('airport').trim().toUpperCase();
+            onJump();
+        }
 
     } catch (error) {
         console.log(error);
