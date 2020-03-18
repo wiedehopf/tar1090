@@ -126,7 +126,6 @@ PlaneObject.prototype.createFeatures = function() {
         name: this.icao,
         isTrail: true,
         source: this.trail_features,
-        renderOrder: null,
         declutter: false,
         zIndex: 150,
     });
@@ -141,7 +140,6 @@ PlaneObject.prototype.createLabels = function() {
         name: this.icao + '_labels',
         isTrail: true,
         source: this.trail_labels,
-        renderOrder: null,
         declutter: true,
         zIndex: 151,
     });
@@ -1510,7 +1508,7 @@ PlaneObject.prototype.updateLines = function() {
                     text: new ol.style.Text({
                         text: text,
                         fill: new ol.style.Fill({color: 'white' }),
-                        backgroundFill: new ol.style.Stroke({color: 'rgba(0,0,0,0.4'}),
+                        stroke: new ol.style.Stroke({color: 'rgba(0,0,0,0.7', width: 4 * globalScale}),
                         textAlign: 'left',
                         textBaseline: "top",
                         font: labelFont,

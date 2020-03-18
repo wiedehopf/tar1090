@@ -2928,7 +2928,7 @@ function toggleMapDim(switchOn) {
         ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
             if (lyr.get('type') != 'base')
                 return;
-            lyr.dimKey = lyr.on('postcompose', dim);
+            lyr.dimKey = lyr.on('postrender', dim);
         });
 
         $('#mapdim_checkbox').addClass('settingsCheckboxChecked');
