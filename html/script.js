@@ -2852,6 +2852,8 @@ function togglePersistence() {
 }
 
 function toggleLastLeg() {
+    if (!globeIndex)
+        return;
     if (lastLeg) {
         lastLeg = false;
         localStorage['lastLeg'] = "false";
