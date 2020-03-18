@@ -2221,14 +2221,14 @@ function refreshTableInfo() {
     //tableinfoFragment = document.createDocumentFragment();
     var tbody = document.getElementById('tableinfo').tBodies[0];
     for (var i = 0; i < PlanesOrdered.length; ++i) {
-        tableplane = PlanesOrdered[i];
-        if (tableplane.inTable) {
-            tbody.removeChild(tableplane.tr);
-            tableplane.inTable = false;
+        const plane = PlanesOrdered[i];
+        if (plane.inTable) {
+            tbody.removeChild(plane.tr);
+            plane.inTable = false;
         }
-        if (tableplane.showInTable) {
-            tbody.appendChild(tableplane.tr);
-            tableplane.inTable = true;
+        if (plane.showInTable) {
+            tbody.appendChild(plane.tr);
+            plane.inTable = true;
         }
     }
     //tbody.appendChild(tableinfoFragment);
@@ -2670,9 +2670,14 @@ function setColumnVisibility() {
 
     var tbody = document.getElementById('tableinfo').tBodies[0];
     for (var i = 0; i < PlanesOrdered.length; ++i) {
-        var tableplane = PlanesOrdered[i];
-        tbody.appendChild(tableplane.tr);
-        tableplane.inTable = true;
+        var plane = PlanesOrdered[i];
+        if (plane.tr) {
+            if (plane.inTable) {
+                tbody.removeChild(plane.tr);
+            }
+            tbody.appendChild(plane.tr);
+            plane.inTable = true;
+        }
     }
 
     for (var col in HideCols) {
