@@ -83,6 +83,9 @@ var newWidth = lineWidth;
 var SitePosInitialized = false;
 var SiteOverride = false;
 var airport = null;
+var labelFill = null;
+var blackFill = null;
+var labelStroke = null;
 
 var shareLink = '';
 
@@ -2834,9 +2837,8 @@ function togglePersistence() {
 
     buttonActive('#P', noVanish);
 
-    for (var i in PlanesOrdered) {
-        PlanesOrdered[i].remakeTrail();
-    }
+    remakeTrails();
+
     if (!noVanish)
         reaper();
     localStorage['noVanish'] = noVanish;
@@ -2880,9 +2882,8 @@ function toggleDebugTracks() {
         localStorage['debugTracks'] = "true";
         $('#debug_checkbox').addClass('settingsCheckboxChecked');
     }
-    for (var i in PlanesOrdered) {
-        PlanesOrdered[i].remakeTrail();
-    }
+
+    remakeTrails();
 }
 
 function dim(evt) {
@@ -3018,9 +3019,9 @@ function toggleExtendedLabels() {
 function toggleTrackLabels() {
     trackLabels = !trackLabels;
     localStorage['trackLabels'] = trackLabels;
-    for (var i in PlanesOrdered) {
-        PlanesOrdered[i].remakeTrail();
-    }
+
+    remakeTrails();
+
     buttonActive('#K', trackLabels);
 }
 
@@ -3176,9 +3177,7 @@ function updatePlaneFilter() {
     }
 
     if (filterTracks) {
-        for (var i in PlanesOrdered) {
-            PlanesOrdered[i].remakeTrail();
-        }
+        remakeTrails();
     }
 
     refreshFeatures();
@@ -3767,9 +3766,7 @@ function toggleLargeMode() {
     setLineWidth();
     refreshFeatures();
     refreshSelected();
-    for (var i in PlanesOrdered) {
-        PlanesOrdered[i].remakeTrail();
-    }
+    remakeTrails();
 }
 
 function toggleShowTrace() {
@@ -3875,6 +3872,9 @@ function setLineWidth() {
         }),
     });
 
+    labelFill = new ol.style.Fill({color: 'white' });
+    blackFill = new ol.style.Fill({color: 'black' });
+    labelStroke = new ol.style.Stroke({color: 'rgba(0,0,0,0.7', width: 4 * globalScale});
 }
 
 function geoFindMe() {
@@ -3943,5 +3943,12 @@ function drawAlt() {
         plane.altitude = i;
         plane.alt_rounded = calcAltitudeRounded(plane.altitude);
         plane.updateTrack(now - i, now - i - 5000, { serverTrack: true });
+    }
+}
+
+function remakeTrails() {
+    for (var i in PlanesOrdered) {
+        PlanesOrdered[i].remakeTrail();
+        PlanesOrdered[i].updateTick(true);
     }
 }

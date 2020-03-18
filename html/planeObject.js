@@ -1507,15 +1507,19 @@ PlaneObject.prototype.updateLines = function() {
                 new ol.style.Style({
                     text: new ol.style.Text({
                         text: text,
-                        fill: new ol.style.Fill({color: 'white' }),
-                        stroke: new ol.style.Stroke({color: 'rgba(0,0,0,0.7', width: 4 * globalScale}),
+                        fill: labelFill,
+                        stroke: labelStroke,
                         textAlign: 'left',
                         textBaseline: "top",
                         font: labelFont,
-                        offsetX: 5,
-                        offsetY: 5,
+                        offsetX: 5 * globalScale,
+                        offsetY: 5 * globalScale,
                     }),
-                    zIndex: -1,
+                    image: new ol.style.Circle({
+                        radius: 2 * globalScale,
+                        fill: blackFill,
+                    }),
+                    zIndex: i,
                 })
             );
             seg.label.hex = this.icao;
@@ -1560,7 +1564,6 @@ PlaneObject.prototype.remakeTrail = function() {
     trailGroup.push(this.layer);
     */
 
-    this.updateTick(true);
 }
 
 PlaneObject.prototype.makeTR = function() {
