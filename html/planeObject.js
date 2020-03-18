@@ -1512,14 +1512,14 @@ PlaneObject.prototype.updateLines = function() {
                         textAlign: 'left',
                         textBaseline: "top",
                         font: labelFont,
-                        offsetX: 5 * globalScale,
-                        offsetY: 5 * globalScale,
+                        offsetX: 8 * globalScale,
+                        offsetY: 8 * globalScale,
                     }),
                     image: new ol.style.Circle({
                         radius: 2 * globalScale,
                         fill: blackFill,
                     }),
-                    zIndex: i,
+                    zIndex: 20000 - i,
                 })
             );
             seg.label.hex = this.icao;
@@ -1804,6 +1804,7 @@ PlaneObject.prototype.reapTrail = function() {
     }
     if (this.track_linesegs.length != oldSegs.length) {
         this.remakeTrail();
+        this.updateTick(true);
     }
 }
 
