@@ -374,7 +374,7 @@ function fetchData() {
             ac_url[0] = 'data/?feed=' + encodeURIComponent(uuid);
         }
 
-        $("#lastLeg_checkbox").hide();
+        $("#lastLeg_checkbox").parent().hide();
     }
     lastRequestFiles = ac_url.length;
     PendingFetches = ac_url.length;
@@ -3056,6 +3056,7 @@ function toggleMultiSelect(on, off) {
 }
 
 function onJump(e) {
+    FollowSelected = false;
     if (e) {
         e.preventDefault();
         airport = $("#jump_input").val().trim().toUpperCase();
