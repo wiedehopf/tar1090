@@ -1200,7 +1200,10 @@ function initialize_map() {
         type: 'overlay',
         title: 'Aircraft positions',
         source: PlaneIconFeatures,
+        declutter: false,
         zIndex: 200,
+        renderBuffer: 20,
+        //renderOrder: null,
     });
 
     layers.push(
@@ -1211,6 +1214,7 @@ function initialize_map() {
             source: StaticFeatures,
             visible: !adsbexchange,
             zIndex: 100,
+            renderOrder: null,
         }));
 
     trailLayers = new ol.layer.Group({
@@ -2068,7 +2072,7 @@ function refreshTableInfo() {
     TrackedAircraft = 0;
     TrackedAircraftPositions = 0;
     TrackedHistorySize = 0;
-    var nTablePlanes = 0;
+    var nplanes = 0;
     var nMapPlanes = 0;
 
     if (mapIsVisible || lastRealExtent == null) {
@@ -2082,104 +2086,105 @@ function refreshTableInfo() {
 
     //console.time("updateCells");
     for (var i = 0; i < PlanesOrdered.length; ++i) {
-        var tableplane = PlanesOrdered[i];
-        TrackedHistorySize += tableplane.history_size;
+        var plane = PlanesOrdered[i];
+        TrackedHistorySize += plane.history_size;
         var classes;
 
 
-        tableplane.inView = inView(tableplane, lastRealExtent);
+        plane.inView = inView(plane, lastRealExtent);
 
         if (globeIndex && !icaoFilter) {
-            if ((nMapPlanes < 100 || !onMobile)
-                && (!onMobile || ZoomLvl > 10 || !tableplane.onGround)
-                && (inView(tableplane, lastRenderExtent) || (tableplane.selected && !SelectedAllPlanes))) {
-                tableplane.updateFeatures(now, last);
-            } else if (tableplane.visible) {
-                tableplane.clearMarker();
-                tableplane.clearLines();
-                tableplane.visible = false;
+            if (((nMapPlanes < 100 || !onMobile)
+                && (!onMobile || ZoomLvl > 10 || !plane.onGround)
+                && inView(plane, lastRenderExtent)
+                ) || (plane.selected && !SelectedAllPlanes)) {
+                plane.updateFeatures(now, last);
+            } else if (plane.visible) {
+                plane.clearMarker();
+                plane.clearLines();
+                plane.visible = false;
             }
         } else {
-            tableplane.updateTick();
+            plane.updateTick();
         }
 
 
-        tableplane.showInTable = false;
+        plane.showInTable = false;
         classes = "plane_table_row";
 
-        if (tableInView && tableplane.visible &&
-            (tableplane.inView || (tableplane.selected && !SelectedAllPlanes))
+        if (tableInView && plane.visible &&
+            (plane.inView || (plane.selected && !SelectedAllPlanes))
         ) {
-            tableplane.showInTable = true;
+            plane.showInTable = true;
             ++TrackedAircraftPositions;
             nMapPlanes++;
         }
 
-        if (!tableplane.isFiltered() && (tableplane.seen < 58 || noVanish)) {
+        if (!plane.isFiltered() && (plane.seen < 58 || noVanish)) {
             TrackedAircraft++;
 
-            if (!tableInView && tableplane.position != null)
+            if (!tableInView && plane.position != null)
                 ++TrackedAircraftPositions;
 
             if (!tableInView)
-                tableplane.showInTable = true;
+                plane.showInTable = true;
         }
 
-        if (!sidebarVisible || (nTablePlanes > globeTableLimit && mapIsVisible && globeIndex)) {
-            tableplane.showInTable = false;
+        if (!sidebarVisible || (nplanes > globeTableLimit && mapIsVisible && globeIndex)) {
+            plane.showInTable = false;
             continue;
         }
 
 
-        if (tableplane.showInTable) {
-            nTablePlanes++;
+        if (plane.showInTable) {
+            nplanes++;
 
-            if (tableplane.tr == null)
-                tableplane.makeTR();
+            if (plane.tr == null)
+                plane.makeTR();
 
-            if (tableplane.dataSource == "adsb") {
+            if (plane.dataSource == "adsb") {
                 classes += " vPosition";
             } else {
                 classes += " ";
-                classes += tableplane.dataSource;
+                classes += plane.dataSource;
             }
 
-            if (tableplane.selected && !SelectedAllPlanes)
+            if (plane.selected && !SelectedAllPlanes)
                 classes += " selected";
 
-            if (tableplane.squawk in SpecialSquawks) {
-                classes = classes + " " + SpecialSquawks[tableplane.squawk].cssClass;
+            if (plane.squawk in SpecialSquawks) {
+                classes = classes + " " + SpecialSquawks[plane.squawk].cssClass;
                 show_squawk_warning = true;
             }			                
 
             // ICAO doesn't change
             if (flightawareLinks) {
-                updateCell(tableplane, 2, getFlightAwareModeSLink(tableplane.icao, tableplane.flight, tableplane.name), true);
-                updateCell(tableplane, 3, getFlightAwareIdentLink(tableplane.registration, tableplane.registration), true);
+                updateCell(plane, 2, getFlightAwareModeSLink(plane.icao, plane.flight, plane.name), true);
+                updateCell(plane, 3, getFlightAwareIdentLink(plane.registration, plane.registration), true);
             } else {
-                updateCell(tableplane, 2, tableplane.name);
-                updateCell(tableplane, 3, tableplane.registration ? tableplane.registration : "");
+                updateCell(plane, 2, plane.name);
+                updateCell(plane, 3, plane.registration ? plane.registration : "");
             }
-            updateCell(tableplane, 4, (tableplane.icaoType != null ? tableplane.icaoType : ""));
-            updateCell(tableplane, 5, (tableplane.squawk != null ? tableplane.squawk : ""));
-            updateCell(tableplane, 6, format_altitude_brief(tableplane.altitude, tableplane.vert_rate, DisplayUnits));
-            updateCell(tableplane, 7, format_speed_brief(tableplane.gs, DisplayUnits));
-            updateCell(tableplane, 8, format_vert_rate_brief(tableplane.vert_rate, DisplayUnits));
-            updateCell(tableplane, 9, format_distance_brief(tableplane.sitedist, DisplayUnits));
-            updateCell(tableplane, 10, format_track_brief(tableplane.track));
-            updateCell(tableplane, 11, tableplane.messages);
-            updateCell(tableplane, 12, tableplane.seen.toFixed(0));
-            updateCell(tableplane, 13, (tableplane.rssi != null ? tableplane.rssi.toFixed(1) : ""));
-            updateCell(tableplane, 14, (tableplane.position != null ? tableplane.position[1].toFixed(4) : ""));
-            updateCell(tableplane, 15, (tableplane.position != null ? tableplane.position[0].toFixed(4) : ""));
-            updateCell(tableplane, 16, format_data_source(tableplane.getDataSource()));
-            //updateCell(tableplane, 17, tableplane.baseMarkerKey);
+            updateCell(plane, 4, (plane.icaoType != null ? plane.icaoType : ""));
+            updateCell(plane, 5, (plane.squawk != null ? plane.squawk : ""));
+            updateCell(plane, 6, format_altitude_brief(plane.altitude, plane.vert_rate, DisplayUnits));
+            updateCell(plane, 7, format_speed_brief(plane.gs, DisplayUnits));
+            updateCell(plane, 8, format_vert_rate_brief(plane.vert_rate, DisplayUnits));
+            updateCell(plane, 9, format_distance_brief(plane.sitedist, DisplayUnits));
+            updateCell(plane, 10, format_track_brief(plane.track));
+            updateCell(plane, 11, plane.messages);
+            updateCell(plane, 12, plane.seen.toFixed(0));
+            updateCell(plane, 13, (plane.rssi != null ? plane.rssi.toFixed(1) : ""));
+            updateCell(plane, 14, (plane.position != null ? plane.position[1].toFixed(4) : ""));
+            updateCell(plane, 15, (plane.position != null ? plane.position[0].toFixed(4) : ""));
+            updateCell(plane, 16, format_data_source(plane.getDataSource()));
+            //updateCell(plane, 17, plane.baseMarkerKey);
 
 
         }
-        if (tableplane.tr && tableplane.classesCache != classes) {
-            tableplane.classesCache = classes;
-            tableplane.tr.className = classes;
+        if (plane.tr && plane.classesCache != classes) {
+            plane.classesCache = classes;
+            plane.tr.className = classes;
         }
     }
     //console.timeEnd("updateCells");
