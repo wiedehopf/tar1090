@@ -328,7 +328,7 @@ then
     fi
 fi
 
-if systemctl status lighttpd >/dev/null; then
+if systemctl status lighttpd &>/dev/null; then
 	echo "Restarting lighttpd ..."
 	systemctl restart lighttpd
 fi
