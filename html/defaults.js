@@ -201,6 +201,7 @@ var filterTISB = false;
 var flightawareLinks = false;
 
 // Filter implausible positions (required speed > Mach 2.5)
+// valid values: true, false, "onlyMLAT" ("" required)
 var positionFilter = true;
 var positionFilterSpeed = 2.5; // in Mach
 // filter speed is based on transmitted ground speed if available

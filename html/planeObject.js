@@ -292,7 +292,9 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
     var derivedMach = 0.01;
     var filterSpeed = 10000;
 
-    if (positionFilter) {
+    const pFilter = (positionFilter == true || (positionFilter == 'onlyMLAT' && this.dataSource == "mlat"));
+
+    if (pFilter) {
         distance = ol.sphere.getDistance(this.position, this.prev_position);
         derivedMach = (distance/(this.position_time - this.prev_time + 0.4))/343;
         filterSpeed = on_ground ? positionFilterSpeed/10 : positionFilterSpeed;
@@ -301,7 +303,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
 
     // ignore the position if the object moves faster than positionFilterSpeed (default Mach 3.5)
     // or faster than twice the transmitted groundspeed
-    if (positionFilter && derivedMach > filterSpeed && this.too_fast < 1) {
+    if (pFilter && derivedMach > filterSpeed && this.too_fast < 1) {
         this.bad_position = this.position;
         this.too_fast++;
         if (debugPosFilter) {
@@ -316,10 +318,6 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
         return false;
     } else {
         this.too_fast = Math.max(-5, this.too_fast-0.8);
-    }
-    if (positionFilter && this.dataSource == "mlat" && on_ground) {
-        this.bad_position = this.position;
-        return true;
     }
 
     if (this.request_rotation_from_track && this.prev_position) {

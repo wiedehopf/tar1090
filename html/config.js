@@ -182,6 +182,7 @@ BingMapsAPIKey = null;
 //flightawareLinks = false;
 
 // Filter implausible positions (required speed > Mach 3.5)
+// valid values: true, false, "onlyMLAT" ("" required)
 // positionFilter = true;
 // positionFilterSpeed = 3.5; // in Mach
 // filter speed is based on transmitted ground speed if available
