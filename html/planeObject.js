@@ -1488,18 +1488,18 @@ PlaneObject.prototype.updateLines = function() {
                     date.getUTCHours().toString().padStart(2,'0')
                     + ":" + date.getUTCMinutes().toString().padStart(2,'0')
                     + ":" + date.getUTCSeconds().toString().padStart(2,'0');
-                timestamp = "".padStart(1, NBSP) + timestamp + NBSP + "Z" + "".padStart(1, NBSP);
+                timestamp = "".padStart(0, NBSP) + timestamp + NBSP + "Z";
 
-                timestamp = ' ' + getDateString(date) + ' \n' + timestamp;
+                timestamp = "".padStart(0, NBSP) + getDateString(date) + '\n' + timestamp;
             } else {
                 timestamp = date.getHours().toString().padStart(2,'0')
                     + ":" + date.getMinutes().toString().padStart(2,'0')
                     + ":" + date.getSeconds().toString().padStart(2,'0');
-                timestamp = "".padStart(3, NBSP) + timestamp + "".padStart(3, NBSP);
+                timestamp = "".padStart(2, NBSP) + timestamp;
             }
             const text =
-                NBSP + Number(seg.speed).toFixed(0).toString().padStart(3, NBSP) + "  "
-                + (seg.alt_real == "ground" ? ("Ground" + NBSP) : (seg.alt_real.toString().padStart(6, NBSP) + NBSP))
+                Number(seg.speed).toFixed(0).toString().padStart(3, NBSP) + "  "
+                + (seg.alt_real == "ground" ? ("Ground") : (seg.alt_real.toString().padStart(6, NBSP)))
                 + "\n"
                 //+ NBSP + format_track_arrow(seg.track)
                 + timestamp;

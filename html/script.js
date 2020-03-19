@@ -3768,7 +3768,7 @@ function toggleLargeMode() {
     globalScale = Math.pow(base, largeMode) / base;
     root.style.setProperty("--SCALE", globalScale);
 
-    labelFont = "bold " + ( 12 * globalScale ) + "px Tahoma, Verdana, Helvetica, sans-serif";
+    labelFont = "bold " + (12 * globalScale) + "px/" + (14 * globalScale) + "px Tahoma, Verdana, Helvetica, sans-serif";
 
     localStorage['largeMode'] = largeMode;
 
