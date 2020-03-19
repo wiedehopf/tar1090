@@ -444,12 +444,12 @@ function fetchData() {
 
 
             if (PendingFetches <= 1) {
-                refreshSelected();
-                refreshHighlighted();
                 //console.time("refreshTable");
                 refreshTableInfo();
                 //console.timeEnd("refreshTable");
                 refreshClock(new Date(now * 1000));
+                refreshSelected();
+                refreshHighlighted();
             }
 
             if (globeIndex) {
