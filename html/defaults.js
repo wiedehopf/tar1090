@@ -71,7 +71,7 @@ var monochromeTracks = null;
 // All color values are given as Hue (0-359) / Saturation (0-100) / Lightness (0-100)
 var ColorByAlt = {
 	// HSL for planes with unknown altitude:
-	unknown : { h: 0,   s: 0,   l: 60 },
+	unknown : { h: 0,   s: 0,   l: 15 },
 
 	// HSL for planes that are on the ground:
 	ground  : { h: 220, s: 0, l: 30 },
