@@ -441,7 +441,8 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
         (
             serverTrack &&
             (
-                this.prev_time - lastseg.ts > 45
+                this.prev_time - lastseg.ts > 5
+                || estimated
                 || track_change > 2
                 || Math.abs(this.prev_speed - lastseg.speed) > 5
                 || Math.abs(this.prev_alt - lastseg.alt_real) > 50
