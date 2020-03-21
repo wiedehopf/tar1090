@@ -1287,7 +1287,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
         moved = this.updateTrack(now, last);
     }
 
-    const zoomedOut = 45 * Math.max(0, 7 - ZoomLvl);
+    const zoomedOut = 20 * Math.max(0, 7 - ZoomLvl);
     const jaeroTime = this.jaero ? 35*60 : 0;
     const tisbReduction = (this.icao[0] == '~') ? 15 : 0;
     // If no packet in over 58 seconds, clear the plane.
@@ -1297,7 +1297,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
     if ( !this.isFiltered() &&
         (
             (!globeIndex && this.seen < (58 - tisbReduction))
-            || (globeIndex && this.seen_pos < (30 + zoomedOut + jaeroTime - tisbReduction))
+            || (globeIndex && this.seen_pos < (40 + zoomedOut + jaeroTime - tisbReduction))
             || (this.selected && (onlySelected || (!SelectedAllPlanes && !multiSelect)))
             || noVanish
         )
