@@ -709,9 +709,10 @@ PlaneObject.prototype.updateIcon = function() {
         if (extendedLabels == 2) {
             labelText = NBSP + (this.icaoType ? this.icaoType : "  ?  ") + NBSP + "\n" + NBSP + (this.registration ? this.registration : "  ?  ")+ NBSP + "\n" + NBSP + this.name + NBSP;
         } else if (extendedLabels == 1 ) {
-            if (this.altitude && (!this.onGround || (this.speed && this.speed > 18) || (this.selected && !SelectedAllPlanes))) {
+            const altitude = this.altitude ? this.altitude : '  ?  ';
+            if ((!this.onGround || (this.speed && this.speed > 18) || (this.selected && !SelectedAllPlanes))) {
                 labelText =  Number(this.speed).toFixed(0).toString().padStart(4, NBSP)+ "  "
-                    + this.altitude.toString().padStart(5, NBSP) + " \n " + this.name + " ";
+                    + altitude.toString().padStart(5, NBSP) + " \n " + this.name + " ";
             } else {
                 labelText =  " " + this.name + " ";
             }
@@ -1478,7 +1479,8 @@ PlaneObject.prototype.updateLines = function() {
 
         if (filterTracks && this.altFiltered(seg.altitude)) {
             seg.label = true;
-        } else if (trackLabels && !seg.label && seg.alt_real != null) {
+        } else if (trackLabels && !seg.label) {
+            const alt_real = (seg.alt_real != null) ? seg.alt_real : 'n/a';
             seg.label = new ol.Feature(new ol.geom.Point(seg.fixed.getFirstCoordinate()));
             var timestamp;
                 const date = new Date(seg.ts * 1000);
@@ -1498,7 +1500,7 @@ PlaneObject.prototype.updateLines = function() {
             }
             const text =
                 Number(seg.speed).toFixed(0).toString().padStart(3, NBSP) + "  "
-                + (seg.alt_real == "ground" ? ("Ground") : (seg.alt_real.toString().padStart(6, NBSP)))
+                + (alt_real == "ground" ? ("Ground") : (alt_real.toString().padStart(6, NBSP)))
                 + "\n"
                 //+ NBSP + format_track_arrow(seg.track)
                 + timestamp;
