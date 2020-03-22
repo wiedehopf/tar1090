@@ -251,7 +251,7 @@ PlaneObject.prototype.updateTrackPrev = function() {
 
 // Appends data to the running track so we can get a visual tail on the plane
 // Only useful for a long running browser session.
-PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
+PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     if (this.position == null)
         return false;
     if (this.prev_position && this.position[0] == this.prev_position[0] && this.position[1] == this.prev_position[1])
@@ -275,9 +275,11 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
     if (this.track_linesegs.length == 0) {
         // Brand new track
         //console.log(this.icao + " new track");
+        if (this.leg_ts == now)
+            is_leg = 'start';
         var newseg = { fixed: new ol.geom.LineString([projHere]),
             feature: null,
-            estimated: true,
+            estimated: false,
             ground: on_ground,
             altitude: this.alt_rounded,
             alt_real: this.altitude,
@@ -387,7 +389,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
         });
         var newseg = { fixed: new ol.geom.LineString([projHere]),
             feature: null,
-            estimated: false,
+            estimated: true,
             ground: on_ground,
             altitude: this.alt_rounded,
             alt_real: this.altitude,
@@ -422,7 +424,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
     // Also check if the position was already stale when it was exported by dump1090
     // Makes stale check more accurate for example for 30s spaced history points
 
-    const estimated = (time_difference > stale_timeout) || ((now - this.position_time) > stale_timeout);
+    const estimated = (time_difference > stale_timeout) || ((now - this.position_time) > stale_timeout) || stale;
 
     /*
     var track_change = this.track != null ? Math.abs(this.tail_track - this.track) : NaN;
@@ -896,13 +898,11 @@ PlaneObject.prototype.processTrace = function(show) {
             if (leg_marker)
                 this.leg_ts = _now;
 
-            if (stale || _last - _now > 320) {
-                _last = _now - 1;
-                //var time_difference = (this.position_time - this.prev_time) - (now - last);
-                //console.log(new Date(1000*this.position_time) + ' ' + new Date(1000*this.prev_time));
+            if (_last - _now > 320) {
+                stale = true;
             }
 
-            this.updateTrack(_now, _last, { serverTrack: true });
+            this.updateTrack(_now, _last, true, stale);
             _last = _now;
         }
     }
