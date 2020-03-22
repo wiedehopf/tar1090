@@ -266,6 +266,12 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
     var projHere = ol.proj.fromLonLat(this.position);
     var on_ground = (this.altitude === "ground");
 
+    var is_leg = false;
+    if (this.leg_ts == now)
+        is_leg = 'end';
+    if (this.leg_ts == last)
+        is_leg = 'start';
+
     if (this.track_linesegs.length == 0) {
         // Brand new track
         //console.log(this.icao + " new track");
@@ -278,6 +284,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
             speed: this.speed,
             ts: now,
             track: this.rotation,
+            leg: is_leg,
         };
         this.track_linesegs.push(newseg);
         this.history_size ++;
@@ -432,11 +439,6 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
     var since_update = this.prev_time - this.tail_update;
     var distance_traveled = ol.sphere.getDistance(this.tail_position, this.prev_position);
 
-    var is_leg = false;
-    if (this.leg_ts == now)
-        is_leg = 'end';
-    if (this.leg_ts == last)
-        is_leg = 'start';
     if (
         this.prev_alt_rounded !== lastseg.altitude
         || this.prev_time > lastseg.ts + 300
