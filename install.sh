@@ -144,6 +144,9 @@ otherport=""
 
 while read -r srcdir instance
 do
+    TMP=$(mktemp -d -p $ipath)
+    chmod 755 $TMP
+
 	if [[ "$instance" != "tar1090" ]]; then
 		html_path="$ipath/html-$instance"
 		service="tar1090-$instance"
@@ -180,27 +183,24 @@ do
 
 	sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" tar1090.service
 
+	cp -r -T html $TMP
+    cp -r -T $ipath/git-db/db $TMP/db-$DB_VERSION
+    sed -i -e "s/var databaseFolder = .*/var databaseFolder = \"db-$DB_VERSION\";/" $TMP/early.js
+    echo "{ \"tar1090Version\": \"$TAR_VERSION\", \"databaseVersion\": \"$DB_VERSION\" }" > $TMP/version.json
+
 	# keep some stuff around
 	if [ -f $html_path/defaults*.js ]; then
-		cp $html_path/config.js /tmp/tar1090_config.js 2>/dev/null || true
+        mv $html_path/config.js $TMP/config.js 2>/dev/null || true
 	fi
-	cp $html_path/upintheair.json /tmp/tar1090_upintheair.json 2>/dev/null || true
-	cp $html_path/color*.css /tmp/tar1090_colors.css 2>/dev/null || true
-
-	rm -rf $html_path 2>/dev/null || true
-	cp -r -T html $html_path
-    cp -r -T $ipath/git-db/db $html_path/db-$DB_VERSION
-    sed -i -e "s/var databaseFolder = .*/var databaseFolder = \"db-$DB_VERSION\";/" $html_path/early.js
-    echo "{ \"tar1090Version\": \"$TAR_VERSION\", \"databaseVersion\": \"$DB_VERSION\" }" > $html_path/version.json
-
-	mv /tmp/tar1090_config.js $html_path/config.js 2>/dev/null || true
-	mv /tmp/tar1090_colors.css $html_path/colors.css 2>/dev/null || true
-	mv /tmp/tar1090_upintheair.json $html_path/upintheair.json 2>/dev/null || true
+	mv $html_path/color*.css $TMP/colors.css 2>/dev/null || true
+	mv $html_path/upintheair.json $TMP/upintheair.json 2>/dev/null || true
 
 	# bust cache for all css and js files
 
 	dir=$(pwd)
-	cd $html_path
+	cd $TMP
+
+    sed -i -e "s/tar1090 on github/tar1090 on github ($(date +%y%m%d))/" index.html
 
 	sed -i \
 		-e "s/dbloader.js/dbloader_$TAR_VERSION.js/" \
@@ -216,8 +216,6 @@ do
 		-e "s/colors.css/colors_$TAR_VERSION.css/" \
 		-e "s/style.css/style_$TAR_VERSION.css/" \
 		index.html
-
-    sed -i -e "s/tar1090 on github/tar1090 on github ($(date +%y%m%d))/" index.html
 
 	mv dbloader.js dbloader_$TAR_VERSION.js
 	mv defaults.js defaults_$TAR_VERSION.js
@@ -250,6 +248,11 @@ do
         gzip -k -9 ol/*.js
         #gzip -k -9 db2/*.json .... already exists compressed
     fi
+    GARBAGE="$ipath/$RANDOM.$RANDOM"
+
+    mv $html_path $GARBAGE
+    mv $TMP $html_path
+	rm -rf $GARBAGE 2>/dev/null || true
 
 	cd "$dir"
 
