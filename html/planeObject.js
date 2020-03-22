@@ -432,6 +432,11 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
     var since_update = this.prev_time - this.tail_update;
     var distance_traveled = ol.sphere.getDistance(this.tail_position, this.prev_position);
 
+    var is_leg = false;
+    if (this.leg_ts == now)
+        is_leg = 'end';
+    if (this.leg_ts == last)
+        is_leg = 'start';
     if (
         this.prev_alt_rounded !== lastseg.altitude
         || this.prev_time > lastseg.ts + 300
@@ -446,6 +451,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
                 || track_change > 2
                 || Math.abs(this.prev_speed - lastseg.speed) > 5
                 || Math.abs(this.prev_alt - lastseg.alt_real) > 50
+                || is_leg
             )
         )
 
@@ -471,6 +477,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack) {
             ground: on_ground,
             ts: this.prev_time,
             track: this.prev_rot,
+            leg: is_leg,
         });
 
         this.history_size += 2;
@@ -883,6 +890,9 @@ PlaneObject.prototype.processTrace = function(show) {
             this.track = track;
             if (track)
                 this.rotation = track
+
+            if (leg_marker)
+                this.leg_ts = _now;
 
             if (stale || _last - _now > 320) {
                 _last = _now - 1;
@@ -1504,11 +1514,21 @@ PlaneObject.prototype.updateLines = function() {
                 + "\n"
                 //+ NBSP + format_track_arrow(seg.track)
                 + timestamp;
+            var fill = labelFill;
+            var zIndex = -i;
+            if (seg.leg == 'start') {
+                fill = new ol.style.Fill({color: '#88CC88' });
+                zIndex = 123456;
+            }
+            if (seg.leg == 'end') {
+                fill = new ol.style.Fill({color: '#8888CC' });
+                zIndex = 123455;
+            }
             seg.label.setStyle(
                 new ol.style.Style({
                     text: new ol.style.Text({
                         text: text,
-                        fill: labelFill,
+                        fill: fill,
                         stroke: labelStroke,
                         textAlign: 'left',
                         textBaseline: "top",
@@ -1520,7 +1540,7 @@ PlaneObject.prototype.updateLines = function() {
                         radius: 2 * globalScale,
                         fill: blackFill,
                     }),
-                    zIndex: 20000 - i,
+                    zIndex: zIndex,
                 })
             );
             seg.label.hex = this.icao;
