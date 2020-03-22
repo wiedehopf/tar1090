@@ -3812,12 +3812,6 @@ function toggleShowTrace() {
 
 function legShift(offset) {
     legSel += offset;
-    if (legSel <= -1) {
-        legSel = -1;
-        $('#leg_sel').text('Legs: All');
-        SelectedPlane.processTrace();
-        return;
-    }
 
     var trace = SelectedPlane.fullTrace.trace;
     var legStart = 0;
@@ -3828,8 +3822,16 @@ function legShift(offset) {
             count++;
         }
     }
-    if (legSel > count)
+    if (legSel < -1)
         legSel = count;
+    if (legSel > count)
+        legSel = -1;
+
+    if (legSel == -1) {
+        $('#leg_sel').text('Legs: All');
+        SelectedPlane.processTrace();
+        return;
+    }
 
     count = 0;
     for (var i = 1; i < trace.length; i++) {

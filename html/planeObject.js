@@ -971,7 +971,7 @@ PlaneObject.prototype.processTrace = function(legStart, legEnd) {
     var mapSize = OLMap.getSize();
     var size = [Math.max(5, mapSize[0] - 280), mapSize[1]];
     if ((showTrace || showTraceExit) && !inView(this, OLMap.getView().calculateExtent(size)))
-        FollowSelected = true;
+        OLMap.getView().setCenter(ol.proj.fromLonLat(this.position));
 
     showTraceExit = false;
 
