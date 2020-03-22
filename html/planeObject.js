@@ -808,7 +808,7 @@ PlaneObject.prototype.updateIcon = function() {
     return true;
 };
 
-PlaneObject.prototype.processTrace = function(show) {
+PlaneObject.prototype.processTrace = function(legStart, legEnd) {
     this.checkLayers();
     var trace = null;
     var timeZero, _now, _last = 0;
@@ -837,7 +837,6 @@ PlaneObject.prototype.processTrace = function(show) {
     }
 
     for (var j = 0; j < 2; j++) {
-        var start = 0;
         if (j == 0) {
             if (!this.fullTrace || !this.fullTrace.trace)
                 continue;
@@ -857,6 +856,8 @@ PlaneObject.prototype.processTrace = function(show) {
             }
             trace = this.recentTrace.trace;
         }
+        var start = 0;
+        var end = trace.length;
 
         if (lastLeg && !showTrace) {
             for (var i = trace.length - 1; i >= 0; i--) {
@@ -867,7 +868,12 @@ PlaneObject.prototype.processTrace = function(show) {
             }
         }
 
-        for (var i = start; i < trace.length; i++) {
+        if (legStart != null)
+            start = legStart;
+        if (legEnd != null)
+            end = legEnd;
+
+        for (var i = start; i < end; i++) {
             const state = trace[i];
             const timestamp = timeZero + state[0];
             const lat = state[1];
@@ -908,6 +914,8 @@ PlaneObject.prototype.processTrace = function(show) {
     }
 
     for (var i = 0; i < this.trace.length; i++) {
+        if (showTrace)
+            break;
         const state = this.trace[i];
         if (_now >= state.now)
             continue;
@@ -933,20 +941,15 @@ PlaneObject.prototype.processTrace = function(show) {
         tempPlane.prev_position = this.position;
     }
 
-    if (tempPlane.last_message_time > this.last_message_time) {
+    if (tempPlane.last_message_time > this.last_message_time && !showTrace) {
         var newSegs = this.track_linesegs;
         Object.assign(this, tempPlane);
         this.track_linesegs = newSegs;
     }
-    if (show) {
-        this.selected = true;
-        this.visible = true;
-        this.updated = true;
-    }
 
     if (showTrace) {
 
-        if (this.track_linesegs.length > 0) {
+        if (this.track_linesegs.length > 0 && this.position) {
             const proj = ol.proj.fromLonLat(this.position);
             this.track_linesegs[this.track_linesegs.length - 1].fixed.appendCoordinate(proj);
             this.track_linesegs.push({ fixed: new ol.geom.LineString([proj]),

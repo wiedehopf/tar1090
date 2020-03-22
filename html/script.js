@@ -86,6 +86,7 @@ var airport = null;
 var labelFill = null;
 var blackFill = null;
 var labelStroke = null;
+var legSel = -1;
 
 var shareLink = '';
 
@@ -810,6 +811,9 @@ function init_page() {
     $("#show_trace").click(toggleShowTrace);
     $("#trace_back_1d").click(function() {shiftTrace(-1)});
     $("#trace_jump_1d").click(function() {shiftTrace(1)});
+
+    $("#leg_prev").click(function() {legShift(-1)});
+    $("#leg_next").click(function() {legShift(1)});
 
 
     $("#altitude_filter_reset_button").click(onResetAltitudeFilter);
@@ -2865,7 +2869,7 @@ function toggleLastLeg() {
         localStorage['lastLeg'] = "true";
         $('#lastLeg_checkbox').addClass('settingsCheckboxChecked');
     }
-    if (SelectedPlane)
+    if (SelectedPlane && !showTrace)
         SelectedPlane.processTrace();
 }
 
@@ -3782,12 +3786,16 @@ function toggleLargeMode() {
 function toggleShowTrace() {
     if (!showTrace) {
         showTrace = true;
+        legSel = -1;
+        $('#leg_sel').text('Legs: All');
         toggleIsolation("on", null);
         shiftTrace();
         $('#history_collapse')[0].style.display = "block";
         $('#show_trace').addClass("active");
     } else {
         showTrace = false;
+        legSel = -1;
+        $('#leg_sel').text('Legs: All');
         toggleIsolation(null, "off");
         //var string = pathName + '?icao=' + SelectedPlane.icao;
         //window.history.replaceState("object or string", "Title", string);
@@ -3800,6 +3808,42 @@ function toggleShowTrace() {
         showTraceExit = true;
         selectPlaneByHex(hex, {follow: true, zoom: ZoomLvl,});
     }
+}
+
+function legShift(offset) {
+    legSel += offset;
+    if (legSel <= -1) {
+        legSel = -1;
+        $('#leg_sel').text('Legs: All');
+        SelectedPlane.processTrace();
+        return;
+    }
+
+    var trace = SelectedPlane.fullTrace.trace;
+    var legStart = 0;
+    var legEnd = trace.length;
+    var count = 0;
+    for (var i = 1; i < trace.length; i++) {
+        if (trace[i][6] & 2) {
+            count++;
+        }
+    }
+    if (legSel > count)
+        legSel = count;
+
+    count = 0;
+    for (var i = 1; i < trace.length; i++) {
+        if (trace[i][6] & 2) {
+            if (count == legSel - 1)
+                legStart = i;
+            if (count == legSel)
+                legEnd = i; // exclusive
+            count++;
+        }
+    }
+    $('#leg_sel').text('Leg: ' + (legSel + 1));
+    SelectedPlane.processTrace(legStart, legEnd);
+
 }
 
 function shiftTrace(offset) {

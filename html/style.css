@@ -272,7 +272,7 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
      padding: calc( 4px * var(--SCALE)) calc( 15px * var(--SCALE)) calc( 4px * var(--SCALE)) calc( 15px * var(--SCALE));
      color: #FFFFFF;
      font-weight: normal;
-     font-size: var(--FS1);
+     font-size: var(--FS2);
 }
 
 .sidebarButton:hover {
@@ -291,7 +291,7 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
 }
 
 .formButton {
-     font-size: var(--FS1);
+     font-size: var(--FS2);
 }
 
 select.error, textarea.error, input.error {
