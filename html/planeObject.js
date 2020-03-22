@@ -254,7 +254,8 @@ PlaneObject.prototype.updateTrackPrev = function() {
 PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     if (this.position == null)
         return false;
-    if (this.prev_position && this.position[0] == this.prev_position[0] && this.position[1] == this.prev_position[1])
+    if (this.prev_position && this.position[0] == this.prev_position[0] && this.position[1] == this.prev_position[1]
+        && !serverTrack)
         return false;
     if (this.bad_position && this.position[0] == this.bad_position[0] && this.position[1] == this.bad_position[1])
         return false;
@@ -902,6 +903,10 @@ PlaneObject.prototype.processTrace = function(legStart, legEnd) {
                 this.rotation = track
 
             if (leg_marker)
+                this.leg_ts = _now;
+            if (legStart != null && legStart > 0 && legStart == i)
+                this.leg_ts = _now;
+            if (legEnd != null && legEnd < trace.length && legEnd == i + 1)
                 this.leg_ts = _now;
 
             if (_last - _now > 320) {
