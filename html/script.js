@@ -1816,7 +1816,7 @@ function refreshSelected() {
     }
     $('#selected_baro_rate').text(format_vert_rate_long(selected.baro_rate, DisplayUnits));
     $('#selected_geom_rate').text(format_vert_rate_long(selected.geom_rate, DisplayUnits));
-    if (adsbexchange) {
+    if (globeIndex) {
         var icao_link = "<a style=\"color: blue\" target=\"_blank\" href=\"" + shareLink + "\">Share</a>";
         icao_link = NBSP +NBSP +NBSP +NBSP +NBSP +NBSP + icao_link;
         $('#selected_icao').html(selected.icao.toUpperCase() + icao_link);
@@ -2511,9 +2511,9 @@ function selectPlaneByHex(hex, options) {
         OLMap.getView().setZoom(options.zoom);
     }
 
+    updateAddressBar();
     refreshSelected();
     refreshTableInfo();
-    updateAddressBar();
 }
 
 
@@ -2562,11 +2562,11 @@ function deselectAllPlanes() {
     SelectedAllPlanes = false;
     SelectedPlane = null;
     refreshFeatures();
-    refreshSelected();
     refreshHighlighted();
     refreshTableInfo();
 
     updateAddressBar();
+    refreshSelected();
 }
 
 function toggleFollowSelected() {
@@ -3747,6 +3747,12 @@ function updateAddressBar() {
         return;
     if (icaoFilter)
         return;
+
+    if (SelectedPlane && globeIndex) {
+        var icao_link = "<a style=\"color: blue\" target=\"_blank\" href=\"" + shareLink + "\">Share</a>";
+        icao_link = NBSP +NBSP +NBSP +NBSP +NBSP +NBSP + icao_link;
+        $('#selected_icao').html(SelectedPlane.icao.toUpperCase() + icao_link);
+    }
 
     window.history.replaceState("object or string", "Title", string);
 }
