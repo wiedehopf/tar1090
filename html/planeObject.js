@@ -1308,7 +1308,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
         moved = this.updateTrack(now, last);
     }
 
-    const zoomedOut = 20 * Math.max(0, 7 - ZoomLvl);
+    const zoomedOut = 40 * Math.max(0, 7 - ZoomLvl);
     const jaeroTime = this.jaero ? 35*60 : 0;
     const tisbReduction = (this.icao[0] == '~') ? 15 : 0;
     // If no packet in over 58 seconds, clear the plane.
