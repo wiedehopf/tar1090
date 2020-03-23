@@ -2432,30 +2432,22 @@ function selectPlaneByHex(hex, options) {
         if (URL1) {
             var req1 = $.ajax({ url: URL1,
                 dataType: 'json',
-                zoom: options.zoom,
-                follow: options.follow,
             });
         }
         var req2 = null;
         req2 = $.ajax({ url: URL2,
             dataType: 'json',
-            zoom: options.zoom,
-            follow: options.follow,
         });
 
         if (req1) {
             req1.done(function(data) {
                 Planes[data.icao].recentTrace = data;
                 Planes[data.icao].processTrace();
-                if (this.follow)
-                    FollowSelected = true;
             });
         }
         req2.done(function(data) {
             Planes[data.icao].fullTrace = data;
             Planes[data.icao].processTrace();
-            if (this.follow)
-                FollowSelected = true;
         });
     }
 
@@ -2478,7 +2470,7 @@ function selectPlaneByHex(hex, options) {
 
     // If we are clicking the same plane, we are deselecting it.
     // (unless it was a doubleclick..)
-    if (oldPlane == newPlane && !options.follow) {
+    if (oldPlane == newPlane && !options.follow && !options.noDeselect) {
         newPlane = null;
     }
 
@@ -3786,8 +3778,6 @@ function toggleLargeMode() {
 function toggleShowTrace() {
     if (!showTrace) {
         showTrace = true;
-        legSel = -1;
-        $('#leg_sel').text('Legs: All');
         toggleIsolation("on", null);
         shiftTrace();
         $('#history_collapse')[0].style.display = "block";
@@ -3867,9 +3857,12 @@ function shiftTrace(offset) {
 
     $('#trace_date').text('UTC day:' + traceDateString);
 
+    legSel = -1;
+    $('#leg_sel').text('Legs: All');
+
     var hex = SelectedPlane ? SelectedPlane.icao : icaoParam;
 
-    var selectOptions = {follow: true, zoom: ZoomLvl};
+    var selectOptions = {noDeselect: true, zoom: ZoomLvl};
     selectPlaneByHex(hex, selectOptions);
 
     updateAddressBar();
