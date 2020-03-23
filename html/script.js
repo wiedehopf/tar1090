@@ -2447,7 +2447,13 @@ function selectPlaneByHex(hex, options) {
         }
         req2.done(function(data) {
             Planes[data.icao].fullTrace = data;
-            Planes[data.icao].processTrace();
+            if (showTrace)
+                legShift(0);
+            else
+                Planes[data.icao].processTrace();
+        });
+        req2.fail(function() {
+                legShift(0);
         });
     }
 
@@ -3478,7 +3484,7 @@ function processURLParams(){
         var follow = true;
         if (search.get("zoom")) {
             try {
-                zoom = parseInt(search.get("zoom"));
+                zoom = parseInt(search.get("zoom"), 10);
                 if (zoom === 0)
                     zoom = 1;
             } catch (error) {
@@ -3531,6 +3537,14 @@ function processURLParams(){
         if (search.has('airport')) {
             airport = search.get('airport').trim().toUpperCase();
             onJump();
+        }
+
+        if (search.has('leg')) {
+            legSel = parseInt(search.get('leg'), 10);
+            if (isNaN(legSel) || legSel < -1)
+                legSel = -1;
+            else
+                legSel--;
         }
 
     } catch (error) {
@@ -3723,6 +3737,8 @@ function updateAddressBar() {
 
     if (SelectedPlane && showTrace) {
         string += '&showTrace=' + traceDateString;
+        if (legSel != -1)
+            string += '&leg=' + (legSel + 1);
     }
 
     shareLink = string;
@@ -3803,10 +3819,16 @@ function toggleShowTrace() {
 function legShift(offset) {
     legSel += offset;
 
+    if (!SelectedPlane.fullTrace) {
+        $('#leg_sel').text('No Data available');
+        return;
+    }
+
     var trace = SelectedPlane.fullTrace.trace;
     var legStart = 0;
     var legEnd = trace.length;
     var count = 0;
+
     for (var i = 1; i < trace.length; i++) {
         if (trace[i][6] & 2) {
             count++;
@@ -3820,6 +3842,7 @@ function legShift(offset) {
     if (legSel == -1) {
         $('#leg_sel').text('Legs: All');
         SelectedPlane.processTrace();
+        updateAddressBar();
         return;
     }
 
@@ -3836,6 +3859,7 @@ function legShift(offset) {
     $('#leg_sel').text('Leg: ' + (legSel + 1));
     SelectedPlane.processTrace(legStart, legEnd);
 
+    updateAddressBar();
 }
 
 function shiftTrace(offset) {
@@ -3856,9 +3880,6 @@ function shiftTrace(offset) {
     traceDateString = getDateString(traceDate);
 
     $('#trace_date').text('UTC day:' + traceDateString);
-
-    legSel = -1;
-    $('#leg_sel').text('Legs: All');
 
     var hex = SelectedPlane ? SelectedPlane.icao : icaoParam;
 
