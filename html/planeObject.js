@@ -115,7 +115,7 @@ function PlaneObject(icao) {
 PlaneObject.prototype.checkLayers = function() {
     if (!this.trail_features)
         this.createFeatures();
-    if (trackLabels && !this.trail_labels)
+    if ((showTrace || trackLabels) && !this.trail_labels)
         this.createLabels();
 }
 
@@ -712,12 +712,14 @@ PlaneObject.prototype.updateIcon = function() {
     this.scale = scaleFactor * this.baseScale;
     var svgKey  = col + '!' + this.shape + '!' + add_stroke;
     var labelText = null;
-    if ( ( (enableLabels && !multiSelect) || (enableLabels && multiSelect && this.selected)) && (
-        (ZoomLvl >= labelZoom && this.altitude != "ground")
-        || (ZoomLvl >= labelZoomGround-2 && this.speed > 5)
-        || ZoomLvl >= labelZoomGround
-        || (this.selected && !SelectedAllPlanes)
-    )) {
+    if ( enableLabels && !showTrace && (!multiSelect || (multiSelect && this.selected)) &&
+        (
+            (ZoomLvl >= labelZoom && this.altitude != "ground")
+            || (ZoomLvl >= labelZoomGround-2 && this.speed > 5)
+            || ZoomLvl >= labelZoomGround
+            || (this.selected && !SelectedAllPlanes)
+        )
+    ) {
         if (extendedLabels == 2) {
             labelText = NBSP + (this.icaoType ? this.icaoType : "  ?  ") + NBSP + "\n" + NBSP + (this.registration ? this.registration : "  ?  ")+ NBSP + "\n" + NBSP + this.name + NBSP;
         } else if (extendedLabels == 1 ) {
@@ -1458,10 +1460,12 @@ PlaneObject.prototype.updateLines = function() {
     if (!this.layer.getVisible())
         this.layer.setVisible(true);
 
-    if (trackLabels && !this.layer_labels.getVisible())
-        this.layer_labels.setVisible(true);
-    if (!trackLabels && this.layer_labels && this.layer_labels.getVisible())
+    if (trackLabels || showTrace) {
+        if (!this.layer_labels.getVisible())
+            this.layer_labels.setVisible(true);
+    } else if (this.layer_labels && this.layer_labels.getVisible()) {
         this.layer_labels.setVisible(false);
+    }
 
     // create the new elastic band feature
     if (this.elastic_feature)
@@ -1499,7 +1503,7 @@ PlaneObject.prototype.updateLines = function() {
 
         if (filterTracks && this.altFiltered(seg.altitude)) {
             seg.label = true;
-        } else if (trackLabels && !seg.label) {
+        } else if ((trackLabels || ((i == 0 || i == this.track_linesegs.length-1 ||seg.leg) && showTrace && enableLabels)) && !seg.label) {
             const alt_real = (seg.alt_real != null) ? seg.alt_real : 'n/a';
             seg.label = new ol.Feature(new ol.geom.Point(seg.fixed.getFirstCoordinate()));
             var timestamp;
@@ -1518,12 +1522,16 @@ PlaneObject.prototype.updateLines = function() {
                     + ":" + date.getSeconds().toString().padStart(2,'0');
                 timestamp = "".padStart(2, NBSP) + timestamp;
             }
-            const text =
+            var text =
                 Number(seg.speed).toFixed(0).toString().padStart(3, NBSP) + "  "
                 + (alt_real == "ground" ? ("Ground") : (alt_real.toString().padStart(6, NBSP)))
                 + "\n"
                 //+ NBSP + format_track_arrow(seg.track)
                 + timestamp;
+
+            if (showTrace && !trackLabels)
+                text = timestamp;
+
             var fill = labelFill;
             var zIndex = -i;
             if (seg.leg == 'start') {
@@ -1560,7 +1568,7 @@ PlaneObject.prototype.updateLines = function() {
 
     if (trail_add.length > 0)
         this.trail_features.addFeatures(trail_add);
-    if (trackLabels && label_add.length > 0)
+    if (this.trail_labels && label_add.length > 0)
         this.trail_labels.addFeatures(label_add);
 
 };

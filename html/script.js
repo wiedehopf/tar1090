@@ -3012,6 +3012,9 @@ function toggleLabels(switchOn) {
         PlanesOrdered[key].updateMarker(false);
     }
     buttonActive('#L', enableLabels);
+
+    if (showTrace)
+        remakeTrails();
 }
 function toggleExtendedLabels() {
     if (isNaN(extendedLabels))
