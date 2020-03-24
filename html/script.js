@@ -221,6 +221,8 @@ function processAircraft(ac, init, uat) {
     if (globeIndex) {
         if (!onlyMilitary || plane.military)
             plane.updateData(now, last, ac, init);
+        else
+            plane.last_message_time = now - ac.seen;
     } else if (uat) {
         if (plane.receiver == "uat" || ac.seen_pos < 1.8 || init) {
             plane.receiver = "uat";
@@ -1684,7 +1686,8 @@ function reaper(all) {
             continue;
         plane.seen = now - plane.last_message_time;
         if ( (!plane.selected || SelectedAllPlanes)
-            && (all || plane.seen > 300 || (globeIndex && plane.seen > 180))
+            && (all || plane.seen > 300)
+            && (!plane.jaero || plane.seen > 35*60)
         ) {
             // Reap it.                                
             //console.log("Removed " + plane.icao);
