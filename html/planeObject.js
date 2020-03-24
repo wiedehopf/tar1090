@@ -811,7 +811,12 @@ PlaneObject.prototype.updateIcon = function() {
     return true;
 };
 
-PlaneObject.prototype.processTrace = function(legStart, legEnd) {
+PlaneObject.prototype.processTrace = function(options) {
+    if (!options)
+        options = {};
+    var legStart = options.legStart;
+    var legEnd = options.legEnd;
+    var follow = options.follow;
     this.checkLayers();
     var trace = null;
     var timeZero, _now, _last = 0;
@@ -984,6 +989,11 @@ PlaneObject.prototype.processTrace = function(legStart, legEnd) {
 
     this.updateMarker(true);
     this.updateLines();
+
+    if (this.position && follow) {
+        toggleFollow(true);
+    }
+
     refreshSelected();
 
     console.log(this.history_size + ' ' + points_in_trace);

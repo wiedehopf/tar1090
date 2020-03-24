@@ -1409,32 +1409,28 @@ function initialize_map() {
                 extent = OLMap.getView().calculateExtent(OLMap.getSize());
                 newCenter = [oldCenter[0], (oldCenter[1] + extent[3])/2];
                 OLMap.getView().setCenter(newCenter);
-                FollowSelected = false;
-                buttonActive('#F', FollowSelected);
+                toggleFollow(false);
                 break;
             case "s":
                 oldCenter = OLMap.getView().getCenter();
                 extent = OLMap.getView().calculateExtent(OLMap.getSize());
                 newCenter = [oldCenter[0], (oldCenter[1] + extent[1])/2];
                 OLMap.getView().setCenter(newCenter);
-                FollowSelected = false;
-                buttonActive('#F', FollowSelected);
+                toggleFollow(false);
                 break;
             case "a":
                 oldCenter = OLMap.getView().getCenter();
                 extent = OLMap.getView().calculateExtent(OLMap.getSize());
                 newCenter = [(oldCenter[0] + extent[0])/2, oldCenter[1]];
                 OLMap.getView().setCenter(newCenter);
-                FollowSelected = false;
-                buttonActive('#F', FollowSelected);
+                toggleFollow(false);
                 break;
             case "d":
                 oldCenter = OLMap.getView().getCenter();
                 extent = OLMap.getView().calculateExtent(OLMap.getSize());
                 newCenter = [(oldCenter[0] + extent[2])/2,  oldCenter[1]];
                 OLMap.getView().setCenter(newCenter);
-                FollowSelected = false;
-                buttonActive('#F', FollowSelected);
+                toggleFollow(false);
                 break;
                 // misc
             case "b":
@@ -1479,7 +1475,7 @@ function initialize_map() {
                 hideButtons = !hideButtons;
                 break;
             case "f":
-                toggleFollowSelected();
+                toggleFollow();
                 break;
                 // filters
             case "M":
@@ -1849,9 +1845,9 @@ function refreshSelected() {
         $('#selected_flag').addClass('hidden');
     }
 
-    if (selected.position === null) {
+    if (selected.position == null) {
         $('#selected_position').text('n/a');
-        $('#selected_follow').addClass('hidden');
+        //$('#selected_follow').addClass('hidden');
     } else {
 
         if (selected.seen_pos > -1) {
@@ -1860,13 +1856,18 @@ function refreshSelected() {
             $('#selected_position').text(format_latlng(selected.position));
         }
 
-        $('#selected_follow').removeClass('hidden');
         if (FollowSelected) {
-            $('#selected_follow').css('font-weight', 'bold');
-            if (selected.position)
-                OLMap.getView().setCenter(ol.proj.fromLonLat(selected.position));
+            //$('#selected_follow').removeClass('hidden');
+            //$('#selected_follow').css('font-weight', 'bold');
+            const center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
+            if (Math.abs(center[0] - SelectedPlane.position[0]) > 0.05 ||
+                Math.abs(center[1] - SelectedPlane.position[1]) > 0.05) {
+                toggleFollow(false);
+            } else {
+                toggleFollow(true);
+            }
         } else {
-            $('#selected_follow').css('font-weight', 'normal');
+           // $('#selected_follow').css('font-weight', 'normal');
         }
     }
     $('#selected_source').text(format_data_source(selected.getDataSource()));
@@ -2432,17 +2433,19 @@ function selectPlaneByHex(hex, options) {
         if (URL1) {
             var req1 = $.ajax({ url: URL1,
                 dataType: 'json',
+                options: options,
             });
         }
         var req2 = null;
         req2 = $.ajax({ url: URL2,
             dataType: 'json',
+            options: options,
         });
 
         if (req1) {
             req1.done(function(data) {
                 Planes[data.icao].recentTrace = data;
-                Planes[data.icao].processTrace();
+                Planes[data.icao].processTrace(this.options);
             });
         }
         req2.done(function(data) {
@@ -2450,7 +2453,7 @@ function selectPlaneByHex(hex, options) {
             if (showTrace)
                 legShift(0);
             else
-                Planes[data.icao].processTrace();
+                Planes[data.icao].processTrace(this.options);
         });
         req2.fail(function() {
                 legShift(0);
@@ -2493,11 +2496,11 @@ function selectPlaneByHex(hex, options) {
     }
 
     if (newPlane && newPlane.position && options.follow) {
-        FollowSelected = true;
+        toggleFollow(true);
         if (!options.zoom)
             options.zoom = 'follow';
     } else {
-        FollowSelected = false;
+        toggleFollow(false);
     }
     if (newPlane && newPlane.position) {
         newPlane.updateLines();
@@ -2569,15 +2572,23 @@ function deselectAllPlanes() {
     refreshSelected();
 }
 
-function toggleFollowSelected() {
-    FollowSelected = !FollowSelected;
-    if (FollowSelected && (!SelectedPlane || !SelectedPlane.position))
+function toggleFollow(override) {
+    if (override == true)
+        FollowSelected = true;
+    else if (override == false)
         FollowSelected = false;
-    if (!SelectedPlane && FollowSelected)
-        FollowSelected = false;
-    if (FollowSelected && OLMap.getView().getZoom() < 8)
-        OLMap.getView().setZoom(8);
-    refreshSelected();
+    else
+        FollowSelected = !FollowSelected;
+
+    if (FollowSelected) {
+        if (!SelectedPlane || !SelectedPlane.position)
+            FollowSelected = false;
+    }
+    if (FollowSelected) {
+        if (override != undefined && OLMap.getView().getZoom() < 8)
+            OLMap.getView().setZoom(8);
+        OLMap.getView().setCenter(ol.proj.fromLonLat(SelectedPlane.position));
+    }
     buttonActive('#F', FollowSelected);
 }
 
@@ -3061,7 +3072,7 @@ function toggleMultiSelect(on, off) {
 }
 
 function onJump(e) {
-    FollowSelected = false;
+    toggleFollow(false);
     if (e) {
         e.preventDefault();
         airport = $("#jump_input").val().trim().toUpperCase();
@@ -3362,7 +3373,7 @@ function changeCenter(init) {
         if (!SelectedPlane || !SelectedPlane.position ||
             (Math.abs(center[0] - SelectedPlane.position[0]) > 0.0001 &&
                 Math.abs(center[1] - SelectedPlane.position[1]) > 0.0001)){
-            FollowSelected = false;
+            toggleFollow(false);
             refreshSelected();
             refreshHighlighted();
         }
@@ -3803,6 +3814,7 @@ function toggleLargeMode() {
 function toggleShowTrace() {
     if (!showTrace) {
         showTrace = true;
+        toggleFollow(false);
         toggleIsolation("on", null);
         shiftTrace();
         $('#history_collapse')[0].style.display = "block";
@@ -3866,7 +3878,7 @@ function legShift(offset) {
         }
     }
     $('#leg_sel').text('Leg: ' + (legSel + 1));
-    SelectedPlane.processTrace(legStart, legEnd);
+    SelectedPlane.processTrace({ legStart: legStart, legEnd: legEnd});
 
     updateAddressBar();
 }
