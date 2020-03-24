@@ -250,7 +250,7 @@ do
     fi
     GARBAGE="$ipath/$RANDOM.$RANDOM"
 
-    mv $html_path $GARBAGE
+    mv $html_path $GARBAGE 2>/dev/null || true
     mv $TMP $html_path
     rm -rf $GARBAGE 2>/dev/null || true
 
