@@ -31,6 +31,7 @@
 		<script src="formatter.js"></script>
 		<script src="flags.js"></script>
 		<script src="layers.js"></script>
+        <script src="geomag2020.js"></script>
 		<script src="script.js"></script>
 		<link rel="icon" type="image/png" href="images/tar1090-favicon.png">
 		<title>tar1090</title>
@@ -314,6 +315,38 @@
 							</div>
 						</div>
 					</div> <!-- FMS SEL -->
+
+					<div class="sectionTitle">
+						<div class="section-title-content">
+							Wind
+						</div>
+					</div>
+					<div class="infoBlockSection">
+						<div class="infoRowLine">
+							<div class="infoHeading infoRowFluid fourColumnSection1">
+								<span title="The selected altitude in the aircraft's flight management system">Speed</span>:
+							</div>
+							<div class="infoData infoRowFluid fourColumnSection2">
+								<span id="selected_ws">n/a</span>
+							</div>
+						</div>
+						<div class="infoRowLine">
+							<div class="infoHeading infoRowFluid fourColumnSection1">
+								<span title="The selected heading in the aircraft's flight management system">Direction</span>:
+							</div>
+							<div class="infoData infoRowFluid fourColumnSection2">
+								<span id="selected_wd">n/a</span>
+							</div>
+						</div>
+						<div class="infoRowLine">
+							<div class="infoHeading infoRowFluid fourColumnSection1">
+								<span title="The aircraft's nose heading relative to ground track">Crab angle</span>:
+							</div>
+							<div class="infoData infoRowFluid fourColumnSection2">
+								<span id="selected_crab">n/a</span>
+							</div>
+						</div>
+					</div> <!-- Wind -->
 					<div class="sectionTitle">
 						<div class="section-title-content">
 							Speed
@@ -418,10 +451,10 @@
 						</div>
 						<div class="infoRowLine">
 							<div class="infoHeading infoRowFluid fourColumnSection1">
-								<span title="Rate of turn of the ground track">Track Rate</span>:
+								<span title="The aircraft's nose heading relative to true north">True Heading</span>:
 							</div>
 							<div class="infoData infoRowFluid fourColumnSection2">
-								<span id="selected_trackrate">n/a</span>
+								<span id="selected_true_heading">n/a</span>
 							</div>
 						</div>
 						<div class="infoRowLine">
@@ -434,18 +467,26 @@
 						</div>
 						<div class="infoRowLine">
 							<div class="infoHeading infoRowFluid fourColumnSection1">
-								<span title="The aircraft's roll angle">Roll</span>:
+								<span title="The aircraft's nose heading relative to magnetic north">Magnetic Decl.</span>:
 							</div>
 							<div class="infoData infoRowFluid fourColumnSection2">
-								<span id="selected_roll">n/a</span>
+								<span id="selected_mag_declination">n/a</span>
 							</div>
 						</div>
 						<div class="infoRowLine">
 							<div class="infoHeading infoRowFluid fourColumnSection1">
-								<span title="The aircraft's nose heading relative to true north">True Heading</span>:
+								<span title="Rate of turn of the ground track">Track Rate</span>:
 							</div>
 							<div class="infoData infoRowFluid fourColumnSection2">
-								<span id="selected_true_heading">n/a</span>
+								<span id="selected_trackrate">n/a</span>
+							</div>
+						</div>
+						<div class="infoRowLine">
+							<div class="infoHeading infoRowFluid fourColumnSection1">
+								<span title="The aircraft's roll angle">Roll</span>:
+							</div>
+							<div class="infoData infoRowFluid fourColumnSection2">
+								<span id="selected_roll">n/a</span>
 							</div>
 						</div>
 					</div>

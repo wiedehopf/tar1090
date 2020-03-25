@@ -87,6 +87,7 @@ var labelFill = null;
 var blackFill = null;
 var labelStroke = null;
 var legSel = -1;
+let geoMag = null;
 
 var shareLink = '';
 
@@ -1139,6 +1140,8 @@ function parse_history() {
 
     if (tempTrails)
         selectAllPlanes();
+
+    geoMag = geoMagFactory(cof2Obj());
 }
 
 // Make a LineString with 'points'-number points
@@ -1804,6 +1807,54 @@ function refreshSelected() {
         $('#selected_squawk2').text(selected.squawk);
     }
 
+    let magResult = null;
+
+    if (geoMag && selected.position != null) {
+        let lon = selected.position[0];
+        let lat = selected.position[1];
+        let alt = selected.altitude == "ground" ? 0 : selected.altitude;
+        magResult = geoMag(lat, lon, alt);
+        $('#selected_mag_declination').text(format_track_brief(magResult.dec));
+    } else {
+        $('#selected_mag_declination').text('n/a');
+    }
+
+    if (magResult && selected.gs != null && selected.tas != null && selected.track != null && selected.mag_heading != null) {
+
+        const trk = (Math.PI / 180) * selected.track;
+        const hdg = (Math.PI / 180) * (selected.mag_heading + magResult.dec);
+        const tas = selected.tas;
+        const gs = selected.gs;
+        const ws = Math.round(Math.sqrt(Math.pow(tas - gs, 2) + 4 * tas * gs * Math.pow(Math.sin((hdg - trk) / 2), 2)));
+        let wd = trk + Math.atan2(tas * Math.sin(hdg - trk), tas * Math.cos(hdg - trk) - gs);
+        if (wd < 0) {
+            wd = wd + 2 * Math.PI;
+        }
+        if (wd > 2 * Math.PI) {
+            wd = wd - 2 * Math.PI;
+        }
+        wd = Math.round((180 / Math.PI) * wd);
+        $('#selected_wd').text(format_track_long(wd, DisplayUnits));
+        $('#selected_ws').text(format_speed_long(ws, DisplayUnits));
+    } else {
+        $('#selected_wd').text('n/a');
+        $('#selected_ws').text('n/a');
+    }
+
+    if (magResult && selected.mag_heading != null && selected.track != null)
+        $('#selected_crab').text(format_track_brief(selected.mag_heading + magResult.dec - selected.track));
+    else if (selected.true_heading != null && selected.track != null)
+        $('#selected_crab').text(format_track_brief(selected.true_heading - selected.track));
+    else
+        $('#selected_crab').text('n/a');
+
+    $('#selected_mag_heading').text(format_track_brief(selected.mag_heading));
+
+    if (selected.true_heading == null && selected.mag_heading != null && magResult)
+        $('#selected_true_heading').text(format_track_brief(selected.mag_heading + magResult.dec));
+    else
+        $('#selected_true_heading').text(format_track_brief(selected.true_heading));
+
     $('#selected_speed1').text(format_speed_long(selected.gs, DisplayUnits));
     $('#selected_speed2').text(format_speed_long(selected.gs, DisplayUnits));
     $('#selected_ias').text(format_speed_long(selected.ias, DisplayUnits));
@@ -1885,8 +1936,6 @@ function refreshSelected() {
     }
 
     $('#selected_altitude_geom').text(format_altitude_long(selected.alt_geom, selected.geom_rate, DisplayUnits));
-    $('#selected_mag_heading').text(format_track_brief(selected.mag_heading));
-    $('#selected_true_heading').text(format_track_brief(selected.true_heading));
     $('#selected_ias').text(format_speed_long(selected.ias, DisplayUnits));
     $('#selected_tas').text(format_speed_long(selected.tas, DisplayUnits));
     if (selected.mach == null) {
