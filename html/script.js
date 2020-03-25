@@ -1841,17 +1841,31 @@ function refreshSelected() {
         $('#selected_ws').text('n/a');
     }
 
-    if (magResult && selected.mag_heading != null && selected.track != null)
-        $('#selected_crab').text(format_track_brief(selected.mag_heading + magResult.dec - selected.track));
-    else if (selected.true_heading != null && selected.track != null)
-        $('#selected_crab').text(format_track_brief(selected.true_heading - selected.track));
-    else
-        $('#selected_crab').text('n/a');
+    let crab = null;
+    let heading = null;
+    let track = selected.track;
+    if (magResult && selected.mag_heading != null && selected.track != null) {
+        heading = selected.mag_heading + magResult.dec;
+    } else if (selected.true_heading != null && selected.track != null) {
+        heading = selected.true_heading;
+    }
+    if (heading != null && heading < 0)
+        heading += 360;
+    if (heading != null && heading > 360)
+        heading -= 360;
+    if (heading != null && track != null) {
+        crab = heading - track;
+        if (crab > 180)
+            crab -= 360;
+        if (crab < -180)
+            crab += 360;
+    }
+    $('#selected_crab').text(format_track_brief(crab));
 
     $('#selected_mag_heading').text(format_track_brief(selected.mag_heading));
 
-    if (selected.true_heading == null && selected.mag_heading != null && magResult)
-        $('#selected_true_heading').text(format_track_brief(selected.mag_heading + magResult.dec));
+    if (selected.true_heading == null && heading != null)
+        $('#selected_true_heading').text(format_track_brief(heading));
     else
         $('#selected_true_heading').text(format_track_brief(selected.true_heading));
 
