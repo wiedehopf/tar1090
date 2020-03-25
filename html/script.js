@@ -1869,6 +1869,14 @@ function refreshSelected() {
     else
         $('#selected_true_heading').text(format_track_brief(selected.true_heading));
 
+    let temp = null;
+    if (selected.mach != null && selected.tas != null) {
+        temp = Math.pow((selected.tas / 661.47 / selected.mach), 2) * 288.15 - 273.15;
+        $('#selected_temp').text(format_track_brief(temp) + 'C');
+    } else {
+        $('#selected_temp').text('n/a');
+    }
+
     $('#selected_speed1').text(format_speed_long(selected.gs, DisplayUnits));
     $('#selected_speed2').text(format_speed_long(selected.gs, DisplayUnits));
     $('#selected_ias').text(format_speed_long(selected.ias, DisplayUnits));
