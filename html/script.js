@@ -1730,6 +1730,10 @@ function refreshPageTitle() {
     document.title = PageName + ' - ' + subtitle;
 }
 
+var selCall = null;
+var selIcao = null;
+var selReg = null;
+
 // Refresh the detail window about the plane
 function refreshSelected() {
 
@@ -1749,24 +1753,29 @@ function refreshSelected() {
 
     if (SelectedPlane.position && SelectedPlane.seen_pos > 25)
         SelectedPlane.updateMarker(true);
-
-    if (selected.flight && selected.flight.trim()) {
-        $('#selected_callsign').text(selected.flight);
-    } else {
-        $('#selected_callsign').text('n/a');
+    if (selected.flight != selCall) {
+        selCall = selected.flight;
+        if (selected.flight && selected.flight.trim()) {
+            $('#selected_callsign').text(selected.flight);
+        } else {
+            $('#selected_callsign').text('n/a');
+        }
     }
     if (flightawareLinks) {
         $('#selected_flightaware_link').html(getFlightAwareModeSLink(selected.icao, selected.flight, "Visit Flight Page"));
     }
 
-    if (selected.registration) {
-        if (flightawareLinks) {
-            $('#selected_registration').html(getFlightAwareIdentLink(selected.registration, selected.registration));
+    if (selected.registration != selReg) {
+        selReg = selected.registration
+        if (selected.registration) {
+            if (flightawareLinks) {
+                $('#selected_registration').html(getFlightAwareIdentLink(selected.registration, selected.registration));
+            } else {
+                $('#selected_registration').text(selected.registration);
+            }
         } else {
-            $('#selected_registration').text(selected.registration);
+            $('#selected_registration').text("n/a");
         }
-    } else {
-        $('#selected_registration').text("n/a");
     }
 
     if (selected.icaoType) {
@@ -1889,12 +1898,15 @@ function refreshSelected() {
     }
     $('#selected_baro_rate').text(format_vert_rate_long(selected.baro_rate, DisplayUnits));
     $('#selected_geom_rate').text(format_vert_rate_long(selected.geom_rate, DisplayUnits));
-    if (globeIndex) {
-        var icao_link = "<a style=\"color: blue\" target=\"_blank\" href=\"" + shareLink + "\">Share</a>";
-        icao_link = NBSP +NBSP +NBSP +NBSP +NBSP +NBSP + icao_link;
-        $('#selected_icao').html(selected.icao.toUpperCase() + icao_link);
-    } else {
-        $('#selected_icao').text(selected.icao.toUpperCase());
+    if (selected.icao != selIcao) {
+        selIcao = selected.icao;
+        if (globeIndex) {
+            var icao_link = "<a style=\"color: blue\" target=\"_blank\" href=\"" + shareLink + "\">Share</a>";
+            icao_link = NBSP +NBSP +NBSP +NBSP +NBSP +NBSP + icao_link;
+            $('#selected_icao').html(selected.icao.toUpperCase() + icao_link);
+        } else {
+            $('#selected_icao').text(selected.icao.toUpperCase());
+        }
     }
     $('#selected_pf_info').text((selected.pfRoute ? selected.pfRoute : "") );
     //+" "+ (selected.pfFlightno ? selected.pfFlightno : "")
