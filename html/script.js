@@ -1819,28 +1819,6 @@ function refreshSelected() {
         $('#selected_mag_declination').text('n/a');
     }
 
-    if (magResult && selected.gs != null && selected.tas != null && selected.track != null && selected.mag_heading != null) {
-
-        const trk = (Math.PI / 180) * selected.track;
-        const hdg = (Math.PI / 180) * (selected.mag_heading + magResult.dec);
-        const tas = selected.tas;
-        const gs = selected.gs;
-        const ws = Math.round(Math.sqrt(Math.pow(tas - gs, 2) + 4 * tas * gs * Math.pow(Math.sin((hdg - trk) / 2), 2)));
-        let wd = trk + Math.atan2(tas * Math.sin(hdg - trk), tas * Math.cos(hdg - trk) - gs);
-        if (wd < 0) {
-            wd = wd + 2 * Math.PI;
-        }
-        if (wd > 2 * Math.PI) {
-            wd = wd - 2 * Math.PI;
-        }
-        wd = Math.round((180 / Math.PI) * wd);
-        $('#selected_wd').text(format_track_long(wd, DisplayUnits));
-        $('#selected_ws').text(format_speed_long(ws, DisplayUnits));
-    } else {
-        $('#selected_wd').text('n/a');
-        $('#selected_ws').text('n/a');
-    }
-
     let crab = null;
     let heading = null;
     let track = selected.track;
@@ -1860,6 +1838,29 @@ function refreshSelected() {
         if (crab < -180)
             crab += 360;
     }
+
+    if (magResult && selected.gs != null && selected.tas != null && selected.track != null && selected.mag_heading != null) {
+
+        const trk = (Math.PI / 180) * selected.track;
+        const hdg = (Math.PI / 180) * heading;
+        const tas = selected.tas;
+        const gs = selected.gs;
+        const ws = Math.round(Math.sqrt(Math.pow(tas - gs, 2) + 4 * tas * gs * Math.pow(Math.sin((hdg - trk) / 2), 2)));
+        let wd = trk + Math.atan2(tas * Math.sin(hdg - trk), tas * Math.cos(hdg - trk) - gs);
+        if (wd < 0) {
+            wd = wd + 2 * Math.PI;
+        }
+        if (wd > 2 * Math.PI) {
+            wd = wd - 2 * Math.PI;
+        }
+        wd = Math.round((180 / Math.PI) * wd);
+        $('#selected_wd').text(format_track_long(wd, DisplayUnits));
+        $('#selected_ws').text(format_speed_long(ws, DisplayUnits));
+    } else {
+        $('#selected_wd').text('n/a');
+        $('#selected_ws').text('n/a');
+    }
+
     $('#selected_crab').text(format_track_brief(crab));
 
     $('#selected_mag_heading').text(format_track_brief(selected.mag_heading));
