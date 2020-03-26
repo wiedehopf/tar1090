@@ -218,38 +218,25 @@ tar1090 is now available at :8504 by default when using lighttpd. (port 8504)
 To display tar1090 at /, add an instance as described above that has the name webroot.
 It will be available at /
 
+
+
 ## nginx configuration
 
 If nginx is installed, the install script should give you a configuration file
 you can include.  The configuration needs to go into the appropriate server { }
-section and looks something like this in case you are interested:
+section.
 
-```
-location /tar1090/data/ {
-  alias /run/dump1090-fa/;
-}
+## heywhatsthat.com range outline:
 
-location /tar1090/chunks/ {
-  alias /run/tar1090/;
-  location ~* \.gz$ {
-    add_header Cache-Control "must-revalidate";
-    add_header Content-Type "application/json";
-    add_header Content-Encoding "gzip";
-  }
-}
-
-location /tar1090 {
-  try_files $uri $uri/ =404;
-  alias /usr/local/share/tar1090/html/;
-}
+- Create a panorama on http://www.heywhatsthat.com/
+- You an use up in the air on the map and set altitudes to view the outlines
+- For use on the tar1090 map the altitude will be set by changing the download URL
+- Near the top of the page, an URL for the panorama is mentioned.
+- Replace teh XXXXXX in the following command with the ID contained in your panorama URL
 ```
-
-If you are using another dump1090 fork, change `/run/dump1090-fa` in this section:
+sudo wget -O /usr/local/share/tar1090/html/upintheair.json "http://www.heywhatsthat.com/api/upintheair.json?id=XXXXXXXX&refraction=0.25&alts=12192"
 ```
-location /tar1090/data/ {
-  alias /run/dump1090-fa/;
-}
-```
+- You should now have a range outline for the theoretical range for aircraft at 40000 ft on your tar1090 map
 
 
 ## history not loading issue (possible fix)
