@@ -1854,7 +1854,7 @@ function refreshSelected() {
             wd = wd - 2 * Math.PI;
         }
         wd = Math.round((180 / Math.PI) * wd);
-        $('#selected_wd').text(format_track_long(wd, DisplayUnits));
+        $('#selected_wd').text(format_track_brief(wd, true));
         $('#selected_ws').text(format_speed_long(ws, DisplayUnits));
     } else {
         $('#selected_wd').text('n/a');
@@ -1873,7 +1873,7 @@ function refreshSelected() {
     let temp = null;
     if (selected.mach != null && selected.tas != null) {
         temp = Math.pow((selected.tas / 661.47 / selected.mach), 2) * 288.15 - 273.15;
-        $('#selected_temp').text(format_track_brief(temp) + 'C');
+        $('#selected_temp').text(Math.round(temp)  + ' °C');
     } else {
         $('#selected_temp').text('n/a');
     }
@@ -1899,7 +1899,7 @@ function refreshSelected() {
     $('#selected_pf_info').text((selected.pfRoute ? selected.pfRoute : "") );
     //+" "+ (selected.pfFlightno ? selected.pfFlightno : "")
     $('#airframes_post_icao').attr('value',selected.icao);
-    $('#selected_track1').text(format_track_long(selected.track));
+    $('#selected_track1').text(format_track_brief(selected.track));
     $('#selected_track2').text(format_track_brief(selected.track));
 
     if (selected.seen != null && selected.seen < 1000000) {
@@ -1983,7 +1983,7 @@ function refreshSelected() {
         $('#selected_nav_qnh').text(selected.nav_qnh.toFixed(1) + " hPa");
     }
     $('#selected_nav_altitude').text(format_altitude_long(selected.nav_altitude, 0, DisplayUnits));
-    $('#selected_nav_heading').text(format_track_long(selected.nav_heading));
+    $('#selected_nav_heading').text(format_track_brief(selected.nav_heading));
     if (selected.nav_modes == null) {
         $('#selected_nav_modes').text("n/a");
     } else {

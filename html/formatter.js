@@ -28,22 +28,22 @@ function get_unit_label(quantity, systemOfMeasurement) {
 }
 
 // track in degrees (0..359)
-function format_track_brief(track) {
+function format_track_brief(track, rounded) {
 	if (track == null){
 		return "n/a";
 	}
 
-	return track.toFixed(1) + DEGREES;
+	return track.toFixed(rounded ? 0 : 1) + DEGREES;
 }
 
 // track in degrees (0..359)
-function format_track_long(track) {
+function format_track_long(track, rounded) {
 	if (track == null){
 		return "n/a";
 	}
 
 	var trackDir = Math.floor((360 + track % 360 + 22.5) / 45) % 8;
-	return  TrackDirections[trackDir] + ":" + NBSP + track.toFixed(1) + DEGREES;
+	return  TrackDirections[trackDir] + ":" + NBSP + track.toFixed(rounded ? 0 : 1) + DEGREES;
 }
 function format_track_arrow(track) {
 	if (track == null){
