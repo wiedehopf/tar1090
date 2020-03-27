@@ -21,12 +21,12 @@
 
 "use strict";
 
-var _aircraft_cache = {};
-var _aircraft_type_cache = null;
-var _airport_coords_cache = null;
+let _aircraft_cache = {};
+let _aircraft_type_cache = null;
+let _airport_coords_cache = null;
 
 function getAircraftData(icao) {
-	var defer = $.Deferred();
+	let defer = $.Deferred();
 	if (icao.charAt(0) == '~') {
 		defer.resolve(null);
 		return defer;
@@ -39,12 +39,12 @@ function getAircraftData(icao) {
 }
 
 function request_from_db(icao, level, defer) {
-	var bkey = icao.substring(0, level);
-	var dkey = icao.substring(level);
-	var req = db_ajax(bkey);
+	let bkey = icao.substring(0, level);
+	let dkey = icao.substring(level);
+	let req = db_ajax(bkey);
 
 	req.done(function(data) {
-		var subkey;
+		let subkey;
 
 		if (data == null) {
 			defer.resolve("strange");
@@ -92,9 +92,9 @@ function getIcaoAircraftTypeData(aircraftData, defer) {
 // 4: wtc
 function lookupIcaoAircraftType(aircraftData, defer) {
 	if (_aircraft_type_cache !== null && aircraftData[1]) {
-		var typeDesignator = aircraftData[1].toUpperCase();
+		let typeDesignator = aircraftData[1].toUpperCase();
 		if (typeDesignator in _aircraft_type_cache) {
-			var typeData = _aircraft_type_cache[typeDesignator];
+			let typeData = _aircraft_type_cache[typeDesignator];
 			if (typeData.desc != null && typeData.desc.length == 3) {
 				aircraftData[3] = typeData.desc;
 			}
@@ -107,12 +107,12 @@ function lookupIcaoAircraftType(aircraftData, defer) {
 	defer.resolve(aircraftData);
 }
 
-var _request_count = 0;
-var _request_queue = [];
-var _request_cache = {};
+let _request_count = 0;
+let _request_queue = [];
+let _request_cache = {};
 
 function db_ajax(bkey) {
-	var req;
+	let req;
 
 	if (bkey in _request_cache) {
 		return _request_cache[bkey];
@@ -128,8 +128,8 @@ function db_ajax(bkey) {
 }
 
 function db_ajax_request_complete() {
-	var req;
-	var ajaxreq;
+	let req;
+	let ajaxreq;
 
 	if (_request_queue.length == 0 || _request_count >= 1) {
 		return;
@@ -144,7 +144,7 @@ function db_ajax_request_complete() {
 		ajaxreq.done(function(data) {
             req.resolve(data);
             const keys = Object.keys(data);
-            for (var i in keys) {
+            for (let i in keys) {
                 if (keys[i] == 'children')
                     continue;
                 const icao = req.bkey + keys[i];

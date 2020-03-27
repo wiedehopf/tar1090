@@ -185,7 +185,7 @@ do
 
     cp -r -T html $TMP
     cp -r -T $ipath/git-db/db $TMP/db-$DB_VERSION
-    sed -i -e "s/var databaseFolder = .*/var databaseFolder = \"db-$DB_VERSION\";/" $TMP/early.js
+    sed -i -e "s/let databaseFolder = .*/let databaseFolder = \"db-$DB_VERSION\";/" $TMP/early.js
     echo "{ \"tar1090Version\": \"$TAR_VERSION\", \"databaseVersion\": \"$DB_VERSION\" }" > $TMP/version.json
 
     # keep some stuff around

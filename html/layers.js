@@ -13,15 +13,15 @@
 //			"url" : "https://{a-c}.tile.openstreetmap.se/osm/{z}/{x}/{y}.png"
 
 function createBaseLayers() {
-    var layers = new ol.Collection();
-    var layers_group = new ol.layer.Group({
+    let layers = new ol.Collection();
+    let layers_group = new ol.layer.Group({
         layers: layers,
     });
 
-    var world = new ol.Collection();
-    var us = new ol.Collection();
-    var europe = new ol.Collection();
-    var custom = new ol.Collection();
+    let world = new ol.Collection();
+    let us = new ol.Collection();
+    let europe = new ol.Collection();
+    let custom = new ol.Collection();
 
     if (localStorage['customTiles'] != undefined) {
         custom.push(new ol.layer.Tile({
@@ -99,12 +99,12 @@ function createBaseLayers() {
     // http://basemaps.cartocdn.com
     // https://github.com/CartoDB/cartodb/wiki/BaseMaps-available
 
-    var basemaps = [ "dark_all", "dark_nolabels",
+    let basemaps = [ "dark_all", "dark_nolabels",
         "light_all", "light_nolabels"
     ]
 
-    for (var i in basemaps) {
-        var basemap_id = basemaps[i];
+    for (let i in basemaps) {
+        let basemap_id = basemaps[i];
 
         world.push(new ol.layer.Tile({
             source: new ol.source.OSM({
@@ -141,7 +141,7 @@ function createBaseLayers() {
 
     if (ChartBundleLayers) {
 
-        var chartbundleTypes = {
+        let chartbundleTypes = {
             sec: "Sectional Charts",
             tac: "Terminal Area Charts",
             hel: "Helicopter Charts",
@@ -150,7 +150,7 @@ function createBaseLayers() {
             enrh: "IFR Enroute High Charts"
         };
 
-        for (var type in chartbundleTypes) {
+        for (let type in chartbundleTypes) {
             us.push(new ol.layer.Tile({
                 source: new ol.source.TileWMS({
                     url: 'http://wms.chartbundle.com/wms',
@@ -189,7 +189,7 @@ function createBaseLayers() {
         zIndex: 99,
     }));
 
-    var nexrad = new ol.layer.Tile({
+    let nexrad = new ol.layer.Tile({
         name: 'nexrad',
         title: 'NEXRAD',
         type: 'overlay',
@@ -198,9 +198,9 @@ function createBaseLayers() {
         zIndex: 99,
     });
 
-    var refreshNexrad = function() {
+    let refreshNexrad = function() {
         // re-build the source to force a refresh of the nexrad tiles
-        var now = new Date().getTime();
+        let now = new Date().getTime();
         nexrad.setSource(new ol.source.XYZ({
             url : 'http://mesonet{1-3}.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0q-900913/{z}/{x}/{y}.png?_=' + now,
             attributions: 'NEXRAD courtesy of <a href="http://mesonet.agron.iastate.edu/">IEM</a>'
@@ -210,7 +210,7 @@ function createBaseLayers() {
     refreshNexrad();
     window.setInterval(refreshNexrad, 4 * 60000);
 
-    var dwd;
+    let dwd;
     if (enableDWD) {
         dwd = new ol.layer.Tile({
             source: new ol.source.TileWMS({
@@ -228,7 +228,7 @@ function createBaseLayers() {
         });
 
 
-        var refreshDwd = function () {
+        let refreshDwd = function () {
             dwd.getSource().updateParams({"validtime": (new Date()).getTime()});
         };
         refreshDwd();
@@ -239,7 +239,7 @@ function createBaseLayers() {
 
     us.push(nexrad);
 
-    var createGeoJsonLayer = function (title, name, url, fill, stroke, showLabel = true) {
+    let createGeoJsonLayer = function (title, name, url, fill, stroke, showLabel = true) {
         return new ol.layer.Vector({
             type: 'overlay',
             title: title,

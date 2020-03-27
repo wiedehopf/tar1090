@@ -3,7 +3,7 @@
 // Declare ICAO registration address ranges and country
 // install the flag images in flags-tiny subdirectory. 
 
-var ICAO_Ranges = [
+let ICAO_Ranges = [
 	// Mostly generated from the assignment table in the appendix to Chapter 9 of
 	// Annex 10 Vol III, Second Edition, July 2007 (with amendments through 88-A, 14/11/2013)
 	{ start: 0x700000, end: 0x700FFF, country: "Afghanistan", flag_image: "Afghanistan.png" },
@@ -212,7 +212,7 @@ var ICAO_Ranges = [
 	{ start: 0xF00000, end: 0xFFFFFF, country: "Unassigned (reserved for future use)", flag_image: "blank.png" },
 ];
 
-var unassigned_range = {
+let unassigned_range = {
 	country: "Unassigned",
 	flag_image: null
 };
@@ -222,9 +222,9 @@ var unassigned_range = {
 // Always returns a non-null object.
 //   (todo: binary search)
 function findICAORange(icao) {
-	var hexa = +("0x" + icao);
+	let hexa = +("0x" + icao);
 
-	for (var i = 0; i < ICAO_Ranges.length; ++i) {
+	for (let i = 0; i < ICAO_Ranges.length; ++i) {
 		if (hexa >= ICAO_Ranges[i].start && hexa <= ICAO_Ranges[i].end) {
 			return ICAO_Ranges[i];
 		}

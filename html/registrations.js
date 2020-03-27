@@ -11,8 +11,8 @@
 const registration_from_hexid = (function () {
     // hide the guts in a closure
 
-    var limited_alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // 24 chars; no I, O
-    var full_alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";  // 26 chars
+    let limited_alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // 24 chars; no I, O
+    let full_alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";  // 26 chars
 
     // handles 3-letter suffixes assigned with a regular pattern
     //
@@ -26,7 +26,7 @@ const registration_from_hexid = (function () {
     //   first: the suffix to use at the start of the range (default: AAA)
     //   last: the last valid suffix in the range (default: ZZZ)
 
-    var stride_mappings = [
+    let stride_mappings = [
         { start: 0x008011, s1: 26*26, s2: 26, prefix: "ZS-" },
 
         { start: 0x390000, s1: 1024, s2:  32, prefix: "F-G" },
@@ -64,32 +64,32 @@ const registration_from_hexid = (function () {
     //  first: first numeric registration
     //  count: number of numeric registrations
     //  template: registration template, trailing characters are replaced with the numeric registration
-    var numeric_mappings = [
+    let numeric_mappings = [
         { start: 0x140000, first: 0,    count: 100000, template: "RA-00000" },
         { start: 0x0B03E8, first: 1000, count: 1000,   template: "CU-T0000" }
     ];
 
     // fill in some derived data
-    for (var i = 0; i < stride_mappings.length; ++i) {
-        var mapping = stride_mappings[i];
+    for (let i = 0; i < stride_mappings.length; ++i) {
+        let mapping = stride_mappings[i];
 
         if (!mapping.alphabet) {
             mapping.alphabet = full_alphabet;
         }
 
         if (mapping.first) {
-            var c1 = mapping.alphabet.indexOf(mapping.first.charAt(0));
-            var c2 = mapping.alphabet.indexOf(mapping.first.charAt(1));
-            var c3 = mapping.alphabet.indexOf(mapping.first.charAt(2));
+            let c1 = mapping.alphabet.indexOf(mapping.first.charAt(0));
+            let c2 = mapping.alphabet.indexOf(mapping.first.charAt(1));
+            let c3 = mapping.alphabet.indexOf(mapping.first.charAt(2));
             mapping.offset = c1 * mapping.s1 + c2 * mapping.s2 + c3;
         } else {
             mapping.offset = 0;
         }
 
         if (mapping.last) {
-            var c1 = mapping.alphabet.indexOf(mapping.last.charAt(0));
-            var c2 = mapping.alphabet.indexOf(mapping.last.charAt(1));
-            var c3 = mapping.alphabet.indexOf(mapping.last.charAt(2));
+            let c1 = mapping.alphabet.indexOf(mapping.last.charAt(0));
+            let c2 = mapping.alphabet.indexOf(mapping.last.charAt(1));
+            let c3 = mapping.alphabet.indexOf(mapping.last.charAt(2));
             mapping.end = mapping.start - mapping.offset +
                 c1 * mapping.s1 +
                 c2 * mapping.s2 +
@@ -102,17 +102,17 @@ const registration_from_hexid = (function () {
         }
     }
 
-    for (var i = 0; i < numeric_mappings.length; ++i) {
+    for (let i = 0; i < numeric_mappings.length; ++i) {
         numeric_mappings[i].end = numeric_mappings[i].start + numeric_mappings[i].count - 1;
     }
 
     function lookup(hexid) {
-        var hexid = +("0x" + hexid);
         if (isNaN(hexid)) {
             return null;
         }
+        hexid = +("0x" + hexid);
 
-        var reg;
+        let reg;
         reg = n_reg(hexid);
         if (reg)
             return reg;
@@ -138,19 +138,19 @@ const registration_from_hexid = (function () {
 
     function stride_reg(hexid) {
         // try the mappings in stride_mappings
-        var i;
+        let i;
         for (i = 0; i < stride_mappings.length; ++i) {
-            var mapping = stride_mappings[i];
+            let mapping = stride_mappings[i];
             if (hexid < mapping.start || hexid > mapping.end)
                 continue;
 
-            var offset = hexid - mapping.start + mapping.offset;
+            let offset = hexid - mapping.start + mapping.offset;
 
-            var i1 = Math.floor(offset / mapping.s1);
+            let i1 = Math.floor(offset / mapping.s1);
             offset = offset % mapping.s1;
-            var i2 = Math.floor(offset / mapping.s2);
+            let i2 = Math.floor(offset / mapping.s2);
             offset = offset % mapping.s2;
-            var i3 = offset;
+            let i3 = offset;
 
             if (i1 < 0 || i1 >= mapping.alphabet.length ||
                 i2 < 0 || i2 >= mapping.alphabet.length ||
@@ -166,13 +166,13 @@ const registration_from_hexid = (function () {
 
     function numeric_reg(hexid) {
         // try the mappings in numeric_mappings
-        var i;
+        let i;
         for (i = 0; i < numeric_mappings.length; ++i) {
-            var mapping = numeric_mappings[i];
+            let mapping = numeric_mappings[i];
             if (hexid < mapping.start || hexid > mapping.end)
                 continue;
 
-            var reg = (hexid - mapping.start + mapping.first) + "";
+            let reg = (hexid - mapping.start + mapping.first) + "";
             return mapping.template.substring(0, mapping.template.length - reg.length) + reg;
         }
     }
@@ -198,13 +198,13 @@ const registration_from_hexid = (function () {
     }
 
     function n_reg(hexid) {
-        var offset = hexid - 0xA00001;
+        let offset = hexid - 0xA00001;
         if (offset < 0 || offset >= 915399) {
             return null;
         }
 
-        var digit1 = Math.floor(offset / 101711) + 1;
-        var reg = "N" + digit1;
+        let digit1 = Math.floor(offset / 101711) + 1;
+        let reg = "N" + digit1;
         offset = offset % 101711;
         if (offset <= 600) {
             // Na, NaA .. NaZ, NaAA .. NaZZ
@@ -214,7 +214,7 @@ const registration_from_hexid = (function () {
         // Na0* .. Na9*
         offset -= 601;
 
-        var digit2 = Math.floor(offset / 10111);
+        let digit2 = Math.floor(offset / 10111);
         reg += digit2;
         offset = offset % 10111;
 
@@ -226,7 +226,7 @@ const registration_from_hexid = (function () {
         // Nab0* .. Nab9*
         offset -= 601;
 
-        var digit3 = Math.floor(offset / 951);
+        let digit3 = Math.floor(offset / 951);
         reg += digit3;
         offset = offset % 951;
 
@@ -238,7 +238,7 @@ const registration_from_hexid = (function () {
         // Nabc0* .. Nabc9*
         offset -= 601;
 
-        var digit4 = Math.floor(offset / 35);
+        let digit4 = Math.floor(offset / 35);
         reg += digit4.toFixed(0);
         offset = offset % 35;
 
@@ -271,19 +271,19 @@ const registration_from_hexid = (function () {
 
     // Japan
     function ja_reg(hexid) {
-        var offset = hexid - 0x840000;
+        let offset = hexid - 0x840000;
         if (offset < 0 || offset >= 229840)
             return null;
 
-        var reg = "JA";
+        let reg = "JA";
 
-        var digit1 = Math.floor(offset / 22984);
+        let digit1 = Math.floor(offset / 22984);
         if (digit1 < 0 || digit1 > 9)
             return null;
         reg += digit1;
         offset = offset % 22984;
 
-        var digit2 = Math.floor(offset / 916);
+        let digit2 = Math.floor(offset / 916);
         if (digit2 < 0 || digit2 > 9)
             return null;
         reg += digit2;
@@ -291,7 +291,7 @@ const registration_from_hexid = (function () {
 
         if (offset < 340) {
             // 3rd is a digit, 4th is a digit or letter
-            var digit3 = Math.floor(offset / 34);
+            let digit3 = Math.floor(offset / 34);
             reg += digit3;
             offset = offset % 34;
 
@@ -307,7 +307,7 @@ const registration_from_hexid = (function () {
 
         // 3rd and 4th are letters
         offset -= 340;
-        var letter3 = Math.floor(offset / 24);
+        let letter3 = Math.floor(offset / 24);
         return reg + limited_alphabet.charAt(letter3) + limited_alphabet.charAt(offset % 24);
     }
 

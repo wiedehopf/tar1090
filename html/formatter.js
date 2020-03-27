@@ -1,15 +1,15 @@
 // -*- mode: javascript; indent-tabs-mode: t; c-basic-offset: 8 -*-
 "use strict";
 
-var NBSP='\u00a0';
-var DEGREES='\u00b0'
-var UP_TRIANGLE='\u25b2'; // U+25B2 BLACK UP-POINTING TRIANGLE
-var DOWN_TRIANGLE='\u25bc'; // U+25BC BLACK DOWN-POINTING TRIANGLE
+let NBSP='\u00a0';
+let DEGREES='\u00b0'
+let UP_TRIANGLE='\u25b2'; // U+25B2 BLACK UP-POINTING TRIANGLE
+let DOWN_TRIANGLE='\u25bc'; // U+25BC BLACK DOWN-POINTING TRIANGLE
 
-var TrackDirections = ["North","NE","East","SE","South","SW","West","NW"];
-var TrackDirectionArrows = ["\u21e7","\u2b00","\u21e8","\u2b02","\u21e9","\u2b03","\u21e6","\u2b01"];
+let TrackDirections = ["North","NE","East","SE","South","SW","West","NW"];
+let TrackDirectionArrows = ["\u21e7","\u2b00","\u21e8","\u2b02","\u21e9","\u2b03","\u21e6","\u2b01"];
 
-var UnitLabels = {
+let UnitLabels = {
 	'altitude': { metric: "m", imperial: "ft", nautical: "ft"},
 	'speed': { metric: "km/h", imperial: "mph", nautical: "kt" },
 	'distance': { metric: "km", imperial: "mi", nautical: "NM" },
@@ -20,7 +20,7 @@ var UnitLabels = {
 // formatting helpers
 
 function get_unit_label(quantity, systemOfMeasurement) {
-	var labels = UnitLabels[quantity];
+	let labels = UnitLabels[quantity];
 	if (labels !== undefined && labels[systemOfMeasurement] !== undefined) {
 		return labels[systemOfMeasurement];
 	}
@@ -42,7 +42,7 @@ function format_track_long(track, rounded) {
 		return "n/a";
 	}
 
-	var trackDir = Math.floor((360 + track % 360 + 22.5) / 45) % 8;
+	let trackDir = Math.floor((360 + track % 360 + 22.5) / 45) % 8;
 	return  TrackDirections[trackDir] + ":" + NBSP + track.toFixed(rounded ? 0 : 1) + DEGREES;
 }
 function format_track_arrow(track) {
@@ -50,13 +50,13 @@ function format_track_arrow(track) {
 		return "";
 	}
 
-	var trackDir = Math.floor((360 + track % 360 + 22.5) / 45) % 8;
+	let trackDir = Math.floor((360 + track % 360 + 22.5) / 45) % 8;
 	return  TrackDirectionArrows[trackDir];
 }
 
 // alt in feet
 function format_altitude_brief(alt, vr, displayUnits) {
-	var alt_text;
+	let alt_text;
 
 	if (alt == null){
 		return "";
@@ -67,7 +67,7 @@ function format_altitude_brief(alt, vr, displayUnits) {
 	alt_text = Math.round(convert_altitude(alt, displayUnits)).toLocaleString() + NBSP;
 
 	// Vertical Rate Triangle
-	var verticalRateTriangle = "";
+	let verticalRateTriangle = "";
 	if (vr > 192){
 		verticalRateTriangle = UP_TRIANGLE;
 	} else if (vr < -192){
@@ -81,7 +81,7 @@ function format_altitude_brief(alt, vr, displayUnits) {
 
 // alt in feet
 function format_altitude_long(alt, vr, displayUnits) {
-	var alt_text = "";
+	let alt_text = "";
 
 	if (alt == null) {
 		return "n/a";
@@ -135,7 +135,7 @@ function format_speed_long(speed, displayUnits) {
 		return "n/a";
 	}
 
-	var speed_text = Math.round(convert_speed(speed, displayUnits)) + NBSP + get_unit_label("speed", displayUnits);
+	let speed_text = Math.round(convert_speed(speed, displayUnits)) + NBSP + get_unit_label("speed", displayUnits);
 
 	return speed_text;
 }
@@ -171,7 +171,7 @@ function format_distance_long(dist, displayUnits, fixed) {
 		fixed = 1;
 	}
 
-	var dist_text = convert_distance(dist, displayUnits).toFixed(fixed) + NBSP + get_unit_label("distance", displayUnits);
+	let dist_text = convert_distance(dist, displayUnits).toFixed(fixed) + NBSP + get_unit_label("distance", displayUnits);
 
 	return dist_text;
 }
@@ -181,7 +181,7 @@ function format_distance_short (dist, displayUnits) {
 		return "n/a";
 	}
 
-	var dist_text = Math.round(convert_distance_short(dist, displayUnits)) + NBSP + get_unit_label("distanceShort", displayUnits);
+	let dist_text = Math.round(convert_distance_short(dist, displayUnits)) + NBSP + get_unit_label("distanceShort", displayUnits);
 
 	return dist_text;
 }
@@ -221,7 +221,7 @@ function format_vert_rate_long(rate, displayUnits) {
 		return "n/a";
 	}
 
-	var rate_text = convert_vert_rate(rate, displayUnits).toFixed(displayUnits === "metric" ? 1 : 0) + NBSP + get_unit_label("verticalRate", displayUnits);
+	let rate_text = convert_vert_rate(rate, displayUnits).toFixed(displayUnits === "metric" ? 1 : 0) + NBSP + get_unit_label("verticalRate", displayUnits);
 
 	return rate_text;
 }

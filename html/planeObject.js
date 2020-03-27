@@ -264,10 +264,10 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
         this.sitedist = ol.sphere.getDistance(SitePosition, this.position);
     }
 
-    var projHere = ol.proj.fromLonLat(this.position);
-    var on_ground = (this.altitude === "ground");
+    let projHere = ol.proj.fromLonLat(this.position);
+    let on_ground = (this.altitude === "ground");
 
-    var is_leg = false;
+    let is_leg = false;
     if (this.leg_ts == now)
         is_leg = 'end';
     if (this.leg_ts == last)
@@ -278,7 +278,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
         //console.log(this.icao + " new track");
         if (this.leg_ts == now)
             is_leg = 'start';
-        var newseg = { fixed: new ol.geom.LineString([projHere]),
+        let newseg = { fixed: new ol.geom.LineString([projHere]),
             feature: null,
             estimated: false,
             ground: on_ground,
@@ -295,12 +295,12 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
         return this.updateTail();
     }
 
-    var projPrev = ol.proj.fromLonLat(this.prev_position);
-    var lastseg = this.track_linesegs[this.track_linesegs.length - 1];
+    let projPrev = ol.proj.fromLonLat(this.prev_position);
+    let lastseg = this.track_linesegs[this.track_linesegs.length - 1];
 
-    var distance = 1000;
-    var derivedMach = 0.01;
-    var filterSpeed = 10000;
+    let distance = 1000;
+    let derivedMach = 0.01;
+    let filterSpeed = 10000;
 
     const pFilter = (positionFilter == true || (positionFilter == 'onlyMLAT' && this.dataSource == "mlat"));
 
@@ -340,20 +340,20 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
         || (this.position[0] > 90 && this.prev_position[0] < -90)
     ) {
         lastseg.fixed.appendCoordinate(projPrev);
-        var sign1 = Math.sign(this.prev_position[0]);
-        var sign2 = Math.sign(this.position[0]);
-        var londiff1 = 180 - Math.abs(this.prev_position[0]);
-        var londiff2 = 180 - Math.abs(this.position[0]);
-        var ratio1 = londiff1 / (londiff1 + londiff2);
-        var ratio2 = londiff2 / (londiff1 + londiff2);
-        var tryLat = ratio1 * this.prev_position[1] + ratio2 *this.position[1];
-        var minDistance = 50 * 1000* 1000;
-        var midLat = 0;
-        for (var i = 1; i < 100; i += 1) {
-            var distance1 = ol.sphere.getDistance(this.prev_position, [sign1 * 180, tryLat - i]);
-            var distance2 = ol.sphere.getDistance(this.position, [sign2 * 180, tryLat - i]);
+        let sign1 = Math.sign(this.prev_position[0]);
+        let sign2 = Math.sign(this.position[0]);
+        let londiff1 = 180 - Math.abs(this.prev_position[0]);
+        let londiff2 = 180 - Math.abs(this.position[0]);
+        let ratio1 = londiff1 / (londiff1 + londiff2);
+        let ratio2 = londiff2 / (londiff1 + londiff2);
+        let tryLat = ratio1 * this.prev_position[1] + ratio2 *this.position[1];
+        let minDistance = 50 * 1000* 1000;
+        let midLat = 0;
+        for (let i = 1; i < 100; i += 1) {
+            let distance1 = ol.sphere.getDistance(this.prev_position, [sign1 * 180, tryLat - i]);
+            let distance2 = ol.sphere.getDistance(this.position, [sign2 * 180, tryLat - i]);
 
-            var distance = distance1 + distance2;
+            let distance = distance1 + distance2;
             if (distance < minDistance) {
                 minDistance = distance;
                 midLat = tryLat - i;
@@ -361,11 +361,11 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
                 break;
             }
         }
-        for (var i = 1; i < 100; i+= 1) {
-            var distance1 = ol.sphere.getDistance(this.prev_position, [sign1 * 180, tryLat + i]);
-            var distance2 = ol.sphere.getDistance(this.position, [sign2 * 180, tryLat + i]);
+        for (let i = 1; i < 100; i+= 1) {
+            let distance1 = ol.sphere.getDistance(this.prev_position, [sign1 * 180, tryLat + i]);
+            let distance2 = ol.sphere.getDistance(this.position, [sign2 * 180, tryLat + i]);
 
-            var distance = distance1 + distance2;
+            let distance = distance1 + distance2;
 
             if (distance < minDistance) {
                 minDistance = distance;
@@ -374,8 +374,8 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
                 break;
             }
         }
-        var midPoint1 = ol.proj.fromLonLat([sign1 * 180, midLat]);
-        var midPoint2 = ol.proj.fromLonLat([sign2 * 180, midLat]);
+        let midPoint1 = ol.proj.fromLonLat([sign1 * 180, midLat]);
+        let midPoint2 = ol.proj.fromLonLat([sign2 * 180, midLat]);
         this.track_linesegs.push({ fixed: new ol.geom.LineString([projPrev, midPoint1]),
             feature: null,
             altitude: 0,
@@ -388,7 +388,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
             estimated: true,
             ts: NaN,
         });
-        var newseg = { fixed: new ol.geom.LineString([projHere]),
+        let newseg = { fixed: new ol.geom.LineString([projHere]),
             feature: null,
             estimated: true,
             ground: on_ground,
@@ -409,10 +409,10 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     // Determine if track data are intermittent/stale
     // Time difference between two position updates should not be much
     // greater than the difference between data inputs
-    var time_difference = (this.position_time - this.prev_time) - (now - last);
+    let time_difference = (this.position_time - this.prev_time) - (now - last);
 
-    //var stale_timeout = lastseg.estimated ? 5 : 10;
-    var stale_timeout = 15;
+    //let stale_timeout = lastseg.estimated ? 5 : 10;
+    let stale_timeout = 15;
 
     // MLAT data are given some more leeway
     if (this.dataSource == "mlat")
@@ -428,19 +428,19 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     const estimated = (time_difference > stale_timeout) || ((now - this.position_time) > stale_timeout) || stale;
 
     /*
-    var track_change = this.track != null ? Math.abs(this.tail_track - this.track) : NaN;
+    let track_change = this.track != null ? Math.abs(this.tail_track - this.track) : NaN;
     track_change = track_change < 180 ? track_change : Math.abs(track_change - 360);
-    var true_change =  this.trueheading != null ? Math.abs(this.tail_true - this.true_heading) : NaN;
+    let true_change =  this.trueheading != null ? Math.abs(this.tail_true - this.true_heading) : NaN;
     true_change = true_change < 180 ? true_change : Math.abs(true_change - 360);
     if (!isNaN(true_change)) {
         track_change = isNaN(track_change) ? true_change : Math.max(track_change, true_change);
     }
     */
-    var track_change = Math.abs(this.tail_rot - this.rotation);
+    let track_change = Math.abs(this.tail_rot - this.rotation);
 
-    var alt_change = Math.abs(this.alt_rounded - lastseg.altitude);
-    var since_update = this.prev_time - this.tail_update;
-    var distance_traveled = ol.sphere.getDistance(this.tail_position, this.prev_position);
+    let alt_change = Math.abs(this.alt_rounded - lastseg.altitude);
+    let since_update = this.prev_time - this.tail_update;
+    let distance_traveled = ol.sphere.getDistance(this.tail_position, this.prev_position);
 
     if (
         this.prev_alt_rounded !== lastseg.altitude
@@ -493,7 +493,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
 
     // Add current position to the existing track.
     // We only retain some points depending on time elapsed and track change
-    var turn_density = 6.5;
+    let turn_density = 6.5;
     if (
         since_update > 86 ||
         (!on_ground && since_update > (100/turn_density)/track_change) ||
@@ -533,7 +533,7 @@ PlaneObject.prototype.getDataSourceNumber = function() {
     if (this.dataSource == "uat")
         return 2; // UAT
 
-    // Not MLAT, but position reported - ADSB or variants
+    // Not MLAT, but position reported - ADSB or letiants
     if (this.dataSource == "tisb")
         return 4; // TIS-B
     if (this.dataSource == "adsb")
@@ -584,9 +584,9 @@ PlaneObject.prototype.getMarkerColor = function() {
         return monochromeMarkers;
     }
 
-    var h, s, l;
+    let h, s, l;
 
-    var colorArr = altitudeColor(this.alt_rounded);
+    let colorArr = altitudeColor(this.alt_rounded);
 
     h = colorArr[0];
     s = colorArr[1];
@@ -632,7 +632,7 @@ PlaneObject.prototype.getMarkerColor = function() {
 }
 
 function altitudeColor(altitude) {
-    var h, s, l;
+    let h, s, l;
 
     if (altitude == null) {
         h = ColorByAlt.unknown.h;
@@ -647,9 +647,9 @@ function altitudeColor(altitude) {
 
         // find the pair of points the current altitude lies between,
         // and interpolate the hue between those points
-        var hpoints = ColorByAlt.air.h;
+        let hpoints = ColorByAlt.air.h;
         h = hpoints[0].val;
-        for (var i = hpoints.length-1; i >= 0; --i) {
+        for (let i = hpoints.length-1; i >= 0; --i) {
             if (altitude > hpoints[i].alt) {
                 if (i == hpoints.length-1) {
                     h = hpoints[i].val;
@@ -659,10 +659,10 @@ function altitudeColor(altitude) {
                 break;
             }
         }
-        var lpoints = ColorByAlt.air.l;
+        let lpoints = ColorByAlt.air.l;
         lpoints = lpoints.length ? lpoints : [{h:0, val:lpoints}];
         l = lpoints[0].val;
-        for (var i = lpoints.length-1; i >= 0; --i) {
+        for (let i = lpoints.length-1; i >= 0; --i) {
             if (h > lpoints[i].h) {
                 if (i == lpoints.length-1) {
                     l = lpoints[i].val;
@@ -691,8 +691,8 @@ function altitudeColor(altitude) {
 
 PlaneObject.prototype.updateIcon = function() {
 
-    var col = this.getMarkerColor();
-    var baseMarkerKey = (this.category ? this.category : "A0") + "_"
+    let col = this.getMarkerColor();
+    let baseMarkerKey = (this.category ? this.category : "A0") + "_"
         + this.typeDescription + "_" + this.wtc  + "_" + this.icaoType;
 
     if (!this.baseMarker || this.baseMarkerKey != baseMarkerKey) {
@@ -704,14 +704,14 @@ PlaneObject.prototype.updateIcon = function() {
         if (!this.baseMarker)
             console.log(baseMarkerKey);
     }
-    var outline = (this.shape != 'md11') ?
+    let outline = (this.shape != 'md11') ?
         ' stroke="'+OutlineADSBColor+'" stroke-width="0.4px"' :
         ' stroke="'+OutlineADSBColor+'" stroke-width="2px"';
-    var add_stroke = (this.selected && !SelectedAllPlanes && !onlySelected) ? outline : '';
+    let add_stroke = (this.selected && !SelectedAllPlanes && !onlySelected) ? outline : '';
 
     this.scale = scaleFactor * this.baseScale;
-    var svgKey  = col + '!' + this.shape + '!' + add_stroke;
-    var labelText = null;
+    let svgKey  = col + '!' + this.shape + '!' + add_stroke;
+    let labelText = null;
     if ( enableLabels && !showTrace && (!multiSelect || (multiSelect && this.selected)) &&
         (
             (ZoomLvl >= labelZoom && this.altitude != "ground")
@@ -734,7 +734,7 @@ PlaneObject.prototype.updateIcon = function() {
             labelText = " " + this.name + " ";
         }
     }
-    var styleKey = svgKey + '!' + labelText + '!' + this.scale;
+    let styleKey = svgKey + '!' + labelText + '!' + this.scale;
 
     if (this.markerStyle == null || this.markerIcon == null || (this.markerSvgKey != svgKey)) {
         //console.log(this.icao + " new icon and style " + this.markerSvgKey + " -> " + svgKey);
@@ -743,7 +743,7 @@ PlaneObject.prototype.updateIcon = function() {
         this.rotationCache = this.rotation;
 
         if (iconCache[svgKey] == undefined) {
-            var svgURI = svgPathToURI(this.baseMarker.svg, OutlineADSBColor, col, add_stroke);
+            let svgURI = svgPathToURI(this.baseMarker.svg, OutlineADSBColor, col, add_stroke);
 
             addToIconCache.push([svgKey, null, svgURI]);
 
@@ -814,16 +814,16 @@ PlaneObject.prototype.updateIcon = function() {
 PlaneObject.prototype.processTrace = function(options) {
     if (!options)
         options = {};
-    var legStart = options.legStart;
-    var legEnd = options.legEnd;
-    var follow = options.follow;
+    let legStart = options.legStart;
+    let legEnd = options.legEnd;
+    let follow = options.follow;
     this.checkLayers();
-    var trace = null;
-    var timeZero, _now, _last = 0;
+    let trace = null;
+    let timeZero, _now, _last = 0;
     this.history_size = 0;
-    var points_in_trace = 0;
+    let points_in_trace = 0;
 
-    var tempPlane = {};
+    let tempPlane = {};
     const oldSegs = this.track_linesegs;
     this.track_linesegs = [];
     this.remakeTrail();
@@ -832,11 +832,11 @@ PlaneObject.prototype.processTrace = function(options) {
 
     this.position = null;
 
-    var onlyRecent = 0;
+    let onlyRecent = 0;
 
     if (lastLeg && !showTrace && this.recentTrace && this.recentTrace.trace) {
         trace = this.recentTrace.trace;
-        for (var i = trace.length - 1; i >= 0; i--) {
+        for (let i = trace.length - 1; i >= 0; i--) {
             if (trace[i][6] & 2) {
                 onlyRecent = 1;
                 break;
@@ -844,7 +844,7 @@ PlaneObject.prototype.processTrace = function(options) {
         }
     }
 
-    for (var j = 0; j < 2; j++) {
+    for (let j = 0; j < 2; j++) {
         if (j == 0) {
             if (!this.fullTrace || !this.fullTrace.trace)
                 continue;
@@ -864,11 +864,11 @@ PlaneObject.prototype.processTrace = function(options) {
             }
             trace = this.recentTrace.trace;
         }
-        var start = 0;
-        var end = trace.length;
+        let start = 0;
+        let end = trace.length;
 
         if (lastLeg && !showTrace) {
-            for (var i = trace.length - 1; i >= 0; i--) {
+            for (let i = trace.length - 1; i >= 0; i--) {
                 if (trace[i][6] & 2) {
                     start = i;
                     break;
@@ -881,7 +881,7 @@ PlaneObject.prototype.processTrace = function(options) {
         if (legEnd != null)
             end = legEnd;
 
-        for (var i = start; i < end; i++) {
+        for (let i = start; i < end; i++) {
             const state = trace[i];
             const timestamp = timeZero + state[0];
             const lat = state[1];
@@ -925,7 +925,7 @@ PlaneObject.prototype.processTrace = function(options) {
         }
     }
 
-    for (var i = 0; i < this.trace.length; i++) {
+    for (let i = 0; i < this.trace.length; i++) {
         if (showTrace)
             break;
         const state = this.trace[i];
@@ -954,7 +954,7 @@ PlaneObject.prototype.processTrace = function(options) {
     }
 
     if (tempPlane.last_message_time > this.last_message_time && !showTrace) {
-        var newSegs = this.track_linesegs;
+        let newSegs = this.track_linesegs;
         Object.assign(this, tempPlane);
         this.track_linesegs = newSegs;
     }
@@ -980,8 +980,8 @@ PlaneObject.prototype.processTrace = function(options) {
     }
     this.updateFeatures(now, _last);
 
-    var mapSize = OLMap.getSize();
-    var size = [Math.max(5, mapSize[0] - 280), mapSize[1]];
+    let mapSize = OLMap.getSize();
+    let size = [Math.max(5, mapSize[0] - 280), mapSize[1]];
     if ((showTrace || showTraceExit) && !inView(this, OLMap.getView().calculateExtent(size)))
         OLMap.getView().setCenter(ol.proj.fromLonLat(this.position));
 
@@ -1004,9 +1004,9 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     // get location data first, return early if only those are needed.
 
     this.updated = true;
-    var newPos = false;
+    let newPos = false;
 
-    var isArray = Array.isArray(data);
+    let isArray = Array.isArray(data);
     // [.hex, .alt_baro, .gs, .track, .lat, .lon, .seen_pos, "mlat"/"tisb"/.type , .flight, .messages]
     //    0      1        2     3       4     5     6                 7               8        9
     // this format is only valid for chunk loading the history
@@ -1015,12 +1015,12 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     const track = isArray? data[3] : data.track;
     const lat = isArray? data[4] : data.lat;
     const lon = isArray? data[5] : data.lon;
-    var seen = isArray? data[6] : data.seen;
+    let seen = isArray? data[6] : data.seen;
     const seen_pos = isArray? data[6] : data.seen_pos;
     seen = (seen == null) ? 5 : seen;
     const type = isArray? data[7] : data.type;
-    var mlat = isArray? (data[7] == "mlat") : (data.mlat != null && data.mlat.indexOf("lat") >= 0);
-    var tisb = isArray? (data[7] == "tisb") : (data.tisb != null && data.tisb.indexOf("lat") >= 0);
+    let mlat = isArray? (data[7] == "mlat") : (data.mlat != null && data.mlat.indexOf("lat") >= 0);
+    let tisb = isArray? (data[7] == "tisb") : (data.tisb != null && data.tisb.indexOf("lat") >= 0);
     tisb = tisb || (type && type.substring(0,4) == "tisb");
     const flight = isArray? data[8] : data.flight;
 
@@ -1043,7 +1043,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     }
 
     // remember last known altitude even if stale
-    var newAlt = null;
+    let newAlt = null;
     if (alt_baro != null) {
         newAlt = alt_baro;
         this.alt_baro = alt_baro;
@@ -1272,7 +1272,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     }
 
     if (globeIndex && newPos) {
-        var state = {};
+        let state = {};
         state.now = this.position_time;
         state.position = this.position;
         state.altitude = this.altitude;
@@ -1305,7 +1305,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
     if (globeIndex && this.isFiltered())
         return;
 
-    var moved = false;
+    let moved = false;
 
     if (this.updated) {
         if (this.flight && this.flight.trim()) {
@@ -1340,8 +1340,8 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
         if (SelectedAllPlanes)
             this.selected = true;
 
-        var lines = false;
-        var marker = false;
+        let lines = false;
+        let marker = false;
 
 
         marker = true;
@@ -1404,12 +1404,12 @@ PlaneObject.prototype.updateMarker = function(moved) {
 
 // return the styling of the lines based on altitude
 function altitudeLines (segment) {
-    var colorArr = altitudeColor(segment.altitude);
+    let colorArr = altitudeColor(segment.altitude);
     if (segment.estimated)
         colorArr = [colorArr[0], colorArr[1], colorArr[2] * 0.7];
-    //var color = 'hsl(' + colorArr[0].toFixed(0) + ', ' + colorArr[1].toFixed(0) + '%, ' + colorArr[2].toFixed(0) + '%)';
+    //let color = 'hsl(' + colorArr[0].toFixed(0) + ', ' + colorArr[1].toFixed(0) + '%, ' + colorArr[2].toFixed(0) + '%)';
 
-    var color = hslToRgb(colorArr[0], colorArr[1], colorArr[2]);
+    let color = hslToRgb(colorArr[0], colorArr[1], colorArr[2]);
 
     if (monochromeTracks)
         color = monochromeTracks;
@@ -1419,7 +1419,7 @@ function altitudeLines (segment) {
     if (lineStyleCache[lineKey])
         return lineStyleCache[lineKey];
 
-    var estimatedMult = segment.estimated ? 0.3 : 1
+    let estimatedMult = segment.estimated ? 0.3 : 1
 
     if (!debugTracks) {
         lineStyleCache[lineKey]	= new ol.style.Style({
@@ -1464,8 +1464,8 @@ PlaneObject.prototype.updateLines = function() {
 
     this.checkLayers();
 
-    var trail_add = [];
-    var label_add = [];
+    let trail_add = [];
+    let label_add = [];
 
     if (!this.layer.getVisible())
         this.layer.setVisible(true);
@@ -1481,9 +1481,9 @@ PlaneObject.prototype.updateLines = function() {
     if (this.elastic_feature)
         this.trail_features.removeFeature(this.elastic_feature);
 
-    var lastseg = this.track_linesegs[this.track_linesegs.length - 1];
-    var lastfixed = lastseg.fixed.getCoordinateAt(1.0);
-    var geom = new ol.geom.LineString([lastfixed, ol.proj.fromLonLat(this.position)]);
+    let lastseg = this.track_linesegs[this.track_linesegs.length - 1];
+    let lastfixed = lastseg.fixed.getCoordinateAt(1.0);
+    let geom = new ol.geom.LineString([lastfixed, ol.proj.fromLonLat(this.position)]);
 
 
     this.elastic_feature = new ol.Feature(geom);
@@ -1497,8 +1497,8 @@ PlaneObject.prototype.updateLines = function() {
 
     // create any missing fixed line features
 
-    for (var i = this.track_linesegs.length-1; i >= 0; i--) {
-        var seg = this.track_linesegs[i];
+    for (let i = this.track_linesegs.length-1; i >= 0; i--) {
+        let seg = this.track_linesegs[i];
         if (seg.feature && (!trackLabels || seg.label))
             break;
 
@@ -1516,7 +1516,7 @@ PlaneObject.prototype.updateLines = function() {
         } else if ((trackLabels || ((i == 0 || i == this.track_linesegs.length-1 ||seg.leg) && showTrace && enableLabels)) && !seg.label) {
             const alt_real = (seg.alt_real != null) ? seg.alt_real : 'n/a';
             seg.label = new ol.Feature(new ol.geom.Point(seg.fixed.getFirstCoordinate()));
-            var timestamp;
+            let timestamp;
                 const date = new Date(seg.ts * 1000);
             if (showTrace) {
                 timestamp =
@@ -1532,7 +1532,7 @@ PlaneObject.prototype.updateLines = function() {
                     + ":" + date.getSeconds().toString().padStart(2,'0');
                 timestamp = "".padStart(2, NBSP) + timestamp;
             }
-            var text =
+            let text =
                 Number(seg.speed).toFixed(0).toString().padStart(3, NBSP) + "  "
                 + (alt_real == "ground" ? ("Ground") : (alt_real.toString().padStart(6, NBSP)))
                 + "\n"
@@ -1542,8 +1542,8 @@ PlaneObject.prototype.updateLines = function() {
             if (showTrace && !trackLabels)
                 text = timestamp;
 
-            var fill = labelFill;
-            var zIndex = -i;
+            let fill = labelFill;
+            let zIndex = -i;
             if (seg.leg == 'start') {
                 fill = new ol.style.Fill({color: '#88CC88' });
                 zIndex = 123456;
@@ -1590,7 +1590,7 @@ PlaneObject.prototype.remakeTrail = function() {
     if (this.trail_labels)
         this.trail_labels.clear();
 
-    for (var i in this.track_linesegs) {
+    for (let i in this.track_linesegs) {
         this.track_linesegs[i].feature = undefined;
         this.track_linesegs[i].label = undefined;
     }
@@ -1680,7 +1680,7 @@ PlaneObject.prototype.destroy = function() {
         this.layer_labels = null;
     }
     if (this.tr) {
-        var tbody = document.getElementById('tableinfo').tBodies[0];
+        let tbody = document.getElementById('tableinfo').tBodies[0];
         if (!this.inTable) {
             tbody.appendChild(this.tr);
         }
@@ -1696,7 +1696,7 @@ PlaneObject.prototype.destroy = function() {
     }
     if (this.icao == SelectedPlane)
         SelectedPlane = null;
-    for (var key in Object.keys(this)) {
+    for (let key in Object.keys(this)) {
         delete this[key];
     }
 };
@@ -1719,11 +1719,11 @@ PlaneObject.prototype.drawRedDot = function(bad_position) {
         OLMap.getView().setCenter(ol.proj.fromLonLat(bad_position));
         selectPlaneByHex(this.icao, false);
     }
-    var badFeat = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(bad_position)));
+    let badFeat = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(bad_position)));
     badFeat.setStyle(this.dataSource == "mlat"  ? badDotMlat : badDot);
     this.trail_features.addFeature(badFeat);
-    var geom = new ol.geom.LineString([ol.proj.fromLonLat(this.prev_position), ol.proj.fromLonLat(bad_position)]);
-    var lineFeat = new ol.Feature(geom);
+    let geom = new ol.geom.LineString([ol.proj.fromLonLat(this.prev_position), ol.proj.fromLonLat(bad_position)]);
+    let lineFeat = new ol.Feature(geom);
     lineFeat.setStyle(this.dataSource == "mlat" ? badLineMlat : badLine);
     this.trail_features.addFeature(lineFeat);
 }
@@ -1740,7 +1740,7 @@ PlaneObject.prototype.drawRedDot = function(bad_position) {
  * @return  {Array}           The RGB representation
  */
 function hslToRgb(h, s, l){
-    var r, g, b;
+    let r, g, b;
 
     h /= 360;
     s *= 0.01;
@@ -1749,7 +1749,7 @@ function hslToRgb(h, s, l){
     if(s == 0){
         r = g = b = l; // achromatic
     }else{
-        var hue2rgb = function hue2rgb(p, q, t){
+        let hue2rgb = function hue2rgb(p, q, t){
             if(t < 0) t += 1;
             if(t > 1) t -= 1;
             if(t < 1/6) return p + (q - p) * 6 * t;
@@ -1758,8 +1758,8 @@ function hslToRgb(h, s, l){
             return p;
         }
 
-        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-        var p = 2 * l - q;
+        let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        let p = 2 * l - q;
         r = hue2rgb(p, q, h + 1/3);
         g = hue2rgb(p, q, h);
         b = hue2rgb(p, q, h - 1/3);
@@ -1769,7 +1769,7 @@ function hslToRgb(h, s, l){
 }
 
 PlaneObject.prototype.altBad = function(newAlt, oldAlt, oldTime, data) {
-    var max_fpm = 12000;
+    let max_fpm = 12000;
     if (data.geom_rate != null)
         max_fpm = 1.3*Math.abs(data.goem_rate) + 5000;
     else if (data.baro_rate != null)
@@ -1780,7 +1780,7 @@ PlaneObject.prototype.altBad = function(newAlt, oldAlt, oldTime, data) {
     return fpm > max_fpm;
 }
 PlaneObject.prototype.getAircraftData = function() {
-    var req = getAircraftData(this.icao);
+    let req = getAircraftData(this.icao);
 
     // military icao ranges
     if (this.milRange()) {
@@ -1844,7 +1844,7 @@ PlaneObject.prototype.reapTrail = function() {
     const oldSegs = this.track_linesegs;
     this.track_linesegs = [];
     this.history_size = 0;
-    for (var i in oldSegs) {
+    for (let i in oldSegs) {
         const seg = oldSegs[i];
         if (seg.ts + tempTrailsTimeout > now) {
             this.history_size += seg.fixed.getCoordinates().length;

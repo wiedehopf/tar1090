@@ -1,24 +1,24 @@
 // This was functionality of script.js, moved it to here to start the downloading of track history earlier
 "use strict";
-var Dump1090Version = "unknown version";
-var RefreshInterval = 1000;
-var enable_uat = false;
-var enable_pf_data = false;
-var HistoryChunks = false;
-var nHistoryItems = 0;
-var HistoryItemsReturned = 0;
-var chunkNames;
-var PositionHistoryBuffer = [];
+let Dump1090Version = "unknown version";
+let RefreshInterval = 1000;
+let enable_uat = false;
+let enable_pf_data = false;
+let HistoryChunks = false;
+let nHistoryItems = 0;
+let HistoryItemsReturned = 0;
+let chunkNames;
+let PositionHistoryBuffer = [];
 var	receiverJson;
-var deferHistory = [];
-var configureReceiver = $.Deferred();
-var historyTimeout = 60;
-var globeIndex = 0;
-var regCache = {};
+let deferHistory = [];
+let configureReceiver = $.Deferred();
+let historyTimeout = 60;
+let globeIndex = 0;
+let regCache = {};
 
-var databaseFolder = "db2";
+let databaseFolder = "db2";
 
-var uuid = null;
+let uuid = null;
 
 try {
     const search = new URLSearchParams(window.location.search);
@@ -39,11 +39,11 @@ try {
 }
 
 // get configuration json files, will be used in initialize function
-var get_receiver_defer = $.ajax({ url: 'data/receiver.json',
+let get_receiver_defer = $.ajax({ url: 'data/receiver.json',
     cache: false,
     dataType: 'json'
 });
-var test_chunk_defer = $.ajax({
+let test_chunk_defer = $.ajax({
     url:'chunks/chunks.json',
     cache: false,
     dataType: 'json'
@@ -96,7 +96,7 @@ function get_history() {
 
     if (!receiverJson.globeIndexGrid) {
         nHistoryItems++;
-        var request = $.ajax({ url: 'data/aircraft.json',
+        let request = $.ajax({ url: 'data/aircraft.json',
             timeout: historyTimeout*800,
             cache: false,
             dataType: 'json' });
@@ -115,7 +115,7 @@ function get_history() {
         if (nHistoryItems > 0) {
             console.log("Starting to load history (" + nHistoryItems + " chunks)");
             console.time("Downloaded History");
-            for (var i = chunkNames.length-1; i >= 0; i--) {
+            for (let i = chunkNames.length-1; i >= 0; i--) {
                 get_history_item(i);
             }
         }
@@ -123,7 +123,7 @@ function get_history() {
         console.log("Starting to load history (" + nHistoryItems + " items)");
         console.time("Downloaded History");
         // Queue up the history file downloads
-        for (var i = nHistoryItems-1; i >= 0; i--) {
+        for (let i = nHistoryItems-1; i >= 0; i--) {
             get_history_item(i);
         }
     }
@@ -131,7 +131,7 @@ function get_history() {
 
 function get_history_item(i) {
 
-    var request;
+    let request;
 
     if (HistoryChunks) {
         request = $.ajax({ url: 'chunks/' + chunkNames[i],

@@ -1,149 +1,147 @@
-// Some global variables are defined in early.js
+// Some global letiables are defined in early.js
 // early.js takes care of getting some history files while the html page and
 // some javascript libraries are still loading, hopefully speeding up loading
 
 "use strict";
 
-// Define our global variables
-var OLMap         = null;
-var StaticFeatures = new ol.source.Vector();
-var PlaneIconFeatures = new ol.source.Vector();
-var trailGroup = new ol.Collection();
-var iconLayer;
-var trailLayers;
-var iconCache = {};
-var addToIconCache = [];
-var lineStyleCache = {};
-var Planes        = {};
-var PlanesOrdered = [];
-var PlaneFilter   = {};
-var SelectedPlane = null;
-var SelectedAllPlanes = false;
-var HighlightedPlane = null;
-var FollowSelected = false;
-var infoBoxOriginalPosition = {};
-var customAltitudeColors = true;
-var loadtime = "loadtime";
-var loadFinished = false;
-var mapResizeTimeout;
-var pointerMoveTimeout;
-var refresh;
-var scaleFactor;
-var debugTracks = false;
-var debugAll = false;
-var trackLabels = false;
-var fragment;
-var grouptype_checkbox;
-var multiSelect = false;
-var uat_data = null;
-var enableLabels = false;
-var extendedLabels = 0;
-var mapIsVisible = true;
-var columnVis = Array(30).fill(true);
-var emptyStyle = new ol.style.Style({});
-var show_squawk_warning_cache = false;
-var tableInView = false;
-var historyOutdated = false;
-var onlyMLAT = false;
-var onlyMilitary = false;
-var onlyADSB = false;
-var onlySelected = false;
-var fetchingPf = false;
-var reaping = false;
-var debug = false;
-var debugJump = false;
-var jumpTo = null;
-var noMLAT = false;
-var noVanish = false;
-var sidebarVisible = true;
-var filterTracks = false;
-var refreshId = 0;
-var globeIndexGrid = 0;
-var globeIndexNow = {};
-var globeIndexSpecialTiles;
-var globeSimLoad = 4;
-var globeTableLimit = 80;
-var lastRealExtent;
-var lastGlobeExtent;
-var lastRenderExtent;
-var globeIndexExtent;
-var PendingFetches = 0;
-var lastRequestFiles = 0;
-var debugCounter = 0;
-var selectedPhotoCache = null;
-var pathName = null;
-var icaoFilter = null;
-var showTrace = false;
-var showTraceExit = false;
-var traceDate = null;
-var traceDateString = null;
-var icaoParam = null;
-var globalScale = 1;
-var newWidth = lineWidth;
-var SitePosInitialized = false;
-var SiteOverride = false;
-var airport = null;
-var labelFill = null;
-var blackFill = null;
-var labelStroke = null;
-var legSel = -1;
+// Define our global letiables
+let OLMap         = null;
+let StaticFeatures = new ol.source.Vector();
+let PlaneIconFeatures = new ol.source.Vector();
+let trailGroup = new ol.Collection();
+let iconLayer;
+let trailLayers;
+let iconCache = {};
+let addToIconCache = [];
+let lineStyleCache = {};
+let Planes        = {};
+let PlanesOrdered = [];
+let PlaneFilter   = {};
+let SelectedPlane = null;
+let SelectedAllPlanes = false;
+let HighlightedPlane = null;
+let FollowSelected = false;
+let infoBoxOriginalPosition = {};
+let customAltitudeColors = true;
+let loadtime = "loadtime";
+let loadFinished = false;
+let mapResizeTimeout;
+let pointerMoveTimeout;
+let refresh;
+let scaleFactor;
+let debugTracks = false;
+let debugAll = false;
+let trackLabels = false;
+let fragment;
+let grouptype_checkbox;
+let multiSelect = false;
+let uat_data = null;
+let enableLabels = false;
+let extendedLabels = 0;
+let mapIsVisible = true;
+let columnVis = Array(30).fill(true);
+let emptyStyle = new ol.style.Style({});
+let show_squawk_warning_cache = false;
+let tableInView = false;
+let historyOutdated = false;
+let onlyMLAT = false;
+let onlyMilitary = false;
+let onlyADSB = false;
+let onlySelected = false;
+let fetchingPf = false;
+let reaping = false;
+let debug = false;
+let debugJump = false;
+let jumpTo = null;
+let noMLAT = false;
+let noVanish = false;
+let sidebarVisible = true;
+let filterTracks = false;
+let refreshId = 0;
+let globeIndexGrid = 0;
+let globeIndexNow = {};
+let globeIndexSpecialTiles;
+let globeSimLoad = 4;
+let globeTableLimit = 80;
+let lastRealExtent;
+let lastGlobeExtent;
+let lastRenderExtent;
+let globeIndexExtent;
+let PendingFetches = 0;
+let lastRequestFiles = 0;
+let debugCounter = 0;
+let selectedPhotoCache = null;
+let pathName = null;
+let icaoFilter = null;
+let showTrace = false;
+let showTraceExit = false;
+let traceDate = null;
+let traceDateString = null;
+let icaoParam = null;
+let globalScale = 1;
+let newWidth = lineWidth;
+let SitePosInitialized = false;
+let SiteOverride = false;
+let airport = null;
+let labelFill = null;
+let blackFill = null;
+let labelStroke = null;
+let legSel = -1;
 let geoMag = null;
 
-var shareLink = '';
+let shareLink = '';
 
-var onMobile = false;
+let onMobile = false;
 
-var SpecialSquawks = {
+let SpecialSquawks = {
     '7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
     '7600' : { cssClass: 'squawk7600', markerColor: 'rgb(0, 255, 255)', text: 'Radio Failure' },
     '7700' : { cssClass: 'squawk7700', markerColor: 'rgb(255, 255, 0)', text: 'General Emergency' }
 };
 
 // Get current map settings
-var CenterLat, CenterLon, ZoomLvl, ZoomLvlCache;
-var zoomTimeout;
-var noMovement;
-var checkMoveZoom;
-var checkMoveCenter = [0, 0];
+let CenterLat, CenterLon, ZoomLvl, ZoomLvlCache;
+let zoomTimeout;
+let noMovement;
+let checkMoveZoom;
+let checkMoveCenter = [0, 0];
 
 
-var PlaneRowTemplate = null;
-var tableinfoFragment = null;
+let PlaneRowTemplate = null;
+let tableinfoFragment = null;
 
-var TrackedAircraft = 0;
-var globeTrackedAircraft = 0;
-var TrackedAircraftPositions = 0;
-var TrackedHistorySize = 0;
+let TrackedAircraft = 0;
+let globeTrackedAircraft = 0;
+let TrackedAircraftPositions = 0;
+let TrackedHistorySize = 0;
 
-var SitePosition = null;
+let SitePosition = null;
 
 // timestamps
-var now = 0;
-var last=0;
-var uat_now=0;
-var uat_last=0;
-var StaleReceiverCount = 0;
-var FetchPending = [];
-var FetchPendingUAT = null;
+let now = 0;
+let last=0;
+let uat_now=0;
+let uat_last=0;
+let StaleReceiverCount = 0;
+let FetchPending = [];
+let FetchPendingUAT = null;
 
-var MessageCountHistory = [];
-var MessageRate = 0;
+let MessageCountHistory = [];
+let MessageRate = 0;
 
-var NBSP='\u00a0';
-
-var layers;
-var layers_group;
+let layers;
+let layers_group;
 
 // piaware vs flightfeeder
-var isFlightFeeder = false;
+let isFlightFeeder = false;
 
-var estimateStyle = new ol.style.Style({
+let estimateStyle = new ol.style.Style({
     stroke: new ol.style.Stroke({
         color: '#808080',
         width: 1.2 * lineWidth,
     })
 });
-var estimateStyleSlim = new ol.style.Style({
+let estimateStyleSlim = new ol.style.Style({
     stroke: new ol.style.Stroke({
         color: '#808080',
         width: 0.4 * lineWidth,
@@ -152,20 +150,20 @@ var estimateStyleSlim = new ol.style.Style({
 
 const nullStyle = new ol.style.Style({});
 
-var badLine =  new ol.style.Style({
+let badLine =  new ol.style.Style({
     stroke: new ol.style.Stroke({
         color: '#FF0000',
         width: 2 * lineWidth,
     })
 });
-var badLineMlat =  new ol.style.Style({
+let badLineMlat =  new ol.style.Style({
     stroke: new ol.style.Stroke({
         color: '#FFA500',
         width: 2 * lineWidth,
     })
 });
 
-var badDot = new ol.style.Style({
+let badDot = new ol.style.Style({
     image: new ol.style.Circle({
         radius: 3.5 * lineWidth,
         fill: new ol.style.Fill({
@@ -173,7 +171,7 @@ var badDot = new ol.style.Style({
         })
     }),
 });
-var badDotMlat = new ol.style.Style({
+let badDotMlat = new ol.style.Style({
     image: new ol.style.Circle({
         radius: 3.5 * lineWidth,
         fill: new ol.style.Fill({
@@ -184,9 +182,9 @@ var badDotMlat = new ol.style.Style({
 
 
 function processAircraft(ac, init, uat) {
-    var isArray = Array.isArray(ac);
-    var hex = isArray ? ac[0] : ac.hex;
-    var plane = null;
+    let isArray = Array.isArray(ac);
+    let hex = isArray ? ac[0] : ac.hex;
+    let plane = null;
 
     // Do we already have this plane object in Planes?
     // If not make it.
@@ -239,7 +237,7 @@ function processAircraft(ac, init, uat) {
 
 function processReceiverUpdate(data, init) {
     // update now and last
-    var uat = false;
+    let uat = false;
     if (data.uat_978 == "true") {
         uat = true;
         uat_last = uat_now;
@@ -252,7 +250,7 @@ function processReceiverUpdate(data, init) {
     }
 
     // Loop through all the planes in the data packet
-    var acs = data.aircraft;
+    let acs = data.aircraft;
 
     if (!uat && !init && !globeIndex) {
         // Detect stats reset
@@ -268,8 +266,8 @@ function processReceiverUpdate(data, init) {
             MessageCountHistory.shift();
 
         if (MessageCountHistory.length > 1) {
-            var message_time_delta = MessageCountHistory[MessageCountHistory.length-1].time - MessageCountHistory[0].time;
-            var message_count_delta = MessageCountHistory[MessageCountHistory.length-1].messages - MessageCountHistory[0].messages;
+            let message_time_delta = MessageCountHistory[MessageCountHistory.length-1].time - MessageCountHistory[0].time;
+            let message_count_delta = MessageCountHistory[MessageCountHistory.length-1].messages - MessageCountHistory[0].messages;
             if (message_time_delta > 0)
                 MessageRate = message_count_delta / message_time_delta;
         } else {
@@ -277,7 +275,7 @@ function processReceiverUpdate(data, init) {
         }
     }
 
-    for (var j=0; j < acs.length; j++) {
+    for (let j=0; j < acs.length; j++) {
         processAircraft(acs[j], init, uat);
     }
     // jquery stuff might still have references to the json, so null the
@@ -287,7 +285,7 @@ function processReceiverUpdate(data, init) {
 
 function fetchData() {
     ZoomLvl = OLMap.getView().getZoom();
-    var center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
+    let center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
     localStorage['CenterLon'] = CenterLon = center[0];
     localStorage['CenterLat'] = CenterLat = center[1];
     clearTimeout(refreshId);
@@ -296,7 +294,7 @@ function fetchData() {
         return;
     if (PendingFetches > 0)
         return;
-    for (var i in FetchPending) {
+    for (let i in FetchPending) {
         if (FetchPending[i] != null && FetchPending[i].state() == 'pending') {
             // don't double up on fetches, let the last one resolve
             return;
@@ -314,11 +312,11 @@ function fetchData() {
     //console.time("Starting Fetch");
 
 
-    var item;
-    var tryAgain = [];
+    let item;
+    let tryAgain = [];
     while(item = addToIconCache.pop()) {
-        var svgKey = item[0];
-        var element = item[1];
+        let svgKey = item[0];
+        let element = item[1];
         if (iconCache[svgKey] != undefined) {
             continue;
         }
@@ -352,13 +350,13 @@ function fetchData() {
     }
     buttonActive('#F', FollowSelected);
 
-    var ac_url = [];
+    let ac_url = [];
     if (adsbexchange) {
         $('#adsbexchange_header').show();
     }
     if (globeIndex) {
-        var indexes = globeIndexes();
-        var count = 0;
+        let indexes = globeIndexes();
+        let count = 0;
         indexes.sort(function(x,y) {
             if (!globeIndexNow[x] && !globeIndexNow[y])
                 return 0;
@@ -369,7 +367,7 @@ function fetchData() {
             return (globeIndexNow[x] - globeIndexNow[y]);
         });
         indexes = indexes.slice(0, globeSimLoad);
-        for (var i in indexes) {
+        for (let i in indexes) {
             ac_url.push('data/globe_' + indexes[i].toString().padStart(4, '0') + '.json');
         }
     } else {
@@ -388,9 +386,9 @@ function fetchData() {
         refreshId = setTimeout(fetchData, 25000);
     }
 
-    for (var i in ac_url) {
+    for (let i in ac_url) {
         //console.log(ac_url[i]);
-        var req = $.ajax({ url: ac_url[i],
+        let req = $.ajax({ url: ac_url[i],
             dataType: 'json' });
         FetchPending.push(req);
 
@@ -401,14 +399,14 @@ function fetchData() {
             if (globeIndex) {
                 globeTrackedAircraft = data.global_ac_count_withpos;
                 if (localStorage['globeGrid'] == 'true' && globeIndexNow[data.globeIndex] == null) {
-                    var southWest = ol.proj.fromLonLat([data.west, data.south]);
-                    var south180p = ol.proj.fromLonLat([180, data.south]);
-                    var south180m = ol.proj.fromLonLat([-180, data.south]);
-                    var southEast = ol.proj.fromLonLat([data.east, data.south]);
-                    var northEast = ol.proj.fromLonLat([data.east, data.north]);
-                    var north180p = ol.proj.fromLonLat([180, data.north]);
-                    var north180m = ol.proj.fromLonLat([-180, data.north]);
-                    var northWest = ol.proj.fromLonLat([data.west, data.north]);
+                    let southWest = ol.proj.fromLonLat([data.west, data.south]);
+                    let south180p = ol.proj.fromLonLat([180, data.south]);
+                    let south180m = ol.proj.fromLonLat([-180, data.south]);
+                    let southEast = ol.proj.fromLonLat([data.east, data.south]);
+                    let northEast = ol.proj.fromLonLat([data.east, data.north]);
+                    let north180p = ol.proj.fromLonLat([180, data.north]);
+                    let north180m = ol.proj.fromLonLat([-180, data.north]);
+                    let northWest = ol.proj.fromLonLat([data.west, data.north]);
                     const estimateStyle = new ol.style.Style({
                         stroke: new ol.style.Stroke({
                             color: '#808080',
@@ -416,15 +414,15 @@ function fetchData() {
                         })
                     });
                     if (data.west < data.east) {
-                        var tile = new ol.geom.LineString([southWest, southEast, northEast, northWest, southWest]);
-                        var tileFeature = new ol.Feature(tile);
+                        let tile = new ol.geom.LineString([southWest, southEast, northEast, northWest, southWest]);
+                        let tileFeature = new ol.Feature(tile);
                         tileFeature.setStyle(estimateStyle);
                         StaticFeatures.addFeature(tileFeature);
                     } else {
-                        var west = new ol.geom.LineString([south180p, southWest, northWest, north180p]);
-                        var east = new ol.geom.LineString([south180m, southEast, northEast, north180m]);
-                        var westF = new ol.Feature(west);
-                        var eastF = new ol.Feature(east);
+                        let west = new ol.geom.LineString([south180p, southWest, northWest, north180p]);
+                        let east = new ol.geom.LineString([south180m, southEast, northEast, north180m]);
+                        let westF = new ol.Feature(west);
+                        let eastF = new ol.Feature(east);
                         westF.setStyle(estimateStyle);
                         eastF.setStyle(estimateStyle);
                         StaticFeatures.addFeature(westF);
@@ -498,7 +496,7 @@ function initialize() {
 
     onMobile = window.mobilecheck();
 
-    var largeModeStorage = localStorage['largeMode'];
+    let largeModeStorage = localStorage['largeMode'];
     if (largeModeStorage != undefined && parseInt(largeModeStorage, 10)) {
         largeMode = parseInt(largeModeStorage, 10);
     }
@@ -506,7 +504,7 @@ function initialize() {
 
     try {
         const search = new URLSearchParams(window.location.search);
-        var tracks = search.get('monochromeTracks');
+        let tracks = search.get('monochromeTracks');
         if (tracks != undefined) {
             if (tracks.length == 6)
                 monochromeTracks = '#' + tracks;
@@ -514,7 +512,7 @@ function initialize() {
                 monochromeTracks = "#000000";
         }
 
-        var markers = search.get('monochromeMarkers');
+        let markers = search.get('monochromeMarkers');
         if (markers != undefined) {
             if (markers.length == 6)
                 monochromeMarkers = '#' + markers;
@@ -522,7 +520,7 @@ function initialize() {
                 monochromeMarkers = "#FFFFFF";
         }
 
-        var outlineColor = search.get('outlineColor');
+        let outlineColor = search.get('outlineColor');
         if (outlineColor != undefined) {
             if (markers.length == 6)
                 OutlineADSBColor = '#' + outlineColor;
@@ -537,7 +535,7 @@ function initialize() {
         }
 
         if (search.has('largeMode')) {
-            var tmp = parseInt(search.get('largeMode'));
+            let tmp = parseInt(search.get('largeMode'));
             console.log(tmp);
             if (!isNaN(tmp))
                 largeMode = tmp;
@@ -574,7 +572,7 @@ function initialize() {
 
         if (search.has('tempTrails')) {
             tempTrails = true;
-            var tmp = parseInt(search.get('tempTrails'));
+            let tmp = parseInt(search.get('tempTrails'));
             if (tmp > 0)
                 tempTrailsTimeout = tmp;
         }
@@ -600,11 +598,11 @@ function initialize() {
                     console.log(error);
                 }
 
-                var countDown = 20;
-                var i = setInterval(function () {
+                let countDown = 20;
+                let i = setInterval(function () {
 
-                    var b1 = document.getElementById('waittohide');
-                    var b2 = document.getElementById('letuserhide');
+                    let b1 = document.getElementById('waittohide');
+                    let b2 = document.getElementById('letuserhide');
 
 
                     if(countDown === 1) {
@@ -673,10 +671,10 @@ function initialize() {
         if (!onMobile && !hideButtons) {
             $.getJSON(databaseFolder + "/files.js")
                 .done(function(data) {
-                    for (var i in data) {
+                    for (let i in data) {
                         const icao = data[i].padEnd(6, 0);
                         //console.log(icao);
-                        var req = getAircraftData(icao);
+                        let req = getAircraftData(icao);
                         req.icao = icao;
                         req.fail(function(jqXHR,textStatus,errorThrown) {
                             if (textStatus == 'timeout') {
@@ -691,12 +689,12 @@ function initialize() {
         }
     });
 
-    var coll = document.getElementsByClassName("collapseButton");
+    let coll = document.getElementsByClassName("collapseButton");
 
-    for (var i = 0; i < coll.length; i++) {
+    for (let i = 0; i < coll.length; i++) {
         coll[i].addEventListener("click", function() {
             this.classList.toggle("active");
-            var content = this.nextElementSibling;
+            let content = this.nextElementSibling;
             if (content.style.display === "block") {
                 content.style.display = "none";
             } else {
@@ -774,7 +772,7 @@ function init_page() {
     });
 // look at the window resize to resize the pop-up infoblock so it doesn't float off the bottom or go off the top
     $(window).on('resize', function() {
-        var topCalc = ($(window).height() - $('#selected_infoblock').height() - 25);
+        let topCalc = ($(window).height() - $('#selected_infoblock').height() - 25);
 // check if the top will be less than zero, which will be overlapping/off the screen, and set the top correctly. 
         if (topCalc < 0) {
             topCalc = 0;
@@ -871,8 +869,8 @@ function init_page() {
     });
 
     if (onMobile) {
-        $('#large_mode_button').css('width', 'calc( 45px * var(--SCALE))');
-        $('#large_mode_button').css('height', 'calc( 45px * var(--SCALE))');
+        $('#large_mode_button').css('width', 'calc( 45px * let(--SCALE))');
+        $('#large_mode_button').css('height', 'calc( 45px * let(--SCALE))');
         if (localStorage['largeMode'] == undefined && largeMode == 1)
             largeMode = 2;
         globeTableLimit = 40;
@@ -941,7 +939,7 @@ function init_page() {
 
 function push_history() {
     $("#loader_progress").attr('max',nHistoryItems*2);
-    for (var i = 0; i < nHistoryItems; i++) {
+    for (let i = 0; i < nHistoryItems; i++) {
         push_history_item(i);
     }
     if (globeIndex) {
@@ -959,7 +957,7 @@ function push_history_item(i) {
 
             if (HistoryChunks) {
                 if (json && json.files) {
-                    for (var i in json.files) {
+                    for (let i in json.files) {
                         PositionHistoryBuffer.push(json.files[i]);
                     }
                 } else if (json && json.now) {
@@ -1000,7 +998,7 @@ function parse_history() {
 
     $("#loader").addClass("hidden");
 
-    for (i in deferHistory)
+    for (let i in deferHistory)
         deferHistory[i] = null;
 
     initialize_map();
@@ -1012,9 +1010,9 @@ function parse_history() {
         PositionHistoryBuffer.sort(function(x,y) { return (y.now - x.now); });
 
         // Process history
-        var data;
-        var h = 0;
-        var pruneInt = Math.floor(PositionHistoryBuffer.length/5);
+        let data;
+        let h = 0;
+        let pruneInt = Math.floor(PositionHistoryBuffer.length/5);
         while (data = PositionHistoryBuffer.pop()) {
 
             // process new data
@@ -1028,8 +1026,8 @@ function parse_history() {
 
             // update aircraft tracks
             if (data.uat_978 != "true") {
-                for (var i = 0; i < PlanesOrdered.length; ++i) {
-                    var plane = PlanesOrdered[i];
+                for (let i = 0; i < PlanesOrdered.length; ++i) {
+                    let plane = PlanesOrdered[i];
                     if (plane.dataSource == "uat")
                         plane.updateTrack(uat_now, uat_last);
                     else
@@ -1054,8 +1052,8 @@ function parse_history() {
 
         // Final pass to update all planes to their latest state
         console.log("Final history cleanup pass");
-        for (var i in PlanesOrdered) {
-            var plane = PlanesOrdered[i];
+        for (let i in PlanesOrdered) {
+            let plane = PlanesOrdered[i];
 
             if (plane.position && SitePosition)
                 plane.sitedist = ol.sphere.getDistance(SitePosition, plane.position);
@@ -1149,16 +1147,16 @@ function parse_history() {
 // great circle distance from 'center' to each point is
 // 'radius' meters
 function make_geodesic_circle(center, radius, points) {
-    var angularDistance = radius / 6378137.0;
-    var lon1 = center[0] * Math.PI / 180.0;
-    var lat1 = center[1] * Math.PI / 180.0;
-    var geom;
-    for (var i = 0; i <= points; ++i) {
-        var bearing = i * 2 * Math.PI / points;
+    let angularDistance = radius / 6378137.0;
+    let lon1 = center[0] * Math.PI / 180.0;
+    let lat1 = center[1] * Math.PI / 180.0;
+    let geom;
+    for (let i = 0; i <= points; ++i) {
+        let bearing = i * 2 * Math.PI / points;
 
-        var lat2 = Math.asin( Math.sin(lat1)*Math.cos(angularDistance) +
+        let lat2 = Math.asin( Math.sin(lat1)*Math.cos(angularDistance) +
             Math.cos(lat1)*Math.sin(angularDistance)*Math.cos(bearing) );
-        var lon2 = lon1 + Math.atan2(Math.sin(bearing)*Math.sin(angularDistance)*Math.cos(lat1),
+        let lon2 = lon1 + Math.atan2(Math.sin(bearing)*Math.sin(angularDistance)*Math.cos(lat1),
             Math.cos(angularDistance)-Math.sin(lat1)*Math.sin(lat2));
 
         lat2 = lat2 * 180.0 / Math.PI;
@@ -1171,7 +1169,7 @@ function make_geodesic_circle(center, radius, points) {
     return geom;
 }
 
-// Initalizes the map and starts up our timers to call various functions
+// Initalizes the map and starts up our timers to call letious functions
 function initialize_map() {
     if (receiverJson && receiverJson.lat != null) {
         SiteLat = receiverJson.lat;
@@ -1240,8 +1238,8 @@ function initialize_map() {
 
     layers.push(iconLayer);
 
-    var foundType = false;
-    var baseCount = 0;
+    let foundType = false;
+    let baseCount = 0;
 
     const dummyLayer = new ol.layer.Vector({
         name: 'dummy',
@@ -1269,7 +1267,7 @@ function initialize_map() {
                 }
             });
         } else if (lyr.get('type') === 'overlay') {
-            var visible = localStorage['layer_' + lyr.get('name')];
+            let visible = localStorage['layer_' + lyr.get('name')];
             if (visible != undefined) {
                 // javascript, why must you taunt me with gratuitous type problems
                 lyr.setVisible(visible === "true");
@@ -1343,7 +1341,7 @@ function initialize_map() {
     */
 
     OLMap.on(['click', 'dblclick'], function(evt) {
-        var hex = evt.map.forEachFeatureAtPixel(
+        let hex = evt.map.forEachFeatureAtPixel(
             evt.pixel,
             function(feature, layer) {
                 return feature.hex;
@@ -1395,7 +1393,7 @@ function initialize_map() {
         if( e.ctrlKey || e.altKey || e.metaKey) {
             return;
         }
-        var oldCenter, extent, newCenter;
+        let oldCenter, extent, newCenter;
         switch (e.key) {
             case "c":
             case "Esc":
@@ -1573,20 +1571,20 @@ function initialize_map() {
 
     // kick off an ajax request that will add the rings when it's done
     if (!globeIndex) {
-        var request = $.ajax({ url: 'upintheair.json',
+        let request = $.ajax({ url: 'upintheair.json',
             cache: true,
             dataType: 'json' });
         request.done(function(data) {
-            for (var i = 0; i < data.rings.length; ++i) {
-                var geom = null;
-                var points = data.rings[i].points;
-                var altitude = (3.28084 * data.rings[i].alt).toFixed(0);
-                var color = range_outline_color;
+            for (let i = 0; i < data.rings.length; ++i) {
+                let geom = null;
+                let points = data.rings[i].points;
+                let altitude = (3.28084 * data.rings[i].alt).toFixed(0);
+                let color = range_outline_color;
                 if (range_outline_colored_by_altitude) {
-                    var colorArr = altitudeColor(altitude);
+                    let colorArr = altitudeColor(altitude);
                     color = 'hsl(' + colorArr[0].toFixed(0) + ',' + colorArr[1].toFixed(0) + '%,' + colorArr[2].toFixed(0) + '%)';
                 }
-                var ringStyle = new ol.style.Style({
+                let ringStyle = new ol.style.Style({
                     fill: null,
                     stroke: new ol.style.Stroke({
                         color: color,
@@ -1595,13 +1593,13 @@ function initialize_map() {
                 });
                 if (points.length > 0) {
                     geom = new ol.geom.LineString([[ points[0][1], points[0][0] ]]);
-                    for (var j = 0; j < points.length; ++j) {
+                    for (let j = 0; j < points.length; ++j) {
                         geom.appendCoordinate([ points[j][1], points[j][0] ]);
                     }
                     geom.appendCoordinate([ points[0][1], points[0][0] ]);
                     geom.transform('EPSG:4326', 'EPSG:3857');
 
-                    var feature = new ol.Feature(geom);
+                    let feature = new ol.Feature(geom);
                     feature.setStyle(ringStyle);
                     StaticFeatures.addFeature(feature);
                 }
@@ -1620,7 +1618,7 @@ function createSiteCircleFeatures() {
         return;
 
     if (SiteShow) {
-        var markerStyle = new ol.style.Style({
+        let markerStyle = new ol.style.Style({
             image: new ol.style.Circle({
                 radius: 7,
                 snapToPixel: false,
@@ -1631,7 +1629,7 @@ function createSiteCircleFeatures() {
             })
         });
 
-        var feature = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(SitePosition)));
+        let feature = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(SitePosition)));
         feature.setStyle(markerStyle);
         StaticFeatures.addFeature(feature);
     }
@@ -1639,7 +1637,7 @@ function createSiteCircleFeatures() {
     if (!SiteCircles)
         return;
 
-    var circleStyle = function(distance) {
+    let circleStyle = function(distance) {
         return new ol.style.Style({
             fill: null,
             stroke: new ol.style.Stroke({
@@ -1656,24 +1654,24 @@ function createSiteCircleFeatures() {
         });
     };
 
-    var conversionFactor = 1000.0;
+    let conversionFactor = 1000.0;
     if (DisplayUnits === "nautical") {
         conversionFactor = 1852.0;
     } else if (DisplayUnits === "imperial") {
         conversionFactor = 1609.0;
     }
 
-    for (var i=0; i < SiteCirclesDistances.length; ++i) {
-        var distance = SiteCirclesDistances[i] * conversionFactor;
-        var circle = make_geodesic_circle(SitePosition, distance, 180);
+    for (let i=0; i < SiteCirclesDistances.length; ++i) {
+        let distance = SiteCirclesDistances[i] * conversionFactor;
+        let circle = make_geodesic_circle(SitePosition, distance, 180);
         circle.transform('EPSG:4326', 'EPSG:3857');
-        var feature = new ol.Feature(circle);
+        let feature = new ol.Feature(circle);
         feature.setStyle(circleStyle(distance));
         StaticFeatures.addFeature(feature);
     }
 }
 
-// This looks for planes to reap out of the master Planes variable
+// This looks for planes to reap out of the master Planes letiable
 function reaper(all) {
     //console.log("Reaping started..");
     if (noVanish)
@@ -1681,9 +1679,9 @@ function reaper(all) {
     reaping = true;
 
     // Look for planes where we have seen no messages for >300 seconds
-    var plane;
-    var length = PlanesOrdered.length;
-    for (var i = 0; i < length; i++) {
+    let plane;
+    let length = PlanesOrdered.length;
+    for (let i = 0; i < length; i++) {
         plane = PlanesOrdered.shift()
         if (plane == null)
             continue;
@@ -1712,7 +1710,7 @@ function refreshPageTitle() {
         return;
     }
 
-    var subtitle = "";
+    let subtitle = "";
 
     if (PlaneCountInTitle) {
         if (globeIndex) {
@@ -1730,9 +1728,9 @@ function refreshPageTitle() {
     document.title = PageName + ' - ' + subtitle;
 }
 
-var selCall = null;
-var selIcao = null;
-var selReg = null;
+let selCall = null;
+let selIcao = null;
+let selReg = null;
 
 // Refresh the detail window about the plane
 function refreshSelected() {
@@ -1785,7 +1783,7 @@ function refreshSelected() {
     }
 
     if (showPictures && selected.icaoType){
-        var new_html = "<img width='150px' src='aircraft_sil/" + selected.icaoType + ".png' />";
+        let new_html = "<img width='150px' src='aircraft_sil/" + selected.icaoType + ".png' />";
         if (new_html != selectedPhotoCache) {
             $('#selected_photo').html(new_html);
             selectedPhotoCache = new_html;
@@ -1795,7 +1793,7 @@ function refreshSelected() {
     }
 
     // Not using this logic for the redesigned info panel at the time, but leaving it in  if/when adding it back
-    // var emerg = document.getElementById('selected_emergency');
+    // let emerg = document.getElementById('selected_emergency');
     // if (selected.squawk in SpecialSquawks) {
     //         emerg.className = SpecialSquawks[selected.squawk].cssClass;
     //         emerg.textContent = NBSP + 'Squawking: ' + SpecialSquawks[selected.squawk].text + NBSP ;
@@ -1901,7 +1899,7 @@ function refreshSelected() {
     if (selected.icao != selIcao) {
         selIcao = selected.icao;
         if (globeIndex) {
-            var icao_link = "<a style=\"color: blue\" target=\"_blank\" href=\"" + shareLink + "\">Share</a>";
+            let icao_link = "<a style=\"color: blue\" target=\"_blank\" href=\"" + shareLink + "\">Share</a>";
             icao_link = NBSP +NBSP +NBSP +NBSP +NBSP +NBSP + icao_link;
             $('#selected_icao').html(selected.icao.toUpperCase() + icao_link);
         } else {
@@ -2024,8 +2022,8 @@ function refreshSelected() {
     if (selected.sil == null || selected.sil_type == null) {
         $('#selected_sil').text("n/a");
     } else {
-        var sampleRate = "";
-        var silDesc = "";
+        let sampleRate = "";
+        let silDesc = "";
         if (selected.sil_type == "perhour") {
             sampleRate = " per flight hour";
         } else if (selected.sil_type == "persample") {
@@ -2070,7 +2068,7 @@ function refreshSelected() {
 
 function refreshHighlighted() {
     // this is following nearly identical logic, etc, as the refreshSelected function, but doing less junk for the highlighted pane
-    var highlighted = false;
+    let highlighted = false;
 
     if (!HighlightedPlane || !(highlighted = Planes[HighlightedPlane]) ) {
         $('#highlighted_infoblock').hide();
@@ -2079,21 +2077,21 @@ function refreshHighlighted() {
 
     $('#highlighted_infoblock').show();
 
-    var infoBox = $('#highlighted_infoblock');
+    let infoBox = $('#highlighted_infoblock');
 
 
-    var marker = highlighted.marker;
-    var geom;
-    var markerCoordinates;
+    let marker = highlighted.marker;
+    let geom;
+    let markerCoordinates;
     if (!marker || !(geom = marker.getGeometry()) || !(markerCoordinates = geom.getCoordinates()) ) {
         $('#highlighted_infoblock').hide();
         return;
     }
-    var markerPosition = OLMap.getPixelFromCoordinate(markerCoordinates);
+    let markerPosition = OLMap.getPixelFromCoordinate(markerCoordinates);
     if (!markerPosition)
         return;
 
-    var mapSize = OLMap.getSize();
+    let mapSize = OLMap.getSize();
     if (markerPosition[0] + 200 < mapSize[0])
         infoBox.css("left", markerPosition[0] + 20);
     else
@@ -2130,8 +2128,8 @@ function refreshHighlighted() {
 }
 
 function refreshClock(now_date) {
-    var hhmm = now_date.getHours().toString().padStart(2,'0') + ":" + now_date.getMinutes().toString().padStart(2,'0');
-    var hms = hhmm + ":" + now_date.getSeconds().toString().padStart(2,'0');
+    let hhmm = now_date.getHours().toString().padStart(2,'0') + ":" + now_date.getMinutes().toString().padStart(2,'0');
+    let hms = hhmm + ":" + now_date.getSeconds().toString().padStart(2,'0');
     $('#clock_div').text(hms + "   " + now_date.toDateString());
 }
 
@@ -2141,7 +2139,7 @@ function removeHighlight() {
 }
 
 function refreshFeatures() {
-    for (var i in PlanesOrdered) {
+    for (let i in PlanesOrdered) {
         PlanesOrdered[i].updateTick(true);
     }
 }
@@ -2161,28 +2159,28 @@ function refreshTableInfo() {
         $('#dump1090_message_rate').text("n/a");
     }
 
-    var show_squawk_warning = false;
+    let show_squawk_warning = false;
 
     TrackedAircraft = 0;
     TrackedAircraftPositions = 0;
     TrackedHistorySize = 0;
-    var nplanes = 0;
-    var nMapPlanes = 0;
+    let nplanes = 0;
+    let nMapPlanes = 0;
 
     if (mapIsVisible || lastRealExtent == null) {
-        var mapSize = OLMap.getSize();
+        let mapSize = OLMap.getSize();
 
         lastRealExtent = OLMap.getView().calculateExtent(mapSize);
 
-        var size = [mapSize[0] * 1.2, mapSize[1] * 1.2];
+        let size = [mapSize[0] * 1.2, mapSize[1] * 1.2];
         lastRenderExtent = OLMap.getView().calculateExtent(size);
     }
 
     //console.time("updateCells");
-    for (var i = 0; i < PlanesOrdered.length; ++i) {
-        var plane = PlanesOrdered[i];
+    for (let i = 0; i < PlanesOrdered.length; ++i) {
+        let plane = PlanesOrdered[i];
         TrackedHistorySize += plane.history_size;
-        var classes;
+        let classes;
 
 
         plane.inView = inView(plane, lastRealExtent);
@@ -2301,8 +2299,8 @@ function refreshTableInfo() {
 
     //console.time("DOM");
     //tableinfoFragment = document.createDocumentFragment();
-    var tbody = document.getElementById('tableinfo').tBodies[0];
-    for (var i = 0; i < PlanesOrdered.length; ++i) {
+    let tbody = document.getElementById('tableinfo').tBodies[0];
+    for (let i = 0; i < PlanesOrdered.length; ++i) {
         const plane = PlanesOrdered[i];
         if (plane.inTable) {
             tbody.removeChild(plane.tr);
@@ -2365,14 +2363,14 @@ function sortByLongitude()  { sortBy('lon',   compareNumeric, function(x) { retu
 function sortByDataSource() { sortBy('data_source',     compareNumeric, function(x) { return x.getDataSourceNumber() } ); }
 function sortByBaseMarkerKey()  { sortBy('base_marker_key', compareAlpha,   function(x) { return x.baseMarkerKey; }); }
 
-var sortId = '';
-var sortCompare = null;
-var sortExtract = null;
-var sortAscending = true;
+let sortId = '';
+let sortCompare = null;
+let sortExtract = null;
+let sortAscending = true;
 
 function sortFunction(x,y) {
-    var xv = x._sort_value;
-    var yv = y._sort_value;
+    let xv = x._sort_value;
+    let yv = y._sort_value;
 
     // always sort missing values at the end, regardless of
     // ascending/descending sort
@@ -2380,7 +2378,7 @@ function sortFunction(x,y) {
     if (xv == null) return 1;
     if (yv == null) return -1;
 
-    var c = sortAscending ? sortCompare(xv,yv) : sortCompare(yv,xv);
+    let c = sortAscending ? sortCompare(xv,yv) : sortCompare(yv,xv);
     if (c !== 0) return c;
 
     return x._sort_pos - y._sort_pos;
@@ -2391,7 +2389,7 @@ function resortTable(pList) {
         return;
     // presort by dataSource
     if (sortId == "sitedist") {
-        for (var i = 0; i < pList.length; ++i) {
+        for (let i = 0; i < pList.length; ++i) {
             pList[i]._sort_pos = i;
         }
         pList.sort(function(x,y) {
@@ -2420,7 +2418,7 @@ function resortTable(pList) {
     // number the existing rows so we can do a stable sort
     // regardless of whether sort() is stable or not.
     // Also extract the sort comparison value.
-    for (var i = 0; i < pList.length; ++i) {
+    for (let i = 0; i < pList.length; ++i) {
         pList[i]._sort_pos = i;
         pList[i]._sort_value = sortExtract(pList[i]);
     }
@@ -2429,7 +2427,7 @@ function resortTable(pList) {
     // Put selected planes on top, do a stable sort!
     // actually that's a bad idea, disable this for now
     if (!SelectedAllPlanes && multiSelect) {
-        for (var i = 0; i < pList.length; ++i) {
+        for (let i = 0; i < pList.length; ++i) {
             pList[i]._sort_pos = i;
         }
         pList.sort(function(x,y) {
@@ -2479,14 +2477,14 @@ function selectPlaneByHex(hex, options) {
         deselectAllPlanes();
     }
     // already selected plane
-    var oldPlane = SelectedPlane;
+    let oldPlane = SelectedPlane;
     // plane to be selected
-    var newPlane = Planes[hex];
+    let newPlane = Planes[hex];
 
 
     if (!options.noFetch && globeIndex && hex) {
-        var URL1 = 'data/traces/'+ hex.slice(-2) + '/trace_recent_' + hex + '.json';
-        var URL2 = 'data/traces/'+ hex.slice(-2) + '/trace_full_' + hex + '.json';
+        let URL1 = 'data/traces/'+ hex.slice(-2) + '/trace_recent_' + hex + '.json';
+        let URL2 = 'data/traces/'+ hex.slice(-2) + '/trace_full_' + hex + '.json';
         //console.log('Requesting trace: ' + hex);
 
         if (!newPlane) {
@@ -2517,13 +2515,15 @@ function selectPlaneByHex(hex, options) {
             newPlane.position_time = NaN;
         }
 
+        let req1 = null;
+        let req2 = null;
+
         if (URL1) {
-            var req1 = $.ajax({ url: URL1,
+            req1 = $.ajax({ url: URL1,
                 dataType: 'json',
                 options: options,
             });
         }
-        var req2 = null;
         req2 = $.ajax({ url: URL2,
             dataType: 'json',
             options: options,
@@ -2644,7 +2644,7 @@ function deselectAllPlanes() {
     if (!multiSelect && SelectedPlane)
         toggleIsolation(false, "off");
     buttonActive('#T', false);
-    for(var key in Planes) {
+    for(let key in Planes) {
         Planes[key].selected = false;
         $(Planes[key].tr).removeClass("selected");
     }
@@ -2743,10 +2743,10 @@ function showMap() {
 }
 
 function showColumn(table, columnId, visible) {
-    var index = $(columnId).index();
+    let index = $(columnId).index();
     columnVis[index] = visible;
     if (index >= 0) {
-        var cells = $(table).find("td:nth-child(" + (index + 1).toString() + ")");
+        let cells = $(table).find("td:nth-child(" + (index + 1).toString() + ")");
         if (visible) {
             cells.show();
         } else {
@@ -2756,11 +2756,11 @@ function showColumn(table, columnId, visible) {
 }
 
 function setColumnVisibility() {
-    var infoTable = $("#tableinfo");
+    let infoTable = $("#tableinfo");
 
-    var tbody = document.getElementById('tableinfo').tBodies[0];
-    for (var i = 0; i < PlanesOrdered.length; ++i) {
-        var plane = PlanesOrdered[i];
+    let tbody = document.getElementById('tableinfo').tBodies[0];
+    for (let i = 0; i < PlanesOrdered.length; ++i) {
+        let plane = PlanesOrdered[i];
         if (plane.tr) {
             if (plane.inTable) {
                 tbody.removeChild(plane.tr);
@@ -2770,7 +2770,7 @@ function setColumnVisibility() {
         }
     }
 
-    for (var col in HideCols) {
+    for (let col in HideCols) {
         showColumn(infoTable, HideCols[col], !mapIsVisible);
     }
 }
@@ -2800,13 +2800,13 @@ function initializeUnitsSelector() {
     if (!localStorage.getItem('displayUnits')) {
         localStorage['displayUnits'] = "nautical";
     }
-    var displayUnits = localStorage['displayUnits'];
+    let displayUnits = localStorage['displayUnits'];
     DisplayUnits = displayUnits;
 
     setAltitudeLegend(displayUnits);
 
     // Initialize drop-down
-    var unitsSelector = $("#units_selector");
+    let unitsSelector = $("#units_selector");
     unitsSelector.val(displayUnits);
     unitsSelector.on("change", onDisplayUnitsChanged);
 
@@ -2817,7 +2817,7 @@ function initializeUnitsSelector() {
 }
 
 function onDisplayUnitsChanged(e) {
-    var displayUnits = e.target.value;
+    let displayUnits = e.target.value;
     // Save display units to local storage
     localStorage['displayUnits'] = displayUnits;
     DisplayUnits = displayUnits;
@@ -2879,7 +2879,7 @@ function filterGroundVehicles(switchFilter) {
     if (typeof localStorage['groundVehicleFilter'] === 'undefined') {
         localStorage['groundVehicleFilter'] = 'not_filtered';
     }
-    var groundFilter = localStorage['groundVehicleFilter'];
+    let groundFilter = localStorage['groundVehicleFilter'];
     if (switchFilter === true) {
         groundFilter = (groundFilter === 'not_filtered') ? 'filtered' : 'not_filtered';
     }
@@ -2896,7 +2896,7 @@ function filterBlockedMLAT(switchFilter) {
     if (typeof localStorage['blockedMLATFilter'] === 'undefined') {
         localStorage['blockedMLATFilter'] = 'not_filtered';
     }
-    var blockedMLATFilter = localStorage['blockedMLATFilter'];
+    let blockedMLATFilter = localStorage['blockedMLATFilter'];
     if (switchFilter === true) {
         blockedMLATFilter = (blockedMLATFilter === 'not_filtered') ? 'filtered' : 'not_filtered';
     }
@@ -3052,7 +3052,7 @@ function toggleAltitudeChart(switchToggle) {
     if (typeof localStorage['altitudeChart'] === 'undefined') {
         localStorage['altitudeChart'] = 'show';
     }
-    var altitudeChartDisplay = localStorage['altitudeChart'];
+    let altitudeChartDisplay = localStorage['altitudeChart'];
     if (switchToggle === true) {
         altitudeChartDisplay = (altitudeChartDisplay === 'show') ? 'hidden' : 'show';
     }
@@ -3075,8 +3075,8 @@ function toggleAltitudeChart(switchToggle) {
 function followRandomPlane() {
     if (showTrace)
         return;
-    var this_one = null;
-    var tired = 0;
+    let this_one = null;
+    let tired = 0;
     do {
         this_one = PlanesOrdered[Math.floor(Math.random()*PlanesOrdered.length)];
         if (!this_one || tired++ > 1000)
@@ -3106,7 +3106,7 @@ function toggleTableInView(switchOn) {
 function toggleLabels(switchOn) {
     enableLabels = !enableLabels;
     localStorage['enableLabels'] = enableLabels;
-    for (var key in PlanesOrdered) {
+    for (let key in PlanesOrdered) {
         PlanesOrdered[key].updateMarker(false);
     }
     buttonActive('#L', enableLabels);
@@ -3122,7 +3122,7 @@ function toggleExtendedLabels() {
     extendedLabels %= 3;
     console.log(extendedLabels);
     localStorage['extendedLabels'] = extendedLabels;
-    for (var key in PlanesOrdered) {
+    for (let key in PlanesOrdered) {
         PlanesOrdered[key].updateMarker(false);
     }
     buttonActive('#O', extendedLabels);
@@ -3148,7 +3148,7 @@ function toggleMultiSelect(on, off) {
     if (!multiSelect) {
         if (!SelectedPlane)
             toggleIsolation(false, "off");
-        var plane = SelectedPlane;
+        let plane = SelectedPlane;
         SelectedPlane = null;
         deselectAllPlanes();
         if (plane)
@@ -3226,7 +3226,7 @@ function updateTypeFilter(e) {
         e.preventDefault();
 
     $("#type_filter").blur();
-    var type = $("#type_filter").val().trim();
+    let type = $("#type_filter").val().trim();
 
     PlaneFilter.type = type.toUpperCase();
 
@@ -3247,7 +3247,7 @@ function updateDescriptionFilter(e) {
         e.preventDefault();
 
     $("#description_filter").blur();
-    var description = $("#description_filter").val().trim();
+    let description = $("#description_filter").val().trim();
 
     PlaneFilter.description = description.toUpperCase();
 
@@ -3266,9 +3266,9 @@ function onResetAltitudeFilter(e) {
 }
 
 function updatePlaneFilter() {
-    var minAltitude = parseFloat($("#altitude_filter_min").val().trim());
-    var maxAltitude = parseFloat($("#altitude_filter_max").val().trim());
-    var enabled = false;
+    let minAltitude = parseFloat($("#altitude_filter_min").val().trim());
+    let maxAltitude = parseFloat($("#altitude_filter_max").val().trim());
+    let enabled = false;
 
     if (minAltitude < -1e6 || minAltitude > 1e6 || isNaN(minAltitude))
         minAltitude = -1e6;
@@ -3313,7 +3313,7 @@ function getFlightAwareModeSLink(code, ident, linkText) {
             linkText = "FlightAware: " + code.toUpperCase();
         }
 
-        var linkHtml = "<a target=\"_blank\" href=\"https://flightaware.com/live/modes/" + code ;
+        let linkHtml = "<a target=\"_blank\" href=\"https://flightaware.com/live/modes/" + code ;
         if (ident != null && ident !== "") {
             linkHtml += "/ident/" + ident.trim();
         }
@@ -3341,7 +3341,7 @@ function toggleLayer(element, layer) {
         }
     });
     $(element).on('click', function() {
-        var visible = false;
+        let visible = false;
         if ($(element).hasClass('settingsCheckboxChecked')) {
             visible = true;
         }
@@ -3389,11 +3389,11 @@ function fetchPfData() {
     if (fetchingPf)
         return;
     fetchingPf = true;
-    for (var i in pf_data) {
+    for (let i in pf_data) {
         const req = $.ajax({ url: pf_data[i],
             dataType: 'json' });
         $.when(req).done(function(data) {
-            for (var i in PlanesOrdered) {
+            for (let i in PlanesOrdered) {
                 const plane = PlanesOrdered[i];
                 const ac = data.aircraft[plane.icao.toUpperCase()];
                 if (!ac) {
@@ -3407,7 +3407,7 @@ function fetchPfData() {
                 if (ac.type && ac.type != "????" && ac.type != "ZVEH")
                     plane.icaoType = ac.type;
                 if (plane.icaoType != plane.icaoTypeCache) {
-                    var typeData = _aircraft_type_cache[plane.icaoType];
+                    let typeData = _aircraft_type_cache[plane.icaoType];
                     if (typeData) {
                         plane.typeDescription = typeData.desc;
                         plane.wtc = typeData.wtc;
@@ -3573,7 +3573,7 @@ function processURLParams(){
         if (icaoFilter)
             icaoFilter = icaoFilter.toLowerCase().split(',');
 
-        var icao = search.get('icao');
+        let icao = search.get('icao');
         if (icao && (icao.length == 7 || icao.length == 6) && icao.toLowerCase().match(/[a-f,0-9]{6}/))
             icaoParam = icao = icao.toLowerCase();
         else
@@ -3581,8 +3581,8 @@ function processURLParams(){
 
         traceDateString = search.get('showTrace');
         const callsign = search.get('callsign');
-        var zoom;
-        var follow = true;
+        let zoom;
+        let follow = true;
         if (search.get("zoom")) {
             try {
                 zoom = parseInt(search.get("zoom"), 10);
@@ -3610,7 +3610,7 @@ function processURLParams(){
                 toggleIsolation("on", false);
             if (Planes[icao] || globeIndex) {
                 console.log('Selected ICAO id: '+ icao);
-                var selectOptions = {follow: follow};
+                let selectOptions = {follow: follow};
                 if (zoom) {
                     selectOptions.zoom = zoom;
                 }
@@ -3657,12 +3657,12 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
     if (query == null)
         return;
     query = query.toLowerCase();
-    var results = [];
+    let results = [];
     if (byReg && regCache[query.toUpperCase()]) {
         selectPlaneByHex(regCache[query.toUpperCase()].toLowerCase(), {follow: true});
         return;
     }
-    for (var i in PlanesOrdered) {
+    for (let i in PlanesOrdered) {
         const plane = PlanesOrdered[i];
         if (
             (byCallsign && plane.flight != null && plane.flight.toLowerCase().match(query))
@@ -3676,7 +3676,7 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
     }
     if (results.length > 1) {
         toggleMultiSelect("on");
-        for (var i in results) {
+        for (let i in results) {
             results[i].selected = true;
             results[i].updateTick(true);
         }
@@ -3693,24 +3693,24 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
 }
 
 function trailReaper() {
-    for (var i in PlanesOrdered) {
+    for (let i in PlanesOrdered) {
         PlanesOrdered[i].reapTrail();
     }
 }
 
 function globeIndexes() {
     if (mapIsVisible || lastGlobeExtent == null) {
-        var mapSize = OLMap.getSize();
-        var size = [mapSize[0] * 1.1, mapSize[1] * 1.1];
+        let mapSize = OLMap.getSize();
+        let size = [mapSize[0] * 1.1, mapSize[1] * 1.1];
         lastGlobeExtent = OLMap.getView().calculateExtent(size);
     }
-    var extent = lastGlobeExtent;
+    let extent = lastGlobeExtent;
     const bottomLeft = ol.proj.toLonLat([extent[0], extent[1]]);
     const topRight = ol.proj.toLonLat([extent[2], extent[3]]);
-    var x1 = bottomLeft[0];
-    var y1 = bottomLeft[1];
-    var x2 = topRight[0];
-    var y2 = topRight[1];
+    let x1 = bottomLeft[0];
+    let y1 = bottomLeft[1];
+    let x2 = topRight[0];
+    let y2 = topRight[1];
     if (Math.abs(extent[2] - extent[0]) > 40075016) {
         // all longtitudes in view, only check latitude
         x1 = -180;
@@ -3720,21 +3720,21 @@ function globeIndexes() {
         y1 = -90;
     if (y2 > 90)
         y2 = 90;
-    var indexes = [];
+    let indexes = [];
     //console.log(x1 + ' ' + x2);
-    var grid = globeIndexGrid;
+    let grid = globeIndexGrid;
 
-    var x3 = (x1 < x2) ? x2 : 300;
-    var count = 0;
+    let x3 = (x1 < x2) ? x2 : 300;
+    let count = 0;
 
-    for (var lon = x1; lon < x3 + grid; lon += grid) {
+    for (let lon = x1; lon < x3 + grid; lon += grid) {
         if (x1 >= x2 && lon > 180) {
             lon -= 360;
             x3 = x2;
         }
         if (lon > x3)
             lon = x3 + 0.01;
-        for (var lat = y1; lat < y2 + grid; lat += grid) {
+        for (let lat = y1; lat < y2 + grid; lat += grid) {
             if (lat > y2)
                 lat = y2 + 0.01;
             if (count++ > 2000) {
@@ -3743,7 +3743,7 @@ function globeIndexes() {
             }
             if (lat > 90)
                 break;
-            var index = globe_index(lat, lon);
+            let index = globe_index(lat, lon);
             //console.log(lat + ' ' + lon + ' ' + index);
             if (!indexes.includes(index)) {
                 indexes.push(index);
@@ -3753,13 +3753,13 @@ function globeIndexes() {
     return indexes;
 }
 function globe_index(lat, lon) {
-    var grid = globeIndexGrid;
+    let grid = globeIndexGrid;
 
     lat = grid * Math.floor((lat + 90) / grid) - 90;
     lon = grid * Math.floor((lon + 180) / grid) - 180;
 
-    for (var i = 0; i < globeIndexSpecialTiles.length; i++) {
-        var tile = globeIndexSpecialTiles[i];
+    for (let i = 0; i < globeIndexSpecialTiles.length; i++) {
+        let tile = globeIndexSpecialTiles[i];
         if (lat >= tile.south && lat < tile.north) {
             if (tile.west < tile.east && lon >= tile.west && lon < tile.east) {
                 return i;
@@ -3770,10 +3770,10 @@ function globe_index(lat, lon) {
         }
     }
 
-    var i = Math.floor((lat+90) / grid);
-    var j = Math.floor((lon+180) / grid);
+    let i = Math.floor((lat+90) / grid);
+    let j = Math.floor((lon+180) / grid);
 
-    var lat_multiplier = Math.floor(360 / grid + 1);
+    let lat_multiplier = Math.floor(360 / grid + 1);
     return (i * lat_multiplier + j + 1000);
 }
 
@@ -3784,7 +3784,7 @@ function inView(tableplane, currExtent) {
     if (tableplane.isFiltered())
         return false;
 
-    var inView;
+    let inView;
 
     //console.log((currExtent[2]-currExtent[0])/40075016);
     const bottomLeft = ol.proj.toLonLat([currExtent[0], currExtent[1]]);
@@ -3821,8 +3821,8 @@ function inView(tableplane, currExtent) {
     return inView;
 }
 function updateAddressBar() {
-    var posString = 'lat=' + CenterLat.toFixed(3) + '&lon=' + CenterLon.toFixed(3) + '&zoom=' + ZoomLvl.toFixed(1);
-    var string;
+    let posString = 'lat=' + CenterLat.toFixed(3) + '&lon=' + CenterLon.toFixed(3) + '&zoom=' + ZoomLvl.toFixed(1);
+    let string;
     if (true || !globeIndex)
         posString = ""
     else if (SelectedPlane)
@@ -3850,7 +3850,7 @@ function updateAddressBar() {
         return;
 
     if (SelectedPlane && globeIndex) {
-        var icao_link = "<a style=\"color: blue\" target=\"_blank\" href=\"" + shareLink + "\">Share</a>";
+        let icao_link = "<a style=\"color: blue\" target=\"_blank\" href=\"" + shareLink + "\">Share</a>";
         icao_link = NBSP +NBSP +NBSP +NBSP +NBSP +NBSP + icao_link;
         $('#selected_icao').html(SelectedPlane.icao.toUpperCase() + icao_link);
     }
@@ -3859,7 +3859,7 @@ function updateAddressBar() {
 }
 
 function refreshInt() {
-    var refresh = RefreshInterval;
+    let refresh = RefreshInterval;
     if (!globeIndex)
         return refresh;
 
@@ -3911,7 +3911,7 @@ function toggleShowTrace() {
         legSel = -1;
         $('#leg_sel').text('Legs: All');
         toggleIsolation(null, "off");
-        //var string = pathName + '?icao=' + SelectedPlane.icao;
+        //let string = pathName + '?icao=' + SelectedPlane.icao;
         //window.history.replaceState("object or string", "Title", string);
         //shareLink = string;
         updateAddressBar();
@@ -3932,12 +3932,12 @@ function legShift(offset) {
         return;
     }
 
-    var trace = SelectedPlane.fullTrace.trace;
-    var legStart = 0;
-    var legEnd = trace.length;
-    var count = 0;
+    let trace = SelectedPlane.fullTrace.trace;
+    let legStart = 0;
+    let legEnd = trace.length;
+    let count = 0;
 
-    for (var i = 1; i < trace.length; i++) {
+    for (let i = 1; i < trace.length; i++) {
         if (trace[i][6] & 2) {
             count++;
         }
@@ -3955,7 +3955,7 @@ function legShift(offset) {
     }
 
     count = 0;
-    for (var i = 1; i < trace.length; i++) {
+    for (let i = 1; i < trace.length; i++) {
         if (trace[i][6] & 2) {
             if (count == legSel - 1)
                 legStart = i;
@@ -3972,7 +3972,7 @@ function legShift(offset) {
 
 function shiftTrace(offset) {
     if (traceDateString && !traceDate) {
-        var numbers = traceDateString.split('-');
+        let numbers = traceDateString.split('-');
         traceDate = new Date();
         traceDate.setUTCFullYear(numbers[0]);
         traceDate.setUTCMonth(numbers[1] - 1);
@@ -3981,7 +3981,7 @@ function shiftTrace(offset) {
     if (!traceDate || offset == "today") {
         traceDate = new Date();
     } else if (offset) {
-        var sinceEpoch = traceDate.getTime();
+        let sinceEpoch = traceDate.getTime();
         traceDate.setTime(sinceEpoch + offset * 86400 * 1000);
     }
 
@@ -3989,16 +3989,16 @@ function shiftTrace(offset) {
 
     $('#trace_date').text('UTC day:' + traceDateString);
 
-    var hex = SelectedPlane ? SelectedPlane.icao : icaoParam;
+    let hex = SelectedPlane ? SelectedPlane.icao : icaoParam;
 
-    var selectOptions = {noDeselect: true, zoom: ZoomLvl};
+    let selectOptions = {noDeselect: true, zoom: ZoomLvl};
     selectPlaneByHex(hex, selectOptions);
 
     updateAddressBar();
 }
 
 function getDateString(date) {
-    var string = date.getUTCFullYear() + '-'
+    let string = date.getUTCFullYear() + '-'
         + (date.getUTCMonth() + 1).toString().padStart(2, '0') + '-'
         + date.getUTCDate().toString().padStart(2, '0')
     return string;
@@ -4084,7 +4084,7 @@ function geoFindMe() {
 }
 
 window.mobilecheck = function() {
-  var check = false;
+  let check = false;
   (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
   return check;
 };
@@ -4114,9 +4114,9 @@ function initSitePos() {
 
 function drawAlt() {
     processAircraft({hex: 'c0ffee', });
-    var plane = Planes['c0ffee'];
+    let plane = Planes['c0ffee'];
     newWidth = 4;
-    for (var i = 0; i <= 50000; i += 500) {
+    for (let i = 0; i <= 50000; i += 500) {
         plane.position = [i/10000, 0];
         plane.altitude = i;
         plane.alt_rounded = calcAltitudeRounded(plane.altitude);
@@ -4125,7 +4125,7 @@ function drawAlt() {
 }
 
 function remakeTrails() {
-    for (var i in PlanesOrdered) {
+    for (let i in PlanesOrdered) {
         PlanesOrdered[i].remakeTrail();
         PlanesOrdered[i].updateTick(true);
     }

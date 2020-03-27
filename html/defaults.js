@@ -6,22 +6,22 @@
 "use strict";
 
 // avoid errors for people who don't understand javascript and change config.js
-var yes = true;
-var no = false;
-var enabled = true;
-var disabled = false;
+let yes = true;
+let no = false;
+let enabled = true;
+let disabled = false;
 
 // -- Title Settings --------------------------------------
 // Show number of aircraft and/or messages per second in the page title
-var PlaneCountInTitle = false;
-var MessageRateInTitle = false;
+let PlaneCountInTitle = false;
+let MessageRateInTitle = false;
 
 // -- Output Settings -------------------------------------
 // The DisplayUnits setting controls whether nautical (ft, NM, knots), 
 // metric (m, km, km/h) or imperial (ft, mi, mph) units are used in the 
 // plane table and in the detailed plane info. Valid values are
 // "nautical", "metric", or "imperial".
-var DisplayUnits = "nautical";
+let DisplayUnits = "nautical";
 
 // -- Map settings ----------------------------------------
 // These settings are overridden by any position information
@@ -29,47 +29,47 @@ var DisplayUnits = "nautical";
 // degrees.
 
 // Default center of the map.
-var DefaultCenterLat = 40.56;
-var DefaultCenterLon = -73.66
+let DefaultCenterLat = 40.56;
+let DefaultCenterLon = -73.66
 // The google maps zoom level, 0 - 16, lower is further out
-var DefaultZoomLvl   = 9;
+let DefaultZoomLvl   = 9;
 
 // Center marker. If dump1090 provides a receiver location,
 // that location is used and these settings are ignored.
 
-var SiteShow    = true;           // true to show a center marker
-var SiteLat     = null;            // position of the marker
-var SiteLon     = null;
-var SiteName    = "My Radar Site"; // tooltip of the marker
+let SiteShow    = true;           // true to show a center marker
+let SiteLat     = null;            // position of the marker
+let SiteLon     = null;
+let SiteName    = "My Radar Site"; // tooltip of the marker
 
 // Color controls for the range outline
-var range_outline_color = '#0000DD';
-var range_outline_width = 1.7;
-var range_outline_colored_by_altitude = false;
+let range_outline_color = '#0000DD';
+let range_outline_width = 1.7;
+let range_outline_colored_by_altitude = false;
 
 // which map is displayed to new visitors
-var MapType_tar1090 = "carto_light_all";
+let MapType_tar1090 = "carto_light_all";
 
 // Default map dim state
-var MapDim = true;
+let MapDim = true;
 
 // -- Marker settings -------------------------------------
 
-var markerScaleFactor = 1.25;
-var markerMaxSize = 1.32;
-var markerMinSize = 0.96;
+let markerScaleFactor = 1.25;
+let markerMaxSize = 1.32;
+let markerMinSize = 0.96;
 
-var largeMode = 1;
+let largeMode = 1;
 
-var lineWidth = 1;
+let lineWidth = 1;
 
 // constant html color for markers / tracks
-var monochromeMarkers = null;
-var monochromeTracks = null;
+let monochromeMarkers = null;
+let monochromeTracks = null;
 
 // These settings control the coloring of aircraft by altitude.
 // All color values are given as Hue (0-359) / Saturation (0-100) / Lightness (0-100)
-var ColorByAlt = {
+let ColorByAlt = {
 	// HSL for planes with unknown altitude:
 	unknown : { h: 0,   s: 0,   l: 20 },
 
@@ -147,27 +147,27 @@ var ColorByAlt = {
 // };
 
 // Outline color for aircraft icons with an ADS-B position
-var OutlineADSBColor = '#000000';
+let OutlineADSBColor = '#000000';
 
 // Outline color for aircraft icons with a mlat position
-var OutlineMlatColor = '#001F66';
+let OutlineMlatColor = '#001F66';
 
 // Also called range rings :)
-var SiteCircles = true; // true to show circles (only shown if the center marker is shown)
+let SiteCircles = true; // true to show circles (only shown if the center marker is shown)
 // In miles, nautical miles, or km (depending settings value 'DisplayUnits')
-var SiteCirclesDistances = new Array(100,150,200);
+let SiteCirclesDistances = new Array(100,150,200);
 
 // Controls page title, righthand pane when nothing is selected
-var PageName = "tar1090";
+let PageName = "tar1090";
 
 // Show country flags by ICAO addresses?
-var ShowFlags = true;
+let ShowFlags = true;
 
 // Path to country flags (can be a relative or absolute URL; include a trailing /)
-var FlagPath = "flags-tiny/";
+let FlagPath = "flags-tiny/";
 
 // Set to false to disable the ChartBundle base layers (US coverage only)
-var ChartBundleLayers = true;
+let ChartBundleLayers = true;
 
 // Provide a Bing Maps API key here to enable the Bing imagery layer.
 // You can obtain a free key (with usage limits) at
@@ -176,54 +176,54 @@ var ChartBundleLayers = true;
 // Be sure to quote your key:
 //   BingMapsAPIKey = "your key here";
 //
-var BingMapsAPIKey = null;
+let BingMapsAPIKey = null;
 
 // Turn on display of extra Mode S EHS / ADS-B v1/v2 data
 // This is not polished yet (and so is disabled by default),
 // currently it's just a data dump of the new fields with no UX work.
-var ExtendedData = false;
-var pf_data = ["chunks/pf.json"]
+let ExtendedData = false;
+let pf_data = ["chunks/pf.json"]
 
-var mapOrientation = 0; // This determines what is up, normally north (0 degrees)
+let mapOrientation = 0; // This determines what is up, normally north (0 degrees)
 
 // Only display labels when zoomed in this far:
-var labelZoom = 0;
-var labelZoomGround = 14.8;
+let labelZoom = 0;
+let labelZoomGround = 14.8;
 
-var labelFont = 'bold 12px tahoma';
+let labelFont = 'bold 12px tahoma';
 
-var displayUATasADSB = false;
-var uatNoTISB = true;
+let displayUATasADSB = false;
+let uatNoTISB = true;
 
 // Don't display any TIS-B planes
-var filterTISB = false;
+let filterTISB = false;
 
-var flightawareLinks = false;
+let flightawareLinks = false;
 
 // Filter implausible positions (required speed > Mach 2.5)
 // valid values: true, false, "onlyMLAT" ("" required)
-var positionFilter = true;
-var positionFilterSpeed = 2.5; // in Mach
+let positionFilter = true;
+let positionFilterSpeed = 2.5; // in Mach
 // filter speed is based on transmitted ground speed if available
 // this factor is used to give the actual filter speed
-var positionFilterGsFactor = 2.2;
-var debugPosFilter = false;
+let positionFilterGsFactor = 2.2;
+let debugPosFilter = false;
 
-var altitudeFilter = true;
+let altitudeFilter = true;
 
 // time in seconds before an MLAT position is accepted after receiving a
 // more reliable position
-var mlatTimeout = 30;
+let mlatTimeout = 30;
 
 // enable/disable mouseover/hover aircraft information
-var enableMouseover = true;
+let enableMouseover = true;
 
 // enable/disable temporary aircraft trails
-var tempTrails = false;
-var tempTrailsTimeout = 90;
+let tempTrails = false;
+let tempTrailsTimeout = 90;
 
 // Columns that have a // in front of them are shown.
-var HideCols = [
+let HideCols = [
 	"#icao",
 //	"#flag",
 //	"#flight",
@@ -244,12 +244,12 @@ var HideCols = [
 ]
 
 
-var showPictures = false;
+let showPictures = false;
 
 // enable DWD Radolan (NEXRAD like weather for Germany)
-var enableDWD = true;
+let enableDWD = true;
 
-var lastLeg = true;
+let lastLeg = true;
 
-var hideButtons = false;
-var adsbexchange = false;
+let hideButtons = false;
+let adsbexchange = false;
