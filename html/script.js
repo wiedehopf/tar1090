@@ -1555,120 +1555,6 @@ function initialize_map() {
         initSitePos();
     }
 
-    // Add terrain-limit rings. To enable this:
-    //
-    //  create a panorama for your receiver location on heywhatsthat.com
-    //
-    //  note the "view" value from the URL at the top of the panorama
-    //    i.e. the XXXX in http://www.heywhatsthat.com/?view=XXXX
-    //
-    // fetch a json file from the API for the altitudes you want to see:
-    //
-    //  wget -O /usr/local/share/tar1090/html/upintheair.json \
-    //    'http://www.heywhatsthat.com/api/upintheair.json?id=XXXX&refraction=0.25&alts=3048,9144'
-    //
-    // NB: altitudes are in _meters_, you can specify a list of altitudes
-
-    // kick off an ajax request that will add the rings when it's done
-    if (!globeIndex) {
-        let request = $.ajax({ url: 'upintheair.json',
-            cache: true,
-            dataType: 'json' });
-        request.done(function(data) {
-            for (let i = 0; i < data.rings.length; ++i) {
-                let geom = null;
-                let points = data.rings[i].points;
-                let altitude = (3.28084 * data.rings[i].alt).toFixed(0);
-                let color = range_outline_color;
-                if (range_outline_colored_by_altitude) {
-                    let colorArr = altitudeColor(altitude);
-                    color = 'hsl(' + colorArr[0].toFixed(0) + ',' + colorArr[1].toFixed(0) + '%,' + colorArr[2].toFixed(0) + '%)';
-                }
-                let ringStyle = new ol.style.Style({
-                    fill: null,
-                    stroke: new ol.style.Stroke({
-                        color: color,
-                        width: range_outline_width,
-                    })
-                });
-                if (points.length > 0) {
-                    geom = new ol.geom.LineString([[ points[0][1], points[0][0] ]]);
-                    for (let j = 0; j < points.length; ++j) {
-                        geom.appendCoordinate([ points[j][1], points[j][0] ]);
-                    }
-                    geom.appendCoordinate([ points[0][1], points[0][0] ]);
-                    geom.transform('EPSG:4326', 'EPSG:3857');
-
-                    let feature = new ol.Feature(geom);
-                    feature.setStyle(ringStyle);
-                    StaticFeatures.addFeature(feature);
-                }
-            }
-        });
-
-        request.fail(function(jqxhr, status, error) {
-            // no rings available, do nothing
-        });
-    }
-}
-
-function createSiteCircleFeatures() {
-    // Clear existing circles first
-    if (!SitePosition)
-        return;
-
-    if (SiteShow) {
-        let markerStyle = new ol.style.Style({
-            image: new ol.style.Circle({
-                radius: 7,
-                snapToPixel: false,
-                fill: new ol.style.Fill({color: 'black'}),
-                stroke: new ol.style.Stroke({
-                    color: 'white', width: 2
-                })
-            })
-        });
-
-        let feature = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(SitePosition)));
-        feature.setStyle(markerStyle);
-        StaticFeatures.addFeature(feature);
-    }
-
-    if (!SiteCircles)
-        return;
-
-    let circleStyle = function(distance) {
-        return new ol.style.Style({
-            fill: null,
-            stroke: new ol.style.Stroke({
-                color: '#000000',
-                width: 1
-            }),
-            text: new ol.style.Text({
-                font: '10px Helvetica Neue, sans-serif',
-                fill: new ol.style.Fill({ color: '#000' }),
-                offsetY: -8,
-                text: format_distance_long(distance, DisplayUnits, 0)
-
-            })
-        });
-    };
-
-    let conversionFactor = 1000.0;
-    if (DisplayUnits === "nautical") {
-        conversionFactor = 1852.0;
-    } else if (DisplayUnits === "imperial") {
-        conversionFactor = 1609.0;
-    }
-
-    for (let i=0; i < SiteCirclesDistances.length; ++i) {
-        let distance = SiteCirclesDistances[i] * conversionFactor;
-        let circle = make_geodesic_circle(SitePosition, distance, 180);
-        circle.transform('EPSG:4326', 'EPSG:3857');
-        let feature = new ol.Feature(circle);
-        feature.setStyle(circleStyle(distance));
-        StaticFeatures.addFeature(feature);
-    }
 }
 
 // This looks for planes to reap out of the master Planes letiable
@@ -4128,5 +4014,124 @@ function remakeTrails() {
     for (let i in PlanesOrdered) {
         PlanesOrdered[i].remakeTrail();
         PlanesOrdered[i].updateTick(true);
+    }
+}
+
+function createSiteCircleFeatures() {
+    StaticFeatures.clear();
+    drawUpintheair();
+    // Clear existing circles first
+    if (!SitePosition)
+        return;
+
+    if (SiteShow) {
+        let markerStyle = new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 7,
+                snapToPixel: false,
+                fill: new ol.style.Fill({color: 'black'}),
+                stroke: new ol.style.Stroke({
+                    color: 'white', width: 2
+                })
+            })
+        });
+
+        let feature = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(SitePosition)));
+        feature.setStyle(markerStyle);
+        StaticFeatures.addFeature(feature);
+    }
+
+    if (!SiteCircles)
+        return;
+
+    let circleStyle = function(distance) {
+        return new ol.style.Style({
+            fill: null,
+            stroke: new ol.style.Stroke({
+                color: '#000000',
+                width: 1
+            }),
+            text: new ol.style.Text({
+                font: '10px Helvetica Neue, sans-serif',
+                fill: new ol.style.Fill({ color: '#000' }),
+                offsetY: -8,
+                text: format_distance_long(distance, DisplayUnits, 0)
+
+            })
+        });
+    };
+
+    let conversionFactor = 1000.0;
+    if (DisplayUnits === "nautical") {
+        conversionFactor = 1852.0;
+    } else if (DisplayUnits === "imperial") {
+        conversionFactor = 1609.0;
+    }
+
+    for (let i=0; i < SiteCirclesDistances.length; ++i) {
+        let distance = SiteCirclesDistances[i] * conversionFactor;
+        let circle = make_geodesic_circle(SitePosition, distance, 180);
+        circle.transform('EPSG:4326', 'EPSG:3857');
+        let feature = new ol.Feature(circle);
+        feature.setStyle(circleStyle(distance));
+        StaticFeatures.addFeature(feature);
+    }
+}
+
+function drawUpintheair() {
+    // Add terrain-limit rings. To enable this:
+    //
+    //  create a panorama for your receiver location on heywhatsthat.com
+    //
+    //  note the "view" value from the URL at the top of the panorama
+    //    i.e. the XXXX in http://www.heywhatsthat.com/?view=XXXX
+    //
+    // fetch a json file from the API for the altitudes you want to see:
+    //
+    //  wget -O /usr/local/share/tar1090/html/upintheair.json \
+    //    'http://www.heywhatsthat.com/api/upintheair.json?id=XXXX&refraction=0.25&alts=3048,9144'
+    //
+    // NB: altitudes are in _meters_, you can specify a list of altitudes
+
+    // kick off an ajax request that will add the rings when it's done
+    if (!globeIndex) {
+        let request = $.ajax({ url: 'upintheair.json',
+            cache: true,
+            dataType: 'json' });
+        request.done(function(data) {
+            for (let i = 0; i < data.rings.length; ++i) {
+                let geom = null;
+                let points = data.rings[i].points;
+                let altitude = (3.28084 * data.rings[i].alt).toFixed(0);
+                let color = range_outline_color;
+                if (range_outline_colored_by_altitude) {
+                    let colorArr = altitudeColor(altitude);
+                    color = 'hsl(' + colorArr[0].toFixed(0) + ',' + colorArr[1].toFixed(0) + '%,' + colorArr[2].toFixed(0) + '%)';
+                }
+                let ringStyle = new ol.style.Style({
+                    fill: null,
+                    stroke: new ol.style.Stroke({
+                        color: color,
+                        width: range_outline_width,
+                    })
+                });
+                if (points.length > 0) {
+                    geom = new ol.geom.LineString([[ points[0][1], points[0][0] ]]);
+                    for (let j = 0; j < points.length; ++j) {
+                        geom.appendCoordinate([ points[j][1], points[j][0] ]);
+                    }
+                    geom.appendCoordinate([ points[0][1], points[0][0] ]);
+                    geom.transform('EPSG:4326', 'EPSG:3857');
+
+                    let feature = new ol.Feature(geom);
+                    feature.setStyle(ringStyle);
+                    StaticFeatures.addFeature(feature);
+                }
+            }
+        });
+
+        request.fail(function(jqxhr, status, error) {
+            // no rings available, do nothing
+        });
     }
 }
