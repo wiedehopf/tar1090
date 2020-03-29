@@ -2,7 +2,7 @@
 
 ![Screenshot1](https://raw.githubusercontent.com/wiedehopf/tar1090/screenshots/screenshot3.png)
 
-Provides an improved dump1090-fa webinterface
+Provides an improved dump1090-fa webinterface 
 
 - Improved adjustable history
 - Show All Tracks much faster than original with many planes
