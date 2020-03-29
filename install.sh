@@ -92,7 +92,7 @@ else
 fi
 
 if git rev-parse --short HEAD &>/dev/null; then
-    TAR_VERSION=$(git rev-parse --short HEAD)
+    TAR_VERSION="$(git rev-parse --short HEAD)_$DB_VERSION"
 else
     TAR_VERSION=$(date +%s)
 fi
