@@ -510,21 +510,21 @@ select.error, textarea.error, input.error {
 }
 
 .identLarge {
-    font-size: calc( 24px * var(--SCALE));
+    font-size: calc( 22px * var(--SCALE));
     line-height: calc( 24px * var(--SCALE));
     color: #003f4b;
     font-weight: lighter;
 }
 
 .identMedium {
-    font-size: calc( 18px * var(--SCALE));
+    font-size: calc( 17px * var(--SCALE));
     line-height: calc( 22px * var(--SCALE));
     color: #003f4b;
     font-weight: lighter;
 }
 
 .identSmall {
-    font-size: calc( 12px * var(--SCALE));
+    font-size: calc( 14px * var(--SCALE));
     font-weight: bold;
     line-height: calc( 20px * var(--SCALE));
     color: #003f4b;

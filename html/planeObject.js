@@ -1517,20 +1517,23 @@ PlaneObject.prototype.updateLines = function() {
             const alt_real = (seg.alt_real != null) ? seg.alt_real : 'n/a';
             seg.label = new ol.Feature(new ol.geom.Point(seg.fixed.getFirstCoordinate()));
             let timestamp;
-                const date = new Date(seg.ts * 1000);
+            const date = new Date(seg.ts * 1000);
             if (showTrace) {
                 timestamp =
                     date.getUTCHours().toString().padStart(2,'0')
                     + ":" + date.getUTCMinutes().toString().padStart(2,'0')
                     + ":" + date.getUTCSeconds().toString().padStart(2,'0');
                 timestamp = "".padStart(0, NBSP) + timestamp + NBSP + "Z";
-
-                timestamp = "".padStart(0, NBSP) + getDateString(date) + '\n' + timestamp;
+                date.getUTCHours()
+                if (traceDay != date.getUTCDate())
+                    timestamp = "".padStart(0, NBSP) + zDateString(date) + '\n' + timestamp;
             } else {
                 timestamp = date.getHours().toString().padStart(2,'0')
                     + ":" + date.getMinutes().toString().padStart(2,'0')
                     + ":" + date.getSeconds().toString().padStart(2,'0');
                 timestamp = "".padStart(2, NBSP) + timestamp;
+                if (today != date.getDate())
+                    timestamp = "".padStart(0, NBSP) + lDateString(date) + '\n' + timestamp;
             }
             let text =
                 Number(seg.speed).toFixed(0).toString().padStart(3, NBSP) + "  "

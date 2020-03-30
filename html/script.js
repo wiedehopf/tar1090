@@ -77,6 +77,7 @@ let showTrace = false;
 let showTraceExit = false;
 let traceDate = null;
 let traceDateString = null;
+let traceDay = null;
 let icaoParam = null;
 let globalScale = 1;
 let newWidth = lineWidth;
@@ -119,9 +120,10 @@ let SitePosition = null;
 
 // timestamps
 let now = 0;
-let last=0;
-let uat_now=0;
-let uat_last=0;
+let last = 0;
+let uat_now = 0;
+let uat_last = 0;
+let today = 0;
 let StaleReceiverCount = 0;
 let FetchPending = [];
 let FetchPendingUAT = null;
@@ -246,6 +248,7 @@ function processReceiverUpdate(data, init) {
         if (data.now > now || globeIndex) {
             last = now;
             now = data.now;
+            today = new Date(now * 1000).getDate();
         }
     }
 
@@ -495,6 +498,8 @@ function fetchData() {
 function initialize() {
 
     onMobile = window.mobilecheck();
+
+    today = new Date().getDate();
 
     let largeModeStorage = localStorage['largeMode'];
     if (largeModeStorage != undefined && parseInt(largeModeStorage, 10)) {
@@ -3870,10 +3875,11 @@ function shiftTrace(offset) {
         let sinceEpoch = traceDate.getTime();
         traceDate.setTime(sinceEpoch + offset * 86400 * 1000);
     }
+    traceDay = traceDate.getUTCDate();
 
-    traceDateString = getDateString(traceDate);
+    traceDateString = zDateString(traceDate);
 
-    $('#trace_date').text('UTC day:' + traceDateString);
+    $('#trace_date').text('UTC day:\n' + traceDateString);
 
     let hex = SelectedPlane ? SelectedPlane.icao : icaoParam;
 
@@ -3883,10 +3889,17 @@ function shiftTrace(offset) {
     updateAddressBar();
 }
 
-function getDateString(date) {
+function zDateString(date) {
     let string = date.getUTCFullYear() + '-'
         + (date.getUTCMonth() + 1).toString().padStart(2, '0') + '-'
         + date.getUTCDate().toString().padStart(2, '0')
+    return string;
+}
+
+function lDateString(date) {
+    let string = date.getFullYear() + '-'
+        + (date.getMonth() + 1).toString().padStart(2, '0') + '-'
+        + date.getDate().toString().padStart(2, '0')
     return string;
 }
 
