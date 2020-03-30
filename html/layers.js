@@ -153,7 +153,7 @@ function createBaseLayers() {
         for (let type in chartbundleTypes) {
             us.push(new ol.layer.Tile({
                 source: new ol.source.TileWMS({
-                    url: 'http://wms.chartbundle.com/wms',
+                    url: 'https://wms.chartbundle.com/wms',
                     params: {LAYERS: type},
                     projection: 'EPSG:3857',
                     attributions: 'Tiles courtesy of <a href="http://www.chartbundle.com/">ChartBundle</a>'
@@ -202,8 +202,8 @@ function createBaseLayers() {
         // re-build the source to force a refresh of the nexrad tiles
         let now = new Date().getTime();
         nexrad.setSource(new ol.source.XYZ({
-            url : 'http://mesonet{1-3}.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0q-900913/{z}/{x}/{y}.png?_=' + now,
-            attributions: 'NEXRAD courtesy of <a href="http://mesonet.agron.iastate.edu/">IEM</a>'
+            url : 'https://mesonet{1-3}.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0q-900913/{z}/{x}/{y}.png?_=' + now,
+            attributions: 'NEXRAD courtesy of <a href="https://mesonet.agron.iastate.edu/">IEM</a>'
         }));
     };
 
