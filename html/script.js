@@ -2568,7 +2568,7 @@ function toggleFollow(override) {
             FollowSelected = false;
     }
     if (FollowSelected) {
-        if (override != undefined && OLMap.getView().getZoom() < 8)
+        if (override == undefined && OLMap.getView().getZoom() < 8)
             OLMap.getView().setZoom(8);
         OLMap.getView().setCenter(ol.proj.fromLonLat(SelectedPlane.position));
     }
