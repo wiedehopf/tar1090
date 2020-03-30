@@ -955,8 +955,10 @@ PlaneObject.prototype.processTrace = function(options) {
 
     if (tempPlane.last_message_time > this.last_message_time && !showTrace) {
         let newSegs = this.track_linesegs;
+        let newSize = this.history_size;
         Object.assign(this, tempPlane);
         this.track_linesegs = newSegs;
+        this.history_size = newSize;
     }
 
     if (showTrace) {
