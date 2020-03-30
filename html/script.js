@@ -580,6 +580,11 @@ function initialize() {
         if (search.has('hideButtons'))
             hideButtons = true;
 
+        icaoFilter = search.get('icaoFilter');
+        if (icaoFilter)
+            icaoFilter = icaoFilter.toLowerCase().split(',');
+
+
     } catch (error) {
         console.log(error);
     }
@@ -3453,11 +3458,6 @@ function highlight(evt) {
 function processURLParams(){
     try {
         const search = new URLSearchParams(window.location.search);
-
-
-        icaoFilter = search.get('icaoFilter');
-        if (icaoFilter)
-            icaoFilter = icaoFilter.toLowerCase().split(',');
 
         let icao = search.get('icao');
         if (icao && (icao.length == 7 || icao.length == 6) && icao.toLowerCase().match(/[a-f,0-9]{6}/))
