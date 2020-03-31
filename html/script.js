@@ -1559,7 +1559,7 @@ function initialize_map() {
         }
     }, true);
 
-    if (globeIndex)
+    if (globeIndex || uuid)
         geoFindMe();
     else {
         initSitePos();
