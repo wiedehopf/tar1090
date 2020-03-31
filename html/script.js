@@ -1783,15 +1783,20 @@ function refreshSelected() {
     */
 
 
-    let temp = null;
-    if (selected.oat != null) {
-        $('#selected_temp').text(Math.round(selected.oat)  + ' °C');
+    let oat = null;
+
+    if (selected.oat != null && selected.mach != null) {
+        oat = selected.oat;
     } else if (!globeIndex && selected.mach != null && selected.tas != null) {
-        temp = Math.pow((selected.tas / 661.47 / selected.mach), 2) * 288.15 - 273.15;
-        $('#selected_temp').text(Math.round(temp)  + ' °C');
-    } else {
-        $('#selected_temp').text('n/a');
+        oat = Math.pow((selected.tas / 661.47 / selected.mach), 2) * 288.15 - 273.15;
     }
+
+    let tat = -273.15 + (selected.oat + 273.15) * (1 + 0.2 * selected.mach * selected.mach);
+
+    if (oat != null)
+        $('#selected_temp').text(Math.round(tat) + ' / ' + Math.round(oat)  + ' °C');
+    else
+        $('#selected_temp').text('n/a');
 
     $('#selected_speed1').text(format_speed_long(selected.gs, DisplayUnits));
     $('#selected_speed2').text(format_speed_long(selected.gs, DisplayUnits));
