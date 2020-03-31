@@ -1775,10 +1775,12 @@ function refreshSelected() {
     else
         $('#selected_true_heading').text(format_track_brief(selected.true_heading));
 
+    /*
     if (globeIndex && selected.true_heading == null)
         crab = null;
 
     $('#selected_crab').text(format_track_brief(crab));
+    */
 
 
     let temp = null;
