@@ -1725,10 +1725,10 @@ function refreshSelected() {
     let crab = null;
     let heading = null;
     let track = selected.track;
-    if (magResult && selected.mag_heading != null && selected.track != null) {
-        heading = selected.mag_heading + magResult.dec;
-    } else if (selected.true_heading != null && selected.track != null) {
+    if (selected.true_heading != null && selected.track != null) {
         heading = selected.true_heading;
+    } else if (magResult && selected.mag_heading != null && selected.track != null) {
+        heading = selected.mag_heading + magResult.dec;
     }
     if (heading != null && heading < 0)
         heading += 360;
@@ -1742,7 +1742,12 @@ function refreshSelected() {
             crab += 360;
     }
 
-    if (magResult && selected.gs != null && selected.tas != null && selected.track != null && selected.mag_heading != null) {
+    $('#selected_mag_heading').text(format_track_brief(selected.mag_heading));
+
+    if (selected.wd != null && selected.ws != null) {
+        $('#selected_wd').text(format_track_brief(selected.wd, true));
+        $('#selected_ws').text(format_speed_long(selected.ws, DisplayUnits));
+    } else if (!globeIndex && magResult && selected.gs != null && selected.tas != null && selected.track != null && selected.mag_heading != null) {
 
         const trk = (Math.PI / 180) * selected.track;
         const hdg = (Math.PI / 180) * heading;
@@ -1764,17 +1769,22 @@ function refreshSelected() {
         $('#selected_ws').text('n/a');
     }
 
-    $('#selected_crab').text(format_track_brief(crab));
 
-    $('#selected_mag_heading').text(format_track_brief(selected.mag_heading));
-
-    if (selected.true_heading == null && heading != null)
+    if (!globeIndex && selected.true_heading == null && heading != null)
         $('#selected_true_heading').text(format_track_brief(heading));
     else
         $('#selected_true_heading').text(format_track_brief(selected.true_heading));
 
+    if (globeIndex && selected.true_heading == null)
+        crab = null;
+
+    $('#selected_crab').text(format_track_brief(crab));
+
+
     let temp = null;
-    if (selected.mach != null && selected.tas != null) {
+    if (selected.oat != null) {
+        $('#selected_temp').text(Math.round(selected.oat)  + ' °C');
+    } else if (!globeIndex && selected.mach != null && selected.tas != null) {
         temp = Math.pow((selected.tas / 661.47 / selected.mach), 2) * 288.15 - 273.15;
         $('#selected_temp').text(Math.round(temp)  + ' °C');
     } else {

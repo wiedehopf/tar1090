@@ -1211,6 +1211,9 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     this.geom_rate = data.geom_rate;
     this.rc = data.rc;
     this.squawk = data.squawk;
+    this.wd = data.wd;
+    this.ws = data.ws;
+    this.oat = data.oat;
 
     // fields with more complex behaviour
 
