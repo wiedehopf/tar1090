@@ -828,6 +828,8 @@ PlaneObject.prototype.processTrace = function(options) {
     this.track_linesegs = [];
     this.remakeTrail();
 
+    let firstPos = null;
+
     Object.assign(tempPlane, this);
 
     this.position = null;
@@ -909,6 +911,9 @@ PlaneObject.prototype.processTrace = function(options) {
             if (track)
                 this.rotation = track
 
+            if (firstPos == null)
+                firstPos = this.position;
+
             if (leg_marker)
                 this.leg_ts = _now;
             if (legStart != null && legStart > 0 && legStart == i)
@@ -984,7 +989,9 @@ PlaneObject.prototype.processTrace = function(options) {
 
     let mapSize = OLMap.getSize();
     let size = [Math.max(5, mapSize[0] - 280), mapSize[1]];
-    if ((showTrace || showTraceExit) && !inView(this, OLMap.getView().calculateExtent(size)))
+    if ((showTrace || showTraceExit)
+        && !inView(this.position, OLMap.getView().calculateExtent(size))
+        && !inView(firstPos, OLMap.getView().calculateExtent(size)))
         OLMap.getView().setCenter(ol.proj.fromLonLat(this.position));
 
     showTraceExit = false;

@@ -2091,12 +2091,13 @@ function refreshTableInfo() {
         let classes;
 
 
-        plane.inView = inView(plane, lastRealExtent);
+        plane.inView = !plane.isFiltered() && inView(plane.position, lastRealExtent);
 
         if (globeIndex && !icaoFilter) {
             if (((nMapPlanes < 100 || !onMobile)
                 && (!onMobile || ZoomLvl > 10 || !plane.onGround)
-                && inView(plane, lastRenderExtent)
+                && !plane.isFiltered()
+                && inView(plane.position, lastRenderExtent)
                 ) || (plane.selected && !SelectedAllPlanes)) {
                 plane.updateFeatures(now, last);
             } else if (plane.visible) {
@@ -3680,11 +3681,9 @@ function globe_index(lat, lon) {
     return (i * lat_multiplier + j + 1000);
 }
 
-function inView(tableplane, currExtent) {
+function inView(pos, currExtent) {
 
-    if (tableplane.position == null)
-        return false;
-    if (tableplane.isFiltered())
+    if (pos == null)
         return false;
 
     let inView;
@@ -3695,8 +3694,7 @@ function inView(tableplane, currExtent) {
     //console.log([bottomLeft[0], topRight[0]]);
     //console.log([bottomLeft[1], topRight[1]]);
     //sidebarVisible = $("#sidebar_container").is(":visible");
-    const pos = tableplane.position;
-    const proj = tableplane.position ? ol.proj.fromLonLat(tableplane.position) : null;
+    const proj = ol.proj.fromLonLat(pos);
 
     if (pos && currExtent[2]-currExtent[0] > 40075016) {
         // all longtitudes in view, only check latitude
