@@ -1418,7 +1418,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
 function altitudeLines (segment) {
     let colorArr = altitudeColor(segment.altitude);
     if (segment.estimated)
-        colorArr = [colorArr[0], colorArr[1], colorArr[2] * 0.7];
+        colorArr = [colorArr[0], colorArr[1], colorArr[2] * 0.8];
     //let color = 'hsl(' + colorArr[0].toFixed(0) + ', ' + colorArr[1].toFixed(0) + '%, ' + colorArr[2].toFixed(0) + '%)';
 
     let color = hslToRgb(colorArr[0], colorArr[1], colorArr[2]);
@@ -1431,13 +1431,14 @@ function altitudeLines (segment) {
     if (lineStyleCache[lineKey])
         return lineStyleCache[lineKey];
 
-    let estimatedMult = segment.estimated ? 0.3 : 1
+    let estimatedMult = segment.estimated ? 0.6 : 1;
+    estimatedMult *= (1 - 0.3 * (noVanish && segment.estimated));
 
     if (!debugTracks) {
         lineStyleCache[lineKey]	= new ol.style.Style({
             stroke: new ol.style.Stroke({
                 color: color,
-                width: (2-(noVanish*0.8)) * newWidth * estimatedMult,
+                width: (2-(noVanish*0.6)) * newWidth * estimatedMult,
                 lineJoin: 'miter',
                 lineCap: 'square',
             })
