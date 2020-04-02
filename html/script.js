@@ -4016,8 +4016,8 @@ function initSitePos() {
         createSiteCircleFeatures();
     } else {
         SitePosition = null;
-        PlaneRowTemplate.cells[9].style.display = 'none'; // hide distance column
-        document.getElementById("distance").style.display = 'none'; // hide distance header
+        HideCols.push("#distance");
+        setColumnVisibility();
     }
 
     if (SitePosition && !onMobile) {
