@@ -1633,11 +1633,13 @@ function refreshSelected() {
 
     buttonActive('#F', FollowSelected);
 
+    /*
     if (SelectedPlane && SelectedPlane.isFiltered()) {
         SelectedPlane.selected = false;
         SelectedPlane.clearLines();
         SelectedPlane = null;
     }
+    */
 
     if (!SelectedPlane) {
         setSelectedInfoBlockVisibility();

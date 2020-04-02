@@ -154,6 +154,8 @@ PlaneObject.prototype.logSel = function(loggable) {
 }
 
 PlaneObject.prototype.isFiltered = function() {
+    if (this.selected && !SelectedAllPlanes)
+        return false;
 
     if (onlySelected && !this.selected) {
         return true;
