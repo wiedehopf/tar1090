@@ -206,7 +206,7 @@ if [[ -n $PF_URL ]]; then
 				new_chunk refresh
 			fi
 		else
-			rm $TMP
+			rm -f $TMP
 			sleep 120
 		fi
 		wait
