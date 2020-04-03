@@ -341,7 +341,6 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     if ((this.position[0] < -90 && this.prev_position[0] > 90)
         || (this.position[0] > 90 && this.prev_position[0] < -90)
     ) {
-        lastseg.fixed.appendCoordinate(projPrev);
         let sign1 = Math.sign(this.prev_position[0]);
         let sign2 = Math.sign(this.position[0]);
         let londiff1 = 180 - Math.abs(this.prev_position[0]);
@@ -351,7 +350,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
         let tryLat = ratio1 * this.prev_position[1] + ratio2 *this.position[1];
         let minDistance = 50 * 1000* 1000;
         let midLat = 0;
-        for (let i = 1; i < 100; i += 1) {
+        for (let i = 0; i < 100; i += 1) {
             let distance1 = ol.sphere.getDistance(this.prev_position, [sign1 * 180, tryLat - i]);
             let distance2 = ol.sphere.getDistance(this.position, [sign2 * 180, tryLat - i]);
 
@@ -378,32 +377,33 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
         }
         let midPoint1 = ol.proj.fromLonLat([sign1 * 180, midLat]);
         let midPoint2 = ol.proj.fromLonLat([sign2 * 180, midLat]);
+
+        lastseg.fixed.appendCoordinate(projPrev);
         this.track_linesegs.push({ fixed: new ol.geom.LineString([projPrev, midPoint1]),
             feature: null,
-            altitude: 0,
             estimated: true,
+            altitude: this.prev_alt_rounded,
+            alt_real: this.prev_alt,
+            speed: this.prev_speed,
+            ground: on_ground,
             ts: this.prev_time,
+            track: this.prev_rot,
+            leg: is_leg,
         });
         this.track_linesegs.push({ fixed: new ol.geom.LineString([midPoint2, projHere]),
             feature: null,
-            altitude: 0,
             estimated: true,
             ts: NaN,
-        });
-        let newseg = { fixed: new ol.geom.LineString([projHere]),
-            feature: null,
-            estimated: true,
+            altitude: this.prev_alt_rounded,
+            alt_real: this.prev_alt,
+            speed: this.prev_speed,
             ground: on_ground,
-            altitude: this.alt_rounded,
-            alt_real: this.altitude,
-            speed: this.speed,
-            ts: now,
-            track: this.rotation,
-        };
-        this.track_linesegs.push(newseg);
+            ts: NaN,
+            track: this.prev_rot,
+            noLabel: true,
+        });
         this.history_size += 2;
 
-        this.updateTrackPrev();
         return this.updateTail();
     }
 
@@ -1526,9 +1526,14 @@ PlaneObject.prototype.updateLines = function() {
             trail_add.push(seg.feature);
         }
 
-        if (filterTracks && this.altFiltered(seg.altitude)) {
+        if (seg.label) {
+            // nothing to do, label already present
+        } else if ((filterTracks && this.altFiltered(seg.altitude)) || seg.noLabel) {
             seg.label = true;
-        } else if ((trackLabels || ((i == 0 || i == this.track_linesegs.length-1 ||seg.leg) && showTrace && enableLabels)) && !seg.label) {
+        } else if (
+            trackLabels ||
+            ((i == 0 || i == this.track_linesegs.length-1 ||seg.leg) && showTrace && enableLabels)
+        ) {
             const alt_real = (seg.alt_real != null) ? seg.alt_real : 'n/a';
             seg.label = new ol.Feature(new ol.geom.Point(seg.fixed.getFirstCoordinate()));
             let timestamp;
@@ -1561,7 +1566,7 @@ PlaneObject.prototype.updateLines = function() {
                 text = timestamp;
 
             let fill = labelFill;
-            let zIndex = -i;
+            let zIndex = -i - 50 * (seg.alt_real == null);
             if (seg.leg == 'start') {
                 fill = new ol.style.Fill({color: '#88CC88' });
                 zIndex = 123456;
