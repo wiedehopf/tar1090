@@ -1308,7 +1308,7 @@ function initialize_map() {
             zoom: ZoomLvl,
             minZoom: 2,
         }),
-        controls: [new ol.control.Zoom({delta: 1, duration: 0,}),
+        controls: [new ol.control.Zoom({delta: 1, duration: 0, target: 'map_container',}),
             new ol.control.Attribution({collapsed: true}),
             new ol.control.ScaleLine({units: DisplayUnits})
         ],
@@ -1321,7 +1321,8 @@ function initialize_map() {
 
     if (baseCount > 1) {
         OLMap.addControl(new ol.control.LayerSwitcher({
-            groupSelectStyle: 'none'
+            groupSelectStyle: 'none',
+            target: 'map_container',
         }));
     }
 
@@ -2700,6 +2701,7 @@ function setSelectedInfoBlockVisibility() {
         //$('#sidebar_canvas').css('margin-bottom', $('#selected_infoblock').height() + 'px');
         //
         $('#large_mode_control').css('left', (190 * globalScale) + 'px');
+        $('.ol-scale-line').css('left', (180 * globalScale + 8) + 'px');
     }
     else {
         $('#selected_infoblock').hide();
@@ -2708,6 +2710,7 @@ function setSelectedInfoBlockVisibility() {
         //$('#sidebar_canvas').css('margin-bottom', 0);
 
         $('#large_mode_control').css('left', (5 * globalScale) + 'px');
+        $('.ol-scale-line').css('left', '8px');
     }
 }
 

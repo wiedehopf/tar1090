@@ -182,6 +182,7 @@ html, body {
 /* remove the blue highlighting around the map buttons */
 .ol-control button {
     outline: none;
+    z-index: 999;
 }
 
 .ol-zoom-in {
