@@ -1444,7 +1444,7 @@ function altitudeLines (segment) {
                     width: (2-(noVanish*0.6)) * newWidth,
                     lineJoin: 'miter',
                     lineCap: 'square',
-                    lineDash: [7, 14 + 3 * newWidth],
+                    lineDash: [10, 10 + 3 * newWidth],
                 })
             });
         } else {

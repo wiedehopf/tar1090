@@ -2915,18 +2915,20 @@ function toggleDebugTracks() {
 }
 
 function dim(evt) {
-    const dim = 0.35;
-    const contrast = 0.13;
+    const dim = 0.45;
+    const contrast = 0;
     evt.context.globalCompositeOperation = 'multiply';
     if (evt.context.globalCompositeOperation == 'multiply') {
         evt.context.fillStyle = 'rgba(0,0,0,'+dim+')';
         evt.context.fillRect(0, 0, evt.context.canvas.width, evt.context.canvas.height);
     }
+    /*
     evt.context.globalCompositeOperation = 'overlay';
     if (evt.context.globalCompositeOperation == 'overlay') {
         evt.context.fillStyle = 'rgba(0,0,0,'+contrast+')';
         evt.context.fillRect(0, 0, evt.context.canvas.width, evt.context.canvas.height);
     }
+    */
     evt.context.globalCompositeOperation = 'source-over';
 }
 
