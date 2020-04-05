@@ -370,7 +370,6 @@ select.error, textarea.error, input.error {
 {
     font-size: calc( 14px * var(--SCALE));
     line-height: calc( 20px * var(--SCALE));
-    text-indent: calc( 16px * var(--SCALE));
     color: rgb(0, 0, 0);
 }
 
@@ -665,6 +664,7 @@ select.error, textarea.error, input.error {
 .settingsCheckbox {
     width: calc( 20px * var(--SCALE));
     height: calc( 11px * var(--SCALE));
+    margin-right: calc( 5px * var(--SCALE));
     background-image: url('images/box-empty.png');
     background-repeat: no-repeat;
     background-position: center;

@@ -147,3 +147,52 @@ function get_history_item(i) {
     }
     deferHistory.push(request);
 }
+
+function Toggle(key, defaultState, doStuff) {
+    this.key = key;
+    this.state = defaultState;
+    this.doStuff = doStuff;
+    this.checkbox = '#' + key + '_cb';
+    this.init();
+}
+
+Toggle.prototype.init = function() {
+    if (this.checkbox) {
+        $(this.checkbox).on('click', function() {
+            this.toggle();
+        }.bind(this));
+    }
+
+    if (localStorage[this.key] == null) {
+        if (this.state)
+            $(this.checkbox).addClass('settingsCheckboxChecked');
+        else
+            $(this.checkbox).removeClass('settingsCheckboxChecked');
+        return;
+    }
+    if (localStorage[this.key] == "false")
+        this.toggle(false);
+    if (localStorage[this.key] == "true")
+        this.toggle(true);
+}
+
+Toggle.prototype.toggle = function(override) {
+    if (override == true)
+        this.state = true;
+    else if (override == false)
+        this.state = false;
+    else
+        this.state = !this.state;
+
+    if (this.state == false) {
+        localStorage[this.key] = "false";
+        $(this.checkbox).removeClass('settingsCheckboxChecked');
+    }
+    if (this.state == true) {
+        localStorage[this.key] = "true";
+        $(this.checkbox).addClass('settingsCheckboxChecked');
+    }
+
+    if (this.doStuff)
+        this.doStuff(this.state);
+}

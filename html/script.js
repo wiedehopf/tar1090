@@ -923,6 +923,22 @@ function init_page() {
         $('#debug_checkbox').removeClass('settingsCheckboxChecked');
     }
 
+    new Toggle("ColoredPlanes", true, function(state) {
+        if (state)
+            monochromeMarkers = null;
+        else
+            monochromeMarkers = "#EEEEEE";
+
+        refreshFeatures();
+    });
+    new Toggle("ColoredTrails", true, function(state) {
+        if (state)
+            monochromeTracks = null;
+        else
+            monochromeTracks = "#000000";
+
+        remakeTrails();
+    });
 
     $('#selectall_checkbox').on('click', function() {
         if ($('#selectall_checkbox').hasClass('settingsCheckboxChecked')) {
@@ -4174,3 +4190,4 @@ function drawUpintheair() {
         });
     }
 }
+
