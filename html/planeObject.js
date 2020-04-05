@@ -1420,7 +1420,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
 function altitudeLines (segment) {
     let colorArr = altitudeColor(segment.altitude);
     if (segment.estimated)
-        colorArr = [colorArr[0], colorArr[1], colorArr[2] * 0.8];
+        colorArr = [colorArr[0], colorArr[1], colorArr[2] * 0.9];
     //let color = 'hsl(' + colorArr[0].toFixed(0) + ', ' + colorArr[1].toFixed(0) + '%, ' + colorArr[2].toFixed(0) + '%)';
 
     let color = hslToRgb(colorArr[0], colorArr[1], colorArr[2]);
@@ -1437,14 +1437,26 @@ function altitudeLines (segment) {
     estimatedMult *= (1 - 0.3 * (noVanish && segment.estimated));
 
     if (!debugTracks) {
-        lineStyleCache[lineKey]	= new ol.style.Style({
-            stroke: new ol.style.Stroke({
-                color: color,
-                width: (2-(noVanish*0.6)) * newWidth * estimatedMult,
-                lineJoin: 'miter',
-                lineCap: 'square',
-            })
-        });
+        if (segment.estimated && !noVanish) {
+            lineStyleCache[lineKey]	= new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    color: color,
+                    width: (2-(noVanish*0.6)) * newWidth,
+                    lineJoin: 'miter',
+                    lineCap: 'square',
+                    lineDash: [7, 14 + 3 * newWidth],
+                })
+            });
+        } else {
+            lineStyleCache[lineKey]	= new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    color: color,
+                    width: (2-(noVanish*0.6)) * newWidth * estimatedMult,
+                    lineJoin: 'miter',
+                    lineCap: 'square',
+                })
+            });
+        }
     } else {
         lineStyleCache[lineKey] = [
             new ol.style.Style({
