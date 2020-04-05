@@ -775,7 +775,8 @@ PlaneObject.prototype.updateIcon = function() {
                 text: new ol.style.Text({
                     text: labelText ,
                     fill: new ol.style.Fill({color: 'white' }),
-                    backgroundFill: new ol.style.Stroke({color: 'rgba(0,0,0,0.4'}),
+                    //backgroundFill: new ol.style.Stroke({color: 'rgba(0,0,0,0.4'}),
+                    stroke: labelStroke,
                     textAlign: 'left',
                     textBaseline: "top",
                     font: labelFont,
