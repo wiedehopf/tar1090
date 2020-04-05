@@ -773,10 +773,10 @@ PlaneObject.prototype.updateIcon = function() {
             this.markerStyle = new ol.style.Style({
                 image: this.markerIcon,
                 text: new ol.style.Text({
-                    text: labelText ,
-                    fill: new ol.style.Fill({color: 'white' }),
-                    //backgroundFill: new ol.style.Stroke({color: 'rgba(0,0,0,0.4'}),
-                    stroke: labelStroke,
+                    text: labelText,
+                    fill: labelFill,
+                    backgroundFill: bgFill,
+                    stroke: labelStrokeNarrow,
                     textAlign: 'left',
                     textBaseline: "top",
                     font: labelFont,

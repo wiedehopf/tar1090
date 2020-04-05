@@ -87,6 +87,8 @@ let airport = null;
 let labelFill = null;
 let blackFill = null;
 let labelStroke = null;
+let labelStrokeNarrow = null;
+let bgFill = null;
 let legSel = -1;
 let geoMag = null;
 
@@ -3974,6 +3976,8 @@ function setLineWidth() {
     labelFill = new ol.style.Fill({color: 'white' });
     blackFill = new ol.style.Fill({color: 'black' });
     labelStroke = new ol.style.Stroke({color: 'rgba(0,0,0,0.7', width: 4 * globalScale});
+    labelStrokeNarrow = new ol.style.Stroke({color: 'rgba(0,0,0,0.7', width: 2.5 * globalScale});
+    bgFill = new ol.style.Stroke({color: 'rgba(0,0,0,0.25'});
 }
 
 function geoFindMe() {
