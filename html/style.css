@@ -474,14 +474,13 @@ select.error, textarea.error, input.error {
 }
 
 .settingsContainer {
-	width: calc( 29px * var(--SCALE));
-	height: calc( 29px * var(--SCALE));
+	width: calc( 36px * var(--SCALE));
+	height: calc( 36px * var(--SCALE));
     cursor: pointer;
-	margin: calc( 5px * var(--SCALE));
 	margin-top: calc( 11px * var(--SCALE));
 	margin-bottom: calc( 11px * var(--SCALE));
     background-image: url('images/settings-icon.png');
-    background-size: calc( 28px * var(--SCALE));
+    background-size: calc( 33px * var(--SCALE));
     background-repeat: no-repeat;
     background-position: center;
 }
