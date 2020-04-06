@@ -1434,15 +1434,17 @@ function altitudeLines (segment) {
     if (lineStyleCache[lineKey])
         return lineStyleCache[lineKey];
 
-    let estimatedMult = segment.estimated ? 0.6 : 1;
-    estimatedMult *= (1 - 0.3 * (noVanish && segment.estimated));
+    let multiplier = segment.estimated ? 0.6 : 1;
+
+    if (noVanish && !globeIndex)
+        multiplier *= (segment.estimated ? 0.3 : 0.6);
 
     if (!debugTracks) {
-        if (segment.estimated && !noVanish) {
+        if (segment.estimated && (!noVanish || globeIndex)) {
             lineStyleCache[lineKey]	= new ol.style.Style({
                 stroke: new ol.style.Stroke({
                     color: color,
-                    width: (2-(noVanish*0.6)) * newWidth,
+                    width: 2 * newWidth,
                     lineJoin: 'miter',
                     lineCap: 'square',
                     lineDash: [10, 10 + 3 * newWidth],
@@ -1452,7 +1454,7 @@ function altitudeLines (segment) {
             lineStyleCache[lineKey]	= new ol.style.Style({
                 stroke: new ol.style.Stroke({
                     color: color,
-                    width: (2-(noVanish*0.6)) * newWidth * estimatedMult,
+                    width: 2 * newWidth * multiplier,
                     lineJoin: 'miter',
                     lineCap: 'square',
                 })
@@ -1474,7 +1476,7 @@ function altitudeLines (segment) {
             new ol.style.Style({
                 stroke: new ol.style.Stroke({
                     color: color,
-                    width: 2 * newWidth * estimatedMult,
+                    width: 2 * newWidth * multiplier,
                 })
             })
         ];

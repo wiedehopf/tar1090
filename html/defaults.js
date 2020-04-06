@@ -61,7 +61,7 @@ let markerMinSize = 0.96;
 
 let largeMode = 1;
 
-let lineWidth = 1;
+let lineWidth = 1.15;
 
 // constant html color for markers / tracks
 let monochromeMarkers = null;
@@ -106,18 +106,21 @@ let ColorByAlt = {
 			{ h: 20,  val: 50},
 			{ h: 32,  val: 54},
 			{ h: 40,  val: 52},
-			{ h: 60,  val: 51},
+			{ h: 50,  val: 51},
+			{ h: 60,  val: 46},
 			{ h: 80,  val: 43},
 			{ h: 100, val: 43},
 			{ h: 120, val: 43},
 			{ h: 140, val: 43},
 			{ h: 160, val: 40},
 			{ h: 180, val: 40},
+			{ h: 190, val: 44},
 			{ h: 198, val: 50},
 			{ h: 200, val: 60},
 			{ h: 220, val: 60},
-			{ h: 240, val: 72},
-			{ h: 260, val: 70},
+			{ h: 240, val: 62},
+			{ h: 260, val: 64},
+			{ h: 270, val: 60},
 			{ h: 280, val: 58},
 			{ h: 290, val: 47},
 			{ h: 300, val: 43},
