@@ -1421,7 +1421,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
 function altitudeLines (segment) {
     let colorArr = altitudeColor(segment.altitude);
     if (segment.estimated)
-        colorArr = [colorArr[0], colorArr[1], colorArr[2] * 0.9];
+        colorArr = [colorArr[0], colorArr[1], colorArr[2] * 0.8];
     //let color = 'hsl(' + colorArr[0].toFixed(0) + ', ' + colorArr[1].toFixed(0) + '%, ' + colorArr[2].toFixed(0) + '%)';
 
     let color = hslToRgb(colorArr[0], colorArr[1], colorArr[2]);
@@ -1441,15 +1441,26 @@ function altitudeLines (segment) {
 
     if (!debugTracks) {
         if (segment.estimated && (!noVanish || globeIndex)) {
-            lineStyleCache[lineKey]	= new ol.style.Style({
-                stroke: new ol.style.Stroke({
-                    color: color,
-                    width: 2 * newWidth,
-                    lineJoin: 'miter',
-                    lineCap: 'square',
-                    lineDash: [10, 10 + 3 * newWidth],
+            lineStyleCache[lineKey]	= [
+                new ol.style.Style({
+                    stroke: new ol.style.Stroke({
+                        color: 'black',
+                        width: 2 * newWidth * 0.3,
+                        lineJoin: 'miter',
+                        lineCap: 'square',
+                    })
+                }),
+                new ol.style.Style({
+                    stroke: new ol.style.Stroke({
+                        color: color,
+                        width: 2 * newWidth,
+                        lineJoin: 'miter',
+                        lineCap: 'square',
+                        lineDash: [10, 10 + 3 * newWidth],
+                        lineDashOffset: 10,
+                    }),
                 })
-            });
+            ];
         } else {
             lineStyleCache[lineKey]	= new ol.style.Style({
                 stroke: new ol.style.Stroke({
