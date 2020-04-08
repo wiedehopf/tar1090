@@ -993,9 +993,11 @@ PlaneObject.prototype.processTrace = function(options) {
     let mapSize = OLMap.getSize();
     let size = [Math.max(5, mapSize[0] - 280), mapSize[1]];
     if ((showTrace || showTraceExit)
+        && !noPan
         && !inView(this.position, OLMap.getView().calculateExtent(size))
         && !inView(firstPos, OLMap.getView().calculateExtent(size)))
         OLMap.getView().setCenter(ol.proj.fromLonLat(this.position));
+    noPan = false;
 
     showTraceExit = false;
 

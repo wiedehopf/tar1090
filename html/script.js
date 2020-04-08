@@ -21,6 +21,7 @@ let SelectedPlane = null;
 let SelectedAllPlanes = false;
 let HighlightedPlane = null;
 let FollowSelected = false;
+let noPan = false;
 let infoBoxOriginalPosition = {};
 let customAltitudeColors = true;
 let loadtime = "loadtime";
@@ -3430,6 +3431,9 @@ function checkMovement() {
     //console.time("fire!");
     changeZoom();
     changeCenter();
+
+    updateAddressBar();
+
     //console.timeEnd("fire!");
 }
 
@@ -3533,6 +3537,7 @@ function processURLParams(){
                 const lon = parseFloat(search.get("lon"));
                 OLMap.getView().setCenter(ol.proj.fromLonLat([lon, lat]));
                 follow = false;
+                noPan = true;
             }
             catch (error) {
                 console.log("Error parsing lat/lon:", error);
@@ -3754,12 +3759,14 @@ function inView(pos, currExtent) {
 function updateAddressBar() {
     let posString = 'lat=' + CenterLat.toFixed(3) + '&lon=' + CenterLon.toFixed(3) + '&zoom=' + ZoomLvl.toFixed(1);
     let string;
-    if (true || !globeIndex)
+    if (showTrace) {
+        if (SelectedPlane)
+            posString = "&" + posString;
+        else
+            posString = "?" + posString;
+    } else {
         posString = ""
-    else if (SelectedPlane)
-        posString = "&" + posString;
-    else
-        posString = "?" + posString;
+    }
 
 
     if (SelectedPlane)
