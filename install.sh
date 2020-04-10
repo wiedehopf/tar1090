@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
+
 srcdir=/run/dump1090-fa
 repo="https://github.com/wiedehopf/tar1090"
 db_repo="https://github.com/wiedehopf/tar1090-db"
