@@ -106,6 +106,8 @@ if [[ -n $1 ]] && [ "$1" != "test" ] ; then
 elif ! [[ -d /run/dump1090-fa ]] ; then
     if [[ -d /run/readsb ]]; then
         srcdir=/run/readsb
+    elif [[ -d /run/adsbexchange-feed ]]; then
+        srcdir=/run/adsbexchange-feed
     elif [[ -d /run/dump1090 ]]; then
         srcdir=/run/dump1090
     elif [[ -d /run/dump1090-mutability ]]; then
