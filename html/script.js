@@ -1724,7 +1724,7 @@ function refreshSelected() {
 
     $('#selected_onground').text(format_onground(selected.altitude));
 
-    if (selected.squawk === null || selected.squawk === '0000') {
+    if (selected.squawk == null || selected.squawk == '0000') {
         $('#selected_squawk1').text('n/a');
         $('#selected_squawk2').text('n/a');
     } else {
