@@ -104,19 +104,19 @@ let TypeDesignatorIcons = {
     'A321': ['airliner', 1.02], // stretched a320 93t
     'A21N': ['airliner', 1.02], // stretched a320
 
-    'A306': ['heavy_2e', 0.96],
-    'A330': ['heavy_2e', 1],
-    'A332': ['heavy_2e', 1],
-    'A333': ['heavy_2e', 1],
-    'A338': ['heavy_2e', 1], // 800 neo
-    'A339': ['heavy_2e', 1], // 900 neo
-    'DC10': ['md11', 0.96],
-    'MD11': ['md11', 1],
+    'A306': ['heavy_2e', 0.93],
+    'A330': ['heavy_2e', 0.96],
+    'A332': ['heavy_2e', 0.96],
+    'A333': ['heavy_2e', 0.96],
+    'A338': ['heavy_2e', 0.96], // 800 neo
+    'A339': ['heavy_2e', 0.96], // 900 neo
+    'DC10': ['md11', 0.92],
+    'MD11': ['md11', 0.96],
 
-    'A359': ['heavy_2e', 1.04],
-    'A35K': ['heavy_2e', 1.06],
+    'A359': ['heavy_2e', 1.00],
+    'A35K': ['heavy_2e', 1.02],
 
-    'A388': ['heavy_4e', 1.08],
+    'A388': ['heavy_4e', 1.04],
 
     // dubious since these are old-generation 737s
     // but the shape is similar
@@ -145,24 +145,24 @@ let TypeDesignatorIcons = {
     'BCS1': ['airliner', 0.86], // 64t
     'BCS3': ['airliner', 0.88], // 70t
 
-    'B741': ['heavy_4e', 1],
-    'B742': ['heavy_4e', 1],
-    'B743': ['heavy_4e', 1],
-    'B744': ['heavy_4e', 1],
-    'B74D': ['heavy_4e', 1],
-    'B74S': ['heavy_4e', 1],
-    'B74R': ['heavy_4e', 1],
-    'BLCF': ['heavy_2e', 1],
-    'BSCA': ['heavy_4e', 1], // hah!
-    'B748': ['heavy_4e', 1.02],
+    'B741': ['heavy_4e', 0.96],
+    'B742': ['heavy_4e', 0.96],
+    'B743': ['heavy_4e', 0.96],
+    'B744': ['heavy_4e', 0.96],
+    'B74D': ['heavy_4e', 0.96],
+    'B74S': ['heavy_4e', 0.96],
+    'B74R': ['heavy_4e', 0.96],
+    'BLCF': ['heavy_2e', 0.96],
+    'BSCA': ['heavy_4e', 0.96], // hah!
+    'B748': ['heavy_4e', 0.98],
 
     'B752': ['airliner', 1.04],
     'B753': ['airliner', 1.04],
 
-    'B772': ['heavy_2e', 1.04], // all pretty similar except for length
-    'B773': ['heavy_2e', 1.06],
-    'B77L': ['heavy_2e', 1.06],
-    'B77W': ['heavy_2e', 1.08],
+    'B772': ['heavy_2e', 1.00], // all pretty similar except for length
+    'B773': ['heavy_2e', 1.02],
+    'B77L': ['heavy_2e', 1.02],
+    'B77W': ['heavy_2e', 1.04],
 
     'C680': ['jet_swept', 0.92], // 14t
     'C68A': ['jet_swept', 0.92], // 14t
@@ -312,40 +312,40 @@ let TypeDescriptionIcons = {
     'L1J-L': ['jet_nonswept', 1], // < 7t
     'L2J-L': ['jet_nonswept', 1], // < 7t
     'L2J-M': ['airliner', 1], // < 136t
-    'L2J-H': ['heavy_2e', 1], // > 136t
+    'L2J-H': ['heavy_2e', 0.96], // > 136t
 
     'L3J-H': ['md11', 1], // > 136t
 
     'L4T-M': ['c130', 1],
     'L4T-H': ['c130', 1.15],
 
-    'L4J-H': ['heavy_4e' , 1],
+    'L4J-H': ['heavy_4e' , 0.96],
 };
 
 let CategoryIcons = {
-    "A1" : 'cessna', // < 7t
+    "A1" : ['cessna', 1],// < 7t
 
-    "A2" : 'jet_swept', // < 34t
+    "A2" : ['jet_swept', 1], // < 34t
 
-    "A3" : 'airliner', // < 136t
+    "A3" : ['airliner', 0.96], // < 136t
 
-    "A4" : 'airliner', // < 136t
+    "A4" : ['airliner', 1], // < 136t
 
-    "A5" : 'heavy_4e', // > 136t
+    "A5" : ['heavy_2e', 0.92], // > 136t
 
-    "A6" : 'hi_perf',
+    "A6" : ['hi_perf', 1],
 
-    "A7" : 'helicopter',
+    "A7" : ['helicopter', 1],
 
-    "B2" : 'balloon',
+    "B2" : ['balloon', 1],
 
-    'C0' : 'ground_unknown',
+    'C0' : ['ground_unknown', 1],
 
-    'C1' : 'ground_emergency',
+    'C1' : ['ground_emergency', 1],
 
-    'C2' : 'ground_service',
+    'C2' : ['ground_service', 1],
 
-    'C3' : 'ground_fixed'
+    'C3' : ['ground_fixed', 1],
 };
 
 function getBaseMarker(category, typeDesignator, typeDescription, wtc) {
@@ -381,7 +381,7 @@ function getBaseMarker(category, typeDesignator, typeDescription, wtc) {
     }
 
     if (category in CategoryIcons) {
-        return [CategoryIcons[category], 1];
+        return CategoryIcons[category];
     }
 
     return ['unknown', 1];
