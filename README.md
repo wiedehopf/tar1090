@@ -271,11 +271,18 @@ REPAIR OR CORRECTION.
 
 This is not in any way or form officially supported and you should consider it experimental.
 To accomplish this, you need to use the dev branch of my readsb repository.
+(https://github.com/wiedehopf/adsb-wiki/wiki/Building-readsb-from-source#wiedehopfs-dev-branch)
 
-The following options need to be used:
+The following options need to be added to for example the decoder options in `/etc/default/readsb`
 ```
 --write-json-globe-index --write-globe-history /var/globe_history
 ```
+
+If you don't want readsb to read data from the SDR, you'll also need to change the receiver options line to something like this:
+```
+RECEIVER_OPTIONS="--net-only --net-connector 192.168.2.7,30005,beast_in"
+```
+If you have another dump1090/readsb running on the same machine, you'll also need to change all the ports to avoid conflicts.
 
 This will obviously write data to the hard drive, be aware of that.
 The data format is subject to change, don't expect this to be stable.
