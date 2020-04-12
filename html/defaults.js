@@ -55,9 +55,12 @@ let MapDim = true;
 
 // -- Marker settings -------------------------------------
 
-let markerScaleFactor = 1.25;
-let markerMaxSize = 1.32;
-let markerMinSize = 0.96;
+// different marker size depending on zoom lvl
+let markerZoomDivide = 8.5;
+// marker size when the zoom level is less than markerZoomDivide
+let markerSmall = 1;
+// marker size when the zoom level is more than markerZoomDivide
+let markerBig = 1.18;
 
 let largeMode = 1;
 

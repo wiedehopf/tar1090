@@ -3450,11 +3450,13 @@ function changeZoom(init) {
     localStorage['ZoomLvl'] = ZoomLvl;
     ZoomLvlCache = ZoomLvl;
 
-    if (globalScale <= 1.15)
-        scaleFactor =  Math.max(markerMinSize, Math.min(markerMaxSize, markerScaleFactor * 0.09 * Math.pow(1.35, ZoomLvl)));
-    else {
-        scaleFactor =  Math.max(markerMinSize * Math.pow(1.3, globalScale) * globalScale, Math.min(markerMaxSize, markerScaleFactor * 0.09 * Math.pow(1.35, ZoomLvl)));
-    }
+    if (ZoomLvl > markerZoomDivide)
+        scaleFactor = markerBig;
+    else
+        scaleFactor = markerSmall;
+
+    // scale markers according to global scaling
+    scaleFactor *= Math.pow(1.3, globalScale) * globalScale;
 
     if (!onlySelected)
         refreshTableInfo();

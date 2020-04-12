@@ -64,9 +64,12 @@
 
 // -- Marker settings -------------------------------------
 
-//markerScaleFactor = 1.2;
-//markerMaxSize = 1.32;
-//markerMinSize = 0.72;
+// different marker size depending on zoom lvl
+// markerZoomDivide = 8.5;
+// marker size when the zoom level is less than markerZoomDivide
+// markerSmall = 1;
+// marker size when the zoom level is more than markerZoomDivide
+// markerBig = 1.18;
 
 //largeMode = 1;
 
