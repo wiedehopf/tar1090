@@ -103,16 +103,16 @@ fi
 
 if [[ -n $1 ]] && [ "$1" != "test" ] ; then
     srcdir=$1
-elif ! [[ -d /run/dump1090-fa ]] ; then
-    if [[ -d /run/readsb ]]; then
+elif ! [[ -f /run/dump1090-fa/aircraft.json ]] ; then
+    if [[ -f /run/readsb/aircraft.json ]]; then
         srcdir=/run/readsb
-    elif [[ -d /run/adsbexchange-feed ]]; then
+    elif [[ -f /run/adsbexchange-feed/aircraft.json ]]; then
         srcdir=/run/adsbexchange-feed
-    elif [[ -d /run/dump1090 ]]; then
+    elif [[ -f /run/dump1090/aircraft.json ]]; then
         srcdir=/run/dump1090
-    elif [[ -d /run/dump1090-mutability ]]; then
+    elif [[ -f /run/dump1090-mutability/aircraft.json ]]; then
         srcdir=/run/dump1090-mutability
-    elif [[ -d /run/skyaware978 ]]; then
+    elif [[ -f /run/skyaware978/aircraft.json ]]; then
         srcdir=/run/skyaware978
     fi
 fi
