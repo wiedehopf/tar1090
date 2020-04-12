@@ -291,7 +291,7 @@ let TypeDesignatorIcons = {
 
     'A400': ['c130', 1.15],
 
-    'C17': ['c17', 0.92],
+    'C17': ['c17', 0.82],
     //
     'GND': ['ground_unknown', 1],
     'GRND': ['ground_unknown', 1],
