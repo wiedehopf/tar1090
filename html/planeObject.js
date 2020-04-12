@@ -706,10 +706,10 @@ PlaneObject.prototype.updateIcon = function() {
         if (!this.baseMarker)
             console.log(baseMarkerKey);
     }
-    let outline = (this.shape != 'md11') ?
-        ' stroke="'+OutlineADSBColor+'" stroke-width="0.4px"' :
-        ' stroke="'+OutlineADSBColor+'" stroke-width="2px"';
-    let add_stroke = (this.selected && !SelectedAllPlanes && !onlySelected) ? outline : '';
+    let strokeScale = this.baseMarker.strokeScale ? this.baseMarker.strokeScale : 1;
+    let outline = ' stroke="'+OutlineADSBColor+'" stroke-width="' + 0.65 * strokeScale + 'px"';
+    let select_outline = ' stroke="'+OutlineADSBColor+'" stroke-width="' + 1.35 * strokeScale + 'px"';
+    let add_stroke = (this.selected && !SelectedAllPlanes && !onlySelected) ? select_outline : outline;
 
     this.scale = scaleFactor * this.baseScale;
     let svgKey  = col + '!' + this.shape + '!' + add_stroke;
