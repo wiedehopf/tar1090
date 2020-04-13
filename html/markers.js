@@ -43,7 +43,7 @@ let shapes = {
     // by Peter Lowden
     // licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)
     'c130': {
-        w: 32,
+        w: 28,
         h: 36,
         noAspect: true,
         strokeScale: 1.8,
@@ -471,11 +471,11 @@ function svgShapeToURI(shape, fillColor, strokeColor, strokeWidth){
     }
 
 
-    let svg = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="'
-    + shape.viewBox + '" width="' + shape.w + '" height="' + shape.h + '">'
-    + (shape.noAspect ? 'preserveAspectRatio="none" ' : '')
-    + '<path fill="' + fillColor + '" stroke="' + strokeColor + '" stroke-width="' + strokeWidth + '" '
-    + 'd="' + shape.path + '"/></svg>';
+    let svg = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="' + shape.viewBox + '" '
+        + (shape.noAspect ? 'preserveAspectRatio="none" ' : '')
+        + 'width="' + shape.w + '" height="' + shape.h + '">'
+        + '<path fill="' + fillColor + '" stroke="' + strokeColor + '" stroke-width="' + strokeWidth + '" '
+        + 'd="' + shape.path + '"/></svg>';
 
     return "data:image/svg+xml;base64," + btoa(svg);
 }
