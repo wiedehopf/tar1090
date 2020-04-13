@@ -43,8 +43,8 @@ let shapes = {
     // by Peter Lowden
     // licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)
     'c130': {
-        w: 28,
-        h: 36,
+        w: 26,
+        h: 34,
         noAspect: true,
         strokeScale: 1.8,
         viewBox: '0 0 64 64',
