@@ -74,6 +74,12 @@
 //largeMode = 1;
 
 //lineWidth = 1;
+//
+// Outline color for aircraft icons
+// OutlineADSBColor = '#000000';
+
+// Outline width for aircraft icons
+// outlineWidth = 1;
 
 // constant html color for markers / tracks
 //monochromeMarkers = "#FFFFFF";
@@ -135,12 +141,6 @@ ColorByAlt = {
 //         stale :    { h: 0, s: 0, l: +30 },
 //         mlat :     { h: 0, s: 0, l: -10 }
 // };
-
-// Outline color for aircraft icons with an ADS-B position
-//OutlineADSBColor = '#000000';
-
-// Outline color for aircraft icons with a mlat position
-//OutlineMlatColor = '#4040FF';
 
 // Range rings
 

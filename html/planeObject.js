@@ -707,8 +707,8 @@ PlaneObject.prototype.updateIcon = function() {
             console.log(baseMarkerKey);
     }
     let strokeScale = this.baseMarker.strokeScale ? this.baseMarker.strokeScale : 1;
-    let outline = ' stroke="'+OutlineADSBColor+'" stroke-width="' + 0.65 * strokeScale + 'px"';
-    let select_outline = ' stroke="'+OutlineADSBColor+'" stroke-width="' + 1.35 * strokeScale + 'px"';
+    let outline = ' stroke="' + OutlineADSBColor+'" stroke-width="' + outlineWidth * 0.65 * strokeScale + 'px"';
+    let select_outline = ' stroke="' + OutlineADSBColor + '" stroke-width="' + outlineWidth * 1.35 * strokeScale + 'px"';
     let add_stroke = (this.selected && !SelectedAllPlanes && !onlySelected) ? select_outline : outline;
 
     this.scale = scaleFactor * this.baseScale;
@@ -783,7 +783,6 @@ PlaneObject.prototype.updateIcon = function() {
                     offsetX: (this.baseMarker.size[0]*0.5*0.74*this.scale),
                     offsetY: (this.baseMarker.size[0]*0.5*0.74*this.scale),
                 }),
-                zIndex: this.zIndex,
             });
         } else {
             this.markerStyle = new ol.style.Style({
@@ -1110,13 +1109,16 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 
     if (this.altitude == null) {
         this.onGround = null;
-        this.zIndex = -10000;
+        this.zIndex = 10;
     } else if (this.altitude == "ground") {
         this.onGround = true;
-        this.zIndex = -10000;
+        this.zIndex = 5;
     } else {
         this.onGround = false;
-        this.zIndex = this.alt_rounded;
+        this.zIndex = this.alt_rounded + 10000;
+    }
+    if (this.category == 'C3' || this.icaoType == 'TWR') {
+        this.zIndex = 1;
     }
 
     // needed for track labels
@@ -1426,7 +1428,7 @@ function altitudeLines (segment) {
         colorArr = [colorArr[0], colorArr[1], colorArr[2] * 0.8];
     //let color = 'hsl(' + colorArr[0].toFixed(0) + ', ' + colorArr[1].toFixed(0) + '%, ' + colorArr[2].toFixed(0) + '%)';
 
-    let color = hslToRgb(colorArr[0], colorArr[1], colorArr[2]);
+    let color = hslToRgb(colorArr);
 
     if (monochromeTracks)
         color = monochromeTracks;
@@ -1790,7 +1792,10 @@ PlaneObject.prototype.drawRedDot = function(bad_position) {
  * @param   {number}  l       The lightness
  * @return  {Array}           The RGB representation
  */
-function hslToRgb(h, s, l){
+function hslToRgb(arr){
+    let h = arr[0];
+    let s = arr[1];
+    let l = arr[2];
     let r, g, b;
 
     h /= 360;

@@ -536,6 +536,12 @@ function initialize() {
                 OutlineADSBColor = "#000000";
         }
 
+        if (search.has('outlineWidth')) {
+            let tmp = parseInt(search.get('outlineWidth'));
+            if (!isNaN(tmp))
+                outlineWidth = tmp;
+        }
+
         if (search.has('kiosk')) {
             tempTrails = true;
             hideButtons = true;

@@ -66,6 +66,12 @@ let largeMode = 1;
 
 let lineWidth = 1.15;
 
+// Outline color for aircraft icons
+let OutlineADSBColor = '#000000';
+
+// Outline width for aircraft icons
+let outlineWidth = 1;
+
 // constant html color for markers / tracks
 let monochromeMarkers = null;
 let monochromeTracks = null;
@@ -155,12 +161,6 @@ let ColorByAlt = {
 //         stale :    { h: 0, s: 0, l: +30 },
 //         mlat :     { h: 0, s: 0, l: -10 }
 // };
-
-// Outline color for aircraft icons with an ADS-B position
-let OutlineADSBColor = '#000000';
-
-// Outline color for aircraft icons with a mlat position
-let OutlineMlatColor = '#001F66';
 
 // Also called range rings :)
 let SiteCircles = true; // true to show circles (only shown if the center marker is shown)
