@@ -530,7 +530,7 @@ function initialize() {
 
         let outlineColor = search.get('outlineColor');
         if (outlineColor != undefined) {
-            if (markers.length == 6)
+            if (outlineColor.length == 6)
                 OutlineADSBColor = '#' + outlineColor;
             else
                 OutlineADSBColor = "#000000";

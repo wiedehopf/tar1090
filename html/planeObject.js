@@ -586,9 +586,13 @@ PlaneObject.prototype.getMarkerColor = function() {
         return monochromeMarkers;
     }
 
+    let alt = this.alt_rounded;
+    if (this.category == 'C3' || this.icaoType == 'TWR')
+        alt = 'ground';
+
     let h, s, l;
 
-    let colorArr = altitudeColor(this.alt_rounded);
+    let colorArr = altitudeColor(alt);
 
     h = colorArr[0];
     s = colorArr[1];
@@ -600,7 +604,7 @@ PlaneObject.prototype.getMarkerColor = function() {
         s += ColorByAlt.stale.s;
         l += ColorByAlt.stale.l;
     }
-    if (this.alt_rounded == "ground") {
+    if (alt == "ground") {
         l += 15;
     }
 
@@ -693,7 +697,7 @@ function altitudeColor(altitude) {
 
 PlaneObject.prototype.updateIcon = function() {
 
-    let col = this.getMarkerColor();
+    let fillColor = this.getMarkerColor();
     let baseMarkerKey = (this.category ? this.category : "A0") + "_"
         + this.typeDescription + "_" + this.wtc  + "_" + this.icaoType;
 
@@ -706,13 +710,11 @@ PlaneObject.prototype.updateIcon = function() {
         if (!this.baseMarker)
             console.log(baseMarkerKey);
     }
-    let strokeScale = this.baseMarker.strokeScale ? this.baseMarker.strokeScale : 1;
-    let outline = ' stroke="' + OutlineADSBColor+'" stroke-width="' + outlineWidth * 0.65 * strokeScale + 'px"';
-    let select_outline = ' stroke="' + OutlineADSBColor + '" stroke-width="' + outlineWidth * 1.35 * strokeScale + 'px"';
-    let add_stroke = (this.selected && !SelectedAllPlanes && !onlySelected) ? select_outline : outline;
+
+    let strokeWidth = outlineWidth * ((this.selected && !SelectedAllPlanes && !onlySelected) ? 1.35 : 0.65);
 
     this.scale = scaleFactor * this.baseScale;
-    let svgKey  = col + '!' + this.shape + '!' + add_stroke;
+    let svgKey  = fillColor + '!' + this.shape + '!' + strokeWidth;
     let labelText = null;
     if ( enableLabels && !showTrace && (!multiSelect || (multiSelect && this.selected)) &&
         (
@@ -745,13 +747,13 @@ PlaneObject.prototype.updateIcon = function() {
         this.rotationCache = this.rotation;
 
         if (iconCache[svgKey] == undefined) {
-            let svgURI = svgPathToURI(this.baseMarker.svg, OutlineADSBColor, col, add_stroke);
+            let svgURI = svgShapeToURI(this.baseMarker, fillColor, OutlineADSBColor, strokeWidth);
 
             addToIconCache.push([svgKey, null, svgURI]);
 
             this.markerIcon = new ol.style.Icon({
                 scale: this.scale,
-                imgSize: this.baseMarker.size,
+                imgSize: [this.baseMarker.w, this.baseMarker.h],
                 src: svgURI,
                 rotation: (this.baseMarker.noRotate ? 0 : this.rotation * Math.PI / 180.0),
                 rotateWithView: (this.baseMarker.noRotate ? false : true),
@@ -759,7 +761,7 @@ PlaneObject.prototype.updateIcon = function() {
         } else {
             this.markerIcon = new ol.style.Icon({
                 scale: this.scale,
-                imgSize: this.baseMarker.size,
+                imgSize: [this.baseMarker.w, this.baseMarker.h],
                 img: iconCache[svgKey],
                 rotation: (this.baseMarker.noRotate ? 0 : this.rotation * Math.PI / 180.0),
                 rotateWithView: (this.baseMarker.noRotate ? false : true),
@@ -780,8 +782,8 @@ PlaneObject.prototype.updateIcon = function() {
                     textAlign: 'left',
                     textBaseline: "top",
                     font: labelFont,
-                    offsetX: (this.baseMarker.size[0]*0.5*0.74*this.scale),
-                    offsetY: (this.baseMarker.size[0]*0.5*0.74*this.scale),
+                    offsetX: (this.baseMarker.w *0.5*0.74*this.scale),
+                    offsetY: (this.baseMarker.w *0.5*0.74*this.scale),
                 }),
             });
         } else {
