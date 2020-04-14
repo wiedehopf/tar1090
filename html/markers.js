@@ -180,13 +180,13 @@ let shapes = {
 let TypeDesignatorIcons = {
     'SHIP': ['balloon', 1], // Blimp
 
-    'A318': ['airliner', 0.88], // shortened a320 68t
-    'A319': ['airliner', 0.92], // shortened a320 75t
-    'A19N': ['airliner', 0.92], // shortened a320
+    'A318': ['airliner', 0.90], // shortened a320 68t
+    'A319': ['airliner', 0.93], // shortened a320 75t
+    'A19N': ['airliner', 0.93], // shortened a320
     'A320': ['airliner', 0.96], // 78t
     'A20N': ['airliner', 0.96],
-    'A321': ['airliner', 1.02], // stretched a320 93t
-    'A21N': ['airliner', 1.02], // stretched a320
+    'A321': ['airliner', 0.99], // stretched a320 93t
+    'A21N': ['airliner', 0.99], // stretched a320
 
     'A306': ['heavy_2e', 0.93],
     'A330': ['heavy_2e', 0.96],
@@ -206,16 +206,16 @@ let TypeDesignatorIcons = {
     // but the shape is similar
     'B731': ['airliner', 0.88],
     'B732': ['airliner', 0.88],
-    'B733': ['airliner', 0.88],
+    'B733': ['airliner', 0.90],
     'B734': ['airliner', 0.94],
     'B735': ['airliner', 0.96],
 
     // these probably need reworking
     // since they vary in length
     'B736': ['airliner', 0.92],
-    'B737': ['airliner', 0.94],
+    'B737': ['airliner', 0.93],
     'B738': ['airliner', 0.96],
-    'B739': ['airliner', 1],
+    'B739': ['airliner', 0.98],
 
     'J328': ['airliner', 0.78], // 15t
     'E170': ['airliner', 0.82], // 38t
