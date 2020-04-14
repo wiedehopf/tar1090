@@ -373,6 +373,9 @@ let TypeDesignatorIcons = {
 
     'A400': ['c130', 1.15],
 
+    'V22': ['twin_large', 0.96],
+    'R44': ['helicopter', 1.1],
+
     'C17': ['c17', 0.82],
     'E3TF': ['e3awacs', 0.88],
     'E3CF': ['e3awacs', 0.88],
