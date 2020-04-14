@@ -1153,7 +1153,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         return;
     }
 
-    this.jaero = (data.type == 'jaero');
+    this.jaero = (data.type == 'adsc');
     this.sbs = (data.type == 'other');
 
     if (this.jaero)
