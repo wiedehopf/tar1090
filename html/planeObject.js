@@ -9,8 +9,6 @@ function PlaneObject(icao) {
     this.selected  = false;
     this.category  = null;
     this.dataSource = "other";
-    this.hasADSB   = false;
-    this.adsbOnGround = null;
 
     this.trCache = [];
 
@@ -1042,16 +1040,9 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     this.last_message_time = now - seen;
 
     // remember last known position even if stale
-    // and some other magic to avoid mlat positions when a current ads-b position is available
-    if (lat != null && this.hasADSB && this.dataSource != "mlat" && mlat
-        && (now - this.position_time) < (mlatTimeout + 0.5 * mlatTimeout * this.adsbOnGround)) {
-        mlat = false;
-        // don't use MLAT for mlatTimeout (default 30) seconds after getting an ADS-B position
-        // console.log(this.icao + ': mlat position ignored');
-        if (debug && this.prev_position) {
-            this.drawRedDot([lon, lat]);
-        }
-    } else if (lat != null && seen_pos < (now - this.position_time + 2) && !(noMLAT && mlat)) {
+    // some logic for parsing 978 and 1090 aircraft.jsons at the same time.
+    // more logic to not show or process mlat positions when filtered out.
+    if (lat != null && seen_pos < (now - this.position_time + 2) && !(noMLAT && mlat)) {
         this.position   = [lon, lat];
         this.position_time = now - seen_pos;
         newPos = true;
@@ -1147,18 +1138,14 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.dataSource = "mlat";
     } else if (!displayUATasADSB && this.receiver == "uat" && !tisb) {
         this.dataSource = "uat";
-    } else if (type == "adsb_icao" || type == "adsb_other") {
-        this.dataSource = "adsb";
     } else if (type && type.substring(0,4) == "adsr") {
         this.dataSource = "adsb";
     } else if (type == "adsb_icao_nt") {
         this.dataSource = "other";
     } else if (tisb) {
         this.dataSource = "tisb";
-    } else if (lat != null && type == null) {
+    } else if ((lat != null && type == null) || type == "adsb_icao" || type == "adsb_other") {
         this.dataSource = "adsb";
-        this.hasADSB = true;
-        this.adsbOnGround = (alt_baro == "ground");
     }
 
     if (isArray) {
@@ -1166,8 +1153,8 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         return;
     }
 
-    this.jaero = data.jaero;
-    this.sbs = data.sbs_other;
+    this.jaero = (data.type == 'jaero');
+    this.sbs = (data.type == 'other');
 
     if (this.jaero)
         this.dataSource = "jaero";
