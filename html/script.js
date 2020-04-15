@@ -357,9 +357,6 @@ function fetchData() {
     buttonActive('#F', FollowSelected);
 
     let ac_url = [];
-    if (adsbexchange) {
-        $('#adsbexchange_header').show();
-    }
     if (globeIndex) {
         let indexes = globeIndexes();
         let count = 0;
@@ -1026,6 +1023,13 @@ function push_history_item(i) {
 
 function parse_history() {
 
+    if (adsbexchange) {
+        $('#adsbexchange_header').show();
+        if (window.self != window.top) {
+            window.top.location.href = "https://www.adsbexchange.com/"
+            return;
+        }
+    }
     if (nHistoryItems) {
         console.timeEnd("Downloaded History");
         console.time("Loaded aircraft tracks from History");
