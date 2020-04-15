@@ -91,7 +91,7 @@ function createBaseLayers() {
             'MODIS_Terra_CorrectedReflectance_TrueColor/default/2019-07-22/' +
             'GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg',
         }),
-        name: 'GIBS',
+        name: 'gibs',
         title: 'GIBS',
         type: 'base',
     }));

@@ -40,23 +40,29 @@
 //range_outline_width = 1.7;
 //range_outline_colored_by_altitude = false;
 
+
 // which map is displayed to new visitors
-// valid values:
-// terrain_roads
+// MapType_tar1090 = "carto_light_all";
+//
+// valid values for the above setting:
 // osm
-// wikimedia
-// terrain_roads
-// terrain
+// esri
 // carto_light_all
 // carto_light_nolabels
 // carto_dark_all
 // carto_dark_nolabels
+// gibs
+// osm_adsbx
+// chartbundle_sec: "Sectional Charts",
+// chartbundle_tac: "Terminal Area Charts",
+// chartbundle_hel: "Helicopter Charts",
+// chartbundle_enrl: "IFR Enroute Low Charts",
+// chartbundle_enra: "IFR Area Charts",
+// chartbundle_enrh: "IFR Enroute High Charts"
+//
 // only with bing key:
 // bing_aerial
 // bing_roads
-
-// which map is displayed to new visitors
-//MapType_tar1090 = "carto_light_all";
 
 // Default map dim state, true or false.
 //MapDim = true;
