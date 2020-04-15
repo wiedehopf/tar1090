@@ -267,6 +267,54 @@ TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.  SHOULD THE
 PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING,
 REPAIR OR CORRECTION.
 
+## A separate instance with longer data retention for gauging range
+
+```
+sudo nano /etc/default/tar1090_instances
+```
+
+put in these two lines if you're using readsb
+```
+/run/readsb tar1090
+/run/readsb persist
+```
+
+put in these two lines if you're using dump1090-fa
+```
+/run/dump1090-fa tar1090
+/run/dump1090-fa persist
+```
+
+if you then run the tar1090 install script afterwards you'll have an extra instance you can configure the history retention for.
+```
+sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"
+sudo nano /etc/default/tar1090-persist
+```
+
+change to these values for 24h of history:
+
+```
+# Interval at which the track history is saved
+INTERVAL=14
+# How many points in time are stored in the track history
+HISTORY_SIZE=6000
+```
+
+then
+```
+sudo systemctl restart tar1090-persist
+```
+and the persist instance will start saving more data.
+You can then visit `/persist` instead of `/tar1090`, enable persistence (P) and reload with F5 to get the complete 24h history displayed.
+Press T to show all traces, you might also want to disable aircraft position in the map layer menu.
+
+for adding the range outline to the persist instance after having used the method described earlier, copy over the json:
+
+```
+sudo cp /usr/local/share/tar1090/html/upintheair.json /usr/local/share/tar1090/html-persist
+```
+
+
 ## History function as used for tar1090.adsbexchange.com
 
 This is not in any way or form officially supported and you should consider it experimental.
