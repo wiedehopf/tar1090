@@ -1433,11 +1433,11 @@ function altitudeLines (segment) {
 
     let multiplier = segment.estimated ? 0.6 : 1;
 
-    if (noVanish && !globeIndex)
+    if (noVanish)
         multiplier *= (segment.estimated ? 0.3 : 0.6);
 
     if (!debugTracks) {
-        if (segment.estimated && (!noVanish || globeIndex)) {
+        if (segment.estimated && !noVanish) {
             lineStyleCache[lineKey]	= [
                 new ol.style.Style({
                     stroke: new ol.style.Stroke({

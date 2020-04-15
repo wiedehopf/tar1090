@@ -2415,7 +2415,7 @@ function selectPlaneByHex(hex, options) {
     options = options || {};
     //console.log("select: " + hex);
     // If SelectedPlane has something in it, clear out the selected
-    if (SelectedAllPlanes) {
+    if (SelectedAllPlanes && !options.goldT) {
         deselectAllPlanes();
     }
     // already selected plane
@@ -2488,6 +2488,8 @@ function selectPlaneByHex(hex, options) {
                 legShift(0);
         });
     }
+    if (options.goldT)
+        return;
 
     if (!multiSelect && oldPlane) {
         oldPlane.selected = false;
@@ -4206,3 +4208,10 @@ function drawUpintheair() {
     }
 }
 
+function solidGoldT() {
+
+    for (let i in PlanesOrdered) {
+        let plane = PlanesOrdered[i];
+        selectPlaneByHex(plane.icao, { goldT: true, });
+    }
+}
