@@ -585,7 +585,7 @@ PlaneObject.prototype.getMarkerColor = function() {
     }
 
     let alt = this.alt_rounded;
-    if (this.category == 'C3' || this.icaoType == 'TWR')
+    if (this.category == 'C3' || this.icaoType == 'TWR' || (this.icaoType == null && this.squawk == 7777))
         alt = 'ground';
 
     let h, s, l;
@@ -698,6 +698,8 @@ PlaneObject.prototype.updateIcon = function() {
     let icaoType = this.icaoType;
     if (this.icaoType == 'V22' && this.speed < 100)
         icaoType = 'R44';
+    if (icaoType == null && this.squawk == 7777)
+        icaoType = 'TWR';
 
     let fillColor = this.getMarkerColor();
     let baseMarkerKey = (this.category ? this.category : "A0") + "_"
