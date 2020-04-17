@@ -1456,7 +1456,7 @@ function altitudeLines (segment) {
                         lineJoin: 'miter',
                         lineCap: 'square',
                         lineDash: [10, 10 + 3 * newWidth],
-                        lineDashOffset: 10,
+                        lineDashOffset: 7,
                     }),
                 })
             ];
