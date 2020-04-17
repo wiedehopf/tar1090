@@ -696,8 +696,8 @@ function altitudeColor(altitude) {
 PlaneObject.prototype.updateIcon = function() {
 
     let icaoType = this.icaoType;
-    if (this.icaoType == 'V22' && this.speed < 100)
-        icaoType = 'R44';
+    if (this.icaoType == 'V22' && this.speed > 120)
+        icaoType = 'V22F';
     if (icaoType == null && this.squawk == 7777)
         icaoType = 'TWR';
 
