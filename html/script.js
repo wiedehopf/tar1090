@@ -221,6 +221,9 @@ function processAircraft(ac, init, uat) {
         }
     }
 
+    if (showTrace)
+        return;
+
     // Call the function update
     if (globeIndex) {
         if (!onlyMilitary || plane.military)
@@ -1384,16 +1387,20 @@ function initialize_map() {
         let hex = evt.map.forEachFeatureAtPixel(
             evt.pixel,
             function(feature, layer) {
+                if (showTrace)
+                    return feature.timestamp;
                 return feature.hex;
             },
             {
                 layerFilter: function(layer) {
                     return (layer == iconLayer || layer.get('isTrail') == true);
                 },
-                hitTolerance:5,
+                hitTolerance: 6 * globalScale,
             }
         );
-        if (hex) {
+        if (showTrace && hex) {
+            SelectedPlane.processTrace({timestamp: hex,});
+        } else if (hex) {
             selectPlaneByHex(hex, {follow: (evt.type === 'dblclick')});
         } else if (!multiSelect) {
             deselectAllPlanes();
@@ -2062,7 +2069,7 @@ function refreshHighlighted() {
         $('#highlighted_registration').text("n/a");
     }
 
-    $('#highlighted_speed').text(format_speed_long(highlighted.speed, DisplayUnits));
+    $('#highlighted_speed').text(format_speed_long(highlighted.gs, DisplayUnits));
 
     $("#highlighted_altitude").text(format_altitude_long(highlighted.altitude, highlighted.vert_rate, DisplayUnits));
 
@@ -2445,7 +2452,6 @@ function selectPlaneByHex(hex, options) {
         }
         if (newPlane && (showTrace || showTraceExit)) {
             SelectedPlane = oldPlane = null;
-            processAircraft({hex: hex, });
             newPlane.trace = [];
             newPlane.recentTrace = null;
             newPlane.fullTrace = null;
