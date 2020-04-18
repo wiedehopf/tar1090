@@ -824,7 +824,7 @@ PlaneObject.prototype.processTrace = function(options) {
         options = {};
 
     let showTime = false;
-    if (options.timestamp != null) {
+    if (options.showTime != null) {
         showTime = true;
     }
 
@@ -909,7 +909,7 @@ PlaneObject.prototype.processTrace = function(options) {
             if (_now <= _last)
                 continue;
 
-            if (options.timestamp != null && timestamp > options.timestamp)
+            if (showTime && timestamp > options.showTime)
                 break;
 
             points_in_trace++;

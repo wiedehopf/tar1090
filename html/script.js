@@ -1401,7 +1401,7 @@ function initialize_map() {
             }
         );
         if (showTrace && hex) {
-            SelectedPlane.processTrace({timestamp: hex,});
+            SelectedPlane.processTrace({showTime: hex,});
         } else if (hex) {
             selectPlaneByHex(hex, {follow: (evt.type === 'dblclick')});
         } else if (!multiSelect) {
