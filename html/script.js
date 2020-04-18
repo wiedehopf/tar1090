@@ -623,6 +623,8 @@ function initialize() {
                     let b1 = document.getElementById('waittohide');
                     let b2 = document.getElementById('letuserhide');
 
+                    if (!b1 || !b2)
+                        return;
 
                     if(countDown === 1) {
                         if(b1['style'].display == 'none') {
