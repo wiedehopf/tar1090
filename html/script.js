@@ -2488,13 +2488,7 @@ function selectPlaneByHex(hex, options) {
         let req2 = null;
 
         options.plane = newPlane;
-
-        req2 = $.ajax({ url: URL2,
-            dataType: 'json',
-            options: options,
-        });
-
-        options.req2 = req2;
+        options.defer = $.Deferred();
 
         if (URL1) {
             req1 = $.ajax({ url: URL1,
@@ -2505,16 +2499,25 @@ function selectPlaneByHex(hex, options) {
             req1 = $.Deferred().resolve(options);
         }
 
+        req2 = $.ajax({ url: URL2,
+            dataType: 'json',
+            options: options,
+        });
+
+        options.req2 = req2;
+
         req1.done(function(data) {
             let plane = data.plane || this.options.plane;
             plane.recentTrace = data;
             if (!showTrace)
                 plane.processTrace();
-
-            let req2 = data.req2 || this.options.req2;
-            req2.done(function(data) {
-                let plane = data.plane || this.options.plane;
-                plane.fullTrace = data;
+            let defer = data.defer || this.options.defer;
+            defer.resolve(plane);
+        });
+        req2.done(function(data) {
+            let plane = this.options.plane;
+            plane.fullTrace = data;
+            this.options.defer.done(function(plane) {
                 if (showTrace)
                     legShift(0);
                 else
