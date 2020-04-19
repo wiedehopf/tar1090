@@ -861,6 +861,16 @@ PlaneObject.prototype.processTrace = function(options) {
             }
         }
     }
+    if (this.fullTrace && this.fullTrace.trace
+        && this.recentTrace && this.recentTrace.trace) {
+        let t1 = this.fullTrace.trace;
+        let t2 = this.recentTrace.trace;
+        let end1 = this.fullTrace.timestamp + t1[t1.length-1][0];
+        let start2 = this.recentTrace.timestamp;
+        if (end1 < start2)
+            console.log("Insufficient recent trace overlap!");
+    }
+
 
     for (let j = 0; j < 2; j++) {
         if (j == 0) {
