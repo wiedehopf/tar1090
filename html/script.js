@@ -1914,6 +1914,9 @@ function refreshSelected() {
            // $('#selected_follow').css('font-weight', 'normal');
         }
     }
+    if (selected.position && SitePosition) {
+        selected.sitedist = ol.sphere.getDistance(SitePosition, selected.position);
+    }
     $('#selected_source').text(format_data_source(selected.getDataSource()));
     $('#selected_category').text(selected.category ? selected.category : "n/a");
     $('#selected_sitedist1').text(format_distance_long(selected.sitedist, DisplayUnits));
@@ -2472,16 +2475,6 @@ function selectPlaneByHex(hex, options) {
             newPlane.trace = [];
             newPlane.recentTrace = null;
             newPlane.fullTrace = null;
-            newPlane.position = null;
-            newPlane.callsign = null;
-            newPlane.track = null;
-            newPlane.rotation = null;
-            newPlane.altitude = null;
-            newPlane.messages = NaN;
-            newPlane.seen = NaN;
-            newPlane.last_message_time = NaN;
-            newPlane.seen_pos = NaN;
-            newPlane.position_time = NaN;
         }
 
         let req1 = null;
@@ -3928,6 +3921,7 @@ function legShift(offset) {
     if (!SelectedPlane.fullTrace) {
         $('#leg_sel').text('No Data available');
         $('#trace_time').text('UTC:\n');
+        SelectedPlane.processTrace();
         return;
     }
 

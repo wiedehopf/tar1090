@@ -483,6 +483,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
             ts: this.prev_time,
             track: this.prev_rot,
             leg: is_leg,
+            extendedT: this.extendedT,
         });
 
         this.history_size += 2;
@@ -827,6 +828,9 @@ PlaneObject.prototype.processTrace = function() {
     if (options.showTime != null) {
         showTime = true;
     }
+
+    if (showTrace)
+        this.setNull();
 
     let legStart = options.legStart;
     let legEnd = options.legEnd;
@@ -1632,13 +1636,15 @@ PlaneObject.prototype.updateLines = function() {
 
             let fill = labelFill;
             let zIndex = -i - 50 * (seg.alt_real == null);
+            if (seg.extendedT)
+                zIndex += 4;
             if (seg.leg == 'start') {
                 fill = new ol.style.Fill({color: '#88CC88' });
-                zIndex = 123456;
+                zIndex += 123456;
             }
             if (seg.leg == 'end') {
                 fill = new ol.style.Fill({color: '#8888CC' });
-                zIndex = 123455;
+                zIndex += 123455;
             }
             seg.label.setStyle(
                 new ol.style.Style({
@@ -1991,7 +1997,7 @@ PlaneObject.prototype.milRange = function() {
         || this.icao.match(/^43[c-f]/)
 
         //444000-447fff = austria mil(aq)
-        || this.icao.match(/^44[4-7]/)
+        || (this.icao.match(/^44[4-7]/) && this.icao != '447ac7')
 
         //44f000-44ffff = belgium mil(bc)
         || this.icao.match(/^44f/)
@@ -2120,7 +2126,9 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
         this.geom_rate = null;
     }
 
+    this.extendedT = false;
     if (data != null) {
+        this.extendedT = true;
         if (data.type.substring(0,4) == "adsb" || data.type.substring(0,4) == "adsr") {
             this.dataSource = "adsb";
         } else if (data.type == "mlat") {
@@ -2174,4 +2182,72 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
             this.nav_altitude = null;
         }
     }
+}
+
+PlaneObject.prototype.setNull = function() {
+    this.position = null;
+    this.callsign = null;
+    this.track = null;
+    this.rotation = null;
+    this.altitude = null;
+    this.messages = NaN;
+    this.seen = NaN;
+    this.last_message_time = NaN;
+    this.seen_pos = NaN;
+    this.position_time = NaN;
+
+    this.flight    = null;
+    this.squawk    = null;
+    this.altitude       = null;
+    this.alt_baro       = null;
+    this.alt_geom       = null;
+    this.altitudeTime   = 0;
+    this.bad_alt        = null;
+    this.bad_altTime    = null;
+    this.alt_reliable   = 0;
+
+    this.speed          = null;
+    this.gs             = null;
+    this.ias            = null;
+    this.tas            = null;
+
+    this.track          = null;
+    this.track_rate     = null;
+    this.mag_heading    = null;
+    this.true_heading   = null;
+    this.mach           = null;
+    this.roll           = null;
+    this.nav_altitude   = null;
+    this.nav_heading    = null;
+    this.nav_modes      = null;
+    this.nav_qnh        = null;
+    this.rc				= null;
+
+    this.rotation       = 0;
+
+    this.nac_p			= null;
+    this.nac_v			= null;
+    this.nic_baro		= null;
+    this.sil_type		= null;
+    this.sil			= null;
+
+    this.baro_rate      = null;
+    this.geom_rate      = null;
+    this.vert_rate      = null;
+
+    this.version        = null;
+
+    this.prev_position = null;
+    this.prev_time = null;
+    this.prev_track = null;
+    this.position  = null;
+    this.sitedist  = null;
+    this.too_fast = 0;
+
+    this.messages  = 0;
+    this.rssi      = null;
+    this.msgs1090  = 0;
+    this.msgs978   = 0;
+    this.messageRate = 0;
+    this.messageRateOld = 0;
 }
