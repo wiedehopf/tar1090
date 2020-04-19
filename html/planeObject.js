@@ -1016,13 +1016,17 @@ PlaneObject.prototype.processTrace = function() {
         now = new Date().getTime()/1000;
     }
     if (showTrace) {
-        const date = new Date(this.position_time * 1000);
-        let timestamp =
-            date.getUTCHours().toString().padStart(2,'0')
-            + ":" + date.getUTCMinutes().toString().padStart(2,'0')
-            + ":" + date.getUTCSeconds().toString().padStart(2,'0')
-            + NBSP + "Z";
-        $('#trace_time').text('UTC:\n' + timestamp);
+        if (this.position_time) {
+            const date = new Date(this.position_time * 1000);
+            let timestamp =
+                date.getUTCHours().toString().padStart(2,'0')
+                + ":" + date.getUTCMinutes().toString().padStart(2,'0')
+                + ":" + date.getUTCSeconds().toString().padStart(2,'0')
+                + NBSP + "Z";
+            $('#trace_time').text('UTC:\n' + timestamp);
+        } else {
+            $('#trace_time').text('UTC:\n');
+        }
         this.seen = 0;
         this.seen_pos = 0;
     }

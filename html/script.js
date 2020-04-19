@@ -2522,7 +2522,10 @@ function selectPlaneByHex(hex, options) {
             });
         });
         req2.fail(function() {
-            this.options.plane.processTrace();
+            if (showTrace)
+                legShift(0);
+            else
+                this.options.plane.processTrace();
         });
     }
     if (options.goldT)
@@ -3921,6 +3924,7 @@ function legShift(offset) {
 
     if (!SelectedPlane.fullTrace) {
         $('#leg_sel').text('No Data available');
+        $('#trace_time').text('UTC:\n');
         return;
     }
 
