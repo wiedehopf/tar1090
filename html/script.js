@@ -2489,6 +2489,12 @@ function selectPlaneByHex(hex, options) {
 
         options.plane = newPlane;
 
+        req2 = $.ajax({ url: URL2,
+            dataType: 'json',
+            options: options,
+        });
+
+        options.req2 = req2;
 
         if (URL1) {
             req1 = $.ajax({ url: URL1,
@@ -2498,17 +2504,17 @@ function selectPlaneByHex(hex, options) {
         } else {
             req1 = $.Deferred().resolve(options);
         }
-        req2 = $.ajax({ url: URL2,
-            dataType: 'json',
-            options: options,
-            req1: req1,
-        });
 
-        req2.done(function(data) {
-            Planes[data.icao].fullTrace = data;
-            this.req1.done(function(data) {
+        req1.done(function(data) {
+            let plane = data.plane || this.options.plane;
+            plane.recentTrace = data;
+            if (!showTrace)
+                plane.processTrace();
+
+            let req2 = data.req2 || this.options.req2;
+            req2.done(function(data) {
                 let plane = data.plane || this.options.plane;
-                plane.recentTrace = data;
+                plane.fullTrace = data;
                 if (showTrace)
                     legShift(0);
                 else
