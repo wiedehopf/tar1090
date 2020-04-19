@@ -114,6 +114,12 @@ elif ! [[ -f /run/dump1090-fa/aircraft.json ]] ; then
         srcdir=/run/dump1090-mutability
     elif [[ -f /run/skyaware978/aircraft.json ]]; then
         srcdir=/run/skyaware978
+    else
+        echo --------------
+        echo FATAL: could not find aircraft.json in any of the usual places!
+        echo "checked these: /run/readsb /run/dump1090-fa /run/dump1090 /run/dump1090-mutability /run/adsbexchange-feed /run/skyaware978"
+        echo --------------
+        exit 1
     fi
 fi
 

@@ -20,9 +20,14 @@ COMPRESS_978=${10}
 
 if ! [[ -d $RUN_DIR && -d $SRC_DIR ]]
 then
-	echo "runtime directory or source directory are not specified or not directories, fatal error!"
-	echo "minimal Syntax: bash tar1090.sh <runtime directory> <dump1090 source directory>"
-	echo "Syntax: bash tar1090.sh <runtime directory> <dump1090 source directory> <history interval> <history size> <chunk size> <enable 978 yes/no> <URL for 978 aircraft.json> <interval 978 is updated>"
+    if ! [[ -d $RUN_DIR ]]; then
+        echo "runtime directory ( $RUN_DIR ) is not a dircectory, fatal error!"
+    fi
+    if ! [[ -d $SRC_DIR ]]; then
+        echo "source directory ( $SRC_DIR ) is not a directory, fatal error!"
+    fi
+	#echo "minimal Syntax: bash tar1090.sh <runtime directory> <dump1090 source directory>"
+	#echo "Syntax: bash tar1090.sh <runtime directory> <dump1090 source directory> <history interval> <history size> <chunk size> <enable 978 yes/no> <URL for 978 aircraft.json> <interval 978 is updated>"
 	exit 1
 fi
 if [[ -z $HISTORY_SIZE || -z $INTERVAL || -z $CHUNK_SIZE ]]
