@@ -18,18 +18,11 @@ INT_978=$8
 PF_URL=$9
 COMPRESS_978=${10}
 
-if ! [[ -d $RUN_DIR && -d $SRC_DIR ]]
-then
-    if ! [[ -d $RUN_DIR ]]; then
-        echo "runtime directory ( $RUN_DIR ) is not a dircectory, fatal error!"
-    fi
-    if ! [[ -d $SRC_DIR ]]; then
-        echo "source directory ( $SRC_DIR ) is not a directory, fatal error!"
-    fi
-	#echo "minimal Syntax: bash tar1090.sh <runtime directory> <dump1090 source directory>"
-	#echo "Syntax: bash tar1090.sh <runtime directory> <dump1090 source directory> <history interval> <history size> <chunk size> <enable 978 yes/no> <URL for 978 aircraft.json> <interval 978 is updated>"
-	exit 1
+if ! [[ -d $RUN_DIR ]]; then
+    echo "runtime directory ( $RUN_DIR ) is not a dircectory, fatal error!"
+    exit 1
 fi
+
 if [[ -z $HISTORY_SIZE || -z $INTERVAL || -z $CHUNK_SIZE ]]
 then
 	echo "Syntax: bash tar1090.sh <runtime directory> <dump1090 source directory> <history interval> <history size> <chunk size> <enable 978 yes/no> <URL for 978 aircraft.json> <interval 978 is updated>"
@@ -93,12 +86,17 @@ prune() {
 while true
 do
 	cd "$RUN_DIR" || { sleep 30; continue; }
+	echo "{ \"files\" : [ ] }" | gzip -1 > empty.gz
+    new_chunk empty.gz
+    if ! [ -f "$SRC_DIR/aircraft.json" ]; then
+        echo "No aircraft.json found in $SRC_DIR! Try restarting dump1090!"
+        sleep 180
+        continue
+    fi
 	rm -f chunk_list ./chunk_*.gz ./current_*.gz history_*.json latest_*.json || true
 
-	echo "{ \"files\" : [ ] }" | gzip -1 > empty.gz
 	cp empty.gz current_small.gz
 	cp empty.gz current_large.gz
-
 
 	# integrate original dump1090-fa history on startup so we don't start blank
 	for i in "$SRC_DIR"/history_*.json
@@ -127,6 +125,12 @@ do
 		if ! [ -f empty.gz ]; then
 			echo "{ \"files\" : [ ] }" | gzip -1 > empty.gz
 		fi
+
+        if ! [ -f "$SRC_DIR/aircraft.json" ]; then
+			echo "No aircraft.json found in $SRC_DIR! Try restarting dump1090!"
+			sleep 60
+			continue
+        fi
 
 		date=$(date +%s%N | head -c-7)
 
