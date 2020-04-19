@@ -1975,7 +1975,7 @@ PlaneObject.prototype.milRange = function() {
         || this.icao.match(/^34/)
 
         //3a8000-3affff = france mil_1(fs)
-        || this.icao.match(/^3(8|9|[a-f])/)
+        || this.icao.match(/^3a(8|9|[a-f])/)
         //3b0000-3bffff = france mil_2(fs)
         || this.icao.match(/^3b/)
 
