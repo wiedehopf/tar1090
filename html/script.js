@@ -2878,6 +2878,8 @@ function buttonActive(id, state) {
 }
 
 function toggleIsolation(on, off) {
+    if (showTrace && !on && !off)
+        return;
     onlySelected = !onlySelected;
     if (on)
         onlySelected = true;
