@@ -100,8 +100,9 @@ else
 fi
 
 
-
-if [[ -n $1 ]] && [ "$1" != "test" ] ; then
+if [ -f /etc/default/tar1090_instances ]; then
+    true
+elif [[ -n $1 ]] && [ "$1" != "test" ] ; then
     srcdir=$1
 elif ! [[ -f /run/dump1090-fa/aircraft.json ]] ; then
     if [[ -f /run/readsb/aircraft.json ]]; then
