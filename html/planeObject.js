@@ -819,9 +819,9 @@ PlaneObject.prototype.updateIcon = function() {
     return true;
 };
 
-PlaneObject.prototype.processTrace = function(options) {
-    if (!options)
-        options = {};
+PlaneObject.prototype.processTrace = function() {
+
+    let options = traceOpts;
 
     let showTime = false;
     if (options.showTime != null) {
@@ -873,6 +873,8 @@ PlaneObject.prototype.processTrace = function(options) {
 
 
     for (let j = 0; j < 2; j++) {
+        let start;
+        let end;
         if (j == 0) {
             if (!this.fullTrace || !this.fullTrace.trace)
                 continue;
@@ -883,7 +885,16 @@ PlaneObject.prototype.processTrace = function(options) {
             _last = timeZero - 1;
 
             trace = this.fullTrace.trace;
+
+            start = 0;
+            end = trace.length;
+            if (legStart != null)
+                start = legStart;
+            if (legEnd != null)
+                end = legEnd;
         } else {
+            if (legEnd != null)
+                continue;
             if (!this.recentTrace || !this.recentTrace.trace)
                 continue;
             timeZero = this.recentTrace.timestamp;
@@ -891,9 +902,9 @@ PlaneObject.prototype.processTrace = function(options) {
                 _last = timeZero - 1;
             }
             trace = this.recentTrace.trace;
+            start = 0;
+            end = trace.length;
         }
-        let start = 0;
-        let end = trace.length;
 
         if (lastLeg && !showTrace) {
             for (let i = trace.length - 1; i >= 0; i--) {
@@ -903,11 +914,6 @@ PlaneObject.prototype.processTrace = function(options) {
                 }
             }
         }
-
-        if (legStart != null)
-            start = legStart;
-        if (legEnd != null)
-            end = legEnd;
 
         for (let i = start; i < end; i++) {
             const state = trace[i];
@@ -919,7 +925,15 @@ PlaneObject.prototype.processTrace = function(options) {
             if (_now <= _last)
                 continue;
 
+            if (i == start) {
+                //console.log(timestamp);
+                //console.log(options.startStamp);
+            }
             if (showTime && timestamp > options.showTime)
+                break;
+            if (options.startStamp != null && timestamp < options.startStamp)
+                continue;
+            if (options.endStamp != null && timestamp > options.endStamp)
                 break;
 
             points_in_trace++;
@@ -1019,6 +1033,7 @@ PlaneObject.prototype.processTrace = function(options) {
     let mapSize = OLMap.getSize();
     let size = [Math.max(5, mapSize[0] - 280), mapSize[1]];
     if ((showTrace || showTraceExit)
+        && this.position
         && !noPan
         && !inView(this.position, OLMap.getView().calculateExtent(size))
         && !inView(firstPos, OLMap.getView().calculateExtent(size)))

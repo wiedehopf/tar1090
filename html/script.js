@@ -76,9 +76,11 @@ let pathName = null;
 let icaoFilter = null;
 let showTrace = false;
 let showTraceExit = false;
+let showTraceWasIsolation = false;
 let traceDate = null;
 let traceDateString = null;
 let traceDay = null;
+let traceOpts = {};
 let icaoParam = null;
 let globalScale = 1;
 let newWidth = lineWidth;
@@ -1401,7 +1403,8 @@ function initialize_map() {
             }
         );
         if (showTrace && hex) {
-            SelectedPlane.processTrace({showTime: hex,});
+            traceOpts.showTime = hex;
+            legShift(0);
         } else if (hex) {
             selectPlaneByHex(hex, {follow: (evt.type === 'dblclick')});
         } else if (!multiSelect) {
@@ -2448,9 +2451,21 @@ function selectPlaneByHex(hex, options) {
             newPlane = Planes[hex];
         }
 
+        traceOpts = options;
+
         if (showTrace) {
-            URL1 = null;
-            URL2 = 'globe_history/' + traceDateString + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json';
+            let today = new Date();
+            if (zDateString(traceDate) == zDateString(today)) {
+
+                today.setUTCHours(0);
+                today.setUTCMinutes(0);
+                today.setUTCSeconds(0);
+
+                traceOpts.startStamp = today.getTime() / 1000;
+            } else {
+                URL1 = null;
+                URL2 = 'globe_history/' + traceDateString + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json';
+            }
         }
         if (newPlane && (showTrace || showTraceExit)) {
             SelectedPlane = oldPlane = null;
@@ -2472,32 +2487,36 @@ function selectPlaneByHex(hex, options) {
         let req1 = null;
         let req2 = null;
 
+        options.plane = newPlane;
+
+
         if (URL1) {
             req1 = $.ajax({ url: URL1,
                 dataType: 'json',
                 options: options,
             });
+        } else {
+            req1 = $.Deferred().resolve(options);
         }
         req2 = $.ajax({ url: URL2,
             dataType: 'json',
             options: options,
+            req1: req1,
         });
 
-        if (req1) {
-            req1.done(function(data) {
-                Planes[data.icao].recentTrace = data;
-                Planes[data.icao].processTrace(this.options);
-            });
-        }
         req2.done(function(data) {
             Planes[data.icao].fullTrace = data;
-            if (showTrace)
-                legShift(0);
-            else
-                Planes[data.icao].processTrace(this.options);
+            this.req1.done(function(data) {
+                let plane = data.plane || this.options.plane;
+                plane.recentTrace = data;
+                if (showTrace)
+                    legShift(0);
+                else
+                    plane.processTrace();
+            });
         });
         req2.fail(function() {
-                legShift(0);
+            this.options.plane.processTrace();
         });
     }
     if (options.goldT)
@@ -3864,6 +3883,7 @@ function toggleShowTrace() {
     if (!showTrace) {
         showTrace = true;
         toggleFollow(false);
+        showTraceWasIsolation = onlySelected;
         toggleIsolation("on", null);
         shiftTrace();
         $('#history_collapse')[0].style.display = "block";
@@ -3872,7 +3892,8 @@ function toggleShowTrace() {
         showTrace = false;
         legSel = -1;
         $('#leg_sel').text('Legs: All');
-        toggleIsolation(null, "off");
+        if (!showTraceWasIsolation)
+            toggleIsolation(null, "off");
         //let string = pathName + '?icao=' + SelectedPlane.icao;
         //window.history.replaceState("object or string", "Title", string);
         //shareLink = string;
@@ -3889,17 +3910,29 @@ function toggleShowTrace() {
 function legShift(offset) {
     legSel += offset;
 
+    if (offset != 0)
+        traceOpts.showTime = null;
+
     if (!SelectedPlane.fullTrace) {
         $('#leg_sel').text('No Data available');
         return;
     }
 
     let trace = SelectedPlane.fullTrace.trace;
-    let legStart = 0;
-    let legEnd = trace.length;
+    let legStart = null;
+    let legEnd = null;
     let count = 0;
+    let timeZero = SelectedPlane.fullTrace.timestamp;
 
     for (let i = 1; i < trace.length; i++) {
+        let timestamp = timeZero + trace[i][0];
+        if (traceOpts.startStamp != null && timestamp < traceOpts.startStamp) {
+            legStart = i;
+            i++;
+            continue;
+        }
+        if (traceOpts.endStamp != null && timestamp > traceOpts.endStamp)
+            break;
         if (trace[i][6] & 2) {
             count++;
         }
@@ -3911,13 +3944,18 @@ function legShift(offset) {
 
     if (legSel == -1) {
         $('#leg_sel').text('Legs: All');
+        traceOpts.legStart = null;
+        traceOpts.legEnd = null;
         SelectedPlane.processTrace();
         updateAddressBar();
         return;
     }
 
     count = 0;
-    for (let i = 1; i < trace.length; i++) {
+    for (let i = legStart + 1; i < trace.length; i++) {
+        let timestamp = timeZero + trace[i][0];
+        if (traceOpts.endStamp != null && timestamp > traceOpts.endStamp)
+            break;
         if (trace[i][6] & 2) {
             if (count == legSel - 1)
                 legStart = i;
@@ -3927,7 +3965,9 @@ function legShift(offset) {
         }
     }
     $('#leg_sel').text('Leg: ' + (legSel + 1));
-    SelectedPlane.processTrace({ legStart: legStart, legEnd: legEnd});
+    traceOpts.legStart = legStart;
+    traceOpts.legEnd = legEnd;
+    SelectedPlane.processTrace();
 
     updateAddressBar();
 }
