@@ -3934,12 +3934,14 @@ function legShift(offset) {
     for (let i = 1; i < trace.length; i++) {
         let timestamp = timeZero + trace[i][0];
         if (traceOpts.startStamp != null && timestamp < traceOpts.startStamp) {
-            legStart = i;
-            i++;
             continue;
         }
         if (traceOpts.endStamp != null && timestamp > traceOpts.endStamp)
             break;
+        if (legStart == null) {
+            legStart = i;
+            i++;
+        }
         if (trace[i][6] & 2) {
             count++;
         }
