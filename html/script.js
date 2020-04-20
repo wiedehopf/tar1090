@@ -3471,6 +3471,8 @@ function changeCenter(init) {
             refreshHighlighted();
         }
     }
+    if (!init && showTrace)
+        updateAddressBar();
 }
 
 function checkMovement() {
@@ -3498,8 +3500,6 @@ function checkMovement() {
     changeZoom();
     changeCenter();
 
-    updateAddressBar();
-
     //console.timeEnd("fire!");
 }
 
@@ -3526,6 +3526,9 @@ function changeZoom(init) {
 
     if (!onlySelected)
         refreshTableInfo();
+
+    if (!init && showTrace)
+        updateAddressBar();
 
     if (ZoomLvl > 5.5 && enableMouseover) {
         OLMap.on('pointermove', onPointermove);
