@@ -325,6 +325,10 @@ The following options need to be added to for example the decoder options in `/e
 ```
 --write-json-globe-index --write-globe-history /var/globe_history
 ```
+/var/globe_history needs to be a direcotry writeable by the user readsb.
+
+You will also need to point tar1090 to /run/readsb in case you are using another dump1090/readsb.
+See the "multiple instances" readme section.
 
 If you don't want readsb to read data from the SDR, you'll also need to change the receiver options line to something like this:
 ```
