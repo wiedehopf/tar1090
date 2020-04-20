@@ -52,6 +52,8 @@ let MapType_tar1090 = "carto_light_all";
 
 // Default map dim state
 let MapDim = true;
+let mapDimPercentage = 0.45;
+let mapContrastPercentage = 0;
 
 // -- Marker settings -------------------------------------
 

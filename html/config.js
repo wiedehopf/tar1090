@@ -65,7 +65,9 @@
 // bing_roads
 
 // Default map dim state, true or false.
-//MapDim = true;
+// MapDim = true;
+// mapDimPercentage = 0.45;
+// mapContrastPercentage = 0;
 
 
 // -- Marker settings -------------------------------------

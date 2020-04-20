@@ -94,6 +94,7 @@ let labelStrokeNarrow = null;
 let bgFill = null;
 let legSel = -1;
 let geoMag = null;
+let globalCompositeTested = false;
 
 let shareLink = '';
 
@@ -591,6 +592,18 @@ function initialize() {
             let tmp = parseInt(search.get('tempTrails'));
             if (tmp > 0)
                 tempTrailsTimeout = tmp;
+        }
+        if (search.has('mapDim')) {
+            let dim = parseFloat(search.get('mapDim'));
+            if (!isNaN(dim))
+                mapDimPercentage = dim;
+        }
+
+
+        if (search.has('mapContrast')) {
+            let contrast = parseFloat(search.get('mapContrast'));
+            if (!isNaN(contrast))
+            mapContrastPercentage = contrast;
         }
 
         if (search.has('hideButtons'))
@@ -2980,20 +2993,27 @@ function toggleDebugTracks() {
 }
 
 function dim(evt) {
-    const dim = 0.45;
-    const contrast = 0;
-    evt.context.globalCompositeOperation = 'multiply';
-    if (evt.context.globalCompositeOperation == 'multiply') {
+    if (!globalCompositeTested) {
+            globalCompositeTested = true;
+        evt.context.globalCompositeOperation = 'multiply';
+        if (evt.context.globalCompositeOperation != 'multiply')
+            globalCompositeTested = false;
+        evt.context.globalCompositeOperation = 'overlay';
+        if (evt.context.globalCompositeOperation != 'overlay')
+            globalCompositeTested = false;
+    }
+    const dim = mapDimPercentage;
+    const contrast = mapContrastPercentage;
+    if (dim > 0.0001) {
+        evt.context.globalCompositeOperation = 'multiply';
         evt.context.fillStyle = 'rgba(0,0,0,'+dim+')';
         evt.context.fillRect(0, 0, evt.context.canvas.width, evt.context.canvas.height);
     }
-    /*
-    evt.context.globalCompositeOperation = 'overlay';
-    if (evt.context.globalCompositeOperation == 'overlay') {
+    if (contrast > 0.0001) {
+        evt.context.globalCompositeOperation = 'overlay';
         evt.context.fillStyle = 'rgba(0,0,0,'+contrast+')';
         evt.context.fillRect(0, 0, evt.context.canvas.width, evt.context.canvas.height);
     }
-    */
     evt.context.globalCompositeOperation = 'source-over';
 }
 
