@@ -3008,10 +3008,19 @@ function dim(evt) {
         evt.context.globalCompositeOperation = 'multiply';
         evt.context.fillStyle = 'rgba(0,0,0,'+dim+')';
         evt.context.fillRect(0, 0, evt.context.canvas.width, evt.context.canvas.height);
+    } else if (dim < -0.0001) {
+        evt.context.globalCompositeOperation = 'screen';
+        console.log(evt.context.globalCompositeOperation);
+        evt.context.fillStyle = 'rgba(255, 255, 255,'+(-dim)+')';
+        evt.context.fillRect(0, 0, evt.context.canvas.width, evt.context.canvas.height);
     }
     if (contrast > 0.0001) {
         evt.context.globalCompositeOperation = 'overlay';
         evt.context.fillStyle = 'rgba(0,0,0,'+contrast+')';
+        evt.context.fillRect(0, 0, evt.context.canvas.width, evt.context.canvas.height);
+    } else if (contrast < -0.0001) {
+        evt.context.globalCompositeOperation = 'overlay';
+        evt.context.fillStyle = 'rgba(255, 255, 255,'+ (-contrast)+')';
         evt.context.fillRect(0, 0, evt.context.canvas.width, evt.context.canvas.height);
     }
     evt.context.globalCompositeOperation = 'source-over';
