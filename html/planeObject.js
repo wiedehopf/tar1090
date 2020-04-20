@@ -1499,8 +1499,8 @@ function altitudeLines (segment) {
                         width: 2 * newWidth,
                         lineJoin: 'miter',
                         lineCap: 'square',
-                        lineDash: [10, 10 + 3 * newWidth],
-                        lineDashOffset: 7,
+                        lineDash: [10, 20 + 3 * newWidth],
+                        lineDashOffset: 5,
                     }),
                 })
             ];
