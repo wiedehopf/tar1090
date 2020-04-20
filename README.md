@@ -315,7 +315,11 @@ sudo cp /usr/local/share/tar1090/html/upintheair.json /usr/local/share/tar1090/h
 ```
 
 
-## History function as used for tar1090.adsbexchange.com
+## 0800-DESTROY-SD-CARD
+
+History function as used for tar1090.adsbexchange.com
+
+No seriously this writes to disk quite often, it will fill up your sd-card by means of writing lots of little files.
 
 This is not in any way or form officially supported and you should consider it experimental.
 To accomplish this, you need to use the dev branch of my readsb repository.
@@ -326,6 +330,7 @@ The following options need to be added to for example the decoder options in `/e
 --write-json-globe-index --write-globe-history /var/globe_history
 ```
 /var/globe_history needs to be a direcotry writeable by the user readsb.
+`sudo mkdir /var/globe_history` and `sudo chown readsb /var/globe_history` are useful for that.
 
 You will also need to point tar1090 to /run/readsb in case you are using another dump1090/readsb.
 See the "multiple instances" readme section.
@@ -343,6 +348,8 @@ Be aware of that when upgrading either tar1090 or readsb to a new commit.
 For these features i only maintain the nginx configuration, not the lighttpd configuration.
 Thus you'll need to use nginx with the config file provided by the tar1090 install script
 or change the lighttpd configuration yourself.
+On the default nginx install you'll usually find the server section in this config file:
+`/etc/nginx/sites-enabled/default`
 
 If you can't figure out how to make it work with the above information, please don't ask.
 I don't support this feature for the general user base.
