@@ -946,7 +946,7 @@ function init_page() {
         debugTracks = false;
         $('#debug_checkbox').removeClass('settingsCheckboxChecked');
     }
-    $('#tStop').on('click', function() { traceOpts.replaySpeed = 0; legShift(); });
+    $('#tStop').on('click', function() { traceOpts.replaySpeed = 0; });
     $('#t1x').on('click', function() { traceOpts.replaySpeed = 1; legShift(); });
     $('#t5x').on('click', function() { traceOpts.replaySpeed = 5; legShift(); });
     $('#t10x').on('click', function() { traceOpts.replaySpeed = 10; legShift(); });
@@ -1414,7 +1414,7 @@ function initialize_map() {
     */
 
     OLMap.on(['click', 'dblclick'], function(evt) {
-        let hex = evt.map.forEachFeatureAtPixel(
+        let res = evt.map.forEachFeatureAtPixel(
             evt.pixel,
             function(feature, layer) {
                 if (showTrace)
@@ -1428,12 +1428,10 @@ function initialize_map() {
                 hitTolerance: 6 * globalScale,
             }
         );
-        if (showTrace && hex) {
-            clearTimeout(traceOpts.showTimeout);
-            traceOpts.showTime = hex;
-            legShift(0);
-        } else if (hex) {
-            selectPlaneByHex(hex, {follow: (evt.type === 'dblclick')});
+        if (showTrace && res) {
+            gotoTime(res);
+        } else if (res) {
+            selectPlaneByHex(res, {follow: (evt.type === 'dblclick')});
         } else if (!multiSelect) {
             deselectAllPlanes();
         }
@@ -1927,19 +1925,7 @@ function refreshSelected() {
             $('#selected_position').text(format_latlng(selected.position));
         }
 
-        if (FollowSelected) {
-            //$('#selected_follow').removeClass('hidden');
-            //$('#selected_follow').css('font-weight', 'bold');
-            const center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
-            if (Math.abs(center[0] - SelectedPlane.position[0]) > 0.05 ||
-                Math.abs(center[1] - SelectedPlane.position[1]) > 0.05) {
-                toggleFollow(false);
-            } else {
-                toggleFollow(true);
-            }
-        } else {
-           // $('#selected_follow').css('font-weight', 'normal');
-        }
+        checkFollow();
     }
     if (selected.position && SitePosition) {
         selected.sitedist = ol.sphere.getDistance(SitePosition, selected.position);
@@ -3488,16 +3474,8 @@ function changeCenter(init) {
     if (!onlySelected)
         refreshTableInfo();
 
-    if (FollowSelected) {
-        // On manual navigation, disable follow
-        if (!SelectedPlane || !SelectedPlane.position ||
-            (Math.abs(center[0] - SelectedPlane.position[0]) > 0.0001 &&
-                Math.abs(center[1] - SelectedPlane.position[1]) > 0.0001)){
-            toggleFollow(false);
-            refreshSelected();
-            refreshHighlighted();
-        }
-    }
+    checkFollow();
+
     if (!init && showTrace)
         updateAddressBar();
 }
@@ -4329,5 +4307,48 @@ function solidGoldT() {
     for (let i in PlanesOrdered) {
         let plane = PlanesOrdered[i];
         selectPlaneByHex(plane.icao, { goldT: true, });
+    }
+}
+
+function gotoTime(timestamp) {
+    clearTimeout(traceOpts.showTimeout);
+    if (timestamp) {
+        traceOpts.showTime = timestamp;
+        traceOpts.animate = false;
+    }
+    if (!traceOpts.animate) {
+        legShift(0);
+    } else {
+        if (SelectedPlane.marker) {
+
+            traceOpts.animateFromLon += (traceOpts.animateToLon - traceOpts.animateFromLon) / traceOpts.animateSteps;
+            traceOpts.animateFromLat += (traceOpts.animateToLat - traceOpts.animateFromLat) / traceOpts.animateSteps;
+
+            let animatePos = [traceOpts.animateFromLon, traceOpts.animateFromLat];
+            SelectedPlane.marker.setGeometry(new ol.geom.Point(animatePos));
+
+            //console.log('int:  ', animatePos);
+            if (FollowSelected)
+                OLMap.getView().setCenter(animatePos);
+        }
+        if (--traceOpts.animateSteps == 1)
+            traceOpts.animate = false;
+        traceOpts.showTimeout = setTimeout(gotoTime, traceOpts.animateInterval);
+    }
+}
+
+function checkFollow() {
+    if (!FollowSelected || traceOpts.showTime)
+        return;
+    if (!SelectedPlane || !SelectedPlane.position) {
+        toggleFollow(false);
+        return;
+    }
+    const center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
+    if (Math.abs(center[0] - SelectedPlane.position[0]) > 0.001 ||
+        Math.abs(center[1] - SelectedPlane.position[1]) > 0.001) {
+        toggleFollow(false);
+    } else {
+        toggleFollow(true);
     }
 }

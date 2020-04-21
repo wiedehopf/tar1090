@@ -931,12 +931,34 @@ PlaneObject.prototype.processTrace = function() {
                 //console.log(options.startStamp);
             }
             if (showTime && timestamp > options.showTime) {
-                if (traceOpts.showTime
-                ) {
-                    clearTimeout(traceOpts.showTimeout);
+                if (traceOpts.showTime) {
                     if (traceOpts.replaySpeed > 0) {
-                        let delay = (timestamp - options.showTime) / traceOpts.replaySpeed;
-                        traceOpts.showTimeout = setTimeout(legShift, delay * 1000);
+                        clearTimeout(traceOpts.showTimeout);
+                        let delay = (timestamp - options.showTime) / traceOpts.replaySpeed * 1000;
+                        let steps = Math.round(delay / 1000);
+                        traceOpts.animateInterval = delay / steps;
+                        traceOpts.animateSteps = steps;
+                        if (steps < 2) {
+                            traceOpts.showTimeout = setTimeout(gotoTime, delay);
+                            traceOpts.animate = false;
+                        } else {
+                            //console.timeEnd('step');
+                            //console.time('step');
+                            //console.log(delay);
+                            traceOpts.animate = true;
+
+                            let fromProj = ol.proj.fromLonLat(this.position);
+                            let toProj = ol.proj.fromLonLat([state[2], state[1]]);
+                            traceOpts.animateFromLon = fromProj[0]
+                            traceOpts.animateFromLat = fromProj[1];
+                            traceOpts.animateToLon = toProj[0];
+                            traceOpts.animateToLat = toProj[1];
+
+                            //console.log('from: ', fromProj);
+                            //console.log('to:   ', toProj);
+
+                            traceOpts.showTimeout = setTimeout(gotoTime, traceOpts.animateInterval);
+                        }
                     }
                 }
                 traceOpts.showTime = timestamp;
@@ -1046,9 +1068,15 @@ PlaneObject.prototype.processTrace = function() {
         this.updateFeatures(now, _last);
     }
 
+    if (showTime && FollowSelected) {
+        OLMap.getView().setCenter(ol.proj.fromLonLat(this.position));
+    } else if (this.position && follow) {
+        toggleFollow(true);
+    }
+
     let mapSize = OLMap.getSize();
     let size = [Math.max(5, mapSize[0] - 280), mapSize[1]];
-    if ((showTrace || showTraceExit)
+    if (!showTime && (showTrace || showTraceExit)
         && this.position
         && !noPan
         && !inView(this.position, OLMap.getView().calculateExtent(size))
@@ -1062,13 +1090,6 @@ PlaneObject.prototype.processTrace = function() {
     if (!showTime) {
         this.updateLines();
     }
-
-    if (this.position && follow) {
-        toggleFollow(true);
-    }
-
-    if (showTime && FollowSelected)
-        OLMap.getView().setCenter(ol.proj.fromLonLat(this.position));
 
     refreshSelected();
 
@@ -1571,22 +1592,26 @@ PlaneObject.prototype.updateLines = function() {
     }
 
     // create the new elastic band feature
-    if (this.elastic_feature)
+    if (this.elastic_feature) {
         this.trail_features.removeFeature(this.elastic_feature);
+        this.elastic_feature = null;
+    }
 
     let lastseg = this.track_linesegs[this.track_linesegs.length - 1];
     let lastfixed = lastseg.fixed.getCoordinateAt(1.0);
     let geom = new ol.geom.LineString([lastfixed, ol.proj.fromLonLat(this.position)]);
 
 
-    this.elastic_feature = new ol.Feature(geom);
-    if (filterTracks && this.altFiltered(lastseg.altitude)) {
-        this.elastic_feature.setStyle(nullStyle);
-    } else {
-        this.elastic_feature.setStyle(altitudeLines(lastseg));
-    }
+    if (!showTrace) {
+        this.elastic_feature = new ol.Feature(geom);
+        if (filterTracks && this.altFiltered(lastseg.altitude)) {
+            this.elastic_feature.setStyle(nullStyle);
+        } else {
+            this.elastic_feature.setStyle(altitudeLines(lastseg));
+        }
 
-    trail_add.push(this.elastic_feature);
+        trail_add.push(this.elastic_feature);
+    }
 
     // create any missing fixed line features
 
