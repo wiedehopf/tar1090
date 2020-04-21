@@ -1640,7 +1640,7 @@ PlaneObject.prototype.updateLines = function() {
                 zIndex += 4;
             if (seg.leg == 'start') {
                 fill = new ol.style.Fill({color: '#88CC88' });
-                zIndex += 123456;
+                zIndex += 123499;
             }
             if (seg.leg == 'end') {
                 fill = new ol.style.Fill({color: '#8888CC' });
