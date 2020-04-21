@@ -2178,6 +2178,10 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
             this.dataSource = "unknown";
         }
 
+        if (data.flight != null) {
+            this.flight = data.flight;
+            this.name = data.flight.trim();
+        }
         this.addrtype = data.type;
 
         this.alt_geom = data.alt_geom;
