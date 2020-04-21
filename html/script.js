@@ -1169,8 +1169,15 @@ function parse_history() {
     }
     if (globeIndex) {
         $('#V').hide();
-        $('#uat1').hide();
-        $('#uat2').hide();
+        $('#uat_legend_1').hide();
+        $('#uat_legend_2').hide();
+        $('#mode_s_legend_1').hide();
+        $('#mode_s_legend_2').hide();
+    } else {
+        $('#unknown_legend_1').hide();
+        $('#unknown_legend_2').hide();
+        $('#adsc_legend_1').hide();
+        $('#adsc_legend_2').hide();
     }
 
     updateMapSize();
@@ -1639,7 +1646,7 @@ function reaper(all) {
         plane.seen = now - plane.last_message_time;
         if ( (!plane.selected || SelectedAllPlanes)
             && (all || plane.seen > 300)
-            && (!plane.jaero || plane.seen > 35*60)
+            && (plane.dataSource != 'adsc' || plane.seen > 35*60)
         ) {
             // Reap it.                                
             //console.log("Removed " + plane.icao);

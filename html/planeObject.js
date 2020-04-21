@@ -526,8 +526,10 @@ PlaneObject.prototype.clearLines = function() {
 
 PlaneObject.prototype.getDataSourceNumber = function() {
     // MLAT
-    if ((this.dataSource == "jaero") || (this.dataSource == "unknown"))
+    if (this.dataSource == "mode_s")
         return 5;
+    if (this.dataSource == "adsc")
+        return 6;
     if (this.dataSource == "mlat") {
         return 3;
     }
@@ -541,19 +543,13 @@ PlaneObject.prototype.getDataSourceNumber = function() {
         return 1;
 
     // Otherwise Mode S
-    return 5;
+    return 7;
 
     // TODO: add support for Mode A/C
 };
 
 PlaneObject.prototype.getDataSource = function() {
     // MLAT
-    if ((this.dataSource == "jaero"))
-        return 'jaero';
-
-    if ((this.dataSource == "unknown"))
-        return 'unknown';
-
     if (this.dataSource == "mlat") {
         return 'mlat';
     }
@@ -1199,7 +1195,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     }
 
     if (data.type == 'adsc') {
-        this.dataSource = "jaero";
+        this.dataSource = "adsc";
     } else if (data.type == 'unknown' || data.type == 'other') {
         this.dataSource = "unknown";
     }
@@ -1377,7 +1373,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
     }
 
     const zoomedOut = 40 * Math.max(0, 7 - ZoomLvl);
-    const jaeroTime = (this.dataSource == "jaero") ? 35*60 : 0;
+    const jaeroTime = (this.dataSource == "adsc") ? 35*60 : 0;
     const tisbReduction = (this.icao[0] == '~') ? 15 : 0;
     // If no packet in over 58 seconds, clear the plane.
     // Only clear the plane if it's not selected individually
@@ -2137,7 +2133,7 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
         } else if (data.type.substring(0,4) == "tisb") {
             this.dataSource = "tisb";
         } else if (data.type == 'adsc') {
-            this.dataSource = "jaero";
+            this.dataSource = "adsc";
         } else if (data.type == 'unknown') {
             this.dataSource = "unknown";
         }
