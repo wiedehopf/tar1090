@@ -946,6 +946,12 @@ function init_page() {
         debugTracks = false;
         $('#debug_checkbox').removeClass('settingsCheckboxChecked');
     }
+    $('#tStop').on('click', function() { traceOpts.replaySpeed = 0; legShift(); });
+    $('#t1x').on('click', function() { traceOpts.replaySpeed = 1; legShift(); });
+    $('#t5x').on('click', function() { traceOpts.replaySpeed = 5; legShift(); });
+    $('#t10x').on('click', function() { traceOpts.replaySpeed = 10; legShift(); });
+    $('#t20x').on('click', function() { traceOpts.replaySpeed = 20; legShift(); });
+    $('#t40x').on('click', function() { traceOpts.replaySpeed = 40; legShift(); });
 
     new Toggle("ColoredPlanes", true, function(state) {
         if (state)
@@ -1423,6 +1429,7 @@ function initialize_map() {
             }
         );
         if (showTrace && hex) {
+            clearTimeout(traceOpts.showTimeout);
             traceOpts.showTime = hex;
             legShift(0);
         } else if (hex) {
@@ -3956,6 +3963,9 @@ function toggleShowTrace() {
 }
 
 function legShift(offset) {
+    if(!offset)
+        offset = 0;
+
     legSel += offset;
 
     if (offset != 0)

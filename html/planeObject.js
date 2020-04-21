@@ -872,7 +872,8 @@ PlaneObject.prototype.processTrace = function() {
     }
 
 
-    for (let j = 0; j < 2; j++) {
+    let stop = 0;
+    for (let j = 0; j < 2 && !stop; j++) {
         let start;
         let end;
         if (j == 0) {
@@ -929,8 +930,19 @@ PlaneObject.prototype.processTrace = function() {
                 //console.log(timestamp);
                 //console.log(options.startStamp);
             }
-            if (showTime && timestamp > options.showTime)
+            if (showTime && timestamp > options.showTime) {
+                if (traceOpts.showTime
+                ) {
+                    clearTimeout(traceOpts.showTimeout);
+                    if (traceOpts.replaySpeed > 0) {
+                        let delay = (timestamp - options.showTime) / traceOpts.replaySpeed;
+                        traceOpts.showTimeout = setTimeout(legShift, delay * 1000);
+                    }
+                }
+                traceOpts.showTime = timestamp;
+                stop = 1;
                 break;
+            }
             if (options.startStamp != null && timestamp < options.startStamp)
                 continue;
             if (options.endStamp != null && timestamp > options.endStamp)
@@ -1054,6 +1066,9 @@ PlaneObject.prototype.processTrace = function() {
     if (this.position && follow) {
         toggleFollow(true);
     }
+
+    if (showTime && FollowSelected)
+        OLMap.getView().setCenter(ol.proj.fromLonLat(this.position));
 
     refreshSelected();
 
