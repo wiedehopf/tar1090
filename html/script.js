@@ -1176,8 +1176,8 @@ function parse_history() {
     } else {
         $('#unknown_legend_1').hide();
         $('#unknown_legend_2').hide();
-        $('#adsc_legend_1').hide();
-        $('#adsc_legend_2').hide();
+        $('#sat_legend_1').hide();
+        $('#sat_legend_2').hide();
     }
 
     updateMapSize();
@@ -2217,6 +2217,8 @@ function refreshTableInfo() {
 
             if (plane.dataSource == "adsb") {
                 classes += " vPosition";
+            } else if (plane.dataSource == "adsc") {
+                classes += " satellite";
             } else if (plane.dataSource == "mode_s") {
                 classes += " other";
             } else {

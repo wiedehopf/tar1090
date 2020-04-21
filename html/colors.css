@@ -2,7 +2,7 @@
 .vPosition  { background-color: #d8f4ff; }
 .mlat       { background-color: #FDF7DD; }
 .uat        { background-color: #C4FFDC; }
-.adsc       { background-color: #C4FFDC; }
+.satellite  { background-color: #C4FFDC; }
 .other      { background-color: #d8d8ff; }
 .tisb       { background-color: #ffd8e6; }
 .unknown    { background-color: #dcdcdc; }
@@ -12,7 +12,7 @@
 .selected.vPosition  { background-color: #88DDFF; }
 .selected.mlat       { background-color: #F1DD83; }
 .selected.uat        { background-color: #66FFA6; }
-.selected.adsc        { background-color: #66FFA6; }
+.selected.satellite  { background-color: #66FFA6; }
 .selected.other      { background-color: #BEBEFF; }
 .selected.tisb       { background-color: #FFC1D8; }
 .selected.unknown    { background-color: #bcbcbc; }
