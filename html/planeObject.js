@@ -8,7 +8,7 @@ function PlaneObject(icao) {
     this.squawk    = null;
     this.selected  = false;
     this.category  = null;
-    this.dataSource = "other";
+    this.dataSource = "mode_s";
 
     this.trCache = [];
 
@@ -159,7 +159,7 @@ PlaneObject.prototype.isFiltered = function() {
         return true;
     }
 
-    if (onlyMLAT && !(this.dataSource == "mlat" || (this.dataSource == "other" && this.position == null))) {
+    if (onlyMLAT && !(this.dataSource == "mlat" || (this.dataSource == "mode_s" && this.position == null))) {
         return true;
     }
 
@@ -1185,24 +1185,22 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     }
 
     if (mlat && noMLAT) {
-        this.dataSource = "other";
+        this.dataSource = "mode_s";
     } else if (mlat) {
         this.dataSource = "mlat";
     } else if (!displayUATasADSB && this.receiver == "uat" && !tisb) {
         this.dataSource = "uat";
     } else if (type && type.substring(0,4) == "adsr") {
         this.dataSource = "adsb";
-    } else if (type == "adsb_icao_nt") {
-        this.dataSource = "other";
     } else if (tisb) {
         this.dataSource = "tisb";
-    } else if ((lat != null && type == null) || type == "adsb_icao" || type == "adsb_other") {
+    } else if ((lat != null && type == null) || (type && type.substring(0,4) == "adsb")) {
         this.dataSource = "adsb";
     }
 
     if (data.type == 'adsc') {
         this.dataSource = "jaero";
-    } else if (data.type == 'unknown') {
+    } else if (data.type == 'unknown' || data.type == 'other') {
         this.dataSource = "unknown";
     }
 
@@ -2135,7 +2133,7 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
             this.dataSource = "mlat";
             this.dataSource = "adsb";
         } else if (data.type == "adsb_icao_nt") {
-            this.dataSource = "other";
+            this.dataSource = "mode_s";
         } else if (data.type.substring(0,4) == "tisb") {
             this.dataSource = "tisb";
         } else if (data.type == 'adsc') {

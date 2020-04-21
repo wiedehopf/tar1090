@@ -2210,6 +2210,8 @@ function refreshTableInfo() {
 
             if (plane.dataSource == "adsb") {
                 classes += " vPosition";
+            } else if (plane.dataSource == "mode_s") {
+                classes += " other";
             } else {
                 classes += " ";
                 classes += plane.dataSource;
