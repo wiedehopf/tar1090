@@ -1630,8 +1630,8 @@ PlaneObject.prototype.updateLines = function() {
 
             let fill = labelFill;
             let zIndex = -i - 50 * (seg.alt_real == null);
-            if (seg.extendedT)
-                zIndex += 4;
+            //if (seg.extendedT)
+            //    zIndex += 100;
             if (seg.leg == 'start') {
                 fill = new ol.style.Fill({color: '#88CC88' });
                 zIndex += 123499;
@@ -2093,10 +2093,10 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
     this.alt_rounded = calcAltitudeRounded(this.altitude);
     if (alt_geom) {
         this.alt_geom = altitude;
-        this.alt_baro = null;
+        //this.alt_baro = null;
     } else {
         this.alt_baro = altitude;
-        this.alt_geom = null;
+        //this.alt_geom = null;
     }
     this.speed = gs;
     this.gs = gs;
@@ -2143,9 +2143,11 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
         this.alt_geom = data.alt_geom;
         this.ias = data.ias;
         this.tas = data.tas;
-        this.track_rate = data.track_rate;
+        this.track = data.track;
         this.mag_heading = data.mag_heading;
+        this.true_heading = data.true_heading;
         this.mach = data.mach;
+        this.track_rate = data.track_rate;
         this.roll = data.roll;
         this.nav_altitude = data.nav_altitude;
         this.nav_heading = data.nav_heading;
