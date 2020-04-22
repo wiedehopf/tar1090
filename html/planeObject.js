@@ -2214,6 +2214,11 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
         this.rc = data.rc;
         this.squawk = data.squawk;
 
+        this.wd = data.wd;
+        this.ws = data.ws;
+        this.oat = data.oat;
+        this.tat = data.tat;
+
         // fields with more complex behaviour
 
         this.version = data.version;
