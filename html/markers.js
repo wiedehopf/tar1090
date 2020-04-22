@@ -245,13 +245,13 @@ let shapes = {
 let TypeDesignatorIcons = {
     'SHIP': ['balloon', 1], // Blimp
 
-    'A318': ['a320', 0.90], // shortened a320 68t
-    'A319': ['a320', 0.93], // shortened a320 75t
-    'A19N': ['a320', 0.93], // shortened a320
-    'A320': ['a320', 0.96], // 78t
-    'A20N': ['a320', 0.96],
-    'A321': ['a320', 0.99], // stretched a320 93t
-    'A21N': ['a320', 0.99], // stretched a320
+    'A318': ['airliner', 0.90], // shortened a320 68t
+    'A319': ['airliner', 0.93], // shortened a320 75t
+    'A19N': ['airliner', 0.93], // shortened a320
+    'A320': ['airliner', 0.96], // 78t
+    'A20N': ['airliner', 0.96],
+    'A321': ['airliner', 0.99], // stretched a320 93t
+    'A21N': ['airliner', 0.99], // stretched a320
 
     'A306': ['heavy_2e', 0.93],
     'A330': ['heavy_2e', 0.96],
