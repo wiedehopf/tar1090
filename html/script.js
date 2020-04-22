@@ -1853,14 +1853,16 @@ function refreshSelected() {
 
 
     let oat = null;
+    let tat = null;
 
-    if (selected.oat != null && selected.mach != null) {
+    if (selected.tat != null && selected.oat != null) {
         oat = selected.oat;
+        tat = selected.tat;
     } else if (!globeIndex && selected.mach != null && selected.tas != null) {
         oat = Math.pow((selected.tas / 661.47 / selected.mach), 2) * 288.15 - 273.15;
+        tat = -273.15 + (oat + 273.15) * (1 + 0.2 * selected.mach * selected.mach);
     }
 
-    let tat = -273.15 + (selected.oat + 273.15) * (1 + 0.2 * selected.mach * selected.mach);
 
     if (oat != null)
         $('#selected_temp').text(Math.round(tat) + ' / ' + Math.round(oat)  + ' °C');

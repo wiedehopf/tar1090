@@ -50,6 +50,12 @@ function PlaneObject(icao) {
     this.geom_rate      = null;
     this.vert_rate      = null;
 
+
+    this.wd = null;
+    this.ws = null;
+    this.oat = null;
+    this.tat = null;
+
     this.version        = null;
 
     this.prev_position = null;
@@ -1297,6 +1303,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     this.wd = data.wd;
     this.ws = data.ws;
     this.oat = data.oat;
+    this.tat = data.tat;
 
     // fields with more complex behaviour
 
@@ -2145,7 +2152,7 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
         this.track = null;
     } else {
         this.track = track;
-        this.true_heading = null;
+        //this.true_heading = null;
     }
 
     if (track)
@@ -2274,6 +2281,11 @@ PlaneObject.prototype.setNull = function() {
     this.baro_rate      = null;
     this.geom_rate      = null;
     this.vert_rate      = null;
+
+    this.wd = null;
+    this.ws = null;
+    this.oat = null;
+    this.tat = null;
 
     this.version        = null;
 
