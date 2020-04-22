@@ -1164,7 +1164,7 @@ function parse_history() {
     changeCenter("init");
 
     if (globeIndex)
-        setInterval(checkMovement, 100);
+        setInterval(checkMovement, 50);
     else
         setInterval(checkMovement, 30);
 
@@ -3476,8 +3476,6 @@ function changeCenter(init) {
     if (!onlySelected)
         refreshTableInfo();
 
-    checkFollow();
-
     if (!init && showTrace)
         updateAddressBar();
 }
@@ -3493,6 +3491,9 @@ function checkMovement() {
     ) {
         noMovement = 0;
     }
+
+    if (noMovement == 0)
+        checkFollow();
 
     checkMoveZoom = zoom;
     checkMoveCenter[0] = center[0];

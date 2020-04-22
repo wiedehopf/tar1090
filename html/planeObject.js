@@ -1450,8 +1450,11 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
 
         if (lines)
             this.updateLines();
-        if (marker)
+        if (marker) {
             this.updateMarker(true);
+            if (this == SelectedPlane && FollowSelected && this.position)
+                OLMap.getView().setCenter(ol.proj.fromLonLat(this.position));
+        }
     } else {
         if (this.visible) {
             //console.log("hiding " + this.icao);
