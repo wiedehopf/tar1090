@@ -43,8 +43,8 @@ let shapes = {
     // by Peter Lowden
     // licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)
     'c130': {
-        w: 32,
-        h: 34,
+        w: 31,
+        h: 33,
         noAspect: true,
         strokeScale: 2,
         viewBox: '0 0 64 64',
@@ -482,7 +482,7 @@ let TypeDescriptionIcons = {
     'L3J-H': ['md11', 1], // > 136t
 
     'L4T-M': ['c130', 1],
-    'L4T-H': ['c130', 1.15],
+    'L4T-H': ['c130', 1.07],
 
     'L4J-H': ['heavy_4e' , 0.96],
 };
