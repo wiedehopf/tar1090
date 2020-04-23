@@ -4355,3 +4355,4 @@ function checkFollow() {
         toggleFollow(true);
     }
 }
+

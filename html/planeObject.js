@@ -304,14 +304,14 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     let projPrev = ol.proj.fromLonLat(this.prev_position);
     let lastseg = this.track_linesegs[this.track_linesegs.length - 1];
 
-    let distance = 1000;
+    let distance = ol.sphere.getDistance(this.position, this.prev_position);
+
     let derivedMach = 0.01;
     let filterSpeed = 10000;
 
     const pFilter = (positionFilter == true || (positionFilter == 'onlyMLAT' && this.dataSource == "mlat"));
 
     if (pFilter) {
-        distance = ol.sphere.getDistance(this.position, this.prev_position);
         derivedMach = (distance/(this.position_time - this.prev_time + 0.4))/343;
         filterSpeed = on_ground ? positionFilterSpeed/10 : positionFilterSpeed;
         filterSpeed = (this.speed != null && this.prev_speed != null) ? (positionFilterGsFactor*(Math.max(this.speed, this.prev_speed)+10+(this.dataSource == "mlat")*100)/666) : filterSpeed;
@@ -345,68 +345,11 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     if ((this.position[0] < -90 && this.prev_position[0] > 90)
         || (this.position[0] > 90 && this.prev_position[0] < -90)
     ) {
-        let sign1 = Math.sign(this.prev_position[0]);
-        let sign2 = Math.sign(this.position[0]);
-        let londiff1 = 180 - Math.abs(this.prev_position[0]);
-        let londiff2 = 180 - Math.abs(this.position[0]);
-        let ratio1 = londiff1 / (londiff1 + londiff2);
-        let ratio2 = londiff2 / (londiff1 + londiff2);
-        let tryLat = ratio1 * this.prev_position[1] + ratio2 *this.position[1];
-        let minDistance = 50 * 1000* 1000;
-        let midLat = 0;
-        for (let i = 0; i < 100; i += 1) {
-            let distance1 = ol.sphere.getDistance(this.prev_position, [sign1 * 180, tryLat - i]);
-            let distance2 = ol.sphere.getDistance(this.position, [sign2 * 180, tryLat - i]);
-
-            let distance = distance1 + distance2;
-            if (distance < minDistance) {
-                minDistance = distance;
-                midLat = tryLat - i;
-            } else {
-                break;
-            }
-        }
-        for (let i = 1; i < 100; i+= 1) {
-            let distance1 = ol.sphere.getDistance(this.prev_position, [sign1 * 180, tryLat + i]);
-            let distance2 = ol.sphere.getDistance(this.position, [sign2 * 180, tryLat + i]);
-
-            let distance = distance1 + distance2;
-
-            if (distance < minDistance) {
-                minDistance = distance;
-                midLat = tryLat + i;
-            } else {
-                break;
-            }
-        }
-        let midPoint1 = ol.proj.fromLonLat([sign1 * 180, midLat]);
-        let midPoint2 = ol.proj.fromLonLat([sign2 * 180, midLat]);
-
         lastseg.fixed.appendCoordinate(projPrev);
-        this.track_linesegs.push({ fixed: new ol.geom.LineString([projPrev, midPoint1]),
-            feature: null,
-            estimated: true,
-            altitude: this.prev_alt_rounded,
-            alt_real: this.prev_alt,
-            speed: this.prev_speed,
-            ground: on_ground,
-            ts: this.prev_time,
-            track: this.prev_rot,
-            leg: is_leg,
-        });
-        this.track_linesegs.push({ fixed: new ol.geom.LineString([midPoint2, projHere]),
-            feature: null,
-            estimated: true,
-            ts: NaN,
-            altitude: this.prev_alt_rounded,
-            alt_real: this.prev_alt,
-            speed: this.prev_speed,
-            ground: on_ground,
-            ts: NaN,
-            track: this.prev_rot,
-            noLabel: true,
-        });
-        this.history_size += 2;
+
+        this.cross180(on_ground, is_leg);
+
+        this.history_size += 258;
 
         return this.updateTail();
     }
@@ -479,7 +422,18 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
         this.logSel("sec_elapsed: " + since_update.toFixed(1) + " alt_change: "+ alt_change.toFixed(0) + " derived_speed(kts/Mach): " + (distance_traveled/since_update*1.94384).toFixed(0) + " / " + (distance_traveled/since_update/343).toFixed(1));
 
         lastseg.fixed.appendCoordinate(projPrev);
-        this.track_linesegs.push({ fixed: new ol.geom.LineString([projPrev]),
+
+        let points = [projPrev];
+        if (distance > 20000) {
+            let nPoints = distance / 19000;
+            let greyskull = Math.ceil(Math.log(nPoints) / Math.log(2));
+            //console.log(Math.round(nPoints) + ' ' + greyskull);
+            points = makeCircle([this.prev_position, this.position], greyskull);
+            for (let i in points)
+                points[i] = ol.proj.fromLonLat(points[i]);
+        }
+
+        this.track_linesegs.push({ fixed: new ol.geom.LineString(points),
             feature: null,
             estimated: estimated,
             altitude: this.prev_alt_rounded,
@@ -1554,6 +1508,15 @@ function altitudeLines (segment) {
                 })
             });
         }
+    } else if (segment.noLabel) {
+        lineStyleCache[lineKey] = [
+            new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    color: color,
+                    width: 2 * newWidth * multiplier,
+                })
+            }),
+        ];
     } else {
         lineStyleCache[lineKey] = [
             new ol.style.Style({
@@ -2310,4 +2273,115 @@ PlaneObject.prototype.setNull = function() {
     this.msgs978   = 0;
     this.messageRate = 0;
     this.messageRateOld = 0;
+}
+
+function makeCircle(points, greyskull) {
+    let out = points;
+    //console.log('1: ' + out.map(x => [Math.round(x[0]), Math.round(x[1])]));
+    for (let k = 0; k < greyskull; k++) {
+        out = [points[0]];
+        for (let j = 1; j < points.length; j++) {
+            let i = j - 1;
+            out.push(midpoint(points[i], points[j]));
+            out.push(points[j]);
+            //console.log('added 2: ' + out.map(x => [Math.round(x[0]), Math.round(x[1])]));
+        }
+        points = out;
+    }
+
+    return out;
+}
+
+function midpoint(from, to) {
+    let lon1 = from[0];
+    let lat1 = from[1];
+    let lon2 = to[0];
+    let lat2 = to[1];
+    lon1 *= (Math.PI/180);
+    lat1 *= (Math.PI/180);
+    lon2 *= (Math.PI/180);
+    lat2 *= (Math.PI/180);
+
+    let b_x = Math.cos(lat2) * Math.cos(lon2 - lon1);
+    let b_y = Math.cos(lat2) * Math.sin(lon2 - lon1);
+    let lat3 = Math.atan2(Math.sin(lat1) + Math.sin(lat2), Math.sqrt((Math.cos(lat1) + b_x) * (Math.cos(lat1) + b_x) + b_y * b_y));
+    let lon3 = lon1 + Math.atan2(b_y, Math.cos(lat1) + b_x);
+    lat3 /= (Math.PI/180);
+    lon3 /= (Math.PI/180);
+    lon3 = (lon3 + 540) % 360 - 180;
+    return [lon3, lat3];
+}
+
+PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
+    let sign1 = Math.sign(this.prev_position[0]);
+    let sign2 = Math.sign(this.position[0]);
+
+    let out = makeCircle([this.prev_position, this.position], 8);
+
+    //console.log([...out]);
+
+    let seg1 = [];
+    let seg2 = [];
+
+    let tmp;
+
+    while ((tmp = out.shift()) != null) {
+        if (sign1 == Math.sign(tmp[0]))
+            seg1.push(tmp);
+        else
+            seg2.push(tmp);
+    }
+    //console.log([...seg1]);
+    //console.log([...seg2]);
+
+    let midLat = (seg1[seg1.length - 1][1] + seg2[0][1]) / 2;
+    let midPoint1 = [sign1 * 180, midLat];
+    let midPoint2 = [sign2 * 180, midLat];
+
+    seg1.push(midPoint1);
+    seg2.unshift(midPoint2);
+
+    for (let i in seg1)
+        seg1[i] = ol.proj.fromLonLat(seg1[i]);
+    for (let i in seg2)
+        seg2[i] = ol.proj.fromLonLat(seg2[i]);
+
+    seg1.unshift(seg1[0]);
+
+    this.track_linesegs.push({ fixed: new ol.geom.LineString([seg1.shift()]),
+        feature: null,
+        estimated: true,
+        altitude: this.prev_alt_rounded,
+        alt_real: this.prev_alt,
+        speed: this.prev_speed,
+        ground: on_ground,
+        ts: this.prev_time,
+        track: this.prev_rot,
+        leg: is_leg,
+    });
+
+    this.track_linesegs.push({ fixed: new ol.geom.LineString(seg1),
+        feature: null,
+        estimated: true,
+        altitude: this.prev_alt_rounded,
+        alt_real: this.prev_alt,
+        speed: this.prev_speed,
+        ground: on_ground,
+        track: this.prev_rot,
+        ts: NaN,
+        noLabel: true,
+    });
+
+    this.track_linesegs.push({ fixed: new ol.geom.LineString(seg2),
+        feature: null,
+        estimated: true,
+        altitude: this.prev_alt_rounded,
+        alt_real: this.prev_alt,
+        speed: this.prev_speed,
+        ground: on_ground,
+        track: this.prev_rot,
+        ts: NaN,
+        noLabel: true,
+    });
+
 }
