@@ -2292,15 +2292,12 @@ function makeCircle(points, greyskull) {
     return out;
 }
 
+// adapted from https://github.com/seangrogan/great_circle_calculator
 function midpoint(from, to) {
-    let lon1 = from[0];
-    let lat1 = from[1];
-    let lon2 = to[0];
-    let lat2 = to[1];
-    lon1 *= (Math.PI/180);
-    lat1 *= (Math.PI/180);
-    lon2 *= (Math.PI/180);
-    lat2 *= (Math.PI/180);
+    let lon1 = from[0] * (Math.PI/180);
+    let lat1 = from[1] * (Math.PI/180);
+    let lon2 = to[0] * (Math.PI/180);
+    let lat2 = to[1] * (Math.PI/180);
 
     let b_x = Math.cos(lat2) * Math.cos(lon2 - lon1);
     let b_y = Math.cos(lat2) * Math.sin(lon2 - lon1);
