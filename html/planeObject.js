@@ -305,6 +305,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     let lastseg = this.track_linesegs[this.track_linesegs.length - 1];
 
     let distance = ol.sphere.getDistance(this.position, this.prev_position);
+    let elapsed = this.position_time - this.prev_time;
 
     let derivedMach = 0.01;
     let filterSpeed = 10000;
@@ -421,10 +422,19 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
 
         this.logSel("sec_elapsed: " + since_update.toFixed(1) + " alt_change: "+ alt_change.toFixed(0) + " derived_speed(kts/Mach): " + (distance_traveled/since_update*1.94384).toFixed(0) + " / " + (distance_traveled/since_update/343).toFixed(1));
 
-        lastseg.fixed.appendCoordinate(projPrev);
-
         let points = [projPrev];
-        if (distance > 20000) {
+
+        if (since_update > 3600 && distance_traveled / since_update * 3.6 < 100) {
+            // don't draw a line if a long time has elapsed but no great distance was traveled
+        } else {
+            lastseg.fixed.appendCoordinate(projPrev);
+        }
+
+        // draw great circle path for long distances
+        if (distance > 20000
+            && !(elapsed > 3600 && distance / elapsed * 3.6 < 100)
+            // don't draw a line if a long time has elapsed but no great distance was traveled
+        ) {
             let nPoints = distance / 19000;
             let greyskull = Math.ceil(Math.log(nPoints) / Math.log(2));
             //console.log(Math.round(nPoints) + ' ' + greyskull);
