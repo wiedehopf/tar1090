@@ -239,33 +239,6 @@ sudo wget -O /usr/local/share/tar1090/html/upintheair.json "http://www.heywhatst
 - You should now have a range outline for the theoretical range for aircraft at 40000 ft on your tar1090 map
 
 
-## history not loading issue (possible fix)
-
-For a day or so i had a bug in the install script turning symbolic links in /etc/lighttpd/conf-enabled into copies of the files they were pointing to.
-
-This can cause some other issues with my install script which fiddles with the lighttpd config files to make mod_setenv work.
-
-Anyhow if just rerunning the install script does not fix your history loading issue, you can try this:
-
-```
-cd /etc/lighttpd/conf-enabled
-for i in *; do if [ -f "../conf-available/$i" ]; then sudo ln -s -f "../conf-available/$i" $i; fi; done
-```
-
-After that rerun the install script.
-If you still have history loading issues, get back to me via the github issues or the various forums i frequent.
-
-## NO WARRANTY - Excerpt from the License:
-
-  11. BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
-FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.  EXCEPT WHEN
-OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
-PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED
-OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE ENTIRE RISK AS
-TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.  SHOULD THE
-PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING,
-REPAIR OR CORRECTION.
 
 ## A separate instance with longer data retention for gauging range
 
@@ -355,3 +328,31 @@ If you can't figure out how to make it work with the above information, please d
 I don't support this feature for the general user base.
 This information is only for people who could figure it out from the source code anyhow,
 so that they don't have to spend as much time figuring it out.
+
+## history not loading issue (possible fix)
+
+For a day or so i had a bug in the install script turning symbolic links in /etc/lighttpd/conf-enabled into copies of the files they were pointing to.
+
+This can cause some other issues with my install script which fiddles with the lighttpd config files to make mod_setenv work.
+
+Anyhow if just rerunning the install script does not fix your history loading issue, you can try this:
+
+```
+cd /etc/lighttpd/conf-enabled
+for i in *; do if [ -f "../conf-available/$i" ]; then sudo ln -s -f "../conf-available/$i" $i; fi; done
+```
+
+After that rerun the install script.
+If you still have history loading issues, get back to me via the github issues or the various forums i frequent.
+
+## NO WARRANTY - Excerpt from the License:
+
+  11. BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
+FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.  EXCEPT WHEN
+OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
+PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED
+OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE ENTIRE RISK AS
+TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.  SHOULD THE
+PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING,
+REPAIR OR CORRECTION.
