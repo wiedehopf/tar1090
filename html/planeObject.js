@@ -1062,6 +1062,7 @@ PlaneObject.prototype.processTrace = function() {
     }
 
     refreshSelected();
+    refreshTableInfo();
 
     console.log(this.history_size + ' ' + points_in_trace);
 }
@@ -2134,7 +2135,7 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
     if (track)
         this.rotation = track
 
-    this.rate = rate;
+    this.vert_rate = rate;
     if (rate_geom) {
         this.geom_rate = rate;
         this.baro_rate = null;
