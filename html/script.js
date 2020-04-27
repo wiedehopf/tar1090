@@ -1611,6 +1611,7 @@ function initialize_map() {
                 }
                 console.log(SelectedPlane.icao + ": " + SelectedPlane.baseMarkerKey + "  " + SelectedPlane.shape);
                 console.log(SelectedPlane);
+                console.log(SelectedPlane.milRange());
                 break;
             case "j":
                 selectPlaneByHex(jumpTo, {follow: true});

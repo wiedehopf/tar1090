@@ -2002,7 +2002,8 @@ PlaneObject.prototype.milRange = function() {
         || this.icao.match(/^3b/)
 
         //3e8000-3ebfff = germany mil_1(df)
-        || this.icao.match(/^3e(8|9|a|b)/)
+        // remove 8 and 9 from mil arnge
+        || this.icao.match(/^3e(a|b)/)
         //3f4000-3f7fff = germany mil_2(df)
         //3f8000-3fbfff = germany mil_3(df)
         || this.icao.match(/^3f([4-9]|[a-b])/)
