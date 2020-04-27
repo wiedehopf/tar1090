@@ -6,6 +6,7 @@
 
 // Define our global letiables
 let OLMap         = null;
+let OLProj = null;
 let StaticFeatures = new ol.source.Vector();
 let PlaneIconFeatures = new ol.source.Vector();
 let trailGroup = new ol.Collection();
@@ -297,7 +298,7 @@ function processReceiverUpdate(data, init) {
 
 function fetchData() {
     ZoomLvl = OLMap.getView().getZoom();
-    let center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
+    let center = ol.proj.toLonLat(OLMap.getView().getCenter());
     localStorage['CenterLon'] = CenterLon = center[0];
     localStorage['CenterLat'] = CenterLat = center[1];
     clearTimeout(refreshId);
@@ -1378,6 +1379,7 @@ function initialize_map() {
         loadTilesWhileInteracting: false,
         interactions: new ol.interaction.defaults({altShiftDragRotate:false, pinchRotate:false,}),
     });
+    OLProj = OLMap.getView().getProjection();
 
     OLMap.getView().setRotation(mapOrientation); // adjust orientation
 
@@ -3468,7 +3470,9 @@ function zoomOut() {
 }
 
 function changeCenter(init) {
-    const center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
+
+    const rawCenter = OLMap.getView().getCenter();
+    const center = ol.proj.toLonLat(rawCenter);
 
     localStorage['CenterLon'] = CenterLon = center[0];
     localStorage['CenterLat'] = CenterLat = center[1];
@@ -3478,11 +3482,16 @@ function changeCenter(init) {
 
     if (!init && showTrace)
         updateAddressBar();
+
+    if (rawCenter[0] < OLProj.extent_[0] || rawCenter[0] > OLProj.extent_[3]) {
+        OLMap.getView().setCenter(ol.proj.fromLonLat(center));
+    }
+
 }
 
 function checkMovement() {
     const zoom = OLMap.getView().getZoom();
-    const center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
+    const center = ol.proj.toLonLat(OLMap.getView().getCenter());
 
     if (
         checkMoveZoom != zoom ||
@@ -4347,7 +4356,7 @@ function checkFollow() {
         toggleFollow(false);
         return;
     }
-    const center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
+    const center = ol.proj.toLonLat(OLMap.getView().getCenter());
     if (Math.abs(center[0] - SelectedPlane.position[0]) > 0.001 ||
         Math.abs(center[1] - SelectedPlane.position[1]) > 0.001) {
         toggleFollow(false);
