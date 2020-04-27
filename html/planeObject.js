@@ -2338,8 +2338,14 @@ PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
     }
     //console.log([...seg1]);
     //console.log([...seg2]);
+    let before = seg1[seg1.length - 1];
+    let after = seg2[0];
+    // weight according to the opposite distance, well longitude difference
+    // not perfect, good enough
+    let afterWeight = Math.abs(sign1 * 180 - before[0]);
+    let beforeWeight = Math.abs(sign2 * 180 - after[0]);
+    let midLat = (beforeWeight * before[1] + afterWeight * after[1]) / (beforeWeight + afterWeight);
 
-    let midLat = (seg1[seg1.length - 1][1] + seg2[0][1]) / 2;
     let midPoint1 = [sign1 * 180, midLat];
     let midPoint2 = [sign2 * 180, midLat];
 
