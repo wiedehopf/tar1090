@@ -1193,11 +1193,9 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.dataSource = "mlat";
     } else if (!displayUATasADSB && this.receiver == "uat" && !tisb) {
         this.dataSource = "uat";
-    } else if (type && type.substring(0,4) == "adsr") {
-        this.dataSource = "adsb";
     } else if (tisb) {
         this.dataSource = "tisb";
-    } else if ((lat != null && type == null) || (type && type.substring(0,4) == "adsb")) {
+    } else if ((lat != null && type == null) || (type && (type.substring(0,4) == "adsb" || type.substring(0,4) == "adsr"))) {
         this.dataSource = "adsb";
     }
 
@@ -2151,7 +2149,6 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
             this.dataSource = "adsb";
         } else if (data.type == "mlat") {
             this.dataSource = "mlat";
-            this.dataSource = "adsb";
         } else if (data.type == "adsb_icao_nt") {
             this.dataSource = "mode_s";
         } else if (data.type.substring(0,4) == "tisb") {
