@@ -1034,6 +1034,7 @@ PlaneObject.prototype.processTrace = function() {
         this.seen = 0;
         this.seen_pos = 0;
     }
+    this.visible = true;
     if (!showTime) {
         this.updateFeatures(now, _last);
     }
