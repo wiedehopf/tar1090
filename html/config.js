@@ -242,3 +242,5 @@ HideCols = [
 //lastLeg = true;
 //
 //hideButtons = false;
+//
+//askLocation = false;  // requires https for geolocation (browsers require it)

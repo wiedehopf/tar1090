@@ -1629,7 +1629,7 @@ function initialize_map() {
         }
     }, true);
 
-    if (globeIndex || uuid)
+    if (globeIndex || uuid || askLocation)
         geoFindMe();
     else {
         initSitePos();
