@@ -593,8 +593,9 @@ function svgShapeToURI(shape, fillColor, strokeColor, strokeWidth){
     let svg = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="' + shape.viewBox + '" '
         + (shape.noAspect ? 'preserveAspectRatio="none" ' : '')
         + 'width="' + shape.w + '" height="' + shape.h + '">'
+        + '<g' + (shape.transform ? (' transform="' + shape.transform + '"') : '') + '>'
         + '<path fill="' + fillColor + '" stroke="' + strokeColor + '" stroke-width="' + strokeWidth + '" '
-        + 'd="' + shape.path + '"/></svg>';
+        + 'd="' + shape.path + '"/></g></svg>';
 
     return "data:image/svg+xml;base64," + btoa(svg);
 }
