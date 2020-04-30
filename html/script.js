@@ -96,6 +96,7 @@ let bgFill = null;
 let legSel = -1;
 let geoMag = null;
 let globalCompositeTested = false;
+let solidT = false;
 
 let shareLink = '';
 
@@ -1904,7 +1905,7 @@ function refreshSelected() {
     } else {
         $('#selected_seen').text('n/a');
     }
-    if (selected.seen_pos != null&& selected.seen_pos < 1000000) {
+    if (selected.seen_pos != null && selected.seen_pos < 1000000) {
         $('#selected_seen_pos').text(format_duration(selected.seen_pos));
     } else {
         $('#selected_seen_pos').text('n/a');
@@ -2456,7 +2457,7 @@ function selectPlaneByHex(hex, options) {
     options = options || {};
     //console.log("select: " + hex);
     // If SelectedPlane has something in it, clear out the selected
-    if (SelectedAllPlanes && !options.goldT) {
+    if (SelectedAllPlanes) {
         deselectAllPlanes();
     }
     // already selected plane
@@ -2464,90 +2465,11 @@ function selectPlaneByHex(hex, options) {
     // plane to be selected
     let newPlane = Planes[hex];
 
+    if (!options.noFetch && globeIndex && hex)
+        newPlane = getTrace(newPlane, hex, options);
 
-    if (!options.noFetch && globeIndex && hex) {
-        let URL1 = 'data/traces/'+ hex.slice(-2) + '/trace_recent_' + hex + '.json';
-        let URL2 = 'data/traces/'+ hex.slice(-2) + '/trace_full_' + hex + '.json';
-        //console.log('Requesting trace: ' + hex);
-
-        if (!newPlane) {
-            processAircraft({hex: hex, });
-            Planes[hex].last_message_time = NaN;
-            newPlane = Planes[hex];
-        }
-
-        traceOpts = options;
-
-        if (showTrace) {
-            let today = new Date();
-            if (zDateString(traceDate) == zDateString(today)) {
-
-                today.setUTCHours(0);
-                today.setUTCMinutes(0);
-                today.setUTCSeconds(0);
-
-                traceOpts.startStamp = today.getTime() / 1000;
-            } else {
-                URL1 = null;
-                URL2 = 'globe_history/' + traceDateString + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json';
-            }
-        }
-        if (newPlane && (showTrace || showTraceExit)) {
-            SelectedPlane = oldPlane = null;
-            newPlane.trace = [];
-            newPlane.recentTrace = null;
-            newPlane.fullTrace = null;
-        }
-
-        let req1 = null;
-        let req2 = null;
-
-        options.plane = newPlane;
-        options.defer = $.Deferred();
-
-        if (URL1) {
-            req1 = $.ajax({ url: URL1,
-                dataType: 'json',
-                options: options,
-            });
-        } else {
-            req1 = $.Deferred().resolve(options);
-        }
-
-        req2 = $.ajax({ url: URL2,
-            dataType: 'json',
-            options: options,
-        });
-
-        options.req2 = req2;
-
-        req1.done(function(data) {
-            let plane = data.plane || this.options.plane;
-            plane.recentTrace = data;
-            if (!showTrace)
-                plane.processTrace();
-            let defer = data.defer || this.options.defer;
-            defer.resolve(plane);
-        });
-        req2.done(function(data) {
-            let plane = this.options.plane;
-            plane.fullTrace = data;
-            this.options.defer.done(function(plane) {
-                if (showTrace)
-                    legShift(0);
-                else
-                    plane.processTrace();
-            });
-        });
-        req2.fail(function() {
-            if (showTrace)
-                legShift(0);
-            else
-                this.options.plane.processTrace();
-        });
-    }
-    if (options.goldT)
-        return;
+    if (newPlane && (showTrace || showTraceExit))
+        SelectedPlane = oldPlane = null;
 
     if (!multiSelect && oldPlane) {
         oldPlane.selected = false;
@@ -3810,6 +3732,9 @@ function inView(pos, currExtent) {
     if (pos == null)
         return false;
 
+    if (solidT)
+        return true;
+
     let inView;
 
     //console.log((currExtent[2]-currExtent[0])/40075016);
@@ -4316,11 +4241,20 @@ function drawUpintheair() {
 }
 
 function solidGoldT() {
-
-    for (let i in PlanesOrdered) {
+    solidT = true;
+    let list = [[], [], [], []];
+    for (let i = 0; i < PlanesOrdered.length; i++) {
         let plane = PlanesOrdered[i];
-        selectPlaneByHex(plane.icao, { goldT: true, });
+        //console.log(plane);
+        if (plane.seen_pos && plane.seen_pos < 1200) {
+            plane.visible = true;
+            list[Math.floor(4*i/PlanesOrdered.length)].push(plane);
+        }
     }
+    getTrace(null, null, {onlyFull: true, list: list[0],});
+    getTrace(null, null, {onlyFull: true, list: list[1],});
+    getTrace(null, null, {onlyFull: true, list: list[2],});
+    getTrace(null, null, {onlyFull: true, list: list[3],});
 }
 
 function gotoTime(timestamp) {
@@ -4366,3 +4300,106 @@ function checkFollow() {
     }
 }
 
+function getTrace(newPlane, hex, options) {
+
+    if (options.list) {
+        newPlane = options.list.pop()
+        if (!newPlane) {
+            return;
+        }
+        hex = newPlane.icao;
+    }
+
+    let URL1 = 'data/traces/'+ hex.slice(-2) + '/trace_recent_' + hex + '.json';
+    let URL2 = 'data/traces/'+ hex.slice(-2) + '/trace_full_' + hex + '.json';
+    //console.log('Requesting trace: ' + hex);
+
+    if (!newPlane) {
+        processAircraft({hex: hex, });
+        Planes[hex].last_message_time = NaN;
+        newPlane = Planes[hex];
+    }
+
+    traceOpts = options;
+
+    if (showTrace) {
+        let today = new Date();
+        if (zDateString(traceDate) == zDateString(today)) {
+
+            today.setUTCHours(0);
+            today.setUTCMinutes(0);
+            today.setUTCSeconds(0);
+
+            traceOpts.startStamp = today.getTime() / 1000;
+        } else {
+            URL1 = null;
+            URL2 = 'globe_history/' + traceDateString + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json';
+        }
+    }
+    if (newPlane && (showTrace || showTraceExit)) {
+        newPlane.trace = [];
+        newPlane.recentTrace = null;
+        newPlane.fullTrace = null;
+    }
+
+    let req1 = null;
+    let req2 = null;
+
+    options.plane = newPlane;
+    options.defer = $.Deferred();
+
+    let fake1 = false;
+
+    if (URL1 && !options.onlyFull) {
+        req1 = $.ajax({ url: URL1,
+            dataType: 'json',
+            options: options,
+        });
+    } else {
+        options.defer.resolve(newPlane);
+        fake1 = true;
+    }
+
+    req2 = $.ajax({ url: URL2,
+        dataType: 'json',
+        options: options,
+    });
+
+    options.req2 = req2;
+
+    if (!fake1) {
+        req1.done(function(data) {
+            let plane = data.plane || this.options.plane;
+            plane.recentTrace = data;
+            if (!showTrace)
+                plane.processTrace();
+            let defer = data.defer || this.options.defer;
+            defer.resolve(plane);
+        });
+    }
+    req2.done(function(data) {
+        let plane = this.options.plane;
+        plane.fullTrace = data;
+        this.options.defer.done(function(plane) {
+            if (showTrace)
+                legShift(0);
+            else
+                plane.processTrace();
+        });
+        if (options.list) {
+            newPlane.updateLines();
+            getTrace(null, null, options);
+        }
+    });
+    req2.fail(function() {
+        if (showTrace)
+            legShift(0);
+        else
+            this.options.plane.processTrace();
+
+        if (options.list)
+            getTrace(null, null, options);
+    });
+
+    return newPlane;
+}

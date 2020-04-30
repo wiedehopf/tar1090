@@ -395,11 +395,12 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     if (
         this.prev_alt_rounded !== lastseg.altitude
         || this.prev_time > lastseg.ts + 300
+        || (!noVanish && this.prev_time > lastseg.ts + 60)
         || estimated != lastseg.estimated
         || tempTrails
         || debugAll ||
         (
-            serverTrack &&
+            serverTrack && !noVanish &&
             (
                 this.prev_time - lastseg.ts > 5
                 || estimated
