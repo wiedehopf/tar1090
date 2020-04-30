@@ -382,6 +382,7 @@ let TypeDesignatorIcons = {
     'B712': ['jet_swept', 1.04], // 54t
     'F100': ['jet_swept', 1], // 45t
 
+    'BE40': ['jet_nonswept', 1], // 7.3t
     'FA10': ['jet_nonswept', 1], // 8t
     'C501': ['jet_nonswept', 1],
     'C510': ['jet_nonswept', 1],
@@ -392,15 +393,18 @@ let TypeDesignatorIcons = {
     'C550': ['jet_nonswept', 1],
     'C560': ['jet_nonswept', 1],
     'C56X': ['jet_nonswept', 1], // 9t
-    'C650': ['jet_nonswept', 1], // 11t
+    'LJ35': ['jet_nonswept', 1], // 8t
     'LJ35': ['jet_nonswept', 1], // 8t
     'LR35': ['jet_nonswept', 1], // wrong but in database
     'LJ60': ['jet_nonswept', 1], // 10t
     'LR45': ['jet_nonswept', 1], // 10t
-    'G150': ['jet_nonswept', 1], // 11t
-    'H25A': ['jet_nonswept', 1.04], // 11t
-    'H25B': ['jet_nonswept', 1.04], // 11t
-    'H25C': ['jet_nonswept', 1.04], // 11t
+
+    'C650': ['jet_nonswept', 1.03], // 11t
+    'G150': ['jet_nonswept', 1.03], // 11t
+    'H25A': ['jet_nonswept', 1.03], // 11t
+    'H25B': ['jet_nonswept', 1.03], // 11t
+    'H25C': ['jet_nonswept', 1.03], // 11t
+
     'PRM1': ['jet_nonswept', 0.96],
     'E55P': ['jet_nonswept', 0.96],
     'E50P': ['jet_nonswept', 0.96],
