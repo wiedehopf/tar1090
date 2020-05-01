@@ -3537,9 +3537,9 @@ function processURLParams(){
         let follow = true;
         if (search.get("zoom")) {
             try {
-                zoom = parseInt(search.get("zoom"), 10);
+                zoom = parseFloat(search.get("zoom"));
                 if (zoom === 0)
-                    zoom = 1;
+                    zoom = 8;
             } catch (error) {
                 console.log("Error parsing zoom:", error);
             }
