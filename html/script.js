@@ -2522,8 +2522,8 @@ function selectPlaneByHex(hex, options) {
     }
 
     if (options.zoom == 'follow') {
-        if (OLMap.getView().getZoom() < 8)
-            OLMap.getView().setZoom(8);
+        //if (OLMap.getView().getZoom() < 8)
+        //    OLMap.getView().setZoom(8);
     } else if (options.zoom) {
         OLMap.getView().setZoom(options.zoom);
     }
@@ -2599,8 +2599,8 @@ function toggleFollow(override) {
             FollowSelected = false;
     }
     if (FollowSelected) {
-        if (override == undefined && OLMap.getView().getZoom() < 8)
-            OLMap.getView().setZoom(8);
+        //if (override == undefined && OLMap.getView().getZoom() < 8)
+        //    OLMap.getView().setZoom(8);
         OLMap.getView().setCenter(ol.proj.fromLonLat(SelectedPlane.position));
     }
     buttonActive('#F', FollowSelected);
@@ -3533,7 +3533,7 @@ function processURLParams(){
 
         traceDateString = search.get('showTrace');
         const callsign = search.get('callsign');
-        let zoom;
+        let zoom = null;
         let follow = true;
         if (search.get("zoom")) {
             try {
@@ -3564,14 +3564,13 @@ function processURLParams(){
             if (Planes[icao] || globeIndex) {
                 console.log('Selected ICAO id: '+ icao);
                 let selectOptions = {follow: follow};
-                if (zoom) {
-                    selectOptions.zoom = zoom;
-                }
                 if (traceDateString != null) {
                     toggleShowTrace();
                     if (!zoom)
                         zoom = 5;
                 } else {
+                    if (!zoom)
+                        zoom = 7;
                     selectPlaneByHex(icao, selectOptions)
                 }
             } else {
