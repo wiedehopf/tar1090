@@ -3913,6 +3913,8 @@ function legShift(offset) {
         if (legStart == null) {
             legStart = i;
             i++;
+            if (i >= trace.length)
+                break;
         }
         if (trace[i][6] & 2) {
             count++;
