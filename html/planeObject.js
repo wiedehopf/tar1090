@@ -994,7 +994,8 @@ PlaneObject.prototype.processTrace = function() {
         tempPlane.prev_position = this.position;
     }
 
-    if (tempPlane.last_message_time > this.last_message_time && !showTrace) {
+    if (tempPlane.position_time > this.position_time && !showTrace) {
+        console.log('reusing current aircraft data after processing trace.');
         let newSegs = this.track_linesegs;
         let newSize = this.history_size;
         Object.assign(this, tempPlane);
@@ -1053,7 +1054,10 @@ PlaneObject.prototype.processTrace = function() {
         && !noPan
         && !inView(this.position, OLMap.getView().calculateExtent(size))
         && !inView(firstPos, OLMap.getView().calculateExtent(size)))
+    {
         OLMap.getView().setCenter(ol.proj.fromLonLat(this.position));
+    }
+
     noPan = false;
 
     showTraceExit = false;

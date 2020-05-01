@@ -2465,12 +2465,18 @@ function selectPlaneByHex(hex, options) {
     // plane to be selected
     let newPlane = Planes[hex];
 
-    if (!options.noFetch && globeIndex && hex)
-        newPlane = getTrace(newPlane, hex, options);
-
     if (newPlane && (showTrace || showTraceExit))
         SelectedPlane = oldPlane = null;
 
+    // If we are clicking the same plane, we are deselecting it.
+    // (unless it was a doubleclick..)
+    if (oldPlane == newPlane) {
+        if (options.follow || options.noDeselect) {
+            oldPlane = null;
+        } else {
+            newPlane = null;
+        }
+    }
     if (!multiSelect && oldPlane) {
         oldPlane.selected = false;
         oldPlane.clearLines();
@@ -2488,11 +2494,8 @@ function selectPlaneByHex(hex, options) {
         newPlane = null;
     }
 
-    // If we are clicking the same plane, we are deselecting it.
-    // (unless it was a doubleclick..)
-    if (oldPlane == newPlane && !options.follow && !options.noDeselect) {
-        newPlane = null;
-    }
+    if (!options.noFetch && globeIndex && hex)
+        newPlane = getTrace(newPlane, hex, options);
 
     if (newPlane) {
         // Assign the new selected
@@ -4316,8 +4319,11 @@ function getTrace(newPlane, hex, options) {
 
     if (!newPlane) {
         processAircraft({hex: hex, });
-        Planes[hex].last_message_time = NaN;
         newPlane = Planes[hex];
+        newPlane.last_message_time = NaN;
+        newPlane.position_time = NaN;
+        newPlane.selected = true;
+        SelectedPlane = newPlane;
     }
 
     traceOpts = options;
