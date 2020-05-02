@@ -683,7 +683,7 @@ PlaneObject.prototype.updateIcon = function() {
             console.log(baseMarkerKey);
     }
 
-    let strokeWidth = outlineWidth * ((this.selected && !SelectedAllPlanes && !onlySelected) ? 1.35 : 0.76);
+    let strokeWidth = outlineWidth * ((this.selected && !SelectedAllPlanes && !onlySelected) ? 1.35 : 0.7);
     strokeWidth /= this.baseScale;
 
     this.scale = scaleFactor * this.baseScale;
