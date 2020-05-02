@@ -677,13 +677,14 @@ PlaneObject.prototype.updateIcon = function() {
         this.baseMarkerKey = baseMarkerKey;
         this.baseMarker = getBaseMarker(this.category, icaoType, this.typeDescription, this.wtc);
         this.shape = this.baseMarker[0];
-        this.baseScale = this.baseMarker[1] * 0.97;
+        this.baseScale = this.baseMarker[1] * 0.96;
         this.baseMarker = shapes[this.shape]
         if (!this.baseMarker)
             console.log(baseMarkerKey);
     }
 
-    let strokeWidth = outlineWidth * ((this.selected && !SelectedAllPlanes && !onlySelected) ? 1.35 : 0.75);
+    let strokeWidth = outlineWidth * ((this.selected && !SelectedAllPlanes && !onlySelected) ? 1.35 : 0.76);
+    strokeWidth /= this.baseScale;
 
     this.scale = scaleFactor * this.baseScale;
     let svgKey  = fillColor + '!' + this.shape + '!' + strokeWidth;
