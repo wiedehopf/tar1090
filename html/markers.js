@@ -260,6 +260,12 @@ let shapes = {
             'M20.33 16.18l.2.78-6.69 1.52-.79-.31-.77.12-.08.13-.3.06s-.04.6-.69.48l-.13.32-.2 1.12-2.12 6.82-.72-.24 2-6.46.61-.56.3-.68-.06-.18.09-.2s-.51-.41-.07-.91l-1.02-.92-4.8-5.22.53-.5 4.63 4.94.14.84.43.54H11l.15.24s.51-.17.7.32l.45-.09 1.2-.38z'
         ],
     },
+    'f5_tiger': {
+        viewBox:'-3.5 -3 32 32',
+        w: 28,
+        h: 28,
+        path: 'M9.77 14.6s-.03-.78.16-1.74l.59-.98.05-.65.8-.72V7.17s-.05-1.28.15-3c0 0 .03-1.33.7-3.36v-1.2h.1V.83s.48 1.15.7 3.37c0 0 .17 1.15.14 3.02l.01 3.32.77.7.08.67.6 1s.14.69.14 1.7l2.47 1.35 2.24 1.22.03-1.82h-.1v-.14h.1l.01-.3s.01-.13.17-.14v-.4s.1-.28.23 0v.68l.1.16h.16v.14h-.26v3.18l.2.23v.68h-.63v-.75l-5.77.57s.06 1.08-.08 2.6l2.5 1.57-.02.94-2.75.17-.2 1.68h-1.8l-.2-1.68-2.77-.17v-.94l2.5-1.58s-.12-1.1-.09-2.62l-5.74-.55v.76H4.4v-.67l.23-.25v-3.15h-.27v-.17h.13l.13-.14v-.73s.1-.17.22 0v.46h.1s.07.02.07.12v.3h.13v.15h-.1v1.82l2.32-1.27z',
+    },
     // c2 = Grumman C2 Greyhound
     'c2': {
         w: 32,
@@ -485,7 +491,7 @@ let TypeDesignatorIcons = {
     'F22': ['hi_perf', 1],
     'F22A': ['hi_perf', 1],
     'F4': ['hi_perf', 1],
-    'F5': ['hi_perf', 1],
+    'F5': ['f5_tiger', 1],
     'FOUG': ['hi_perf', 1],
     'J8A': ['hi_perf', 1],
     'J8B': ['hi_perf', 1],
@@ -618,7 +624,7 @@ let CategoryIcons = {
 };
 
 function getBaseMarker(category, typeDesignator, typeDescription, wtc) {
-    //return ['chinook', 1];
+    //return ['f5_tiger', 1];
     if (typeDesignator in TypeDesignatorIcons) {
         let shape = TypeDesignatorIcons[typeDesignator][0];
         let scaling = TypeDesignatorIcons[typeDesignator][1];
