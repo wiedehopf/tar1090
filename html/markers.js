@@ -656,7 +656,7 @@ function svgShapeToURI(shape, fillColor, strokeColor, strokeWidth){
         + (shape.noAspect ? 'preserveAspectRatio="none" ' : '')
         + 'width="' + shape.w + '" height="' + shape.h + '">'
         + '<g' + (shape.transform ? (' transform="' + shape.transform + '"') : '') + '>'
-        + '<path fill="' + fillColor + '" stroke="' + strokeColor + '" stroke-width="' + strokeWidth + '" '
+        + '<path paint-order="stroke" fill="' + fillColor + '" stroke="' + strokeColor + '" stroke-width="' + (2 * strokeWidth) + '" '
         + 'd="' + shape.path + '"/></g></svg>';
 
     return "data:image/svg+xml;base64," + btoa(svg);
