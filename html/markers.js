@@ -568,6 +568,7 @@ let TypeDesignatorIcons = {
 
     'SR20': ['cirrus_sr22', 1],
     'SR22': ['cirrus_sr22', 1],
+    'S22T': ['cirrus_sr22', 1],
     'VEZE': ['rutan_veze', 1],
 
     'PA24': ['pa24', 1],
