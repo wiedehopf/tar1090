@@ -445,11 +445,11 @@ let TypeDesignatorIcons = {
     'CRJ9': ['jet_swept', 0.96], // 38t
     'CRJX': ['jet_swept', 0.98], // 41t
     'MD80': ['jet_swept', 1.04], // 60t
-    'DC91': ['jet_swept', 1.04],
-    'DC92': ['jet_swept', 1.04],
-    'DC93': ['jet_swept', 1.04],
-    'DC94': ['jet_swept', 1.04],
-    'DC95': ['jet_swept', 1.04],
+    'DC91': ['jet_swept', 1.],
+    'DC92': ['jet_swept', 1.],
+    'DC93': ['jet_swept', 1.],
+    'DC94': ['jet_swept', 1.],
+    'DC95': ['jet_swept', 1.],
     'MD81': ['jet_swept', 1.04],
     'MD82': ['jet_swept', 1.04],
     'MD83': ['jet_swept', 1.04],
