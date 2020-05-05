@@ -1524,7 +1524,7 @@ function altitudeLines (segment) {
                 })
             });
         }
-    } else if (segment.noLabel) {
+    } else if (segment.noLabel || segment.estimated) {
         lineStyleCache[lineKey] = [
             new ol.style.Style({
                 stroke: new ol.style.Stroke({
