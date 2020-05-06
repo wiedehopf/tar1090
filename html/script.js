@@ -2265,6 +2265,7 @@ function refreshTableInfo() {
     }
     //console.timeEnd("updateCells");
 
+    /*
     if (show_squawk_warning_cache != show_squawk_warning && show_squawk_warning ) {
         $("#SpecialSquawkWarning").css('display','block');
         show_squawk_warning_cache = show_squawk_warning;
@@ -2273,6 +2274,7 @@ function refreshTableInfo() {
         $("#SpecialSquawkWarning").css('display','none');
         show_squawk_warning_cache = show_squawk_warning;
     }
+    */
 
     if (!globeIndex)
         $('#dump1090_total_ac').text(TrackedAircraft);

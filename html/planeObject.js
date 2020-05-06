@@ -545,8 +545,8 @@ PlaneObject.prototype.getDataSource = function() {
 
 PlaneObject.prototype.getMarkerColor = function() {
     // Emergency squawks override everything else
-    if (this.squawk in SpecialSquawks)
-        return SpecialSquawks[this.squawk].markerColor;
+    //if (this.squawk in SpecialSquawks)
+    //    return SpecialSquawks[this.squawk].markerColor;
 
     if (monochromeMarkers) {
         return monochromeMarkers;
