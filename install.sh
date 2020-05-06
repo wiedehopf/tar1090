@@ -104,24 +104,24 @@ if [ -f /etc/default/tar1090_instances ]; then
     true
 elif [[ -n $1 ]] && [ "$1" != "test" ] ; then
     srcdir=$1
-elif ! [[ -f /run/dump1090-fa/aircraft.json ]] ; then
-    if [[ -f /run/readsb/aircraft.json ]]; then
-        srcdir=/run/readsb
-    elif [[ -f /run/adsbexchange-feed/aircraft.json ]]; then
-        srcdir=/run/adsbexchange-feed
-    elif [[ -f /run/dump1090/aircraft.json ]]; then
-        srcdir=/run/dump1090
-    elif [[ -f /run/dump1090-mutability/aircraft.json ]]; then
-        srcdir=/run/dump1090-mutability
-    elif [[ -f /run/skyaware978/aircraft.json ]]; then
-        srcdir=/run/skyaware978
-    else
-        echo --------------
-        echo FATAL: could not find aircraft.json in any of the usual places!
-        echo "checked these: /run/readsb /run/dump1090-fa /run/dump1090 /run/dump1090-mutability /run/adsbexchange-feed /run/skyaware978"
-        echo --------------
-        exit 1
-    fi
+elif [[ -f /run/dump1090-fa/aircraft.json ]] ; then
+    srcdir=/run/dump1090-fa
+elif [[ -f /run/readsb/aircraft.json ]]; then
+    srcdir=/run/readsb
+elif [[ -f /run/adsbexchange-feed/aircraft.json ]]; then
+    srcdir=/run/adsbexchange-feed
+elif [[ -f /run/dump1090/aircraft.json ]]; then
+    srcdir=/run/dump1090
+elif [[ -f /run/dump1090-mutability/aircraft.json ]]; then
+    srcdir=/run/dump1090-mutability
+elif [[ -f /run/skyaware978/aircraft.json ]]; then
+    srcdir=/run/skyaware978
+else
+    echo --------------
+    echo FATAL: could not find aircraft.json in any of the usual places!
+    echo "checked these: /run/readsb /run/dump1090-fa /run/dump1090 /run/dump1090-mutability /run/adsbexchange-feed /run/skyaware978"
+    echo --------------
+    exit 1
 fi
 
 if [ -f /etc/default/tar1090_instances ]; then
