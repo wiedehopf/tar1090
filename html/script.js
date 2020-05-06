@@ -2468,6 +2468,17 @@ function selectPlaneByHex(hex, options) {
     if (newPlane && (showTrace || showTraceExit))
         SelectedPlane = oldPlane = null;
 
+    // multiSelect deselect
+    if (multiSelect && newPlane && newPlane.selected && !options.follow && !onlySelected) {
+        newPlane.selected = false;
+        newPlane.clearLines();
+        newPlane.updateMarker();
+        $(newPlane.tr).removeClass("selected");
+        if (SelectedPlane == newPlane)
+            SelectedPlane = null;
+        newPlane = null;
+        hex = null;
+    }
     // If we are clicking the same plane, we are deselecting it.
     // (unless it was a doubleclick..)
     if (oldPlane == newPlane) {
@@ -2475,6 +2486,7 @@ function selectPlaneByHex(hex, options) {
             oldPlane = null;
         } else {
             newPlane = null;
+            hex = null;
         }
     }
     if (!multiSelect && oldPlane) {
@@ -2482,16 +2494,9 @@ function selectPlaneByHex(hex, options) {
         oldPlane.clearLines();
         oldPlane.updateMarker();
         $(oldPlane.tr).removeClass("selected");
+        SelectedPlane = null;
         // scroll the infoblock back to the top for the next plane to be selected
         //$('.infoblock-container').scrollTop(0);
-    }
-    // multiSelect deselect
-    if (multiSelect && newPlane && newPlane.selected && !options.follow && !onlySelected) {
-        newPlane.selected = false;
-        newPlane.clearLines();
-        newPlane.updateMarker();
-        $(newPlane.tr).removeClass("selected");
-        newPlane = null;
     }
 
     if (!options.noFetch && globeIndex && hex)
@@ -2505,8 +2510,6 @@ function selectPlaneByHex(hex, options) {
         $(newPlane.tr).addClass("selected");
         newPlane.logSel(newPlane.history_size);
         //console.log(newPlane.baseMarkerKey);
-    } else {
-        SelectedPlane = null;
     }
 
     if (newPlane && newPlane.position && options.follow) {
