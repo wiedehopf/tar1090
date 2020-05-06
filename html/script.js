@@ -241,7 +241,9 @@ function processAircraft(ac, init, uat) {
             plane.updateData(uat_now, uat_last, ac, init);
         }
     } else {
-        if (plane.receiver == "1090" || ac.seen_pos < 1.8 || init) {
+        if (plane.receiver == "1090"
+            || (ac.seen_pos < 1.8 && (plane.seen_pos > 5 || !(ac.mlat && ac.mlat.indexOf("lat") >= 0)))
+            || init) {
             plane.receiver = "1090";
             plane.updateData(now, last, ac, init);
         }
