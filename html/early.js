@@ -213,6 +213,8 @@ if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and 
 function handleVisibilityChange() {
   if (!document[hidden]) {
       fetchData();
+      if (SelectedPlane)
+        getTrace(SelectedPlane, SelectedPlane.icao, {});
   }
 }
 

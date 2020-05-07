@@ -359,7 +359,9 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     // Determine if track data are intermittent/stale
     // Time difference between two position updates should not be much
     // greater than the difference between data inputs
-    let time_difference = (this.position_time - this.prev_time) - (now - last);
+    let time_difference = (this.position_time - this.prev_time) - 2;
+    if (!loadFinished || serverTrack)
+        time_difference = (this.position_time - this.prev_time) - (now - last);
 
     //let stale_timeout = lastseg.estimated ? 5 : 10;
     let stale_timeout = 15;

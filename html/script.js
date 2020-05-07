@@ -3832,7 +3832,7 @@ function refreshInt() {
     let inactive = (lastActive - new Date().getTime()) / 1000;
 
     if (document[hidden])
-        refresh = 30000;
+        refresh = 3600 * 1000; // hidden tab, don't refresh to avoid freeze when the tab is switched to again.
     else if (inactive > 1200 && ZoomLvl < 7)
         refresh *= 2;
     else if (inactive > 600 && ZoomLvl < 8)
