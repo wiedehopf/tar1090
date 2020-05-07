@@ -3833,10 +3833,10 @@ function refreshInt() {
 
     if (document[hidden])
         refresh = 3600 * 1000; // hidden tab, don't refresh to avoid freeze when the tab is switched to again.
-    else if (inactive > 1200 && ZoomLvl < 7)
-        refresh *= 2;
-    else if (inactive > 600 && ZoomLvl < 8)
-        refresh *= 1.6;
+    else if (inactive > 1200)
+        refresh *= 1.5;
+    else if (inactive > 600)
+        refresh *= 1.25;
 
     if (!mapIsVisible)
         refresh *= 2;
