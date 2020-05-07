@@ -525,6 +525,7 @@ let TypeDesignatorIcons = {
     'F15': ['hi_perf', 1],
     'F16': ['hi_perf', 1],
     'F18': ['hi_perf', 1],
+    'F18H': ['hi_perf', 1],
     'F22': ['hi_perf', 1],
     'F22A': ['hi_perf', 1],
     'F4': ['hi_perf', 1],
