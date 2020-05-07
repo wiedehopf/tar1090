@@ -306,6 +306,7 @@ function fetchData() {
     localStorage['CenterLat'] = CenterLat = center[1];
     clearTimeout(refreshId);
     refreshId = setTimeout(fetchData, refreshInt());
+    //console.log("fetch");
     if (showTrace)
         return;
     if (PendingFetches > 0)
@@ -3823,6 +3824,9 @@ function refreshInt() {
     let refresh = RefreshInterval;
     if (!globeIndex)
         return refresh;
+
+    if (document[hidden])
+        refresh = 30000;
 
     if (!mapIsVisible)
         refresh *= 2;
