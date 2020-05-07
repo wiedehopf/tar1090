@@ -118,6 +118,9 @@ function createBaseLayers() {
         }));
     }
 
+    if (localStorage['bingKey'] != undefined)
+        BingMapsAPIKey = localStorage['bingKey'];
+
     if (BingMapsAPIKey) {
         world.push(new ol.layer.Tile({
             source: new ol.source.BingMaps({

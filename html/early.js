@@ -35,6 +35,12 @@ try {
     if (customTiles == 'remove')
         localStorage.removeItem('customTiles');
 
+    const bingKey = search.get('BingMapsAPIKey');
+    if (bingKey)
+        localStorage['bingKey'] = bingKey;
+    if (bingKey == 'remove')
+        localStorage.removeItem('bingKey');
+
 } catch (error) {
 }
 
