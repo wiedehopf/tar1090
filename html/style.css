@@ -610,6 +610,12 @@ select.error, textarea.error, input.error {
 #dump1090_infoblock {
 }
 
+.largeText a {
+    font-weight: bold;
+    color: #003f4b;
+    font-size: var(--FS3);
+}
+
 .largeText {
     font-weight: bold;
     color: #003f4b;
