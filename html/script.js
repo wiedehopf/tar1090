@@ -97,6 +97,7 @@ let legSel = -1;
 let geoMag = null;
 let globalCompositeTested = false;
 let solidT = false;
+let lastActive = new Date().getTime();
 
 let shareLink = '';
 
@@ -1169,7 +1170,7 @@ function parse_history() {
     changeCenter("init");
 
     if (globeIndex)
-        setInterval(checkMovement, 50);
+        setInterval(checkMovement, 80);
     else
         setInterval(checkMovement, 30);
 
@@ -1463,6 +1464,7 @@ function initialize_map() {
     }
 
     window.addEventListener('keydown', function(e) {
+        lastActive = new Date().getTime();
         if (e.defaultPrevented ) {
             return; // Do nothing if the event was already processed
         }
@@ -2458,6 +2460,7 @@ function sortBy(id,sc,se) {
 }
 
 function selectPlaneByHex(hex, options) {
+    lastActive = new Date().getTime();
     //console.log("SELECTING", hex, options);
     options = options || {};
     //console.log("select: " + hex);
@@ -3448,6 +3451,7 @@ function checkMovement() {
     // no zoom/pan inputs for 450 ms after a zoom/pan input
     //
     //console.time("fire!");
+    lastActive = new Date().getTime();
     changeZoom();
     changeCenter();
 
@@ -3825,8 +3829,14 @@ function refreshInt() {
     if (!globeIndex)
         return refresh;
 
+    let inactive = (lastActive - new Date().getTime()) / 1000;
+
     if (document[hidden])
         refresh = 30000;
+    else if (inactive > 1200 && ZoomLvl < 7)
+        refresh *= 2;
+    else if (inactive > 600 && ZoomLvl < 8)
+        refresh *= 1.6;
 
     if (!mapIsVisible)
         refresh *= 2;
