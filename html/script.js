@@ -1864,7 +1864,7 @@ function refreshSelected() {
     if (selected.tat != null && selected.oat != null) {
         oat = selected.oat;
         tat = selected.tat;
-    } else if (!globeIndex && selected.mach != null && selected.tas != null) {
+    } else if (!globeIndex && selected.mach != null && selected.tas != null && selected.mach > 0.395) {
         oat = Math.pow((selected.tas / 661.47 / selected.mach), 2) * 288.15 - 273.15;
         tat = -273.15 + (oat + 273.15) * (1 + 0.2 * selected.mach * selected.mach);
     }
