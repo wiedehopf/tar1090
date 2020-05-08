@@ -3847,7 +3847,7 @@ function refreshInt() {
     if (lastRequestFiles >= 4)
         return 1.6 * refresh;
 
-    return refresh * (1 + 0.6/4 * lastRequestFiles);
+    return refresh * (1 + 0.6 / 3 * (lastRequestFiles - 1));
 }
 
 function toggleLargeMode() {

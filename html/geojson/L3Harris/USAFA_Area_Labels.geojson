@@ -1,0 +1,16 @@
+{
+"type": "FeatureCollection",
+"name": "USAFA Area Labels",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "Name": "1", "description": null }, "geometry": { "type": "Point", "coordinates": [ -104.543043445285306, 39.166221962827521 ] } },
+{ "type": "Feature", "properties": { "Name": "2", "description": null }, "geometry": { "type": "Point", "coordinates": [ -104.505478284347504, 39.259706129988963 ] } },
+{ "type": "Feature", "properties": { "Name": "3", "description": null }, "geometry": { "type": "Point", "coordinates": [ -104.395612152654493, 39.080767911987287 ] } },
+{ "type": "Feature", "properties": { "Name": "4", "description": null }, "geometry": { "type": "Point", "coordinates": [ -104.295492848292596, 39.141579539503482 ] } },
+{ "type": "Feature", "properties": { "Name": "6", "description": null }, "geometry": { "type": "Point", "coordinates": [ -104.211329504925999, 38.992395314879637 ] } },
+{ "type": "Feature", "properties": { "Name": "7", "description": null }, "geometry": { "type": "Point", "coordinates": [ -104.313921035681602, 38.844955448520167 ] } },
+{ "type": "Feature", "properties": { "Name": "8", "description": null }, "geometry": { "type": "Point", "coordinates": [ -104.188957380887103, 38.806128190249588 ] } },
+{ "type": "Feature", "properties": { "Name": "9", "description": null }, "geometry": { "type": "Point", "coordinates": [ -104.394206408600894, 38.755605541567057 ] } },
+{ "type": "Feature", "properties": { "Name": "10", "description": null }, "geometry": { "type": "Point", "coordinates": [ -104.308655695004902, 38.686307261796898 ] } }
+]
+}

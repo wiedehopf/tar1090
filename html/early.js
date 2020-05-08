@@ -15,6 +15,7 @@ let configureReceiver = $.Deferred();
 let historyTimeout = 60;
 let globeIndex = 0;
 let regCache = {};
+let l3harris = false;
 
 let databaseFolder = "db2";
 
@@ -40,6 +41,9 @@ try {
         localStorage['bingKey'] = bingKey;
     if (bingKey == 'remove')
         localStorage.removeItem('bingKey');
+
+    if (search.has('L3Harris') || search.has('l3harris'))
+        l3harris = true;
 
 } catch (error) {
 }

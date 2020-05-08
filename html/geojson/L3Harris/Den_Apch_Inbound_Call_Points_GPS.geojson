@@ -1,0 +1,14 @@
+{
+"type": "FeatureCollection",
+"name": "Den Apch Inbound Call Points [GPS]",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "Name": "I", "description": "India is a Denver Approach inbound call point.  PUB 199 radial at 18 DME." }, "geometry": { "type": "Point", "coordinates": [ -104.601815661798994, 38.026535768136903 ] } },
+{ "type": "Feature", "properties": { "Name": "J", "description": "Juliette is a Denver Approach inbound call point.  PUB 169 radial at 18 DME." }, "geometry": { "type": "Point", "coordinates": [ -104.409584122793007, 37.994338151103001 ] } },
+{ "type": "Feature", "properties": { "Name": "K", "description": "Kilo is a Denver Approach inbound call point.  PUB 139 radial at 18 DME." }, "geometry": { "type": "Point", "coordinates": [ -104.222615308098995, 38.042198150436001 ] } },
+{ "type": "Feature", "properties": { "Name": "L", "description": "Lima is a Denver Approach inbound call point.  PUB 091 radial at 18 DME." }, "geometry": { "type": "Point", "coordinates": [ -104.053313801502995, 38.246671137676501 ] } },
+{ "type": "Feature", "properties": { "Name": "M", "description": "Mike is a Denver Approach inbound call point.  PUB 061 radial at 18 DME." }, "geometry": { "type": "Point", "coordinates": [ -104.073163188888998, 38.401337687382302 ] } },
+{ "type": "Feature", "properties": { "Name": "N", "description": "November is a Denver Approach inbound call point. PUB 031 radial at 18 DME." }, "geometry": { "type": "Point", "coordinates": [ -104.188860625011003, 38.527395248508803 ] } },
+{ "type": "Feature", "properties": { "Name": "TRAX", "description": "TRAX is a Denver Approach inbound call point.  PUB 007 radial at 12 DME." }, "geometry": { "type": "Point", "coordinates": [ -104.363519144010994, 38.487623459387599 ] } }
+]
+}

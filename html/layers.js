@@ -289,6 +289,20 @@ function createBaseLayers() {
 
     us.push(createGeoJsonLayer('US A2A Refueling', 'usa2arefueling', 'geojson/US_A2A_refueling.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
 
+    if (l3harris) {
+        let c = 1;
+        us.push(createGeoJsonLayer('L3 Area Labels Brown', 'harris' + c++, 'geojson/L3Harris/Area_Labels_Brown.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
+        us.push(createGeoJsonLayer('L3 Area Labels Green', 'harris' + c++, 'geojson/L3Harris/Area_Labels_Green.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
+        us.push(createGeoJsonLayer('L3 Den App GPS', 'harris' + c++, 'geojson/L3Harris/Den_Apch_Inbound_Call_Points_GPS.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
+        us.push(createGeoJsonLayer('L3 Den App Visual', 'harris' + c++, 'geojson/L3Harris/Den_Apch_Inbound_Call_Points_Visual.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
+        us.push(createGeoJsonLayer('L3 Harris', 'harris' + c++, 'geojson/L3Harris/L3Harris.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
+        us.push(createGeoJsonLayer('L3 Pueblo Inbound', 'harris' + c++, 'geojson/L3Harris/Pueblo_Tower_Inbound_Call_Points_Visual.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
+        us.push(createGeoJsonLayer('L3 Routes', 'harris' + c++, 'geojson/L3Harris/Route_Name_Labels.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
+        us.push(createGeoJsonLayer('L3 Training Areas', 'harris' + c++, 'geojson/L3Harris/Training_Areas_Labels.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
+        us.push(createGeoJsonLayer('L3 USAFA', 'harris' + c++, 'geojson/L3Harris/USAFA_Area_Labels.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
+    //    us.push(createGeoJsonLayer('L3 VNAV', 'harris' + c++, 'geojson/L3Harris/VNAV_Corridors.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
+    }
+
     if (custom.getLength() > 0) {
         layers.push(new ol.layer.Group({
             name: 'custom',

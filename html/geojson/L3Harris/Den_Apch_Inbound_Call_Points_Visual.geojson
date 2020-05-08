@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "Den Apch Inbound Call Points [Visual]",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "Name": "CREEK", "description": "The intersection of Chicosa Creek and the Rocky Ford Highline Canal, located 4.5 nm west of CO80 (Fowler Airport). CREEK is located at the southern tip of a prominent peninsula of agricultural land bounded on the south side by this canal. CREEK is a Denver Approach inbound call point." }, "geometry": { "type": "Point", "coordinates": [ -104.113500018276994, 38.121166665835801 ] } },
+{ "type": "Feature", "properties": { "Name": "POND", "description": "A small reservoir located between Mineral Creek and Hardscrabble Creek, 2.5 miles southeast of the Federal Correctional Complex. POND is a Denver Approach inbound call point." }, "geometry": { "type": "Point", "coordinates": [ -105.073216699355001, 38.318049977253203 ] } },
+{ "type": "Feature", "properties": { "Name": "RANCH", "description": "A point on I-25 located 12 nm northwest of KPUB, and PUB 14 DME. RANCH is just south of Young Hollow Rd and can be visually identified by the ranch house on the east edge of the freeway. RANCH is a Denver Approach inbound call point." }, "geometry": { "type": "Point", "coordinates": [ -104.615000002806994, 38.475333304155001 ] } }
+]
+}
