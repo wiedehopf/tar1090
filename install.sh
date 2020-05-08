@@ -345,6 +345,13 @@ then
         rm /etc/lighttpd/conf-enabled/87-mod_setenv.conf
     fi
     #lighttpd -tt -f /etc/lighttpd/lighttpd.conf && echo success || true
+    if ! lighttpd -tt -f /etc/lighttpd/lighttpd.conf &>/dev/null; then
+        rm /etc/lighttpd/conf-enabled/47-stat-cache.conf &>/dev/null || true
+        rm /etc/lighttpd/conf-enabled/87-mod_setenv.conf &>/dev/null || true
+        echo ----------------
+        echo "Lighttpd error, tar1090 will probably not work correctly:"
+        lighttpd -tt -f /etc/lighttpd/lighttpd.conf
+    fi
 fi
 
 if systemctl status lighttpd &>/dev/null; then
