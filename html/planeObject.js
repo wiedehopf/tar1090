@@ -377,7 +377,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     // Also check if the position was already stale when it was exported by dump1090
     // Makes stale check more accurate for example for 30s spaced history points
 
-    const estimated = (time_difference > stale_timeout) || ((now - this.position_time) > stale_timeout) || stale;
+    let estimated = (time_difference > stale_timeout) || ((now - this.position_time) > stale_timeout) || stale;
 
     /*
     let track_change = this.track != null ? Math.abs(this.tail_track - this.track) : NaN;
@@ -434,10 +434,11 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
         }
 
         // draw great circle path for long distances
-        if (distance > 20000
+        if (distance > 30000
             && !(elapsed > 3600 && distance / elapsed * 3.6 < 100)
             // don't draw a line if a long time has elapsed but no great distance was traveled
         ) {
+            estimated = true;
             let nPoints = distance / 19000;
             let greyskull = Math.ceil(Math.log(nPoints) / Math.log(2));
             //console.log(Math.round(nPoints) + ' ' + greyskull);
@@ -456,7 +457,6 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
             ts: this.prev_time,
             track: this.prev_rot,
             leg: is_leg,
-            extendedT: this.extendedT,
         });
 
         this.history_size += 2;
@@ -1661,8 +1661,6 @@ PlaneObject.prototype.updateLines = function() {
 
             let fill = labelFill;
             let zIndex = -i - 50 * (seg.alt_real == null);
-            //if (seg.extendedT)
-            //    zIndex += 100;
             if (seg.leg == 'start') {
                 fill = new ol.style.Fill({color: '#88CC88' });
                 zIndex += 123499;
@@ -2152,9 +2150,7 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
         this.geom_rate = null;
     }
 
-    this.extendedT = false;
     if (data != null) {
-        this.extendedT = true;
         if (data.type.substring(0,4) == "adsb" || data.type.substring(0,4) == "adsr") {
             this.dataSource = "adsb";
         } else if (data.type == "mlat") {
