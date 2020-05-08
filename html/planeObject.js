@@ -1630,6 +1630,7 @@ PlaneObject.prototype.updateLines = function() {
             ((i == 0 || i == this.track_linesegs.length-1 ||seg.leg) && showTrace && enableLabels)
         ) {
             const alt_real = (seg.alt_real != null) ? seg.alt_real : 'n/a';
+            const speed = (seg.speed != null) ? seg.speed.toFixed(0).toString() : 'n/a';
             seg.label = new ol.Feature(new ol.geom.Point(seg.fixed.getFirstCoordinate()));
             let timestamp;
             const date = new Date(seg.ts * 1000);
@@ -1650,7 +1651,7 @@ PlaneObject.prototype.updateLines = function() {
                     timestamp = "".padStart(0, NBSP) + lDateString(date) + '\n' + timestamp;
             }
             let text =
-                Number(seg.speed).toFixed(0).toString().padStart(3, NBSP) + "  "
+                speed.padStart(3, NBSP) + "  "
                 + (alt_real == "ground" ? ("Ground") : (alt_real.toString().padStart(6, NBSP)))
                 + "\n"
                 //+ NBSP + format_track_arrow(seg.track)
