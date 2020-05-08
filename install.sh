@@ -275,6 +275,9 @@ do
             cp 95-tar1090-otherport.conf /etc/lighttpd/conf-available/
             ln -f -s /etc/lighttpd/conf-available/95-tar1090-otherport.conf /etc/lighttpd/conf-enabled/95-tar1090-otherport.conf
             otherport="done"
+            if [ -f /etc/lighttpd/conf.d/69-skybup.conf ]; then
+                mv /etc/lighttpd/conf-enabled/95-tar1090-otherport.conf /etc/lighttpd/conf-enabled/68-tar1090-otherport.conf
+            fi
         fi
         if [ -f /etc/lighttpd/conf.d/69-skybup.conf ] && [[ "$instance" == "webroot" ]]; then
             true
@@ -284,10 +287,9 @@ do
             ln -f -s /etc/lighttpd/conf-available/99-$service.conf /etc/lighttpd/conf-enabled/99-$service.conf
         else
             cp 88-tar1090.conf /etc/lighttpd/conf-available/88-$service.conf
+            ln -f -s /etc/lighttpd/conf-available/88-$service.conf /etc/lighttpd/conf-enabled/88-$service.conf
             if [ -f /etc/lighttpd/conf.d/69-skybup.conf ]; then
-                ln -f -s /etc/lighttpd/conf-available/88-$service.conf /etc/lighttpd/conf-enabled/66-$service.conf
-            else
-                ln -f -s /etc/lighttpd/conf-available/88-$service.conf /etc/lighttpd/conf-enabled/88-$service.conf
+                mv /etc/lighttpd/conf-enabled/88-$service.conf /etc/lighttpd/conf-enabled/66-$service.conf
             fi
         fi
     fi
@@ -325,21 +327,24 @@ then
 
     ln -s -f /etc/lighttpd/conf-available/87-mod_setenv.conf /etc/lighttpd/conf-enabled/87-mod_setenv.conf
     ln -s -f /etc/lighttpd/conf-available/47-stat-cache.conf /etc/lighttpd/conf-enabled/47-stat-cache.conf
-
+    #lighttpd -tt -f /etc/lighttpd/lighttpd.conf && echo success || true
     if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep mod_setenv >/dev/null
     then
         rm /etc/lighttpd/conf-enabled/87-mod_setenv.conf
     fi
 
+    #lighttpd -tt -f /etc/lighttpd/lighttpd.conf && echo success || true
     if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep stat-cache >/dev/null
     then
         rm /etc/lighttpd/conf-enabled/47-stat-cache.conf
     fi
 
+    #lighttpd -tt -f /etc/lighttpd/lighttpd.conf && echo success || true
     if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep mod_setenv >/dev/null
     then
         rm /etc/lighttpd/conf-enabled/87-mod_setenv.conf
     fi
+    #lighttpd -tt -f /etc/lighttpd/lighttpd.conf && echo success || true
 fi
 
 if systemctl status lighttpd &>/dev/null; then
