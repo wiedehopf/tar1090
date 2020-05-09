@@ -3097,12 +3097,12 @@ function toggleTrackLabels() {
     buttonActive('#K', trackLabels);
 }
 
-function toggleMultiSelect(on, off) {
+function toggleMultiSelect(newState) {
     multiSelect = !multiSelect;
 
-    if (on)
+    if (newState == "on")
         multiSelect = true;
-    if (off)
+    if (newState == "off")
         multiSelect = false;
 
     if (!multiSelect) {
@@ -3537,11 +3537,22 @@ function processURLParams(){
     try {
         const search = new URLSearchParams(window.location.search);
 
-        let icao = search.get('icao');
-        if (icao && (icao.length == 7 || icao.length == 6) && icao.toLowerCase().match(/[a-f,0-9]{6}/))
-            icaoParam = icao = icao.toLowerCase();
-        else
-            icao = null;
+        let icaos = [];
+        let valid = [];
+        let icao = null;
+        if (search.has('icao')) {
+            icaos = search.get('icao').toLowerCase().split(',');
+            for (let i = 0; i < icaos.length; i++) {
+                icao = icaos[i].toLowerCase();
+                if (icao && (icao.length == 7 || icao.length == 6) && icao.toLowerCase().match(/[a-f,0-9]{6}/)) {
+                    valid.push(icao);
+                    if (i == 0)
+                        icaoParam = icao;
+                }
+            }
+        }
+
+        icaos = valid;
 
         traceDateString = search.get('showTrace');
         const callsign = search.get('callsign');
@@ -3570,23 +3581,28 @@ function processURLParams(){
             }
         }
 
-        if (icao != null) {
+        if (icaos.length > 0) {
             if (!search.has('noIsolation'))
                 toggleIsolation("on", false);
-            if (Planes[icao] || globeIndex) {
-                console.log('Selected ICAO id: '+ icao);
-                let selectOptions = {follow: follow};
-                if (traceDateString != null) {
-                    toggleShowTrace();
-                    if (!zoom)
-                        zoom = 5;
+            if (icaos.length > 1)
+                toggleMultiSelect("on");
+            for (let i = 0; i < icaos.length; i++) {
+                icao = icaos[i];
+                if (Planes[icao] || globeIndex) {
+                    console.log('Selected ICAO id: '+ icao);
+                    let selectOptions = {follow: follow};
+                    if (traceDateString != null) {
+                        toggleShowTrace();
+                        if (!zoom)
+                            zoom = 5;
+                    } else {
+                        if (!zoom)
+                            zoom = 7;
+                        selectPlaneByHex(icao, selectOptions)
+                    }
                 } else {
-                    if (!zoom)
-                        zoom = 7;
-                    selectPlaneByHex(icao, selectOptions)
+                    console.log('ICAO id not found: ' + icao);
                 }
-            } else {
-                console.log('ICAO id not found: ' + icao);
             }
         } else if (callsign != null) {
             findPlanes(callsign, false, true, false, false);
@@ -3796,11 +3812,28 @@ function updateAddressBar() {
         posString = ""
     }
 
+    let planes = [];
+    if (multiSelect && !SelectedAllPlanes) {
+          for (let i = 0; i < PlanesOrdered.length; ++i) {
+              let plane = PlanesOrdered[i];
+              if (plane.selected)
+                  planes.push(plane);
+          }
+    } else if (SelectedPlane) {
+        planes.push(SelectedPlane);
+    }
 
-    if (SelectedPlane)
-        string = pathName + '?icao=' + SelectedPlane.icao + posString;
-    else
-        string = pathName + posString;
+    string = pathName;
+    if (planes.length > 0) {
+        string += '?icao=';
+        for (let i = 0; i < planes.length; i++) {
+            string += planes[i].icao;
+            if (i < planes.length - 1)
+                string += ',';
+        }
+    }
+
+    string += posString;
 
     if (SelectedPlane && showTrace) {
         string += '&showTrace=' + traceDateString;
@@ -3875,6 +3908,7 @@ function toggleLargeMode() {
 
 function toggleShowTrace() {
     if (!showTrace) {
+        toggleMultiSelect("off");
         showTrace = true;
         toggleFollow(false);
         showTraceWasIsolation = onlySelected;

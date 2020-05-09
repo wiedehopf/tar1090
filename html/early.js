@@ -225,8 +225,19 @@ function handleVisibilityChange() {
       fetchData();
       if (showTrace)
           return;
-      if (SelectedPlane)
+      let count = 0;
+      if (multiSelect && !SelectedAllPlanes) {
+          for (let i = 0; i < PlanesOrdered.length; ++i) {
+              let plane = PlanesOrdered[i];
+              if (plane.selected) {
+                  getTrace(plane, plane.icao, {});
+                  if (count++ > 20)
+                      break;
+              }
+          }
+      } else if (SelectedPlane) {
         getTrace(SelectedPlane, SelectedPlane.icao, {});
+      }
   }
 }
 
