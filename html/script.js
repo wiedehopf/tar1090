@@ -65,6 +65,7 @@ let globeIndexNow = {};
 let globeIndexSpecialTiles;
 let globeSimLoad = 4;
 let globeTableLimit = 80;
+let showGrid = false;
 let lastRealExtent;
 let lastGlobeExtent;
 let lastRenderExtent;
@@ -413,7 +414,7 @@ function fetchData() {
             }
             if (globeIndex) {
                 globeTrackedAircraft = data.global_ac_count_withpos;
-                if (localStorage['globeGrid'] == 'true' && globeIndexNow[data.globeIndex] == null) {
+                if ((showGrid || localStorage['globeGrid'] == 'true') && globeIndexNow[data.globeIndex] == null) {
                     let southWest = ol.proj.fromLonLat([data.west, data.south]);
                     let south180p = ol.proj.fromLonLat([180, data.south]);
                     let south180m = ol.proj.fromLonLat([-180, data.south]);
@@ -424,8 +425,8 @@ function fetchData() {
                     let northWest = ol.proj.fromLonLat([data.west, data.north]);
                     const estimateStyle = new ol.style.Style({
                         stroke: new ol.style.Stroke({
-                            color: '#808080',
-                            width: 1,
+                            color: '#303030',
+                            width: 1.5,
                         })
                     });
                     if (data.west < data.east) {
@@ -544,6 +545,9 @@ function initialize() {
             else
                 OutlineADSBColor = "#000000";
         }
+
+        if (search.has('showGrid'))
+            showGrid = true;
 
         if (search.has('outlineWidth')) {
             let tmp = parseInt(search.get('outlineWidth'));
