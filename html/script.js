@@ -4027,6 +4027,10 @@ function shiftTrace(offset) {
         let sinceEpoch = traceDate.getTime();
         traceDate.setTime(sinceEpoch + offset * 86400 * 1000);
     }
+    traceDate.setUTCHours(0);
+    traceDate.setUTCMinutes(0);
+    traceDate.setUTCSeconds(0);
+
     traceDay = traceDate.getUTCDate();
 
     traceDateString = zDateString(traceDate);
@@ -4390,7 +4394,7 @@ function getTrace(newPlane, hex, options) {
 
     if (showTrace) {
         let today = new Date();
-        if (zDateString(traceDate) == zDateString(today)) {
+        if (today.getTime() < traceDate.getTime() + (86400 + 300) * 1000) {
 
             today.setUTCHours(0);
             today.setUTCMinutes(0);
