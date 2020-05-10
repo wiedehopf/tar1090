@@ -221,24 +221,26 @@ if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and 
 }
 
 function handleVisibilityChange() {
-  if (!document[hidden]) {
-      fetchData();
-      if (showTrace)
-          return;
-      let count = 0;
-      if (multiSelect && !SelectedAllPlanes) {
-          for (let i = 0; i < PlanesOrdered.length; ++i) {
-              let plane = PlanesOrdered[i];
-              if (plane.selected) {
-                  getTrace(plane, plane.icao, {});
-                  if (count++ > 20)
-                      break;
-              }
-          }
-      } else if (SelectedPlane) {
-        getTrace(SelectedPlane, SelectedPlane.icao, {});
-      }
-  }
+    if (!globeIndex)
+        return;
+    if (!document[hidden]) {
+        fetchData();
+        if (showTrace)
+            return;
+        let count = 0;
+        if (multiSelect && !SelectedAllPlanes) {
+            for (let i = 0; i < PlanesOrdered.length; ++i) {
+                let plane = PlanesOrdered[i];
+                if (plane.selected) {
+                    getTrace(plane, plane.icao, {});
+                    if (count++ > 20)
+                        break;
+                }
+            }
+        } else if (SelectedPlane) {
+            getTrace(SelectedPlane, SelectedPlane.icao, {});
+        }
+    }
 }
 
 // Warn if the browser doesn't support addEventListener or the Page Visibility API
