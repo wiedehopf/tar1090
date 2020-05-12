@@ -690,7 +690,8 @@ function initialize() {
     if (localStorage['debugPosFilter'] == "true")
         debugPosFilter = true;
     if (localStorage['noMLAT'] == "true") {
-        noMLAT = true;
+        // disable remembering this for now
+        //noMLAT = true;
         //localStorage['noMLAT'] = "false";
     }
 
