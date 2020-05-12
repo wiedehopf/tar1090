@@ -2464,6 +2464,7 @@ function sortBy(id,sc,se) {
 }
 
 function selectPlaneByHex(hex, options) {
+    //console.trace();
     lastActive = new Date().getTime();
     //console.log("SELECTING", hex, options);
     options = options || {};
@@ -2580,19 +2581,22 @@ function selectAllPlanes() {
 
 
 // deselect all the planes
-function deselectAllPlanes() {
+function deselectAllPlanes(keepMain) {
     if (showTrace)
         return;
     if (!multiSelect && SelectedPlane)
         toggleIsolation(false, "off");
     buttonActive('#T', false);
     for(let key in Planes) {
+        if (keepMain && Planes[key] == SelectedPlane)
+            continue;
         Planes[key].selected = false;
         $(Planes[key].tr).removeClass("selected");
     }
     $('#selectall_checkbox').removeClass('settingsCheckboxChecked');
     SelectedAllPlanes = false;
-    SelectedPlane = null;
+    if (!keepMain)
+        SelectedPlane = null;
     refreshFeatures();
     refreshHighlighted();
     refreshTableInfo();
@@ -3112,11 +3116,7 @@ function toggleMultiSelect(newState) {
     if (!multiSelect) {
         if (!SelectedPlane)
             toggleIsolation(false, "off");
-        let plane = SelectedPlane;
-        SelectedPlane = null;
-        deselectAllPlanes();
-        if (plane)
-            selectPlaneByHex(plane.icao);
+        deselectAllPlanes("keepMain");
     }
 
     buttonActive('#M', multiSelect);
@@ -4394,7 +4394,8 @@ function getTrace(newPlane, hex, options) {
 
     if (showTrace) {
         let today = new Date();
-        if (today.getTime() < traceDate.getTime() + (86400 + 300) * 1000) {
+        //console.log(today.toUTCString() + ' ' + traceDate.toUTCString());
+        if (today.getTime() > traceDate.getTime() && today.getTime() < traceDate.getTime() + (86400 + 300) * 1000) {
 
             today.setUTCHours(0);
             today.setUTCMinutes(0);
@@ -4411,6 +4412,8 @@ function getTrace(newPlane, hex, options) {
         newPlane.recentTrace = null;
         newPlane.fullTrace = null;
     }
+
+    //console.log(URL2);
 
     let req1 = null;
     let req2 = null;
