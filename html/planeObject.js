@@ -266,6 +266,11 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     if (this.bad_position && this.position[0] == this.bad_position[0] && this.position[1] == this.bad_position[1])
         return false;
 
+    if (this.position[0] > 180 || this.position[0] < -180 || this.position[1] > 90 || this.position[1] < -90) {
+        console.log("Ignoring Impossible Position for " + this.icao + ": " + this.position);
+        return false;
+    }
+
     if (this.position && SitePosition) {
         this.sitedist = ol.sphere.getDistance(SitePosition, this.position);
     }
