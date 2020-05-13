@@ -211,7 +211,7 @@ function processAircraft(ac, init, uat) {
 
     plane = Planes[hex];
 
-    if (uatNoTISB && !init && uat && ac.type && ac.type.substring(0,4) == "tisb") {
+    if (uatNoTISB && uat && ac.type && ac.type.substring(0,4) == "tisb") {
         // drop non ADS-B planes from UAT (TIS-B)
         return;
     }
@@ -239,8 +239,13 @@ function processAircraft(ac, init, uat) {
             plane.last_message_time = now - ac.seen;
     } else if (uat) {
         if (plane.receiver == "uat" || ac.seen_pos < 1.8 || init) {
-            plane.receiver = "uat";
-            plane.updateData(uat_now, uat_last, ac, init);
+            let tisb = Array.isArray(ac) ? (ac[7] == "tisb") : (ac.tisb != null && ac.tisb.indexOf("lat") >= 0);
+            if (tisb && plane.dataSource == "adsb") {
+                // ignore TIS-B data for current ADS-B 1090 planes
+            } else {
+                plane.receiver = "uat";
+                plane.updateData(uat_now, uat_last, ac, init);
+            }
         }
     } else {
         if (plane.receiver == "1090"

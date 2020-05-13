@@ -205,7 +205,7 @@ let labelZoomGround = 14.8;
 let labelFont = 'bold 12px tahoma';
 
 let displayUATasADSB = false;
-let uatNoTISB = true;
+let uatNoTISB = false;
 
 // Don't display any TIS-B planes
 let filterTISB = false;
