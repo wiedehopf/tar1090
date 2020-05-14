@@ -2628,7 +2628,6 @@ function toggleFollow(override) {
         //    OLMap.getView().setZoom(8);
         OLMap.getView().setCenter(ol.proj.fromLonLat(SelectedPlane.position));
     }
-    traceOpts.follow = FollowSelected;
     buttonActive('#F', FollowSelected);
 }
 
