@@ -2531,7 +2531,7 @@ function selectPlaneByHex(hex, options) {
         //console.log(newPlane.baseMarkerKey);
     }
 
-    if (newPlane && newPlane.position && options.follow) {
+    if (newPlane && options.follow) {
         toggleFollow(true);
         if (!options.zoom)
             options.zoom = 'follow';
@@ -2618,6 +2618,8 @@ function toggleFollow(override) {
         FollowSelected = false;
     else
         FollowSelected = !FollowSelected;
+
+    traceOpts.follow = FollowSelected;
 
     if (FollowSelected) {
         if (!SelectedPlane || !SelectedPlane.position)
