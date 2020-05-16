@@ -184,6 +184,10 @@ PlaneObject.prototype.isFiltered = function() {
     if (!filterTracks && this.altFiltered(this.altitude))
         return true;
 
+    if (PlaneFilter.icao && !this.icao.match(PlaneFilter.icao) ) {
+        return true;
+    }
+
     if (PlaneFilter.type && (!this.icaoType || !this.icaoType.match(PlaneFilter.type)) ) {
         return true;
     }
@@ -2023,8 +2027,8 @@ PlaneObject.prototype.milRange = function() {
 
         //400000-40003f = united kingdom mil_1(ra)
         || this.icao.match(/^4000[0-3]/)
-        //43c000-43ffff = united kingdom mil(ra)
-        || this.icao.match(/^43[c-f]/)
+        //43c000-43cfff = united kingdom mil(ra)
+        || this.icao.match(/^43c/)
 
         //444000-447fff = austria mil(aq)
         || (this.icao.match(/^44[4-7]/) && this.icao != '447ac7')

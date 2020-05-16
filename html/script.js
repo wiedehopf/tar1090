@@ -857,6 +857,7 @@ function init_page() {
     $("#callsign_filter_form").submit(updateCallsignFilter);
     $("#type_filter_form").submit(updateTypeFilter);
     $("#description_filter_form").submit(updateDescriptionFilter);
+    $("#icao_filter_form").submit(updateIcaoFilter);
 
     $("#search_form").submit(onSearch);
     $("#jump_form").submit(onJump);
@@ -873,6 +874,7 @@ function init_page() {
     $("#callsign_filter_reset_button").click(onResetCallsignFilter);
     $("#type_filter_reset_button").click(onResetTypeFilter);
     $("#description_filter_reset_button").click(onResetDescriptionFilter);
+    $("#icao_filter_reset_button").click(onResetIcaoFilter);
 
     // check if the altitude color values are default to enable the altitude filter
     if (ColorByAlt.air.h.length === 3 && ColorByAlt.air.h[0].alt === 2000 && ColorByAlt.air.h[0].val === 20 && ColorByAlt.air.h[1].alt === 10000 && ColorByAlt.air.h[1].val === 140 && ColorByAlt.air.h[2].alt === 40000 && ColorByAlt.air.h[2].val === 300) {
@@ -3201,6 +3203,25 @@ function updateTypeFilter(e) {
     let type = $("#type_filter").val().trim();
 
     PlaneFilter.type = type.toUpperCase();
+
+    refreshSelected();
+    refreshHighlighted();
+    refreshTableInfo();
+}
+function onResetIcaoFilter(e) {
+    $("#icao_filter").val("");
+    $("#icao_filter").blur();
+
+    updateIcaoFilter();
+}
+function updateIcaoFilter(e) {
+    if (e)
+        e.preventDefault();
+
+    $("#icao_filter").blur();
+    let icao = $("#icao_filter").val().trim();
+
+    PlaneFilter.icao = icao.toLowerCase();
 
     refreshSelected();
     refreshHighlighted();

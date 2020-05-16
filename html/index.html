@@ -827,7 +827,7 @@
                             <form id="callsign_filter_form">
                                 <label><span class="infoBlockTitleText">Filter by callsign or squawk:</span></label>
                                 <br>
-                                <input id="callsign_filter" name="callsign" type="text" class="searchInput" maxlength="128">
+                                <input id="callsign_filter" name="callsign" type="text" class="searchInput" maxlength="1024">
                                 <button class="formButton" type="submit">Filter</button>
                                 <button class="formButton" id="callsign_filter_reset_button">Reset</button>
 
@@ -836,7 +836,7 @@
                             <form id="type_filter_form">
                                 <label><span class="infoBlockTitleText">Filter by type:</span></label>
                                 <br>
-                                <input id="type_filter" name="type" type="text" class="searchInput" maxlength="128">
+                                <input id="type_filter" name="type" type="text" class="searchInput" maxlength="1024">
                                 <button class="formButton" type="submit">Filter</button>
                                 <button class="formButton" id="type_filter_reset_button">Reset</button>
 
@@ -845,11 +845,21 @@
                             <form id="description_filter_form">
                                 <label><span class="infoBlockTitleText">Filter by type description:</span></label>
                                 <br>
-                                <input id="description_filter" name="description" type="text" class="searchInput" maxlength="128">
+                                <input id="description_filter" name="description" type="text" class="searchInput" maxlength="1024">
                                 <button class="formButton" type="submit">Filter</button>
                                 <button class="formButton" id="description_filter_reset_button">Reset</button>
 
                             </form>
+
+                            <form id="icao_filter_form">
+                                <label><span class="infoBlockTitleText">Filter by icao hex id:</span></label>
+                                <br>
+                                <input id="icao_filter" name="description" type="text" class="searchInput" maxlength="1024">
+                                <button class="formButton" type="submit">Filter</button>
+                                <button class="formButton" id="icao_filter_reset_button">Reset</button>
+
+                            </form>
+
 
                         </div> <!-- filter_block -->
 
