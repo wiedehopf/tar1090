@@ -65,7 +65,7 @@ if (!heatmap) {
     for (let i = 0; i < 64; i++) {
         var oReq = new XMLHttpRequest();
         //oReq.open("GET", "/globe_history/heatmap.bin.csv?v=" + new Date().getTime(), true);
-        let URL = "/globe_history/heatmap/" + i.toString().padStart(2, '0') + ".bin.csv";
+        let URL = "globe_history/heatmap/" + i.toString().padStart(2, '0') + ".bin.csv";
         oReq.open("GET", URL , true);
         // not really CSV, just for CF caching
         oReq.responseType = "arraybuffer";
