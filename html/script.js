@@ -12,6 +12,8 @@ let PlaneIconFeatures = new ol.source.Vector();
 let trailGroup = new ol.Collection();
 let iconLayer;
 let trailLayers;
+let heatFeatures = new ol.source.Vector();
+let heatLayer;
 let iconCache = {};
 let addToIconCache = [];
 let lineStyleCache = {};
@@ -720,7 +722,7 @@ function initialize() {
             .done(function(typeLookupData) {
                 _aircraft_type_cache = typeLookupData;
             });
-        if (!onMobile && !hideButtons) {
+        if (!onMobile && !hideButtons && !heatmap) {
             $.getJSON(databaseFolder + "/files.js")
                 .done(function(data) {
                     for (let i in data) {
@@ -1009,33 +1011,6 @@ function init_page() {
     filterBlockedMLAT(false);
     //toggleAltitudeChart(false);
     //
-    if (heatmap) {
-        $.when(heatmapDefer).done(function() {
-            var points = new Int32Array(heatPos);
-            for (var i = 0; i < points.length; i += 3) {
-                let pos = [ points[i + 1] / 1000000, points[i] / 1000000];
-                let alt = points[i + 2] * 25;
-                let projHere = ol.proj.fromLonLat(pos);
-                let style = lineStyleCache[alt];
-                if (!style) {
-                    let col = hslToRgb(altitudeColor(alt));
-                    style = new ol.style.Style({
-                        image: new ol.style.Circle({
-                            radius: 1 * globalScale,
-                            fill: new ol.style.Fill({
-                                color: col,
-                            }),
-                        }),
-                    });
-                    lineStyleCache[alt] = style;
-                }
-                let feat = new ol.Feature(new ol.geom.Point(projHere));
-                feat.setStyle(style);
-                PlaneIconFeatures.addFeature(feat);
-                console.log(alt);
-            }
-        });
-    }
 }
 
 
@@ -1106,7 +1081,8 @@ function parse_history() {
         console.time("Loaded aircraft tracks from History");
     }
 
-    $("#loader").addClass("hidden");
+    if (!heatmap)
+        $("#loader").addClass("hidden");
 
     for (let i in deferHistory)
         deferHistory[i] = null;
@@ -1207,7 +1183,9 @@ function parse_history() {
     changeZoom("init");
     changeCenter("init");
 
-    if (globeIndex)
+    if (heatmap)
+        setInterval(checkMovement, 250);
+    else if (globeIndex)
         setInterval(checkMovement, 80);
     else
         setInterval(checkMovement, 30);
@@ -1258,6 +1236,13 @@ function parse_history() {
         selectAllPlanes();
 
     geoMag = geoMagFactory(cof2Obj());
+
+
+    if (heatmap) {
+        $.when(heatmapDefer).done(function() {
+            drawHeatmap();
+        });
+    }
 }
 
 // Make a LineString with 'points'-number points
@@ -1571,7 +1556,10 @@ function initialize_map() {
                 toggleTableInView();
                 break;
             case "r":
-                followRandomPlane();
+                if (heatmap)
+                    drawHeatmap();
+                else
+                    followRandomPlane();
                 break;
             case "t":
                 selectAllPlanes();
@@ -2859,6 +2847,8 @@ function onFilterByAltitude(e) {
     refreshSelected();
     refreshHighlighted();
     refreshTableInfo();
+
+    drawHeatmap();
 }
 
 function filterGroundVehicles(switchFilter) {
@@ -3516,6 +3506,8 @@ function checkMovement() {
     changeZoom();
     changeCenter();
 
+    drawHeatmap();
+
     //console.timeEnd("fire!");
 }
 
@@ -3834,7 +3826,7 @@ function inView(pos, currExtent) {
     //console.log([bottomLeft[0], topRight[0]]);
     //console.log([bottomLeft[1], topRight[1]]);
     //sidebarVisible = $("#sidebar_container").is(":visible");
-    const proj = ol.proj.fromLonLat(pos);
+    //const proj = ol.proj.fromLonLat(pos);
 
     if (pos && currExtent[2]-currExtent[0] > 40075016) {
         // all longtitudes in view, only check latitude
@@ -4532,4 +4524,60 @@ function getTrace(newPlane, hex, options) {
     });
 
     return newPlane;
+}
+
+function drawHeatmap() {
+    if (!heatmap)
+        return;
+    heatFeatures.clear();
+    if (!heatLayer) {
+        heatLayer = new ol.layer.Vector({
+            name: heatmap,
+            isTrail: true,
+            source: heatFeatures,
+            declutter: false,
+            zIndex: 150,
+        });
+        trailGroup.push(heatLayer);
+    }
+
+
+    let extent = OLMap.getView().calculateExtent(OLMap.getSize());
+
+    console.log(extent);
+
+    let points = new Int32Array(heatPos);
+    let features = [];
+    for (let i = 0; i < points.length && features.length < heatmap.max; i += 3) {
+        let pos = [ points[i + 1] / 1000000, points[i] / 1000000];
+
+        if (!inView(pos, extent))
+            continue;
+        let alt = points[i + 2] * 25;
+        if (PlaneFilter.enabled && altFiltered(alt))
+            continue;
+        alt = calcAltitudeRounded(alt);
+        let projHere = ol.proj.fromLonLat(pos);
+        let style = lineStyleCache[alt];
+        if (!style) {
+            let col = hslToRgb(altitudeColor(alt), 0.8);
+
+            style = new ol.style.Style({
+                image: new ol.style.Circle({
+                    radius: 2 * globalScale,
+                    fill: new ol.style.Fill({
+                        color: col,
+                    }),
+                }),
+                zIndex: i,
+            });
+            lineStyleCache[alt] = style;
+        }
+        let feat = new ol.Feature(new ol.geom.Point(projHere));
+        feat.setStyle(style);
+        features.push(feat);
+        //console.log(alt);
+    }
+    console.log(features.length);
+    heatFeatures.addFeatures(features);
 }

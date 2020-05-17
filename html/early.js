@@ -48,20 +48,29 @@ try {
     if (search.has('L3Harris') || search.has('l3harris'))
         l3harris = true;
 
-    if (search.has('heatmap'))
-        heatmap = true;
+    if (search.has('heatmap')) {
+        heatmap = {max: 10000};
+        let val;
+        if (val = parseInt(search.get('heatmap'), 10))
+            heatmap.max = val;
+    }
 
 } catch (error) {
 }
 
 if (heatmap) {
     var oReq = new XMLHttpRequest();
-    oReq.open("GET", "/globe_history/heatmap.bin", true);
+    //oReq.open("GET", "/globe_history/heatmap.bin.csv?v=" + new Date().getTime(), true);
+    oReq.open("GET", "/globe_history/heatmap.bin.csv" , true);
+    // not really CSV, just for CF caching
     oReq.responseType = "arraybuffer";
 
+    $("#loader").removeClass("hidden");
     oReq.onload = function (oEvent) {
         heatPos = oReq.response; // Note: not oReq.responseText
+        console.log("onload");
         heatmapDefer.resolve();
+        $("#loader").addClass("hidden");
     };
     oReq.send(null);
 }

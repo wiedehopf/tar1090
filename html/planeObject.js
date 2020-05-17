@@ -181,7 +181,7 @@ PlaneObject.prototype.isFiltered = function() {
         return true;
     }
 
-    if (!filterTracks && this.altFiltered(this.altitude))
+    if (!filterTracks && altFiltered(this.altitude))
         return true;
 
     if (PlaneFilter.icao && !this.icao.match(PlaneFilter.icao) ) {
@@ -221,7 +221,7 @@ PlaneObject.prototype.isFiltered = function() {
 }
 
 
-PlaneObject.prototype.altFiltered = function(altitude) {
+function altFiltered(altitude) {
     if (PlaneFilter.minAltitude == null || PlaneFilter.maxAltitude == null)
         return false;
     if (altitude == null) {
@@ -1604,7 +1604,7 @@ PlaneObject.prototype.updateLines = function() {
 
     if (!showTrace) {
         this.elastic_feature = new ol.Feature(geom);
-        if (filterTracks && this.altFiltered(lastseg.altitude)) {
+        if (filterTracks && altFiltered(lastseg.altitude)) {
             this.elastic_feature.setStyle(nullStyle);
         } else {
             this.elastic_feature.setStyle(altitudeLines(lastseg));
@@ -1620,7 +1620,7 @@ PlaneObject.prototype.updateLines = function() {
         if (seg.feature && (!trackLabels || seg.label))
             break;
 
-        if ((filterTracks && this.altFiltered(seg.altitude)) || altitudeLines(seg) == nullStyle) {
+        if ((filterTracks && altFiltered(seg.altitude)) || altitudeLines(seg) == nullStyle) {
             seg.feature = true;
         } else if (!seg.feature) {
             seg.feature = new ol.Feature(seg.fixed);
@@ -1632,7 +1632,7 @@ PlaneObject.prototype.updateLines = function() {
 
         if (seg.label) {
             // nothing to do, label already present
-        } else if ((filterTracks && this.altFiltered(seg.altitude)) || seg.noLabel) {
+        } else if ((filterTracks && altFiltered(seg.altitude)) || seg.noLabel) {
             seg.label = true;
         } else if (
             trackLabels ||
