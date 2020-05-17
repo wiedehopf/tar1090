@@ -17,8 +17,9 @@ let globeIndex = 0;
 let regCache = {};
 let l3harris = false;
 let heatmap = false;
+let heatLoaded = 0;
 let heatmapDefer = $.Deferred();
-let heatPos = [];
+let heatRequests = [];
 
 let databaseFolder = "db2";
 
@@ -58,21 +59,28 @@ try {
 } catch (error) {
 }
 
-if (heatmap) {
-    var oReq = new XMLHttpRequest();
-    //oReq.open("GET", "/globe_history/heatmap.bin.csv?v=" + new Date().getTime(), true);
-    oReq.open("GET", "/globe_history/heatmap2.bin.csv" , true);
-    // not really CSV, just for CF caching
-    oReq.responseType = "arraybuffer";
+if (!heatmap) {
+    heatmapDefer.resolve();
+} else {
+    for (let i = 0; i < 64; i++) {
+        var oReq = new XMLHttpRequest();
+        //oReq.open("GET", "/globe_history/heatmap.bin.csv?v=" + new Date().getTime(), true);
+        let URL = "/globe_history/heatmap/" + i.toString().padStart(2, '0') + ".bin.csv";
+        oReq.open("GET", URL , true);
+        // not really CSV, just for CF caching
+        oReq.responseType = "arraybuffer";
+        oReq.timeout = 90000; // 90 seconds
 
-    $("#loader").removeClass("hidden");
-    oReq.onload = function (oEvent) {
-        heatPos = oReq.response; // Note: not oReq.responseText
-        console.log("onload");
-        heatmapDefer.resolve();
-        $("#loader").addClass("hidden");
-    };
-    oReq.send(null);
+        heatRequests.push(oReq);
+
+        oReq.onload = function (oEvent) {
+            heatLoaded++;
+            if (heatLoaded == 64) {
+                heatmapDefer.resolve();
+            }
+        };
+        oReq.send(null);
+    }
 }
 
 // get configuration json files, will be used in initialize function

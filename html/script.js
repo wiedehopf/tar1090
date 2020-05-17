@@ -12,7 +12,8 @@ let PlaneIconFeatures = new ol.source.Vector();
 let trailGroup = new ol.Collection();
 let iconLayer;
 let trailLayers;
-let heatFeatures = new ol.source.Vector();
+let heatFeatures = [];
+let heatLayers = [];
 let heatLayer;
 let iconCache = {};
 let addToIconCache = [];
@@ -711,7 +712,7 @@ function initialize() {
         buttonActive('#P', noVanish);
     }
 
-    $.when(configureReceiver).done(function() {
+    $.when(configureReceiver, heatmapDefer).done(function() {
         configureReceiver = null;
 
         // Initialize stuff
@@ -1239,12 +1240,7 @@ function parse_history() {
 
     geoMag = geoMagFactory(cof2Obj());
 
-
-    if (heatmap) {
-        $.when(heatmapDefer).done(function() {
-            drawHeatmap();
-        });
-    }
+    $("#loader").addClass("hidden");
 }
 
 // Make a LineString with 'points'-number points
@@ -4531,55 +4527,75 @@ function getTrace(newPlane, hex, options) {
 function drawHeatmap() {
     if (!heatmap)
         return;
-    heatFeatures.clear();
-    if (!heatLayer) {
-        heatLayer = new ol.layer.Vector({
-            name: heatmap,
-            isTrail: true,
-            source: heatFeatures,
-            declutter: false,
-            zIndex: 150,
-        });
-        trailGroup.push(heatLayer);
+    if (heatFeatures.length == 0) {
+        for (let i = 0; i < 64; i++) {
+            heatFeatures.push(new ol.source.Vector());
+            heatLayers.push(new ol.layer.Vector({
+                name: ('heatLayer' + i),
+                isTrail: true,
+                source: heatFeatures[i],
+                declutter: false,
+                zIndex: 150,
+            }));
+            trailGroup.push(heatLayers[i]);
+        }
     }
+    for (let i = 0; i < 64; i++)
+        heatFeatures[i].clear();
 
+    let chunks = [];
+    for (let i in heatRequests) {
+        chunks.push(heatRequests[i].response);
+    }
 
     let extent = OLMap.getView().calculateExtent(OLMap.getSize());
 
-    console.log(extent);
-
-    let points = new Int32Array(heatPos);
+    chunks.sort((a, b) => (Math.random() - 0.5));
+    let chunk;
+    let pointCount = 0;
     let features = [];
-    for (let i = 0; i < points.length && features.length < heatmap.max; i += 3) {
-        let pos = [ points[i + 1] / 1000000, points[i] / 1000000];
-
-        if (!inView(pos, extent))
-            continue;
-        let alt = points[i + 2] * 25;
-        if (PlaneFilter.enabled && altFiltered(alt))
-            continue;
-        alt = calcAltitudeRounded(alt);
-        let projHere = ol.proj.fromLonLat(pos);
-        let style = lineStyleCache[alt];
-        if (!style) {
-            let col = hslToRgb(altitudeColor(alt), 0.8);
-
-            style = new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: 2 * globalScale,
-                    fill: new ol.style.Fill({
-                        color: col,
-                    }),
-                }),
-                zIndex: i,
-            });
-            lineStyleCache[alt] = style;
-        }
-        let feat = new ol.Feature(new ol.geom.Point(projHere));
-        feat.setStyle(style);
-        features.push(feat);
-        //console.log(alt);
+    if (lineStyleCache["scale"] != globalScale) {
+        lineStyleCache = {};
+        lineStyleCache["scale"] = globalScale;
     }
-    console.log(features.length);
-    heatFeatures.addFeatures(features);
+    while (chunk = chunks.pop()) {
+        let points = new Int32Array(chunk);
+        for (let i = 0; i < points.length && pointCount < heatmap.max; i += 3) {
+            let pos = [ points[i + 1] / 1000000, points[i] / 1000000];
+
+            if (!inView(pos, extent))
+                continue;
+            let alt = points[i + 2] * 25;
+            if (PlaneFilter.enabled && altFiltered(alt))
+                continue;
+
+            pointCount++;
+
+            alt = calcAltitudeRounded(alt);
+            let projHere = ol.proj.fromLonLat(pos);
+            let style = lineStyleCache[alt];
+            if (!style) {
+                let col = hslToRgb(altitudeColor(alt), 0.8);
+
+                style = new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: 2 * globalScale,
+                        fill: new ol.style.Fill({
+                            color: col,
+                        }),
+                    }),
+                    zIndex: i,
+                });
+                lineStyleCache[alt] = style;
+            }
+            let feat = new ol.Feature(new ol.geom.Point(projHere));
+            feat.setStyle(style);
+            features.push(feat);
+            //console.log(alt);
+        }
+    }
+    for (let i = 0; i < 16; i++) {
+        //console.log(features.length);
+        heatFeatures[i].addFeatures(features.splice(0, heatmap.max / 16));
+    }
 }
