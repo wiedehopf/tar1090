@@ -309,6 +309,8 @@ function processReceiverUpdate(data, init) {
 }
 
 function fetchData() {
+    if (heatmap)
+        return;
     ZoomLvl = OLMap.getView().getZoom();
     let center = ol.proj.toLonLat(OLMap.getView().getCenter());
     localStorage['CenterLon'] = CenterLon = center[0];
