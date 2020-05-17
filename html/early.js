@@ -50,7 +50,7 @@ try {
         l3harris = true;
 
     if (search.has('heatmap')) {
-        heatmap = {max: 10000};
+        heatmap = {max: 16000};
         let val;
         if (val = parseInt(search.get('heatmap'), 10))
             heatmap.max = val;
