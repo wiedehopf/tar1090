@@ -1008,7 +1008,34 @@ function init_page() {
     filterGroundVehicles(false);
     filterBlockedMLAT(false);
     //toggleAltitudeChart(false);
-
+    //
+    if (heatmap) {
+        $.when(heatmapDefer).done(function() {
+            var points = new Int32Array(heatPos);
+            for (var i = 0; i < points.length; i += 3) {
+                let pos = [ points[i + 1] / 1000000, points[i] / 1000000];
+                let alt = points[i + 2] * 25;
+                let projHere = ol.proj.fromLonLat(pos);
+                let style = lineStyleCache[alt];
+                if (!style) {
+                    let col = hslToRgb(altitudeColor(alt));
+                    style = new ol.style.Style({
+                        image: new ol.style.Circle({
+                            radius: 1 * globalScale,
+                            fill: new ol.style.Fill({
+                                color: col,
+                            }),
+                        }),
+                    });
+                    lineStyleCache[alt] = style;
+                }
+                let feat = new ol.Feature(new ol.geom.Point(projHere));
+                feat.setStyle(style);
+                PlaneIconFeatures.addFeature(feat);
+                console.log(alt);
+            }
+        });
+    }
 }
 
 
@@ -1172,7 +1199,6 @@ function parse_history() {
     //window.setInterval(function() {PendingFetches--;}, 10000);
 
     pathName = window.location.pathname;
-    // And kick off one refresh immediately.
     processURLParams();
 
     if (!icaoFilter && globeIndex)
@@ -1186,7 +1212,9 @@ function parse_history() {
     else
         setInterval(checkMovement, 30);
 
-    fetchData();
+    // And kick off one refresh immediately.
+    if (!heatmap)
+        fetchData();
 
     if (!globeIndex) {
         $('#show_trace').hide();

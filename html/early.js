@@ -16,6 +16,9 @@ let historyTimeout = 60;
 let globeIndex = 0;
 let regCache = {};
 let l3harris = false;
+let heatmap = false;
+let heatmapDefer = $.Deferred();
+let heatPos = [];
 
 let databaseFolder = "db2";
 
@@ -45,7 +48,22 @@ try {
     if (search.has('L3Harris') || search.has('l3harris'))
         l3harris = true;
 
+    if (search.has('heatmap'))
+        heatmap = true;
+
 } catch (error) {
+}
+
+if (heatmap) {
+    var oReq = new XMLHttpRequest();
+    oReq.open("GET", "/globe_history/heatmap.bin", true);
+    oReq.responseType = "arraybuffer";
+
+    oReq.onload = function (oEvent) {
+        heatPos = oReq.response; // Note: not oReq.responseText
+        heatmapDefer.resolve();
+    };
+    oReq.send(null);
 }
 
 // get configuration json files, will be used in initialize function
@@ -222,6 +240,8 @@ if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and 
 
 function handleVisibilityChange() {
     if (!globeIndex)
+        return;
+    if (heatmap)
         return;
     if (!document[hidden]) {
         fetchData();

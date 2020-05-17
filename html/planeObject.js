@@ -1866,7 +1866,7 @@ PlaneObject.prototype.drawRedDot = function(bad_position) {
  * @param   {number}  l       The lightness
  * @return  {Array}           The RGB representation
  */
-function hslToRgb(arr){
+function hslToRgb(arr, opacity){
     let h = arr[0];
     let s = arr[1];
     let l = arr[2];
@@ -1895,7 +1895,10 @@ function hslToRgb(arr){
         b = hue2rgb(p, q, h - 1/3);
     }
 
-    return 'rgb(' + Math.round(r * 255) + ', ' + Math.round(g * 255) + ', ' +  Math.round(b * 255) + ')';
+    if (opacity != null)
+        return 'rgba(' + Math.round(r * 255) + ', ' + Math.round(g * 255) + ', ' +  Math.round(b * 255) + ', ' + opacity + ')';
+    else
+        return 'rgb(' + Math.round(r * 255) + ', ' + Math.round(g * 255) + ', ' +  Math.round(b * 255) + ')';
 }
 
 PlaneObject.prototype.altBad = function(newAlt, oldAlt, oldTime, data) {
