@@ -40,6 +40,9 @@ fi
 if [[ -z $INT_978 ]]; then
 	INT_978=1
 fi
+if (( ${#INT_978} > 2 )) || (( ${#INT_978} < 1 )); then
+	INT_978=1
+fi
 
 
 hist=$((HISTORY_SIZE))
