@@ -617,6 +617,9 @@ function initialize() {
             let dim = parseFloat(search.get('mapDim'));
             if (!isNaN(dim))
                 mapDimPercentage = dim;
+        } else if (heatmap) {
+            mapDimPercentage = 0.6;
+            MapDim = true;
         }
 
 
@@ -4570,11 +4573,14 @@ function drawHeatmap() {
             let projHere = ol.proj.fromLonLat(pos);
             let style = lineStyleCache[alt];
             if (!style) {
-                let col = hslToRgb(altitudeColor(alt), 0.8);
+                let hsl = altitudeColor(alt);
+                hsl[1] = hsl[1] * 0.85;
+                hsl[2] = hsl[2] * 0.8;
+                let col = hslToRgb(hsl);
 
                 style = new ol.style.Style({
                     image: new ol.style.Circle({
-                        radius: 2 * globalScale,
+                        radius: 2.5 * globalScale,
                         fill: new ol.style.Fill({
                             color: col,
                         }),

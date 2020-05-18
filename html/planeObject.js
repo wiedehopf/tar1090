@@ -1833,7 +1833,7 @@ function calcAltitudeRounded(altitude) {
         return null;
     } else if (altitude == "ground") {
         return altitude;
-    } else if (altitude > 8000) {
+    } else if (altitude > 8000 || heatmap) {
         return (altitude/500).toFixed(0)*500;
     } else {
         return (altitude/125).toFixed(0)*125;
