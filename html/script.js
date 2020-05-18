@@ -772,9 +772,6 @@ function init_page() {
 
     $('#clock_div').text(new Date().toLocaleString());
 
-
-    $("#loader").removeClass("hidden");
-
     if (ExtendedData || window.location.hash == '#extended') {
         $("#extendedData").removeClass("hidden");
     }
@@ -1084,9 +1081,6 @@ function parse_history() {
         console.time("Loaded aircraft tracks from History");
     }
 
-    if (!heatmap)
-        $("#loader").addClass("hidden");
-
     for (let i in deferHistory)
         deferHistory[i] = null;
 
@@ -1240,7 +1234,8 @@ function parse_history() {
 
     geoMag = geoMagFactory(cof2Obj());
 
-    $("#loader").addClass("hidden");
+    if (!heatmap)
+        $("#loader").addClass("hidden");
 }
 
 // Make a LineString with 'points'-number points
@@ -4598,4 +4593,5 @@ function drawHeatmap() {
         //console.log(features.length);
         heatFeatures[i].addFeatures(features.splice(0, heatmap.max / 16));
     }
+    $("#loader").addClass("hidden");
 }
