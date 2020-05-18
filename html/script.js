@@ -102,6 +102,7 @@ let geoMag = null;
 let globalCompositeTested = false;
 let solidT = false;
 let lastActive = new Date().getTime();
+let firstFetchDone = false;
 
 let shareLink = '';
 
@@ -380,7 +381,10 @@ function fetchData() {
     buttonActive('#F', FollowSelected);
 
     let ac_url = [];
-    if (globeIndex) {
+    if (uuid != null) {
+        ac_url[0] = 'uuid/?feed=' + encodeURIComponent(uuid);
+        $("#lastLeg_checkbox").parent().hide();
+    } else if (globeIndex) {
         let indexes = globeIndexes();
         let count = 0;
         indexes.sort(function(x,y) {
@@ -398,10 +402,6 @@ function fetchData() {
         }
     } else {
         ac_url[0] = 'data/aircraft.json';
-        if (uuid != null) {
-            ac_url[0] = 'data/?feed=' + encodeURIComponent(uuid);
-        }
-
         $("#lastLeg_checkbox").parent().hide();
     }
     lastRequestFiles = ac_url.length;
@@ -496,6 +496,14 @@ function fetchData() {
             } else if (StaleReceiverCount > 0){
                 StaleReceiverCount = 0;
                 $("#update_error").css('display','none');
+            }
+
+            if (!firstFetchDone) {
+                firstFetchDone = true;
+                if (uuid) {
+                    followRandomPlane();
+                    OLMap.getView().setZoom(6);
+                }
             }
         });
 
@@ -1239,6 +1247,7 @@ function parse_history() {
 
     if (!heatmap)
         $("#loader").addClass("hidden");
+
 }
 
 // Make a LineString with 'points'-number points

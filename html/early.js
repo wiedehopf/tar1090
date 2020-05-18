@@ -100,7 +100,7 @@ if (uuid != null) {
     Dump1090Version = 'unknown';
     RefreshInterval = 5000;
     configureReceiver.resolve();
-    console.time("Downloaded History");
+    //console.time("Downloaded History");
 } else {
     $.when(get_receiver_defer).done(function(data){
         get_receiver_defer = null;
