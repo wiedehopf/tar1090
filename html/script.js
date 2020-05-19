@@ -3912,7 +3912,7 @@ function updateAddressBar() {
         $('#selected_icao').html(SelectedPlane.icao.toUpperCase() + icao_link);
     }
 
-    window.history.replaceState("object or string", "Title", string);
+    window.history && window.history.replaceState && window.history.replaceState("object or string", "Title", string);
 }
 
 function refreshInt() {
