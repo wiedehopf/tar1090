@@ -740,7 +740,7 @@ let CategoryIcons = {
     'C3' : ['ground_tower', 1],
 };
 
-function getBaseMarker(category, typeDesignator, typeDescription, wtc) {
+function getBaseMarker(category, typeDesignator, typeDescription, wtc, addrtype) {
     //return ['f5_tiger', 1];
     if (typeDesignator in TypeDesignatorIcons) {
         let shape = TypeDesignatorIcons[typeDesignator][0];
@@ -776,6 +776,9 @@ function getBaseMarker(category, typeDesignator, typeDescription, wtc) {
     if (category in CategoryIcons) {
         return CategoryIcons[category];
     }
+
+    if (addrtype == 'adsb_icao_nt')
+        return ['ground_unknown', 1];
 
     return ['unknown', 1];
 }

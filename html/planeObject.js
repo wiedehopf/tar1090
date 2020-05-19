@@ -686,7 +686,7 @@ PlaneObject.prototype.updateIcon = function() {
 
     if (!this.baseMarker || this.baseMarkerKey != baseMarkerKey) {
         this.baseMarkerKey = baseMarkerKey;
-        this.baseMarker = getBaseMarker(this.category, icaoType, this.typeDescription, this.wtc);
+        this.baseMarker = getBaseMarker(this.category, icaoType, this.typeDescription, this.wtc, this.addrtype);
         this.shape = this.baseMarker[0];
         this.baseScale = this.baseMarker[1] * 0.96;
         this.baseMarker = shapes[this.shape]
