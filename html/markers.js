@@ -784,7 +784,7 @@ function getBaseMarker(category, typeDesignator, typeDescription, wtc, addrtype,
         return CategoryIcons[category];
     }
 
-    if (altitude == 'ground' && (addrtype == 'adsb_icao_nt' || addrtype == 'tisb_other'))
+    if (altitude == 'ground' && (addrtype == 'adsb_icao_nt' || addrtype == 'tisb_other' || addrtype == 'tisb_trackfile'))
         return ['ground_square', 1];
 
     return ['unknown', 1];

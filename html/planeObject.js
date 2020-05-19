@@ -682,7 +682,7 @@ PlaneObject.prototype.updateIcon = function() {
 
     let fillColor = this.getMarkerColor();
     let baseMarkerKey = (this.category ? this.category : "A0") + "_"
-        + this.typeDescription + "_" + this.wtc  + "_" + icaoType;
+        + this.typeDescription + "_" + this.wtc  + "_" + icaoType + '_' + (this.altitude == "ground");
 
     if (!this.baseMarker || this.baseMarkerKey != baseMarkerKey) {
         this.baseMarkerKey = baseMarkerKey;
