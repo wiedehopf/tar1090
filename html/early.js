@@ -32,12 +32,13 @@ try {
     if (feed != null) {
         uuid = feed;
         console.log('uuid: ' + uuid);
-        if (uuid.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i))
+        if (uuid.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i)) {
             console.log('redirecting the idiot, oui!');
-        let URL = 'https://www.adsbexchange.com/api/feeders/tar1090/?feed=' + uuid;
-        console.log(URL);
-        //window.history.pushState(URL, "Title", URL);
-        window.location.href = URL;
+            let URL = 'https://www.adsbexchange.com/api/feeders/tar1090/?feed=' + uuid;
+            console.log(URL);
+            //window.history.pushState(URL, "Title", URL);
+            window.location.href = URL;
+        }
     }
 
     const customTiles = search.get('customTiles');
