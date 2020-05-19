@@ -204,17 +204,17 @@ PlaneObject.prototype.isFiltered = function() {
     }
 
     // filter out ground vehicles
-    if (typeof PlaneFilter.groundVehicles !== 'undefined' && PlaneFilter.groundVehicles === 'filtered') {
-        if (typeof this.category === 'string' && this.category.startsWith('C')) {
+    if (PlaneFilter.groundVehicles == 'filtered') {
+        if (typeof this.category === 'string' && this.category.startsWith('C'))
             return true;
-        }
+        if (this.altitude == 'ground' && (this.addrtype == 'adsb_icao_nt' || this.addrtype == 'tisb_other'))
+            return true;
     }
 
     // filter out blocked MLAT flights
-    if (typeof PlaneFilter.blockedMLAT !== 'undefined' && PlaneFilter.blockedMLAT === 'filtered') {
-        if (typeof this.icao === 'string' && this.icao.startsWith('~')) {
+    if (PlaneFilter.blockedMLAT == 'filtered') {
+        if (typeof this.icao === 'string' && this.icao.startsWith('~'))
             return true;
-        }
     }
 
     return false;
