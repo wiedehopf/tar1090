@@ -364,6 +364,13 @@ let shapes = {
         path: 'M5.25,16.76c-.92,0-1.33-.46-1.39-.86a1,1,0,0,1,.79-1.11c.25-.08,1.22-.43,2.63-1V10.65h-6c-.68,0-1-.35-1-.66a.81.81,0,0,1,.6-.86C1.14,9,4.8,7,7.28,5.63V3c0-1.11.44-2.71,1.23-2.71S9.77,1.84,9.77,3V5.63C12.22,7,15.87,9,16.14,9.13a.8.8,0,0,1,.61.86c-.05.31-.36.67-1.05.67H9.77v3.19l1.61.59,1,.36a1.05,1.05,0,0,1,.8,1.11c-.07.39-.47.86-1.39.86Z',
         size: [22,22]
     },
+    'ground_square': {
+        w: 11,
+        h: 11,
+        strokeScale: 1.4,
+        viewBox: "0 0 16 16",
+        path: 'M 4,4 H 12 V 12 H 4 Z',
+    },
     // ground stuff:
     'ground_emergency': {
         w: 6,
@@ -778,7 +785,7 @@ function getBaseMarker(category, typeDesignator, typeDescription, wtc, addrtype)
     }
 
     if (addrtype == 'adsb_icao_nt')
-        return ['ground_unknown', 1];
+        return ['ground_square', 1];
 
     return ['unknown', 1];
 }
