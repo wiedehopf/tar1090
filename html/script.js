@@ -4542,6 +4542,8 @@ function drawHeatmap() {
     if (heatmap.init)
         initHeatmap();
 
+    console.log('drawHeat');
+
     let extent = OLMap.getView().calculateExtent(OLMap.getSize());
 
     for (let i = 0; i < 16; i++)
@@ -4555,13 +4557,14 @@ function drawHeatmap() {
     }
     let offsets = Array(heatChunks.length).fill(0);
     let done = false;
+    let iterations = 0;
 
     let indexes = Array(heatChunks.length).fill([]);
 
     for (let k = 0; k < heatChunks.length; k++) {
         if (heatPoints[k] != null) {
             true; // do nothing
-        } else if (heatChunks[k] != null) {
+        } else if (heatChunks[k] != null && heatChunks[k].byteLength % 16 == 0) {
             heatPoints[k] = new Int32Array(heatChunks[k]);
         } else {
             continue;
@@ -4578,11 +4581,11 @@ function drawHeatmap() {
             index.sort((a, b) => (Math.random() - 0.5));
         indexes[k] = index;
     }
-    while (pointCount < heatmap.max && !done) {
+    while (pointCount < heatmap.max && !done && iterations++ < 1000) {
         for (let k = 0; k < heatChunks.length; k++) {
             if (heatPoints[k] != null) {
                 true; // do nothing
-            } else if (heatChunks[k] != null) {
+            } else if (heatChunks[k] != null && heatChunks[k].byteLength % 16 == 0) {
                 heatPoints[k] = new Int32Array(heatChunks[k]);
             } else {
                 continue;
@@ -4642,6 +4645,8 @@ function drawHeatmap() {
             offsets[k] += 1;
         }
     }
+    if (iterations == 1000)
+        console.log("drawHeatmap: MAX_ITERATIONS!");
     for (let i = 0; i < 16; i++) {
         //console.log(features.length);
         heatFeatures[i].addFeatures(features.splice(0, heatmap.max / 16));
