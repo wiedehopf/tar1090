@@ -4005,7 +4005,7 @@ function legShift(offset) {
         traceOpts.showTime = null;
 
     if (!SelectedPlane.fullTrace) {
-        $('#leg_sel').text('No Data available');
+        $('#leg_sel').text('No Data available for\n' + traceDateString);
         $('#trace_time').text('UTC:\n');
         SelectedPlane.processTrace();
         return;
@@ -4070,6 +4070,7 @@ function legShift(offset) {
 }
 
 function shiftTrace(offset) {
+    $('#leg_sel').text('Loading ...');
     if (traceDateString && !traceDate) {
         let numbers = traceDateString.split('-');
         traceDate = new Date();
