@@ -3859,6 +3859,8 @@ function inView(pos, currExtent) {
     return inView;
 }
 function updateAddressBar() {
+    if (heatmap)
+        return;
     let posString = 'lat=' + CenterLat.toFixed(3) + '&lon=' + CenterLon.toFixed(3) + '&zoom=' + ZoomLvl.toFixed(1);
     let string;
     if (showTrace) {
@@ -4516,13 +4518,8 @@ function getTrace(newPlane, hex, options) {
 
     return newPlane;
 }
-
-function drawHeatmap() {
-    if (!heatmap)
-        return;
-
-    let extent = OLMap.getView().calculateExtent(OLMap.getSize());
-
+function initHeatmap() {
+    heatmap.init = false;
     if (heatFeatures.length == 0) {
         for (let i = 0; i < 16; i++) {
             heatFeatures.push(new ol.source.Vector());
@@ -4536,6 +4533,16 @@ function drawHeatmap() {
             trailGroup.push(heatLayers[i]);
         }
     }
+}
+
+function drawHeatmap() {
+    if (!heatmap)
+        return;
+    if (heatmap.init)
+        initHeatmap();
+
+    let extent = OLMap.getView().calculateExtent(OLMap.getSize());
+
     for (let i = 0; i < 16; i++)
         heatFeatures[i].clear();
 
@@ -4545,57 +4552,92 @@ function drawHeatmap() {
         lineStyleCache = {};
         lineStyleCache["scale"] = globalScale;
     }
+    let offsets = Array(heatChunks.length).fill(0);
+    let done = false;
+
+    let indexes = Array(heatChunks.length).fill([]);
+
     for (let k = 0; k < heatChunks.length; k++) {
-        let chunk = heatChunks[k];
-        if (chunk == null)
+        if (heatPoints[k] != null) {
+            true; // do nothing
+        } else if (heatChunks[k] != null) {
+            heatPoints[k] = new Int32Array(heatChunks[k]);
+        } else {
             continue;
-        let points = new Int32Array(chunk);
-        let i = 0;
+        }
+        let points = heatPoints[k];
         let index = [];
-        while(points[i] != 243235997) {
+        let i = 0;
+        while(points[i] != 0xe7f7c9d && i < points.length) {
             index.push(points[i]);
+            //console.log(points[i]);
             i += 4;
-            if (i > 5000) {
-                console.log("bad");
+        }
+        index.sort((a, b) => (Math.random() - 0.5));
+        indexes[k] = index;
+    }
+    while (pointCount < heatmap.max && !done) {
+        for (let k = 0; k < heatChunks.length; k++) {
+            if (heatPoints[k] != null) {
+                true; // do nothing
+            } else if (heatChunks[k] != null) {
+                heatPoints[k] = new Int32Array(heatChunks[k]);
+            } else {
+                continue;
+            }
+
+            if (offsets[k] >= indexes[k].length) {
+                done = true;
                 break;
             }
-        }
-        i += 4;
-        for (; i < points.length && pointCount < heatmap.max; i += 4) {
-            let pos = [ points[i + 2] / 1000000, points[i+1] / 1000000];
 
-            if (!inView(pos, extent))
-                continue;
-            let alt = points[i + 3] * 25;
-            if (PlaneFilter.enabled && altFiltered(alt))
-                continue;
+            let points = heatPoints[k];
 
-            pointCount++;
+            let i = 4 * indexes[k][offsets[k]];
 
-            alt = calcAltitudeRounded(alt);
-            let projHere = ol.proj.fromLonLat(pos);
-            let style = lineStyleCache[alt];
-            if (!style) {
-                let hsl = altitudeColor(alt);
-                hsl[1] = hsl[1] * 0.85;
-                hsl[2] = hsl[2] * 0.8;
-                let col = hslToRgb(hsl);
+            if (points[i] == 0xe7f7c9d)
+                i += 4;
 
-                style = new ol.style.Style({
-                    image: new ol.style.Circle({
-                        radius: 2.5 * globalScale,
-                        fill: new ol.style.Fill({
-                            color: col,
+            for (; i < points.length && pointCount < heatmap.max; i += 4) {
+                if (points[i] == 0xe7f7c9d)
+                    break;
+
+                let pos = [ points[i + 2] / 1000000, points[i+1] / 1000000];
+
+                if (!inView(pos, extent))
+                    continue;
+                let alt = points[i + 3] * 25;
+                if (PlaneFilter.enabled && altFiltered(alt))
+                    continue;
+
+                pointCount++;
+
+                alt = calcAltitudeRounded(alt);
+                let projHere = ol.proj.fromLonLat(pos);
+                let style = lineStyleCache[alt];
+                if (!style) {
+                    let hsl = altitudeColor(alt);
+                    hsl[1] = hsl[1] * 0.85;
+                    hsl[2] = hsl[2] * 0.8;
+                    let col = hslToRgb(hsl);
+
+                    style = new ol.style.Style({
+                        image: new ol.style.Circle({
+                            radius: 2.5 * globalScale,
+                            fill: new ol.style.Fill({
+                                color: col,
+                            }),
                         }),
-                    }),
-                    zIndex: i,
-                });
-                lineStyleCache[alt] = style;
+                        zIndex: i,
+                    });
+                    lineStyleCache[alt] = style;
+                }
+                let feat = new ol.Feature(new ol.geom.Point(projHere));
+                feat.setStyle(style);
+                features.push(feat);
+                //console.log(alt);
             }
-            let feat = new ol.Feature(new ol.geom.Point(projHere));
-            feat.setStyle(style);
-            features.push(feat);
-            //console.log(alt);
+            offsets[k] += 1;
         }
     }
     for (let i = 0; i < 16; i++) {

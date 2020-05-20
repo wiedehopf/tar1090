@@ -20,6 +20,7 @@ let heatmap = false;
 let heatLoaded = 0;
 let heatmapDefer = $.Deferred();
 let heatChunks = [];
+let heatPoints = [];
 
 let databaseFolder = "db2";
 
@@ -57,10 +58,23 @@ try {
         l3harris = true;
 
     if (search.has('heatmap')) {
-        heatmap = {max: 16000};
+        heatmap = {
+            max: 16000,
+            init: true,
+            duration: 24,
+            end: new Date().getTime(),
+        };
         let val;
         if (val = parseInt(search.get('heatmap'), 10))
             heatmap.max = val;
+        let tmp = parseFloat(search.get('heatDuration'));
+        if (!isNaN(tmp))
+            heatmap.duration = tmp;
+        if (heatmap.duration < 0.5)
+            heatmap.duration = 0.5;
+        tmp = parseFloat(search.get('heatEnd'));
+        if (!isNaN(tmp))
+            heatmap.end -= tmp * 3600 * 1000;
     }
 
 } catch (error) {
@@ -84,11 +98,13 @@ function lDateString(date) {
 if (!heatmap) {
     heatmapDefer.resolve();
 } else {
-    let end = new Date().getTime();
-    let start = end - 24 * 3600 * 1000;
+    let end = heatmap.end;
+    let start = end - heatmap.duration * 3600 * 1000;
     let interval = 1800 * 1000;
-    let numChunks = (end - start) / interval;
+    let numChunks = Math.round((end - start) / interval);
+    console.log('numChunks: ' + numChunks + ' heatDuration: ' + heatmap.duration + ' heatEnd: ' + new Date(heatmap.end));
     heatChunks = Array(numChunks).fill(null);
+    heatPoints = Array(numChunks).fill(null);
     for (let i = 0; i < numChunks; i++) {
         var xhrOverride = new XMLHttpRequest();
         xhrOverride.responseType = 'arraybuffer';
