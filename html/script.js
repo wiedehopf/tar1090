@@ -4099,20 +4099,6 @@ function shiftTrace(offset) {
     updateAddressBar();
 }
 
-function zDateString(date) {
-    let string = date.getUTCFullYear() + '-'
-        + (date.getUTCMonth() + 1).toString().padStart(2, '0') + '-'
-        + date.getUTCDate().toString().padStart(2, '0')
-    return string;
-}
-
-function lDateString(date) {
-    let string = date.getFullYear() + '-'
-        + (date.getMonth() + 1).toString().padStart(2, '0') + '-'
-        + date.getDate().toString().padStart(2, '0')
-    return string;
-}
-
 function setLineWidth() {
 
     newWidth = lineWidth * Math.pow(2, globalScale) / 2 * globalScale
@@ -4534,8 +4520,11 @@ function getTrace(newPlane, hex, options) {
 function drawHeatmap() {
     if (!heatmap)
         return;
+
+    let extent = OLMap.getView().calculateExtent(OLMap.getSize());
+
     if (heatFeatures.length == 0) {
-        for (let i = 0; i < 64; i++) {
+        for (let i = 0; i < 16; i++) {
             heatFeatures.push(new ol.source.Vector());
             heatLayers.push(new ol.layer.Vector({
                 name: ('heatLayer' + i),
@@ -4547,32 +4536,37 @@ function drawHeatmap() {
             trailGroup.push(heatLayers[i]);
         }
     }
-    for (let i = 0; i < 64; i++)
+    for (let i = 0; i < 16; i++)
         heatFeatures[i].clear();
 
-    let chunks = [];
-    for (let i in heatRequests) {
-        chunks.push(heatRequests[i].response);
-    }
-
-    let extent = OLMap.getView().calculateExtent(OLMap.getSize());
-
-    chunks.sort((a, b) => (Math.random() - 0.5));
-    let chunk;
     let pointCount = 0;
     let features = [];
     if (lineStyleCache["scale"] != globalScale) {
         lineStyleCache = {};
         lineStyleCache["scale"] = globalScale;
     }
-    while (chunk = chunks.pop()) {
+    for (let k = 0; k < heatChunks.length; k++) {
+        let chunk = heatChunks[k];
+        if (chunk == null)
+            continue;
         let points = new Int32Array(chunk);
-        for (let i = 0; i < points.length && pointCount < heatmap.max; i += 3) {
-            let pos = [ points[i + 1] / 1000000, points[i] / 1000000];
+        let i = 0;
+        let index = [];
+        while(points[i] != 243235997) {
+            index.push(points[i]);
+            i += 4;
+            if (i > 5000) {
+                console.log("bad");
+                break;
+            }
+        }
+        i += 4;
+        for (; i < points.length && pointCount < heatmap.max; i += 4) {
+            let pos = [ points[i + 2] / 1000000, points[i+1] / 1000000];
 
             if (!inView(pos, extent))
                 continue;
-            let alt = points[i + 2] * 25;
+            let alt = points[i + 3] * 25;
             if (PlaneFilter.enabled && altFiltered(alt))
                 continue;
 

@@ -19,7 +19,7 @@ let l3harris = false;
 let heatmap = false;
 let heatLoaded = 0;
 let heatmapDefer = $.Deferred();
-let heatRequests = [];
+let heatChunks = [];
 
 let databaseFolder = "db2";
 
@@ -66,27 +66,60 @@ try {
 } catch (error) {
 }
 
+function zDateString(date) {
+    let string = date.getUTCFullYear() + '-'
+        + (date.getUTCMonth() + 1).toString().padStart(2, '0') + '-'
+        + date.getUTCDate().toString().padStart(2, '0')
+    return string;
+}
+
+function lDateString(date) {
+    let string = date.getFullYear() + '-'
+        + (date.getMonth() + 1).toString().padStart(2, '0') + '-'
+        + date.getDate().toString().padStart(2, '0')
+    return string;
+}
+
+
 if (!heatmap) {
     heatmapDefer.resolve();
 } else {
-    for (let i = 0; i < 64; i++) {
-        var oReq = new XMLHttpRequest();
-        //oReq.open("GET", "/globe_history/heatmap.bin.csv?v=" + new Date().getTime(), true);
-        let URL = "globe_history/heatmap/" + i.toString().padStart(2, '0') + ".bin.csv";
-        oReq.open("GET", URL , true);
-        // not really CSV, just for CF caching
-        oReq.responseType = "arraybuffer";
-        oReq.timeout = 90000; // 90 seconds
+    let end = new Date().getTime();
+    let start = end - 24 * 3600 * 1000;
+    let interval = 1800 * 1000;
+    let numChunks = (end - start) / interval;
+    heatChunks = Array(numChunks).fill(null);
+    for (let i = 0; i < numChunks; i++) {
+        var xhrOverride = new XMLHttpRequest();
+        xhrOverride.responseType = 'arraybuffer';
 
-        heatRequests.push(oReq);
+        let time = new Date(start + i * interval);
+        let zDate = zDateString(time);
+        let index = 2 * time.getUTCHours() + Math.floor(time.getUTCMinutes() / 30);
 
-        oReq.onload = function (oEvent) {
+        let URL = "globe_history/" + zDate + "/heatmap/" +
+            index.toString().padStart(2, '0') + ".bin.ttf";
+        let req = $.ajax({
+            url: URL,
+            method: 'GET',
+            num: i,
+            xhr: function() {
+                return xhrOverride;
+            }
+        });
+        req.done(function (responseData) {
+            heatChunks[this.num] = responseData;
             heatLoaded++;
-            if (heatLoaded == 64) {
+            if (heatLoaded == heatChunks.length) {
                 heatmapDefer.resolve();
             }
-        };
-        oReq.send(null);
+        });
+        req.fail(function(jqxhr, status, error) {
+            heatLoaded++;
+            if (heatLoaded == heatChunks.length) {
+                heatmapDefer.resolve();
+            }
+        });
     }
 }
 
