@@ -75,6 +75,8 @@ try {
         tmp = parseFloat(search.get('heatEnd'));
         if (!isNaN(tmp))
             heatmap.end -= tmp * 3600 * 1000;
+        if (search.has('heatLines'))
+            heatmap.lines = true;
     }
 
 } catch (error) {

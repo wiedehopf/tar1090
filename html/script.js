@@ -4573,7 +4573,8 @@ function drawHeatmap() {
             //console.log(points[i]);
             i += 4;
         }
-        index.sort((a, b) => (Math.random() - 0.5));
+        if (!heatmap.lines)
+            index.sort((a, b) => (Math.random() - 0.5));
         indexes[k] = index;
     }
     while (pointCount < heatmap.max && !done) {
