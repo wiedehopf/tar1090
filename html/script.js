@@ -4564,13 +4564,12 @@ function drawHeatmap() {
         lineStyleCache = {};
         lineStyleCache["scale"] = globalScale;
     }
-    let offsets = Array(heatChunks.length).fill(0);
     let done = new Set();
     let iterations = 0;
     let maxIter = 1000 * 1000;
 
-    let indexes = Array(heatChunks.length).fill([]);
 
+    let tempPoints = [];
     for (let k = 0; k < heatChunks.length; k++) {
         if (heatPoints[k] != null) {
             true; // do nothing
@@ -4579,7 +4578,31 @@ function drawHeatmap() {
         } else {
             continue;
         }
-        let points = heatPoints[k];
+        tempPoints.push(heatPoints[k]);
+    }
+    let myPoints = [];
+    if (tempPoints.length <= 2) {
+        myPoints = tempPoints;
+    } else {
+        let len = tempPoints.length;
+        let arr1 = tempPoints.splice(0, Math.round(tempPoints.length / 3));
+        let arr2 = tempPoints.splice(0, Math.round(tempPoints.length / 2));
+        let arr3 = tempPoints;
+        myPoints.push(arr2.splice(0, 1));
+        myPoints.push(arr3.splice(0, 1));
+        myPoints.push(arr1.splice(0, 1));
+        len -= 3;
+        for (let i = 0; i < Math.ceil(len / 3); i++) {
+            myPoints.push(arr2.splice(0, 1));
+            myPoints.push(arr3.splice(0, 1));
+            myPoints.push(arr1.splice(0, 1));
+        }
+    }
+    myPoints = myPoints.flat();
+
+    let indexes = [];
+    for (let k = 0; k < myPoints.length; k++) {
+        let points = myPoints[k];
         let index = [];
         let i = 0;
         while(points[i] != 0xe7f7c9d && i < points.length) {
@@ -4589,32 +4612,24 @@ function drawHeatmap() {
         }
         if (!heatmap.lines)
             index.sort((a, b) => (Math.random() - 0.5));
-        indexes[k] = index;
+        indexes.push(index);
     }
-    while (pointCount < heatmap.max && setSize(done) < heatChunks.length && iterations++ < maxIter) {
-        for (let k = 0; k < heatChunks.length; k++) {
-            if (heatPoints[k] != null) {
-                true; // do nothing
-            } else if (heatChunks[k] != null && heatChunks[k].byteLength % 16 == 0) {
-                heatPoints[k] = new Int32Array(heatChunks[k]);
-            } else {
-                done.add(k);
-                continue;
-            }
-
+    let offsets = Array(myPoints.length).fill(0);
+    while (pointCount < heatmap.max && setSize(done) < myPoints.length && iterations++ < maxIter) {
+        for (let k = 0; k < myPoints.length && pointCount < heatmap.max; k++) {
             if (offsets[k] >= indexes[k].length) {
                 done.add(k);
                 continue;
             }
 
-            let points = heatPoints[k];
+            let points = myPoints[k];
 
             let i = 4 * indexes[k][offsets[k]];
 
             if (points[i] == 0xe7f7c9d)
                 i += 4;
 
-            for (; i < points.length && pointCount < heatmap.max; i += 4) {
+            for (; i < points.length; i += 4) {
                 if (points[i] == 0xe7f7c9d)
                     break;
                 let lat = points[i+1];
@@ -4674,7 +4689,7 @@ function drawHeatmap() {
     if (iterations >= maxIter)
         console.log("drawHeatmap: MAX_ITERATIONS!");
     //console.log(setSize(done));
-    console.log(pointCount);
+    console.log("files: " + myPoints.length + ", points drawn: " + pointCount);
     for (let i = 0; i < 16; i++) {
         //console.log(features.length);
         heatFeatures[i].addFeatures(features.splice(0, heatmap.max / 16));
