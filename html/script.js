@@ -4536,13 +4536,20 @@ function initHeatmap() {
     }
 }
 
+function setSize(set) {
+    let count = 0;
+    for (const i of set.values())
+        count++;
+    return count;
+}
+
 function drawHeatmap() {
     if (!heatmap)
         return;
     if (heatmap.init)
         initHeatmap();
 
-    console.log('drawHeat');
+    console.time("drawHeat");
 
     let extent = OLMap.getView().calculateExtent(OLMap.getSize());
 
@@ -4556,8 +4563,9 @@ function drawHeatmap() {
         lineStyleCache["scale"] = globalScale;
     }
     let offsets = Array(heatChunks.length).fill(0);
-    let done = false;
+    let done = new Set();
     let iterations = 0;
+    let maxIter = 1000 * 1000;
 
     let indexes = Array(heatChunks.length).fill([]);
 
@@ -4581,19 +4589,20 @@ function drawHeatmap() {
             index.sort((a, b) => (Math.random() - 0.5));
         indexes[k] = index;
     }
-    while (pointCount < heatmap.max && !done && iterations++ < 1000) {
+    while (pointCount < heatmap.max && setSize(done) < heatChunks.length && iterations++ < maxIter) {
         for (let k = 0; k < heatChunks.length; k++) {
             if (heatPoints[k] != null) {
                 true; // do nothing
             } else if (heatChunks[k] != null && heatChunks[k].byteLength % 16 == 0) {
                 heatPoints[k] = new Int32Array(heatChunks[k]);
             } else {
+                done.add(k);
                 continue;
             }
 
             if (offsets[k] >= indexes[k].length) {
-                done = true;
-                break;
+                done.add(k);
+                continue;
             }
 
             let points = heatPoints[k];
@@ -4630,7 +4639,11 @@ function drawHeatmap() {
                     let hsl = altitudeColor(alt);
                     hsl[1] = hsl[1] * 0.85;
                     hsl[2] = hsl[2] * 0.8;
-                    let col = hslToRgb(hsl);
+                    let col;
+                    if (heatmap.alpha == null)
+                        col = hslToRgb(hsl);
+                    else
+                        col = hslToRgb(hsl, heatmap.alpha);
 
                     style = new ol.style.Style({
                         image: new ol.style.Circle({
@@ -4651,11 +4664,14 @@ function drawHeatmap() {
             offsets[k] += 1;
         }
     }
-    if (iterations == 1000)
+    if (iterations >= maxIter)
         console.log("drawHeatmap: MAX_ITERATIONS!");
+    //console.log(setSize(done));
+    console.log(pointCount);
     for (let i = 0; i < 16; i++) {
         //console.log(features.length);
         heatFeatures[i].addFeatures(features.splice(0, heatmap.max / 16));
     }
+    console.timeEnd("drawHeat");
     $("#loader").addClass("hidden");
 }

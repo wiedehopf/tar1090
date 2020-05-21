@@ -77,6 +77,11 @@ try {
             heatmap.end -= tmp * 3600 * 1000;
         if (search.has('heatLines'))
             heatmap.lines = true;
+        tmp = parseFloat(search.get('heatAlpha'));
+        if (!isNaN(tmp)) {
+            heatmap.alpha = tmp;
+            console.log('heatmap.alpha = ' + tmp);
+        }
     }
 
 } catch (error) {
