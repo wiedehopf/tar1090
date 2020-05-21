@@ -2187,10 +2187,10 @@ function refreshTableInfo() {
     if (mapIsVisible || lastRealExtent == null) {
         let mapSize = OLMap.getSize();
 
-        lastRealExtent = OLMap.getView().calculateExtent(mapSize);
+        lastRealExtent = myExtent(OLMap.getView().calculateExtent(mapSize));
 
         let size = [mapSize[0] * 1.2, mapSize[1] * 1.2];
-        lastRenderExtent = OLMap.getView().calculateExtent(size);
+        lastRenderExtent = myExtent(OLMap.getView().calculateExtent(size));
     }
 
     //console.time("updateCells");
@@ -3740,9 +3740,9 @@ function globeIndexes() {
     if (mapIsVisible || lastGlobeExtent == null) {
         let mapSize = OLMap.getSize();
         let size = [mapSize[0] * 1.1, mapSize[1] * 1.1];
-        lastGlobeExtent = OLMap.getView().calculateExtent(size);
+        lastGlobeExtent = myExtent(OLMap.getView().calculateExtent(size));
     }
-    let extent = lastGlobeExtent;
+    let extent = lastGlobeExtent.extent;
     const bottomLeft = ol.proj.toLonLat([extent[0], extent[1]]);
     const topRight = ol.proj.toLonLat([extent[2], extent[3]]);
     let x1 = bottomLeft[0];
@@ -3815,7 +3815,19 @@ function globe_index(lat, lon) {
     return (i * lat_multiplier + j + 1000);
 }
 
-function inView(pos, currExtent) {
+function myExtent(extent) {
+    let bottomLeft = ol.proj.toLonLat([extent[0], extent[1]]);
+    let topRight = ol.proj.toLonLat([extent[2], extent[3]]);
+    return {
+        extent: extent,
+        minLon: bottomLeft[0],
+        maxLon: topRight[0],
+        minLat: bottomLeft[1],
+        maxLat: topRight[1],
+    }
+}
+
+function inView(pos, ex) {
 
     if (pos == null)
         return false;
@@ -3823,40 +3835,28 @@ function inView(pos, currExtent) {
     if (solidT)
         return true;
 
-    let inView;
+    let extent = ex.extent;
+    let lon = pos[0];
+    let lat = pos[1];
 
     //console.log((currExtent[2]-currExtent[0])/40075016);
-    const bottomLeft = ol.proj.toLonLat([currExtent[0], currExtent[1]]);
-    const topRight = ol.proj.toLonLat([currExtent[2], currExtent[3]]);
     //console.log([bottomLeft[0], topRight[0]]);
     //console.log([bottomLeft[1], topRight[1]]);
     //sidebarVisible = $("#sidebar_container").is(":visible");
     //const proj = ol.proj.fromLonLat(pos);
+    if (lat < ex.minLat || lat > ex.maxLat)
+        return false;
 
-    if (pos && currExtent[2]-currExtent[0] > 40075016) {
+    if (extent[2] - extent[0] > 40075016) {
         // all longtitudes in view, only check latitude
-        inView = (
-            pos[1] > bottomLeft[1]
-            && pos[1] < topRight[1]
-        )
-    } else if (pos && bottomLeft[0] < topRight[0]) {
+        return true;
+    } else if (ex.minLon < ex.maxLon) {
         // no wraparound: view not crossing 179 to -180 transition line
-        inView = (
-            pos[0] > bottomLeft[0]
-            && pos[0] < topRight[0]
-            && pos[1] > bottomLeft[1]
-            && pos[1] < topRight[1]
-        )
-    } else if (pos && bottomLeft[0] > topRight[0]) {
+        return (lon > ex.minLon && lon < ex.maxLon);
+    } else {
         // wraparound: view crossing 179 to -180 transition line
-        inView = (
-            (pos[0] > bottomLeft[0]
-                || pos[0] < topRight[0])
-            && pos[1] > bottomLeft[1]
-            && pos[1] < topRight[1]
-        )
+        return (lon > ex.minLon || lon < ex.maxLon);
     }
-    return inView;
 }
 function updateAddressBar() {
     if (heatmap)
@@ -4551,7 +4551,9 @@ function drawHeatmap() {
 
     console.time("drawHeat");
 
-    let extent = OLMap.getView().calculateExtent(OLMap.getSize());
+    let ext = myExtent(OLMap.getView().calculateExtent(OLMap.getSize()));
+    let maxLat = ext.maxLat * 1000000;
+    let minLat = ext.minLat * 1000000;
 
     for (let i = 0; i < 16; i++)
         heatFeatures[i].clear();
@@ -4615,10 +4617,15 @@ function drawHeatmap() {
             for (; i < points.length && pointCount < heatmap.max; i += 4) {
                 if (points[i] == 0xe7f7c9d)
                     break;
+                let lat = points[i+1];
+                if (lat > maxLat || lat < minLat)
+                    continue;
 
-                let pos = [ points[i + 2] / 1000000, points[i+1] / 1000000];
+                lat /= 1000000;
+                let lon = points[i + 2] / 1000000;
+                let pos = [lon, lat];
 
-                if (!inView(pos, extent))
+                if (!inView(pos, ext))
                     continue;
 
                 let alt = points[i + 3];
