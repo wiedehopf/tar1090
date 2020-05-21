@@ -485,6 +485,7 @@ let TypeDesignatorIcons = {
     'FA20': ['jet_swept', 0.92], // 13t
     'C680': ['jet_swept', 0.92], // 14t
     'C68A': ['jet_swept', 0.92], // 14t
+    'YK40': ['jet_swept', 0.94], // 16t
     'C750': ['jet_swept', 0.94], // 17t
     'FA50': ['jet_swept', 0.94], // 18t
     'CL30': ['jet_swept', 0.92], // 14t
