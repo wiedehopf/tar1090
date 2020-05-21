@@ -14,7 +14,8 @@ let iconLayer;
 let trailLayers;
 let heatFeatures = [];
 let heatLayers = [];
-let heatLayer;
+let realHeatFeatures = new ol.source.Vector();
+let realHeat;
 let iconCache = {};
 let addToIconCache = [];
 let lineStyleCache = {};
@@ -4534,6 +4535,16 @@ function initHeatmap() {
             trailGroup.push(heatLayers[i]);
         }
     }
+    realHeat = new ol.layer.Heatmap({
+        source: realHeatFeatures,
+        name: realHeat,
+        isTrail: true,
+        zIndex: 150,
+        weight: x => heatmap.weight,
+        radius: heatmap.radius,
+        blur: heatmap.blur,
+    });
+    trailGroup.push(realHeat);
 }
 
 function setSize(set) {
@@ -4557,6 +4568,7 @@ function drawHeatmap() {
 
     for (let i = 0; i < 16; i++)
         heatFeatures[i].clear();
+    realHeatFeatures.clear();
 
     let pointCount = 0;
     let features = [];
@@ -4669,7 +4681,7 @@ function drawHeatmap() {
 
                     style = new ol.style.Style({
                         image: new ol.style.Circle({
-                            radius: 2.5 * globalScale,
+                            radius: heatmap.radius * globalScale,
                             fill: new ol.style.Fill({
                                 color: col,
                             }),
@@ -4690,9 +4702,13 @@ function drawHeatmap() {
         console.log("drawHeatmap: MAX_ITERATIONS!");
     //console.log(setSize(done));
     console.log("files: " + myPoints.length + ", points drawn: " + pointCount);
-    for (let i = 0; i < 16; i++) {
-        //console.log(features.length);
-        heatFeatures[i].addFeatures(features.splice(0, heatmap.max / 16));
+    if (heatmap.real) {
+        realHeatFeatures.addFeatures(features);
+    } else {
+        for (let i = 0; i < 16; i++) {
+            //console.log(features.length);
+            heatFeatures[i].addFeatures(features.splice(0, pointCount / 16));
+        }
     }
     console.timeEnd("drawHeat");
     $("#loader").addClass("hidden");

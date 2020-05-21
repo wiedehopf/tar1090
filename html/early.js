@@ -82,6 +82,22 @@ try {
             heatmap.alpha = tmp;
             console.log('heatmap.alpha = ' + tmp);
         }
+        heatmap.radius = 2.5;
+        heatmap.weight = 0.6;
+        if (search.has('realHeat')) {
+            heatmap.real = true;
+            heatmap.radius = 1.5;
+            heatmap.blur = 4;
+            tmp = parseFloat(search.get('heatBlur'));
+            if (!isNaN(tmp))
+                heatmap.blur = tmp;
+            tmp = parseFloat(search.get('heatWeight'));
+            if (!isNaN(tmp))
+                heatmap.weight = tmp;
+        }
+        tmp = parseFloat(search.get('heatRadius'));
+        if (!isNaN(tmp))
+            heatmap.radius = tmp;
     }
 
 } catch (error) {
