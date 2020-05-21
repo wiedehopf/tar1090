@@ -18,6 +18,8 @@ let realHeatFeatures = new ol.source.Vector();
 let realHeat;
 let iconCache = {};
 let addToIconCache = [];
+let dotCache = {};
+let useDots = false;
 let lineStyleCache = {};
 let Planes        = {};
 let PlanesOrdered = [];

@@ -730,7 +730,25 @@ PlaneObject.prototype.updateIcon = function() {
         this.markerSvgKey = svgKey;
         this.rotationCache = this.rotation;
 
-        if (iconCache[svgKey] == undefined) {
+        if (useDots) {
+            let alt = this.alt_rounded;
+            let dotKey = String(alt) + String(globalScale);
+            let circle = dotCache[dotKey];
+            if (!circle) {
+                let hsl = altitudeColor(this.altitude);
+                hsl[1] = hsl[1] * 0.85;
+                hsl[2] = hsl[2] * 0.8;
+                let col = hslToRgb(hsl);
+                circle = new ol.style.Circle({
+                    radius: 3 * globalScale,
+                    fill: new ol.style.Fill({
+                        color: col,
+                    }),
+                });
+                dotCache[dotKey] = circle;
+            }
+            this.markerIcon = circle;
+        } else if (iconCache[svgKey] == undefined) {
             let svgURI = svgShapeToURI(this.baseMarker, fillColor, OutlineADSBColor, strokeWidth);
 
             addToIconCache.push([svgKey, null, svgURI]);
