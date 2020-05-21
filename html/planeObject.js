@@ -1064,8 +1064,8 @@ PlaneObject.prototype.processTrace = function() {
     if (!showTime && (showTrace || showTraceExit)
         && this.position
         && !noPan
-        && !inView(this.position, OLMap.getView().calculateExtent(size))
-        && !inView(firstPos, OLMap.getView().calculateExtent(size)))
+        && !inView(this.position, myExtent(OLMap.getView().calculateExtent(size)))
+        && !inView(firstPos, myExtent(OLMap.getView().calculateExtent(size))))
     {
         OLMap.getView().setCenter(ol.proj.fromLonLat(this.position));
     }

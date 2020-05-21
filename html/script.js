@@ -4528,7 +4528,7 @@ function initHeatmap() {
                 name: ('heatLayer' + i),
                 isTrail: true,
                 source: heatFeatures[i],
-                declutter: false,
+                declutter: (heatmap.declutter ? true : false),
                 zIndex: 150,
             }));
             trailGroup.push(heatLayers[i]);
