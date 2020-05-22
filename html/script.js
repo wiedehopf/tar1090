@@ -4441,7 +4441,8 @@ function getTrace(newPlane, hex, options) {
     if (showTrace) {
         let today = new Date();
         //console.log(today.toUTCString() + ' ' + traceDate.toUTCString());
-        if (today.getTime() > traceDate.getTime() && today.getTime() < traceDate.getTime() + (86400 + 300) * 1000) {
+        // use non historic traces for showTrace until 20 min after midnight
+        if (today.getTime() > traceDate.getTime() && today.getTime() < traceDate.getTime() + (24 * 60 * 60 + 20 * 60) * 1000) {
 
             today.setUTCHours(0);
             today.setUTCMinutes(0);
@@ -4559,8 +4560,9 @@ function setSize(set) {
 function drawHeatmap() {
     if (!heatmap)
         return;
-    if (heatmap.init)
+    if (heatmap.init) {
         initHeatmap();
+    }
 
     console.time("drawHeat");
 

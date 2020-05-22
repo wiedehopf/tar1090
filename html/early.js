@@ -58,15 +58,15 @@ try {
         l3harris = true;
 
     if (search.has('heatmap')) {
-        heatmap = {
-            max: 16000,
-            init: true,
-            duration: 24,
-            end: new Date().getTime(),
-        };
-        let val;
-        if (val = parseInt(search.get('heatmap'), 10))
-            heatmap.max = val;
+
+        heatmap = {};
+
+        heatmap.max = 16000;
+        heatmap.init = true;
+        heatmap.duration = 24;
+        heatmap.end = (new Date()).getTime();
+
+
         let tmp = parseFloat(search.get('heatDuration'));
         if (!isNaN(tmp))
             heatmap.duration = tmp;
@@ -83,14 +83,17 @@ try {
             console.log('heatmap.alpha = ' + tmp);
         }
         heatmap.radius = 2.5;
-        heatmap.weight = 0.6;
         if (search.has('realHeat')) {
+            heatmap.max = 50000;
             heatmap.real = true;
             heatmap.radius = 1.5;
             heatmap.blur = 4;
+            heatmap.weight = 0.15;
+
             tmp = parseFloat(search.get('heatBlur'));
             if (!isNaN(tmp))
                 heatmap.blur = tmp;
+
             tmp = parseFloat(search.get('heatWeight'));
             if (!isNaN(tmp))
                 heatmap.weight = tmp;
@@ -98,9 +101,13 @@ try {
         tmp = parseFloat(search.get('heatRadius'));
         if (!isNaN(tmp))
             heatmap.radius = tmp;
+        let val;
+        if (val = parseInt(search.get('heatmap'), 10))
+            heatmap.max = val;
     }
 
 } catch (error) {
+    console.log(error);
 }
 
 function zDateString(date) {
