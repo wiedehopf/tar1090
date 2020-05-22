@@ -88,7 +88,7 @@ try {
             heatmap.real = true;
             heatmap.radius = 1.5;
             heatmap.blur = 4;
-            heatmap.weight = 0.15;
+            heatmap.weight = 0.25;
 
             tmp = parseFloat(search.get('heatBlur'));
             if (!isNaN(tmp))
