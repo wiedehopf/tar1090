@@ -130,10 +130,18 @@
 						</div>
 						<div class="infoRowLine ">
 							<div class="infoHeading infoRowFluid">
-								<span title="ICAO type description (L/S/H Landplane/Seaplane/Helicoper 1/2/3/4 Number of P/T/J Reciprocating/Turboprop/Jet Engines - ICAO type short hand (A320/B738)">Desc. - Type: </span>
+								<span title="ICAO type code (A320/B738)">Type code: </span>
 							</div>
 							<div class="infoData infoRowFluid">
 								<span class="lightblue-link" id="selected_photo_link"></span> <span id="selected_icaotype"></span>
+							</div>
+						</div>
+						<div class="infoRowLine ">
+							<div class="infoHeading infoRowFluid">
+								<span title="ICAO type description (L/S/H Landplane/Seaplane/Helicopter 1/2/3/4 Number of P/T/J Reciprocating/Turboprop/Jet Engines">Type Desc.: </span>
+							</div>
+							<div class="infoData infoRowFluid">
+								<span id="selected_typedesc"></span>
 							</div>
 						</div>
 						<div class="infoRowLine">
@@ -838,7 +846,7 @@
                             </form>
 
                             <form id="type_filter_form">
-                                <label><span class="infoBlockTitleText">Filter by type:</span></label>
+                                <label><span title="ICAO type code (A320, B738, etc.)"class="infoBlockTitleText">Filter by type code:</span></label>
                                 <br>
                                 <input id="type_filter" name="type" type="text" class="searchInput" maxlength="1024">
                                 <button class="formButton" type="submit">Filter</button>
@@ -847,7 +855,7 @@
                             </form>
 
                             <form id="description_filter_form">
-                                <label><span class="infoBlockTitleText">Filter by type description:</span></label>
+                                <label><span title="ICAO type description (L/S/H Landplane/Seaplane/Helicopter 1/2/3/4 Number of P/T/J Reciprocating/Turboprop/Jet Engines" class="infoBlockTitleText">Filter by type description:</span></label>
                                 <br>
                                 <input id="description_filter" name="description" type="text" class="searchInput" maxlength="1024">
                                 <button class="formButton" type="submit">Filter</button>

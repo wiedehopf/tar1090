@@ -1787,10 +1787,14 @@ function refreshSelected() {
     }
 
     if (selected.icaoType) {
-        $('#selected_icaotype').text(selected.typeDescription + ' - ' + selected.icaoType);
+        $('#selected_icaotype').text(selected.icaoType);
     } else {
         $('#selected_icaotype').text("n/a");
     }
+    if (selected.typeDescription)
+        $('#selected_typedesc').text(selected.typeDescription);
+    else
+        $('#selected_typedesc').text("n/a");
 
     if (showPictures && selected.icaoType){
         let new_html = "<img width='150px' src='aircraft_sil/" + selected.icaoType + ".png' />";
