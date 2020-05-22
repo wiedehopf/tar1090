@@ -589,6 +589,7 @@ let TypeDesignatorIcons = {
     'F35': ['f35', 1],
     'VF35': ['f35', 1],
     'L159': ['l159', 1],
+    'L39': ['l159', 1],
     'F4': ['hi_perf', 1],
     'F5': ['f5_tiger', 1],
     'FOUG': ['hi_perf', 1],
