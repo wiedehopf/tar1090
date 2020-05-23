@@ -267,3 +267,5 @@ let hideButtons = false;
 let adsbexchange = false;
 
 let askLocation = false; // requires https for geolocation
+
+let filterMaxRange = 1e8; // 100 000 km should include all planes on earth ;)

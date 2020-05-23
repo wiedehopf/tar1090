@@ -244,3 +244,5 @@ HideCols = [
 //hideButtons = false;
 //
 //askLocation = false;  // requires https for geolocation (browsers require it)
+//
+//let filterMaxRange = 50; // don't show aircraft further than 50 nmi from the receiver

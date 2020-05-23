@@ -217,6 +217,9 @@ PlaneObject.prototype.isFiltered = function() {
             return true;
     }
 
+    if (this.sitedist && this.sitedist > filterMaxRange)
+        return true;
+
     return false;
 }
 

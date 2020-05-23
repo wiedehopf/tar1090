@@ -647,7 +647,12 @@ function initialize() {
         if (icaoFilter)
             icaoFilter = icaoFilter.toLowerCase().split(',');
 
-
+        if (search.has('filterMaxRange')) {
+            let tmp = parseFloat(search.get('filterMaxRange'));
+            if (!isNaN(tmp))
+                filterMaxRange = tmp;
+        }
+        filterMaxRange *= 1852; // convert from nmi to meters
     } catch (error) {
         console.log(error);
     }
@@ -1161,6 +1166,7 @@ function parse_history() {
         }
 
         refreshFeatures();
+        refreshTableInfo();
     }
 
     PositionHistoryBuffer = null;
