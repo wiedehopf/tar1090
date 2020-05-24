@@ -17,7 +17,7 @@ then
     adduser --system --home $ipath --no-create-home --quiet tar1090
 fi
 
-command_package="git git/jq jq/7za p7zip-full/"
+command_package="git git/jq jq/"
 packages=""
 
 while read -r -d '/' CMD PKG
@@ -33,13 +33,17 @@ if [[ -n "$packages" ]]
 then
     echo "Installing required packages: $packages"
     apt-get update || true
-    if ! apt-get install -y $packages
-    then
-        echo "Failed to install required packages: $packages"
-        echo "Exiting ..."
-        exit 1
-    fi
+    apt-get install -y $packages || true
     hash -r || true
+    while read -r -d '/' CMD PKG
+    do
+        if ! command -v "$CMD" &>/dev/null
+        then
+            echo "command $CMD not found, seems we failed to install package $PKG"
+            echo "FATAL: Exiting!"
+            exit 1
+        fi
+    done < <(echo "$command_package")
 fi
 
 if [ -d /etc/lighttpd/conf.d/ ] && ! [ -d /etc/lighttpd/conf-enabled/ ] && ! [ -d /etc/lighttpd/conf-available ] && command -v lighttpd &>/dev/null

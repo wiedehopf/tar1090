@@ -19,7 +19,7 @@ PF_URL=$9
 COMPRESS_978=${10}
 
 if ! [[ -d $RUN_DIR ]]; then
-    echo "runtime directory ( $RUN_DIR ) is not a dircectory, fatal error!"
+    echo "runtime directory ( $RUN_DIR ) is not a directory, fatal error!"
     exit 1
 fi
 
@@ -102,21 +102,21 @@ do
 	cp empty.gz current_large.gz
 
 	# integrate original dump1090-fa history on startup so we don't start blank
-	for i in "$SRC_DIR"/history_*.json
-	do
-		FILE=$(basename "$i")
-		if prune "$i" "$FILE"; then
-			sed -i -e '$a,' "$FILE"
-		fi
-	done
+    if [[ -f "$SRC_DIR"/history_0.json ]]; then
+        for i in "$SRC_DIR"/history_*.json
+        do
+            FILE=$(basename "$i")
+            if prune "$i" "$FILE"; then
+                sed -i -e '$a,' "$FILE"
+            fi
+        done
 
-	if sed -e '1i{ "files" : [' -e '$a]}' -e '$d' history_*.json | 7za a -si temp.gz >/dev/null; then
-		new_chunk temp.gz
-	else
-		new_chunk empty.gz
-	fi
-	# cleanup
-	rm -f history_*.json
+        if sed -e '1i{ "files" : [' -e '$a]}' -e '$d' history_*.json | gzip -9 > temp.gz; then
+            new_chunk temp.gz
+        fi
+        # cleanup
+        rm -f history_*.json
+    fi
 
 	i=0
 
@@ -173,7 +173,7 @@ do
 
 		if [[ $i == "$CHUNK_SIZE" ]]
 		then
-			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' history_*.json | 7za a -si temp.gz >/dev/null
+			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' history_*.json | gzip -9 > temp.gz
 			new_chunk temp.gz
 			cp empty.gz current_small.gz
 			cp empty.gz current_large.gz
