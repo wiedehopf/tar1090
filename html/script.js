@@ -543,30 +543,6 @@ function initialize() {
 
     try {
         const search = new URLSearchParams(window.location.search);
-        let tracks = search.get('monochromeTracks');
-        if (tracks != undefined) {
-            if (tracks.length == 6)
-                monochromeTracks = '#' + tracks;
-            else
-                monochromeTracks = "#000000";
-        }
-
-        let markers = search.get('monochromeMarkers');
-        if (markers != undefined) {
-            if (markers.length == 6)
-                monochromeMarkers = '#' + markers;
-            else
-                monochromeMarkers = "#FFFFFF";
-        }
-
-        let outlineColor = search.get('outlineColor');
-        if (outlineColor != undefined) {
-            if (outlineColor.length == 6)
-                OutlineADSBColor = '#' + outlineColor;
-            else
-                OutlineADSBColor = "#000000";
-        }
-
         if (search.has('showGrid'))
             showGrid = true;
 
@@ -3698,6 +3674,31 @@ function processURLParams(){
             else
                 legSel--;
         }
+
+        let tracks = search.get('monochromeTracks');
+        if (tracks != undefined) {
+            if (tracks.length == 6)
+                monochromeTracks = '#' + tracks;
+            else
+                monochromeTracks = "#000000";
+        }
+
+        let markers = search.get('monochromeMarkers');
+        if (markers != undefined) {
+            if (markers.length == 6)
+                monochromeMarkers = '#' + markers;
+            else
+                monochromeMarkers = "#FFFFFF";
+        }
+
+        let outlineColor = search.get('outlineColor');
+        if (outlineColor != undefined) {
+            if (outlineColor.length == 6)
+                OutlineADSBColor = '#' + outlineColor;
+            else
+                OutlineADSBColor = "#000000";
+        }
+
 
     } catch (error) {
         console.log(error);
