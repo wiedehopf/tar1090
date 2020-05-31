@@ -518,7 +518,7 @@ PlaneObject.prototype.getDataSourceNumber = function() {
     if (this.dataSource == "mlat") {
         return 3;
     }
-    if (this.dataSource == "uat")
+    if (this.dataSource == "uat" || (this.addrtype && this.addrtype.substring(0,4) == "adsr"))
         return 2; // UAT
 
     // Not MLAT, but position reported - ADSB or letiants

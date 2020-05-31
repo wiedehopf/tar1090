@@ -355,7 +355,7 @@ select.error, textarea.error, input.error {
     color: #000000;
     color: rgb(0, 0, 0);
     display: inline-flex;
-    justify-content: flex-end;
+    justify-content: space-around;
     padding-top: calc( 10px * var(--SCALE));
 }
 
@@ -640,8 +640,9 @@ select.error, textarea.error, input.error {
 .legendTitle {
     line-height: calc( 19px * var(--SCALE));
     display: inline-block;
-    padding-right: calc( 20px * var(--SCALE));
+    padding-right: calc( 5px * var(--SCALE));
     padding-left: calc( 5px * var(--SCALE));
+    white-space: nowrap;
 }
 
 #settings_infoblock {

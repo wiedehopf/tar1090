@@ -253,7 +253,7 @@ function format_data_source(source) {
 			return "ADS-B noTP";
 		case 'adsr_icao':
 		case 'adsr_other':
-			return "ADS-R";
+			return "ADS-R or UAT";
 		case 'tisb_icao':
 		case 'tisb_trackfile':
 		case 'tisb_other':

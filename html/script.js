@@ -1192,14 +1192,10 @@ function parse_history() {
     }
     if (globeIndex) {
         $('#V').hide();
-        $('#uat_legend_1').hide();
         $('#uat_legend_2').hide();
-        $('#mode_s_legend_1').hide();
         $('#mode_s_legend_2').hide();
     } else {
-        $('#unknown_legend_1').hide();
         $('#unknown_legend_2').hide();
-        $('#sat_legend_1').hide();
         $('#sat_legend_2').hide();
     }
 
@@ -2241,7 +2237,9 @@ function refreshTableInfo() {
             if (plane.tr == null)
                 plane.makeTR();
 
-            if (plane.dataSource == "adsb") {
+            if (plane.dataSource == "uat" || (plane.addrtype && plane.addrtype.substring(0,4) == 'adsr')) {
+                classes += " uat";
+            } else if (plane.dataSource == "adsb") {
                 classes += " vPosition";
             } else if (plane.dataSource == "adsc") {
                 classes += " satellite";
