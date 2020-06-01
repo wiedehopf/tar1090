@@ -4668,11 +4668,19 @@ function drawHeatmap() {
                 if (!inView(pos, ext))
                     continue;
 
-                let alt = points[i + 3];
+                let alt = points[i + 3] & 65535;
+                if (alt & 32768)
+                    alt |= -65536;
                 if (alt == -123)
                     alt = 'ground';
                 else
                     alt *= 25;
+
+                let gs = points[i + 3] >> 16;
+                if (gs == -1)
+                    gs = null;
+                else
+                    gs /= 10;
 
                 if (PlaneFilter.enabled && altFiltered(alt))
                     continue;
