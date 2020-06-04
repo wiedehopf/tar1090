@@ -476,6 +476,7 @@ let TypeDesignatorIcons = {
     'E75S/L': ['airliner', 0.82],
     'E75L': ['airliner', 0.82],
     'E75S': ['airliner', 0.82],  // 40t
+    'A148': ['airliner', 0.83], // 43t
     'RJ70': ['heavy_4e', 0.73], // 38t
     'RJ85': ['heavy_4e', 0.73], // 42t
     'RJ1H': ['heavy_4e', 0.73], // 44t
@@ -596,7 +597,6 @@ let TypeDesignatorIcons = {
     'T37': ['hi_perf', 1],
     'T38': ['t38', 1],
     'A10': ['a10', 1],
-    'A148': ['hi_perf', 1],
     'A3': ['hi_perf', 1],
     'A6': ['hi_perf', 1],
     'AJET': ['alpha_jet', 1],
