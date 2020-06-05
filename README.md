@@ -183,6 +183,22 @@ Example file:
 After saving that file, just run the install script and it will install/update
 all instances.
 
+Configuration for each instance will be separate, in the example the config files would be:
+```
+/etc/default/tar1090
+/etc/default/tar1090-combo
+/etc/default/tar1090-978
+/etc/default/tar1090-webroot
+```
+
+HTML folders will be:
+```
+/usr/local/share/tar1090/html
+/usr/local/share/tar1090/html-combo
+/usr/local/share/tar1090/html-978
+/usr/local/share/tar1090/html-webroot
+```
+
 The run folder and systemd service will be called tar1090-combo and tar1090-978
 in this example file.
 The main instance is the exception to that rule, having systemd service and run
