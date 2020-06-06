@@ -168,14 +168,23 @@ function createBaseLayers() {
         }
     }
 
+    // temporary
+    /*
     world.push(new ol.layer.Tile({
         source: new ol.source.OSM({
-            "url" : "https://map.adsbexchange.com/mapproxy/tiles/1.0.0/osm/osm_grid/{z}/{x}/{y}.png",
+            //"url" : "https://map.adsbexchange.com/mapproxy/tiles/1.0.0/osm/osm_grid/{z}/{x}/{y}.png",
             //"attributions" : 'hosted by <a href="https://adsbexchange.com/">adsbexchange.com</a> '
             //+ '© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>  contributors.',
         }),
         name: 'osm_adsbx',
         title: 'OSM by ADSBx',
+        type: 'base',
+    }));
+    */
+    world.push(new ol.layer.Tile({
+        source: new ol.source.OSM(),
+        name: 'osm_adsbx',
+        title: 'OpenStreetMap',
         type: 'base',
     }));
 
