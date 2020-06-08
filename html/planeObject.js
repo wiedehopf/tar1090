@@ -2436,3 +2436,9 @@ PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
     });
 
 }
+PlaneObject.prototype.isNonIcao = function() {
+    if (this.icao[0] == '~')
+        return true;
+    else
+        return false;
+}

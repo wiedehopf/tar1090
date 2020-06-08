@@ -1751,6 +1751,13 @@ function refreshSelected() {
         $('#selected_flightaware_link').html(getFlightAwareModeSLink(selected.icao, selected.flight, "Visit Flight Page"));
     }
 
+    if (selected.isNonIcao()) {
+        $('#tisb_info').removeClass('hidden');
+        $('#reg_info').addClass('hidden');
+    } else {
+        $('#tisb_info').addClass('hidden');
+        $('#reg_info').removeClass('hidden');
+    }
     if (selected.registration != selReg) {
         selReg = selected.registration
         if (selected.registration) {
