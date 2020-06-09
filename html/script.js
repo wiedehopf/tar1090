@@ -638,7 +638,11 @@ function initialize() {
 
     if (document.getElementById('adsense') != null || adsbexchange) {
         if (onMobile || hideButtons) {
-            document.getElementById('adsense').style.display='none';
+            try {
+                document.getElementById('adsense').style.display='none';
+            } catch (error) {
+                console.log(error);
+            }
         } else {
             setTimeout(function() {
                 try {
@@ -1219,6 +1223,7 @@ function parse_history() {
         $('#jumpSearch').hide();
         $('#filterButton').hide();
         $('.ol-control').hide();
+        $('.ol-attribution').show();
     }
 
     if (tempTrails)
@@ -1562,6 +1567,7 @@ function initialize_map() {
                     $('#jumpSearch').hide();
                     $('#filterButton').hide();
                     $('.ol-control').hide();
+                    $('.ol-attribution').show();
                 } else {
                     $('#large_mode_control').show();
                     $('#header_top').show();
