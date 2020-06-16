@@ -934,13 +934,15 @@ function init_page() {
     largeMode--;
     toggleLargeMode();
 
-    if (localStorage['lastLeg'] === "true") {
+    if (localStorage['lastLeg'] === "true")
         lastLeg = true;
-        $('#lastLeg_checkbox').addClass('settingsCheckboxChecked');
-    } else if (localStorage['lastLeg'] === "false") {
+    else if (localStorage['lastLeg'] === "false")
         lastLeg = false;
+
+    if (lastLeg)
+        $('#lastLeg_checkbox').addClass('settingsCheckboxChecked');
+    else
         $('#lastLeg_checkbox').removeClass('settingsCheckboxChecked');
-    }
 
     $('#debugAll_checkbox').on('click', function() {
         toggleDebugAll();
@@ -1396,8 +1398,6 @@ function initialize_map() {
             new ol.control.Attribution({collapsed: true}),
             new ol.control.ScaleLine({units: DisplayUnits})
         ],
-        loadTilesWhileAnimating: false,
-        loadTilesWhileInteracting: false,
         interactions: new ol.interaction.defaults({altShiftDragRotate:false, pinchRotate:false,}),
     });
     OLProj = OLMap.getView().getProjection();
