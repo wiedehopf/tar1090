@@ -167,6 +167,7 @@ function createBaseLayers() {
             hel: "Helicopter Charts",
             enrl: "IFR Enroute Low Charts",
             enra: "IFR Area Charts",
+            secgrids: "Sect. w/ SAR grid",
         };
 
         for (let type in chartbundleTypes) {
