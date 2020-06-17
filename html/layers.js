@@ -146,11 +146,27 @@ function createBaseLayers() {
 
         let chartbundleTypes = {
             sec: "Sectional Charts",
+            enrh: "IFR Enroute High Charts"
+        };
+
+        for (let type in chartbundleTypes) {
+            us.push(new ol.layer.Tile({
+                source: new ol.source.TileWMS({
+                    url: 'https://map.adsbexchange.com/mapproxy/wms',
+                    params: {LAYERS: type},
+                    projection: 'EPSG:3857',
+                    attributions: 'Tiles courtesy of <a href="http://www.chartbundle.com/">ChartBundle</a>'
+                }),
+                name: 'chartbundle_' + type,
+                title: chartbundleTypes[type],
+                type: 'base',
+                group: 'chartbundle'}));
+        }
+        chartbundleTypes = {
             tac: "Terminal Area Charts",
             hel: "Helicopter Charts",
             enrl: "IFR Enroute Low Charts",
             enra: "IFR Area Charts",
-            enrh: "IFR Enroute High Charts"
         };
 
         for (let type in chartbundleTypes) {
