@@ -525,6 +525,8 @@ let TypeDesignatorIcons = {
     'G200': ['jet_swept', 0.92], // 16t
     'G280': ['jet_swept', 0.92], // 18t
     'GL5T': ['jet_swept', 1],
+    'FA7X': ['jet_swept', 0.96], // 29t
+    'FA8X': ['jet_swept', 0.96], // 33t
     'GLF2': ['jet_swept', 0.96], // 29t
     'GLF3': ['jet_swept', 0.96], // 31t
     'GLF4': ['jet_swept', 0.96], // 34t
