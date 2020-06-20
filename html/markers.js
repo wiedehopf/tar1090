@@ -433,6 +433,7 @@ let shapes = {
 
 let TypeDesignatorIcons = {
     'SHIP': ['balloon', 1], // Blimp
+    'BALL': ['balloon', 1], // Balloon
 
     'A318': ['airliner', 0.90], // shortened a320 68t
     'A319': ['airliner', 0.93], // shortened a320 75t
