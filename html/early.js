@@ -172,12 +172,14 @@ if (!heatmap) {
 // get configuration json files, will be used in initialize function
 let get_receiver_defer = $.ajax({ url: 'data/receiver.json',
     cache: false,
-    dataType: 'json'
+    dataType: 'json',
+    timeout: 5000,
 });
 let test_chunk_defer = $.ajax({
     url:'chunks/chunks.json',
     cache: false,
-    dataType: 'json'
+    dataType: 'json',
+    timeout: 4000,
 });
 
 if (uuid != null) {
@@ -188,7 +190,12 @@ if (uuid != null) {
     configureReceiver.resolve();
     //console.time("Downloaded History");
 } else {
-    $.when(get_receiver_defer).done(function(data){
+    get_receiver_defer.fail(function(data){
+        setTimeout(function() {
+            location.reload();
+        }, 4000);
+    });
+    get_receiver_defer.done(function(data){
         get_receiver_defer = null;
         receiverJson = data;
         Dump1090Version = data.version;
