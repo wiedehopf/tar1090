@@ -4463,8 +4463,8 @@ function getTrace(newPlane, hex, options) {
     if (showTrace) {
         let today = new Date();
         //console.log(today.toUTCString() + ' ' + traceDate.toUTCString());
-        // use non historic traces for showTrace until 20 min after midnight
-        if (today.getTime() > traceDate.getTime() && today.getTime() < traceDate.getTime() + (24 * 60 * 60 + 20 * 60) * 1000) {
+        // use non historic traces for showTrace until 30 min after midnight
+        if (today.getTime() > traceDate.getTime() && today.getTime() < traceDate.getTime() + (24 * 60 * 60 + 30 * 60) * 1000) {
 
             today.setUTCHours(0);
             today.setUTCMinutes(0);
