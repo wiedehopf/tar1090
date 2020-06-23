@@ -549,17 +549,17 @@ let TypeDesignatorIcons = {
     'DC93': ['jet_swept', 1],
     'DC94': ['jet_swept', 1],
     'DC95': ['jet_swept', 1],
-    'MD80': ['jet_swept', 1.04], // 60t
-    'MD81': ['jet_swept', 1.04],
-    'MD82': ['jet_swept', 1.04],
-    'MD83': ['jet_swept', 1.04],
-    'MD87': ['jet_swept', 1.04],
-    'MD88': ['jet_swept', 1.04], // 72t
-    'MD90': ['jet_swept', 1.04],
-    'B712': ['jet_swept', 1.04], // 54t
+    'MD80': ['jet_swept', 1.06], // 60t
+    'MD81': ['jet_swept', 1.06],
+    'MD82': ['jet_swept', 1.06],
+    'MD83': ['jet_swept', 1.06],
+    'MD87': ['jet_swept', 1.06],
+    'MD88': ['jet_swept', 1.06], // 72t
+    'MD90': ['jet_swept', 1.06],
+    'B712': ['jet_swept', 1.06], // 54t
     'F100': ['jet_swept', 1], // 45t
-    'B721': ['jet_swept', 1.04],
-    'B722': ['jet_swept', 1.04],
+    'B721': ['jet_swept', 1.10],
+    'B722': ['jet_swept', 1.10],
 
     'BE40': ['jet_nonswept', 1], // 7.3t
     'FA10': ['jet_nonswept', 1], // 8t
