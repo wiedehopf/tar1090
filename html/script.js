@@ -282,7 +282,7 @@ function processReceiverUpdate(data, init) {
     // Loop through all the planes in the data packet
     let acs = data.aircraft;
 
-    if (!uat && !init && !globeIndex && !heatLocal) {
+    if (!uat && !init && !globeIndex) {
         // Detect stats reset
         if (MessageCountHistory.length > 0 && MessageCountHistory[MessageCountHistory.length-1].messages > data.messages) {
             MessageCountHistory = [{'time' : MessageCountHistory[MessageCountHistory.length-1].time,
@@ -4723,7 +4723,7 @@ function drawHeatmap() {
                     continue;
 
                 pointCount++;
-                console.log(pos);
+                //console.log(pos);
 
                 alt = calcAltitudeRounded(alt);
                 let projHere = ol.proj.fromLonLat(pos);
@@ -4766,7 +4766,7 @@ function drawHeatmap() {
     } else {
         for (let i = 0; i < 16; i++) {
             heatFeatures[i].addFeatures(features.splice(0, pointCount / 16 + 1));
-            console.log(features.length);
+            //console.log(features.length);
         }
     }
     console.timeEnd("drawHeat");
