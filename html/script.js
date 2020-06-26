@@ -282,7 +282,7 @@ function processReceiverUpdate(data, init) {
     // Loop through all the planes in the data packet
     let acs = data.aircraft;
 
-    if (!uat && !init && !globeIndex) {
+    if (!uat && !init && !globeIndex && !heatLocal) {
         // Detect stats reset
         if (MessageCountHistory.length > 0 && MessageCountHistory[MessageCountHistory.length-1].messages > data.messages) {
             MessageCountHistory = [{'time' : MessageCountHistory[MessageCountHistory.length-1].time,
@@ -4611,13 +4611,29 @@ function drawHeatmap() {
     for (let k = 0; k < heatChunks.length; k++) {
         if (heatPoints[k] != null) {
             true; // do nothing
-        } else if (heatChunks[k] != null && heatChunks[k].byteLength % 16 == 0) {
-            heatPoints[k] = new Int32Array(heatChunks[k]);
+        } else if (heatChunks[k] != null) {
+            if (heatChunks[k].byteLength % 16 != 0) {
+                console.log("Invalid heatmap file (byteLength): " + k);
+                continue;
+            }
+            let points = heatPoints[k] = new Int32Array(heatChunks[k]);
+            let found = 0;
+            for (let i = 0; i < points.length; i += 4) {
+                if (points[i] == 0xe7f7c9d) {
+                    found = 1;
+                    break;
+                }
+            }
+            if (!found) {
+                heatPoints[k] = heatChunks[k] = null;
+                console.log("Invalid heatmap file (magic number): " + k);
+            }
         } else {
             continue;
         }
         tempPoints.push(heatPoints[k]);
     }
+    //console.log('tempPoints.length: ' + tempPoints.length);
     let myPoints = [];
     if (tempPoints.length <= 2) {
         myPoints = tempPoints;
@@ -4638,11 +4654,15 @@ function drawHeatmap() {
     }
     myPoints = myPoints.flat();
 
+    //console.log('myPoints.length: ' + myPoints.length);
+
     let indexes = [];
     for (let k = 0; k < myPoints.length; k++) {
         let points = myPoints[k];
         let index = [];
         let i = 0;
+        if (!points)
+            continue;
         while(points[i] != 0xe7f7c9d && i < points.length) {
             index.push(points[i]);
             //console.log(points[i]);
@@ -4667,6 +4687,10 @@ function drawHeatmap() {
             if (points[i] == 0xe7f7c9d)
                 i += 4;
 
+            if (i < 0) {
+                console.log('wat ' + i);
+                break;
+            }
             for (; i < points.length; i += 4) {
                 if (points[i] == 0xe7f7c9d)
                     break;
@@ -4699,6 +4723,7 @@ function drawHeatmap() {
                     continue;
 
                 pointCount++;
+                console.log(pos);
 
                 alt = calcAltitudeRounded(alt);
                 let projHere = ol.proj.fromLonLat(pos);
@@ -4740,8 +4765,8 @@ function drawHeatmap() {
         realHeatFeatures.addFeatures(features);
     } else {
         for (let i = 0; i < 16; i++) {
-            //console.log(features.length);
-            heatFeatures[i].addFeatures(features.splice(0, pointCount / 16));
+            heatFeatures[i].addFeatures(features.splice(0, pointCount / 16 + 1));
+            console.log(features.length);
         }
     }
     console.timeEnd("drawHeat");

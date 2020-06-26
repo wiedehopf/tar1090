@@ -17,6 +17,7 @@ let globeIndex = 0;
 let regCache = {};
 let l3harris = false;
 let heatmap = false;
+let heatLocal = false;
 let heatLoaded = 0;
 let heatmapDefer = $.Deferred();
 let heatChunks = [];
@@ -57,7 +58,10 @@ try {
     if (search.has('L3Harris') || search.has('l3harris'))
         l3harris = true;
 
-    if (search.has('heatmap')) {
+    if (search.has('heatmap') || search.has('heatLocal')) {
+
+        if (search.has('heatLocal'))
+            heatLocal = true;
 
         heatmap = {};
 
@@ -143,7 +147,11 @@ if (!heatmap) {
         let zDate = zDateString(time);
         let index = 2 * time.getUTCHours() + Math.floor(time.getUTCMinutes() / 30);
 
-        let URL = "globe_history/" + zDate + "/heatmap/" +
+        let base = "globe_history/";
+        if (heatLocal)
+            base = "data/heatmap/";
+
+        let URL = base + zDate + "/heatmap/" +
             index.toString().padStart(2, '0') + ".bin.ttf";
         let req = $.ajax({
             url: URL,
@@ -201,7 +209,7 @@ if (uuid != null) {
         Dump1090Version = data.version;
         RefreshInterval = data.refresh;
         nHistoryItems = (data.history < 2) ? 0 : data.history;
-        if (data.globeIndexGrid != null) {
+        if (data.globeIndexGrid != null || heatLocal) {
                 HistoryChunks = false;
                 nHistoryItems = 0;
                 globeIndex = 1;
@@ -232,7 +240,7 @@ if (uuid != null) {
 
 function get_history() {
 
-    if (!receiverJson.globeIndexGrid) {
+    if (!globeIndex) {
         nHistoryItems++;
         let request = $.ajax({ url: 'data/aircraft.json',
             timeout: historyTimeout*800,
