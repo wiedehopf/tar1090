@@ -316,7 +316,7 @@ To accomplish this, you need to use the dev branch of my readsb repository.
 
 The following options need to be added to for example the decoder options in `/etc/default/readsb`
 ```
---write-json-globe-index --write-globe-history /var/globe_history --globe-history-heatmap 30
+--write-json-globe-index --write-globe-history /var/globe_history --heatmap 30
 ```
 /var/globe_history needs to be a direcotry writeable by the user readsb.
 `sudo mkdir /var/globe_history` and `sudo chown readsb /var/globe_history` are useful for that.
