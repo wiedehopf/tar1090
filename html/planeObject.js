@@ -1207,6 +1207,8 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     if (this.category == 'C3' || this.icaoType == 'TWR') {
         this.zIndex = 1;
     }
+    if (this.icao[0] == '~')
+        this.zIndex -= 100000;
 
     // needed for track labels
     this.speed = gs;

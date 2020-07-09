@@ -1308,7 +1308,6 @@ function initialize_map() {
         declutter: false,
         zIndex: 200,
         renderBuffer: 20,
-        //renderOrder: null,
     });
 
     layers.push(
