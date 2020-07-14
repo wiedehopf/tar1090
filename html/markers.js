@@ -644,6 +644,8 @@ let TypeDesignatorIcons = {
     'F5': ['f5_tiger', 1],
     'HUNT': ['hunter', 1],
     'LANC': ['lancaster', 1],
+    'B17': ['lancaster', 1],
+    'B29': ['lancaster', 1],
     'FOUG': ['hi_perf', 1],
     'J8A': ['hi_perf', 1],
     'J8B': ['hi_perf', 1],
