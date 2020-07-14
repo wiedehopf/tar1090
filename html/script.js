@@ -277,7 +277,7 @@ function processReceiverUpdate(data, init) {
             last = now;
             now = data.now;
             today = new Date(now * 1000).getDate();
-            time_delta = last - now;
+            time_delta = now - last;
         }
     }
 
