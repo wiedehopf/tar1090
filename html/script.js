@@ -283,7 +283,7 @@ function processReceiverUpdate(data, init) {
     let acs = data.aircraft;
 
     if (!uat && !init && !globeIndex) {
-        if (data.messages) {
+        if (data.messages && uuid == null) {
             // Detect stats reset
             if (MessageCountHistory.length > 0 && MessageCountHistory[MessageCountHistory.length-1].messages > data.messages) {
                 MessageCountHistory = [{'time' : MessageCountHistory[MessageCountHistory.length-1].time,
