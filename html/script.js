@@ -267,6 +267,7 @@ function processAircraft(ac, init, uat) {
 function processReceiverUpdate(data, init) {
     // update now and last
     let uat = false;
+    let time_delta = 0;
     if (data.uat_978 == "true") {
         uat = true;
         uat_last = uat_now;
@@ -276,6 +277,7 @@ function processReceiverUpdate(data, init) {
             last = now;
             now = data.now;
             today = new Date(now * 1000).getDate();
+            time_delta = last - now;
         }
     }
 
@@ -292,9 +294,6 @@ function processReceiverUpdate(data, init) {
 
             // Note the message count in the history
             MessageCountHistory.push({ 'time' : now, 'messages' : data.messages});
-            // .. and clean up any old values
-            if ((now - MessageCountHistory[0].time) > 30)
-                MessageCountHistory.shift();
 
             if (MessageCountHistory.length > 1) {
                 let message_time_delta = MessageCountHistory[MessageCountHistory.length-1].time - MessageCountHistory[0].time;
@@ -302,17 +301,20 @@ function processReceiverUpdate(data, init) {
                 if (message_time_delta > 0)
                     MessageRate = message_count_delta / message_time_delta;
             }
+
+            // .. and clean up any old values
+            if ((now - MessageCountHistory[0].time) > 10)
+                MessageCountHistory.shift();
         } else if (uuid != null) {
-            let message_delta = 0;
-            for (let j=0; j < acs.length; j++) {
-                let data = acs[j];
-                let plane = Planes[data.hex]
-                if (plane) {
-                    message_delta += (data.messages - plane.messages);
+            if (time_delta > 0.5) {
+                let message_delta = 0;
+                for (let j=0; j < acs.length; j++) {
+                    let data = acs[j];
+                    let plane = Planes[data.hex]
+                    if (plane) {
+                        message_delta += (data.messages - plane.messages);
+                    }
                 }
-            }
-            let time_delta = now - last;
-            if (time_delta > 0.1) {
                 MessageRate = message_delta / time_delta;
             }
         } else {
