@@ -283,23 +283,38 @@ function processReceiverUpdate(data, init) {
     let acs = data.aircraft;
 
     if (!uat && !init && !globeIndex) {
-        // Detect stats reset
-        if (MessageCountHistory.length > 0 && MessageCountHistory[MessageCountHistory.length-1].messages > data.messages) {
-            MessageCountHistory = [{'time' : MessageCountHistory[MessageCountHistory.length-1].time,
-                'messages' : 0}];
-        }
+        if (data.messages) {
+            // Detect stats reset
+            if (MessageCountHistory.length > 0 && MessageCountHistory[MessageCountHistory.length-1].messages > data.messages) {
+                MessageCountHistory = [{'time' : MessageCountHistory[MessageCountHistory.length-1].time,
+                    'messages' : 0}];
+            }
 
-        // Note the message count in the history
-        MessageCountHistory.push({ 'time' : now, 'messages' : data.messages});
-        // .. and clean up any old values
-        if ((now - MessageCountHistory[0].time) > 30)
-            MessageCountHistory.shift();
+            // Note the message count in the history
+            MessageCountHistory.push({ 'time' : now, 'messages' : data.messages});
+            // .. and clean up any old values
+            if ((now - MessageCountHistory[0].time) > 30)
+                MessageCountHistory.shift();
 
-        if (MessageCountHistory.length > 1) {
-            let message_time_delta = MessageCountHistory[MessageCountHistory.length-1].time - MessageCountHistory[0].time;
-            let message_count_delta = MessageCountHistory[MessageCountHistory.length-1].messages - MessageCountHistory[0].messages;
-            if (message_time_delta > 0)
-                MessageRate = message_count_delta / message_time_delta;
+            if (MessageCountHistory.length > 1) {
+                let message_time_delta = MessageCountHistory[MessageCountHistory.length-1].time - MessageCountHistory[0].time;
+                let message_count_delta = MessageCountHistory[MessageCountHistory.length-1].messages - MessageCountHistory[0].messages;
+                if (message_time_delta > 0)
+                    MessageRate = message_count_delta / message_time_delta;
+            }
+        } else if (uuid != null) {
+            let message_delta = 0;
+            for (let j=0; j < acs.length; j++) {
+                let data = acs[j];
+                let plane = Planes[data.hex]
+                if (plane) {
+                    message_delta += (data.messages - plane.messages);
+                }
+            }
+            let time_delta = now - last;
+            if (time_delta > 0.1) {
+                MessageRate = message_delta / time_delta;
+            }
         } else {
             MessageRate = null;
         }
@@ -308,9 +323,6 @@ function processReceiverUpdate(data, init) {
     for (let j=0; j < acs.length; j++) {
         processAircraft(acs[j], init, uat);
     }
-    // jquery stuff might still have references to the json, so null the
-    // aircraft array to make it easier for the garbage collector.
-    //data.aircraft = null;
 }
 
 function fetchData() {
