@@ -1,0 +1,35 @@
+{
+  "name": "tar1090",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": "6.11.1",
+    "npm": "3.10.9"
+  },
+  "dependencies": {
+    "jquery": "3.5.1",
+    "jquery-ui-dist": "1.12.1",
+    "jquery-ui-touch-punch": "0.2.3",
+    "ol": "6.3.1",
+    "ol-layerswitcher": "3.6.0"
+  },
+  "devDependencies": {
+    "npm-check-updates": "^7.0.2"
+  },
+  "description": "![Screenshot1](https://raw.githubusercontent.com/wiedehopf/tar1090/screenshots/screenshot3.png)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wiedehopf/tar1090.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wiedehopf/tar1090/issues"
+  },
+  "homepage": "https://github.com/wiedehopf/tar1090#readme"
+}
