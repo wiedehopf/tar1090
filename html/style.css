@@ -537,6 +537,18 @@ select.error, textarea.error, input.error {
     padding-top: calc( 10px * var(--SCALE));
 }
 
+.infoTable {
+  width: 100%;
+  border-collapse: collapse;
+  padding: 0;
+  margin: 0;
+}
+
+table.infoTable tr td {
+  padding: 0;
+  margin: 0;
+}
+
 .infoRowLine {
 }
 
