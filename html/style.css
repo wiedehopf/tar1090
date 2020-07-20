@@ -165,19 +165,6 @@ html, body {
 	border-bottom-width: calc( 1px * var(--SCALE));
 	border-bottom-style: solid;
 }
-#close-button {
-	display: inline-block;
-	position: absolute;
-	top: calc( 18px * var(--SCALE));
-	color: #67b6c3;
-	right: calc( 30px * var(--SCALE));
-	margin-left: auto;
-	font-size: 75%;
-	text-decoration: underline;
-	cursor: pointer;
-	padding: calc( 3px * var(--SCALE));
-	border-radius: calc( 2px * var(--SCALE));
-}
 
 /* remove the blue highlighting around the map buttons */
 .ol-control button {
@@ -684,6 +671,17 @@ select.error, textarea.error, input.error {
 .settingsCloseBox {
     position: absolute;
     right: calc( 8px * var(--SCALE));
+    top: calc( 8px * var(--SCALE));
+    background-image: url('images/close-settings.png');
+    background-size: cover;
+    width: calc( 20px * var(--SCALE));
+    height: calc( 20px * var(--SCALE));
+    cursor: pointer;
+}
+
+.infoblockCloseBox {
+    position: absolute;
+    right: calc( 20px * var(--SCALE));
     top: calc( 8px * var(--SCALE));
     background-image: url('images/close-settings.png');
     background-size: cover;

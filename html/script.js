@@ -819,18 +819,18 @@ function init_page() {
     });
     */
 
-    $('#close-button').on('click', function() {
-        if (SelectedPlane) {
-            SelectedPlane.selected = null;
-            SelectedPlane.clearLines();
-            SelectedPlane.updateMarker();
-            SelectedPlane = null;
-            refreshSelected();
-            refreshHighlighted();
-            $('#selected_infoblock').hide();
-            refreshTableInfo();
-        }
-    });
+  $('#infoblock_close').on('click', function () {
+    if (SelectedPlane) {
+      SelectedPlane.selected = null;
+      SelectedPlane.clearLines();
+      SelectedPlane.updateMarker();
+      SelectedPlane = null;
+      refreshSelected();
+      refreshHighlighted();
+      $('#selected_infoblock').hide();
+      refreshTableInfo();
+    }
+  });
 
     /*
         // this is a little hacky, but the best, most consitent way of doing this. change the margin bottom of the table container to the height of the overlay
