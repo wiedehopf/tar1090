@@ -145,7 +145,7 @@
 							</div>
 						</div>
                         <div class="infoHeading">
-                            <span title="Aircraft Photo"><div id="selected_photo"></div></span>
+                            <span title="Aircraft Photo"><span id="selected_photo"></span></span>
                         </div>
 						<div class="infoRowLine ">
 							<div class="infoHeading infoRowFluid">
@@ -603,7 +603,7 @@
 					<div class="infoBlockSection">
 						<div class="infoRowLine">
 							<div class="infoHeading infoRowFluid fourColumnSection1">
-								<span title="Navigation accuracy category of the position (95% bound on positions)">NAC<sub>P</sub></sub></span>:
+								<span title="Navigation accuracy category of the position (95% bound on positions)">NAC<sub>P</sub></span>:
 							</div>
 							<div class="infoData infoRowFluid fourColumnSection2">
 								<span id="selected_nac_p">n/a</span>
@@ -787,7 +787,9 @@
 						<div id="dump1090_infoblock">
 							<table style="width: 100%">
                                 <tr>
-                                    <div class="button-flex buttonTable" id="show_map_button"><span class="buttonText">Show Map</span></div>
+									<td>
+										<div class="button-flex buttonTable" id="show_map_button"><span class="buttonText">Show Map</span></div>
+									</td>
                                 </tr>
 
                                 <tr class="infoRowSpacer">
@@ -817,37 +819,44 @@
                                 </tr>
                                 <tr class="infoRowSpacer">
                                 </tr>
-                                <table style="width: 100%">
-                                    <tr class="infoblock_heading">
-                                        <td><span class="infoBlockTitleText">Total Aircraft:</span> <span id="dump1090_total_ac">n/a</span></td>
-                                        <td id="dump1090_message_rate_td"><span class="infoBlockTitleText">Messages:</span> <span id="dump1090_message_rate">n/a</span>/sec</td>
-                                    </tr>
-
-                                    <tr class="infoblock_body">
-                                        <td><span id="with_positions" class="infoBlockTitleText">With Positions:</span> <span id="dump1090_total_ac_positions">n/a</span></td>
-                                        <td id="dump1090_total_history_td"><span class="infoBlockTitleText">History:</span> <span id="dump1090_total_history">n/a</span> positions</td>
-                                    </tr>
-                                </table>
+								<tr>
+									<td>
+										<table style="width: 100%">
+											<tr class="infoblock_heading">
+												<td><span class="infoBlockTitleText">Total Aircraft:</span> <span id="dump1090_total_ac">n/a</span></td>
+												<td id="dump1090_message_rate_td"><span class="infoBlockTitleText">Messages:</span> <span id="dump1090_message_rate">n/a</span>/sec</td>
+											</tr>
+		                                    <tr class="infoblock_body">
+				                                <td><span id="with_positions" class="infoBlockTitleText">With Positions:</span> <span id="dump1090_total_ac_positions">n/a</span></td>
+						                        <td id="dump1090_total_history_td"><span class="infoBlockTitleText">History:</span> <span id="dump1090_total_history">n/a</span> positions</td>
+								            </tr>
+			                            </table>
+									</td>
+								</tr>
 
                                 <tr class="infoRowSpacer">
                                 </tr>
 								<tr class="infoblock_heading">
-                                    <table id="jumpSearch" style="width: 100%">
-                                    <td>
-                                        <form id="search_form">
-                                            <span class="infoBlockTitleText">Search:</span>
-                                            <br>
-                                            <input id="search_input" name="searchBox" type="text" class="searchInput" maxlength="8">
-										</form>
-                                    </td>
-                                    <td>
-                                        <form id="jump_form">
-                                            <span class="infoBlockTitleText">Jump to airport:</span>
-                                            <br>
-                                            <input id="jump_input" name="jumpBox" type="text" class="searchInput" maxlength="4">
-                                        </form>
-                                    </td>
-                                    </table>
+									<td>
+										<table id="jumpSearch" style="width: 100%">
+											<tr>
+												<td>
+													<form id="search_form">
+														<span class="infoBlockTitleText">Search:</span>
+														<br>
+														<input id="search_input" name="searchBox" type="text" class="searchInput" maxlength="8">
+													</form>
+												</td>
+												<td>
+													<form id="jump_form">
+														<span class="infoBlockTitleText">Jump to airport:</span>
+														<br>
+														<input id="jump_input" name="jumpBox" type="text" class="searchInput" maxlength="4">
+													</form>
+												</td>
+											</tr>
+										</table>
+									</td>
 								</tr>
 
                                 <tr class="infoRowSpacer">
@@ -936,7 +945,7 @@
 								<tbody>
 									<tr id="plane_row_template" class="plane_table_row hidden">
 										<td class="icaoCodeColumn">ICAO</td>
-										<td><img style="width: 20px; height=12px" src="" alt="Flag"></td>
+										<td><img style="width: 20px; height: 12px" src="" alt="Flag"></td>
 										<td>FLIGHT</td>
 										<td>REGISTRATION</td>
 										<td>AIRCRAFT_TYPE</td>
