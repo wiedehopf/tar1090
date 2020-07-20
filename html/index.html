@@ -4,7 +4,6 @@
   <head>
     <meta charset="utf-8"/>
     <meta name="mobile-web-app-capable" content="yes">
-
     <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, minimal-ui" />
 
     <script src="jquery/jquery-3.4.1.min.js"></script>
@@ -43,7 +42,6 @@
     </div>
 
     <div id="layout_container">
-
       <div id="highlighted_infoblock">
         <div class="highlightedTitle">
           <div>
@@ -85,11 +83,9 @@
         </div>
       </div>
 
-
       <div id="selected_infoblock" class="hidden">
         <div id="infoblock_close" class="infoblockCloseBox"></div>
         <div class="infoblock-container">
-
           <div class="highlightedTitle">
             <div>
               <span class="identLarge" title="Callsign: Typically the air traffic control callsign or the aircraft's registration, as entered into the transponder by the pilot"><span id="selected_callsign">n/a</span></span>
@@ -97,7 +93,6 @@
             <div>
               <span class="identSmall" title="ICAO / hex id: The aircraft's unique ICAO identification number shown in hexadecimal format"><span id="selected_icao">n/a</span></span>
             </div>
-
           </div>
           <div id=tisb_info class="infoBlockSection hidden">
             <div class="infoRowLine ">
@@ -134,7 +129,6 @@
           </div>
           <div id=reg_info class="infoBlockSection">
             <table class="infoTable">
-
               <tr>
                 <td>
                   <div>
@@ -254,7 +248,6 @@
             </div>
           </div>
           <div class="infoBlockSection">
-
             <div class="infoRowLine">
               <div class="infoHeading infoRowFluid ">
                 <span title="The speed of the aircraft over the ground.">Speed:</span>
@@ -279,10 +272,8 @@
                 <span id="selected_vert_rate">n/a</span>
               </div>
             </div>
-
             <div class="infoRowSpacer">
             </div>
-
             <div class="infoRowLine">
               <div class="infoHeading infoRowFluid fourColumnSection1">
                 <span title="Direction the aircraft is traveling over the ground">Track</span>:
@@ -307,8 +298,6 @@
                 <span id="selected_sitedist2">n/a</span>
               </div>
             </div>
-
-
           </div> <!-- SPATIAL -->
 
           <div class="sectionTitle">
@@ -317,7 +306,6 @@
             </div>
           </div>
           <div class="infoBlockSection">
-
             <div class="infoRowLine">
               <div class="infoHeading infoRowFluid">
                 <span title="Data source for the reported aircraft data (e.g., ADS-B, MLAT, Other Mode S)">Source</span>:
@@ -350,10 +338,8 @@
                 <span id="selected_message_count">n/a</span>
               </div>
             </div>
-
             <div class="infoRowSpacer">
             </div>
-
             <div class="infoRowLine">
               <div class="infoHeading infoRowFluid ">
                 <span title="Time in seconds since a position was received from this aircraft">Last Pos.</span>:
@@ -395,7 +381,6 @@
               </div>
             </div>
           </div> <!-- FMS SEL -->
-
           <div class="sectionTitle">
             <div class="section-title-content">
               Wind
@@ -466,7 +451,6 @@
               </div>
             </div>
           </div>
-
           <div class="sectionTitle">
             <div class="section-title-content">
               Altitude
@@ -514,7 +498,6 @@
               </div>
             </div>
           </div>
-
           <div class="sectionTitle">
             <div class="section-title-content">
               Direction
@@ -570,7 +553,6 @@
               </div>
             </div>
           </div>
-
           <div class="sectionTitle">
             <div class="section-title-content">
               Stuff
@@ -602,7 +584,6 @@
               </div>
             </div>
           </div>
-
           <div class="sectionTitle">
             <div class="section-title-content">
               Accuracy
@@ -649,16 +630,13 @@
                 <span id="selected_rc">n/a</span>
               </div>
             </div>
-
-
           </div>
-
           <div class="bottom-info-container">
             <img src="images/icon-information@2x.png" width="18" height="18"><div class="bottom-info-text"> Learn more about Mode S data type by hovering over each data label.</div>
           </div>
-
         </div>
       </div> <!-- selected_infoblock -->
+
       <div id="map_container">
         <div id="map_canvas"></div>
         <div id="settings_infoblock">
@@ -741,9 +719,9 @@
         </div>
         <div id="header_top" class="infoHeading">
           <div class="buttonContainer">
-            <span id="U" title="only show the U2 and other military planes" class="button inActiveButton" onclick="toggleMilitary();"><span class="buttonText">U</span></span><!--
-            --><span id="H" title="(H)ome / Reset Map" class="button inActiveButton" onclick="resetMap();"><span class="buttonText">H</span></span><!--
-            --><span id="T" title="All (T)racks" class="button inActiveButton" onclick="selectAllPlanes();"><span class="buttonText">T</span></span>
+            <span id="U" title="only show the U2 and other military planes" class="button inActiveButton" onclick="toggleMilitary();"><span class="buttonText">U</span></span>
+            <span id="H" title="(H)ome / Reset Map" class="button inActiveButton" onclick="resetMap();"><span class="buttonText">H</span></span>
+            <span id="T" title="All (T)racks" class="button inActiveButton" onclick="selectAllPlanes();"><span class="buttonText">T</span></span>
           </div>
         </div>
         <div id="header_side" class="infoHeading">
@@ -774,8 +752,6 @@
       <div id="sidebar_container">
         <div id="splitter" class="ui-resizable-handle ui-resizable-w"></div>
         <div id="sidebar_canvas">
-
-
           <div id="sidebar-table">
             <div id="dump1090_infoblock">
               <table style="width: 100%">
@@ -784,10 +760,9 @@
                     <div class="button-flex buttonTable" id="show_map_button"><span class="buttonText">Show Map</span></div>
                   </td>
                 </tr>
-
                 <tr class="infoRowSpacer">
+                    <td></td>
                 </tr>
-
                 <tr id='adsbexchange_header' class="infoblock_row hidden">
                   <td style="text-align: center">
                     <div>
@@ -803,21 +778,22 @@
                   </td>
                 </tr>
                 <tr class="infoRowSpacer">
+                    <td></td>
                 </tr>
-
                 <tr class="infoblock_heading">
                   <td style="text-align: right">
                     <a href="https://github.com/wiedehopf/tar1090#tar1090" id="dump1090_version" target="_blank">tar1090 on github</a>
                   </td>
                 </tr>
                 <tr class="infoRowSpacer">
+                    <td></td>
                 </tr>
                 <tr>
                   <td>
                     <table style="width: 100%">
                       <tr class="infoblock_heading">
-                        <td><span class="infoBlockTitleText">Total Aircraft:</span> <span id="dump1090_total_ac">n/a</span></td>
-                        <td id="dump1090_message_rate_td"><span class="infoBlockTitleText">Messages:</span> <span id="dump1090_message_rate">n/a</span>/sec</td>
+                        <td><span class="infoBlockTitleText" style="width: 50%">Total Aircraft:</span> <span id="dump1090_total_ac">n/a</span></td>
+                        <td id="dump1090_message_rate_td" style="width: 50%"><span class="infoBlockTitleText">Messages:</span> <span id="dump1090_message_rate">n/a</span>/sec</td>
                       </tr>
                       <tr class="infoblock_body">
                         <td><span id="with_positions" class="infoBlockTitleText">With Positions:</span> <span id="dump1090_total_ac_positions">n/a</span></td>
@@ -826,21 +802,21 @@
                     </table>
                   </td>
                 </tr>
-
                 <tr class="infoRowSpacer">
+                    <td></td>
                 </tr>
                 <tr class="infoblock_heading">
                   <td>
                     <table id="jumpSearch" style="width: 100%">
                       <tr>
-                        <td>
+                        <td style="width: 50%">
                           <form id="search_form">
                             <span class="infoBlockTitleText">Search:</span>
                             <br>
                             <input id="search_input" name="searchBox" type="text" class="searchInput" maxlength="8">
                           </form>
                         </td>
-                        <td>
+                        <td style="width: 50%">
                           <form id="jump_form">
                             <span class="infoBlockTitleText">Jump to airport:</span>
                             <br>
@@ -851,15 +827,14 @@
                     </table>
                   </td>
                 </tr>
-
                 <tr class="infoRowSpacer">
+                    <td></td>
                 </tr>
               </table>
             </div> <!-- dump1090_infoblock -->
 
             <button id="filterButton" type="button" class="collapseButton">Filters</button>
             <div class="collapse" id="filter_block">
-
               <form id="altitude_filter_form">
                 <label><span class="infoBlockTitleText">Filter by altitude:</span></label>
                 <br>
@@ -870,46 +845,35 @@
                 <label for="maxAltitude" class="altitudeUnit"></label>
                 <button class="formButton" type="submit">Filter</button>
                 <button class="formButton" id="altitude_filter_reset_button">Reset</button>
-
               </form>
-
               <form id="callsign_filter_form">
                 <label><span class="infoBlockTitleText">Filter by callsign or squawk:</span></label>
                 <br>
                 <input id="callsign_filter" name="callsign" type="text" class="searchInput" maxlength="1024">
                 <button class="formButton" type="submit">Filter</button>
                 <button class="formButton" id="callsign_filter_reset_button">Reset</button>
-
               </form>
-
               <form id="type_filter_form">
                 <label><span title="ICAO type code (A320, B738, etc.)"class="infoBlockTitleText">Filter by type code:</span></label>
                 <br>
                 <input id="type_filter" name="type" type="text" class="searchInput" maxlength="1024">
                 <button class="formButton" type="submit">Filter</button>
                 <button class="formButton" id="type_filter_reset_button">Reset</button>
-
               </form>
-
               <form id="description_filter_form">
                 <label><span title="ICAO type description (L/S/H Landplane/Seaplane/Helicopter 1/2/3/4 Number of P/T/J Reciprocating/Turboprop/Jet Engines" class="infoBlockTitleText">Filter by type description:</span></label>
                 <br>
                 <input id="description_filter" name="description" type="text" class="searchInput" maxlength="1024">
                 <button class="formButton" type="submit">Filter</button>
                 <button class="formButton" id="description_filter_reset_button">Reset</button>
-
               </form>
-
               <form id="icao_filter_form">
                 <label><span class="infoBlockTitleText">Filter by icao hex id:</span></label>
                 <br>
                 <input id="icao_filter" name="description" type="text" class="searchInput" maxlength="1024">
                 <button class="formButton" type="submit">Filter</button>
                 <button class="formButton" id="icao_filter_reset_button">Reset</button>
-
               </form>
-
-
             </div> <!-- filter_block -->
 
             <div id="planes_table">
@@ -968,16 +932,7 @@
               </div>
             </div> <!-- planes_table -->
           </div>
-
-
-
         </div> <!-- sidebar_canvas -->	
-
-
-
-
-
-
       </div> <!-- sidebar_container -->
     </div> <!-- layout_container -->
 
