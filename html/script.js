@@ -3330,7 +3330,7 @@ function getFlightAwareIdentLink(ident, linkText) {
         if (!linkText) {
             linkText = ident;
         }
-        return "<a target=\"_blank\" href=\"https://flightaware.com/live/flight/" + ident.trim() + "\">" + linkText + "</a>";
+        return "<a target=\"_blank\" href=\"https://flightaware.com/live/flight/" + ident.trim() + "\" rel=\"noreferrer\">" + linkText + "</a>";
     }
 
     return "";
@@ -3346,7 +3346,7 @@ function getFlightAwareModeSLink(code, ident, linkText) {
         if (ident != null && ident !== "") {
             linkHtml += "/ident/" + ident.trim();
         }
-        linkHtml += "/redirect\">" + linkText + "</a>";
+        linkHtml += "/redirect\" rel=\"noreferrer\">" + linkText + "</a>";
         return linkHtml;
     }
 
@@ -3355,7 +3355,7 @@ function getFlightAwareModeSLink(code, ident, linkText) {
 
 function getFlightAwarePhotoLink(registration) {
     if (registration !== null && registration !== "") {
-        return "<a target=\"_blank\" href=\"https://flightaware.com/photos/aircraft/" + registration.replace(/[^0-9a-z]/ig,'') + "\">See Photos</a>";
+        return "<a target=\"_blank\" href=\"https://flightaware.com/photos/aircraft/" + registration.replace(/[^0-9a-z]/ig,'') + "\" rel=\"noreferrer\">See Photos</a>";
     }
 
     return "";   
