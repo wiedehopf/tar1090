@@ -3722,6 +3722,9 @@ function processURLParams(){
                 OutlineADSBColor = "#000000";
         }
 
+        if (search.has('centerReceiver')) {
+            OLMap.getView().setCenter(ol.proj.fromLonLat([SiteLon, SiteLat]));
+        }
 
     } catch (error) {
         console.log(error);
