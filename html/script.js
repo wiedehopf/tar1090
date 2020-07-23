@@ -856,7 +856,7 @@ function init_page() {
     // Set up event handlers for buttons
     $("#toggle_sidebar_button").click(toggleSidebarVisibility);
     $("#expand_sidebar_button").click(expandSidebar);
-    $(".toggle_sidebar").click(showMap);
+    $("#shrink_sidebar_button").click(showMap);
 
     $("#large_mode_button").click(toggleLargeMode);
 
@@ -2706,7 +2706,7 @@ function expandSidebar(e) {
     $("#toggle_sidebar_control").hide();
     $("#splitter").hide();
     $("#sudo_buttons").hide();
-    $(".toggle_sidebar").show();
+    $("#shrink_sidebar_button").show();
     $("#sidebar_container").width("100%");
     setColumnVisibility();
     clearTimeout(refreshId);
@@ -2723,7 +2723,7 @@ function showMap() {
     $("#toggle_sidebar_control").show();
     $("#splitter").show();
     $("#sudo_buttons").show();
-    $(".toggle_sidebar").hide();
+    $("#shrink_sidebar_button").hide();
     setColumnVisibility();
     clearTimeout(refreshId);
     fetchData();

@@ -85,7 +85,15 @@ html, body {
     background-image: url("images/hide_sidebar.png");
 }
 
-#toggle_sidebar_button.toggle_sidebar {
+#shrink_sidebar_button {
+    cursor: pointer;
+    width: calc( 30px * var(--SCALE));
+    height: calc( 36px * var(--SCALE));
+    background-size: calc( 28px * var(--SCALE)) calc( 32px * var(--SCALE));
+    background-repeat: no-repeat;
+    background-position: calc( 0px * var(--SCALE));
+    background-color: transparent;
+    border: none;
     float: left;
     background-image: url("images/hide_sidebar.png");
 }
