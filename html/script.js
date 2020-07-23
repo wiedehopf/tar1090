@@ -856,12 +856,11 @@ function init_page() {
     // Set up event handlers for buttons
     $("#toggle_sidebar_button").click(toggleSidebarVisibility);
     $("#expand_sidebar_button").click(expandSidebar);
-    $("#show_map_button").click(showMap);
+    $(".toggle_sidebar").click(showMap);
 
     $("#large_mode_button").click(toggleLargeMode);
 
     // Set initial element visibility
-    $("#show_map_button").hide();
     setColumnVisibility();
 
     // Initialize other controls
@@ -2707,7 +2706,7 @@ function expandSidebar(e) {
     $("#toggle_sidebar_control").hide();
     $("#splitter").hide();
     $("#sudo_buttons").hide();
-    $("#show_map_button").show();
+    $(".toggle_sidebar").show();
     $("#sidebar_container").width("100%");
     setColumnVisibility();
     clearTimeout(refreshId);
@@ -2724,7 +2723,7 @@ function showMap() {
     $("#toggle_sidebar_control").show();
     $("#splitter").show();
     $("#sudo_buttons").show();
-    $("#show_map_button").hide();
+    $(".toggle_sidebar").hide();
     setColumnVisibility();
     clearTimeout(refreshId);
     fetchData();
