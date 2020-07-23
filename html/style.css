@@ -84,6 +84,12 @@ html, body {
 #toggle_sidebar_button.hide_sidebar {
     background-image: url("images/hide_sidebar.png");
 }
+
+#toggle_sidebar_button.toggle_sidebar {
+    float: left;
+    background-image: url("images/hide_sidebar.png");
+}
+
 #large_mode_control {
     display: block;
     position: absolute;
@@ -436,30 +442,13 @@ select.error, textarea.error, input.error {
     cursor: pointer;
     text-align: center;
 }
-.button-flex {
-    background: #67b6c3;
-    width: flex;
-    height: calc( 28px * var(--SCALE));
-    border-radius: calc( 2px * var(--SCALE));
-    -moz-border-radius: calc( 2px * var(--SCALE));
-    -webkit-border-radius: calc( 2px * var(--SCALE));
-    display: inline-block;
-	margin: calc( 6px * var(--SCALE));
-	margin-top: calc( 11px * var(--SCALE));
-	margin-bottom: calc( 11px * var(--SCALE));
-    cursor: pointer;
-    text-align: center;
-}
+
 
 .lightblue-link, .lightblue-link a {
 	color: #67b6c3;
     font-weight: normal;
 }
-
-.buttonTable {
-    margin-bottom: calc( 0px * var(--SCALE));
-}
-
+    
 .settingsContainer {
 	width: calc( 36px * var(--SCALE));
 	height: calc( 36px * var(--SCALE));
