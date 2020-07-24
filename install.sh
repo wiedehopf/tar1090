@@ -137,6 +137,10 @@ fi
 if ! diff tar1090.sh /usr/local/share/tar1090/tar1090.sh &>/dev/null; then
     changed=yes
     while read -r srcdir instance; do
+        if [[ -z "$srcdir" || -z "$instance" ]]; then
+            continue
+        fi
+
         if [[ "$instance" != "tar1090" ]]; then
             service="tar1090-$instance"
         else
@@ -160,6 +164,9 @@ otherport=""
 
 while read -r srcdir instance
 do
+    if [[ -z "$srcdir" || -z "$instance" ]]; then
+        continue
+    fi
     TMP=$(mktemp -d -p $ipath)
     chmod 755 $TMP
 

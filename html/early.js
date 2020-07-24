@@ -124,6 +124,19 @@ function lDateString(date) {
     return string;
 }
 
+// get configuration json files, will be used in initialize function
+let get_receiver_defer = $.ajax({ url: 'data/receiver.json',
+    cache: false,
+    dataType: 'json',
+    timeout: 5000,
+});
+let test_chunk_defer = $.ajax({
+    url:'chunks/chunks.json',
+    cache: false,
+    dataType: 'json',
+    timeout: 4000,
+});
+
 
 if (!heatmap) {
     heatmapDefer.resolve();
@@ -170,19 +183,6 @@ if (!heatmap) {
         });
     }
 }
-
-// get configuration json files, will be used in initialize function
-let get_receiver_defer = $.ajax({ url: 'data/receiver.json',
-    cache: false,
-    dataType: 'json',
-    timeout: 5000,
-});
-let test_chunk_defer = $.ajax({
-    url:'chunks/chunks.json',
-    cache: false,
-    dataType: 'json',
-    timeout: 4000,
-});
 
 if (uuid != null) {
     get_receiver_defer = null;
