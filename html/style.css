@@ -12,6 +12,11 @@ html, body {
 
 }
 
+select {
+    font-size: var(--FS2);
+    height: calc(22px * var(--SCALE));
+}
+
 #tableinfo { font-size: var(--FS2); }
 
 #layout_container {
