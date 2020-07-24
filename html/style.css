@@ -40,7 +40,6 @@ html, body {
 #sidebar_container {
 	display: flex;
 	flex-direction: column;
-    width: flex;
 	left: calc( 0px * var(--SCALE)) !important;
 	height: 100%;
 }
@@ -225,15 +224,7 @@ div#update_error { position: absolute; bottom: calc( 25px * var(--SCALE)); left:
     text-align: center; }
 
 div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right: 0; background: #000; opacity: 0.8; filter: alpha(opacity=80); }
-#spinny { width:  calc(128px * var(--SCALE)); height:  calc(128px * var(--SCALE)); position: absolute; top: 50%; left: 50%; margin: calc( -64px * var(--SCALE)) 0 0 calc( -64px * var(--SCALE)); }
 #loader_progress { width:  calc(250px * var(--SCALE)); height: calc( 20px * var(--SCALE)); position: absolute; top: 50%; left: 50%; margin:  calc(128px * var(--SCALE)) 0 0 - calc(125px * var(--SCALE)); }
-
-
-#sudo_buttons {
-    display: flex;
-    padding: calc( 0px * var(--SCALE)) calc( 40px * var(--SCALE)) calc( 0px * var(--SCALE)) calc( 40px * var(--SCALE));
-    justify-content: space-between;
-}
 
 
 .aircraft_table_header { 
@@ -310,14 +301,6 @@ select.error, textarea.error, input.error {
 }
 
 /* new css */
-.rangeRingText
-{
-    font-weight: bold;
-    font-size: calc( 8px * var(--SCALE));
-    color: #333333;
-    color: rgb(51, 51, 51);
-}
-
 .dateTime
 {
     font-weight: bold;
@@ -360,12 +343,6 @@ select.error, textarea.error, input.error {
     padding-top: calc( 10px * var(--SCALE));
 }
 
-.settingsHeading
-{
-    font-size: 110%;
-    line-height: calc( 20px * var(--SCALE));
-    color: #003f4b;
-}
 
 .settingsText
 {
@@ -388,7 +365,6 @@ select.error, textarea.error, input.error {
 	right: calc( 0px * var(--SCALE));
 	top:  calc(140px * var(--SCALE));
     width: calc( 38px * var(--SCALE));
-    height: flex;
     z-index: 9;
 }
 #header_top {
@@ -396,20 +372,10 @@ select.error, textarea.error, input.error {
 	position: absolute;
 	right: calc( 94px * var(--SCALE));
 	top: calc( 0px * var(--SCALE));
-    width: flex;
     height: calc( 38px * var(--SCALE));
     z-index: 9;
 }
 
-.adsbLogo {
-    padding-left: calc( 20px * var(--SCALE));
-    padding-top: calc( 30px * var(--SCALE));
-    padding-bottom: calc( 5px * var(--SCALE));
-}
-
-.logoContainer {
-    flex: 1;
-}
 
 .buttonContainer {
 	display: block;
@@ -520,11 +486,6 @@ select.error, textarea.error, input.error {
     padding-bottom: calc( 12px * var(--SCALE));
 }
 
-.infoRowTitle {
-}
-
-.infoRowContent {
-}
 
 .infoRowFluid {
 	display: inline-block;
@@ -544,9 +505,6 @@ select.error, textarea.error, input.error {
 table.infoTable tr td {
   padding: 0;
   margin: 0;
-}
-
-.infoRowLine {
 }
 
 .infoRowSpacer {
@@ -580,17 +538,6 @@ table.infoTable tr td {
     padding-right: calc( 5px * var(--SCALE));
 }
 
-.infoBlockTopSection {
-    padding-top: calc( 14px * var(--SCALE));
-    padding-bottom: calc( 14px * var(--SCALE));
-    padding-left: calc( 8px * var(--SCALE));
-}
-
-.infoBlock45pxSection {
-    height: calc( 45px * var(--SCALE));
-    line-height: calc( 45px * var(--SCALE));
-    padding-left: calc( 10px * var(--SCALE));
-}
 
 .infoBlockSection {
     padding-top: calc( 8px * var(--SCALE));
@@ -599,9 +546,6 @@ table.infoTable tr td {
     padding-right: calc( 5px * var(--SCALE));
 }
 
-.lightGreyBackground {
-    background-color: #efefef;
-}
 
 #dump1090_infoblock {
 }
@@ -623,14 +567,6 @@ table.infoTable tr td {
     color: #003f4b;
 }
 
-.legendBox {
-    width: calc( 15px * var(--SCALE));
-    height: calc( 15px * var(--SCALE));
-    border: calc( 1px * var(--SCALE)) solid #efefef;
-    border-radius: calc( 4px * var(--SCALE));
-    -moz-border-radius: calc( 4px * var(--SCALE));
-    -webkit-border-radius: calc( 4px * var(--SCALE));
-}
 
 
 .legendTitle {
@@ -730,13 +666,6 @@ table.infoTable tr td {
 */
 
 
-.bottom-container {
-	width: 100%;
-	margin-top: calc( 8px * var(--SCALE));
-	padding: calc( 40px * var(--SCALE)) calc( 0px * var(--SCALE));
-	text-align: center;
-	background-color: #eee;
-}
 #selected_flightaware_link a {
 	background-color: #67b6c3;
 	color: white;
@@ -759,13 +688,7 @@ table.infoTable tr td {
 	vertical-align: middle;
 	display: inline;
 }
-.selected_airframe a {
-	color: #003f4b;
-}
 
-.infoblock-container-small .infoRowFluid {
-	display: block;
-}
 
 /* Retina 2x images */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { 
