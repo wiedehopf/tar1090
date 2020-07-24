@@ -39,7 +39,7 @@
   </head>
 
   <body onload="initialize()">
-    <div id="loader" >
+    <div id="loader">
       <progress id="loader_progress"></progress>
     </div>
 
@@ -51,35 +51,35 @@
             <span class="identLarge"><span id="highlighted_callsign">n/a</span></span>
           </div>
           <div>
-            <span class="identSmall"> <span id="highlighted_pf_route"></span></span>
+            <span class="identSmall"><span id="highlighted_pf_route"></span></span>
           </div>
         </div>
         <div class="infoBlockSection">
-          <div class="infoRowLine">
+          <div>
             <div class="infoHeading infoRowFluid"><span>Registration: </span></div>
             <div class="infoData infoRowFluid"><span id="highlighted_registration">n/a</span></div>
           </div>
-          <div class="infoRowLine">
+          <div>
             <div class="infoHeading infoRowFluid"><span>Aircraft Type: </span></div>
             <div class="infoData infoRowFluid"><span id="highlighted_icaotype">n/a</span></div>
           </div>
           <div class="infoRowSpacer">
           </div>
-          <div class="infoRowLine">
+          <div>
             <div class="infoHeading infoRowFluid"><span>Altitude: </span></div>
             <div class="infoData infoRowFluid"><span id="highlighted_altitude">n/a</span></div>
           </div>
-          <div class="infoRowLine">
+          <div>
             <div class="infoHeading infoRowFluid"><span>Speed: </span></div>
             <div class="infoData infoRowFluid"><span id="highlighted_speed">n/a</span></div>
           </div>
           <div class="infoRowSpacer">
           </div>
-          <div class="infoRowLine">
+          <div>
             <div class="infoHeading infoRowFluid"><span>Source: </span></div>
             <div class="infoData infoRowFluid"><span id="highlighted_source">n/a</span></div>
           </div>
-          <div class="infoRowLine">
+          <div>
             <div class="infoHeading infoRowFluid"><span>RSSI: </span></div>
             <div class="infoData infoRowFluid"><span id="highlighted_rssi">n/a</span></div>
           </div>
@@ -101,7 +101,7 @@
 
           </div>
           <div id=tisb_info class="infoBlockSection hidden">
-            <div class="infoRowLine ">
+            <div class="infoRowLine">
               <div class="infoHeading infoRowFluid">
                 <span title="TIS-B link">
                   <a style="color: blue" target="_blank" href="https://www.skybrary.aero/index.php/Traffic_Information_Service_-_Broadcast_(TIS-B)" rel="noreferrer">TIS-B target</a></span>
@@ -111,7 +111,7 @@
             </div>
             <div class="infoRowSpacer">
             </div>
-            <div class="infoRowLine ">
+            <div class="infoRowLine">
               <div class="infoHeading infoRowFluid">
                 <span>No <a style="color: blue" target="_blank" href="https://en.wikipedia.org/wiki/Aviation_transponder_interrogation_modes#ICAO_24-bit_address" rel="noreferrer">ICAO 24 bit address</a></span>
               </div>
@@ -207,7 +207,7 @@
           <div id="history_collapse" class="collapse">
             <div class="infoRowSpacer">
             </div>
-            <div class=identSmall id="trace_date">
+            <div class="identSmall" id="trace_date">
             </div>
             <div class="infoRowSpacer">
             </div>
@@ -217,7 +217,7 @@
             </div>
             <div class="infoRowSpacer">
             </div>
-            <div class=identSmall id="leg_sel">
+            <div class="identSmall" id="leg_sel">
             </div>
             <div class="infoRowSpacer">
             </div>
@@ -227,7 +227,7 @@
             </div>
             <div class="infoRowSpacer">
             </div>
-            <div class=identSmall id="trace_time">
+            <div class="identSmall" id="trace_time">
             </div>
             <div class="infoRowSpacer">
             </div>
@@ -245,7 +245,7 @@
             </div>
             <div class="infoRowSpacer">
             </div>
-            <div class="infoRowLine">
+            <div>
               Click on the trace line to start playback!
             </div>
           </div>
@@ -256,27 +256,27 @@
           </div>
           <div class="infoBlockSection">
 
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid ">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="The speed of the aircraft over the ground.">Speed:</span>
               </div>
-              <div class="infoData infoRowFluid ">
+              <div class="infoData infoRowFluid">
                 <span id="selected_speed1">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid ">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="The uncorrected pressure-derived height of the aircraft above mean sea level (based on barometric pressure)">Altitude</span>:
               </div>
-              <div class="infoData infoRowFluid ">
+              <div class="infoData infoRowFluid">
                 <span id="selected_altitude1"></span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid ">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="Rate of climb or descent">Vert. Rate</span>:
               </div>
-              <div class="infoData infoRowFluid ">
+              <div class="infoData infoRowFluid">
                 <span id="selected_vert_rate">n/a</span>
               </div>
             </div>
@@ -284,27 +284,27 @@
             <div class="infoRowSpacer">
             </div>
 
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="Direction the aircraft is traveling over the ground">Track</span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_track1">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid ">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="Latitude and longitude coordinates of the aircraft's last known position">Pos.:</span>
               </div>
-              <div class="infoData infoRowFluid ">
+              <div class="infoData infoRowFluid">
                 <span id="selected_position">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid ">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="Distance of the aircraft from your ADS-B site at its last known position">Distance</span>:
               </div>
-              <div class="infoData infoRowFluid ">
+              <div class="infoData infoRowFluid">
                 <span id="selected_sitedist2">n/a</span>
               </div>
             </div>
@@ -319,7 +319,7 @@
           </div>
           <div class="infoBlockSection">
 
-            <div class="infoRowLine">
+            <div>
               <div class="infoHeading infoRowFluid">
                 <span title="Data source for the reported aircraft data (e.g., ADS-B, MLAT, Other Mode S)">Source</span>:
               </div>
@@ -327,27 +327,27 @@
                 <span id="selected_source">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="Signal strength from this aircraft on your receiver in dBFS">RSSI</span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_rssi1">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid ">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="Number of messages received from this aircraft per second (averaged over the last 2 update intervals)">Msg. Rate</span>:
               </div>
-              <div class="infoData infoRowFluid ">
+              <div class="infoData infoRowFluid">
                 <span id="selected_message_rate">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="The total number of messages received from the aircraft by your ADS-B site">Messages</span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_message_count">n/a</span>
               </div>
             </div>
@@ -355,19 +355,19 @@
             <div class="infoRowSpacer">
             </div>
 
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid ">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="Time in seconds since a position was received from this aircraft">Last Pos.</span>:
               </div>
-              <div class="infoData infoRowFluid ">
+              <div class="infoData infoRowFluid">
                 <span id="selected_seen_pos">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="Time in seconds since a message was received from this aircraft">Last Seen</span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_seen">n/a</span>
               </div>
             </div>
@@ -379,19 +379,19 @@
             </div>
           </div>
           <div class="infoBlockSection">
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="The selected altitude in the aircraft's flight management system">Sel. Alt.</span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_nav_altitude">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="The selected heading in the aircraft's flight management system">Sel. Head.</span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_nav_heading">n/a</span>
               </div>
             </div>
@@ -403,27 +403,27 @@
             </div>
           </div>
           <div class="infoBlockSection">
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="Calculated Wind speed">Speed</span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_ws">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="Calculated wind is blowing out of this direction">Direction (from)</span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_wd">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="Total (TAT) / Static (SAT/OAT) air temperature calculated using Mach and true airspeed">TAT / OAT</span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_temp">n/a</span>
               </div>
             </div>
@@ -434,35 +434,35 @@
             </div>
           </div>
           <div class="infoBlockSection">
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid ">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="The speed of the aircraft over the ground">Ground:</span>
               </div>
-              <div class="infoData infoRowFluid ">
+              <div class="infoData infoRowFluid">
                 <span id="selected_speed2">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid ">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="True airspeed (the speed of the aircraft relative to the airmass in which it is flying)">True</span>:
               </div>
-              <div class="infoData infoRowFluid ">
+              <div class="infoData infoRowFluid">
                 <span id="selected_tas">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid ">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="Indicated airspeed (the airspeed read directly from the airspeed indicator on the aircraft)">Indicated:</span>
               </div>
-              <div class="infoData infoRowFluid ">
+              <div class="infoData infoRowFluid">
                 <span id="selected_ias">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid ">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="The ratio of the speed of the aircraft to the speed of sound in the surrounding space">Mach</span>:
               </div>
-              <div class="infoData infoRowFluid ">
+              <div class="infoData infoRowFluid">
                 <span id="selected_mach">n/a</span>
               </div>
             </div>
@@ -474,31 +474,31 @@
             </div>
           </div>
           <div class="infoBlockSection">
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid ">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="The uncorrected pressure-derived height of the aircraft above mean sea level (based on barometric pressure)">Barometric</span>:
               </div>
-              <div class="infoData infoRowFluid ">
+              <div class="infoData infoRowFluid">
                 <span id="selected_altitude2"></span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid ">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="Rate of climb or descent (derived from barometric altitude)">Baro. Rate</span>:
               </div>
-              <div class="infoData infoRowFluid ">
+              <div class="infoData infoRowFluid">
                 <span id="selected_baro_rate">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid ">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="The height of the aircraft (usually height above the WGS84 ellipsoid and derived from avionics which may be inertial or GNSS/satellite-based)">Geometric</span>:
               </div>
-              <div class="infoData infoRowFluid ">
+              <div class="infoData infoRowFluid">
                 <span id="selected_altitude_geom">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
+            <div>
               <div class="infoHeading infoRowFluid fourColumnSection3">
                 <span title="Rate of climb or descent (derived from avionics which may be inertial or GNSS/satellite-based)">Geom. Rate</span>:
               </div>
@@ -506,11 +506,11 @@
                 <span id="selected_geom_rate">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="The altimeter/QNH setting used by the aircraft's navigation systems">QNH</span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_nav_qnh">n/a</span>
               </div>
             </div>
@@ -522,51 +522,51 @@
             </div>
           </div>
           <div class="infoBlockSection">
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="Direction the aircraft is traveling over the ground">Ground Track</span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_track2">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="The aircraft's nose heading relative to true north">True Heading</span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_true_heading">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="The aircraft's nose heading relative to magnetic north">Magnetic Heading</span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_mag_heading">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="Magnetic Declination looked up from the World Magnetic Model">Magnetic Decl.</span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_mag_declination">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="Rate of turn of the ground track">Track Rate</span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_trackrate">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="The aircraft's roll angle">Roll</span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_roll">n/a</span>
               </div>
             </div>
@@ -578,27 +578,27 @@
             </div>
           </div>
           <div class="infoBlockSection">
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="The enabled navigation modes as reported by the aircraft (i.e., auto-pilot, Traffic Collision Avoidance System, altitude hold, approach, LNAV approach, and/or VNAV approach)">Nav. Modes</span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_nav_modes">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="For ADS-B-equipped aircraft, the version of ADS-B to which the aircraft conforms, as reported by the aircraft">ADS-B Ver.</span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_version">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="Aircraft category code as reported by the aircraft, this indicates the type of aircraft and, for airplanes, a relative indicator of its size">Category</span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_category">n/a</span>
               </div>
             </div>
@@ -610,43 +610,43 @@
             </div>
           </div>
           <div class="infoBlockSection">
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="Navigation accuracy category of the position (95% bound on positions)">NAC<sub>P</sub></span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_nac_p">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="Surveillance integrity level (probability of positions lying outside the claimed radius of containment)">SIL</span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_sil">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="Navigation accuracy category of the velocity (95% bound on velocities)">NAC<sub>V</sub></span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_nac_v">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="Whether the reported pressure altitude has been crosschecked against another source of pressure altitude">NIC<sub>BARO</sub></span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_nic_baro">n/a</span>
               </div>
             </div>
-            <div class="infoRowLine">
-              <div class="infoHeading infoRowFluid fourColumnSection1">
+            <div>
+              <div class="infoHeading infoRowFluid">
                 <span title="Radius of containment, the reported position of the aircraft is expected to be within this distance of the true position, with a failure rate defined by SIL">R<sub>C</sub></span>:
               </div>
-              <div class="infoData infoRowFluid fourColumnSection2">
+              <div class="infoData infoRowFluid">
                 <span id="selected_rc">n/a</span>
               </div>
             </div>
