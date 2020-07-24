@@ -151,9 +151,6 @@ let MessageRate = 0;
 let layers;
 let layers_group;
 
-// piaware vs flightfeeder
-let isFlightFeeder = false;
-
 let estimateStyle = new ol.style.Style({
     stroke: new ol.style.Stroke({
         color: '#808080',
@@ -778,8 +775,6 @@ function initialize() {
 function init_page() {
     // Set page basics
     document.title = PageName;
-
-    //flightFeederCheck();
 
     PlaneRowTemplate = document.getElementById("plane_row_template");
 
@@ -2705,7 +2700,6 @@ function expandSidebar(e) {
     mapIsVisible = false;
     $("#toggle_sidebar_control").hide();
     $("#splitter").hide();
-    $("#sudo_buttons").hide();
     $("#shrink_sidebar_button").show();
     $("#sidebar_container").width("100%");
     setColumnVisibility();
@@ -2722,7 +2716,6 @@ function showMap() {
     mapIsVisible = true;
     $("#toggle_sidebar_control").show();
     $("#splitter").show();
-    $("#sudo_buttons").show();
     $("#shrink_sidebar_button").hide();
     setColumnVisibility();
     clearTimeout(refreshId);
@@ -3385,32 +3378,6 @@ function toggleLayer(element, layer) {
             }
         });
     });
-}
-
-// check status.json if it has a serial number for a flightfeeder
-function flightFeederCheck() {
-    $.ajax('/status.json', {
-        success: function(data) {
-            if (data.type === "flightfeeder") {
-                isFlightFeeder = true;
-                updatePiAwareOrFlightFeeder();
-            }
-        }
-    })
-}
-
-// updates the page to replace piaware with flightfeeder references
-function updatePiAwareOrFlightFeeder() {
-    if (isFlightFeeder) {
-        $('.piAwareLogo').hide();
-        $('.flightfeederLogo').show();
-        PageName = 'FlightFeeder SkyAware';
-    } else {
-        $('.flightfeederLogo').hide();
-        $('.piAwareLogo').show();
-        PageName = 'PiAware SkyAware';
-    }
-    refreshPageTitle();
 }
 
 function fetchPfData() {
@@ -4388,23 +4355,6 @@ function drawUpintheair() {
             // no rings available, do nothing
         });
     }
-}
-
-function solidGoldT() {
-    solidT = true;
-    let list = [[], [], [], []];
-    for (let i = 0; i < PlanesOrdered.length; i++) {
-        let plane = PlanesOrdered[i];
-        //console.log(plane);
-        if (plane.seen_pos && plane.seen_pos < 1200) {
-            plane.visible = true;
-            list[Math.floor(4*i/PlanesOrdered.length)].push(plane);
-        }
-    }
-    getTrace(null, null, {onlyFull: true, list: list[0],});
-    getTrace(null, null, {onlyFull: true, list: list[1],});
-    getTrace(null, null, {onlyFull: true, list: list[2],});
-    getTrace(null, null, {onlyFull: true, list: list[3],});
 }
 
 function gotoTime(timestamp) {
