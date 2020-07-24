@@ -8,15 +8,6 @@ trap 'echo ERROR on line number $LINENO' ERR
 
 RUN_DIR=$1
 SRC_DIR=$2
-INTERVAL=$3
-HISTORY_SIZE=$4
-CHUNK_SIZE=$5
-
-ENABLE_978=$6
-URL_978=$7
-INT_978=$8
-PF_URL=$9
-COMPRESS_978=${10}
 
 if ! [[ -d $RUN_DIR ]]; then
     echo "runtime directory ( $RUN_DIR ) is not a directory, fatal error!"
@@ -42,6 +33,12 @@ if [[ -z $INT_978 ]]; then
 fi
 if (( ${#INT_978} > 2 )) || (( ${#INT_978} < 1 )); then
 	INT_978=1
+fi
+
+if (( ${#GZIP_LVL} < 1 || ${#GZIP_LVL} > 9 ));
+then
+	echo "gzip level unspecified, using level 3"
+    GZIP_LVL=3
 fi
 
 
@@ -100,6 +97,7 @@ do
 
 	cp empty.gz current_small.gz
 	cp empty.gz current_large.gz
+    touch chunk_list
 
 	# integrate original dump1090-fa history on startup so we don't start blank
     if [[ -f "$SRC_DIR"/history_0.json ]]; then
@@ -111,7 +109,7 @@ do
             fi
         done
 
-        if sed -e '1i{ "files" : [' -e '$a]}' -e '$d' history_*.json | gzip -9 > temp.gz; then
+        if sed -e '1i{ "files" : [' -e '$a]}' -e '$d' history_*.json | gzip -1 > temp.gz; then
             new_chunk temp.gz
         fi
         # cleanup
@@ -154,7 +152,7 @@ do
 
 		if [[ $((i%6)) == 5 ]]
 		then
-			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' history_*.json | gzip -4 > temp.gz
+			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' history_*.json | gzip -1 > temp.gz
 			mv temp.gz current_large.gz
 			cp empty.gz current_small.gz
 			rm -f latest_*.json
@@ -173,7 +171,7 @@ do
 
 		if [[ $i == "$CHUNK_SIZE" ]]
 		then
-			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' history_*.json | gzip -9 > temp.gz
+			sed -e '1i{ "files" : [' -e '$a]}' -e '$d' history_*.json | gzip "-$GZIP_LVL" > temp.gz
 			new_chunk temp.gz
 			cp empty.gz current_small.gz
 			cp empty.gz current_large.gz
