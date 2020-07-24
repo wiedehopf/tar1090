@@ -790,6 +790,7 @@ PlaneObject.prototype.updateIcon = function() {
                     offsetX: (this.baseMarker.w *0.5*0.74*this.scale),
                     offsetY: (this.baseMarker.w *0.5*0.74*this.scale),
                 }),
+                zIndex: this.zIndex,
             });
         } else {
             this.markerStyle = new ol.style.Style({
@@ -1202,7 +1203,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.zIndex = 5;
     } else {
         this.onGround = false;
-        this.zIndex = this.alt_rounded + 10000;
+        this.zIndex = this.altitude + 10000;
     }
     if (this.category == 'C3' || this.icaoType == 'TWR') {
         this.zIndex = 1;
