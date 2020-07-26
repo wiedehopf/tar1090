@@ -21,6 +21,8 @@ let heatLoaded = 0;
 let heatmapDefer = $.Deferred();
 let heatChunks = [];
 let heatPoints = [];
+let replay = false;
+let rData = [];
 
 let databaseFolder = "db2";
 
@@ -57,7 +59,7 @@ try {
     if (search.has('L3Harris') || search.has('l3harris'))
         l3harris = true;
 
-    if (search.has('heatmap')) {
+    if (search.has('heatmap') || search.has('replay')) {
 
         heatmap = {};
 
@@ -66,6 +68,12 @@ try {
         heatmap.duration = 24;
         heatmap.end = (new Date()).getTime();
 
+        if (search.has('replay')) {
+            replay = {
+                ival: 60 * 1000,
+                speed: 5,
+            };
+        }
 
         let tmp = parseFloat(search.get('heatDuration'));
         if (!isNaN(tmp))
