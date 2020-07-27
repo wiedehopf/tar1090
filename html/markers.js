@@ -589,11 +589,21 @@ let TypeDesignatorIcons = {
     'C550': ['jet_nonswept', 1],
     'C560': ['jet_nonswept', 1],
     'C56X': ['jet_nonswept', 1], // 9t
+    'LJ23': ['jet_nonswept', 1],
+    'LJ24': ['jet_nonswept', 1],
+    'LJ25': ['jet_nonswept', 1],
+    'LJ28': ['jet_nonswept', 1],
+    'LJ31': ['jet_nonswept', 1],
     'LJ35': ['jet_nonswept', 1], // 8t
-    'LJ35': ['jet_nonswept', 1], // 8t
-    'LR35': ['jet_nonswept', 1], // wrong but in database
+    'LR35': ['jet_nonswept', 1], // wrong but in DB
+    'LJ40': ['jet_nonswept', 1],
+    'LJ45': ['jet_nonswept', 1],
+    'LR45': ['jet_nonswept', 1], // wrong but in DB
+    'LJ55': ['jet_nonswept', 1],
     'LJ60': ['jet_nonswept', 1], // 10t
-    'LR45': ['jet_nonswept', 1], // 10t
+    'LJ70': ['jet_nonswept', 1],
+    'LJ75': ['jet_nonswept', 1],
+    'LJ85': ['jet_nonswept', 1],
 
     'C650': ['jet_nonswept', 1.03], // 11t
     'G150': ['jet_nonswept', 1.03], // 11t
