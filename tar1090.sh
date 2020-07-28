@@ -10,17 +10,23 @@ RUN_DIR=$1
 SRC_DIR=$2
 
 if ! [[ -d $RUN_DIR ]]; then
-    echo "runtime directory ( $RUN_DIR ) is not a directory, fatal error!"
+    echo "runtime directory (first argument: $RUN_DIR) is not a directory, fatal error!"
+    exit 1
+fi
+if ! [[ -z $SRC_DIR ]]; then
+    echo "source directory (2nd argument) not specified, fatal error!"
     exit 1
 fi
 
 if [[ -z $HISTORY_SIZE || -z $INTERVAL || -z $CHUNK_SIZE ]]
 then
-    echo "Syntax: bash tar1090.sh <runtime directory> <dump1090 source directory> <history interval> <history size> <chunk size> <enable 978 yes/no> <URL for 978 aircraft.json> <interval 978 is updated>"
+    echo "Syntax: bash tar1090.sh <runtime directory> <dump1090 source directory>"
     echo "Missing some settings from environment variables, using defaults:"
     echo "history interval: 8 seconds"
     echo "history size: 450 entries"
     echo "chunk size: 60 entries"
+    echo "really either use the file named default as a systemd environment file or export those variables yourself"
+    echo "in other words: figure it out ;)"
     INTERVAL=8
     HISTORY_SIZE=450
     CHUNK_SIZE=60
