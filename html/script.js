@@ -106,6 +106,7 @@ let globalCompositeTested = false;
 let solidT = false;
 let lastActive = new Date().getTime();
 let firstFetchDone = false;
+let overrideMapType = null;
 
 let shareLink = '';
 
@@ -607,6 +608,9 @@ function initialize() {
 
         if (search.has('hideButtons'))
             hideButtons = true;
+
+        if (search.has('baseMap'))
+            overrideMapType = search.get('baseMap');
 
         icaoFilter = search.get('icaoFilter');
         if (icaoFilter)
@@ -1275,7 +1279,9 @@ function initialize_map() {
     CenterLat = Number(localStorage['CenterLat']) || DefaultCenterLat;
     ZoomLvl = Number(localStorage['ZoomLvl']) || DefaultZoomLvl;
     ZoomLvlCache = ZoomLvl;
-    if (localStorage['MapType_tar1090']) {
+    if (overrideMapType)
+        MapType_tar1090 = overrideMapType;
+    else if (localStorage['MapType_tar1090']) {
         MapType_tar1090 = localStorage['MapType_tar1090'];
     }
 
