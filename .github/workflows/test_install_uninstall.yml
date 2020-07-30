@@ -1,0 +1,40 @@
+name: Test Install and Uninstall
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  test_install_uninstall:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Creating fake aircraft.json
+      run: |
+        mkdir -p /tmp/readsb
+        touch /tmp/readsb/aircraft.json
+        chmod a+rx /tmp/readsb
+        chmod a+r /tmp/readsb/aircraft.json
+    - name: Creating fake systemctl
+      run: |
+        echo '#!/bin/bash' > /tmp/fake_systemctl
+        echo "echo -e '\033[1;35m'systemctl called: \$@'\033[0m'" >> /tmp/fake_systemctl
+        chmod a+x /tmp/fake_systemctl
+    - name: Creating debian container
+      run: |
+        docker kill tar1090_testing > /dev/null 2>&1 || true
+        docker run --rm -d --name=tar1090_testing -v "$PWD:/workdir" -v "/tmp/fake_systemctl:/usr/bin/systemctl" -v "/tmp/readsb:/run/readsb" --workdir=/workdir debian:stable-slim sleep 3600
+    - name: Testing install.sh
+      run: docker exec -i tar1090_testing bash -x ./install.sh
+    - name: Testing uninstall.sh
+      run: docker exec -i tar1090_testing bash -x ./uninstall.sh
+    - name: Cleaning up
+      run: |
+        docker kill tar1090_testing
+        rm -r /tmp/readsb
+        rm /tmp/fake_systemctl
