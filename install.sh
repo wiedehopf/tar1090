@@ -18,14 +18,14 @@ then
 fi
 
 command_package="git git/jq jq/"
-packages=""
+packages=()
 
 while read -r -d '/' CMD PKG
 do
     if ! command -v "$CMD" &>/dev/null
     then
         echo "command $CMD not found, will try to install package $PKG"
-        packages+="$PKG "
+        packages+=($PKG)
     fi
 done < <(echo "$command_package")
 
@@ -33,7 +33,7 @@ if [[ -n "$packages" ]]
 then
     echo "Installing required packages: $packages"
     apt-get update || true
-    apt-get install -y $packages || true
+    apt-get install -y "${packages[@]}" || true
     hash -r || true
     while read -r -d '/' CMD PKG
     do
