@@ -28,8 +28,8 @@ jobs:
     - name: Creating debian container
       run: docker run --rm -d --name=tar1090_testing -v "/tmp/fake_systemctl:/usr/bin/systemctl" -v "$(pwd)":"/workdir" -v "/tmp/readsb:/run/readsb" --workdir=/workdir debian:stable-slim sleep 86400
     - name: Testing install.sh
-      run: docker exec -i tar1090_testing ./install.sh
+      run: docker exec -i --workdir=/workdir tar1090_testing ./install.sh
     - name: Testing uninstall.sh
-      run: docker exec -i tar1090_testing ./uinstall.sh
+      run: docker exec -i --workdir=/workdir tar1090_testing ./uinstall.sh
     - name: Cleaning up
       run: docker kill tar1090_testing
