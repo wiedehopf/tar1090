@@ -9,7 +9,7 @@ else
     rm -f /etc/lighttpd/conf-enabled/*tar1090*
 fi
 echo --------------
-echo "Removing tar1090, instance name ${instance}!"
+echo "Removing tar1090, instance name $instance!"
 echo --------------
 
 systemctl stop "$instance"
@@ -18,13 +18,13 @@ systemctl disable "$instance"
 
 #rm -f /etc/default/$instance
 echo "Configuration is left to be removed manually, you can use this command:"
-echo "sudo rm /etc/default/${instance}"
-rm -f "/lib/systemd/system/${instance}.service"
+echo "sudo rm /etc/default/$instance"
+rm -f "/lib/systemd/system/$instance.service"
 
-rm -f "/etc/lighttpd/conf-available/88-${instance}.conf"
-rm -f "/etc/lighttpd/conf-enabled/88-${instance}.conf"
-rm -f "/etc/lighttpd/conf-available/99-${instance}-webroot.conf"
-rm -f "/etc/lighttpd/conf-enabled/99-${instance}-webroot.conf"
+rm -f "/etc/lighttpd/conf-available/88-$instance.conf"
+rm -f "/etc/lighttpd/conf-enabled/88-$instance.conf"
+rm -f "/etc/lighttpd/conf-available/99-$instance-webroot.conf"
+rm -f "/etc/lighttpd/conf-enabled/99-$instance-webroot.conf"
 
 
 systemctl daemon-reload
