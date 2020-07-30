@@ -9,6 +9,7 @@ if ! [[ -d $RUN_DIR ]]; then
     echo "runtime directory (first argument: $RUN_DIR) is not a directory, fatal error!"
     exit 1
 fi
+
 if [[ -z $SRC_DIR ]]; then
     echo "source directory (2nd argument) not specified, fatal error!"
     exit 1
