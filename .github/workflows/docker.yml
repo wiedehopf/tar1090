@@ -14,22 +14,22 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Test install.sh/uninstall.sh
+    - name: Creating fake aircraft.json
       run: |
-        echo -e "\033[1;34m========== Creating fake aircraft.json ==========\033[0m"
         mkdir -p /tmp/readsb
         touch /tmp/readsb/aircraft.json
         chmod a+rx /tmp/readsb
         chmod a+r /tmp/readsb/aircraft.json
-        echo -e "\033[1;34m========== Creating fake systemctl ==========\033[0m"
+    - name: Creating fake systemctl
+      run: |
         echo '#!/bin/bash' > /tmp/fake_systemctl
         echo "echo -e '\033[1;35m'systemctl called: \$@'\033[0m'" >> /tmp/fake_systemctl
         chmod a+x /tmp/fake_systemctl
-        echo -e "\033[1;34m========== Creating debian container ==========\033[0m"
-        docker run --rm -d --name=tar1090_testing -v "/tmp/fake_systemctl:/usr/bin/systemctl" -v "$(pwd)":"/workdir" -v "/tmp/readsb:/run/readsb" --workdir=/workdir debian:stable-slim sleep 86400
-        echo -e "\033[1;34m========== Testing install.sh ==========\033[0m"
-        docker exec -i tar1090_testing ./install.sh
-        echo -e "\033[1;34m========== Testing uninstall.sh ==========\033[0m"
-        docker exec -i tar1090_testing ./uinstall.sh
-        echo -e "\033[1;34m========== Cleaning up ==========\033[0m"
-        docker kill tar1090_testing
+    - name: Creating debian container
+      run: docker run --rm -d --name=tar1090_testing -v "/tmp/fake_systemctl:/usr/bin/systemctl" -v "$(pwd)":"/workdir" -v "/tmp/readsb:/run/readsb" --workdir=/workdir debian:stable-slim sleep 86400
+    - name: Testing install.sh
+      run: docker exec -i tar1090_testing ./install.sh
+    - name: Testing uninstall.sh
+      run: docker exec -i tar1090_testing ./uinstall.sh
+    - name: Cleaning up
+      run: docker kill tar1090_testing
