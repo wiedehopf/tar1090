@@ -208,12 +208,12 @@ do
 
     cp -r -T html $TMP
     cp -r -T $ipath/git-db/db $TMP/db-$DB_VERSION
-    sed -i -e "s/let databaseFolder = .*/let databaseFolder = \"db-$DB_VERSION\";/" $TMP/early.js
-    echo "{ \"tar1090Version\": \"$TAR_VERSION\", \"databaseVersion\": \"$DB_VERSION\" }" > $TMP/version.json
+    sed -i -e "s/let databaseFolder = .*/let databaseFolder = \"db-$DB_VERSION\";/" "$TMP/early.js"
+    echo "{ \"tar1090Version\": \"$TAR_VERSION\", \"databaseVersion\": \"$DB_VERSION\" }" > "$TMP/version.json"
 
     # keep some stuff around
-    if [ -f $html_path/defaults*.js ]; then
-        mv $html_path/config.js $TMP/config.js 2>/dev/null || true
+    if [ -f "$html_path"/defaults*.js ]; then
+        mv "$html_path/config.js" "$TMP/config.js" 2>/dev/null || true
     fi
     mv "$html_path"/color*.css "$TMP/colors.css" 2>/dev/null || true
     mv "$html_path/upintheair.json" "$TMP/upintheair.json" 2>/dev/null || true
