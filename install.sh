@@ -25,13 +25,13 @@ do
     if ! command -v "$CMD" &>/dev/null
     then
         echo "command $CMD not found, will try to install package $PKG"
-        packages+=($PKG)
+        packages+=("$PKG")
     fi
 done < <(echo "$command_package")
 
-if [[ -n "$packages" ]]
+if [[ -n "${packages[@]}" ]]
 then
-    echo "Installing required packages: $packages"
+    echo "Installing required packages: ${packages[@]}"
     apt-get update || true
     apt-get install -y "${packages[@]}" || true
     hash -r || true
