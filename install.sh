@@ -33,7 +33,7 @@ if [[ -n "$packages" ]]
 then
     echo "Installing required packages: $packages"
     apt-get update || true
-    apt-get install -y "$packages" || true
+    apt-get install -y $packages || true
     hash -r || true
     while read -r -d '/' CMD PKG
     do
