@@ -240,35 +240,35 @@ do
         -e "s/style.css/style_$TAR_VERSION.css/" \
         index.html
 
-    mv dbloader.js dbloader_$TAR_VERSION.js
-    mv defaults.js defaults_$TAR_VERSION.js
-    mv early.js early_$TAR_VERSION.js
-    mv flags.js flags_$TAR_VERSION.js
-    mv formatter.js formatter_$TAR_VERSION.js
-    mv layers.js layers_$TAR_VERSION.js
-    mv markers.js markers_$TAR_VERSION.js
-    mv planeObject.js planeObject_$TAR_VERSION.js
-    mv registrations.js registrations_$TAR_VERSION.js
-    mv script.js script_$TAR_VERSION.js
-    mv colors.css colors_$TAR_VERSION.css
-    mv style.css style_$TAR_VERSION.css
+    mv dbloader.js "dbloader_$TAR_VERSION.js"
+    mv defaults.js "defaults_$TAR_VERSION.js"
+    mv early.js "early_$TAR_VERSION.js"
+    mv flags.js "flags_$TAR_VERSION.js"
+    mv formatter.js "formatter_$TAR_VERSION.js"
+    mv layers.js "layers_$TAR_VERSION.js"
+    mv markers.js "markers_$TAR_VERSION.js"
+    mv planeObject.js "planeObject_$TAR_VERSION.js"
+    mv registrations.js "registrations_$TAR_VERSION.js"
+    mv script.js "script_$TAR_VERSION.js"
+    mv colors.css "colors_$TAR_VERSION.css"
+    mv style.css "style_$TAR_VERSION.css"
 
     if [[ $nginx == yes ]]; then
-        gzip -k -9 dbloader_$TAR_VERSION.js
-        gzip -k -9 defaults_$TAR_VERSION.js
-        gzip -k -9 early_$TAR_VERSION.js
-        gzip -k -9 flags_$TAR_VERSION.js
-        gzip -k -9 formatter_$TAR_VERSION.js
-        gzip -k -9 layers_$TAR_VERSION.js
-        gzip -k -9 markers_$TAR_VERSION.js
-        gzip -k -9 planeObject_$TAR_VERSION.js
-        gzip -k -9 registrations_$TAR_VERSION.js
-        gzip -k -9 script_$TAR_VERSION.js
-        gzip -k -9 colors_$TAR_VERSION.css
-        gzip -k -9 style_$TAR_VERSION.css
+        gzip -k -9 "dbloader_$TAR_VERSION.js"
+        gzip -k -9 "defaults_$TAR_VERSION.js"
+        gzip -k -9 "early_$TAR_VERSION.js"
+        gzip -k -9 "flags_$TAR_VERSION.js"
+        gzip -k -9 "formatter_$TAR_VERSION.js"
+        gzip -k -9 "layers_$TAR_VERSION.js"
+        gzip -k -9 "markers_$TAR_VERSION.js"
+        gzip -k -9 "planeObject_$TAR_VERSION.js"
+        gzip -k -9 "registrations_$TAR_VERSION.js"
+        gzip -k -9 "script_$TAR_VERSION.js"
+        gzip -k -9 "colors_$TAR_VERSION.css"
+        gzip -k -9 "style_$TAR_VERSION.css"
 
-        gzip -k -9 jquery/*.js
-        gzip -k -9 ol/*.js
+        gzip -k -9 ./jquery/*.js
+        gzip -k -9 ./ol/*.js
         #gzip -k -9 db2/*.json .... already exists compressed
     fi
     GARBAGE="$ipath/$RANDOM.$RANDOM"
@@ -279,7 +279,7 @@ do
 
     cd "$dir"
 
-    cp nginx.conf "${ipath}/nginx-${service}.conf"
+    cp nginx.conf "$ipath/nginx-$service.conf"
 
     if [[ $lighttpd == yes ]] &>/dev/null
     then
