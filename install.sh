@@ -29,9 +29,9 @@ do
     fi
 done < <(echo "$command_package")
 
-if [[ -n "${packages[@]}" ]]
+if [[ -n "${packages[*]}" ]]
 then
-    echo "Installing required packages: ${packages[@]}"
+    echo "Installing required packages: ${packages[*]}"
     apt-get update || true
     apt-get install -y "${packages[@]}" || true
     hash -r || true
