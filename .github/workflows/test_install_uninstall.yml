@@ -27,6 +27,7 @@ jobs:
         chmod a+x /tmp/fake_systemctl
     - name: Creating debian container
       run: |
+        pwd
         docker kill tar1090_testing || true
         docker run --rm -d --name=tar1090_testing -v "/tmp/fake_systemctl:/usr/bin/systemctl" -v "$(pwd)":"/tmp/tar1090" -v "/tmp/readsb:/run/readsb" --workdir=/workdir debian:stable-slim sleep 3600
         docker exec -i tar1090_testing mkdir -p /opt/tar1090_install
