@@ -27,15 +27,11 @@ jobs:
         chmod a+x /tmp/fake_systemctl
     - name: Creating debian container
       run: |
-        pwd
         docker kill tar1090_testing || true
-        docker run --rm -d --name=tar1090_testing -v "/tmp/fake_systemctl:/usr/bin/systemctl" -v "$(pwd)":"/tmp/tar1090" -v "/tmp/readsb:/run/readsb" --workdir=/workdir debian:stable-slim sleep 3600
-        docker exec -i tar1090_testing mkdir -p /opt/tar1090_install
-        docker exec -i tar1090_testing cp -Rv /tmp/tar1090/* /opt/tar1090_install
-        docker exec -i tar1090_testing ls -la /opt/tar1090_install
+        docker run --rm -d --name=tar1090_testing -v "/tmp/fake_systemctl:/usr/bin/systemctl" -v "/github/workspace":"/workdir" -v "/tmp/readsb:/run/readsb" --workdir=/workdir debian:stable-slim sleep 3600
     - name: Testing install.sh
-      run: docker exec -i --workdir=/opt/tar1090_install tar1090_testing bash ./install.sh
+      run: docker exec -i --workdir=/workdir tar1090_testing bash ./install.sh
     - name: Testing uninstall.sh
-      run: docker exec -i --workdir=/opt/tar1090_install tar1090_testing bash ./uninstall.sh
+      run: docker exec -i --workdir=/workdir tar1090_testing bash ./uninstall.sh
     - name: Cleaning up
       run: docker kill tar1090_testing
