@@ -8,11 +8,36 @@ on:
 
 jobs:
 
-  build:
+  test_install:
 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
-    - name: Test installation script
-      run: docker run --rm -it -v "$(pwd)":"/workdir" --workdir=/workdir debian:stable-slim ./install.sh
+    - name: Test install.sh
+      run: |
+        mkdir -p /tmp/readsb
+        touch /tmp/readsb/aircraft.json
+        chmod a+rx /tmp/readsb
+        chmod a+r /tmp/readsb/aircraft.json
+        echo '#!/bin/bash' > /tmp/fake_systemctl
+        echo "echo -e '\033[1;35m'systemctl called: \$@'\033[0m'" >> /tmp/fake_systemctl
+        chmod a+x /tmp/fake_systemctl
+        docker run --rm --name=tar1090_install -it -v "/tmp/fake_systemctl:/usr/bin/systemctl" -v "$(pwd)":"/workdir" -v "/tmp/readsb:/run/readsb" --workdir=/workdir debian:stable-slim ./install.sh
+
+  test_uninstall:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Test uninstall.sh
+      run: |
+        mkdir -p /tmp/readsb
+        touch /tmp/readsb/aircraft.json
+        chmod a+rx /tmp/readsb
+        chmod a+r /tmp/readsb/aircraft.json
+        echo '#!/bin/bash' > /tmp/fake_systemctl
+        echo "echo -e '\033[1;35m'systemctl called: \$@'\033[0m'" >> /tmp/fake_systemctl
+        chmod a+x /tmp/fake_systemctl
+        docker run --rm --name=tar1090_uninst  -it -v "/tmp/fake_systemctl:/usr/bin/systemctl" -v "$(pwd)":"/workdir" -v "/tmp/readsb:/run/readsb" --workdir=/workdir debian:stable-slim ./uninstall.sh
