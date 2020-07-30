@@ -273,13 +273,13 @@ do
     fi
     GARBAGE="$ipath/$RANDOM.$RANDOM"
 
-    mv $html_path $GARBAGE 2>/dev/null || true
-    mv $TMP $html_path
-    rm -rf $GARBAGE 2>/dev/null || true
+    mv "$html_path" "$GARBAGE" 2>/dev/null || true
+    mv "$TMP" "$html_path"
+    rm -rf "$GARBAGE" 2>/dev/null || true
 
     cd "$dir"
 
-    cp nginx.conf $ipath/nginx-$service.conf
+    cp nginx.conf "${ipath}/nginx-${service}.conf"
 
     if [[ $lighttpd == yes ]] &>/dev/null
     then
