@@ -215,13 +215,13 @@ do
     if [ -f $html_path/defaults*.js ]; then
         mv $html_path/config.js $TMP/config.js 2>/dev/null || true
     fi
-    mv $html_path/color*.css $TMP/colors.css 2>/dev/null || true
-    mv $html_path/upintheair.json $TMP/upintheair.json 2>/dev/null || true
+    mv "$html_path"/color*.css "$TMP/colors.css" 2>/dev/null || true
+    mv "$html_path/upintheair.json" "$TMP/upintheair.json" 2>/dev/null || true
 
     # bust cache for all css and js files
 
     dir=$(pwd)
-    cd $TMP
+    cd "$TMP"
 
     sed -i -e "s/tar1090 on github/tar1090 on github ($(date +%y%m%d))/" index.html
 
