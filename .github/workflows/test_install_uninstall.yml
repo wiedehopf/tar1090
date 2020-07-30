@@ -29,6 +29,8 @@ jobs:
       run: |
         docker kill tar1090_testing || true
         docker run --rm -d --name=tar1090_testing -v "$PWD:/workdir" -v "/tmp/fake_systemctl:/usr/bin/systemctl" -v "/tmp/readsb:/run/readsb" --workdir=/workdir debian:stable-slim sleep 3600
+        docker exec -i tar1090_testing apt-get update
+        docker exec -i tar1090_testing apt-get install -y tree
         docker exec -i tar1090_testing tree
         docker exec -i --workdir=/workdir tar1090_testing tree
     - name: Testing install.sh
