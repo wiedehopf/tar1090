@@ -167,8 +167,8 @@ do
     if [[ -z "$srcdir" || -z "$instance" ]]; then
         continue
     fi
-    TMP=$(mktemp -d -p $ipath)
-    chmod 755 $TMP
+    TMP=$(mktemp -d -p "$ipath")
+    chmod 755 "$TMP"
 
     if [[ "$instance" != "tar1090" ]]; then
         html_path="$ipath/html-$instance"
@@ -206,8 +206,8 @@ do
 
     sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" tar1090.service
 
-    cp -r -T html $TMP
-    cp -r -T $ipath/git-db/db $TMP/db-$DB_VERSION
+    cp -r -T html "$TMP"
+    cp -r -T "$ipath/git-db/db" "$TMP/db-$DB_VERSION"
     sed -i -e "s/let databaseFolder = .*/let databaseFolder = \"db-$DB_VERSION\";/" "$TMP/early.js"
     echo "{ \"tar1090Version\": \"$TAR_VERSION\", \"databaseVersion\": \"$DB_VERSION\" }" > "$TMP/version.json"
 
