@@ -542,6 +542,7 @@ let TypeDesignatorIcons = {
     'GLEX': ['jet_swept', 1],
     'G200': ['jet_swept', 0.92], // 16t
     'G280': ['jet_swept', 0.92], // 18t
+    'HA4T': ['jet_swept', 0.92], // 18t
     'GL5T': ['jet_swept', 1],
     'FA7X': ['jet_swept', 0.96], // 29t
     'FA8X': ['jet_swept', 0.96], // 33t
@@ -606,6 +607,7 @@ let TypeDesignatorIcons = {
     'LJ85': ['jet_nonswept', 1],
 
     'C650': ['jet_nonswept', 1.03], // 11t
+    'ASTR': ['jet_nonswept', 1.03], // 11t
     'G150': ['jet_nonswept', 1.03], // 11t
     'H25A': ['jet_nonswept', 1.03], // 11t
     'H25B': ['jet_nonswept', 1.03], // 11t
