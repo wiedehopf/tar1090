@@ -9,7 +9,8 @@ ENABLE_978=no
 # The URL needs to point at where you would normally find the skyview978 webinterface
 URL_978="http://127.0.0.1/skyaware978"
 
-
+# 1-9 are valid, lower lvl: less CPU usage, higher level: less network bandwidth used when loading the page
+GZIP_LVL=3
 
 
 

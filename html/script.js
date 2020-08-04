@@ -106,6 +106,7 @@ let globalCompositeTested = false;
 let solidT = false;
 let lastActive = new Date().getTime();
 let firstFetchDone = false;
+let overrideMapType = null;
 
 let shareLink = '';
 
@@ -356,30 +357,8 @@ function fetchData() {
     //console.time("Starting Fetch");
 
 
-    let item;
-    let tryAgain = [];
-    while(item = addToIconCache.pop()) {
-        let svgKey = item[0];
-        let element = item[1];
-        if (iconCache[svgKey] != undefined) {
-            continue;
-        }
-        if (!element) {
-            element = new Image();
-            element.src = item[2];
-            item[1] = element;
-            tryAgain.push(item);
-            continue;
-        }
-        if (!element.complete) {
-            console.log("moep");
-            tryAgain.push(item);
-            continue;
-        }
+    updateIconCache();
 
-        iconCache[svgKey] = element;
-    }
-    addToIconCache = tryAgain;
     if (enable_uat) {
         FetchPendingUAT = $.ajax({ url: 'chunks/978.json',
             dataType: 'json' });
@@ -629,6 +608,9 @@ function initialize() {
 
         if (search.has('hideButtons'))
             hideButtons = true;
+
+        if (search.has('baseMap'))
+            overrideMapType = search.get('baseMap');
 
         icaoFilter = search.get('icaoFilter');
         if (icaoFilter)
@@ -1200,6 +1182,10 @@ function parse_history() {
     // And kick off one refresh immediately.
     if (!heatmap)
         fetchData();
+    if (replay) {
+        initReplay();
+        play(); // kick off first play
+    }
 
     if (!globeIndex) {
         $('#show_trace').hide();
@@ -1293,7 +1279,9 @@ function initialize_map() {
     CenterLat = Number(localStorage['CenterLat']) || DefaultCenterLat;
     ZoomLvl = Number(localStorage['ZoomLvl']) || DefaultZoomLvl;
     ZoomLvlCache = ZoomLvl;
-    if (localStorage['MapType_tar1090']) {
+    if (overrideMapType)
+        MapType_tar1090 = overrideMapType;
+    else if (localStorage['MapType_tar1090']) {
         MapType_tar1090 = localStorage['MapType_tar1090'];
     }
 
@@ -1554,7 +1542,7 @@ function initialize_map() {
                 toggleTableInView();
                 break;
             case "r":
-                if (heatmap)
+                if (heatmap && !replay)
                     drawHeatmap();
                 else
                     followRandomPlane();
@@ -4545,7 +4533,7 @@ function setSize(set) {
 }
 
 function drawHeatmap() {
-    if (!heatmap)
+    if (!heatmap || replay)
         return;
     if (heatmap.init) {
         initHeatmap();
@@ -4736,4 +4724,88 @@ function drawHeatmap() {
     }
     console.timeEnd("drawHeat");
     $("#loader").addClass("hidden");
+}
+
+function initReplay() {
+    let index = 0;
+    for (let k = 0; k < heatChunks.length; k++) {
+        if (heatChunks[k].byteLength % 16 != 0) {
+            console.log("Invalid heatmap file (byteLength): " + k);
+            continue;
+        }
+        let points = heatPoints[k] = new Int32Array(heatChunks[k]);
+        let found = 0;
+        for (let i = 0; i < points.length; i += 4) {
+            if (points[i] == 0xe7f7c9d) {
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            heatPoints[k] = heatChunks[k] = null;
+            console.log("Invalid heatmap file (magic number): " + k);
+        }
+    }
+}
+
+
+function play() {
+    if (!replay)
+        return;
+    ZoomLvl = OLMap.getView().getZoom();
+    let center = ol.proj.toLonLat(OLMap.getView().getCenter());
+    localStorage['CenterLon'] = CenterLon = center[0];
+    localStorage['CenterLat'] = CenterLat = center[1];
+    clearTimeout(refreshId);
+    refreshId = setTimeout(replay, replay.ival / replay.speed);
+    if (showTrace)
+        return;
+
+    updateIconCache();
+
+    last = now;
+
+    for (let j=0; j < acs.length; j++) {
+        if (icaoFilter && !icaoFilter.includes(hex))
+            continue;
+
+        if (!onlyMilitary || plane.military)
+            plane.updateData(now, last, ac, init);
+        else
+            plane.last_message_time = now - ac.seen;
+    }
+
+    refreshTableInfo();
+    refreshClock(new Date(now * 1000));
+    refreshSelected();
+    refreshHighlighted();
+
+}
+
+
+function updateIconCache() {
+    let item;
+    let tryAgain = [];
+    while(item = addToIconCache.pop()) {
+        let svgKey = item[0];
+        let element = item[1];
+        if (iconCache[svgKey] != undefined) {
+            continue;
+        }
+        if (!element) {
+            element = new Image();
+            element.src = item[2];
+            item[1] = element;
+            tryAgain.push(item);
+            continue;
+        }
+        if (!element.complete) {
+            console.log("moep");
+            tryAgain.push(item);
+            continue;
+        }
+
+        iconCache[svgKey] = element;
+    }
+    addToIconCache = tryAgain;
 }

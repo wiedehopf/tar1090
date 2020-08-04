@@ -18,22 +18,22 @@ then
 fi
 
 command_package="git git/jq jq/"
-packages=""
+packages=()
 
 while read -r -d '/' CMD PKG
 do
     if ! command -v "$CMD" &>/dev/null
     then
         echo "command $CMD not found, will try to install package $PKG"
-        packages+="$PKG "
+        packages+=("$PKG")
     fi
 done < <(echo "$command_package")
 
-if [[ -n "$packages" ]]
+if [[ -n "${packages[*]}" ]]
 then
-    echo "Installing required packages: $packages"
+    echo "Installing required packages: ${packages[*]}"
     apt-get update || true
-    apt-get install -y $packages || true
+    apt-get install -y "${packages[@]}" || true
     hash -r || true
     while read -r -d '/' CMD PKG
     do
@@ -167,8 +167,8 @@ do
     if [[ -z "$srcdir" || -z "$instance" ]]; then
         continue
     fi
-    TMP=$(mktemp -d -p $ipath)
-    chmod 755 $TMP
+    TMP=$(mktemp -d -p "$ipath")
+    chmod 755 "$TMP"
 
     if [[ "$instance" != "tar1090" ]]; then
         html_path="$ipath/html-$instance"
@@ -206,22 +206,20 @@ do
 
     sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" tar1090.service
 
-    cp -r -T html $TMP
-    cp -r -T $ipath/git-db/db $TMP/db-$DB_VERSION
-    sed -i -e "s/let databaseFolder = .*/let databaseFolder = \"db-$DB_VERSION\";/" $TMP/early.js
-    echo "{ \"tar1090Version\": \"$TAR_VERSION\", \"databaseVersion\": \"$DB_VERSION\" }" > $TMP/version.json
+    cp -r -T html "$TMP"
+    cp -r -T "$ipath/git-db/db" "$TMP/db-$DB_VERSION"
+    sed -i -e "s/let databaseFolder = .*/let databaseFolder = \"db-$DB_VERSION\";/" "$TMP/early.js"
+    echo "{ \"tar1090Version\": \"$TAR_VERSION\", \"databaseVersion\": \"$DB_VERSION\" }" > "$TMP/version.json"
 
     # keep some stuff around
-    if [ -f $html_path/defaults*.js ]; then
-        mv $html_path/config.js $TMP/config.js 2>/dev/null || true
-    fi
-    mv $html_path/color*.css $TMP/colors.css 2>/dev/null || true
-    mv $html_path/upintheair.json $TMP/upintheair.json 2>/dev/null || true
+    mv "$html_path/config.js" "$TMP/config.js" 2>/dev/null || true
+    mv "$html_path"/color*.css "$TMP/colors.css" 2>/dev/null || true
+    mv "$html_path/upintheair.json" "$TMP/upintheair.json" 2>/dev/null || true
 
     # bust cache for all css and js files
 
     dir=$(pwd)
-    cd $TMP
+    cd "$TMP"
 
     sed -i -e "s/tar1090 on github/tar1090 on github ($(date +%y%m%d))/" index.html
 
@@ -240,46 +238,46 @@ do
         -e "s/style.css/style_$TAR_VERSION.css/" \
         index.html
 
-    mv dbloader.js dbloader_$TAR_VERSION.js
-    mv defaults.js defaults_$TAR_VERSION.js
-    mv early.js early_$TAR_VERSION.js
-    mv flags.js flags_$TAR_VERSION.js
-    mv formatter.js formatter_$TAR_VERSION.js
-    mv layers.js layers_$TAR_VERSION.js
-    mv markers.js markers_$TAR_VERSION.js
-    mv planeObject.js planeObject_$TAR_VERSION.js
-    mv registrations.js registrations_$TAR_VERSION.js
-    mv script.js script_$TAR_VERSION.js
-    mv colors.css colors_$TAR_VERSION.css
-    mv style.css style_$TAR_VERSION.css
+    mv dbloader.js "dbloader_$TAR_VERSION.js"
+    mv defaults.js "defaults_$TAR_VERSION.js"
+    mv early.js "early_$TAR_VERSION.js"
+    mv flags.js "flags_$TAR_VERSION.js"
+    mv formatter.js "formatter_$TAR_VERSION.js"
+    mv layers.js "layers_$TAR_VERSION.js"
+    mv markers.js "markers_$TAR_VERSION.js"
+    mv planeObject.js "planeObject_$TAR_VERSION.js"
+    mv registrations.js "registrations_$TAR_VERSION.js"
+    mv script.js "script_$TAR_VERSION.js"
+    mv colors.css "colors_$TAR_VERSION.css"
+    mv style.css "style_$TAR_VERSION.css"
 
     if [[ $nginx == yes ]]; then
-        gzip -k -9 dbloader_$TAR_VERSION.js
-        gzip -k -9 defaults_$TAR_VERSION.js
-        gzip -k -9 early_$TAR_VERSION.js
-        gzip -k -9 flags_$TAR_VERSION.js
-        gzip -k -9 formatter_$TAR_VERSION.js
-        gzip -k -9 layers_$TAR_VERSION.js
-        gzip -k -9 markers_$TAR_VERSION.js
-        gzip -k -9 planeObject_$TAR_VERSION.js
-        gzip -k -9 registrations_$TAR_VERSION.js
-        gzip -k -9 script_$TAR_VERSION.js
-        gzip -k -9 colors_$TAR_VERSION.css
-        gzip -k -9 style_$TAR_VERSION.css
+        gzip -k -9 "dbloader_$TAR_VERSION.js"
+        gzip -k -9 "defaults_$TAR_VERSION.js"
+        gzip -k -9 "early_$TAR_VERSION.js"
+        gzip -k -9 "flags_$TAR_VERSION.js"
+        gzip -k -9 "formatter_$TAR_VERSION.js"
+        gzip -k -9 "layers_$TAR_VERSION.js"
+        gzip -k -9 "markers_$TAR_VERSION.js"
+        gzip -k -9 "planeObject_$TAR_VERSION.js"
+        gzip -k -9 "registrations_$TAR_VERSION.js"
+        gzip -k -9 "script_$TAR_VERSION.js"
+        gzip -k -9 "colors_$TAR_VERSION.css"
+        gzip -k -9 "style_$TAR_VERSION.css"
 
-        gzip -k -9 jquery/*.js
-        gzip -k -9 ol/*.js
+        gzip -k -9 ./jquery/*.js
+        gzip -k -9 ./ol/*.js
         #gzip -k -9 db2/*.json .... already exists compressed
     fi
     GARBAGE="$ipath/$RANDOM.$RANDOM"
 
-    mv $html_path $GARBAGE 2>/dev/null || true
-    mv $TMP $html_path
-    rm -rf $GARBAGE 2>/dev/null || true
+    mv "$html_path" "$GARBAGE" 2>/dev/null || true
+    mv "$TMP" "$html_path"
+    rm -rf "$GARBAGE" 2>/dev/null || true
 
     cd "$dir"
 
-    cp nginx.conf $ipath/nginx-$service.conf
+    cp nginx.conf "$ipath/nginx-$service.conf"
 
     if [[ $lighttpd == yes ]] &>/dev/null
     then
