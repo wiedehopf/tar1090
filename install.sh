@@ -64,14 +64,16 @@ fi
 
 dir=$(pwd)
 
-if { ! [ -d "$ipath/git-db" ] && git clone --depth 1 $db_repo $ipath/git-db; } || { cd $ipath/git-db && ! [[ "$1" == "test" ]] ; }
+{ [[ "$1" == "test" ]] && cd "$ipath/git-db" && git rev-parse; } ||
+    { cd "$ipath/git-db" &>/dev/null && git fetch --depth 1 origin master && git reset --hard FETCH_HEAD; } ||
+    { rm -rf "$ipath/git-db" && git clone --depth 1 "$db_repo" "$ipath/git-db"; }
+
+if ! cd $ipath/git-db || ! git rev-parse
 then
-    cd $ipath/git-db
-    git fetch --depth 1 origin master
-    git reset --hard origin/master
+    echo "Unable to download files, exiting! (Maybe try again?)"
+    exit 1
 fi
 
-cd $ipath/git-db
 DB_VERSION=$(git rev-parse --short HEAD)
 
 cd "$dir"
@@ -82,17 +84,13 @@ then
     mkdir -p /tmp/tar1090-test
     cp -r ./* /tmp/tar1090-test
     cd /tmp/tar1090-test
-
-elif { ! [ -d "$ipath/git" ] && git clone --single-branch -b master --depth 1 $repo $ipath/git; } || cd $ipath/git
-then
-    cd $ipath/git
-    git fetch origin master
-    git reset --hard origin/master
-
-elif wget --timeout=30 -q -O /tmp/master.zip $repo/archive/master.zip && unzip -q -o master.zip
-then
-    cd /tmp/tar1090-master
 else
+    { cd "$ipath/git" &>/dev/null && git fetch origin master && git reset --hard FETCH_HEAD; } ||
+        { rm -rf "$ipath/git" && git clone --depth 1 "$repo" "$ipath/git"; }
+fi
+
+if ! cd $ipath/git || ! git rev-parse
+then
     echo "Unable to download files, exiting! (Maybe try again?)"
     exit 1
 fi
