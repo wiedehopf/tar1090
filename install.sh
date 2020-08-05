@@ -84,21 +84,17 @@ then
     mkdir -p /tmp/tar1090-test
     cp -r ./* /tmp/tar1090-test
     cd /tmp/tar1090-test
+    TAR_VERSION=$(date +%s)
 else
     { cd "$ipath/git" &>/dev/null && git fetch origin master && git reset --hard FETCH_HEAD; } ||
         { rm -rf "$ipath/git" && git clone --depth 1 "$repo" "$ipath/git"; }
-fi
 
-if ! cd $ipath/git || ! git rev-parse
-then
-    echo "Unable to download files, exiting! (Maybe try again?)"
-    exit 1
-fi
-
-if git rev-parse --short HEAD &>/dev/null; then
+    if ! cd $ipath/git || ! git rev-parse
+    then
+        echo "Unable to download files, exiting! (Maybe try again?)"
+        exit 1
+    fi
     TAR_VERSION="$(git rev-parse --short HEAD)_$DB_VERSION"
-else
-    TAR_VERSION=$(date +%s)
 fi
 
 

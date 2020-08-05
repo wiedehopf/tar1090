@@ -1483,6 +1483,8 @@ PlaneObject.prototype.clearMarker = function() {
 
 // Update our marker on the map
 PlaneObject.prototype.updateMarker = function(moved) {
+    if (pTracks)
+        return;
     if (!this.visible || this.position == null || this.isFiltered()) {
         this.clearMarker();
         return;

@@ -107,6 +107,7 @@ let solidT = false;
 let lastActive = new Date().getTime();
 let firstFetchDone = false;
 let overrideMapType = null;
+let pTracks = false;
 
 let shareLink = '';
 
@@ -546,6 +547,14 @@ function initialize() {
             tempTrails = true;
             hideButtons = true;
             largeMode = 2;
+        }
+
+        if (search.has('pTracks')) {
+            pTracks = true;
+            noVanish = true;
+            buttonActive('#P', noVanish);
+            filterTracks = true;
+            selectAllPlanes();
         }
 
         if (search.has('largeMode')) {
@@ -2156,6 +2165,8 @@ function refreshFeatures() {
 
 // Refreshes the larger table of all the planes
 function refreshTableInfo() {
+    if (pTracks)
+        return;
     refreshPageTitle();
 
     resortTable(PlanesOrdered);
