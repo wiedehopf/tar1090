@@ -284,9 +284,9 @@ change to these values for 24h of history:
 
 ```
 # Interval at which the track history is saved
-INTERVAL=14
+INTERVAL=20
 # How many points in time are stored in the track history
-HISTORY_SIZE=6000
+HISTORY_SIZE=4300
 ```
 
 then
@@ -294,10 +294,12 @@ then
 sudo systemctl restart tar1090-persist
 ```
 and the persist instance will start saving more data.
-You can then visit `/persist` instead of `/tar1090`, enable persistence (P) and reload with F5 to get the complete 24h history displayed.
-Press T to show all traces, you might also want to disable aircraft position in the map layer menu.
+You can then visit `/persist/?pTracks` instead of `/tar1090` to get the complete 24h history displayed.
+Press T to toggle the traces on and off, this is recommended for zooming and panning as with the traces showing this can be slow.
 
-for adding the range outline to the persist instance after having used the method described earlier, copy over the json:
+(you can also look at /tar1090/?pTracks if you want to look only at the more recent tracks, interval / history can be configured in /etc/tar1090 for that instance)
+
+For adding the range outline to the /persist instance after having used the method described earlier, copy over the json:
 
 ```
 sudo cp /usr/local/share/tar1090/html/upintheair.json /usr/local/share/tar1090/html-persist

@@ -1529,6 +1529,8 @@ function altitudeLines (segment) {
     if (noVanish)
         multiplier *= (segment.estimated ? 0.3 : 0.6);
 
+    let join = 'round';
+    let cap = 'square';
     if (!debugTracks) {
         if (segment.estimated && !noVanish) {
             lineStyleCache[lineKey]	= [
@@ -1536,18 +1538,18 @@ function altitudeLines (segment) {
                     stroke: new ol.style.Stroke({
                         color: 'black',
                         width: 2 * newWidth * 0.3,
-                        lineJoin: 'miter',
-                        lineCap: 'square',
+                        lineJoin: join,
+                        lineCap: cap,
                     })
                 }),
                 new ol.style.Style({
                     stroke: new ol.style.Stroke({
                         color: color,
                         width: 2 * newWidth,
-                        lineJoin: 'miter',
-                        lineCap: 'square',
                         lineDash: [10, 20 + 3 * newWidth],
                         lineDashOffset: 5,
+                        lineJoin: join,
+                        lineCap: cap,
                     }),
                 })
             ];
@@ -1556,8 +1558,8 @@ function altitudeLines (segment) {
                 stroke: new ol.style.Stroke({
                     color: color,
                     width: 2 * newWidth * multiplier,
-                    lineJoin: 'miter',
-                    lineCap: 'square',
+                    lineJoin: join,
+                    lineCap: cap,
                 })
             });
         }
@@ -1567,6 +1569,8 @@ function altitudeLines (segment) {
                 stroke: new ol.style.Stroke({
                     color: color,
                     width: 2 * newWidth * multiplier,
+                    lineJoin: join,
+                    lineCap: cap,
                 })
             }),
         ];
@@ -1587,6 +1591,8 @@ function altitudeLines (segment) {
                 stroke: new ol.style.Stroke({
                     color: color,
                     width: 2 * newWidth * multiplier,
+                    lineJoin: join,
+                    lineCap: cap,
                 })
             })
         ];
