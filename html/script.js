@@ -637,7 +637,7 @@ function initialize() {
     if (onMobile)
         enableMouseover = false;
 
-    if (iOSVersion() <= 12 && !('PointerEvent' in window)) {
+    if (false && iOSVersion() <= 12 && !('PointerEvent' in window)) {
             $("#generic_error_detail").text("Enable Settings - Safari - Advanced - Experimental features - Pointer Events");
             $("#generic_error").css('display','block');
         setTimeout(function() {
