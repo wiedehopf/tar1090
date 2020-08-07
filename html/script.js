@@ -143,7 +143,6 @@ let last = 0;
 let uat_now = 0;
 let uat_last = 0;
 let today = 0;
-let StaleReceiverCount = 0;
 let FetchPending = [];
 let FetchPendingUAT = null;
 
@@ -637,6 +636,14 @@ function initialize() {
 
     if (onMobile)
         enableMouseover = false;
+
+    if (iOSVersion() <= 12 && !('PointerEvent' in window)) {
+            $("#generic_error_detail").text("Enable Settings - Safari - Advanced - Experimental features - Pointer Events");
+            $("#generic_error").css('display','block');
+        setTimeout(function() {
+            $("#generic_error").css('display','none');
+        }, 30000);
+    }
 
     if (document.getElementById('adsense') != null || adsbexchange) {
         if (onMobile || hideButtons) {
