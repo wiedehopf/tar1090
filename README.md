@@ -2,7 +2,7 @@
 
 ![Screenshot1](https://raw.githubusercontent.com/wiedehopf/tar1090/screenshots/screenshot3.png)
 
-Provides an improved dump1090-fa webinterface 
+Provides an improved webinterface for use with ADS-B decoders readsb / dump1090-fa
 
 - Improved adjustable history
 - Show All Tracks much faster than original with many planes
@@ -19,7 +19,7 @@ See the bottom of this page or the LICENSE for details.
 While striving not to disrupt an existing Raspbian / Debian / Ubuntu installation, this can't be guaranteed.
 This install script assumes Raspbian / Debian / Ubunutu and will not work on systems without apt.
 
-tar1090 is not a dump1090 replacement, it merely adds an additional webinterface for an existing dump1090-fa or readsb installation.
+tar1090 is not a readsb / dump1090-fa replacement, it merely adds an additional webinterface for an existing readsb or dump1090-fa installation.
 dump1090-mutability installations should work as well, aircraft details will be limited though.
 
 ## Installation
