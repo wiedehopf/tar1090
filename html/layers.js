@@ -207,6 +207,7 @@ function createBaseLayers() {
         opacity: 0.7,
         visible: false,
         zIndex: 99,
+        maxZoom: 15,
     }));
 
     let nexrad = new ol.layer.Tile({
@@ -216,6 +217,7 @@ function createBaseLayers() {
         opacity: 0.3,
         visible: false,
         zIndex: 99,
+        maxZoom: 15,
     });
 
     let refreshNexrad = function() {
@@ -245,6 +247,7 @@ function createBaseLayers() {
             opacity: 0.3,
             visible: false,
             zIndex: 99,
+            maxZoom: 15,
         });
 
 
