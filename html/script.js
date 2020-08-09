@@ -4827,3 +4827,168 @@ function updateIconCache() {
     }
     addToIconCache = tryAgain;
 }
+
+
+function zeroPad(num, size) {
+    var s = num + "";
+    while (s.length < size) s = "0" + s;
+    return s;
+}
+
+// Converts "hiccup"-style structures (https://github.com/weavejester/hiccup)
+// to XML.
+function hiccup(node) {
+    if (Array.isArray(node)) {
+        const [tag, attribs, ...children] = node;
+        let attribStrings = [];
+        for (const prop in attribs) {
+            if (!attribs.hasOwnProperty(prop) || attribs[prop] === undefined) {
+                continue;
+            }
+            attribStrings.push(`${prop}="${attribs[prop]}"`);
+        }
+        let xml = `<${tag} ${attribStrings.join(' ')}>`;
+        for (const child of children) {
+            xml += hiccup(child);
+        }
+        xml += `</${tag}>\n`;
+        return xml;
+    } else {
+        return '' + node;
+    }
+}
+
+// Prompts a browser to download a data: URL.
+function download(name, contentType, data) {
+    var link = document.createElement("a");
+    link.download = name;
+    link.href = 'data:' + contentType + ',' + encodeURIComponent(data);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function baseExportFilenameForAircrafts(aircrafts) {
+    return aircrafts.map((a) => (a.registration || a.icao).toUpperCase()).join('-');
+}
+
+// Returns an array of {pos, alt, ts} for an aircraft.
+function coordsForExport(plane) {
+    var coords = [];
+    var numSegs = plane.track_linesegs.length;
+    for (let i = 0; i < numSegs; i++) {
+        const proj = plane.track_linesegs[i].fixed.getCoordinates()[1];
+        if (proj) {
+            const pos = ol.proj.toLonLat(proj);
+            const alt = plane.track_linesegs[i].alt_real;
+            const ts = new Date(plane.track_linesegs[i].ts * 1000.0);
+            if (!alt) {
+                throw new Error(`No altitude: ${i} ${pos} ${ts}`);
+            }
+            // Attempt to correct altitude. This could be better?
+            //
+            // 950 feet is the correction factor for an altimeter of 30.15.
+            // 25 feet is the quantum of transponder reporting. 0 altitude
+            // could be reported as -25, so just add 25.
+            coords.push({ pos, alt: (alt + 950 + 25) * 0.3048, ts });
+        } else {
+            console.log(`Skipping ${i}`);
+        }
+    }
+    return coords;
+}
+
+// We use this to give each aircraft a different color track in a
+// multi-select export scenario. From colorbrewer, but I moved the red
+// to be first.
+const EXPORT_RGB_COLORS = [
+    'e31a1c',
+    'a6cee3',
+    '1f78b4',
+    'b2df8a',
+    '33a02c',
+    'fb9a99',
+    'fdbf6f',
+    'ff7f00',
+    'cab2d6',
+    '6a3d9a',
+    'ffff99',
+    'b15928'
+];
+
+// Converts "rrggbb" colors to KML format, "aabbggrr".
+function RGBColorToKMLColor(c) {
+    return 'ff' + c.substring(4, 6) + c.substring(2, 4) + c.substring(0, 2);
+}
+
+// Returns an array of selected planes, ordered by registration-or-ICAO.
+function selectedPlanes() {
+    const planes = [];
+    for (let key in Planes) {
+        if (Planes[key].selected) {
+            planes.push(Planes[key]);
+        }
+    }
+    planes.sort((a, b) => {
+        const keyA = (a.registration || a.icao).toUpperCase();
+        const keyB = (b.registration || b.icao).toUpperCase();
+        if (keyA < keyB) return -1;
+        if (keyA > keyB) return 1;
+        return 0;
+    });
+    return planes;
+}
+
+// Exports currently selected aircraft as KML.
+function exportKML() {
+    const planes = selectedPlanes();
+    const folders = [];
+    for (let i = 0; i < planes.length; i++) {
+        const plane = planes[i];
+        const coords = coordsForExport(plane);
+        const whenObjs = coords.map((c) => {
+            const date = `${c.ts.getUTCFullYear()}-${zeroPad(c.ts.getUTCMonth() + 1, 2)}-${zeroPad(c.ts.getUTCDate(), 2)}`;
+            const time = `T${zeroPad(c.ts.getUTCHours(), 2)}:${zeroPad(c.ts.getUTCMinutes(), 2)}:${zeroPad(c.ts.getUTCSeconds(), 2)}.${zeroPad(c.ts.getUTCMilliseconds(), 3)}Z`;
+            return ["when", {}, date + time];
+        });
+        const coordObjs = coords.map((c) => ["gx:coord", {}, `${c.pos[0]} ${c.pos[1]} ${c.alt}`]);
+        var folder = ["Folder", {},
+            ["name", {}, `${(plane.registration || plane.icao).toUpperCase()} track`],
+            ["Placemark", {},
+                ["name", {}, (plane.registration || plane.icao).toUpperCase()],
+                ["Style", {},
+                    ["LineStyle", {},
+                        ["color", {}, RGBColorToKMLColor(EXPORT_RGB_COLORS[i % EXPORT_RGB_COLORS.length])],
+                        ["width", {}, 6]
+                    ],
+                    ["IconStyle", {},
+                        ["Icon", {},
+                            ["href", {}, "http://maps.google.com/mapfiles/kml/shapes/airports.png"]
+                        ]
+                    ]
+                ],
+                ["gx:Track", {},
+                    ["altitudeMode", {}, "absolute"],
+                    ...whenObjs,
+                    ...coordObjs
+                ]
+            ]
+        ];
+        folders.push(folder);
+    }
+    const filename = baseExportFilenameForAircrafts(planes);
+    const prologue = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    const xmlObj = ["kml", {
+        "xmlns": "http://www.opengis.net/kml/2.2",
+        "xmlns:gx": "http://www.google.com/kml/ext/2.2"
+    },
+        ["Folder", {},
+            ...folders
+        ]
+    ];
+    const xml = prologue + hiccup(xmlObj);
+    download(
+        filename + '-track.kml',
+        'application/vnd.google-earth.kml+xml',
+        xml);
+}
