@@ -13,6 +13,7 @@ let trailGroup = new ol.Collection();
 let iconLayer;
 let trailLayers;
 let heatFeatures = [];
+let heatFeaturesSpread = 1024;
 let heatLayers = [];
 let realHeatFeatures = new ol.source.Vector();
 let realHeat;
@@ -4519,7 +4520,7 @@ function getTrace(newPlane, hex, options) {
 function initHeatmap() {
     heatmap.init = false;
     if (heatFeatures.length == 0) {
-        for (let i = 0; i < 16; i++) {
+        for (let i = 0; i < heatFeaturesSpread; i++) {
             heatFeatures.push(new ol.source.Vector());
             heatLayers.push(new ol.layer.Vector({
                 name: ('heatLayer' + i),
@@ -4527,6 +4528,8 @@ function initHeatmap() {
                 source: heatFeatures[i],
                 declutter: (heatmap.declutter ? true : false),
                 zIndex: 150,
+                renderOrder: null,
+                renderBuffer: 5,
             }));
             trailGroup.push(heatLayers[i]);
         }
@@ -4563,7 +4566,7 @@ function drawHeatmap() {
     let maxLat = ext.maxLat * 1000000;
     let minLat = ext.minLat * 1000000;
 
-    for (let i = 0; i < 16; i++)
+    for (let i = 0; i < heatFeaturesSpread; i++)
         heatFeatures[i].clear();
     realHeatFeatures.clear();
 
@@ -4735,8 +4738,8 @@ function drawHeatmap() {
     if (heatmap.real) {
         realHeatFeatures.addFeatures(features);
     } else {
-        for (let i = 0; i < 16; i++) {
-            heatFeatures[i].addFeatures(features.splice(0, pointCount / 16 + 1));
+        for (let i = 0; i < heatFeaturesSpread; i++) {
+            heatFeatures[i].addFeatures(features.splice(0, pointCount / heatFeaturesSpread + 1));
             //console.log(features.length);
         }
     }
