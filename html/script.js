@@ -1799,6 +1799,11 @@ function refreshSelected() {
     else
         $('#selected_typedesc').text("n/a");
 
+    if (selected.typeLong)
+        $('#selected_typelong').text(selected.typeLong);
+    else
+        $('#selected_typelong').text("n/a");
+
     if (showPictures && selected.icaoType){
         let new_html = "<img width='150px' src='aircraft_sil/" + selected.icaoType + ".png' />";
         if (new_html != selectedPhotoCache) {

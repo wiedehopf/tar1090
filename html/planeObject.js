@@ -109,6 +109,7 @@ function PlaneObject(icao) {
     this.registration = registration_from_hexid(this.icao);
     this.icaoType = null;
     this.typeDescription = null;
+    this.typeLong = null;
     this.wtc = null;
 
 
@@ -1975,12 +1976,16 @@ PlaneObject.prototype.getAircraftData = function() {
             this.icaoTypeCache = this.icaoType;
         }
 
-        if (data[3]) {
-            this.typeDescription = data[3];
+        if (data[5]) {
+            this.typeDescription = data[5];
         }
 
-        if (data[4]) {
-            this.wtc = data[4];
+        if (data[6]) {
+            this.wtc = data[6];
+        }
+
+        if (data[3]) {
+            this.typeLong = data[3];
         }
 
         if (data[2]) {
