@@ -2051,8 +2051,8 @@ PlaneObject.prototype.milRange = function() {
         //33ff00-33ffff = italy mil(iy)
         || i.match(/^33ff/)
 
-        //340000-37ffff = spain mil(sp)
-        || i.match(/^34/)
+        //350000-37ffff = spain mil(sp)
+        || (i >= '350000' && i <= '37ffff')
 
         //3a8000-3affff = france mil_1(fs)
         || i.match(/^3a(8|9|[a-f])/)
