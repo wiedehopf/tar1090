@@ -48,7 +48,7 @@ let range_outline_width = 1.7;
 let range_outline_colored_by_altitude = false;
 
 // which map is displayed to new visitors
-let MapType_tar1090 = "carto_light_all";
+let MapType_tar1090 = "osm_adsbx";
 
 // Default map dim state
 let MapDim = true;
