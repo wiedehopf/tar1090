@@ -1288,8 +1288,8 @@ function initialize_map() {
         globeIndexGrid = receiverJson.globeIndexGrid;
         globeIndex = 1;
         globeIndexSpecialTiles = receiverJson.globeIndexSpecialTiles;
-        $('.dump1090_total_history_td').hide();
-        $('.dump1090_message_rate_td').hide();
+        $('#dump1090_total_history_td').hide();
+        $('#dump1090_message_rate_td').hide();
     }
     // Load stored map settings if present
     CenterLon = Number(localStorage['CenterLon']) || DefaultCenterLon;
