@@ -792,6 +792,12 @@ function init_page() {
         minWidth: 150,
         maxWidth: ($(window).innerWidth() *0.8),
     });
+    $("#splitter").dblclick(function() {
+        $('#sidebar_container').width('auto');
+        updateMapSize();
+        localStorage['sidebar_width'] = $('#sidebar_container').width();
+        $('#sidebar_container').width(localStorage['sidebar_width']);
+    });
 
     if (localStorage['sidebar_width'] != null)
         $('#sidebar_container').width(localStorage['sidebar_width']);
