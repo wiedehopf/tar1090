@@ -23,6 +23,7 @@ let heatChunks = [];
 let heatPoints = [];
 let replay = false;
 let rData = [];
+let StaleReceiverCount = 0;
 
 let databaseFolder = "db2";
 
@@ -201,9 +202,17 @@ if (uuid != null) {
     //console.time("Downloaded History");
 } else {
     get_receiver_defer.fail(function(data){
+        StaleReceiverCount++;
+
+        setTimeout(function() {
+            $("#loader").addClass("hidden");
+            $("#update_error_detail").text("Seems the decoder / receiver / backend isn't working correctly!");
+            $("#update_error").css('display','block');
+        }, 2000);
+
         setTimeout(function() {
             location.reload();
-        }, 4000);
+        }, 10000);
     });
     get_receiver_defer.done(function(data){
         get_receiver_defer = null;

@@ -207,6 +207,7 @@ function createBaseLayers() {
         opacity: 0.7,
         visible: false,
         zIndex: 99,
+        maxZoom: 14,
     }));
 
     let nexrad = new ol.layer.Tile({
@@ -216,6 +217,7 @@ function createBaseLayers() {
         opacity: 0.3,
         visible: false,
         zIndex: 99,
+        maxZoom: 14,
     });
 
     let refreshNexrad = function() {
@@ -228,7 +230,7 @@ function createBaseLayers() {
     };
 
     refreshNexrad();
-    window.setInterval(refreshNexrad, 4 * 60000);
+    window.setInterval(refreshNexrad, 300 * 1000);
 
     let dwd;
     if (enableDWD) {
@@ -245,6 +247,7 @@ function createBaseLayers() {
             opacity: 0.3,
             visible: false,
             zIndex: 99,
+            maxZoom: 14,
         });
 
 

@@ -13,6 +13,7 @@ let trailGroup = new ol.Collection();
 let iconLayer;
 let trailLayers;
 let heatFeatures = [];
+let heatFeaturesSpread = 1024;
 let heatLayers = [];
 let realHeatFeatures = new ol.source.Vector();
 let realHeat;
@@ -107,6 +108,7 @@ let solidT = false;
 let lastActive = new Date().getTime();
 let firstFetchDone = false;
 let overrideMapType = null;
+let pTracks = false;
 
 let shareLink = '';
 
@@ -142,7 +144,6 @@ let last = 0;
 let uat_now = 0;
 let uat_last = 0;
 let today = 0;
-let StaleReceiverCount = 0;
 let FetchPending = [];
 let FetchPendingUAT = null;
 
@@ -548,6 +549,14 @@ function initialize() {
             largeMode = 2;
         }
 
+        if (search.has('pTracks')) {
+            pTracks = true;
+            noVanish = true;
+            buttonActive('#P', noVanish);
+            filterTracks = true;
+            selectAllPlanes();
+        }
+
         if (search.has('largeMode')) {
             let tmp = parseInt(search.get('largeMode'));
             console.log(tmp);
@@ -628,6 +637,14 @@ function initialize() {
 
     if (onMobile)
         enableMouseover = false;
+
+    if (false && iOSVersion() <= 12 && !('PointerEvent' in window)) {
+            $("#generic_error_detail").text("Enable Settings - Safari - Advanced - Experimental features - Pointer Events");
+            $("#generic_error").css('display','block');
+        setTimeout(function() {
+            $("#generic_error").css('display','none');
+        }, 30000);
+    }
 
     if (document.getElementById('adsense') != null || adsbexchange) {
         if (onMobile || hideButtons) {
@@ -1782,6 +1799,11 @@ function refreshSelected() {
     else
         $('#selected_typedesc').text("n/a");
 
+    if (selected.typeLong)
+        $('#selected_typelong').text(selected.typeLong);
+    else
+        $('#selected_typelong').text("n/a");
+
     if (showPictures && selected.icaoType){
         let new_html = "<img width='150px' src='aircraft_sil/" + selected.icaoType + ".png' />";
         if (new_html != selectedPhotoCache) {
@@ -2156,6 +2178,8 @@ function refreshFeatures() {
 
 // Refreshes the larger table of all the planes
 function refreshTableInfo() {
+    if (pTracks)
+        return;
     refreshPageTitle();
 
     resortTable(PlanesOrdered);
@@ -4501,7 +4525,7 @@ function getTrace(newPlane, hex, options) {
 function initHeatmap() {
     heatmap.init = false;
     if (heatFeatures.length == 0) {
-        for (let i = 0; i < 16; i++) {
+        for (let i = 0; i < heatFeaturesSpread; i++) {
             heatFeatures.push(new ol.source.Vector());
             heatLayers.push(new ol.layer.Vector({
                 name: ('heatLayer' + i),
@@ -4509,6 +4533,8 @@ function initHeatmap() {
                 source: heatFeatures[i],
                 declutter: (heatmap.declutter ? true : false),
                 zIndex: 150,
+                renderOrder: null,
+                renderBuffer: 5,
             }));
             trailGroup.push(heatLayers[i]);
         }
@@ -4545,7 +4571,7 @@ function drawHeatmap() {
     let maxLat = ext.maxLat * 1000000;
     let minLat = ext.minLat * 1000000;
 
-    for (let i = 0; i < 16; i++)
+    for (let i = 0; i < heatFeaturesSpread; i++)
         heatFeatures[i].clear();
     realHeatFeatures.clear();
 
@@ -4717,8 +4743,8 @@ function drawHeatmap() {
     if (heatmap.real) {
         realHeatFeatures.addFeatures(features);
     } else {
-        for (let i = 0; i < 16; i++) {
-            heatFeatures[i].addFeatures(features.splice(0, pointCount / 16 + 1));
+        for (let i = 0; i < heatFeaturesSpread; i++) {
+            heatFeatures[i].addFeatures(features.splice(0, pointCount / heatFeaturesSpread + 1));
             //console.log(features.length);
         }
     }

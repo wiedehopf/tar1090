@@ -224,8 +224,11 @@ div#SpecialSquawkWarning { position: absolute; bottom: calc( 25px * var(--SCALE)
     background-color: #FFFFA3; opacity: 0.75; filter:alpha(opacity=75); padding: calc( 5px * var(--SCALE));
     text-align: center; }
 
-div#update_error { position: absolute; bottom: calc( 25px * var(--SCALE)); left: calc( 25px * var(--SCALE)); border: calc( 2px * var(--SCALE)) solid red;
+.error_box { position: absolute; bottom: calc( 25px * var(--SCALE)); left: calc( 25px * var(--SCALE)); border: calc( 2px * var(--SCALE)) solid red;
     background-color: #FFFFA3; opacity: 0.75; filter:alpha(opacity=75); padding: calc( 5px * var(--SCALE));
+    font-weight: bold;
+    font-size: var(--FS3);
+    line-height: 150%;
     text-align: center; }
 
 div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right: 0; background: #000; opacity: 0.8; filter: alpha(opacity=80); }

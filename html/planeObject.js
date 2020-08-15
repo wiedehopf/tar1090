@@ -109,6 +109,7 @@ function PlaneObject(icao) {
     this.registration = registration_from_hexid(this.icao);
     this.icaoType = null;
     this.typeDescription = null;
+    this.typeLong = null;
     this.wtc = null;
 
 
@@ -1483,6 +1484,8 @@ PlaneObject.prototype.clearMarker = function() {
 
 // Update our marker on the map
 PlaneObject.prototype.updateMarker = function(moved) {
+    if (pTracks)
+        return;
     if (!this.visible || this.position == null || this.isFiltered()) {
         this.clearMarker();
         return;
@@ -1527,6 +1530,8 @@ function altitudeLines (segment) {
     if (noVanish)
         multiplier *= (segment.estimated ? 0.3 : 0.6);
 
+    let join = 'round';
+    let cap = 'square';
     if (!debugTracks) {
         if (segment.estimated && !noVanish) {
             lineStyleCache[lineKey]	= [
@@ -1534,18 +1539,18 @@ function altitudeLines (segment) {
                     stroke: new ol.style.Stroke({
                         color: 'black',
                         width: 2 * newWidth * 0.3,
-                        lineJoin: 'miter',
-                        lineCap: 'square',
+                        lineJoin: join,
+                        lineCap: cap,
                     })
                 }),
                 new ol.style.Style({
                     stroke: new ol.style.Stroke({
                         color: color,
                         width: 2 * newWidth,
-                        lineJoin: 'miter',
-                        lineCap: 'square',
                         lineDash: [10, 20 + 3 * newWidth],
                         lineDashOffset: 5,
+                        lineJoin: join,
+                        lineCap: cap,
                     }),
                 })
             ];
@@ -1554,8 +1559,8 @@ function altitudeLines (segment) {
                 stroke: new ol.style.Stroke({
                     color: color,
                     width: 2 * newWidth * multiplier,
-                    lineJoin: 'miter',
-                    lineCap: 'square',
+                    lineJoin: join,
+                    lineCap: cap,
                 })
             });
         }
@@ -1565,6 +1570,8 @@ function altitudeLines (segment) {
                 stroke: new ol.style.Stroke({
                     color: color,
                     width: 2 * newWidth * multiplier,
+                    lineJoin: join,
+                    lineCap: cap,
                 })
             }),
         ];
@@ -1585,6 +1592,8 @@ function altitudeLines (segment) {
                 stroke: new ol.style.Stroke({
                     color: color,
                     width: 2 * newWidth * multiplier,
+                    lineJoin: join,
+                    lineCap: cap,
                 })
             })
         ];
@@ -1967,12 +1976,16 @@ PlaneObject.prototype.getAircraftData = function() {
             this.icaoTypeCache = this.icaoType;
         }
 
-        if (data[3]) {
-            this.typeDescription = data[3];
+        if (data[5]) {
+            this.typeDescription = data[5];
         }
 
-        if (data[4]) {
-            this.wtc = data[4];
+        if (data[6]) {
+            this.wtc = data[6];
+        }
+
+        if (data[3]) {
+            this.typeLong = data[3];
         }
 
         if (data[2]) {
@@ -2038,8 +2051,8 @@ PlaneObject.prototype.milRange = function() {
         //33ff00-33ffff = italy mil(iy)
         || i.match(/^33ff/)
 
-        //340000-37ffff = spain mil(sp)
-        || i.match(/^34/)
+        //350000-37ffff = spain mil(sp)
+        || (i >= '350000' && i <= '37ffff')
 
         //3a8000-3affff = france mil_1(fs)
         || i.match(/^3a(8|9|[a-f])/)

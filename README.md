@@ -1,8 +1,9 @@
 # tar1090
 
+
 ![Screenshot1](https://raw.githubusercontent.com/wiedehopf/tar1090/screenshots/screenshot3.png)
 
-Provides an improved dump1090-fa webinterface 
+Provides an improved webinterface for use with ADS-B decoders readsb / dump1090-fa
 
 - Improved adjustable history
 - Show All Tracks much faster than original with many planes
@@ -19,7 +20,7 @@ See the bottom of this page or the LICENSE for details.
 While striving not to disrupt an existing Raspbian / Debian / Ubuntu installation, this can't be guaranteed.
 This install script assumes Raspbian / Debian / Ubunutu and will not work on systems without apt.
 
-tar1090 is not a dump1090 replacement, it merely adds an additional webinterface for an existing dump1090-fa or readsb installation.
+tar1090 is not a readsb / dump1090-fa replacement, it merely adds an additional webinterface for an existing readsb or dump1090-fa installation.
 dump1090-mutability installations should work as well, aircraft details will be limited though.
 
 ## Installation
@@ -284,9 +285,9 @@ change to these values for 24h of history:
 
 ```
 # Interval at which the track history is saved
-INTERVAL=14
+INTERVAL=20
 # How many points in time are stored in the track history
-HISTORY_SIZE=6000
+HISTORY_SIZE=4300
 ```
 
 then
@@ -294,10 +295,12 @@ then
 sudo systemctl restart tar1090-persist
 ```
 and the persist instance will start saving more data.
-You can then visit `/persist` instead of `/tar1090`, enable persistence (P) and reload with F5 to get the complete 24h history displayed.
-Press T to show all traces, you might also want to disable aircraft position in the map layer menu.
+You can then visit `/persist/?pTracks` instead of `/tar1090` to get the complete 24h history displayed.
+Press T to toggle the traces on and off, this is recommended for zooming and panning as with the traces showing this can be slow.
 
-for adding the range outline to the persist instance after having used the method described earlier, copy over the json:
+(you can also look at /tar1090/?pTracks if you want to look only at the more recent tracks, interval / history can be configured in /etc/tar1090 for that instance)
+
+For adding the range outline to the /persist instance after having used the method described earlier, copy over the json:
 
 ```
 sudo cp /usr/local/share/tar1090/html/upintheair.json /usr/local/share/tar1090/html-persist
