@@ -824,47 +824,48 @@
                 </tr>
                 <tr>
                   <td>
-                    <table style="width: 100%">
-                      <tr class="infoblock_heading">
-                        <td style="width: 50%"><span class="infoBlockTitleText">Total Aircraft:</span> <span id="dump1090_total_ac">n/a</span></td>
-                        <td id="dump1090_message_rate_td"><span class="infoBlockTitleText">Messages:</span> <span id="dump1090_message_rate">n/a</span>/sec</td>
-                      </tr>
-                      <tr class="infoblock_body">
-                        <td style="width: 50%"><span id="with_positions" class="infoBlockTitleText">With Positions:</span> <span id="dump1090_total_ac_positions">n/a</span></td>
-                        <td id="dump1090_total_history_td"><span class="infoBlockTitleText">History:</span> <span id="dump1090_total_history">n/a</span> positions</td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-
-                <tr class="infoRowSpacer">
-                    <td></td>
-                </tr>
-                <tr class="infoblock_heading">
-                  <td>
-                    <table id="jumpSearch" style="width: 100%">
+                    <table>
                       <tr>
-                        <td style="width: 50%">
+                        <td><span class="infoBlockTitleText">Total Aircraft:</span></td>
+                        <td><span id="dump1090_total_ac">n/a</span></td>
+                        <td style="width: 30px"></td>
+                        <td class="dump1090_message_rate_td"><span class="infoBlockTitleText">Messages:</span></td>
+                        <td class="dump1090_message_rate_td"><span id="dump1090_message_rate">n/a</span>/sec</td>
+                      </tr>
+                      <tr>
+                        <td><span id="with_positions" class="infoBlockTitleText">With Positions:</span></td>
+                        <td><span id="dump1090_total_ac_positions">n/a</span></td>
+                        <td></td>
+                        <td class="dump1090_total_history_td"><span class="infoBlockTitleText">History:</span></td>
+                        <td class="dump1090_total_history_td"><span id="dump1090_total_history">n/a</span> positions</td>
+                      </tr>
+                      <tr class="infoRowSpacer">
+                        <td colspan="5"></td>
+                      </tr>
+                      <tr class="infoRowSpacer">
+                        <td colspan="5"></td>
+                      </tr>
+                      <tr>
+                        <td colspan="3">
                           <form id="search_form">
-                            <span class="infoBlockTitleText">Search:</span>
-                            <br>
+                            <span class="infoBlockTitleText">Search:</span><br />
                             <input id="search_input" name="searchBox" type="text" class="searchInput" maxlength="8">
                           </form>
                         </td>
-                        <td style="width: 50%">
+                        <td colspan="2">
                           <form id="jump_form">
-                            <span class="infoBlockTitleText">Jump to airport:</span>
-                            <br>
+                            <span class="infoBlockTitleText">Jump to airport:</span><br />
                             <input id="jump_input" name="jumpBox" type="text" class="searchInput" maxlength="4">
                           </form>
                         </td>
+                        <td></td>
                       </tr>
                     </table>
                   </td>
                 </tr>
 
                 <tr class="infoRowSpacer">
-                    <td></td>
+                  <td></td>
                 </tr>
               </table>
             </div> <!-- dump1090_infoblock -->
