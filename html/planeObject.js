@@ -715,9 +715,10 @@ PlaneObject.prototype.updateIcon = function() {
         if (extendedLabels == 2) {
             labelText = NBSP + (this.icaoType ? this.icaoType : "  ?  ") + NBSP + "\n" + NBSP + (this.registration ? this.registration : "  ?  ")+ NBSP + "\n" + NBSP + this.name + NBSP;
         } else if (extendedLabels == 1 ) {
-            const altitude = this.altitude ? this.altitude : '  ?  ';
+            const altitude = (this.altitude == null) ? '  ?  ' : this.altitude;
             if ((!this.onGround || (this.speed && this.speed > 18) || (this.selected && !SelectedAllPlanes))) {
-                labelText =  Number(this.speed).toFixed(0).toString().padStart(4, NBSP)+ "  "
+                let speedString = (this.speed == null) ? ' ? ' : Number(this.speed).toFixed(0).toString().padStart(4, NBSP);
+                labelText =  speedString + "  "
                     + altitude.toString().padStart(5, NBSP) + " \n " + this.name + " ";
             } else {
                 labelText =  " " + this.name + " ";

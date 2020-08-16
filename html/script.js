@@ -3436,6 +3436,22 @@ function fetchPfData() {
     }
 }
 
+function solidGoldT() {
+    solidT = true;
+    let list = [[], [], [], []];
+    for (let i = 0; i < PlanesOrdered.length; i++) {
+        let plane = PlanesOrdered[i];
+        //console.log(plane);
+        if (plane.seen_pos && plane.seen_pos < 1200) {
+            plane.visible = true;
+            list[Math.floor(4*i/PlanesOrdered.length)].push(plane);
+        }
+    }
+    getTrace(null, null, {onlyFull: true, list: list[0],});
+    getTrace(null, null, {onlyFull: true, list: list[1],});
+    getTrace(null, null, {onlyFull: true, list: list[2],});
+    getTrace(null, null, {onlyFull: true, list: list[3],});
+}
 
 function bearingFromLonLat(position1, position2) {
     // Positions in format [lon in deg, lat in deg]
