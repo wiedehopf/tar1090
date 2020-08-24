@@ -109,6 +109,7 @@ let lastActive = new Date().getTime();
 let firstFetchDone = false;
 let overrideMapType = null;
 let pTracks = false;
+let inactive = 0;
 
 let shareLink = '';
 
@@ -3963,14 +3964,20 @@ function refreshInt() {
     if (!globeIndex)
         return refresh;
 
-    let inactive = (lastActive - new Date().getTime()) / 1000;
+    if (adsbexchange && refresh < 2500)
+        refresh = 2500;
+
+    inactive = (lastActive - new Date().getTime()) / 1000;
+
+    if (inactive < 100)
+        inactive = 100;
+    if (inactive > 400)
+        inactive = 400;
 
     if (document[hidden])
-        refresh = 3600 * 1000; // hidden tab, don't refresh to avoid freeze when the tab is switched to again.
-    else if (inactive > 1200)
-        refresh *= 1.5;
-    else if (inactive > 600)
-        refresh *= 1.25;
+        refresh = 24 * 3600 * 1000; // hidden tab, don't refresh to avoid freeze when the tab is switched to again.
+    else
+        refresh *= inactive / 100;
 
     if (!mapIsVisible)
         refresh *= 2;

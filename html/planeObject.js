@@ -1432,7 +1432,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
     if ( !this.isFiltered() &&
         (
             (!globeIndex && this.seen < (58 - tisbReduction))
-            || (globeIndex && this.seen_pos < (40 + zoomedOut + jaeroTime - tisbReduction))
+            || (globeIndex && this.seen_pos < inactive / 100 * (40 + zoomedOut + jaeroTime - tisbReduction))
             || (this.selected && (onlySelected || (!SelectedAllPlanes && !multiSelect)))
             || noVanish
         )
