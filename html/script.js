@@ -57,6 +57,7 @@ let onlyMLAT = false;
 let onlyMilitary = false;
 let onlyADSB = false;
 let onlySelected = false;
+let onlyDataSource = null;
 let fetchingPf = false;
 let reaping = false;
 let debug = false;
@@ -537,6 +538,9 @@ function initialize() {
         const search = new URLSearchParams(window.location.search);
         if (search.has('showGrid'))
             showGrid = true;
+
+        if (search.has('onlyDataSource'))
+            onlyDataSource = search.get('onlyDataSource');
 
         if (search.has('outlineWidth')) {
             let tmp = parseInt(search.get('outlineWidth'));

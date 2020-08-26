@@ -178,6 +178,10 @@ PlaneObject.prototype.isFiltered = function() {
         return true;
     }
 
+    if (onlyDataSource && this.dataSource != onlyDataSource) {
+        return true;
+    }
+
     if (filterTISB && this.dataSource == "tisb") {
         return true;
     }
@@ -1327,7 +1331,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.true_heading = null;
 
     if (data.type != null)
-        this.addrtype	= data.type;
+        this.addrtype = data.type;
     else
         this.addrtype = null;
 
