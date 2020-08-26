@@ -1204,7 +1204,7 @@ function parse_history() {
         setInterval(checkMovement, 30);
 
     // And kick off one refresh immediately.
-    if (!heatmap)
+    if (!heatmap && !pTracks)
         fetchData();
     if (replay) {
         initReplay();
@@ -3400,7 +3400,7 @@ function toggleLayer(element, layer) {
 }
 
 function fetchPfData() {
-    if (fetchingPf)
+    if (fetchingPf || pTracks)
         return;
     fetchingPf = true;
     for (let i in pf_data) {
