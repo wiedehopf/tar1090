@@ -2007,9 +2007,7 @@ function refreshSelected() {
     $('#selected_rssi1').text(selected.rssi != null ? selected.rssi.toFixed(1) : "n/a");
     $('#selected_message_count').text(selected.messages);
     $('#selected_message_rate').text((selected.messageRate != null) ? (selected.messageRate.toFixed(1)) : "n/a");
-    if (flightawareLinks) {
-        $('#selected_photo_link').html(getFlightAwarePhotoLink(selected.registration));
-    }
+    $('#selected_photo_link').html(getPhotoLink(selected.registration));
 
     $('#selected_altitude_geom').text(format_altitude_long(selected.alt_geom, selected.geom_rate, DisplayUnits));
     $('#selected_ias').text(format_speed_long(selected.ias, DisplayUnits));
@@ -3368,12 +3366,14 @@ function getFlightAwareModeSLink(code, ident, linkText) {
     return "";
 }
 
-function getFlightAwarePhotoLink(registration) {
-    if (registration !== null && registration !== "") {
+function getPhotoLink(registration) {
+    if (registration == null || registration == "")
+        return "";
+    if (flightawareLinks) {
         return "<a target=\"_blank\" href=\"https://flightaware.com/photos/aircraft/" + registration.replace(/[^0-9a-z]/ig,'') + "\" rel=\"noreferrer\">See Photos</a>";
+    } else {
+        return "<a target=\"_blank\" href=\"https://www.planespotters.net/photos/reg/" + registration + "\" rel=\"noreferrer\">View on Planespotters</a>";
     }
-
-    return "";   
 }
 
 // takes in an elemnt jQuery path and the OL3 layer name and toggles the visibility based on clicking it
