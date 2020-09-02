@@ -107,10 +107,10 @@ let geoMag = null;
 let globalCompositeTested = false;
 let solidT = false;
 let lastActive = new Date().getTime();
+let inactive = 0;
 let firstFetchDone = false;
 let overrideMapType = null;
 let pTracks = false;
-let inactive = 0;
 
 let shareLink = '';
 
@@ -692,6 +692,7 @@ function initialize() {
                 }, 1000);
             }, 1000);
         }
+        setInterval(function(){$.ajax({url:'data/receiver.json',cache:false,});}, 180000);
     }
 
     mapOrientation *= (Math.PI/180); // adjust to radians
@@ -1503,7 +1504,7 @@ function initialize_map() {
     }
 
     window.addEventListener('keydown', function(e) {
-        lastActive = new Date().getTime();
+        active();
         if (e.defaultPrevented ) {
             return; // Do nothing if the event was already processed
         }
@@ -2522,7 +2523,7 @@ function sortBy(id,sc,se) {
 
 function selectPlaneByHex(hex, options) {
     //console.trace();
-    lastActive = new Date().getTime();
+    active();
     //console.log("SELECTING", hex, options);
     options = options || {};
     //console.log("select: " + hex);
@@ -3525,7 +3526,7 @@ function checkMovement() {
     // no zoom/pan inputs for 450 ms after a zoom/pan input
     //
     //console.time("fire!");
-    lastActive = new Date().getTime();
+    active();
     changeZoom();
     changeCenter();
 
@@ -3971,7 +3972,7 @@ function refreshInt() {
     if (adsbexchange && refresh < 2500)
         refresh = 2500;
 
-    inactive = (lastActive - new Date().getTime()) / 1000;
+    inactiveUpdate();
 
     if (inactive < 100)
         inactive = 100;
@@ -4867,4 +4868,16 @@ function updateIconCache() {
         iconCache[svgKey] = element;
     }
     addToIconCache = tryAgain;
+}
+function inactiveUpdate() {
+    inactive = (new Date().getTime() - lastActive) / 1000;
+}
+
+function active() {
+    let now = new Date().getTime();
+    if ((now - lastActive) > 200 * 1000) {
+        clearTimeout(refreshId);
+        refreshId = setTimeout(fetchData, RefreshInterval);
+    }
+    lastActive = now;
 }
