@@ -174,6 +174,10 @@ PlaneObject.prototype.isFiltered = function() {
         return true;
     }
 
+    if (onlySquawk && !this.squawk == "7500" || this.squawk == "7600" || this.squawk == "7700") {
+        return true;
+    }
+
     if (onlyADSB && this.dataSource != "adsb" && this.dataSource != "uat") {
         return true;
     }

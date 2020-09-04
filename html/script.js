@@ -55,6 +55,7 @@ let tableInView = false;
 let historyOutdated = false;
 let onlyMLAT = false;
 let onlyMilitary = false;
+let onlySquawk = false;
 let onlyADSB = false;
 let onlySelected = false;
 let onlyDataSource = null;
@@ -567,6 +568,11 @@ function initialize() {
             console.log(tmp);
             if (!isNaN(tmp))
                 largeMode = tmp;
+        }
+
+        if (search.has('squawk')) {
+            onlySquawk = search.get('squawk');
+            onlySquawkMode();
         }
 
         if (search.has('mobile'))
@@ -3237,6 +3243,18 @@ function updateCallsignFilter(e) {
     refreshTableInfo();
 }
 
+function onlySquawkMode(e) {
+    if (e)
+        e.preventDefault();
+
+    $("#callsign_filter").blur();
+
+    PlaneFilter.callsign = onlySquawk;
+
+    refreshSelected();
+    refreshHighlighted();
+    refreshTableInfo();
+}
 
 function onResetTypeFilter(e) {
     $("#type_filter").val("");
