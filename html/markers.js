@@ -610,8 +610,10 @@ let TypeDesignatorIcons = {
     'MD90': ['jet_swept', 1.06],
     'B712': ['jet_swept', 1.06], // 54t
     'F100': ['jet_swept', 1], // 45t
-    'B721': ['jet_swept', 1.10],
-    'B722': ['jet_swept', 1.10],
+    'B721': ['jet_swept', 1.10], // 80t
+    'B722': ['jet_swept', 1.10], // 80t
+
+    'T154': ['jet_swept', 1.12], // 100t
 
     'BE40': ['jet_nonswept', 1], // 7.3t
     'FA10': ['jet_nonswept', 1], // 8t
