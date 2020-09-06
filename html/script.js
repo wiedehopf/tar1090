@@ -110,7 +110,6 @@ let lastActive = new Date().getTime();
 let inactive = 0;
 let firstFetchDone = false;
 let overrideMapType = null;
-let pTracks = false;
 
 let shareLink = '';
 

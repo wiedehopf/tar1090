@@ -40,7 +40,7 @@ fi
 
 if (( ${#GZIP_LVL} < 1 || ${#GZIP_LVL} > 9 ));
 then
-    echo "gzip level unspecified, using level 3"
+    echo "gzip level unspecified, using level 1"
     GZIP_LVL=3
 fi
 
@@ -50,15 +50,31 @@ chunks=$(( hist/CHUNK_SIZE + 1 ))
 #increase chunk size to get history size as close as we can
 CHUNK_SIZE=$(( CHUNK_SIZE - ( (CHUNK_SIZE - hist % CHUNK_SIZE)/chunks ) ))
 
+
+if [[ -z $PTRACKS ]]; then
+    PTRACKS=8
+fi
+chunksAll=$(awk "function ceil(x){return int(x)+(x>int(x))} BEGIN {printf ceil($PTRACKS * 3600 / $INTERVAL / $CHUNK_SIZE)}")
+
+if (( ${#chunksAll} < ${#chunks} )); then
+    chunksAll=chunks
+fi
+
 new_chunk() {
     if [[ $1 != "refresh" ]]; then
         cur_chunk="chunk_$(date +%s%N | head -c-7).gz"
         echo "$cur_chunk" >> chunk_list
+        echo "$cur_chunk" >> chunk_list_all
         cp "$1" "$cur_chunk"
     fi
-    for iterator in $(head -n-$chunks chunk_list); do rm -f "$RUN_DIR/$iterator"; done
+    for iterator in $(head -n-$chunksAll chunk_list_all); do rm -f "$RUN_DIR/$iterator"; done
+
+    tail -n$chunksAll chunk_list_all > chunk_list_all.tmp
+    mv chunk_list_all.tmp chunk_list_all
+
     tail -n$chunks chunk_list > chunk_list.tmp
     mv chunk_list.tmp chunk_list
+
 
     # construct chunks.json
     JSON='{'
@@ -68,6 +84,10 @@ new_chunk() {
 
     JSON="$JSON"' "chunks": [ '
     JSON="$JSON""$(while read -r i; do echo -n "\"$i\", "; done < chunk_list)"
+    JSON="$JSON"' "current_large.gz", "current_small.gz" ],'
+
+    JSON="$JSON"' "chunks_all": [ '
+    JSON="$JSON""$(while read -r i; do echo -n "\"$i\", "; done < chunk_list_all)"
     JSON="$JSON"' "current_large.gz", "current_small.gz" ] }'
 
     echo "$JSON" > "$RUN_DIR/chunks.json"
@@ -96,11 +116,12 @@ do
         sleep 180
         continue
     fi
-    rm -f chunk_list ./chunk_*.gz ./current_*.gz history_*.json latest_*.json || true
+    rm -f chunk_list chunk_list_all ./chunk_*.gz ./current_*.gz history_*.json latest_*.json || true
 
     cp empty.gz current_small.gz
     cp empty.gz current_large.gz
     touch chunk_list
+    touch chunk_list_all
 
     # integrate original dump1090-fa history on startup so we don't start blank
     if [[ -f "$SRC_DIR"/history_0.json ]]; then
@@ -207,7 +228,7 @@ fi
 
 sleep 10
 
-if [[ -n $PF_URL ]]; then
+if [[ -n $PF_URL ]] && [[ "x$PF_ENABLE" != "x0" ]]; then
     TMP="/tmp/tar1090-tmp.pf.json.$RANDOM$RANDOM"
     while true
     do

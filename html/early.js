@@ -24,6 +24,7 @@ let heatPoints = [];
 let replay = false;
 let rData = [];
 let StaleReceiverCount = 0;
+let pTracks = false;
 
 let databaseFolder = "db2";
 
@@ -113,6 +114,11 @@ try {
         let val;
         if (val = parseInt(search.get('heatmap'), 10))
             heatmap.max = val;
+
+    }
+
+    if (search.has('pTracks')) {
+        pTracks = true;
     }
 
 } catch (error) {
@@ -229,7 +235,7 @@ if (uuid != null) {
         } else {
             $.when(test_chunk_defer).done(function(data) {
                 HistoryChunks = true;
-                chunkNames = data.chunks;
+                chunkNames = pTracks ? data.chunks_all : data.chunks;
                 nHistoryItems = chunkNames.length;
                 enable_uat = (data.enable_uat == "true");
                 enable_pf_data = (data.pf_data == "true");

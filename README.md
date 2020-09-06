@@ -35,7 +35,11 @@ Click the following URL and replace the IP address with address of your Raspberr
 
 http://192.168.x.yy/tar1090
 
-Check further down or keyboard shortcuts.
+If you are curious about your coverage, try this URL:
+
+http://192.168.x.yy/tar1090/?pTracks
+
+Check further down for keyboard shortcuts.
 
 ## Update (same command as installation)
 
@@ -255,9 +259,11 @@ sudo wget -O /usr/local/share/tar1090/html/upintheair.json "http://www.heywhatst
 ```
 - You should now have a range outline for the theoretical range for aircraft at 40000 ft on your tar1090 map
 
-
+- It might be interesting to compare to http://192.168.x.yy/tar1090/?pTracks which will by default will display the last 8 hours of traces.
 
 ## A separate instance with longer data retention for gauging range
+
+If this seems too complicated for you or you don't want a 2nd instance, changing / adding PTRACKS=24 to the /etc/default/tar1090 configuration should also extend the history (for /?pTracks only).
 
 ```
 sudo nano /etc/default/tar1090_instances
