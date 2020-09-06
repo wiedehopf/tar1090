@@ -118,7 +118,11 @@ try {
     }
 
     if (search.has('pTracks')) {
-        pTracks = true;
+        let tmp = parseFloat(search.get('pTracks'))
+        if (tmp > 0 && tmp < 9999)
+            pTracks = tmp;
+        else
+            pTracks = 9999;
     }
 
 } catch (error) {

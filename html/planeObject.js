@@ -485,10 +485,11 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     // Add current position to the existing track.
     // We only retain some points depending on time elapsed and track change
     let turn_density = 6.5;
+    if (pTracks) turn_density = 3;
     if (
-        since_update > 86 ||
+        since_update > 86 + !!pTracks * 90 ||
         (!on_ground && since_update > (100/turn_density)/track_change) ||
-        (!on_ground && isNaN(track_change) && since_update > 8) ||
+        (!on_ground && isNaN(track_change) && since_update > 8 + !!pTracks * 22) ||
         (on_ground && since_update > (120/turn_density)/track_change && distance_traveled > 20) ||
         (on_ground && distance_traveled > 50 && since_update > 5) ||
         debugAll

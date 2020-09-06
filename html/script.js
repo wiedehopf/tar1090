@@ -554,7 +554,6 @@ function initialize() {
         }
 
         if (search.has('pTracks')) {
-            pTracks = true;
             noVanish = true;
             buttonActive('#P', noVanish);
             filterTracks = true;
@@ -1115,13 +1114,16 @@ function parse_history() {
         let data;
         let h = 0;
         let pruneInt = Math.floor(PositionHistoryBuffer.length/5);
+        let currentTime = new Date().getTime()/1000;
         while (data = PositionHistoryBuffer.pop()) {
+
+            if (pTracks && currentTime - data.now > pTracks * 3600) {
+                continue;
+            }
 
             // process new data
             if (PositionHistoryBuffer.length < 10) {
                 processReceiverUpdate(data, false);
-                if (now-new Date().getTime()/1000 > 600)
-                    historyOutdated = true;
             } else {
                 processReceiverUpdate(data, true);
             }
