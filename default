@@ -1,7 +1,10 @@
-# Interval at which the track history is saved
+# Time in seconds between snapshots in the track history
 INTERVAL=8
-# How many points in time are stored in the track history
+
+# How many snapshots are stored in the track history
 HISTORY_SIZE=450
+
+# history duration computes as HISTORY_SIZE x INTERVAL seconds.
 
 # Change to yes to enable UAT/978 display in tar1090
 ENABLE_978=no
