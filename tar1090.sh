@@ -57,7 +57,7 @@ fi
 chunksAll=$(awk "function ceil(x){return int(x)+(x>int(x))} BEGIN {printf ceil($PTRACKS * 3600 / $INTERVAL / $CHUNK_SIZE)}")
 
 if (( ${#chunksAll} < ${#chunks} )); then
-    chunksAll=chunks
+    chunksAll="$chunks"
 fi
 
 new_chunk() {
