@@ -61,7 +61,7 @@ if (( ${#chunksAll} < ${#chunks} )); then
 fi
 
 new_chunk() {
-    if [[ $1 != "refresh" ]]; then
+    if [[ "$1" != "refresh" ]]; then
         cur_chunk="chunk_$(date +%s%N | head -c-7).gz"
         echo "$cur_chunk" >> chunk_list
         echo "$cur_chunk" >> chunk_list_all
@@ -109,8 +109,6 @@ elif .tisb != null and (.tisb | contains(["lat"])) then "tisb" else .type end),
 while true
 do
     cd "$RUN_DIR" || { sleep 30; continue; }
-    echo "{ \"files\" : [ ] }" | gzip -1 > empty.gz
-    new_chunk empty.gz
     if ! [ -f "$SRC_DIR/aircraft.json" ]; then
         echo "No aircraft.json found in $SRC_DIR! Try restarting dump1090!"
         sleep 180
@@ -118,10 +116,11 @@ do
     fi
     rm -f chunk_list chunk_list_all ./chunk_*.gz ./current_*.gz history_*.json latest_*.json || true
 
+    echo "{ \"files\" : [ ] }" | gzip -1 > empty.gz
+    new_chunk empty.gz
+
     cp empty.gz current_small.gz
     cp empty.gz current_large.gz
-    touch chunk_list
-    touch chunk_list_all
 
     # integrate original dump1090-fa history on startup so we don't start blank
     if [[ -f "$SRC_DIR"/history_0.json ]]; then
