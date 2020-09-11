@@ -2832,12 +2832,10 @@ function onDisplayUnitsChanged(e) {
     setAltitudeLegend(displayUnits);
 
     // Update filters
-    updatePlaneFilter();
+    updateAltFilter();
 
     // Refresh data
-    refreshSelected();
-    refreshHighlighted();
-    refreshTableInfo();
+    refreshFilter();
 
     // Redraw range rings
     if (SitePosition != null && SiteCircles) {
@@ -2870,13 +2868,24 @@ function onFilterByAltitude(e) {
     $("#altitude_filter_min").blur();
     $("#altitude_filter_max").blur();
 
-    updatePlaneFilter();
 
     if (SelectedPlane && SelectedPlane.isFiltered()) {
         SelectedPlane.selected = false;
         SelectedPlane.clearLines();
         SelectedPlane = null;
     }
+
+    updateAltFilter();
+    refreshFilter();
+}
+
+function refreshFilter() {
+
+    if (filterTracks)
+        remakeTrails();
+
+    refreshFeatures();
+
     refreshSelected();
     refreshHighlighted();
     refreshTableInfo();
@@ -2939,14 +2948,14 @@ function toggleIsolation(on, off) {
 
     buttonActive('#I', onlySelected);
 
-    refreshFeatures();
-    refreshTableInfo();
+    refreshFilter();
 }
 
 function toggleMilitary() {
     onlyMilitary = !onlyMilitary;
     buttonActive('#U', onlyMilitary);
-    refreshTableInfo();
+
+    refreshFilter();
 }
 
 function togglePersistence() {
@@ -2961,7 +2970,8 @@ function togglePersistence() {
         reaper();
     localStorage['noVanish'] = noVanish;
     console.log('noVanish = ' + noVanish);
-    refreshTableInfo();
+
+    refreshFilter();
 }
 
 function toggleLastLeg() {
@@ -3201,9 +3211,11 @@ function onJump(e) {
         const coords = _airport_coords_cache[airport];
         if (coords) {
             OLMap.getView().setCenter(ol.proj.fromLonLat([coords[1], coords[0]]));
-            refreshTableInfo();
+
             if (ZoomLvl >= 7)
                 fetchData();
+
+            refreshFilter();
         }
     }
 }
@@ -3233,9 +3245,7 @@ function updateCallsignFilter(e) {
 
     PlaneFilter.callsign = $("#callsign_filter").val().trim().toUpperCase();
 
-    refreshSelected();
-    refreshHighlighted();
-    refreshTableInfo();
+    refreshFilter();
 }
 
 
@@ -3255,9 +3265,7 @@ function updateTypeFilter(e) {
 
     PlaneFilter.type = type.toUpperCase();
 
-    refreshSelected();
-    refreshHighlighted();
-    refreshTableInfo();
+    refreshFilter();
 }
 function onResetIcaoFilter(e) {
     $("#icao_filter").val("");
@@ -3274,9 +3282,7 @@ function updateIcaoFilter(e) {
 
     PlaneFilter.icao = icao.toLowerCase();
 
-    refreshSelected();
-    refreshHighlighted();
-    refreshTableInfo();
+    refreshFilter();
 }
 
 function onResetDescriptionFilter(e) {
@@ -3295,9 +3301,7 @@ function updateDescriptionFilter(e) {
 
     PlaneFilter.description = description.toUpperCase();
 
-    refreshSelected();
-    refreshHighlighted();
-    refreshTableInfo();
+    refreshFilter();
 }
 function onResetAltitudeFilter(e) {
     $("#altitude_filter_min").val("");
@@ -3305,11 +3309,11 @@ function onResetAltitudeFilter(e) {
     $("#altitude_filter_min").blur();
     $("#altitude_filter_max").blur();
 
-    updatePlaneFilter();
-    refreshTableInfo();
+    updateAltFilter();
+    refreshFilter();
 }
 
-function updatePlaneFilter() {
+function updateAltFilter() {
     let minAltitude = parseFloat($("#altitude_filter_min").val().trim());
     let maxAltitude = parseFloat($("#altitude_filter_max").val().trim());
     let enabled = false;
@@ -3333,11 +3337,6 @@ function updatePlaneFilter() {
         PlaneFilter.maxAltitude = maxAltitude;
     }
 
-    if (filterTracks) {
-        remakeTrails();
-    }
-
-    refreshFeatures();
 }
 
 function getFlightAwareIdentLink(ident, linkText) {
