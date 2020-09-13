@@ -227,19 +227,19 @@ fi
 
 sleep 10
 
-if [[ -n $PF_URL ]] && [[ "x$PF_ENABLE" != "x0" ]]; then
-    TMP="/tmp/tar1090-tmp.pf.json.$RANDOM$RANDOM"
+if [[ -n "$PF_URL" ]] && [[ "x$PF_ENABLE" != "x0" ]]; then
     while true
     do
         sleep 10 &
-        if cd "$RUN_DIR" && wget -T 5 -q -O $TMP "$PF_URL" &>/dev/null; then
-            sed -i -e 's/"user_l[a-z]*":"[0-9,.,-]*",//g' $TMP
-            mv $TMP pf.json
+        TMP="$RUN_DIR/tar1090-tmp.pf.json.$RANDOM$RANDOM"
+        if cd "$RUN_DIR" && wget -T 5 -O "$TMP" "$PF_URL" &>/dev/null; then
+            sed -i -e 's/"user_l[a-z]*":"[0-9,.,-]*",//g' "$TMP"
+            mv "$TMP" pf.json
             if ! grep -qs -e pf_data chunks.json; then
                 new_chunk refresh
             fi
         else
-            rm -f $TMP
+            rm -f "$TMP"
             sleep 120
         fi
         wait

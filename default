@@ -20,15 +20,9 @@ PTRACKS=8
 
 
 
-
-
-
-
-
-PF_ENABLE=0
-
 # no need to change the lines below
 CHUNK_SIZE=60
 INT_978=1
+PF_ENABLE=1
 PF_URL="http://127.0.0.1:30053/ajax/aircraft"
 COMPRESS_978=""
