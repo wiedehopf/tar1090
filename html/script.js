@@ -1192,6 +1192,7 @@ function parse_history() {
     }
     //window.setInterval(refreshTableInfo, 1000);
     //window.setInterval(function() {PendingFetches--;}, 10000);
+    setInterval(decrementTraceRate, 1000);
 
     pathName = window.location.pathname;
     processURLParams();
@@ -4123,6 +4124,10 @@ function legShift(offset) {
 }
 
 function shiftTrace(offset) {
+    if (traceRate > 180) {
+        $('#leg_sel').text('Slow down! ...');
+        return;
+    }
     $('#leg_sel').text('Loading ...');
     if (traceDateString && !traceDate) {
         let numbers = traceDateString.split('-');
@@ -4446,6 +4451,11 @@ function checkFollow() {
     }
 }
 
+function decrementTraceRate() {
+    if (traceRate > 0)
+        traceRate = traceRate  * 0.985 - 1;
+}
+
 function getTrace(newPlane, hex, options) {
 
     if (options.list) {
@@ -4455,6 +4465,15 @@ function getTrace(newPlane, hex, options) {
         }
         hex = newPlane.icao;
     }
+
+    let now = new Date().getTime();
+    let backoff = 200;
+    if (!showTrace && traceRate > 140 && now < lastTraceGet + backoff) {
+        setTimeout(getTrace, lastTraceGet + backoff + 20 - now, newPlane, hex, options);
+        return;
+    }
+
+    lastTraceGet = now;
 
     let URL1 = 'data/traces/'+ hex.slice(-2) + '/trace_recent_' + hex + '.json';
     let URL2 = 'data/traces/'+ hex.slice(-2) + '/trace_full_' + hex + '.json';
@@ -4472,6 +4491,7 @@ function getTrace(newPlane, hex, options) {
     traceOpts = options;
 
     if (showTrace) {
+        traceRate += 3;
         let today = new Date();
         //console.log(today.toUTCString() + ' ' + traceDate.toUTCString());
         // use non historic traces for showTrace until 30 min after midnight
@@ -4486,6 +4506,8 @@ function getTrace(newPlane, hex, options) {
             URL1 = null;
             URL2 = 'globe_history/' + traceDateString + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json';
         }
+    } else {
+        traceRate += 2;
     }
     if (newPlane && (showTrace || showTraceExit)) {
         newPlane.trace = [];

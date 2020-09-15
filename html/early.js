@@ -25,6 +25,8 @@ let replay = false;
 let rData = [];
 let StaleReceiverCount = 0;
 let pTracks = false;
+let lastTraceGet = 0;
+let traceRate = 0;
 
 let databaseFolder = "db2";
 
