@@ -1560,6 +1560,8 @@ function altitudeLines (segment) {
                     }),
                 })
             ];
+        } else if (segment.estimated && pTracks) {
+            lineStyleCache[lineKey]	= new ol.style.Style({});
         } else {
             lineStyleCache[lineKey]	= new ol.style.Style({
                 stroke: new ol.style.Stroke({
@@ -1570,39 +1572,41 @@ function altitudeLines (segment) {
                 })
             });
         }
-    } else if (segment.noLabel || segment.estimated) {
-        lineStyleCache[lineKey] = [
-            new ol.style.Style({
-                stroke: new ol.style.Stroke({
-                    color: color,
-                    width: 2 * newWidth * multiplier,
-                    lineJoin: join,
-                    lineCap: cap,
-                })
-            }),
-        ];
     } else {
-        lineStyleCache[lineKey] = [
-            new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: 2 * newWidth,
-                    fill: new ol.style.Fill({
-                        color: color
+        if (segment.noLabel || segment.estimated) {
+            lineStyleCache[lineKey] = [
+                new ol.style.Style({
+                    stroke: new ol.style.Stroke({
+                        color: color,
+                        width: 2 * newWidth * multiplier,
+                        lineJoin: join,
+                        lineCap: cap,
                     })
                 }),
-                geometry: function(feature) {
-                    return new ol.geom.MultiPoint(feature.getGeometry().getCoordinates());
-                }
-            }),
-            new ol.style.Style({
-                stroke: new ol.style.Stroke({
-                    color: color,
-                    width: 2 * newWidth * multiplier,
-                    lineJoin: join,
-                    lineCap: cap,
+            ];
+        } else {
+            lineStyleCache[lineKey] = [
+                new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: 2 * newWidth,
+                        fill: new ol.style.Fill({
+                            color: color
+                        })
+                    }),
+                    geometry: function(feature) {
+                        return new ol.geom.MultiPoint(feature.getGeometry().getCoordinates());
+                    }
+                }),
+                new ol.style.Style({
+                    stroke: new ol.style.Stroke({
+                        color: color,
+                        width: 2 * newWidth * multiplier,
+                        lineJoin: join,
+                        lineCap: cap,
+                    })
                 })
-            })
-        ];
+            ];
+        }
     }
     return lineStyleCache[lineKey];
 }
