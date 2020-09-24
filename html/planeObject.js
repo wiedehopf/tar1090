@@ -1429,6 +1429,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
 
     const zoomedOut = 40 * Math.max(0, 7 - ZoomLvl);
     const jaeroTime = (this.dataSource == "adsc") ? 35*60 : 0;
+    const mlatTime = (this.dataSource == "mlat") ? 25 : 0;
     const tisbReduction = (this.icao[0] == '~') ? 15 : 0;
     // If no packet in over 58 seconds, clear the plane.
     // Only clear the plane if it's not selected individually
@@ -1437,7 +1438,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
     if ( !this.isFiltered() &&
         (
             (!globeIndex && this.seen < (58 - tisbReduction))
-            || (globeIndex && this.seen_pos < inactive / 100 * (40 + zoomedOut + jaeroTime - tisbReduction))
+            || (globeIndex && this.seen_pos < inactive / 100 * (40 + zoomedOut + jaeroTime + mlatTime - tisbReduction))
             || (this.selected && (onlySelected || (!SelectedAllPlanes && !multiSelect)))
             || noVanish
         )
