@@ -1769,7 +1769,7 @@ function refreshSelected() {
     }
     const selected = SelectedPlane;
 
-    if (SelectedPlane.position && SelectedPlane.seen_pos > 25)
+    if (SelectedPlane.position)
         SelectedPlane.updateMarker(true);
     if (selected.flight != selCall) {
         selCall = selected.flight;
@@ -2259,7 +2259,7 @@ function refreshTableInfo() {
             nMapPlanes++;
         }
 
-        if (!plane.isFiltered() && (plane.seen < 58 || noVanish)) {
+        if (plane.visible) {
             TrackedAircraft++;
 
             if (!tableInView && plane.position != null)
@@ -3756,7 +3756,7 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
             || (byReg && plane.registration != null && plane.registration.toLowerCase().match(query))
             || (byType && plane.icaoType != null && plane.icaoType.toLowerCase().match(query))
         ) {
-            if (plane.seen < 70 || noVanish)
+            if (plane.checkVisible())
                 results.push(plane);
         }
     }
