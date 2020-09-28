@@ -170,7 +170,7 @@ if (!heatmap) {
     heatChunks = Array(numChunks).fill(null);
     heatPoints = Array(numChunks).fill(null);
     for (let i = 0; i < numChunks; i++) {
-        var xhrOverride = new XMLHttpRequest();
+        let xhrOverride = new XMLHttpRequest();
         xhrOverride.responseType = 'arraybuffer';
 
         let time = new Date(start + i * interval);

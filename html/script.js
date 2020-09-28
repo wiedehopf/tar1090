@@ -5,6 +5,7 @@
 "use strict";
 
 // Define our global letiables
+let wdb = globeIndex;
 let OLMap         = null;
 let OLProj = null;
 let StaticFeatures = new ol.source.Vector();
@@ -266,65 +267,38 @@ function processAircraft(ac, init, uat) {
 
 function processReceiverUpdate(data, init) {
     // update now and last
-    let uat = false;
-    let time_delta = 0;
-    if (data.uat_978 == "true") {
-        uat = true;
+    let uat = data.uat_978;
+    if (uat) {
+        if (data.now <= uat_now)
+            return;
         uat_last = uat_now;
         uat_now = data.now;
     } else {
-        if (data.now > now || globeIndex) {
+        if (data.now <= now && !globeIndex)
+            return;
+        if (data.now > now) {
             last = now;
             now = data.now;
-            today = new Date(now * 1000).getDate();
-            time_delta = now - last;
         }
     }
+
+    if (globeIndex) {
+        if (!wdb && (showGrid || localStorage['globeGrid'] == 'true')
+            && globeIndexNow[data.globeIndex] == null)
+            drawTileBorder(data);
+        if (wdb)
+            wqi(data);
+        globeTrackedAircraft = data.global_ac_count_withpos;
+        globeIndexNow[data.globeIndex] = data.now;
+    }
+
+
+    if (!uat && !init && !globeIndex && !wdb)
+        updateMessageRate(data);
 
     // Loop through all the planes in the data packet
-    let acs = data.aircraft;
-
-    if (!uat && !init && !globeIndex) {
-        if (data.messages && uuid == null) {
-            // Detect stats reset
-            if (MessageCountHistory.length > 0 && MessageCountHistory[MessageCountHistory.length-1].messages > data.messages) {
-                MessageCountHistory = [{'time' : MessageCountHistory[MessageCountHistory.length-1].time,
-                    'messages' : 0}];
-            }
-
-            // Note the message count in the history
-            MessageCountHistory.push({ 'time' : now, 'messages' : data.messages});
-
-            if (MessageCountHistory.length > 1) {
-                let message_time_delta = MessageCountHistory[MessageCountHistory.length-1].time - MessageCountHistory[0].time;
-                let message_count_delta = MessageCountHistory[MessageCountHistory.length-1].messages - MessageCountHistory[0].messages;
-                if (message_time_delta > 0)
-                    MessageRate = message_count_delta / message_time_delta;
-            }
-
-            // .. and clean up any old values
-            if ((now - MessageCountHistory[0].time) > 10)
-                MessageCountHistory.shift();
-        } else if (uuid != null) {
-            if (time_delta > 0.5) {
-                let message_delta = 0;
-                for (let j=0; j < acs.length; j++) {
-                    let data = acs[j];
-                    let plane = Planes[data.hex]
-                    if (plane) {
-                        message_delta += (data.messages - plane.messages);
-                    }
-                }
-                MessageRate = message_delta / time_delta;
-            }
-        } else {
-            MessageRate = null;
-        }
-    }
-
-    for (let j=0; j < acs.length; j++) {
-        processAircraft(acs[j], init, uat);
-    }
+    for (let j=0; j < data.aircraft.length; j++)
+        processAircraft(data.aircraft[j], init, uat);
 }
 
 function fetchData() {
@@ -392,8 +366,9 @@ function fetchData() {
             return (globeIndexNow[x] - globeIndexNow[y]);
         });
         indexes = indexes.slice(0, globeSimLoad);
+        let ft = wdb ? '.ttf' : '.json'
         for (let i in indexes) {
-            ac_url.push('data/globe_' + indexes[i].toString().padStart(4, '0') + '.json');
+            ac_url.push('data/globe_' + indexes[i].toString().padStart(4, '0') + ft);
         }
     } else {
         ac_url[0] = 'data/aircraft.json';
@@ -409,52 +384,27 @@ function fetchData() {
 
     for (let i in ac_url) {
         //console.log(ac_url[i]);
-        let req = $.ajax({ url: ac_url[i],
-            dataType: 'json' });
+        let req;
+        if (wdb) {
+            let xhrOverride = new XMLHttpRequest();
+            xhrOverride.responseType = 'arraybuffer';
+            req = $.ajax({
+                url: ac_url[i], method: 'GET',
+                xhr: function() { return xhrOverride; }
+            });
+        } else {
+            req = $.ajax({ url: ac_url[i], dataType: 'json' });
+        }
         FetchPending.push(req);
 
         req.done(function(data) {
             if (data == null) {
                 return;
             }
-            if (globeIndex) {
-                globeTrackedAircraft = data.global_ac_count_withpos;
-                if ((showGrid || localStorage['globeGrid'] == 'true') && globeIndexNow[data.globeIndex] == null) {
-                    let southWest = ol.proj.fromLonLat([data.west, data.south]);
-                    let south180p = ol.proj.fromLonLat([180, data.south]);
-                    let south180m = ol.proj.fromLonLat([-180, data.south]);
-                    let southEast = ol.proj.fromLonLat([data.east, data.south]);
-                    let northEast = ol.proj.fromLonLat([data.east, data.north]);
-                    let north180p = ol.proj.fromLonLat([180, data.north]);
-                    let north180m = ol.proj.fromLonLat([-180, data.north]);
-                    let northWest = ol.proj.fromLonLat([data.west, data.north]);
-                    const estimateStyle = new ol.style.Style({
-                        stroke: new ol.style.Stroke({
-                            color: '#303030',
-                            width: 1.5,
-                        })
-                    });
-                    if (data.west < data.east) {
-                        let tile = new ol.geom.LineString([southWest, southEast, northEast, northWest, southWest]);
-                        let tileFeature = new ol.Feature(tile);
-                        tileFeature.setStyle(estimateStyle);
-                        StaticFeatures.addFeature(tileFeature);
-                    } else {
-                        let west = new ol.geom.LineString([south180p, southWest, northWest, north180p]);
-                        let east = new ol.geom.LineString([south180m, southEast, northEast, north180m]);
-                        let westF = new ol.Feature(west);
-                        let eastF = new ol.Feature(east);
-                        westF.setStyle(estimateStyle);
-                        eastF.setStyle(estimateStyle);
-                        StaticFeatures.addFeature(westF);
-                        StaticFeatures.addFeature(eastF);
-                    }
-
-
-                }
-                globeIndexNow[data.globeIndex] = data.now;
+            if (wdb) {
+                data = { buffer: data, };
+                data.now = Number(new BigUint64Array(data.buffer, 0, 1)[0])/1000;
             }
-
             if (data.now >= now || globeIndex) {
                 //console.time("Process " + data.globeIndex);
                 processReceiverUpdate(data);
@@ -1692,6 +1642,7 @@ function initialize_map() {
 // This looks for planes to reap out of the master Planes letiable
 function reaper(all) {
     //console.log("Reaping started..");
+    today = new Date().getDate();
     if (noVanish)
         return;
     reaping = true;
@@ -4902,4 +4853,74 @@ function active() {
         refreshId = setTimeout(fetchData, RefreshInterval);
     }
     lastActive = now;
+}
+function drawTileBorder(data) {
+    let southWest = ol.proj.fromLonLat([data.west, data.south]);
+    let south180p = ol.proj.fromLonLat([180, data.south]);
+    let south180m = ol.proj.fromLonLat([-180, data.south]);
+    let southEast = ol.proj.fromLonLat([data.east, data.south]);
+    let northEast = ol.proj.fromLonLat([data.east, data.north]);
+    let north180p = ol.proj.fromLonLat([180, data.north]);
+    let north180m = ol.proj.fromLonLat([-180, data.north]);
+    let northWest = ol.proj.fromLonLat([data.west, data.north]);
+    const estimateStyle = new ol.style.Style({
+        stroke: new ol.style.Stroke({
+            color: '#303030',
+            width: 1.5,
+        })
+    });
+    if (data.west < data.east) {
+        let tile = new ol.geom.LineString([southWest, southEast, northEast, northWest, southWest]);
+        let tileFeature = new ol.Feature(tile);
+        tileFeature.setStyle(estimateStyle);
+        StaticFeatures.addFeature(tileFeature);
+    } else {
+        let west = new ol.geom.LineString([south180p, southWest, northWest, north180p]);
+        let east = new ol.geom.LineString([south180m, southEast, northEast, north180m]);
+        let westF = new ol.Feature(west);
+        let eastF = new ol.Feature(east);
+        westF.setStyle(estimateStyle);
+        eastF.setStyle(estimateStyle);
+        StaticFeatures.addFeature(westF);
+        StaticFeatures.addFeature(eastF);
+    }
+}
+
+function updateMessageRate(data) {
+    let time_delta = now - last;
+    if (data.messages && uuid == null) {
+        // Detect stats reset
+        if (MessageCountHistory.length > 0 && MessageCountHistory[MessageCountHistory.length-1].messages > data.messages) {
+            MessageCountHistory = [{'time' : MessageCountHistory[MessageCountHistory.length-1].time,
+                'messages' : 0}];
+        }
+
+        // Note the message count in the history
+        MessageCountHistory.push({ 'time' : now, 'messages' : data.messages});
+
+        if (MessageCountHistory.length > 1) {
+            let message_time_delta = MessageCountHistory[MessageCountHistory.length-1].time - MessageCountHistory[0].time;
+            let message_count_delta = MessageCountHistory[MessageCountHistory.length-1].messages - MessageCountHistory[0].messages;
+            if (message_time_delta > 0)
+                MessageRate = message_count_delta / message_time_delta;
+        }
+
+        // .. and clean up any old values
+        if ((now - MessageCountHistory[0].time) > 10)
+            MessageCountHistory.shift();
+    } else if (uuid != null) {
+        if (time_delta > 0.5) {
+            let message_delta = 0;
+            for (let j=0; j < acs.length; j++) {
+                let data = acs[j];
+                let plane = Planes[data.hex]
+                if (plane) {
+                    message_delta += (data.messages - plane.messages);
+                }
+            }
+            MessageRate = message_delta / time_delta;
+        }
+    } else {
+        MessageRate = null;
+    }
 }
