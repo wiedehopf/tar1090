@@ -5,7 +5,6 @@
 "use strict";
 
 // Define our global letiables
-let wdb = globeIndex;
 let OLMap         = null;
 let OLProj = null;
 let StaticFeatures = new ol.source.Vector();
@@ -1160,6 +1159,7 @@ function parse_history() {
     else
         setInterval(checkMovement, 30);
 
+    wdb = globeIndex;
     // And kick off one refresh immediately.
     if (!heatmap && !pTracks)
         fetchData();

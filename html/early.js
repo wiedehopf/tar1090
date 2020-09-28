@@ -14,6 +14,7 @@ let deferHistory = [];
 let configureReceiver = $.Deferred();
 let historyTimeout = 60;
 let globeIndex = 0;
+let wdb = globeIndex;
 let regCache = {};
 let l3harris = false;
 let heatmap = false;
@@ -235,7 +236,7 @@ if (uuid != null) {
         if (data.globeIndexGrid != null || heatmap) {
                 HistoryChunks = false;
                 nHistoryItems = 0;
-                globeIndex = 1;
+                wdb = globeIndex = 1;
                 get_history();
                 configureReceiver.resolve();
         } else {
