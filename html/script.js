@@ -4912,11 +4912,11 @@ function updateMessageRate(data) {
     } else if (uuid != null) {
         if (time_delta > 0.5) {
             let message_delta = 0;
+            let acs = data.aircraft;
             for (let j=0; j < acs.length; j++) {
-                let data = acs[j];
-                let plane = Planes[data.hex]
+                let plane = Planes[acs[j].hex]
                 if (plane) {
-                    message_delta += (data.messages - plane.messages);
+                    message_delta += (acs[j].messages - plane.messages);
                 }
             }
             MessageRate = message_delta / time_delta;
