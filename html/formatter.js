@@ -501,8 +501,6 @@ function wqi(data) {
             case 12: ac.type = 'mode_ac';          break;
             default: ac.type = 'unknown';
         }
-        if (ac.type != 'adsb_icao')
-            console.log(String(ac.type) +  ' ' + ac.flight);
 
         data.aircraft.push(ac);
     }

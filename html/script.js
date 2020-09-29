@@ -552,6 +552,9 @@ function initialize() {
             if (tmp > 0)
                 tempTrailsTimeout = tmp;
         }
+        if (search.has('squareMania')) {
+            squareMania = true;
+        }
         if (search.has('mapDim')) {
             let dim = parseFloat(search.get('mapDim'));
             if (!isNaN(dim))

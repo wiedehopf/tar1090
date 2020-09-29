@@ -464,6 +464,7 @@ let shapes = {
     'ground_square': {
         w: 11,
         h: 11,
+        noRotate: true,
         strokeScale: 1.4,
         viewBox: "0 0 16 16",
         path: 'M 4,4 H 12 V 12 H 4 Z',
@@ -894,6 +895,8 @@ let CategoryIcons = {
 
 function getBaseMarker(category, typeDesignator, typeDescription, wtc, addrtype, altitude) {
     //return ['f5_tiger', 1];
+    if (squareMania)
+        return ['ground_square', 1.2];
     if (typeDesignator in TypeDesignatorIcons) {
         let shape = TypeDesignatorIcons[typeDesignator][0];
         let scaling = TypeDesignatorIcons[typeDesignator][1];

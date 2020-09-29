@@ -233,6 +233,7 @@ let enableMouseover = true;
 // enable/disable temporary aircraft trails
 let tempTrails = false;
 let tempTrailsTimeout = 90;
+let squareMania = false;
 
 // Columns that have a // in front of them are shown.
 let HideCols = [

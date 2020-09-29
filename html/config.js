@@ -213,6 +213,7 @@ BingMapsAPIKey = null;
 // enable/disable temporary aircraft trails
 //tempTrails = false;
 //tempTrailsTimeout = 90;
+//squareMania = false;
 
 // Columns that have a // in front of them are shown.
 HideCols = [
