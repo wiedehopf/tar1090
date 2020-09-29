@@ -469,6 +469,8 @@ function wqi(data) {
         ac.oat                  = (u8[77] & 32)  ? ac.oat              : undefined;
         ac.tat                  = (u8[77] & 32)  ? ac.tat              : undefined;
 
+        ac.rssi                  = 10 * Math.log(u8[98]*u8[98]/65025 + 1.125e-5)/Math.log(10);
+
         if (ac.airground == 1)
             ac.alt_baro = "ground";
 
