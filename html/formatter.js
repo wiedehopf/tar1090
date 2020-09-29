@@ -391,31 +391,33 @@ function wqi(data) {
         ac.tas = u16[28];
         ac.ias = u16[29];
         ac.rc  = u16[30];
-        ac.messages = u16[31];
+        ac.messages = u16[15];
 
         ac.category = u8[64] ? u8[64].toString(16) : undefined;
         ac.nic      = u8[65];
 
         let nav_modes = u8[66];
         ac.nav_modes = true;
-        ac.emergency = u8[67] & 31;
-        ac.addrtype = u8[67] & 225;
+        ac.emergency = u8[67] & 15;
+        ac.type = (u8[67] & 240) >> 4;
 
-        ac.nav_altitude_src = u8[68] & 31;
-        ac.airground = u8[68] & 225;
-        ac.sil_type = u8[69] & 31;
-        ac.adsb_version = u8[69] & 225;
+        ac.airground = u8[68] & 15;
+        ac.nav_altitude_src = (u8[68] & 240) >> 4;
 
-        ac.adsr_version = u8[70] & 31;
-        ac.tisb_version = u8[70] & 225;
-        ac.nac_p = u8[71] & 31;
-        ac.nac_v = u8[71] & 225;
+        ac.sil_type = u8[69] & 15;
+        ac.adsb_version = (u8[69] & 240) >> 4;
+
+        ac.adsr_version = u8[70] & 15;
+        ac.tisb_version = (u8[70] & 240) >> 4;
+
+        ac.nac_p = u8[71] & 15;
+        ac.nac_v = (u8[71] & 240) >> 4;
 
         ac.sil = u8[72] & 3;
-        ac.gva = u8[72] & 12;
-        ac.sda = u8[72] & 48;
-        ac.nic_a = u8[72] & 64;
-        ac.nic_c = u8[72] & 128;
+        ac.gva = (u8[72] & 12) >> 2;
+        ac.sda = (u8[72] & 48) >> 4;
+        ac.nic_a = (u8[72] & 64) >> 6;
+        ac.nic_c = (u8[72] & 128) >> 7;
 
         ac.flight = "";
         for (let i = 78; i < 86; i++) {
@@ -483,6 +485,24 @@ function wqi(data) {
             if (nav_modes & 16) ac.nav_modes.push('lnav');
             if (nav_modes & 32) ac.nav_modes.push('tcas');
         }
+        switch (ac.type) {
+            case  0: ac.type = 'adsb_icao';        break;
+            case  1: ac.type = 'adsb_icao_nt';     break;
+            case  2: ac.type = 'adsr_icao';        break;
+            case  3: ac.type = 'tisb_icao';        break;
+            case  4: ac.type = 'adsc';             break;
+            case  5: ac.type = 'mlat';             break;
+            case  6: ac.type = 'other';            break;
+            case  7: ac.type = 'mode_s';           break;
+            case  8: ac.type = 'adsb_other';       break;
+            case  9: ac.type = 'adsr_other';       break;
+            case 10: ac.type = 'tisb_trackfile';   break;
+            case 11: ac.type = 'tisb_other';       break;
+            case 12: ac.type = 'mode_ac';          break;
+            default: ac.type = 'unknown';
+        }
+        if (ac.type != 'adsb_icao')
+            console.log(String(ac.type) +  ' ' + ac.flight);
 
         data.aircraft.push(ac);
     }

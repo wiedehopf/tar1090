@@ -1133,10 +1133,10 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     let seen = isArray? data[6] : data.seen;
     const seen_pos = isArray? data[6] : data.seen_pos;
     seen = (seen == null) ? 5 : seen;
-    const type = isArray? data[7] : data.type;
-    let mlat = isArray? (data[7] == "mlat") : (data.mlat != null && data.mlat.indexOf("lat") >= 0);
-    let tisb = isArray? (data[7] == "tisb") : (data.tisb != null && data.tisb.indexOf("lat") >= 0);
-    tisb = tisb || (type && type.substring(0,4) == "tisb");
+    let type = isArray? data[7] : data.type;
+    if (!isArray && data.mlat != null && data.mlat.indexOf("lat") >= 0) type = 'mlat';
+    const mlat = (type == 'mlat');
+    const tisb = (type && type.substring(0,4) == "tisb");
     const flight = isArray? data[8] : data.flight;
 
     this.last_message_time = now - seen;
