@@ -402,7 +402,8 @@ function fetchData() {
             }
             if (wdb) {
                 data = { buffer: data, };
-                data.now = Number(new BigUint64Array(data.buffer, 0, 1)[0])/1000;
+                let ts = new Uint32Array(data.buffer, 0, 2);
+                data.now = ts[0] / 1000 + ts[1] * 4294967.296;
             }
             if (data.now >= now || globeIndex) {
                 //console.time("Process " + data.globeIndex);
