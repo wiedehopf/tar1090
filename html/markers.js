@@ -809,6 +809,7 @@ let TypeDesignatorIcons = {
     'E3CF': ['e3awacs', 0.88],
     //
     'GLID': ['glider', 1],
+    'S12': ['glider', 1],
     'ULAC': ['cessna', 0.9],
 
     'SR20': ['cirrus_sr22', 1],
@@ -836,6 +837,7 @@ let TypeDescriptionIcons = {
     'H': ['helicopter', 1],
 
     'L1P': ['cessna', 1],
+    'A1P': ['cessna', 1],
     'L1T': ['single_turbo', 1],
     'L1J': ['hi_perf', 0.92],
 
