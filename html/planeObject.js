@@ -1131,8 +1131,9 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     const lat = isArray? data[4] : data.lat;
     const lon = isArray? data[5] : data.lon;
     let seen = isArray? data[6] : data.seen;
-    const seen_pos = isArray? data[6] : data.seen_pos;
+    let seen_pos = isArray? data[6] : data.seen_pos;
     seen = (seen == null) ? 5 : seen;
+    seen_pos = (seen_pos == null) ? 5 : seen;
     let type = isArray? data[7] : data.type;
     if (!isArray && data.mlat != null && data.mlat.indexOf("lat") >= 0) type = 'mlat';
     const mlat = (type == 'mlat');

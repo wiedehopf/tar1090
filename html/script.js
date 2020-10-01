@@ -1532,6 +1532,9 @@ function initialize_map() {
                 else
                     followRandomPlane();
                 break;
+            case "R":
+                fetchData();
+                break;
             case "t":
                 selectAllPlanes();
                 break;
