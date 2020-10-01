@@ -393,7 +393,7 @@ function wqi(data) {
         ac.rc  = u16[30];
         ac.messages = u16[15];
 
-        ac.category = u8[64] ? u8[64].toString(16) : undefined;
+        ac.category = u8[64] ? u8[64].toString(16).toUpperCase() : undefined;
         ac.nic      = u8[65];
 
         let nav_modes = u8[66];
