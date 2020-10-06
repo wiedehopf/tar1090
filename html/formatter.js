@@ -373,7 +373,7 @@ function wqi(data) {
         ac.nav_qnh = s16[14] / 10;
         ac.nav_heading = s16[15] / 90;
 
-        ac.squawk = u16[16].toString(16);
+        ac.squawk = u16[16].toString(16).padStart(4, '0');
         ac.gs = s16[17] / 10;
         ac.mach = s16[18] / 1000;
         ac.roll = s16[19] / 100;
