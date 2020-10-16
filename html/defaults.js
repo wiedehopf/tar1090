@@ -167,7 +167,11 @@ let ColorByAlt = {
 // Also called range rings :)
 let SiteCircles = true; // true to show circles (only shown if the center marker is shown)
 // In miles, nautical miles, or km (depending settings value 'DisplayUnits')
-let SiteCirclesDistances = new Array(100,150,200);
+let SiteCirclesDistances = new Array(100, 150, 200);
+// When more circles defined than cirle colors last color will be used or black by default
+let SiteCirclesColors = ['#000000', '#000000', '#000000'];
+// Show circles using dashed line
+let SiteCirclesLineDash = null; // null - solid line, [5, 5] - dashed line with 5 pixel lines and spaces in between
 
 // Controls page title, righthand pane when nothing is selected
 let PageName = "tar1090";

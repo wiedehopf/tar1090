@@ -4250,6 +4250,7 @@ function remakeTrails() {
 function createSiteCircleFeatures() {
     StaticFeatures.clear();
     drawUpintheair();
+
     // Clear existing circles first
     if (!SitePosition)
         return;
@@ -4274,37 +4275,42 @@ function createSiteCircleFeatures() {
     if (!SiteCircles)
         return;
 
-    let circleStyle = function(distance) {
-        return new ol.style.Style({
-            fill: null,
-            stroke: new ol.style.Stroke({
-                color: '#000000',
-                width: 1
-            }),
-            text: new ol.style.Text({
-                font: '10px Helvetica Neue, sans-serif',
-                fill: new ol.style.Fill({ color: '#000' }),
-                offsetY: -8,
-                text: format_distance_long(distance, DisplayUnits, 0)
+    var circleColor = '#000000';
 
-            })
-        });
-    };
+    for (var i = 0; i < SiteCirclesDistances.length; ++i) {
+      let circleStyle = function(distance) {
+          circleColor = i < SiteCirclesColors.length ? SiteCirclesColors[i] : circleColor;
+          
+          return new ol.style.Style({
+              fill: null,
+              stroke: new ol.style.Stroke({
+                  color: circleColor,
+                  lineDash: SiteCirclesLineDash,
+                  width: 1
+              }),
+              text: new ol.style.Text({
+                  font: '10px Helvetica Neue, sans-serif',
+                  fill: new ol.style.Fill({ color: '#000' }),
+                  offsetY: -8,
+                  text: format_distance_long(distance, DisplayUnits, 0)
 
-    let conversionFactor = 1000.0;
-    if (DisplayUnits === "nautical") {
-        conversionFactor = 1852.0;
-    } else if (DisplayUnits === "imperial") {
-        conversionFactor = 1609.0;
-    }
+              })
+          });
+      };
 
-    for (let i=0; i < SiteCirclesDistances.length; ++i) {
-        let distance = SiteCirclesDistances[i] * conversionFactor;
-        let circle = make_geodesic_circle(SitePosition, distance, 180);
-        circle.transform('EPSG:4326', 'EPSG:3857');
-        let feature = new ol.Feature(circle);
-        feature.setStyle(circleStyle(distance));
-        StaticFeatures.addFeature(feature);
+      let conversionFactor = 1000.0;
+      if (DisplayUnits === "nautical") {
+          conversionFactor = 1852.0;
+      } else if (DisplayUnits === "imperial") {
+          conversionFactor = 1609.0;
+      }
+
+      let distance = SiteCirclesDistances[i] * conversionFactor;
+      let circle = make_geodesic_circle(SitePosition, distance, 180);
+      circle.transform('EPSG:4326', 'EPSG:3857');
+      let feature = new ol.Feature(circle);
+      feature.setStyle(circleStyle(distance));
+      StaticFeatures.addFeature(feature);
     }
 }
 
