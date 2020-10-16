@@ -35,7 +35,11 @@ let uuid = null;
 
 try {
     const search = new URLSearchParams(window.location.search);
-
+    if (search.has('reset')) {
+        localStorage.clear();
+        if (window.history && window.history.replaceState && window.history.replaceState("object or string", "Title", window.location.pathname))
+            location.reload();
+    }
     const feed = search.get('feed');
     if (feed != null) {
         uuid = feed;
