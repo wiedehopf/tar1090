@@ -170,7 +170,7 @@ let SiteCircles = true; // true to show circles (only shown if the center marker
 let SiteCirclesDistances = new Array(100, 150, 200);
 // When more circles defined than cirle colors last color will be used or black by default
 let SiteCirclesColors = ['#000000', '#000000', '#000000'];
-// Show circles using dashed line
+// Show circles using dashed line (CAUTION, can be slow, especially when zooming in a lot)
 let SiteCirclesLineDash = null; // null - solid line, [5, 5] - dashed line with 5 pixel lines and spaces in between
 
 // Controls page title, righthand pane when nothing is selected
