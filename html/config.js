@@ -156,6 +156,10 @@ ColorByAlt = {
 //SiteCircles = true; // true to show circles (only shown if the center marker is shown)
 // In miles, nautical miles, or km (depending settings value 'DisplayUnits')
 //SiteCirclesDistances = new Array(100,150,200,250);
+// When more circles defined than cirle colors last color will be used or black by default
+//SiteCirclesColors = ['#FF0000', '#0000FF', '#00FF00'];
+// Show circles using dashed line (CAUTION, can be slow, especially when zooming in a lot)
+//SiteCirclesLineDash = [5, 5]; // null - solid line, [5, 5] - dashed line with 5 pixel lines and spaces in between
 
 // Controls page title, righthand pane when nothing is selected
 //PageName = "tar1090";
