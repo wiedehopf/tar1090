@@ -3928,20 +3928,20 @@ function refreshInt() {
     if (!globeIndex)
         return refresh;
 
-    if (adsbexchange && refresh < 2500)
-        refresh = 2500;
+    if (adsbexchange && refresh < 1500)
+        refresh = 1500;
 
     inactiveUpdate();
 
-    if (inactive < 100)
-        inactive = 100;
+    if (inactive < 80)
+        inactive = 80;
     if (inactive > 400)
         inactive = 400;
 
     if (document[hidden])
         refresh = 24 * 3600 * 1000; // hidden tab, don't refresh to avoid freeze when the tab is switched to again.
     else
-        refresh *= inactive / 100;
+        refresh *= inactive / 80;
 
     if (!mapIsVisible)
         refresh *= 2;
