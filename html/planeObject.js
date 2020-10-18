@@ -2033,10 +2033,8 @@ PlaneObject.prototype.milRange = function() {
         //adf7d0-adf7df = united states mil_4(uf)
         //adf7e0-adf7ff = united states mil_3(uf)
         //adf800-adffff = united states mil_2(uf)
-        || i.match(/^adf[7-9]/)
-        || i.match(/^adf[a-f]/)
         //ae0000-afffff = united states mil_1(uf)
-        || i.match(/^a(e|f)/)
+        || (i >= 'adf7c8' && i <= 'afffff')
 
         //010070-01008f = egypt_mil
         || i.match(/^0100(7|8)/)
