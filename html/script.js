@@ -3928,8 +3928,8 @@ function refreshInt() {
     if (!globeIndex)
         return refresh;
 
-    if (adsbexchange && refresh < 1500)
-        refresh = 1500;
+    if (adsbexchange && refresh < 2000)
+        refresh = 2000;
 
     inactiveUpdate();
 
