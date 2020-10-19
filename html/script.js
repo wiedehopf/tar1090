@@ -3933,15 +3933,15 @@ function refreshInt() {
 
     inactiveUpdate();
 
-    if (inactive < 80)
-        inactive = 80;
+    if (inactive < 70)
+        inactive = 70;
     if (inactive > 400)
         inactive = 400;
 
     if (document[hidden])
         refresh = 24 * 3600 * 1000; // hidden tab, don't refresh to avoid freeze when the tab is switched to again.
     else
-        refresh *= inactive / 80;
+        refresh *= inactive / 70;
 
     if (!mapIsVisible)
         refresh *= 2;
@@ -3949,10 +3949,7 @@ function refreshInt() {
     if (onMobile)
         refresh *= 1.5;
 
-    if (lastRequestFiles >= 4)
-        return 1.6 * refresh;
-
-    return refresh * (1 + 0.6 / 3 * (lastRequestFiles - 1));
+    return refresh;
 }
 
 function toggleLargeMode() {
