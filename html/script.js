@@ -282,17 +282,17 @@ function processReceiverUpdate(data, init) {
     }
 
     if (globeIndex) {
-        if (!wdb && (showGrid || localStorage['globeGrid'] == 'true')
+        if (!binCraft && (showGrid || localStorage['globeGrid'] == 'true')
             && globeIndexNow[data.globeIndex] == null)
             drawTileBorder(data);
-        if (wdb)
+        if (binCraft)
             wqi(data);
         globeTrackedAircraft = data.global_ac_count_withpos;
         globeIndexNow[data.globeIndex] = data.now;
     }
 
 
-    if (!uat && !init && !globeIndex && !wdb)
+    if (!uat && !init && !globeIndex && !binCraft)
         updateMessageRate(data);
 
     // Loop through all the planes in the data packet
@@ -365,7 +365,7 @@ function fetchData() {
             return (globeIndexNow[x] - globeIndexNow[y]);
         });
         indexes = indexes.slice(0, globeSimLoad);
-        let ft = wdb ? '.binCraft' : '.json'
+        let ft = binCraft ? '.binCraft' : '.json'
         for (let i in indexes) {
             ac_url.push('data/globe_' + indexes[i].toString().padStart(4, '0') + ft);
         }
@@ -384,7 +384,7 @@ function fetchData() {
     for (let i in ac_url) {
         //console.log(ac_url[i]);
         let req;
-        if (wdb) {
+        if (binCraft) {
             let xhrOverride = new XMLHttpRequest();
             xhrOverride.responseType = 'arraybuffer';
             req = $.ajax({
@@ -400,7 +400,7 @@ function fetchData() {
             if (data == null) {
                 return;
             }
-            if (wdb) {
+            if (binCraft) {
                 data = { buffer: data, };
                 let ts = new Uint32Array(data.buffer, 0, 2);
                 data.now = ts[0] / 1000 + ts[1] * 4294967.296;
@@ -687,11 +687,7 @@ function initialize() {
         // Wait for history item downloads and append them to the buffer
         push_history();
         // this will be needed later
-        $.getJSON(databaseFolder + "/icao_aircraft_types.js")
-            .done(function(typeLookupData) {
-                _aircraft_type_cache = typeLookupData;
-            });
-        if (!onMobile && !hideButtons && !heatmap) {
+        if (!dbServer && !onMobile && !hideButtons && !heatmap) {
             $.getJSON(databaseFolder + "/files.js")
                 .done(function(data) {
                     for (let i in data) {
@@ -1163,7 +1159,6 @@ function parse_history() {
     else
         setInterval(checkMovement, 30);
 
-    wdb = globeIndex;
     // And kick off one refresh immediately.
     if (!heatmap && !pTracks)
         fetchData();
@@ -3380,21 +3375,12 @@ function fetchPfData() {
                 plane.pfRoute = ac.route;
                 plane.pfMach = ac.mach;
                 plane.pfFlightno = ac.flightno;
-                if (ac.reg && ac.reg != "????" && ac.reg != "z.NO-REG")
+                if (!plane.registration && ac.reg && ac.reg != "????" && ac.reg != "z.NO-REG")
                     plane.registration = ac.reg;
-                if (ac.type && ac.type != "????" && ac.type != "ZVEH")
+                if (!plane.icaoType && ac.type && ac.type != "????" && ac.type != "ZVEH") {
                     plane.icaoType = ac.type;
-                if (plane.icaoType != plane.icaoTypeCache) {
-                    let typeData = _aircraft_type_cache[plane.icaoType];
-                    if (typeData) {
-                        plane.typeDescription = typeData.desc;
-                        plane.wtc = typeData.wtc;
-                    }
-                    //console.log(plane.icao +" "+ plane.flight + " was " + plane.icaoTypeCache + " and is now " + plane.icaoType + " " + plane.typeDescription + "-" + plane.wtc);
-                    //console.log(plane.flight);
-                    plane.icaoTypeCache = plane.icaoType;
+                    plane.setTypeData();
                 }
-
             }
             fetchingPf = false;
         });

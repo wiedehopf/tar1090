@@ -14,7 +14,8 @@ let deferHistory = [];
 let configureReceiver = $.Deferred();
 let historyTimeout = 60;
 let globeIndex = 0;
-let wdb = globeIndex;
+let binCraft = false;
+let dbServer = false;
 let regCache = {};
 let l3harris = false;
 let heatmap = false;
@@ -28,6 +29,7 @@ let StaleReceiverCount = 0;
 let pTracks = false;
 let lastTraceGet = 0;
 let traceRate = 0;
+let _aircraft_type_cache = null;
 
 let databaseFolder = "db2";
 
@@ -162,6 +164,9 @@ let test_chunk_defer = $.ajax({
     dataType: 'json',
     timeout: 4000,
 });
+$.getJSON(databaseFolder + "/icao_aircraft_types.js").done(function(typeLookupData) {
+    _aircraft_type_cache = typeLookupData;
+});
 
 
 if (!heatmap) {
@@ -237,10 +242,12 @@ if (uuid != null) {
         Dump1090Version = data.version;
         RefreshInterval = data.refresh;
         nHistoryItems = (data.history < 2) ? 0 : data.history;
+        binCraft = data.binCraft ? true : false;
+        dbServer = data.dbServer ? true : false;
         if (data.globeIndexGrid != null || heatmap) {
                 HistoryChunks = false;
                 nHistoryItems = 0;
-                wdb = globeIndex = 1;
+                globeIndex = 1;
                 get_history();
                 configureReceiver.resolve();
         } else {

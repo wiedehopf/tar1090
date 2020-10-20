@@ -22,7 +22,6 @@
 "use strict";
 
 let _aircraft_cache = {};
-let _aircraft_type_cache = null;
 let _airport_coords_cache = null;
 
 function getAircraftData(icao) {
@@ -52,7 +51,8 @@ function request_from_db(icao, level, defer) {
 		}
 
 		if (dkey in data) {
-			getIcaoAircraftTypeData(data[dkey], defer);
+			//getIcaoAircraftTypeData(data[dkey], defer);
+            defer.resolve(data[dkey]);
 			return;
 		}
 

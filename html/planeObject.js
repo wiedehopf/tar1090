@@ -114,8 +114,13 @@ function PlaneObject(icao) {
 
 
     // request metadata
-    this.getAircraftData();
+    if (!dbServer)
+        this.getAircraftData();
 
+    // military icao ranges
+    if (this.milRange()) {
+        this.military = true;
+    }
 }
 PlaneObject.prototype.checkLayers = function() {
     if (!this.trail_features)
@@ -864,6 +869,11 @@ PlaneObject.prototype.processTrace = function() {
 
     let onlyRecent = 0;
 
+    if (this.recentTrace && this.recentTrace.desc)
+        this.typeLong = this.recentTrace.desc;
+    if (this.fullTrace && this.fullTrace.desc)
+        this.typeLong = this.fullTrace.desc;
+
     if (lastLeg && !showTrace && this.recentTrace && this.recentTrace.trace) {
         trace = this.recentTrace.trace;
         for (let i = trace.length - 1; i >= 0; i--) {
@@ -1392,6 +1402,13 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         if (this.trace.length > 20) {
             this.trace.slice(-15);
         }
+    }
+
+    if (data.r)
+        this.registration = data.r;
+    if (data.t) {
+        this.icaoType = data.t;
+        this.setTypeData();
     }
 
     this.last = now;
@@ -1944,11 +1961,6 @@ PlaneObject.prototype.altBad = function(newAlt, oldAlt, oldTime, data) {
 PlaneObject.prototype.getAircraftData = function() {
     let req = getAircraftData(this.icao);
 
-    // military icao ranges
-    if (this.milRange()) {
-        this.military = true;
-    }
-
     req.done(function(data) {
         if (data == null) {
             //console.log(this.icao + ': Not found in database!');
@@ -1969,15 +1981,7 @@ PlaneObject.prototype.getAircraftData = function() {
 
         if (data[1]) {
             this.icaoType = data[1];
-            this.icaoTypeCache = this.icaoType;
-        }
-
-        if (data[5]) {
-            this.typeDescription = data[5];
-        }
-
-        if (data[6]) {
-            this.wtc = data[6];
+            this.setTypeData();
         }
 
         if (data[3]) {
@@ -2465,4 +2469,20 @@ PlaneObject.prototype.checkVisible = function() {
         || (this.selected && (onlySelected || (!SelectedAllPlanes && !multiSelect)))
         || noVanish
     );
+}
+
+PlaneObject.prototype.setTypeData = function() {
+	if (_aircraft_type_cache == null || !this.icaoType || this.icaoType == this.icaoTypeCache)
+        return;
+    this.icaoTypeCache = this.icaoType;
+
+    let typeDesignator = this.icaoType.toUpperCase();
+    if (!(typeDesignator in _aircraft_type_cache))
+        return;
+
+    let typeData = _aircraft_type_cache[typeDesignator];
+    if (typeData.desc != null && typeData.desc.length == 3)
+        this.typeDescription = typeData.desc;
+    if (typeData.wtc != null)
+        this.wtc = typeData.wtc;
 }
