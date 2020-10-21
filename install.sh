@@ -64,6 +64,10 @@ fi
 
 dir=$(pwd)
 
+if (( $(du -s "$ipath/git-db" | cut -f1) > 150000 )); then
+    rm -rf "$ipath/git-db"
+fi
+
 { [[ "$1" == "test" ]] && cd "$ipath/git-db" && git rev-parse; } ||
     { cd "$ipath/git-db" &>/dev/null && git fetch --depth 1 origin master && git reset --hard FETCH_HEAD; } ||
     { rm -rf "$ipath/git-db" && git clone --depth 1 "$db_repo" "$ipath/git-db"; }
@@ -263,11 +267,9 @@ do
         gzip -k -9 ./ol/*.js
         #gzip -k -9 db2/*.json .... already exists compressed
     fi
-    GARBAGE="$ipath/$RANDOM.$RANDOM"
 
-    mv "$html_path" "$GARBAGE" 2>/dev/null || true
+    rm -rf "$html_path"
     mv "$TMP" "$html_path"
-    rm -rf "$GARBAGE" 2>/dev/null || true
 
     cd "$dir"
 
