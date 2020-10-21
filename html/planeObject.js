@@ -869,10 +869,8 @@ PlaneObject.prototype.processTrace = function() {
 
     let onlyRecent = 0;
 
-    if (this.recentTrace && this.recentTrace.desc)
-        this.typeLong = this.recentTrace.desc;
-    if (this.fullTrace && this.fullTrace.desc)
-        this.typeLong = this.fullTrace.desc;
+    this.checkForDB(this.recentTrace);
+    this.checkForDB(this.fullTrace);
 
     if (lastLeg && !showTrace && this.recentTrace && this.recentTrace.trace) {
         trace = this.recentTrace.trace;
@@ -1404,12 +1402,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         }
     }
 
-    if (data.r)
-        this.registration = data.r;
-    if (data.t) {
-        this.icaoType = data.t;
-        this.setTypeData();
-    }
+    this.checkForDB(data);
 
     this.last = now;
 };
@@ -2485,4 +2478,19 @@ PlaneObject.prototype.setTypeData = function() {
         this.typeDescription = typeData.desc;
     if (typeData.wtc != null)
         this.wtc = typeData.wtc;
+}
+PlaneObject.prototype.checkForDB = function(t) {
+    if (!t)
+        return;
+
+    if (t.desc) this.typeLong = t.desc;
+    if (t.r) this.registration = t.r;
+    if (t.t) {
+        this.icaoType = t.t;
+        this.setTypeData();
+    }
+    if (t.dbFlags) {
+        this.military = t.dbFlags & 1;
+        this.interesting = t.dbFlags & 2;
+    }
 }
