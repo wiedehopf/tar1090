@@ -64,7 +64,7 @@ fi
 
 dir=$(pwd)
 
-if (( $(du -s "$ipath/git-db" | cut -f1) > 150000 )); then
+if (( $( { du -s "$ipath/git-db" 2>/dev/null || echo 0; } | cut -f1) > 150000 )); then
     rm -rf "$ipath/git-db"
 fi
 
