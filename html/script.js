@@ -365,9 +365,10 @@ function fetchData() {
             return (globeIndexNow[x] - globeIndexNow[y]);
         });
         indexes = indexes.slice(0, globeSimLoad);
-        let ft = binCraft ? '.binCraft' : '.json'
+        let suffix = binCraft ? '.binCraft' : '.json'
+        let mid = (binCraft && onlyMilitary) ? 'Mil_' : '_';
         for (let i in indexes) {
-            ac_url.push('data/globe_' + indexes[i].toString().padStart(4, '0') + ft);
+            ac_url.push('data/globe' + mid + indexes[i].toString().padStart(4, '0') + suffix);
         }
     } else {
         ac_url[0] = 'data/aircraft.json';
