@@ -113,8 +113,9 @@ function PlaneObject(icao) {
     this.wtc = null;
 
 
+    this.regLoaded = false;
     // request metadata
-    if (!dbServer)
+    if (!dbServer && !this.regLoaded)
         this.getAircraftData();
 
     // military icao ranges
@@ -1955,6 +1956,7 @@ PlaneObject.prototype.getAircraftData = function() {
     let req = getAircraftData(this.icao);
 
     req.done(function(data) {
+        this.regLoaded = true;
         if (data == null) {
             //console.log(this.icao + ': Not found in database!');
             return;
@@ -2480,11 +2482,16 @@ PlaneObject.prototype.setTypeData = function() {
         this.wtc = typeData.wtc;
 }
 PlaneObject.prototype.checkForDB = function(t) {
-    if (!t)
+    if (!t) {
         return;
+    }
 
     if (t.desc) this.typeLong = t.desc;
     if (t.r) this.registration = t.r;
+
+    if (!t.r && !dbServer && !this.regLoaded)
+        this.getAircraftData();
+
     if (t.t) {
         this.icaoType = t.t;
         this.setTypeData();

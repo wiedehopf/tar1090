@@ -686,26 +686,6 @@ function initialize() {
 
         // Wait for history item downloads and append them to the buffer
         push_history();
-        // this will be needed later
-        if (!dbServer && !onMobile && !hideButtons && !heatmap) {
-            $.getJSON(databaseFolder + "/files.js")
-                .done(function(data) {
-                    for (let i in data) {
-                        const icao = data[i].padEnd(6, 0);
-                        //console.log(icao);
-                        let req = getAircraftData(icao);
-                        req.icao = icao;
-                        req.fail(function(jqXHR,textStatus,errorThrown) {
-                            if (textStatus == 'timeout') {
-                                getAircraftData(this.icao);
-                                console.log('Database load timeout:' + this.icao);
-                            } else {
-                                console.log(this.icao + ': Database load error: ' + textStatus + ' at URL: ' + jqXHR.url);
-                            }
-                        });
-                    }
-                });
-        }
     });
 
     let coll = document.getElementsByClassName("collapseButton");
@@ -3180,9 +3160,20 @@ function onSearch(e) {
     $("#search_input").val("");
     $("#search_input").blur();
     if (searchTerm)
-        findPlanes(searchTerm, true, true, true, true);
+        findPlanes(searchTerm, "byIcao", "byCallsign", "byReg", "byType");
     return false;
 }
+/*
+function onSearchReg(e) {
+    e.preventDefault();
+    const searchTerm = $("#search_reg_input").val().trim();
+    $("#search_reg_input").val("");
+    $("#search_reg_input").blur();
+    if (searchTerm)
+        findPlanes(searchTerm, false, false, "byReg", false);
+    return false;
+}
+*/
 
 function onResetCallsignFilter(e) {
     $("#callsign_filter").val("");
@@ -3688,9 +3679,27 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
         return;
     query = query.toLowerCase();
     let results = [];
-    if (byReg && regCache[query.toUpperCase()]) {
-        selectPlaneByHex(regCache[query.toUpperCase()].toLowerCase(), {follow: true});
-        return;
+    if (byReg) {
+        if (regCache) {
+            if (regCache[query.toUpperCase()]) {
+                selectPlaneByHex(regCache[query.toUpperCase()].toLowerCase(), {follow: true});
+                return;
+            }
+        } else {
+            let req_url = databaseFolder + "/regIcao.js";
+            let req = $.ajax({ url: req_url,
+                cache: true,
+                timeout: 10000,
+                dataType : 'json'
+            });
+            req.done(function(data) {
+                regCache = data;
+                if (regCache[query.toUpperCase()]) {
+                    selectPlaneByHex(regCache[query.toUpperCase()].toLowerCase(), {follow: true});
+                    return;
+                }
+            });
+        }
     }
     for (let i in PlanesOrdered) {
         const plane = PlanesOrdered[i];
@@ -3963,6 +3972,7 @@ function toggleLargeMode() {
 
 function toggleShowTrace() {
     if (!showTrace) {
+        dbServer = false; // temporary until i get the traces supplemented with registration data
         toggleMultiSelect("off");
         showTrace = true;
         toggleFollow(false);

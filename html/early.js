@@ -16,7 +16,6 @@ let historyTimeout = 60;
 let globeIndex = 0;
 let binCraft = false;
 let dbServer = false;
-let regCache = {};
 let l3harris = false;
 let heatmap = false;
 let heatLoaded = 0;
@@ -30,6 +29,7 @@ let pTracks = false;
 let lastTraceGet = 0;
 let traceRate = 0;
 let _aircraft_type_cache = null;
+let dbLoadedAll = false;
 
 let databaseFolder = "db2";
 

@@ -24,6 +24,12 @@
 let _aircraft_cache = {};
 let _airport_coords_cache = null;
 
+let _request_count = 0;
+let _request_queue = [];
+let _request_cache = {};
+
+let regCache = null;
+
 function getAircraftData(icao) {
 	let defer = $.Deferred();
 	if (icao.charAt(0) == '~') {
@@ -107,10 +113,6 @@ function lookupIcaoAircraftType(aircraftData, defer) {
 	defer.resolve(aircraftData);
 }
 
-let _request_count = 0;
-let _request_queue = [];
-let _request_cache = {};
-
 function db_ajax(bkey) {
 	let req;
 
@@ -143,6 +145,7 @@ function db_ajax_request_complete() {
 			dataType : 'json' });
 		ajaxreq.done(function(data) {
             req.resolve(data);
+            /*
             const keys = Object.keys(data);
             for (let i in keys) {
                 if (keys[i] == 'children')
@@ -152,6 +155,7 @@ function db_ajax_request_complete() {
                 //console.log(reg);
                 regCache[reg] = icao;
             }
+            */
         });
 		ajaxreq.fail(function(jqxhr, status, error) {
 			if (status == 'timeout') {
@@ -166,3 +170,24 @@ function db_ajax_request_complete() {
 		});
 	}
 }
+/*
+function dbLoadAll() {
+    return $.getJSON(databaseFolder + "/files.js")
+        .done(function(data) {
+            for (let i in data) {
+                const icao = data[i].padEnd(6, 0);
+                //console.log(icao);
+                let req = getAircraftData(icao);
+                req.icao = icao;
+                req.fail(function(jqXHR,textStatus,errorThrown) {
+                    if (textStatus == 'timeout') {
+                        getAircraftData(this.icao);
+                        console.log('Database load timeout:' + this.icao);
+                    } else {
+                        console.log(this.icao + ': Database load error: ' + textStatus + ' at URL: ' + jqXHR.url);
+                    }
+                });
+            }
+        });
+}
+*/

@@ -70,7 +70,7 @@ fi
 
 { [[ "$1" == "test" ]] && cd "$ipath/git-db" && git rev-parse; } ||
     { cd "$ipath/git-db" &>/dev/null && git fetch --depth 1 origin master && git reset --hard FETCH_HEAD; } ||
-    { rm -rf "$ipath/git-db" && git clone --depth 1 "$db_repo" "$ipath/git-db"; }
+    { cd && rm -rf "$ipath/git-db" && git clone --depth 1 "$db_repo" "$ipath/git-db"; }
 
 if ! cd $ipath/git-db || ! git rev-parse
 then
