@@ -2024,7 +2024,9 @@ PlaneObject.prototype.reapTrail = function() {
 
 
 PlaneObject.prototype.milRange = function() {
-    let i = this.icao;
+    if (this.icao[0] == '~')
+        return false;
+    let i = parseInt(this.icao, 16);
     return (
         false
         // us military
@@ -2033,114 +2035,108 @@ PlaneObject.prototype.milRange = function() {
         //adf7e0-adf7ff = united states mil_3(uf)
         //adf800-adffff = united states mil_2(uf)
         //ae0000-afffff = united states mil_1(uf)
-        || (i >= 'adf7c8' && i <= 'afffff')
+        || (i >= 0xadf7c8 && i <= 0xafffff)
 
         //010070-01008f = egypt_mil
-        || i.match(/^0100(7|8)/)
+        || (i >= 0x010070 && i <= 0x01008f)
 
         //0a4000-0a4fff = algeria mil(ap)
-        || i.match(/^0a4/)
+        || (i >= 0x0a4000 && i <= 0x0a4fff)
 
         //33ff00-33ffff = italy mil(iy)
-        || i.match(/^33ff/)
+        || (i >= 0x33ff00 && i <= 0x33ffff)
 
         //350000-37ffff = spain mil(sp)
-        || (i >= '350000' && i <= '37ffff')
+        || (i >= 0x350000 && i <= 0x37ffff)
 
         //3a8000-3affff = france mil_1(fs)
-        || i.match(/^3a(8|9|[a-f])/)
+        || (i >= 0x3a8000 && i <= 0x3affff)
         //3b0000-3bffff = france mil_2(fs)
-        || i.match(/^3b/)
+        || (i >= 0x3b0000 && i <= 0x3bffff)
 
-        //3e8000-3ebfff = germany mil_1(df)
-        // remove 8 and 9 from mil arnge
-        || i.match(/^3e(a|b)/)
+        //3ea000-3ebfff = germany mil_1(df)
+        || (i >= 0x3ea000 && i <= 0x3ebfff)
         //3f4000-3f7fff = germany mil_2(df)
         //3f8000-3fbfff = germany mil_3(df)
-        || i.match(/^3f([4-9]|[a-b])/)
+        || (i >= 0x3f4000 && i <= 0x3fbfff)
 
         //400000-40003f = united kingdom mil_1(ra)
-        || i.match(/^4000[0-3]/)
+        || (i >= 0x400000 && i <= 0x40003f)
         //43c000-43cfff = united kingdom mil(ra)
-        || i.match(/^43c/)
+        || (i >= 0x43c000 && i <= 0x43cfff)
 
-        //444000-447fff = austria mil(aq)
-        || (i.match(/^44[4-7]/) && i != '447ac7')
+        //444000-446fff = austria mil(aq)
+        || (i >= 0x444000 && i <= 0x446fff)
 
         //44f000-44ffff = belgium mil(bc)
-        || i.match(/^44f/)
+        || (i >= 0x44f000 && i <= 0x44ffff)
 
         //457000-457fff = bulgaria mil(bu)
-        || i.match(/^457/)
+        || (i >= 0x457000 && i <= 0x457fff)
 
         //45f400-45f4ff = denmark mil(dg)
-        || i.match(/^45f4/)
+        || (i >= 0x45f400 && i <= 0x45f4ff)
 
         //468000-4683ff = greece mil(gc)
-        || i.match(/^468[0-3]/)
+        || (i >= 0x468000 && i <= 0x4683ff)
 
         //473c00-473c0f = hungary mil(hm)
-        || i.match(/^473c0/)
+        || (i >= 0x473c00 && i <= 0x473c0f)
 
         //478100-4781ff = norway mil(nn)
-        || i.match(/^4781/)
+        || (i >= 0x478100 && i <= 0x4781ff)
         //480000-480fff = netherlands mil(nm)
-        || i.match(/^480/)
+        || (i >= 0x480000 && i <= 0x480fff)
         //48d800-48d87f = poland mil(po)
-        || i.match(/^48d8[0-7]/)
+        || (i >= 0x48d800 && i <= 0x48d87f)
         //497c00-497cff = portugal mil(pu)
-        || i.match(/^497c/)
+        || (i >= 0x497c00 && i <= 0x497cff)
         //498420-49842f = czech republic mil(ct)
-        || i.match(/^49842/)
+        || (i >= 0x498420 && i <= 0x49842f)
 
         //4b7000-4b7fff = switzerland mil(su)
-        || i.match(/^4b7/)
+        || (i >= 0x4b7000 && i <= 0x4b7fff)
         //4b8200-4b82ff = turkey mil(tq)
-        || i.match(/^4b82/)
+        || (i >= 0x4b8200 && i <= 0x4b82ff)
 
         //506f00-506fff = slovenia mil(sj)
-        || i.match(/^506f/)
+        || (i >= 0x506f00 && i <= 0x506fff)
 
         //70c070-70c07f = oman mil(on)
-        || i.match(/^70c07/)
+        || (i >= 0x70c070 && i <= 0x70c07f)
 
         //710258-71025f = saudi arabia mil_1(sx)
         //710260-71027f = saudi arabia mil_2(sx)
         //710280-71028f = saudi arabia mil_3(sx)
+        || (i >= 0x710258 && i <= 0x71028f)
         //710380-71039f = saudi arabia mil_4(sx)
-        || i.match(/^7102[5-8]/)
-        || i.match(/^7103[8-9]/)
+        || (i >= 0x710380 && i <= 0x71039f)
 
         //738a00-738aff = israel mil(iz)
-        || i.match(/^738a/)
+        || (i >= 0x738a00 && i <= 0x738aff)
 
-        //7c822e-7c822f = australia mil_1(av)
-        //7c8230-7c823f = australia mil_2(av)
-        //7c8240-7c827f = australia mil_3(av)
-        //7c8280-7c82ff = australia mil_4(av)
-        //7c8300-7c83ff = australia mil_5(av)
-        //7c8400-7c87ff = australia mil_6(av)
+        //7c822e-7c84ff = australia mil_1(av)
+        || (i >= 0x7c822e && i <= 0x7c84ff)
         //7c8800-7c8fff = australia mil_7(av)
-        || i.match(/^7c8([2-4]|8)/)
+        || (i >= 0x7c8800 && i <= 0x7c88ff)
         //7c9000-7c9fff = australia mil_8(av)
         //7ca000-7cbfff = australia mil_9(av)
-        || (i >= '7c9000' && i <= '7cbfff')
-        //7cc000-7cffff = australia mil_10(av) 7cc409 not mil, remove this range
+        || (i >= 0x7c9000 && i <= 0x7cbfff)
         //7d0000-7dffff = australia mil_11(av)
         //7e0000-7fffff = australia mil_12(av)
-        || i.match(/^7[d-f]/)
+        || (i >= 0x7d0000 && i <= 0x7fffff)
 
         //800200-8002ff = india mil(im)
-        || i.match(/^8002/)
+        || (i >= 0x800200 && i <= 0x8002ff)
 
         //c20000-c3ffff = canada mil(cb)
-        || i.match(/^c[2-3]/)
+        || (i >= 0xc20000 && i <= 0xc3ffff)
 
         //e40000-e41fff = brazil mil(bq)
-        || i.match(/^e4[0-1]/)
+        || (i >= 0xe40000 && i <= 0xe41fff)
 
         //e80600-e806ff = chile mil(cq)
-        || i.match(/^e806/)
+        || (i >= 0xe80600 && i <= 0xe806ff)
     );
 }
 
