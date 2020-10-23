@@ -821,9 +821,10 @@ PlaneObject.prototype.updateIcon = function() {
     }
     */
 
-    if (this.rotationCache == null || Math.abs(this.rotationCache - this.rotation) > 0.15) {
-        this.rotationCache = this.rotation;
-        this.markerIcon.setRotation(this.baseMarker.noRotate ? 0 : this.rotation * Math.PI / 180.0);
+    const iconRotation = this.baseMarker.noRotate ? 0 : this.rotation;
+    if (this.rotationCache != iconRotation && Math.abs(this.rotationCache - iconRotation) > 0.35) {
+        this.rotationCache = iconRotation;
+        this.markerIcon.setRotation(iconRotation * Math.PI / 180.0);
     }
 
     if (this.scaleCache != this.scale) {
