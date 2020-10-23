@@ -80,7 +80,7 @@ let monochromeTracks = null;
 
 // These settings control the coloring of aircraft by altitude.
 // All color values are given as Hue (0-359) / Saturation (0-100) / Lightness (0-100)
-let ColorByAlt = {
+const defaultColorByAlt = {
 	// HSL for planes with unknown altitude:
 	unknown : { h: 0,   s: 0,   l: 20 },
 
@@ -153,6 +153,8 @@ let ColorByAlt = {
 	// Changes added to the color of planes that have positions from mlat
 	mlat :     { h: 0, s: 0, l: 0 }
 };
+
+let ColorByAlt = JSON.parse(JSON.stringify(defaultColorByAlt)); // clone default object to compare with later
 
 // For a monochrome display try this:
 // ColorByAlt = {

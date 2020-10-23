@@ -695,6 +695,10 @@
               <div class="settingsCheckbox" id="acpositions_checkbox"></div>
               <div class="settingsText">Aircraft Positions</div>
             </div>
+            <div class="settingsOptionContainer" id="altitude_chart_container">
+              <div class="settingsCheckbox" id="altitude_checkbox"></div>
+              <div class="settingsText">Altitude Chart</div>
+            </div>
             <div class="settingsOptionContainer">
               <div class="settingsCheckbox" id="debug_checkbox"></div>
               <div class="settingsText">Debug tracks</div>
@@ -780,6 +784,9 @@
             <div id="R" title="Follow a (R)andom plane!" class="button inActiveButton" onclick="followRandomPlane();"><span class="buttonText">R</span></div>
             <div id="F" title="(F)ollow" class="button inActiveButton" onclick="toggleFollow();"><span class="buttonText">F</span></div>
           </div>
+        </div>
+        <div id="altitude_chart" class="ol-unselectable ol-control altitudeFeet">
+          <button id="altitude_chart_button"></button>
         </div>
       </div> <!-- map_container-->
 
