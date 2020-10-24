@@ -211,7 +211,7 @@ select {
 
 .ol-zoom {
     background-color: transparent !important;
-    left: calc(100% - calc( 35px * var(--SCALE)));
+    left: calc(100% - calc( 65px * var(--SCALE)));
     top: calc(100% - calc( 85px * var(--SCALE)));
 }
 
@@ -652,7 +652,7 @@ table.infoTable tr td {
     float: right;
     width: calc(100% - calc( 5px * var(--SCALE)));
     max-width:  calc(800px * var(--SCALE));
-    right: calc( 55px * var(--SCALE));
+    right: calc( 85px * var(--SCALE));
     bottom: calc( 35px * var(--SCALE));
     background-color: transparent !important;
 }

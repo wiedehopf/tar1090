@@ -3018,12 +3018,17 @@ function toggleMapDim(switchOn) {
 }
 
 function toggleAltitudeChart(switchToggle) {
-    if (typeof localStorage['altitudeChart'] === 'undefined') {
-        localStorage['altitudeChart'] = 'show';
+    let altitudeChartDisplay;
+    if (localStorage['altitudeChart']) {
+        altitudeChartDisplay = localStorage['altitudeChart'];
+    } else if (onMobile) {
+        altitudeChartDisplay = 'hidden';
+    } else {
+        altitudeChartDisplay = 'show'
     }
-    let altitudeChartDisplay = localStorage['altitudeChart'];
     if (switchToggle === true) {
         altitudeChartDisplay = (altitudeChartDisplay === 'show') ? 'hidden' : 'show';
+        localStorage['altitudeChart'] = altitudeChartDisplay;
     }
     // if you're using custom colors always hide the chart
     if (customAltitudeColors === true) {
@@ -3038,7 +3043,6 @@ function toggleAltitudeChart(switchToggle) {
         $('#altitude_checkbox').removeClass('settingsCheckboxChecked');
         $('#altitude_chart').hide();
     }
-    localStorage['altitudeChart'] = altitudeChartDisplay;
 }
 
 function followRandomPlane() {
