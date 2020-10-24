@@ -825,9 +825,7 @@ function init_page() {
     $("#icao_filter_reset_button").click(onResetIcaoFilter);
 
     // check if the altitude color values are default to enable the altitude filter
-    if (ColorByAlt.air.h.length === 3 && ColorByAlt.air.h[0].alt === 2000 && ColorByAlt.air.h[0].val === 20 && ColorByAlt.air.h[1].alt === 10000 && ColorByAlt.air.h[1].val === 140 && ColorByAlt.air.h[2].alt === 40000 && ColorByAlt.air.h[2].val === 300) {
-        customAltitudeColors = false;
-    }
+    customAltitudeColors = JSON.stringify(ColorByAlt) !== JSON.stringify(defaultColorByAlt); // should be good enough for compare in our case
 
     $('#settingsCog').on('click', function() {
         $('#settings_infoblock').toggle();
@@ -860,11 +858,9 @@ function init_page() {
 
     });
 
-    /*
     $('#altitude_checkbox').on('click', function() {
         toggleAltitudeChart(true);
     });
-    */
 
     $('#lastLeg_checkbox').on('click', function() {
         toggleLastLeg();
@@ -957,8 +953,7 @@ function init_page() {
 
     filterGroundVehicles(false);
     filterBlockedMLAT(false);
-    //toggleAltitudeChart(false);
-    //
+    toggleAltitudeChart(false);
 }
 
 
