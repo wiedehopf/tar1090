@@ -110,6 +110,7 @@ let lastActive = new Date().getTime();
 let inactive = 0;
 let firstFetchDone = false;
 let overrideMapType = null;
+let altitudeChartDisplay;
 
 let shareLink = '';
 
@@ -1533,6 +1534,8 @@ function initialize_map() {
                     $('#expand_sidebar_control').hide();
                     toggleSidebarVisibility();
                     toggleSidebarVisibility();
+                    if (altitudeChartDisplay != 'show')
+                        $('#altitude_chart').hide();
                 }
                 hideButtons = !hideButtons;
                 break;
@@ -3018,7 +3021,6 @@ function toggleMapDim(switchOn) {
 }
 
 function toggleAltitudeChart(switchToggle) {
-    let altitudeChartDisplay;
     if (localStorage['altitudeChart']) {
         altitudeChartDisplay = localStorage['altitudeChart'];
     } else if (onMobile) {
