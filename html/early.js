@@ -152,18 +152,28 @@ function lDateString(date) {
     return string;
 }
 
-// get configuration json files, will be used in initialize function
-let get_receiver_defer = $.ajax({ url: 'data/receiver.json',
-    cache: false,
-    dataType: 'json',
-    timeout: 5000,
-});
-let test_chunk_defer = $.ajax({
-    url:'chunks/chunks.json',
-    cache: false,
-    dataType: 'json',
-    timeout: 4000,
-});
+let get_receiver_defer;
+let test_chunk_defer;
+
+if (!window.location.href.match(/globe.*adsbexchange.com/)) {
+    // get configuration json files, will be used in initialize function
+    get_receiver_defer = $.ajax({ url: 'data/receiver.json',
+        cache: false,
+        datatype: 'json',
+        timeout: 10000,
+    });
+    test_chunk_defer = $.ajax({
+        url:'chunks/chunks.json',
+        datatype: 'json',
+        timeout: 4000,
+    });
+} else {
+    console.log("Using adsbexchange fast-path load!");
+    let data = JSON.parse('{"refresh":1000,"history":1,"dbServer":true,"binCraft":true,"globeIndexGrid":10,"globeIndexSpecialTiles":[{"south":60,"east":150,"north":90,"west":-130},{"south":10,"east":-130,"north":90,"west":150},{"south":50,"east":-70,"north":60,"west":-130},{"south":40,"east":-100,"north":50,"west":-130},{"south":40,"east":50,"north":60,"west":20},{"south":30,"east":90,"north":60,"west":50},{"south":30,"east":120,"north":60,"west":90},{"south":30,"east":150,"north":60,"west":120},{"south":10,"east":70,"north":30,"west":50},{"south":10,"east":90,"north":30,"west":70},{"south":10,"east":110,"north":30,"west":90},{"south":10,"east":150,"north":30,"west":110},{"south":-90,"east":110,"north":10,"west":-40},{"south":-90,"east":160,"north":10,"west":110},{"south":-90,"east":-90,"north":10,"west":160},{"south":-10,"east":-40,"north":10,"west":-90},{"south":-90,"east":-40,"north":-10,"west":-90},{"south":10,"east":-90,"north":30,"west":-130},{"south":10,"east":-70,"north":20,"west":-90},{"south":10,"east":30,"north":40,"west":-10},{"south":10,"east":50,"north":40,"west":30},{"south":10,"east":-10,"north":60,"west":-70}],"version":"adsbexchange-backend"}');
+    get_receiver_defer = $.Deferred().resolve(data);
+    test_chunk_defer = $.Deferred().reject();
+}
+
 $.getJSON(databaseFolder + "/icao_aircraft_types.js").done(function(typeLookupData) {
     _aircraft_type_cache = typeLookupData;
 });
