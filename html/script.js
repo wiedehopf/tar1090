@@ -867,21 +867,33 @@ function init_page() {
     $('#t20x').on('click', function() { traceOpts.replaySpeed = 20; legShift(); });
     $('#t40x').on('click', function() { traceOpts.replaySpeed = 40; legShift(); });
 
-    new Toggle("ColoredPlanes", true, function(state) {
-        if (state)
-            monochromeMarkers = null;
-        else
-            monochromeMarkers = "#EEEEEE";
+    new Toggle({
+        key: "ColoredPlanes",
+        display: "Colored Planes",
+        container: "#settingsRight",
+        init: true,
+        toggle: function(state) {
+            if (state)
+                monochromeMarkers = null;
+            else
+                monochromeMarkers = "#EEEEEE";
 
-        refreshFeatures();
+            refreshFeatures();
+        },
     });
-    new Toggle("ColoredTrails", true, function(state) {
-        if (state)
-            monochromeTracks = null;
-        else
-            monochromeTracks = "#000000";
+    new Toggle({
+        key: "ColoredTrails",
+        display: "Colored Trails",
+        container: "#settingsRight",
+        init: true,
+        toggle: function(state) {
+            if (state)
+                monochromeTracks = null;
+            else
+                monochromeTracks = "#000000";
 
-        remakeTrails();
+            remakeTrails();
+        },
     });
 
     $('#selectall_checkbox').on('click', function() {

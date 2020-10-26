@@ -338,20 +338,30 @@ function get_history_item(i) {
     deferHistory.push(request);
 }
 
-function Toggle(key, defaultState, doStuff) {
-    this.key = key;
-    this.state = defaultState;
-    this.doStuff = doStuff;
-    this.checkbox = '#' + key + '_cb';
+let toggleList = [];
+
+function Toggle(arg) {
+    toggleList.push(this);
+
+    this.key = arg.key;
+    this.state = arg.init;
+    this.doStuff = arg.toggle;
+    this.checkbox = '#' + this.key + '_cb';
+    this.display = arg.display;
+    this.container = arg.container;
     this.init();
 }
-
 Toggle.prototype.init = function() {
-    if (this.checkbox) {
-        $(this.checkbox).on('click', function() {
-            this.toggle();
-        }.bind(this));
-    }
+
+    $(this.container).append((
+        '<div class="settingsOptionContainer">'
+        + '<div class="settingsCheckbox" id="' + this.key + '_cb' + '"></div>'
+        + '<div class="settingsText">' + this.display + '</div>'
+        + '</div>'));
+
+    console.log(this.checkbox);
+    console.log($(this.checkbox));
+    $(this.checkbox).on('click', this.toggle.bind(this));
 
     if (localStorage[this.key] == null) {
         if (this.state)
