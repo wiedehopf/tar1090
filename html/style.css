@@ -220,10 +220,6 @@ select {
 }
 
 
-div#SpecialSquawkWarning { position: absolute; bottom: calc( 25px * var(--SCALE)); right:  calc(430px * var(--SCALE)); border: calc( 2px * var(--SCALE)) solid red;
-    background-color: #FFFFA3; opacity: 0.75; filter:alpha(opacity=75); padding: calc( 5px * var(--SCALE));
-    text-align: center; }
-
 .error_box { position: absolute; bottom: calc( 25px * var(--SCALE)); left: calc( 25px * var(--SCALE)); border: calc( 2px * var(--SCALE)) solid red;
     background-color: #FFFFA3; opacity: 0.75; filter:alpha(opacity=75); padding: calc( 5px * var(--SCALE));
     font-weight: bold;
@@ -465,10 +461,6 @@ select.error, textarea.error, input.error {
 	width: 83%;
 }
 
-.highlightedInfo {
-    padding-left: calc( 10px * var(--SCALE));
-}
-
 .identLarge {
     font-size: calc( 22px * var(--SCALE));
     line-height: calc( 24px * var(--SCALE));
@@ -489,11 +481,6 @@ select.error, textarea.error, input.error {
     line-height: calc( 20px * var(--SCALE));
     color: #003f4b;
 }
-
-.highlightedInfo {
-    padding-bottom: calc( 12px * var(--SCALE));
-}
-
 
 .infoRowFluid {
 	display: inline-block;
@@ -536,26 +523,11 @@ table.infoTable tr td {
 	text-align: right;
 }
 
-
-.removePadding {
-    padding: 0;
-}
-
-.rightLink {
-    float: right;
-    padding-right: calc( 5px * var(--SCALE));
-}
-
-
 .infoBlockSection {
     padding-top: calc( 8px * var(--SCALE));
     padding-bottom: calc( 8px * var(--SCALE));
     padding-left: calc( 10px * var(--SCALE));
     padding-right: calc( 5px * var(--SCALE));
-}
-
-
-#dump1090_infoblock {
 }
 
 .largeText a {
