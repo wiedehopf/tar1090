@@ -107,6 +107,13 @@ let shareLink = '';
 
 let onMobile = false;
 
+let SpecialSquawks = {
+    '7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
+    '7600' : { cssClass: 'squawk7600', markerColor: 'rgb(0, 255, 255)', text: 'Radio Failure' },
+    '7700' : { cssClass: 'squawk7700', markerColor: 'rgb(255, 255, 0)', text: 'General Emergency' }
+};
+
+
 // Get current map settings
 let CenterLat, CenterLon, ZoomLvl, ZoomLvlCache;
 let zoomTimeout;
@@ -2162,6 +2169,10 @@ function refreshTableInfo() {
 
             if (plane.selected && !SelectedAllPlanes)
                 classes += " selected";
+            if (plane.squawk in SpecialSquawks) {
+                classes = classes + " " + SpecialSquawks[plane.squawk].cssClass;
+                show_squawk_warning = true;
+            }
 
             // ICAO doesn't change
             if (flightawareLinks) {

@@ -6,6 +6,9 @@
 .other      { background-color: #d8d8ff; }
 .tisb       { background-color: #ffd8e6; }
 .unknown    { background-color: #dcdcdc; }
+.squawk7500 { font-weight: bold; background-color: #ff5555; }
+.squawk7600 { font-weight: bold; background-color: #00ffff; }
+.squawk7700 { font-weight: bold; background-color: #ffff00; }
 .selected.vPosition  { background-color: #88DDFF; }
 .selected.mlat       { background-color: #F1DD83; }
 .selected.uat        { background-color: #66FFA6; }
