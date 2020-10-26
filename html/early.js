@@ -1,5 +1,6 @@
 // This was functionality of script.js, moved it to here to start the downloading of track history earlier
 "use strict";
+
 let Dump1090Version = "unknown version";
 let RefreshInterval = 1000;
 let enable_uat = false;
@@ -29,7 +30,6 @@ let pTracks = false;
 let lastTraceGet = 0;
 let traceRate = 0;
 let _aircraft_type_cache = null;
-let dbLoadedAll = false;
 
 let databaseFolder = "db2";
 
@@ -123,7 +123,6 @@ try {
         let val;
         if (val = parseInt(search.get('heatmap'), 10))
             heatmap.max = val;
-
     }
 
     if (search.has('pTracks')) {

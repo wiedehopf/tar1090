@@ -570,10 +570,6 @@ PlaneObject.prototype.getDataSource = function() {
 };
 
 PlaneObject.prototype.getMarkerColor = function() {
-    // Emergency squawks override everything else
-    //if (this.squawk in SpecialSquawks)
-    //    return SpecialSquawks[this.squawk].markerColor;
-
     if (monochromeMarkers) {
         return monochromeMarkers;
     }
@@ -1954,6 +1950,7 @@ PlaneObject.prototype.altBad = function(newAlt, oldAlt, oldTime, data) {
     const fpm = (delta < 800) ? 0 : (60 * delta / (now - oldTime + 2));
     return fpm > max_fpm;
 }
+
 PlaneObject.prototype.getAircraftData = function() {
     let req = getAircraftData(this.icao);
 
@@ -2005,7 +2002,6 @@ PlaneObject.prototype.getAircraftData = function() {
             console.log(this.icao + ': Database load error: ' + textStatus + ' at URL: ' + jqXHR.url);
     }.bind(this));
 }
-
 
 PlaneObject.prototype.reapTrail = function() {
     const oldSegs = this.track_linesegs;
@@ -2438,8 +2434,8 @@ PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
         ts: NaN,
         noLabel: true,
     });
-
 }
+
 PlaneObject.prototype.isNonIcao = function() {
     if (this.icao[0] == '~')
         return true;
@@ -2479,6 +2475,7 @@ PlaneObject.prototype.setTypeData = function() {
     if (typeData.wtc != null)
         this.wtc = typeData.wtc;
 }
+
 PlaneObject.prototype.checkForDB = function(t) {
     if (!t) {
         return;
