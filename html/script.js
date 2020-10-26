@@ -111,6 +111,7 @@ let inactive = 0;
 let firstFetchDone = false;
 let overrideMapType = null;
 let altitudeChartDisplay;
+let halloween = false;
 
 let shareLink = '';
 
@@ -489,6 +490,9 @@ function initialize() {
         const search = new URLSearchParams(window.location.search);
         if (search.has('showGrid'))
             showGrid = true;
+
+        if (search.has('halloween'))
+            halloween = true;
 
         if (search.has('onlyDataSource'))
             onlyDataSource = search.get('onlyDataSource');

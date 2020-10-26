@@ -695,13 +695,14 @@ PlaneObject.prototype.updateIcon = function() {
     if (icaoType == null && this.squawk == 7777)
         icaoType = 'TWR';
 
+    let eastbound = this.rotation < 180;
     let fillColor = this.getMarkerColor();
     let baseMarkerKey = (this.category ? this.category : "A0") + "_"
-        + this.typeDescription + "_" + this.wtc  + "_" + icaoType + '_' + (this.altitude == "ground");
+        + this.typeDescription + "_" + this.wtc  + "_" + icaoType + '_' + (this.altitude == "ground") + eastbound;
 
     if (!this.baseMarker || this.baseMarkerKey != baseMarkerKey) {
         this.baseMarkerKey = baseMarkerKey;
-        this.baseMarker = getBaseMarker(this.category, icaoType, this.typeDescription, this.wtc, this.addrtype, this.altitude);
+        this.baseMarker = getBaseMarker(this.category, icaoType, this.typeDescription, this.wtc, this.addrtype, this.altitude, eastbound);
         this.shape = this.baseMarker[0];
         this.baseScale = this.baseMarker[1] * 0.96;
         this.baseMarker = shapes[this.shape]
