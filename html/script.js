@@ -854,29 +854,6 @@ function init_page() {
     else
         $('#lastLeg_checkbox').removeClass('settingsCheckboxChecked');
 
-    $('#debugAll_checkbox').on('click', function() {
-        toggleDebugAll();
-    });
-
-    if (localStorage['debugAll'] === "true") {
-        debugAll = true;
-        $('#debugAll_checkbox').addClass('settingsCheckboxChecked');
-    } else {
-        debugAll = false;
-        $('#debugAll_checkbox').removeClass('settingsCheckboxChecked');
-    }
-
-    $('#debug_checkbox').on('click', function() {
-        toggleDebugTracks();
-    });
-
-    if (localStorage['debugTracks'] === "true") {
-        debugTracks = true;
-        $('#debug_checkbox').addClass('settingsCheckboxChecked');
-    } else {
-        debugTracks = false;
-        $('#debug_checkbox').removeClass('settingsCheckboxChecked');
-    }
     $('#tStop').on('click', function() { traceOpts.replaySpeed = 0; });
     $('#t1x').on('click', function() { traceOpts.replaySpeed = 1; legShift(); });
     $('#t5x').on('click', function() { traceOpts.replaySpeed = 5; legShift(); });
@@ -884,6 +861,32 @@ function init_page() {
     $('#t20x').on('click', function() { traceOpts.replaySpeed = 20; legShift(); });
     $('#t40x').on('click', function() { traceOpts.replaySpeed = 40; legShift(); });
 
+    new Toggle({
+        key: "debugTracks",
+        display: "Debug Tracks",
+        container: "#settingsLeft",
+        init: false,
+        toggle: function(state) {
+            if (state)
+                debugTracks = true;
+            else
+                debugTracks = false;
+
+            remakeTrails();
+        },
+    });
+    new Toggle({
+        key: "debugAll",
+        display: "Debug show all",
+        container: "#settingsLeft",
+        init: false,
+        toggle: function(state) {
+            if (state)
+                debugAll = true;
+            else
+                debugAll = false;
+        },
+    });
     new Toggle({
         key: "ColoredPlanes",
         display: "Colored Planes",
@@ -920,9 +923,6 @@ function init_page() {
             selectAllPlanes();
         }
     })
-    $('#mapdim_checkbox').on('click', function() {
-        toggleMapDim();
-    });
 
     // Force map to redraw if sidebar container is resized - use a timer to debounce
     $("#sidebar_container").on("resize", function() {
@@ -1399,6 +1399,10 @@ function initialize_map() {
         //toggleLayer('#sitepos_checkbox', 'site_pos');
         toggleLayer('#actrail_checkbox', 'ac_trail');
         toggleLayer('#acpositions_checkbox', 'ac_positions');
+    });
+
+    $('#mapdim_checkbox').on('click', function() {
+        toggleMapDim();
     });
 
     if (localStorage['MapDim'] === "true" || (MapDim && localStorage['MapDim'] == null)) {
@@ -2172,7 +2176,6 @@ function refreshTableInfo() {
                 classes += " selected";
             if (plane.squawk in SpecialSquawks) {
                 classes = classes + " " + SpecialSquawks[plane.squawk].cssClass;
-                show_squawk_warning = true;
             }
 
             // ICAO doesn't change
@@ -2843,32 +2846,6 @@ function toggleLastLeg() {
     }
     if (SelectedPlane && !showTrace)
         SelectedPlane.processTrace();
-}
-
-function toggleDebugAll() {
-    if (localStorage['debugAll'] === "true") {
-        debugAll = false;
-        localStorage['debugAll'] = "false";
-        $('#debugAll_checkbox').removeClass('settingsCheckboxChecked');
-    } else {
-        debugAll = true;
-        localStorage['debugAll'] = "true";
-        $('#debugAll_checkbox').addClass('settingsCheckboxChecked');
-    }
-}
-
-function toggleDebugTracks() {
-    if (localStorage['debugTracks'] === "true") {
-        debugTracks = false;
-        localStorage['debugTracks'] = "false";
-        $('#debug_checkbox').removeClass('settingsCheckboxChecked');
-    } else {
-        debugTracks = true;
-        localStorage['debugTracks'] = "true";
-        $('#debug_checkbox').addClass('settingsCheckboxChecked');
-    }
-
-    remakeTrails();
 }
 
 function dim(evt) {
