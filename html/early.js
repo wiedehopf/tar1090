@@ -359,8 +359,6 @@ Toggle.prototype.init = function() {
         + '<div class="settingsText">' + this.display + '</div>'
         + '</div>'));
 
-    console.log(this.checkbox);
-    console.log($(this.checkbox));
     $(this.checkbox).on('click', this.toggle.bind(this));
 
     if (localStorage[this.key] == null) {
