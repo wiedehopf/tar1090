@@ -630,17 +630,12 @@ table.infoTable tr td {
 }
 
 #altitude_chart_button {
-    background-image: url('images/alt_legend_feet.svg');
     background-size: cover;
     background-color: transparent;
     width: 100%;
     height: 0;
     padding: 0;
     padding-bottom: calc(100% * 56 / 1815);
-}
-
-.altitudeMeters {
-    background-image: url('images/alt_legend_meters.svg') !important;
 }
 
 
