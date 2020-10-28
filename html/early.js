@@ -338,13 +338,13 @@ function get_history_item(i) {
     deferHistory.push(request);
 }
 
-let toggleList = [];
+let toggles = {};
 
 function Toggle(arg) {
-    toggleList.push(this);
 
     this.key = arg.key;
-    this.state = arg.init;
+    toggles[this.key] = this;
+    this.state = (arg.init ? true : false);
     this.doStuff = arg.toggle;
     this.checkbox = '#' + this.key + '_cb';
     this.display = arg.display;
@@ -361,17 +361,12 @@ Toggle.prototype.init = function() {
 
     $(this.checkbox).on('click', this.toggle.bind(this));
 
-    if (localStorage[this.key] == null) {
-        if (this.state)
-            $(this.checkbox).addClass('settingsCheckboxChecked');
-        else
-            $(this.checkbox).removeClass('settingsCheckboxChecked');
-        return;
-    }
-    if (localStorage[this.key] == "false")
-        this.toggle(false);
     if (localStorage[this.key] == "true")
-        this.toggle(true);
+        this.state = true;
+    if (localStorage[this.key] == "false")
+        this.state = false
+
+    this.toggle(this.state);
 }
 
 Toggle.prototype.toggle = function(override) {

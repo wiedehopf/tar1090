@@ -1517,7 +1517,7 @@ function initialize_map() {
                     $('#expand_sidebar_control').hide();
                     toggleSidebarVisibility();
                     toggleSidebarVisibility();
-                    TAR.altitudeChart.hide();
+                    TAR.altitudeChart.render();
                 }
                 hideButtons = !hideButtons;
                 break;
@@ -2900,8 +2900,6 @@ function toggleMapDim(switchOn) {
 (function (global, $, TAR) {
     let altitudeChart = TAR.altitudeChart = TAR.altitudeChart || {};
 
-    let altitudeChartDisplay;
-
     function createLegendGradientStops() {
         const mapOffsetToAltitude = [[0.033, 500], [0.066, 1000], [0.126, 2000], [0.19, 4000], [0.253, 6000], [0.316, 8000], [0.38, 10000], [0.59, 20000], [0.79, 30000], [1, 40000]];
 
@@ -2929,40 +2927,23 @@ function toggleMapDim(switchOn) {
         });
     }
 
-    altitudeChart.init = function () {
-        $('#altitude_checkbox').on('click', function () {
-            altitudeChart.toggle();
-        });
-
-        if (global.localStorage['altitudeChart']) {
-            altitudeChartDisplay = global.localStorage['altitudeChart'];
-        } else {
-            altitudeChartDisplay = onMobile ? 'hidden' : 'show';
-        }
-
-        altitudeChart.render();
-    }
-
-    altitudeChart.toggle = function () {
-        global.localStorage['altitudeChart'] = altitudeChartDisplay = (altitudeChartDisplay === 'show') ? 'hidden' : 'show';
-        altitudeChart.render();
-    }
-
     altitudeChart.render = function () {
-        if (altitudeChartDisplay === 'show') {
+        if (toggles['altitudeChart'].state) {
             loadLegend();
-            $('#altitude_checkbox').addClass('settingsCheckboxChecked');
             $('#altitude_chart').show();
         } else {
-            $('#altitude_checkbox').removeClass('settingsCheckboxChecked');
             $('#altitude_chart').hide();
         }
     }
 
-    altitudeChart.hide = function () {
-        if (altitudeChartDisplay !== 'show') {
-            $('#altitude_chart').hide();
-        }
+    altitudeChart.init = function () {
+        new Toggle({
+            key: "altitudeChart",
+            display: "Altitude Chart",
+            container: "#settingsLeft",
+            init: (onMobile ? false : true),
+            toggle: altitudeChart.render,
+        });
     }
 
     return TAR;
