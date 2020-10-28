@@ -311,7 +311,6 @@ function fetchData() {
     let ac_url = [];
     if (uuid != null) {
         ac_url[0] = 'uuid/?feed=' + encodeURIComponent(uuid);
-        $("#lastLeg_checkbox").parent().hide();
     } else if (globeIndex) {
         let indexes = globeIndexes();
         let count = 0;
@@ -332,7 +331,6 @@ function fetchData() {
         }
     } else {
         ac_url[0] = 'data/aircraft.json';
-        $("#lastLeg_checkbox").parent().hide();
     }
 
     PendingFetches = ac_url.length;
@@ -340,7 +338,10 @@ function fetchData() {
     if (globeIndex) {
         clearTimeout(refreshId);
         refreshId = setTimeout(fetchData, 25000);
+    } else {
+        $("#lastLeg_cb").parent().hide();
     }
+
 
     for (let i in ac_url) {
         //console.log(ac_url[i]);
@@ -819,8 +820,16 @@ function init_page() {
         }
     });
 
-    $('#lastLeg_checkbox').on('click', function() {
-        toggleLastLeg();
+    new Toggle({
+        key: "lastLeg",
+        display: "Last Leg only",
+        container: "#settingsLeft",
+        init: true,
+        toggle: function(state) {
+            lastLeg = state;
+            if (SelectedPlane && !showTrace)
+                SelectedPlane.processTrace();
+        },
     });
 
     if (onMobile) {
@@ -833,16 +842,6 @@ function init_page() {
 
     largeMode--;
     toggleLargeMode();
-
-    if (localStorage['lastLeg'] === "true")
-        lastLeg = true;
-    else if (localStorage['lastLeg'] === "false")
-        lastLeg = false;
-
-    if (lastLeg)
-        $('#lastLeg_checkbox').addClass('settingsCheckboxChecked');
-    else
-        $('#lastLeg_checkbox').removeClass('settingsCheckboxChecked');
 
     $('#tStop').on('click', function() { traceOpts.replaySpeed = 0; });
     $('#t1x').on('click', function() { traceOpts.replaySpeed = 1; legShift(); });
@@ -857,14 +856,11 @@ function init_page() {
         container: "#settingsLeft",
         init: false,
         toggle: function(state) {
-            if (state)
-                debugTracks = true;
-            else
-                debugTracks = false;
-
+            debugTracks = state;
             remakeTrails();
         },
     });
+
     new Toggle({
         key: "debugAll",
         display: "Debug show all",
@@ -877,6 +873,7 @@ function init_page() {
                 debugAll = false;
         },
     });
+
     new Toggle({
         key: "ColoredPlanes",
         display: "Colored Planes",
@@ -891,6 +888,7 @@ function init_page() {
             refreshFeatures();
         },
     });
+
     new Toggle({
         key: "ColoredTrails",
         display: "Colored Trails",
@@ -1406,13 +1404,29 @@ function initialize_map() {
         toggleLayer('#acpositions_checkbox', 'ac_positions');
     });
 
-    $('#mapdim_checkbox').on('click', function() {
-        toggleMapDim();
+    new Toggle({
+        key: "MapDim",
+        display: "Dim Map",
+        container: "#settingsLeft",
+        init: true,
+        toggle: function(state) {
+            if (!state) {
+                ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
+                    if (lyr.get('type') != 'base')
+                        return;
+                    ol.Observable.unByKey(lyr.dimKey);
+                });
+            } else {
+                ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
+                    if (lyr.get('type') != 'base')
+                        return;
+                    lyr.dimKey = lyr.on('postrender', dim);
+                });
+            }
+            OLMap.render();
+            buttonActive('#B', state);
+        },
     });
-
-    if (localStorage['MapDim'] === "true" || (MapDim && localStorage['MapDim'] == null)) {
-        toggleMapDim(true);
-    }
 
     window.addEventListener('keydown', function(e) {
         active();
@@ -1473,7 +1487,7 @@ function initialize_map() {
                 break;
                 // misc
             case "b":
-                toggleMapDim();
+                toggles['MapDim'].toggle();
                 break;
             case "m":
                 toggleMultiSelect();
@@ -1557,7 +1571,7 @@ function initialize_map() {
                 break;
                 // debug stuff
             case "L":
-                toggleLastLeg();
+                toggles['lastLeg'].toggle();
                 break;
             case "D":
                 debug = !debug;
@@ -2815,22 +2829,6 @@ function togglePersistence() {
     refreshFilter();
 }
 
-function toggleLastLeg() {
-    if (!globeIndex)
-        return;
-    if (lastLeg) {
-        lastLeg = false;
-        localStorage['lastLeg'] = "false";
-        $('#lastLeg_checkbox').removeClass('settingsCheckboxChecked');
-    } else {
-        lastLeg = true;
-        localStorage['lastLeg'] = "true";
-        $('#lastLeg_checkbox').addClass('settingsCheckboxChecked');
-    }
-    if (SelectedPlane && !showTrace)
-        SelectedPlane.processTrace();
-}
-
 function dim(evt) {
     if (!globalCompositeTested) {
             globalCompositeTested = true;
@@ -2863,35 +2861,6 @@ function dim(evt) {
         evt.context.fillRect(0, 0, evt.context.canvas.width, evt.context.canvas.height);
     }
     evt.context.globalCompositeOperation = 'source-over';
-}
-
-function toggleMapDim(switchOn) {
-    if (!switchOn && localStorage['MapDim'] === "true") {
-        localStorage['MapDim'] = "false";
-        MapDim = false;
-
-        ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
-            if (lyr.get('type') != 'base')
-                return;
-            ol.Observable.unByKey(lyr.dimKey);
-        });
-
-        $('#mapdim_checkbox').removeClass('settingsCheckboxChecked');
-    } else {
-        localStorage['MapDim'] = "true";
-        MapDim = true;
-
-        ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
-            if (lyr.get('type') != 'base')
-                return;
-            lyr.dimKey = lyr.on('postrender', dim);
-        });
-
-        $('#mapdim_checkbox').addClass('settingsCheckboxChecked');
-
-    }
-    OLMap.render();
-    buttonActive('#B', localStorage['MapDim'] == "true");
 }
 
 //
