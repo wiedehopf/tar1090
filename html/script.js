@@ -156,7 +156,8 @@ let badDot;
 let badDotMlat;
 
 // TAR1090 application object
-var TAR = (function (global, $, TAR) {
+let TAR;
+TAR = (function (global, $, TAR) {
     return TAR;
 }(window, jQuery, TAR || {}));
 
@@ -1156,7 +1157,7 @@ function parse_history() {
 // Utils begin
 //
 (function (global, $, TAR) {
-    var utils = TAR.utils = TAR.utils || {};
+    let utils = TAR.utils = TAR.utils || {};
 
     // Make a LineString with 'points'-number points
     // that is a closed circle on the sphere such that the
@@ -2897,11 +2898,9 @@ function toggleMapDim(switchOn) {
 // Altitude Chart begin
 //
 (function (global, $, TAR) {
-    var altitudeChart = TAR.altitudeChart = TAR.altitudeChart || {};
+    let altitudeChart = TAR.altitudeChart = TAR.altitudeChart || {};
 
     let altitudeChartDisplay;
-    let feetUrl = null;
-    let metersUrl = null;
 
     function createLegendGradientStops() {
         const mapOffsetToAltitude = [[0.033, 500], [0.066, 1000], [0.126, 2000], [0.19, 4000], [0.253, 6000], [0.316, 8000], [0.38, 10000], [0.59, 20000], [0.79, 30000], [1, 40000]];
@@ -2922,23 +2921,11 @@ function toggleMapDim(switchOn) {
         return 'url("data:image/svg+xml;base64,' + global.btoa(svg) + '")';
     }
 
-    function setLegend() {
-        $('#altitude_chart_button').css("background-image", (DisplayUnits === 'metric') ? metersUrl : feetUrl);
-    }
-
     function loadLegend() {
-        if (feetUrl !== null && metersUrl !== null) // already loaded?
-            return;
+        let baseLegend = (DisplayUnits === 'metric') ? 'images/alt_legend_meters.svg' : 'images/alt_legend_feet.svg';
 
-        $.when(
-            $.get('images/alt_legend_feet.svg', function (data) {
-                feetUrl = createLegendUrl(data);
-            }),
-            $.get('images/alt_legend_meters.svg', function (data) {
-                metersUrl = createLegendUrl(data);
-            })
-        ).then(function () {
-            setLegend();
+        $.get(baseLegend, function (data) {
+            $('#altitude_chart_button').css("background-image", createLegendUrl(data));
         });
     }
 
@@ -2964,7 +2951,6 @@ function toggleMapDim(switchOn) {
     altitudeChart.render = function () {
         if (altitudeChartDisplay === 'show') {
             loadLegend();
-            setLegend();
             $('#altitude_checkbox').addClass('settingsCheckboxChecked');
             $('#altitude_chart').show();
         } else {
