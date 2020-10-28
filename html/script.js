@@ -30,7 +30,6 @@ let SelectedAllPlanes = false;
 let HighlightedPlane = null;
 let FollowSelected = false;
 let noPan = false;
-let customAltitudeColors = true;
 let loadFinished = false;
 let mapResizeTimeout;
 let pointerMoveTimeout;
@@ -102,7 +101,6 @@ let lastActive = new Date().getTime();
 let inactive = 0;
 let firstFetchDone = false;
 let overrideMapType = null;
-let altitudeChartDisplay;
 let halloween = false;
 
 let shareLink = '';
@@ -157,6 +155,10 @@ let badLineMlat;
 let badDot;
 let badDotMlat;
 
+// TAR1090 application object
+var TAR = (function (global, $, TAR) {
+    return TAR;
+}(window, jQuery, TAR || {}));
 
 function processAircraft(ac, init, uat) {
     let isArray = Array.isArray(ac);
@@ -377,7 +379,6 @@ function fetchData() {
                 //console.time("refreshTable");
                 refreshTableInfo();
                 //console.timeEnd("refreshTable");
-                refreshClock(new Date(now * 1000));
                 refreshSelected();
                 refreshHighlighted();
             }
@@ -423,8 +424,6 @@ function fetchData() {
         });
     }
 }
-
-
 
 // this function is called from index.html on body load
 // kicks off the whole rabbit hole
@@ -678,8 +677,6 @@ function init_page() {
 
     PlaneRowTemplate = document.getElementById("plane_row_template");
 
-    $('#clock_div').text(new Date().toLocaleString());
-
     if (ExtendedData || window.location.hash == '#extended') {
         $("#extendedData").removeClass("hidden");
     }
@@ -785,15 +782,11 @@ function init_page() {
     $("#leg_prev").click(function() {legShift(-1)});
     $("#leg_next").click(function() {legShift(1)});
 
-
     $("#altitude_filter_reset_button").click(onResetAltitudeFilter);
     $("#callsign_filter_reset_button").click(onResetCallsignFilter);
     $("#type_filter_reset_button").click(onResetTypeFilter);
     $("#description_filter_reset_button").click(onResetDescriptionFilter);
     $("#icao_filter_reset_button").click(onResetIcaoFilter);
-
-    // check if the altitude color values are default to enable the altitude filter
-    customAltitudeColors = JSON.stringify(ColorByAlt) !== JSON.stringify(defaultColorByAlt); // should be good enough for compare in our case
 
     $('#settingsCog').on('click', function() {
         $('#settings_infoblock').toggle();
@@ -823,10 +816,6 @@ function init_page() {
         } else {
             sortByDataSource();
         }
-    });
-
-    $('#altitude_checkbox').on('click', function() {
-        toggleAltitudeChart(true);
     });
 
     $('#lastLeg_checkbox').on('click', function() {
@@ -932,9 +921,9 @@ function init_page() {
 
     filterGroundVehicles(false);
     filterBlockedMLAT(false);
-    toggleAltitudeChart(false);
+    
+    TAR.altitudeChart.init();
 }
-
 
 function push_history() {
     $("#loader_progress").attr('max',nHistoryItems*2);
@@ -1163,34 +1152,49 @@ function parse_history() {
         $("#loader").addClass("hidden");
 }
 
-// Make a LineString with 'points'-number points
-// that is a closed circle on the sphere such that the
-// great circle distance from 'center' to each point is
-// 'radius' meters
-function make_geodesic_circle(center, radius, points) {
-    let angularDistance = radius / 6378137.0;
-    let lon1 = center[0] * Math.PI / 180.0;
-    let lat1 = center[1] * Math.PI / 180.0;
-    let geom;
-    for (let i = 0; i <= points; ++i) {
-        let bearing = i * 2 * Math.PI / points;
+//
+// Utils begin
+//
+(function (global, $, TAR) {
+    var utils = TAR.utils = TAR.utils || {};
 
-        let lat2 = Math.asin( Math.sin(lat1)*Math.cos(angularDistance) +
-            Math.cos(lat1)*Math.sin(angularDistance)*Math.cos(bearing) );
-        let lon2 = lon1 + Math.atan2(Math.sin(bearing)*Math.sin(angularDistance)*Math.cos(lat1),
-            Math.cos(angularDistance)-Math.sin(lat1)*Math.sin(lat2));
+    // Make a LineString with 'points'-number points
+    // that is a closed circle on the sphere such that the
+    // great circle distance from 'center' to each point is
+    // 'radius' meters
+    utils.make_geodesic_circle = function (center, radius, points) {
+        const angularDistance = radius / 6378137.0;
+        const lon1 = center[0] * Math.PI / 180.0;
+        const lat1 = center[1] * Math.PI / 180.0;
 
-        lat2 = lat2 * 180.0 / Math.PI;
-        lon2 = lon2 * 180.0 / Math.PI;
-        if (!geom)
-            geom = new ol.geom.LineString([[lon2, lat2]]);
-        else
-            geom.appendCoordinate([lon2, lat2]);
+        let geom;
+        for (let i = 0; i <= points; ++i) {
+            const bearing = i * 2 * Math.PI / points;
+
+            let lat2 = Math.asin(Math.sin(lat1) * Math.cos(angularDistance) +
+                Math.cos(lat1) * Math.sin(angularDistance) * Math.cos(bearing));
+            let lon2 = lon1 + Math.atan2(Math.sin(bearing) * Math.sin(angularDistance) * Math.cos(lat1),
+                Math.cos(angularDistance) - Math.sin(lat1) * Math.sin(lat2));
+
+            lat2 = lat2 * 180.0 / Math.PI;
+            lon2 = lon2 * 180.0 / Math.PI;
+
+            if (!geom)
+                geom = new ol.geom.LineString([[lon2, lat2]]);
+            else
+                geom.appendCoordinate([lon2, lat2]);
+        }
+        return geom;
     }
-    return geom;
-}
 
-// Initalizes the map and starts up our timers to call letious functions
+    return TAR;
+}(window, jQuery, TAR || {}));
+//
+// Utils end
+//
+
+
+// Initalizes the map and starts up our timers to call various functions
 function initialize_map() {
     if (receiverJson && receiverJson.lat != null) {
         SiteLat = receiverJson.lat;
@@ -1512,8 +1516,7 @@ function initialize_map() {
                     $('#expand_sidebar_control').hide();
                     toggleSidebarVisibility();
                     toggleSidebarVisibility();
-                    if (altitudeChartDisplay != 'show')
-                        $('#altitude_chart').hide();
+                    TAR.altitudeChart.hide();
                 }
                 hideButtons = !hideButtons;
                 break;
@@ -2052,12 +2055,6 @@ function refreshHighlighted() {
     $('#highlighted_rssi').text(highlighted.rssi != null ? highlighted.rssi.toFixed(1) + ' dBFS' : "n/a");
 }
 
-function refreshClock(now_date) {
-    let hhmm = now_date.getHours().toString().padStart(2,'0') + ":" + now_date.getMinutes().toString().padStart(2,'0');
-    let hms = hhmm + ":" + now_date.getSeconds().toString().padStart(2,'0');
-    $('#clock_div').text(hms + "   " + now_date.toDateString());
-}
-
 function removeHighlight() {
     HighlightedPlane = null;
     refreshHighlighted();
@@ -2468,7 +2465,6 @@ function selectPlaneByHex(hex, options) {
     refreshTableInfo();
 }
 
-
 // loop through the planes and mark them as selected to show the paths for all planes
 function selectAllPlanes() {
     HighlightedPlane = null;
@@ -2497,7 +2493,6 @@ function selectAllPlanes() {
     refreshHighlighted();
     refreshTableInfo();
 }
-
 
 // deselect all the planes
 function deselectAllPlanes(keepMain) {
@@ -2664,17 +2659,15 @@ function setSelectedInfoBlockVisibility() {
 function initializeUnitsSelector() {
     // Get display unit preferences from local storage
     if (!localStorage.getItem('displayUnits')) {
-        localStorage['displayUnits'] = "nautical";
+        localStorage['displayUnits'] = 'nautical';
     }
-    let displayUnits = localStorage['displayUnits'];
-    DisplayUnits = displayUnits;
 
-    setAltitudeLegend(displayUnits);
+    DisplayUnits = localStorage['displayUnits'];
 
     // Initialize drop-down
-    let unitsSelector = $("#units_selector");
-    unitsSelector.val(displayUnits);
-    unitsSelector.on("change", onDisplayUnitsChanged);
+    $('#units_selector')
+        .val(DisplayUnits)
+        .on('change', onDisplayUnitsChanged);
 
     $(".altitudeUnit").text(get_unit_label("altitude", DisplayUnits));
     $(".speedUnit").text(get_unit_label("speed", DisplayUnits));
@@ -2683,12 +2676,9 @@ function initializeUnitsSelector() {
 }
 
 function onDisplayUnitsChanged(e) {
-    let displayUnits = e.target.value;
-    // Save display units to local storage
-    localStorage['displayUnits'] = displayUnits;
-    DisplayUnits = displayUnits;
+    localStorage['displayUnits'] = DisplayUnits = e.target.value;
 
-    setAltitudeLegend(displayUnits);
+    TAR.altitudeChart.render();
 
     // Update filters
     updateAltFilter();
@@ -2704,7 +2694,7 @@ function onDisplayUnitsChanged(e) {
     // Reset map scale line units
     OLMap.getControls().forEach(function(control) {
         if (control instanceof ol.control.ScaleLine) {
-            control.setUnits(displayUnits);
+            control.setUnits(DisplayUnits);
         }
     });
 
@@ -2712,14 +2702,6 @@ function onDisplayUnitsChanged(e) {
     $(".speedUnit").text(get_unit_label("speed", DisplayUnits));
     $(".distanceUnit").text(get_unit_label("distance", DisplayUnits));
     $(".verticalRateUnit").text(get_unit_label("verticalRate", DisplayUnits));
-}
-
-function setAltitudeLegend(units) {
-    if (units === 'metric') {
-        $('#altitude_chart_button').addClass('altitudeMeters');
-    } else {
-        $('#altitude_chart_button').removeClass('altitudeMeters');
-    }
 }
 
 function onFilterByAltitude(e) {
@@ -2911,32 +2893,97 @@ function toggleMapDim(switchOn) {
     buttonActive('#B', localStorage['MapDim'] == "true");
 }
 
-function toggleAltitudeChart(switchToggle) {
-    if (localStorage['altitudeChart']) {
-        altitudeChartDisplay = localStorage['altitudeChart'];
-    } else if (onMobile) {
-        altitudeChartDisplay = 'hidden';
-    } else {
-        altitudeChartDisplay = 'show'
+//
+// Altitude Chart begin
+//
+(function (global, $, TAR) {
+    var altitudeChart = TAR.altitudeChart = TAR.altitudeChart || {};
+
+    let altitudeChartDisplay;
+    let feetUrl = null;
+    let metersUrl = null;
+
+    function createLegendGradientStops() {
+        const mapOffsetToAltitude = [[0.033, 500], [0.066, 1000], [0.126, 2000], [0.19, 4000], [0.253, 6000], [0.316, 8000], [0.38, 10000], [0.59, 20000], [0.79, 30000], [1, 40000]];
+
+        let stops = '';
+        for (const map of mapOffsetToAltitude) {
+            const color = altitudeColor(map[1]);
+            stops += '<stop offset="' + map[0] + '" stop-color="hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)" />';
+        }
+        return stops;
     }
-    if (switchToggle === true) {
-        altitudeChartDisplay = (altitudeChartDisplay === 'show') ? 'hidden' : 'show';
-        localStorage['altitudeChart'] = altitudeChartDisplay;
+
+    function createLegendUrl(data) {
+        $(data).find('#linear-gradient').html(createLegendGradientStops());
+
+        const svg = $('svg', data).prop('outerHTML');
+
+        return 'url("data:image/svg+xml;base64,' + global.btoa(svg) + '")';
     }
-    // if you're using custom colors always hide the chart
-    if (customAltitudeColors === true) {
-        altitudeChartDisplay = 'hidden';
-        // also hide the control option
-        $('#altitude_chart_container').hide();
+
+    function setLegend() {
+        $('#altitude_chart_button').css("background-image", (DisplayUnits === 'metric') ? metersUrl : feetUrl);
     }
-    if (altitudeChartDisplay === 'show') {
-        $('#altitude_checkbox').addClass('settingsCheckboxChecked');
-        $('#altitude_chart').show();
-    } else {
-        $('#altitude_checkbox').removeClass('settingsCheckboxChecked');
-        $('#altitude_chart').hide();
+
+    function loadLegend() {
+        if (feetUrl !== null && metersUrl !== null) // already loaded?
+            return;
+
+        $.when(
+            $.get('images/alt_legend_feet.svg', function (data) {
+                feetUrl = createLegendUrl(data);
+            }),
+            $.get('images/alt_legend_meters.svg', function (data) {
+                metersUrl = createLegendUrl(data);
+            })
+        ).then(function () {
+            setLegend();
+        });
     }
-}
+
+    altitudeChart.init = function () {
+        $('#altitude_checkbox').on('click', function () {
+            altitudeChart.toggle();
+        });
+
+        if (global.localStorage['altitudeChart']) {
+            altitudeChartDisplay = global.localStorage['altitudeChart'];
+        } else {
+            altitudeChartDisplay = onMobile ? 'hidden' : 'show';
+        }
+
+        altitudeChart.render();
+    }
+
+    altitudeChart.toggle = function () {
+        global.localStorage['altitudeChart'] = altitudeChartDisplay = (altitudeChartDisplay === 'show') ? 'hidden' : 'show';
+        altitudeChart.render();
+    }
+
+    altitudeChart.render = function () {
+        if (altitudeChartDisplay === 'show') {
+            loadLegend();
+            setLegend();
+            $('#altitude_checkbox').addClass('settingsCheckboxChecked');
+            $('#altitude_chart').show();
+        } else {
+            $('#altitude_checkbox').removeClass('settingsCheckboxChecked');
+            $('#altitude_chart').hide();
+        }
+    }
+
+    altitudeChart.hide = function () {
+        if (altitudeChartDisplay !== 'show') {
+            $('#altitude_chart').hide();
+        }
+    }
+
+    return TAR;
+}(window, jQuery, TAR || {}));
+//
+// Altitude Chart end
+//
 
 function followRandomPlane() {
     if (showTrace)
@@ -3057,6 +3104,7 @@ function onSearch(e) {
         findPlanes(searchTerm, "byIcao", "byCallsign", "byReg", "byType");
     return false;
 }
+
 /*
 function onSearchReg(e) {
     e.preventDefault();
@@ -3086,7 +3134,6 @@ function updateCallsignFilter(e) {
 
     refreshFilter();
 }
-
 
 function onResetTypeFilter(e) {
     $("#type_filter").val("");
@@ -4116,6 +4163,7 @@ function initSitePos() {
     }
 }
 
+/*
 function drawAlt() {
     processAircraft({hex: 'c0ffee', });
     let plane = Planes['c0ffee'];
@@ -4127,6 +4175,7 @@ function drawAlt() {
         plane.updateTrack(now - i, now - i - 5000, { serverTrack: true });
     }
 }
+*/
 
 function remakeTrails() {
     for (let i in PlanesOrdered) {
@@ -4176,7 +4225,7 @@ function createSiteCircleFeatures() {
         }
 
         let distance = SiteCirclesDistances[i] * conversionFactor;
-        let circle = make_geodesic_circle(SitePosition, distance, 180);
+        let circle = TAR.utils.make_geodesic_circle(SitePosition, distance, 180);
         circle.transform('EPSG:4326', 'EPSG:3857');
         let feature = new ol.Feature(circle);
 
@@ -4519,6 +4568,7 @@ function drawHeatmap() {
         }
         tempPoints.push(heatPoints[k]);
     }
+
     //console.log('tempPoints.length: ' + tempPoints.length);
     let myPoints = [];
     if (tempPoints.length <= 2) {
@@ -4558,7 +4608,9 @@ function drawHeatmap() {
             index.sort((a, b) => (Math.random() - 0.5));
         indexes.push(index);
     }
+
     let offsets = Array(myPoints.length).fill(0);
+
     while (pointCount < heatmap.max && setSize(done) < myPoints.length && iterations++ < maxIter) {
         for (let k = 0; k < myPoints.length && pointCount < heatmap.max; k++) {
             if (offsets[k] >= indexes[k].length) {
@@ -4680,7 +4732,6 @@ function initReplay() {
     }
 }
 
-
 function play() {
     if (!replay)
         return;
@@ -4710,7 +4761,6 @@ function play() {
     }
 
     refreshTableInfo();
-    refreshClock(new Date(now * 1000));
     refreshSelected();
     refreshHighlighted();
 }
