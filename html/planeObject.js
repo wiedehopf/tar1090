@@ -880,6 +880,7 @@ PlaneObject.prototype.processTrace = function() {
             }
         }
     }
+
     if (this.fullTrace && this.fullTrace.trace
         && this.recentTrace && this.recentTrace.trace) {
         let t1 = this.fullTrace.trace;
@@ -889,7 +890,6 @@ PlaneObject.prototype.processTrace = function() {
         if (end1 < start2)
             console.log("Insufficient recent trace overlap!");
     }
-
 
     let stop = 0;
     for (let j = 0; j < 2 && !stop; j++) {
@@ -1069,6 +1069,7 @@ PlaneObject.prototype.processTrace = function() {
         }
         now = new Date().getTime()/1000;
     }
+
     if (showTrace) {
         if (this.position_time) {
             const date = new Date(this.position_time * 1000);
@@ -1084,7 +1085,9 @@ PlaneObject.prototype.processTrace = function() {
         this.seen = 0;
         this.seen_pos = 0;
     }
+
     this.visible = true;
+
     if (!showTime) {
         this.updateFeatures(now, _last);
     }
@@ -1107,16 +1110,17 @@ PlaneObject.prototype.processTrace = function() {
     }
 
     noPan = false;
-
     showTraceExit = false;
 
     this.updateMarker(true);
+
     if (!showTime) {
         this.updateLines();
     }
 
     refreshSelected();
-    refreshTableInfo();
+
+    TAR.planesTable.refresh();
 
     console.log(this.history_size + ' ' + points_in_trace);
 }
@@ -1780,9 +1784,9 @@ PlaneObject.prototype.remakeTrail = function() {
 
 }
 
-PlaneObject.prototype.makeTR = function() {
+PlaneObject.prototype.makeTR = function (trTemplate) {
 
-    this.tr = PlaneRowTemplate.cloneNode(true);
+    this.tr = trTemplate;
 
     if (this.icao[0] === '~') {
         // Non-ICAO address
@@ -1808,7 +1812,6 @@ PlaneObject.prototype.makeTR = function() {
 
         if(!mapIsVisible) {
             selectPlaneByHex(this.icao, {follow: true});
-            //showMap();
         } else {
             selectPlaneByHex(this.icao, {follow: false});
         }
