@@ -338,21 +338,22 @@ function get_history_item(i) {
     deferHistory.push(request);
 }
 
-let toggles = {};
+const toggles = {};
 
 function Toggle(arg) {
-
     this.key = arg.key;
-    toggles[this.key] = this;
     this.state = (arg.init ? true : false);
     this.doStuff = arg.toggle;
     this.checkbox = '#' + this.key + '_cb';
     this.display = arg.display;
     this.container = arg.container;
+
+    toggles[this.key] = this;
+
     this.init();
 }
-Toggle.prototype.init = function() {
 
+Toggle.prototype.init = function() {
     $(this.container).append((
         '<div class="settingsOptionContainer">'
         + '<div class="settingsCheckbox" id="' + this.key + '_cb' + '"></div>'
@@ -361,9 +362,9 @@ Toggle.prototype.init = function() {
 
     $(this.checkbox).on('click', this.toggle.bind(this));
 
-    if (localStorage[this.key] == "true")
+    if (localStorage[this.key] == 'true')
         this.state = true;
-    if (localStorage[this.key] == "false")
+    if (localStorage[this.key] == 'false')
         this.state = false
 
     this.toggle(this.state);
@@ -378,16 +379,20 @@ Toggle.prototype.toggle = function(override) {
         this.state = !this.state;
 
     if (this.state == false) {
-        localStorage[this.key] = "false";
+        localStorage[this.key] = 'false';
         $(this.checkbox).removeClass('settingsCheckboxChecked');
     }
     if (this.state == true) {
-        localStorage[this.key] = "true";
+        localStorage[this.key] = 'true';
         $(this.checkbox).addClass('settingsCheckboxChecked');
     }
 
     if (this.doStuff)
         this.doStuff(this.state);
+}
+
+Toggle.prototype.hide = function () {
+    $(this.checkbox).parent().hide();
 }
 
 // Set the name of the hidden property and the change event for visibility

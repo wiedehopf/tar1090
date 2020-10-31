@@ -817,7 +817,7 @@ function init_page() {
             lastLeg = state;
             if (SelectedPlane && !showTrace)
                 SelectedPlane.processTrace();
-        },
+        }
     });
 
     if (onMobile) {
@@ -846,7 +846,7 @@ function init_page() {
         toggle: function(state) {
             debugTracks = state;
             remakeTrails();
-        },
+        }
     });
 
     new Toggle({
@@ -859,7 +859,7 @@ function init_page() {
                 debugAll = true;
             else
                 debugAll = false;
-        },
+        }
     });
 
     new Toggle({
@@ -874,7 +874,7 @@ function init_page() {
                 monochromeMarkers = "#EEEEEE";
 
             refreshFeatures();
-        },
+        }
     });
 
     new Toggle({
@@ -889,7 +889,7 @@ function init_page() {
                 monochromeTracks = "#000000";
 
             remakeTrails();
-        },
+        }
     });
 
     $('#selectall_checkbox').on('click', function() {
@@ -1410,7 +1410,7 @@ function initialize_map() {
             }
             OLMap.render();
             buttonActive('#B', state);
-        },
+        }
     });
 
     window.addEventListener('keydown', function(e) {
@@ -2074,46 +2074,76 @@ function refreshFeatures() {
 (function (global, $, TAR) {
     let planesTable = TAR.planesTable = TAR.planesTable || {};
 
+    const columns = [
+        { id: '#icao', text: 'ICAO' },
+        { id: '#flag', text: 'Flag' },
+        { id: '#flight', text: 'Ident' },
+        { id: '#registration', text: 'Registration' },
+        { id: '#aircraft_type', text: 'Aircraft Type' },
+        { id: '#squawk', text: 'Squawk' },
+        { id: '#altitude', text: 'Altitude' },
+        { id: '#speed', text: 'Speed' },
+        { id: '#vert_rate', text: 'Vertical Rate' },
+        { id: '#distance', text: 'Distance' },
+        { id: '#track', text: 'Heading' },
+        { id: '#msgs', text: 'Messages' },
+        { id: '#seen', text: 'Seen' },
+        { id: '#rssi', text: 'RSSI' },
+        { id: '#lat', text: 'Latitude' },
+        { id: '#lon', text: 'Longitude' },
+        { id: '#data_source', text: 'Source' }
+    ];
+
     let planeRowTemplate = null;
     let lastRealExtent = null;
     let lastRenderExtent = null;
+    let initializing = true;
 
     planesTable.init = function () {
-        planeRowTemplate = document.getElementById("plane_row_template");
+        planeRowTemplate = document.getElementById('plane_row_template');
 
-        if (!ShowFlags) { 
-            planesTable.hideColumn('#flag', true);
+        // initialize columns
+        for (let col of columns) {
+            col.visible = true;
+            col.toggleKey = col.id.replace('#', 'column_');
+
+            if (HideCols.includes(col.id)) {
+                planesTable.showColumn(col.id, false);
+            }
         }
+
+        createColumnToggles();
+
+        if (!ShowFlags) {
+            planesTable.removeColumn('#flag');
+        }
+
+        initializing = false;
 
         applyColumnVisibility();
     }
 
-    planesTable.showColumn = function (col, accumulateChanges) {
-        HideCols = HideCols.filter(c => c !== col);
-        if (accumulateChanges !== true) {
-            applyColumnVisibility();
-        }
+    planesTable.showColumn = function (col, visible) {
+        const column = columns.find(c => c.id === col);
+        column.visible = visible;
+
+        applyColumnVisibility();
+
+        return column;
     }
 
-    planesTable.hideColumn = function (col, accumulateChanges) {
-        HideCols.push(col);
-        if (!accumulateChanges) {
-            applyColumnVisibility();
-        }
-    }
+    planesTable.removeColumn = function (col) {
+        const column = planesTable.showColumn(col, false);
 
-    planesTable.toggleColumn = function (col) {
-        if (HideCols.includes(col)) {
-            showColumn(col);
-        }
-        else {
-            hideColumn(col);
+        const toggle = toggles[column.toggleKey];
+        if (toggle) {
+            toggle.hide();
         }
     }
 
     // Refreshes the larger table of all the planes
     planesTable.refresh = function () {
-        if (pTracks)
+        if (initializing || pTracks)
             return;
 
         global.refreshPageTitle();
@@ -2130,7 +2160,7 @@ function refreshFeatures() {
         let nPlanes = 0;
         let nMapPlanes = 0;
 
-        if (mapIsVisible || lastRealExtent == null) {
+        if (mapIsVisible || lastRealExtent === null) {
             const mapSize = OLMap.getSize();
             lastRealExtent = myExtent(OLMap.getView().calculateExtent(mapSize));
 
@@ -2163,8 +2193,6 @@ function refreshFeatures() {
 
             plane.showInTable = false;
 
-            let classes = "plane_table_row";
-
             if (tableInView && plane.visible &&
                 (plane.inView || (plane.selected && !SelectedAllPlanes))
             ) {
@@ -2187,6 +2215,8 @@ function refreshFeatures() {
                 plane.showInTable = false;
                 continue;
             }
+
+            let classes = "plane_table_row";
 
             if (plane.showInTable) {
                 nPlanes++;
@@ -2433,7 +2463,10 @@ function refreshFeatures() {
         }
     }
 
-    function applyColumnVisibility () {
+    function applyColumnVisibility() {
+        if (initializing)
+            return;
+
         const infoTable = $("#tableinfo");
         const tbody = document.getElementById('tableinfo').tBodies[0];
 
@@ -2448,8 +2481,8 @@ function refreshFeatures() {
             }
         }
 
-        for (let col in HideCols) {
-            renderColumn(infoTable, HideCols[col], !mapIsVisible);
+        for (let col of columns) {
+            renderColumn(infoTable, col.id, col.visible);
         }
     }
 
@@ -2461,6 +2494,27 @@ function refreshFeatures() {
             } else {
                 plane.tr.cells[cell].textContent = newValue;
             }
+        }
+    }
+
+    function createColumnToggles() {
+        let container = '#columns_block1';
+
+        for (let col of columns) {
+            if (col.id === '#distance') {
+                container = '#columns_block2';
+            }
+
+            new Toggle({
+                key: col.toggleKey,
+                display: col.text,
+                container: container,
+                init: col.visible,
+                toggle: function (state) {
+                    planesTable.showColumn(col.id, state);
+                    planesTable.refresh();
+                }
+            });
         }
     }
 
@@ -2953,7 +3007,7 @@ function dim(evt) {
             display: "Altitude Chart",
             container: "#settingsLeft",
             init: (onMobile ? false : true),
-            toggle: altitudeChart.render,
+            toggle: altitudeChart.render
         });
     }
 
@@ -4111,7 +4165,7 @@ function initSitePos() {
         // Add home marker if requested
         createSiteCircleFeatures();
     } else {
-        TAR.planesTable.hideColumn('#distance');
+        TAR.planesTable.removeColumn('#distance');
     }
 
     if (SitePosition && !onMobile) {
