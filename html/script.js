@@ -2120,14 +2120,14 @@ function refreshFeatures() {
 
         initializing = false;
 
-        applyColumnVisibility();
+        planesTable.applyColumnVisibility();
     }
 
     planesTable.showColumn = function (col, visible) {
         const column = columns.find(c => c.id === col);
         column.visible = visible;
 
-        applyColumnVisibility();
+        planesTable.applyColumnVisibility();
 
         return column;
     }
@@ -2463,7 +2463,7 @@ function refreshFeatures() {
         }
     }
 
-    function applyColumnVisibility() {
+    planesTable.applyColumnVisibility = function () {
         if (initializing)
             return;
 
@@ -2482,7 +2482,7 @@ function refreshFeatures() {
         }
 
         for (let col of columns) {
-            renderColumn(infoTable, col.id, col.visible);
+            renderColumn(infoTable, col.id, col.visible || !mapIsVisible);
         }
     }
 
@@ -2726,6 +2726,7 @@ function expandSidebar(e) {
     $("#splitter").hide();
     $("#shrink_sidebar_button").show();
     $("#sidebar_container").width("100%");
+    TAR.planesTable.applyColumnVisibility();
     clearTimeout(refreshId);
     fetchData();
     TAR.planesTable.refresh();
@@ -2740,6 +2741,7 @@ function showMap() {
     $("#toggle_sidebar_control").show();
     $("#splitter").show();
     $("#shrink_sidebar_button").hide();
+    TAR.planesTable.applyColumnVisibility();
     clearTimeout(refreshId);
     fetchData();
     TAR.planesTable.refresh();
