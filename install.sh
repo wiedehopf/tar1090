@@ -55,6 +55,7 @@ fi
 if [ -d /etc/lighttpd/conf-enabled/ ] && [ -d /etc/lighttpd/conf-available ] && command -v lighttpd &>/dev/null
 then
     lighttpd=yes
+    sed -i -e 's$^compress.cache-dir.*$#\0 # disabled by tar1090, often causes full disk$' /etc/lighttpd/lighttpd.conf
 fi
 
 if command -v nginx &>/dev/null
