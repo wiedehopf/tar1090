@@ -55,7 +55,6 @@ fi
 if [ -d /etc/lighttpd/conf-enabled/ ] && [ -d /etc/lighttpd/conf-available ] && command -v lighttpd &>/dev/null
 then
     lighttpd=yes
-    sed -i -e 's$^compress.cache-dir.*$#\0 # disabled by tar1090, often causes full disk$' /etc/lighttpd/lighttpd.conf
 fi
 
 if command -v nginx &>/dev/null
@@ -358,6 +357,15 @@ then
         echo ----------------
         echo "Lighttpd error, tar1090 will probably not work correctly:"
         lighttpd -tt -f /etc/lighttpd/lighttpd.conf
+    fi
+
+    if grep -qs -e '^compress.cache-dir' /etc/lighttpd/lighttpd.conf && grep -qs -e '^compress.filetype.*json' /etc/lighttpd/lighttpd.conf; then
+        echo -----
+        echo "Disabling compress.cache-dir in /etc/lighttpd/lighttpd.conf due to often causing full disk issues when compression for filetype application/json is enabled."
+        echo -----
+        sed -i -e 's$^compress.cache-dir.*$#\0 # disabled by tar1090, often causes full disk$' /etc/lighttpd/lighttpd.conf
+    else
+        sed -i -e 's$^compress.cache-dir.*$# CAUTION, enabling cache-dir and filetype json will cause full disk when using tar1090\n\0$' /etc/lighttpd/lighttpd.conf
     fi
 fi
 
