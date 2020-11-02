@@ -670,17 +670,21 @@
 
         </div>
       </div> <!-- selected_infoblock -->
+
       <div id="map_container">
         <div id="map_canvas"></div>
         <div id="settings_infoblock">
           <div id="settings_close" class="settingsCloseBox"></div>
           <div class="settingsOptionContainer">
-            <label for="units_selector"><span class="infoBlockTitleText">Units: </span></label>
+            <label for="units_selector"><span class="infoBlockTitleText">Units:&nbsp;&nbsp;</span></label>
             <select name="units_selector" id="units_selector">
               <option value="nautical">Aeronautical</option>
               <option value="metric">Metric</option>
               <option value="imperial">Imperial</option>
             </select>
+          </div>
+          <div class="infoRowSpacer">
+            <hr />
           </div>
           <div id="settingsLeft" class="settingsColumn">
             <div class="settingsOptionContainer">
@@ -714,6 +718,20 @@
             <div class="settingsOptionContainer">
               <div class="settingsCheckbox" id="grouptype_checkbox"></div>
               <div class="settingsText">Group by Data Type</div>
+            </div>
+          </div>
+          <div class="infoRowSpacer">
+            <hr />
+          </div>
+          <div>
+            <button id="columnsButton" type="button" class="collapseButton">Select Columns</button>
+            <div class="collapse collapseSettings">
+              <div id="settingsLeft" class="settingsColumn">
+                <div id="columns_block1"></div>
+              </div>
+              <div id="settingsRight" class="settingsColumn">
+                <div id="columns_block2"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -796,7 +814,7 @@
                 </td>
               </tr>
               <tr class="infoRowSpacer">
-                  <td></td>
+                <td></td>
               </tr>
               <tr>
                 <td>
@@ -814,7 +832,7 @@
               </tr>
 
               <tr class="infoRowSpacer">
-                  <td></td>
+                <td></td>
               </tr>
               <tr class="infoblock_heading">
                 <td>
@@ -829,7 +847,7 @@
                       </td>
                       <td style="width: 50%">
                         <form id="jump_form">
-                          <span class="infoBlockTitleText">Jump to airport:</span>
+                          <span class="infoBlockTitleText">Jump to Airport:</span>
                           <br>
                           <input id="jump_input" name="jumpBox" type="text" class="searchInput" maxlength="4">
                         </form>
@@ -840,7 +858,7 @@
               </tr>
 
               <tr class="infoRowSpacer">
-                  <td></td>
+                <td></td>
               </tr>
             </table>
 
@@ -870,7 +888,7 @@
               </form>
 
               <form id="type_filter_form">
-                <label><span title="ICAO type code (A320, B738, etc.)"class="infoBlockTitleText">Filter by type code:</span></label>
+                <label><span title="ICAO type code (A320, B738, etc.)" class="infoBlockTitleText">Filter by type code:</span></label>
                 <br>
                 <input id="type_filter" name="type" type="text" class="searchInput" maxlength="1024">
                 <button class="formButton" type="submit">Filter</button>
@@ -896,30 +914,29 @@
 
               </form>
 
-
             </div> <!-- filter_block -->
 
             <div id="planes_table">
               <table id="tableinfo" style="width: 100%">
                 <thead class="aircraft_table_header">
                   <tr>
-                    <td id="icao" onclick="sortByICAO();">ICAO</td>
-                    <td id="flag" onclick="sortByCountry()"><!-- column for flag image --></td>
-                    <td id="flight" onclick="sortByFlight();">&nbsp&nbsp&nbsp&nbsp&nbspIdent&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-                    <td id="registration" onclick="sortByRegistration();">Registration</td>
-                    <td id="aircraft_type" onclick="sortByAircraftType();">Type</td>
-                    <td id="squawk" onclick="sortBySquawk();">Squawk</td>
-                    <td id="altitude" onclick="sortByAltitude();">Altitude(<span class="altitudeUnit"></span>)</td>
-                    <td id="speed" onclick="sortBySpeed();">GS(<span class="speedUnit"></span>)</td>
-                    <td id="vert_rate" onclick="sortByVerticalRate();">V. Rate (<span class="verticalRateUnit"></span>)</td>
-                    <td id="distance" onclick="sortByDistance();">Dist. (<span class="distanceUnit"></span>)</td>
-                    <td id="track" onclick="sortByTrack();">Heading</td>
-                    <td id="msgs" onclick="sortByMsgs();">Msgs</td>
-                    <td id="seen" onclick="sortBySeen();">Age</td>
-                    <td id="rssi" onclick="sortByRssi();">RSSI</td>
-                    <td id="lat" onclick="sortByLatitude();">Latitude</td>
-                    <td id="lon" onclick="sortByLongitude();">Longitude</td>
-                    <td id="data_source" onclick="sortByDataSource();">Source</td>
+                    <td id="icao" onclick="TAR.planesTable.sortByICAO();">ICAO</td>
+                    <td id="flag" onclick="TAR.planesTable.sortByCountry()" style="width: 20px"><!-- column for flag image --></td>
+                    <td id="flight" onclick="TAR.planesTable.sortByFlight();">&nbsp&nbsp&nbsp&nbsp&nbspIdent&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+                    <td id="registration" onclick="TAR.planesTable.sortByRegistration();">Registration</td>
+                    <td id="aircraft_type" onclick="TAR.planesTable.sortByAircraftType();">Type</td>
+                    <td id="squawk" onclick="TAR.planesTable.sortBySquawk();">Squawk</td>
+                    <td id="altitude" onclick="TAR.planesTable.sortByAltitude();">Altitude(<span class="altitudeUnit"></span>)</td>
+                    <td id="speed" onclick="TAR.planesTable.sortBySpeed();">GS(<span class="speedUnit"></span>)</td>
+                    <td id="vert_rate" onclick="TAR.planesTable.sortByVerticalRate();">V. Rate (<span class="verticalRateUnit"></span>)</td>
+                    <td id="distance" onclick="TAR.planesTable.sortByDistance();">Dist. (<span class="distanceUnit"></span>)</td>
+                    <td id="track" onclick="TAR.planesTable.sortByTrack();">Heading</td>
+                    <td id="msgs" onclick="TAR.planesTable.sortByMsgs();">Msgs</td>
+                    <td id="seen" onclick="TAR.planesTable.sortBySeen();">Seen</td>
+                    <td id="rssi" onclick="TAR.planesTable.sortByRssi();">RSSI</td>
+                    <td id="lat" onclick="TAR.planesTable.sortByLatitude();">Latitude</td>
+                    <td id="lon" onclick="TAR.planesTable.sortByLongitude();">Longitude</td>
+                    <td id="data_source" onclick="TAR.planesTable.sortByDataSource();">Source</td>
                   </tr>
                 </thead>
                 <tbody>
@@ -956,16 +973,10 @@
             </div> <!-- planes_table -->
           </div>
 
-
-
         </div> <!-- sidebar_canvas -->	
 
-
-
-
-
-
       </div> <!-- sidebar_container -->
+
     </div> <!-- layout_container -->
 
     <div id="update_error" class="hidden error_box">

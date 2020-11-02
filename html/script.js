@@ -43,8 +43,6 @@ let uat_data = null;
 let enableLabels = false;
 let extendedLabels = 0;
 let mapIsVisible = true;
-let columnVis = Array(30).fill(true);
-let emptyStyle = new ol.style.Style({});
 let tableInView = false;
 let onlyMLAT = false;
 let onlyMilitary = false;
@@ -66,10 +64,7 @@ let globeIndexSpecialTiles;
 let globeSimLoad = 4;
 let globeTableLimit = 80;
 let showGrid = false;
-let lastRealExtent;
 let lastGlobeExtent;
-let lastRenderExtent;
-let globeIndexExtent;
 let PendingFetches = 0;
 let debugCounter = 0;
 let selectedPhotoCache = null;
@@ -85,7 +80,6 @@ let traceOpts = {};
 let icaoParam = null;
 let globalScale = 1;
 let newWidth = lineWidth;
-let SitePosInitialized = false;
 let SiteOverride = false;
 let airport = null;
 let labelFill = null;
@@ -121,8 +115,6 @@ let noMovement;
 let checkMoveZoom;
 let checkMoveCenter = [0, 0];
 
-
-let PlaneRowTemplate = null;
 
 let TrackedAircraft = 0;
 let globeTrackedAircraft = 0;
@@ -313,7 +305,6 @@ function fetchData() {
         ac_url[0] = 'uuid/?feed=' + encodeURIComponent(uuid);
     } else if (globeIndex) {
         let indexes = globeIndexes();
-        let count = 0;
         indexes.sort(function(x,y) {
             if (!globeIndexNow[x] && !globeIndexNow[y])
                 return 0;
@@ -379,7 +370,7 @@ function fetchData() {
 
             if (PendingFetches <= 1) {
                 //console.time("refreshTable");
-                refreshTableInfo();
+                TAR.planesTable.refresh();
                 //console.timeEnd("refreshTable");
                 refreshSelected();
                 refreshHighlighted();
@@ -677,12 +668,11 @@ function init_page() {
     // Set page basics
     document.title = PageName;
 
-    PlaneRowTemplate = document.getElementById("plane_row_template");
+    TAR.planesTable.init();
 
     if (ExtendedData || window.location.hash == '#extended') {
         $("#extendedData").removeClass("hidden");
     }
-
 
     // Set up map/sidebar splitter
     $("#sidebar_container").resizable({
@@ -692,13 +682,14 @@ function init_page() {
         minWidth: 150,
         maxWidth: ($(window).innerWidth() *0.8),
     });
+
     $("#splitter").dblclick(function() {
         $('#sidebar_container').width('auto');
         updateMapSize();
         localStorage['sidebar_width'] = $('#sidebar_container').width();
         $('#sidebar_container').width(localStorage['sidebar_width']);
     });
-
+    
     if (localStorage['sidebar_width'] != null)
         $('#sidebar_container').width(localStorage['sidebar_width']);
     else
@@ -729,7 +720,7 @@ function init_page() {
             refreshSelected();
             refreshHighlighted();
             $('#selected_infoblock').hide();
-            refreshTableInfo();
+            TAR.planesTable.refresh();
         }
     });
 
@@ -760,9 +751,6 @@ function init_page() {
     $("#shrink_sidebar_button").click(showMap);
 
     $("#large_mode_button").click(toggleLargeMode);
-
-    // Set initial element visibility
-    setColumnVisibility();
 
     // Initialize other controls
     initializeUnitsSelector();
@@ -802,21 +790,21 @@ function init_page() {
         filterGroundVehicles(true);
         refreshSelected();
         refreshHighlighted();
-        refreshTableInfo();
+        TAR.planesTable.refresh();
     });
 
     $('#blockedmlat_filter').on('click', function() {
         filterBlockedMLAT(true);
         refreshSelected();
         refreshHighlighted();
-        refreshTableInfo();
+        TAR.planesTable.refresh();
     });
 
     $('#grouptype_checkbox').on('click', function() {
         if ($('#grouptype_checkbox').hasClass('settingsCheckboxChecked')) {
-            sortByDistance();
+            TAR.planesTable.sortByDistance();
         } else {
-            sortByDataSource();
+            TAR.planesTable.sortByDataSource();
         }
     });
 
@@ -829,7 +817,7 @@ function init_page() {
             lastLeg = state;
             if (SelectedPlane && !showTrace)
                 SelectedPlane.processTrace();
-        },
+        }
     });
 
     if (onMobile) {
@@ -858,7 +846,7 @@ function init_page() {
         toggle: function(state) {
             debugTracks = state;
             remakeTrails();
-        },
+        }
     });
 
     new Toggle({
@@ -871,7 +859,7 @@ function init_page() {
                 debugAll = true;
             else
                 debugAll = false;
-        },
+        }
     });
 
     new Toggle({
@@ -886,7 +874,7 @@ function init_page() {
                 monochromeMarkers = "#EEEEEE";
 
             refreshFeatures();
-        },
+        }
     });
 
     new Toggle({
@@ -901,7 +889,7 @@ function init_page() {
                 monochromeTracks = "#000000";
 
             remakeTrails();
-        },
+        }
     });
 
     $('#selectall_checkbox').on('click', function() {
@@ -1057,7 +1045,7 @@ function parse_history() {
         }
 
         refreshFeatures();
-        refreshTableInfo();
+        TAR.planesTable.refresh();
     }
 
     PositionHistoryBuffer = null;
@@ -1079,7 +1067,7 @@ function parse_history() {
     if (enable_pf_data) {
         window.setInterval(fetchPfData, RefreshInterval*10.314);
     }
-    //window.setInterval(refreshTableInfo, 1000);
+    //window.setInterval(TAR.planesTable.refresh, 1000);
     //window.setInterval(function() {PendingFetches--;}, 10000);
     setInterval(decrementTraceRate, 1000);
 
@@ -1201,6 +1189,7 @@ function initialize_map() {
         DefaultCenterLat = receiverJson.lat;
         DefaultCenterLon = receiverJson.lon;
     }
+
     if (receiverJson && receiverJson.globeIndexGrid != null) {
         globeIndexGrid = receiverJson.globeIndexGrid;
         globeIndex = 1;
@@ -1208,21 +1197,17 @@ function initialize_map() {
         $('#dump1090_total_history_td').hide();
         $('#dump1090_message_rate_td').hide();
     }
+
     // Load stored map settings if present
     CenterLon = Number(localStorage['CenterLon']) || DefaultCenterLon;
     CenterLat = Number(localStorage['CenterLat']) || DefaultCenterLat;
     ZoomLvl = Number(localStorage['ZoomLvl']) || DefaultZoomLvl;
     ZoomLvlCache = ZoomLvl;
+
     if (overrideMapType)
         MapType_tar1090 = overrideMapType;
     else if (localStorage['MapType_tar1090']) {
         MapType_tar1090 = localStorage['MapType_tar1090'];
-    }
-
-    // Maybe hide flag info
-    if (!ShowFlags) {
-        PlaneRowTemplate.cells[1].style.display = 'none'; // hide flag column
-        document.getElementById("flag").style.display = 'none'; // hide flag header
     }
 
     // Initialize OL3
@@ -1425,7 +1410,7 @@ function initialize_map() {
             }
             OLMap.render();
             buttonActive('#B', state);
-        },
+        }
     });
 
     window.addEventListener('keydown', function(e) {
@@ -1541,7 +1526,7 @@ function initialize_map() {
                 // filters
             case "M":
                 onlyMLAT = !onlyMLAT;
-                refreshTableInfo();
+                TAR.planesTable.refresh();
                 break;
             case "T":
                 filterTISB = !filterTISB;
@@ -1650,6 +1635,8 @@ function reaper(all) {
 
 // Page Title update function
 function refreshPageTitle() {
+    if (pTracks) 
+        return;
     if (!PlaneCountInTitle && !MessageRateInTitle) {
         return;
     }
@@ -2081,318 +2068,468 @@ function refreshFeatures() {
     }
 }
 
-// Refreshes the larger table of all the planes
-function refreshTableInfo() {
-    if (pTracks)
-        return;
-    refreshPageTitle();
+//
+// Planes table begin
+//
+(function (global, $, TAR) {
+    let planesTable = TAR.planesTable = TAR.planesTable || {};
 
-    resortTable(PlanesOrdered);
+    const columns = [
+        { id: '#icao', text: 'ICAO' },
+        { id: '#flag', text: 'Flag' },
+        { id: '#flight', text: 'Ident' },
+        { id: '#registration', text: 'Registration' },
+        { id: '#aircraft_type', text: 'Aircraft Type' },
+        { id: '#squawk', text: 'Squawk' },
+        { id: '#altitude', text: 'Altitude' },
+        { id: '#speed', text: 'Speed' },
+        { id: '#vert_rate', text: 'Vertical Rate' },
+        { id: '#distance', text: 'Distance' },
+        { id: '#track', text: 'Heading' },
+        { id: '#msgs', text: 'Messages' },
+        { id: '#seen', text: 'Seen' },
+        { id: '#rssi', text: 'RSSI' },
+        { id: '#lat', text: 'Latitude' },
+        { id: '#lon', text: 'Longitude' },
+        { id: '#data_source', text: 'Source' }
+    ];
 
-    $('#dump1090_total_history').text(TrackedHistorySize);
+    let planeRowTemplate = null;
+    let lastRealExtent = null;
+    let lastRenderExtent = null;
+    let initializing = true;
 
-    if (MessageRate !== null) {
-        $('#dump1090_message_rate').text(MessageRate.toFixed(1));
-    } else {
-        $('#dump1090_message_rate').text("n/a");
+    planesTable.init = function () {
+        planeRowTemplate = document.getElementById('plane_row_template');
+
+        // initialize columns
+        for (let col of columns) {
+            col.visible = true;
+            col.toggleKey = col.id.replace('#', 'column_');
+
+            if (HideCols.includes(col.id)) {
+                planesTable.showColumn(col.id, false);
+            }
+        }
+
+        createColumnToggles();
+
+        if (!ShowFlags) {
+            planesTable.removeColumn('#flag');
+        }
+
+        initializing = false;
+
+        planesTable.applyColumnVisibility();
     }
 
-    TrackedAircraft = 0;
-    TrackedAircraftPositions = 0;
-    TrackedHistorySize = 0;
-    let nplanes = 0;
-    let nMapPlanes = 0;
+    planesTable.showColumn = function (col, visible) {
+        const column = columns.find(c => c.id === col);
+        column.visible = visible;
 
-    if (mapIsVisible || lastRealExtent == null) {
-        let mapSize = OLMap.getSize();
+        planesTable.applyColumnVisibility();
 
-        lastRealExtent = myExtent(OLMap.getView().calculateExtent(mapSize));
-
-        let size = [mapSize[0] * 1.2, mapSize[1] * 1.2];
-        lastRenderExtent = myExtent(OLMap.getView().calculateExtent(size));
+        return column;
     }
 
-    //console.time("updateCells");
-    for (let i = 0; i < PlanesOrdered.length; ++i) {
-        let plane = PlanesOrdered[i];
-        TrackedHistorySize += plane.history_size;
-        let classes;
+    planesTable.removeColumn = function (col) {
+        const column = planesTable.showColumn(col, false);
 
+        const toggle = toggles[column.toggleKey];
+        if (toggle) {
+            toggle.hide();
+        }
+    }
 
-        plane.inView = !plane.isFiltered() && inView(plane.position, lastRealExtent);
+    // Refreshes the larger table of all the planes
+    planesTable.refresh = function () {
+        if (initializing || pTracks)
+            return;
 
-        if (globeIndex && !icaoFilter) {
-            if (((nMapPlanes < 100 || !onMobile)
-                && (!onMobile || ZoomLvl > 10 || !plane.onGround)
-                && !plane.isFiltered()
-                && inView(plane.position, lastRenderExtent)
-                ) || (plane.selected && !SelectedAllPlanes)) {
-                plane.updateFeatures(now, last);
-            } else if (plane.visible) {
-                plane.clearMarker();
-                plane.clearLines();
-                plane.visible = false;
+        resortTable();
+
+        TrackedAircraft = 0;
+        TrackedAircraftPositions = 0;
+        TrackedHistorySize = 0;
+
+        let nPlanes = 0;
+        let nMapPlanes = 0;
+
+        if (mapIsVisible || lastRealExtent === null) {
+            const mapSize = OLMap.getSize();
+            lastRealExtent = myExtent(OLMap.getView().calculateExtent(mapSize));
+
+            const size = [mapSize[0] * 1.2, mapSize[1] * 1.2];
+            lastRenderExtent = myExtent(OLMap.getView().calculateExtent(size));
+        }
+
+        for (let i = 0; i < PlanesOrdered.length; ++i) {
+            const plane = PlanesOrdered[i];
+
+            TrackedHistorySize += plane.history_size;
+
+            plane.inView = !plane.isFiltered() && inView(plane.position, lastRealExtent);
+
+            if (globeIndex && !icaoFilter) {
+                if (((nMapPlanes < 100 || !onMobile)
+                    && (!onMobile || ZoomLvl > 10 || !plane.onGround)
+                    && !plane.isFiltered()
+                    && inView(plane.position, lastRenderExtent)
+                    ) || (plane.selected && !SelectedAllPlanes)) {
+                    plane.updateFeatures(now, last);
+                } else if (plane.visible) {
+                    plane.clearMarker();
+                    plane.clearLines();
+                    plane.visible = false;
+                }
+            } else {
+                plane.updateTick();
+            }
+
+            plane.showInTable = false;
+
+            if (tableInView && plane.visible &&
+                (plane.inView || (plane.selected && !SelectedAllPlanes))
+            ) {
+                plane.showInTable = true;
+                TrackedAircraftPositions++;
+                nMapPlanes++;
+            }
+
+            if (plane.visible) {
+                TrackedAircraft++;
+
+                if (!tableInView && plane.position != null)
+                    TrackedAircraftPositions++;
+
+                if (!tableInView)
+                    plane.showInTable = true;
+            }
+
+            if (!sidebarVisible || (nPlanes > globeTableLimit && mapIsVisible && globeIndex)) {
+                plane.showInTable = false;
+                continue;
+            }
+
+            let classes = "plane_table_row";
+
+            if (plane.showInTable) {
+                nPlanes++;
+
+                if (plane.tr == null)
+                    plane.makeTR(planeRowTemplate.cloneNode(true));
+
+                if (plane.dataSource == "uat" || (plane.addrtype && plane.addrtype.substring(0, 4) == 'adsr')) {
+                    classes += " uat";
+                } else if (plane.dataSource == "adsb") {
+                    classes += " vPosition";
+                } else if (plane.dataSource == "adsc") {
+                    classes += " satellite";
+                } else if (plane.dataSource == "mode_s") {
+                    classes += " other";
+                } else {
+                    classes += " ";
+                    classes += plane.dataSource;
+                }
+
+                if (plane.selected && !SelectedAllPlanes) {
+                    classes += " selected";
+                }
+                if (plane.squawk in SpecialSquawks) {
+                    classes = classes + " " + SpecialSquawks[plane.squawk].cssClass;
+                }
+
+                // ICAO doesn't change
+                if (flightawareLinks) {
+                    updateCell(plane, 2, getFlightAwareModeSLink(plane.icao, plane.flight, plane.name), true);
+                    updateCell(plane, 3, getFlightAwareIdentLink(plane.registration, plane.registration), true);
+                } else {
+                    updateCell(plane, 2, plane.name);
+                    updateCell(plane, 3, plane.registration ? plane.registration : "");
+                }
+                updateCell(plane, 4, (plane.icaoType != null ? plane.icaoType : ""));
+                updateCell(plane, 5, (plane.squawk != null ? plane.squawk : ""));
+                updateCell(plane, 6, format_altitude_brief(plane.altitude, plane.vert_rate, DisplayUnits));
+                updateCell(plane, 7, format_speed_brief(plane.gs, DisplayUnits));
+                updateCell(plane, 8, format_vert_rate_brief(plane.vert_rate, DisplayUnits));
+                updateCell(plane, 9, format_distance_brief(plane.sitedist, DisplayUnits));
+                updateCell(plane, 10, format_track_brief(plane.track));
+                updateCell(plane, 11, plane.messages);
+                updateCell(plane, 12, plane.seen.toFixed(0));
+                updateCell(plane, 13, (plane.rssi != null ? plane.rssi.toFixed(1) : ""));
+                updateCell(plane, 14, (plane.position != null ? plane.position[1].toFixed(4) : ""));
+                updateCell(plane, 15, (plane.position != null ? plane.position[0].toFixed(4) : ""));
+                updateCell(plane, 16, format_data_source(plane.getDataSource()));
+            }
+
+            if (plane.tr && plane.classesCache != classes) {
+                plane.classesCache = classes;
+                plane.tr.className = classes;
+            }
+        }
+
+        global.refreshPageTitle();
+        $('#dump1090_total_history').text(TrackedHistorySize);
+        $('#dump1090_message_rate').text(MessageRate === null ? 'n/a' : MessageRate.toFixed(1));
+        $('#dump1090_total_ac').text(globeIndex ? globeTrackedAircraft : TrackedAircraft);
+        $('#dump1090_total_ac_positions').text(TrackedAircraftPositions);
+
+        const tbody = document.getElementById('tableinfo').tBodies[0];
+        for (let i = 0; i < PlanesOrdered.length; ++i) {
+            const plane = PlanesOrdered[i];
+            if (plane.inTable) {
+                tbody.removeChild(plane.tr);
+                plane.inTable = false;
+            }
+            if (plane.showInTable) {
+                tbody.appendChild(plane.tr);
+                plane.inTable = true;
+            }
+        }
+    }
+
+    //
+    // ---- table sorting begin ----
+    //
+
+    function compareAlpha(xa,ya) {
+        if (xa === ya)
+            return 0;
+        if (xa < ya)
+            return -1;
+        return 1;
+    }
+
+    function compareBeta(xa, ya) {
+        if (xa === ya)
+            return 0;
+        if (sortAscending && xa < ya)
+            return -1;
+        if (!sortAscending && (xa.replace(/ /g, "").split("").reverse().join("") > ya.replace(/ /g, "").split("").reverse().join("")))
+            return -1;
+        return 1;
+    }
+
+    function compareNumeric(xf,yf) {
+        if (Math.abs(xf - yf) < 1e-9)
+            return 0;
+
+        return xf - yf;
+    }
+
+    planesTable.sortByICAO = function ()            { sortBy('icao', compareAlpha, function(x) { return x.icao; }); }
+    planesTable.sortByFlight = function ()          { sortBy('flight', compareBeta, function(x) { return x.flight ? x.flight : x.registration; }); }
+    planesTable.sortByRegistration = function ()    { sortBy('registration', compareAlpha, function(x) { return x.registration; }); }
+    planesTable.sortByAircraftType = function ()    { sortBy('icaoType', compareAlpha, function(x) { return x.icaoType; }); }
+    planesTable.sortBySquawk = function ()          { sortBy('squawk', compareAlpha, function(x) { return x.squawk; }); }
+    planesTable.sortByAltitude = function ()        { sortBy('altitude',compareNumeric, function(x) { return (x.altitude == "ground" ? -1e9 : x.altitude); }); }
+    planesTable.sortBySpeed = function ()           { sortBy('speed', compareNumeric, function(x) { return x.gs; }); }
+    planesTable.sortByVerticalRate = function ()    { sortBy('vert_rate', compareNumeric, function(x) { return x.vert_rate; }); }
+    planesTable.sortByDistance = function ()        { sortBy('sitedist',compareNumeric, function(x) { return x.sitedist; }); }
+    planesTable.sortByTrack = function ()           { sortBy('track', compareNumeric, function(x) { return x.track; }); }
+    planesTable.sortByMsgs = function ()            { sortBy('msgs', compareNumeric, function(x) { return x.messages; }); }
+    planesTable.sortBySeen = function ()            { sortBy('seen', compareNumeric, function(x) { return x.seen; }); }
+    planesTable.sortByCountry = function ()         { sortBy('country', compareAlpha, function(x) { return x.icaorange.country; }); }
+    planesTable.sortByRssi = function ()            { sortBy('rssi', compareNumeric, function(x) { return x.rssi; }); }
+    planesTable.sortByLatitude = function ()        { sortBy('lat', compareNumeric, function(x) { return (x.position !== null ? x.position[1] : null); }); }
+    planesTable.sortByLongitude = function ()       { sortBy('lon', compareNumeric, function(x) { return (x.position !== null ? x.position[0] : null); }); }
+    planesTable.sortByDataSource = function ()      { sortBy('data_source', compareNumeric, function(x) { return x.getDataSourceNumber() } ); }
+    planesTable.sortByBaseMarkerKey = function ()   { sortBy('base_marker_key', compareAlpha, function(x) { return x.baseMarkerKey; }); }
+
+    let sortId = '';
+    let sortCompare = null;
+    let sortExtract = null;
+    let sortAscending = true;
+    let columnVis = Array(30).fill(true);
+
+    function sortFunction(x,y) {
+        const xv = x._sort_value;
+        const yv = y._sort_value;
+
+        // always sort missing values at the end, regardless of
+        // ascending/descending sort
+        if (xv == null && yv == null) return x._sort_pos - y._sort_pos;
+        if (xv == null) return 1;
+        if (yv == null) return -1;
+
+        const c = sortAscending ? sortCompare(xv,yv) : sortCompare(yv,xv);
+        if (c !== 0) return c;
+
+        return x._sort_pos - y._sort_pos;
+    }
+
+    function resortTable() {
+        if (!sortExtract)
+            return;
+        const pList = PlanesOrdered;
+        if (globeIndex) {
+            // don't presort for globeIndex
+        }
+        // presort by dataSource
+        else if (sortId == "sitedist") {
+            for (let i = 0; i < pList.length; ++i) {
+                pList[i]._sort_pos = i;
+            }
+            pList.sort(function(x,y) {
+                const a = x.getDataSourceNumber();
+                const b = y.getDataSourceNumber();
+                if (a == b)
+                    return (x._sort_pos - y._sort_pos);
+
+                return (a-b);
+            });
+        }
+        // or distance
+        else if (sortId == "data_source") {
+            pList.sort(function(x,y) {
+                return (x.sitedist - y.sitedist);
+            });
+        }
+        // or longitude
+        else {
+            pList.sort(function(x,y) {
+                return (x.position ? x.position[0] : 500) - (y.position ? y.position[0] : 500);
+            });
+        }
+
+        // number the existing rows so we can do a stable sort
+        // regardless of whether sort() is stable or not.
+        // Also extract the sort comparison value.
+        if (globeIndex) {
+            for (let i = 0; i < pList.length; ++i) {
+                pList[i]._sort_pos = pList[i].icao;
+                pList[i]._sort_value = sortExtract(pList[i]);
             }
         } else {
-            plane.updateTick();
-        }
-
-
-        plane.showInTable = false;
-        classes = "plane_table_row";
-
-        if (tableInView && plane.visible &&
-            (plane.inView || (plane.selected && !SelectedAllPlanes))
-        ) {
-            plane.showInTable = true;
-            ++TrackedAircraftPositions;
-            nMapPlanes++;
-        }
-
-        if (plane.visible) {
-            TrackedAircraft++;
-
-            if (!tableInView && plane.position != null)
-                ++TrackedAircraftPositions;
-
-            if (!tableInView)
-                plane.showInTable = true;
-        }
-
-        if (!sidebarVisible || (nplanes > globeTableLimit && mapIsVisible && globeIndex)) {
-            plane.showInTable = false;
-            continue;
-        }
-
-
-        if (plane.showInTable) {
-            nplanes++;
-
-            if (plane.tr == null)
-                plane.makeTR();
-
-            if (plane.dataSource == "uat" || (plane.addrtype && plane.addrtype.substring(0,4) == 'adsr')) {
-                classes += " uat";
-            } else if (plane.dataSource == "adsb") {
-                classes += " vPosition";
-            } else if (plane.dataSource == "adsc") {
-                classes += " satellite";
-            } else if (plane.dataSource == "mode_s") {
-                classes += " other";
-            } else {
-                classes += " ";
-                classes += plane.dataSource;
+            for (let i = 0; i < pList.length; ++i) {
+                pList[i]._sort_pos = i;
+                pList[i]._sort_value = sortExtract(pList[i]);
             }
+        }
 
-            if (plane.selected && !SelectedAllPlanes)
-                classes += " selected";
-            if (plane.squawk in SpecialSquawks) {
-                classes = classes + " " + SpecialSquawks[plane.squawk].cssClass;
+        pList.sort(sortFunction);
+
+        // Put selected planes on top, do a stable sort!
+        // actually that's a bad idea, disable this for now
+        if (!SelectedAllPlanes && multiSelect) {
+            for (let i = 0; i < pList.length; ++i) {
+                pList[i]._sort_pos = i;
             }
+            pList.sort(function(x,y) {
+                if (x.selected && y.selected) {
+                    return (x._sort_pos - y._sort_pos);
+                }
+                if (x.selected)
+                    return -1;
+                if (y.selected)
+                    return 1;
 
-            // ICAO doesn't change
-            if (flightawareLinks) {
-                updateCell(plane, 2, getFlightAwareModeSLink(plane.icao, plane.flight, plane.name), true);
-                updateCell(plane, 3, getFlightAwareIdentLink(plane.registration, plane.registration), true);
-            } else {
-                updateCell(plane, 2, plane.name);
-                updateCell(plane, 3, plane.registration ? plane.registration : "");
-            }
-            updateCell(plane, 4, (plane.icaoType != null ? plane.icaoType : ""));
-            updateCell(plane, 5, (plane.squawk != null ? plane.squawk : ""));
-            updateCell(plane, 6, format_altitude_brief(plane.altitude, plane.vert_rate, DisplayUnits));
-            updateCell(plane, 7, format_speed_brief(plane.gs, DisplayUnits));
-            updateCell(plane, 8, format_vert_rate_brief(plane.vert_rate, DisplayUnits));
-            updateCell(plane, 9, format_distance_brief(plane.sitedist, DisplayUnits));
-            updateCell(plane, 10, format_track_brief(plane.track));
-            updateCell(plane, 11, plane.messages);
-            updateCell(plane, 12, plane.seen.toFixed(0));
-            updateCell(plane, 13, (plane.rssi != null ? plane.rssi.toFixed(1) : ""));
-            updateCell(plane, 14, (plane.position != null ? plane.position[1].toFixed(4) : ""));
-            updateCell(plane, 15, (plane.position != null ? plane.position[0].toFixed(4) : ""));
-            updateCell(plane, 16, format_data_source(plane.getDataSource()));
-            //updateCell(plane, 17, plane.baseMarkerKey);
-        }
-
-        if (plane.tr && plane.classesCache != classes) {
-            plane.classesCache = classes;
-            plane.tr.className = classes;
-        }
-    }
-    //console.timeEnd("updateCells");
-
-    if (!globeIndex)
-        $('#dump1090_total_ac').text(TrackedAircraft);
-    else
-        $('#dump1090_total_ac').text(globeTrackedAircraft);
-    $('#dump1090_total_ac_positions').text(TrackedAircraftPositions);
-
-    let tbody = document.getElementById('tableinfo').tBodies[0];
-    for (let i = 0; i < PlanesOrdered.length; ++i) {
-        const plane = PlanesOrdered[i];
-        if (plane.inTable) {
-            tbody.removeChild(plane.tr);
-            plane.inTable = false;
-        }
-        if (plane.showInTable) {
-            tbody.appendChild(plane.tr);
-            plane.inTable = true;
-        }
-    }
-}
-
-//
-// ---- table sorting ----
-//
-
-function compareAlpha(xa,ya) {
-    if (xa === ya)
-        return 0;
-    if (xa < ya)
-        return -1;
-    return 1;
-}
-
-function compareBeta(xa, ya) {
-    if (xa === ya)
-        return 0;
-    if (sortAscending && xa < ya)
-        return -1;
-    if (!sortAscending && (xa.replace(/ /g, "").split("").reverse().join("") > ya.replace(/ /g, "").split("").reverse().join("")))
-        return -1;
-    return 1;
-}
-
-function compareNumeric(xf,yf) {
-    if (Math.abs(xf - yf) < 1e-9)
-        return 0;
-
-    return xf - yf;
-}
-
-function sortByICAO()     { sortBy('icao',    compareAlpha,   function(x) { return x.icao; }); }
-function sortByFlight()   { sortBy('flight',  compareBeta,   function(x) { return x.flight ? x.flight : x.registration; }); }
-function sortByRegistration()   { sortBy('registration',    compareAlpha,   function(x) { return x.registration; }); }
-function sortByAircraftType()   { sortBy('icaoType',        compareAlpha,   function(x) { return x.icaoType; }); }
-function sortBySquawk()   { sortBy('squawk',  compareAlpha,   function(x) { return x.squawk; }); }
-function sortByAltitude() { sortBy('altitude',compareNumeric, function(x) { return (x.altitude == "ground" ? -1e9 : x.altitude); }); }
-function sortBySpeed()    { sortBy('speed',   compareNumeric, function(x) { return x.gs; }); }
-function sortByVerticalRate()   { sortBy('vert_rate',      compareNumeric, function(x) { return x.vert_rate; }); }
-function sortByDistance() { sortBy('sitedist',compareNumeric, function(x) { return x.sitedist; }); }
-function sortByTrack()    { sortBy('track',   compareNumeric, function(x) { return x.track; }); }
-function sortByMsgs()     { sortBy('msgs',    compareNumeric, function(x) { return x.messages; }); }
-function sortBySeen()     { sortBy('seen',    compareNumeric, function(x) { return x.seen; }); }
-function sortByCountry()  { sortBy('country', compareAlpha,   function(x) { return x.icaorange.country; }); }
-function sortByRssi()     { sortBy('rssi',    compareNumeric, function(x) { return x.rssi; }); }
-function sortByLatitude()   { sortBy('lat',   compareNumeric, function(x) { return (x.position !== null ? x.position[1] : null); }); }
-function sortByLongitude()  { sortBy('lon',   compareNumeric, function(x) { return (x.position !== null ? x.position[0] : null); }); }
-function sortByDataSource() { sortBy('data_source',     compareNumeric, function(x) { return x.getDataSourceNumber() } ); }
-function sortByBaseMarkerKey()  { sortBy('base_marker_key', compareAlpha,   function(x) { return x.baseMarkerKey; }); }
-
-let sortId = '';
-let sortCompare = null;
-let sortExtract = null;
-let sortAscending = true;
-
-function sortFunction(x,y) {
-    let xv = x._sort_value;
-    let yv = y._sort_value;
-
-    // always sort missing values at the end, regardless of
-    // ascending/descending sort
-    if (xv == null && yv == null) return x._sort_pos - y._sort_pos;
-    if (xv == null) return 1;
-    if (yv == null) return -1;
-
-    let c = sortAscending ? sortCompare(xv,yv) : sortCompare(yv,xv);
-    if (c !== 0) return c;
-
-    return x._sort_pos - y._sort_pos;
-}
-
-function resortTable(pList) {
-    if (!sortExtract)
-        return;
-    // presort by dataSource
-    if (sortId == "sitedist") {
-        for (let i = 0; i < pList.length; ++i) {
-            pList[i]._sort_pos = i;
-        }
-        pList.sort(function(x,y) {
-            const a = x.getDataSourceNumber();
-            const b = y.getDataSourceNumber();
-            if (a == b)
                 return (x._sort_pos - y._sort_pos);
-
-            return (a-b);
-        });
-    }
-    // or distance
-    else if (sortId == "data_source") {
-        pList.sort(function(x,y) {
-            return (x.sitedist - y.sitedist);
-        });
-    }
-    // or longitude
-    else {
-        pList.sort(function(x,y) {
-            const xlon = x.position ? x.position[0] : 500;
-            const ylon = y.position ? y.position[0] : 500;
-            return (xlon - ylon);
-        });
-    }
-
-    // number the existing rows so we can do a stable sort
-    // regardless of whether sort() is stable or not.
-    // Also extract the sort comparison value.
-    for (let i = 0; i < pList.length; ++i) {
-        pList[i]._sort_pos = i;
-        pList[i]._sort_value = sortExtract(pList[i]);
-    }
-
-    pList.sort(sortFunction);
-
-    // Put selected planes on top, do a stable sort!
-    // actually that's a bad idea, disable this for now
-    if (!SelectedAllPlanes && multiSelect) {
-        for (let i = 0; i < pList.length; ++i) {
-            pList[i]._sort_pos = i;
+            });
         }
-        pList.sort(function(x,y) {
-            if (x.selected && y.selected) {
-                return (x._sort_pos - y._sort_pos);
+    }
+
+    function sortBy(id, sc, se) {
+        if (id != 'data_source' && grouptype_checkbox) {
+            $('#grouptype_checkbox').removeClass('settingsCheckboxChecked');
+            grouptype_checkbox = false;
+        } else if (id == 'data_source' && !grouptype_checkbox) {
+            $('#grouptype_checkbox').addClass('settingsCheckboxChecked');
+            grouptype_checkbox = true;
+        }
+
+        if (id === sortId) {
+            sortAscending = !sortAscending;
+            PlanesOrdered.reverse(); // this correctly flips the order of rows that compare equal
+        } else {
+            sortAscending = true;
+        }
+
+        sortId = id;
+        sortCompare = sc;
+        sortExtract = se;
+
+        planesTable.refresh();
+    }
+
+    //
+    // ---- table sorting end ----
+    //
+
+    function renderColumn(table, columnId, visible) {
+        const index = $(columnId).index();
+        columnVis[index] = visible;
+        if (index >= 0) {
+            let cells = $(table).find("td:nth-child(" + (index + 1).toString() + ")");
+            if (visible) {
+                cells.show();
+            } else {
+                cells.hide();
             }
-            if (x.selected)
-                return -1;
-            if (y.selected)
-                return 1;
-
-            return (x._sort_pos - y._sort_pos);
-        });
-    }
-}
-
-function sortBy(id,sc,se) {
-    if (id != 'data_source' && grouptype_checkbox) {
-        $('#grouptype_checkbox').removeClass('settingsCheckboxChecked');
-        grouptype_checkbox = false;
-    } else if (id == 'data_source' && !grouptype_checkbox) {
-        $('#grouptype_checkbox').addClass('settingsCheckboxChecked');
-        grouptype_checkbox = true;
-    }
-    if (id === sortId) {
-        sortAscending = !sortAscending;
-        PlanesOrdered.reverse(); // this correctly flips the order of rows that compare equal
-    } else {
-        sortAscending = true;
+        }
     }
 
-    sortId = id;
-    sortCompare = sc;
-    sortExtract = se;
+    planesTable.applyColumnVisibility = function () {
+        if (initializing)
+            return;
 
-    refreshTableInfo();
-}
+        const infoTable = $("#tableinfo");
+        const tbody = document.getElementById('tableinfo').tBodies[0];
+
+        for (let i = 0; i < PlanesOrdered.length; ++i) {
+            const plane = PlanesOrdered[i];
+            if (plane.tr) {
+                if (plane.inTable) {
+                    tbody.removeChild(plane.tr);
+                }
+                tbody.appendChild(plane.tr);
+                plane.inTable = true;
+            }
+        }
+
+        for (let col of columns) {
+            renderColumn(infoTable, col.id, col.visible || !mapIsVisible);
+        }
+    }
+
+    function updateCell(plane, cell, newValue, html) {
+        if (columnVis[cell] && newValue != plane.trCache[cell]) {
+            plane.trCache[cell] = newValue;
+            if (html) {
+                plane.tr.cells[cell].innerHTML = newValue;
+            } else {
+                plane.tr.cells[cell].textContent = newValue;
+            }
+        }
+    }
+
+    function createColumnToggles() {
+        let container = '#columns_block1';
+
+        for (let col of columns) {
+            if (col.id === '#distance') {
+                container = '#columns_block2';
+            }
+
+            new Toggle({
+                key: col.toggleKey,
+                display: col.text,
+                container: container,
+                init: col.visible,
+                toggle: function (state) {
+                    planesTable.showColumn(col.id, state);
+                    planesTable.refresh();
+                }
+            });
+        }
+    }
+
+    return TAR;
+}(window, jQuery, TAR || {}));
+//
+// Planes table end
+//
+
 
 function selectPlaneByHex(hex, options) {
     //console.trace();
@@ -2477,7 +2614,7 @@ function selectPlaneByHex(hex, options) {
 
     updateAddressBar();
     refreshSelected();
-    refreshTableInfo();
+    TAR.planesTable.refresh();
 }
 
 // loop through the planes and mark them as selected to show the paths for all planes
@@ -2506,7 +2643,7 @@ function selectAllPlanes() {
 
     refreshSelected();
     refreshHighlighted();
-    refreshTableInfo();
+    TAR.planesTable.refresh();
 }
 
 // deselect all the planes
@@ -2528,7 +2665,7 @@ function deselectAllPlanes(keepMain) {
         SelectedPlane = null;
     refreshFeatures();
     refreshHighlighted();
-    refreshTableInfo();
+    TAR.planesTable.refresh();
 
     updateAddressBar();
     refreshSelected();
@@ -2595,10 +2732,10 @@ function expandSidebar(e) {
     $("#splitter").hide();
     $("#shrink_sidebar_button").show();
     $("#sidebar_container").width("100%");
-    setColumnVisibility();
+    TAR.planesTable.applyColumnVisibility();
     clearTimeout(refreshId);
     fetchData();
-    refreshTableInfo();
+    TAR.planesTable.refresh();
     updateMapSize();
     setSelectedInfoBlockVisibility();
 }
@@ -2610,44 +2747,11 @@ function showMap() {
     $("#toggle_sidebar_control").show();
     $("#splitter").show();
     $("#shrink_sidebar_button").hide();
-    setColumnVisibility();
+    TAR.planesTable.applyColumnVisibility();
     clearTimeout(refreshId);
     fetchData();
-    refreshTableInfo();
+    TAR.planesTable.refresh();
     updateMapSize();
-}
-
-function showColumn(table, columnId, visible) {
-    let index = $(columnId).index();
-    columnVis[index] = visible;
-    if (index >= 0) {
-        let cells = $(table).find("td:nth-child(" + (index + 1).toString() + ")");
-        if (visible) {
-            cells.show();
-        } else {
-            cells.hide();
-        }
-    }
-}
-
-function setColumnVisibility() {
-    let infoTable = $("#tableinfo");
-
-    let tbody = document.getElementById('tableinfo').tBodies[0];
-    for (let i = 0; i < PlanesOrdered.length; ++i) {
-        let plane = PlanesOrdered[i];
-        if (plane.tr) {
-            if (plane.inTable) {
-                tbody.removeChild(plane.tr);
-            }
-            tbody.appendChild(plane.tr);
-            plane.inTable = true;
-        }
-    }
-
-    for (let col in HideCols) {
-        showColumn(infoTable, HideCols[col], !mapIsVisible);
-    }
 }
 
 function setSelectedInfoBlockVisibility() {
@@ -2743,7 +2847,7 @@ function refreshFilter() {
 
     refreshSelected();
     refreshHighlighted();
-    refreshTableInfo();
+    TAR.planesTable.refresh();
 
     drawHeatmap();
 }
@@ -2911,7 +3015,7 @@ function dim(evt) {
             display: "Altitude Chart",
             container: "#settingsLeft",
             init: (onMobile ? false : true),
-            toggle: altitudeChart.render,
+            toggle: altitudeChart.render
         });
     }
 
@@ -2941,14 +3045,12 @@ function toggleTableInView(switchOn) {
         tableInView = true;
     } else {
         tableInView = !tableInView;
-        refreshTableInfo();
+        TAR.planesTable.refresh();
     }
     localStorage['tableInView'] = tableInView;
-    if (tableInView) {
-        $('#with_positions').text("On Screen:");
-    } else {
-        $('#with_positions').text("With Position:");
-    }
+
+    $('#with_positions').text(tableInView ? "On Screen:" : "With Position:");
+
     buttonActive('#V', tableInView);
 }
 
@@ -3305,7 +3407,7 @@ function changeCenter(init) {
     localStorage['CenterLat'] = CenterLat = center[1];
 
     if (!onlySelected)
-        refreshTableInfo();
+        TAR.planesTable.refresh();
 
     if (!init && showTrace)
         updateAddressBar();
@@ -3371,7 +3473,7 @@ function changeZoom(init) {
     scaleFactor *= Math.pow(1.3, globalScale) * globalScale;
 
     if (!onlySelected)
-        refreshTableInfo();
+        TAR.planesTable.refresh();
 
     if (!init && showTrace)
         updateAddressBar();
@@ -3381,17 +3483,6 @@ function changeZoom(init) {
     } else {
         OLMap.un('pointermove', onPointermove);
         removeHighlight();
-    }
-}
-
-function updateCell(plane, cell, newValue, html) {
-    if (columnVis[cell] && newValue != plane.trCache[cell]) {
-        plane.trCache[cell] = newValue;
-        if (html) {
-            plane.tr.cells[cell].innerHTML = newValue;
-        } else {
-            plane.tr.cells[cell].textContent = newValue;
-        }
     }
 }
 
@@ -4067,7 +4158,6 @@ function geoFindMe() {
         console.log('Locating…');
         navigator.geolocation.getCurrentPosition(success, error);
     }
-
 }
 
 window.mobilecheck = function() {
@@ -4077,25 +4167,20 @@ window.mobilecheck = function() {
 };
 
 function initSitePos() {
-    if (SitePosInitialized)
-        return;
-
     // Set SitePosition
     if (SiteLat != null && SiteLon != null) {
         SitePosition = [SiteLon, SiteLat];
         // Add home marker if requested
         createSiteCircleFeatures();
     } else {
-        SitePosition = null;
-        HideCols.push("#distance");
-        setColumnVisibility();
+        TAR.planesTable.removeColumn('#distance');
     }
 
     if (SitePosition && !onMobile) {
-        sortByDistance();
+        TAR.planesTable.sortByDistance();
     } else {
-        sortByAltitude();
-        sortByAltitude();
+        TAR.planesTable.sortByAltitude();
+        TAR.planesTable.sortByAltitude();
     }
 }
 
@@ -4696,7 +4781,7 @@ function play() {
             plane.last_message_time = now - ac.seen;
     }
 
-    refreshTableInfo();
+    TAR.planesTable.refresh();
     refreshSelected();
     refreshHighlighted();
 }

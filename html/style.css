@@ -576,7 +576,8 @@ table.infoTable tr td {
 }
 .settingsOptionContainer {
     display: table;
-    padding-bottom: calc( 10px * var(--SCALE));
+    padding-top: calc( 5px * var(--SCALE));
+    padding-bottom: calc( 5px * var(--SCALE));
 }
 
 .settingsCheckbox {
@@ -745,6 +746,10 @@ table.infoTable tr td {
   overflow: hidden;
   background-color: #f1f1f1;
   margin-bottom: calc( 8px * var(--SCALE));
+}
+
+.collapseSettings {
+  padding: 0;
 }
 
 .collapseButton:after {
