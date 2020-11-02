@@ -2146,12 +2146,7 @@ function refreshFeatures() {
         if (initializing || pTracks)
             return;
 
-        global.refreshPageTitle();
-
         resortTable();
-
-        $('#dump1090_total_history').text(TrackedHistorySize);
-        $('#dump1090_message_rate').text(MessageRate === null ? 'n/a' : MessageRate.toFixed(1));
 
         TrackedAircraft = 0;
         TrackedAircraftPositions = 0;
@@ -2273,6 +2268,9 @@ function refreshFeatures() {
             }
         }
 
+        global.refreshPageTitle();
+        $('#dump1090_total_history').text(TrackedHistorySize);
+        $('#dump1090_message_rate').text(MessageRate === null ? 'n/a' : MessageRate.toFixed(1));
         $('#dump1090_total_ac').text(globeIndex ? globeTrackedAircraft : TrackedAircraft);
         $('#dump1090_total_ac_positions').text(TrackedAircraftPositions);
 
@@ -2364,8 +2362,11 @@ function refreshFeatures() {
         if (!sortExtract)
             return;
         const pList = PlanesOrdered;
+        if (globeIndex) {
+            // don't presort for globeIndex
+        }
         // presort by dataSource
-        if (sortId == "sitedist") {
+        else if (sortId == "sitedist") {
             for (let i = 0; i < pList.length; ++i) {
                 pList[i]._sort_pos = i;
             }
@@ -2387,18 +2388,23 @@ function refreshFeatures() {
         // or longitude
         else {
             pList.sort(function(x,y) {
-                const xlon = x.position ? x.position[0] : 500;
-                const ylon = y.position ? y.position[0] : 500;
-                return (xlon - ylon);
+                return (x.position ? x.position[0] : 500) - (y.position ? y.position[0] : 500);
             });
         }
 
         // number the existing rows so we can do a stable sort
         // regardless of whether sort() is stable or not.
         // Also extract the sort comparison value.
-        for (let i = 0; i < pList.length; ++i) {
-            pList[i]._sort_pos = i;
-            pList[i]._sort_value = sortExtract(pList[i]);
+        if (globeIndex) {
+            for (let i = 0; i < pList.length; ++i) {
+                pList[i]._sort_pos = pList[i].icao;
+                pList[i]._sort_value = sortExtract(pList[i]);
+            }
+        } else {
+            for (let i = 0; i < pList.length; ++i) {
+                pList[i]._sort_pos = i;
+                pList[i]._sort_value = sortExtract(pList[i]);
+            }
         }
 
         pList.sort(sortFunction);
