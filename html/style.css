@@ -558,11 +558,11 @@ table.infoTable tr td {
 }
 
 #settings_infoblock {
-	position: absolute;
-	top: calc( 60px * var(--SCALE));
-	right: calc( 60px * var(--SCALE));
-    width:  calc(398px * var(--SCALE));
-    min-height:  calc(180px * var(--SCALE));
+    position: absolute;
+    top: 1%;
+    right: calc( 50px * var(--SCALE));
+    overflow: auto;
+    max-height: 90%;
     box-shadow: calc( 4px * var(--SCALE)) calc( 4px * var(--SCALE)) calc( 10px * var(--SCALE)) #444444;
     padding: calc( 20px * var(--SCALE));
     z-index: 9999;
