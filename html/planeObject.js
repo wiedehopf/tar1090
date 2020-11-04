@@ -10,8 +10,6 @@ function PlaneObject(icao) {
     this.category  = null;
     this.dataSource = "mode_s";
 
-    this.trCache = [];
-
     // Basic location information
     this.altitude       = null;
     this.alt_baro       = null;
@@ -1400,7 +1398,6 @@ PlaneObject.prototype.updateTick = function(redraw) {
 }
 
 PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
-
     // recompute seen and seen_pos
     this.seen = Math.max(0, now - this.last_message_time)
     this.seen_pos = Math.max(0, now - this.position_time);
@@ -1409,6 +1406,9 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
         return;
 
     let moved = false;
+
+    const lastVisible = this.visible;
+    this.visible = !this.isFiltered() && this.checkVisible();
 
     if (this.updated) {
         if (this.flight && this.flight.trim()) {
@@ -1421,10 +1421,10 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
         this.name = this.name.trim();
 
         moved = this.updateTrack(now, last);
+        this.updated = false;
     }
-    if (!this.isFiltered() && this.checkVisible()) {
-        const lastVisible = this.visible;
-        this.visible = true;
+
+    if (this.visible) {
         if (SelectedAllPlanes)
             this.selected = true;
 
@@ -1459,7 +1459,6 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
                 selectPlaneByHex(null,false);
         }
     }
-    this.updated = false;
 };
 
 PlaneObject.prototype.clearMarker = function() {
@@ -1766,25 +1765,12 @@ PlaneObject.prototype.remakeTrail = function() {
 
 }
 
-PlaneObject.prototype.makeTR = function (trTemplate) {
+PlaneObject.prototype.makeTR = function (trTemplate, tbody) {
 
+    this.tbody = tbody;
+    this.trCache = [];
+    this.classesCache = null;
     this.tr = trTemplate;
-
-    if (this.icao[0] === '~') {
-        // Non-ICAO address
-        this.tr.cells[0].textContent = this.icao.substring(1);
-        $(this.tr).css('font-style', 'italic');
-    } else {
-        this.tr.cells[0].textContent = this.icao;
-    }
-
-    // set flag image if available
-    if (ShowFlags && this.icaorange.flag_image !== null) {
-        $('img', this.tr.cells[1]).attr('src', FlagPath + this.icaorange.flag_image);
-        $('img', this.tr.cells[1]).attr('title', this.icaorange.country);
-    } else {
-        $('img', this.tr.cells[1]).css('display', 'none');
-    }
 
     this.clickListener = function(evt) {
         if (evt.srcElement instanceof HTMLAnchorElement) {
@@ -1814,11 +1800,28 @@ PlaneObject.prototype.makeTR = function (trTemplate) {
 
     this.tr.addEventListener('click', this.clickListener);
 }
+PlaneObject.prototype.destroyTR = function (trTemplate) {
+    if (this.tr == null)
+        return;
+
+    this.tr.removeEventListener('click', this.clickListener);
+    this.tr.removeEventListener('dblclick', this.dblclickListener);
+
+    if (this.inTable) {
+        this.tbody.removeChild(this.tr);
+        this.inTable = false;
+    }
+    if (this.tr.parentNode)
+        this.tr.parentNode.removeChild(this.tr);
+
+    this.tr = null;
+}
 
 PlaneObject.prototype.destroy = function() {
     this.clearLines();
     this.clearMarker();
     this.visible = false;
+    this.destroyTR();
     if (this.layer) {
         trailGroup.remove(this.layer);
         this.trail_features.clear();
@@ -1828,21 +1831,6 @@ PlaneObject.prototype.destroy = function() {
         trailGroup.remove(this.layer_labels);
         this.trail_labels.clear();
         this.layer_labels = null;
-    }
-    if (this.tr) {
-        let tbody = document.getElementById('tableinfo').tBodies[0];
-        if (!this.inTable) {
-            tbody.appendChild(this.tr);
-        }
-
-        this.tr.removeEventListener('click', this.clickListener);
-        this.tr.removeEventListener('dblclick', this.dblclickListener);
-
-        tbody.removeChild(this.tr);
-
-        if (this.tr.parentNode)
-            this.tr.parentNode.removeChild(this.tr);
-        this.tr = null;
     }
     if (this.icao == SelectedPlane)
         SelectedPlane = null;

@@ -17,7 +17,11 @@ select {
     height: calc(22px * var(--SCALE));
 }
 
-#tableinfo { font-size: var(--FS2); }
+#tableinfo {
+    font-size: var(--FS2);
+    table-layout: fixed;
+    white-space: nowrap;
+}
 
 #layout_container {
     display: flex;
@@ -256,6 +260,7 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
 
 .plane_table_row {
     cursor: default;
+    height: var(--FS2);
 }
 
 .plane_table_row a:link, a:visited {

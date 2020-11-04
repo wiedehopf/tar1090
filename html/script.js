@@ -2072,71 +2072,214 @@ function refreshFeatures() {
 (function (global, $, TAR) {
     let planesTable = TAR.planesTable = TAR.planesTable || {};
 
-    const columns = [
-        { id: '#icao', text: 'ICAO' },
-        { id: '#flag', text: 'Flag' },
-        { id: '#flight', text: 'Ident' },
-        { id: '#registration', text: 'Registration' },
-        { id: '#aircraft_type', text: 'Aircraft Type' },
-        { id: '#squawk', text: 'Squawk' },
-        { id: '#altitude', text: 'Altitude' },
-        { id: '#speed', text: 'Speed' },
-        { id: '#vert_rate', text: 'Vertical Rate' },
-        { id: '#distance', text: 'Distance' },
-        { id: '#track', text: 'Heading' },
-        { id: '#msgs', text: 'Messages' },
-        { id: '#seen', text: 'Seen' },
-        { id: '#rssi', text: 'RSSI' },
-        { id: '#lat', text: 'Latitude' },
-        { id: '#lon', text: 'Longitude' },
-        { id: '#data_source', text: 'Source' }
-    ];
+    function compareAlpha(xa,ya) {
+        if (xa === ya)
+            return 0;
+        if (xa < ya)
+            return -1;
+        return 1;
+    }
+
+    function compareBeta(xa, ya) {
+        if (xa === ya)
+            return 0;
+        if (sortAscending && xa < ya)
+            return -1;
+        if (!sortAscending && (xa.replace(/ /g, "").split("").reverse().join("") > ya.replace(/ /g, "").split("").reverse().join("")))
+            return -1;
+        return 1;
+    }
+
+    function compareNumeric(xf,yf) {
+        if (Math.abs(xf - yf) < 1e-9)
+            return 0;
+
+        return xf - yf;
+    }
+
+    let cols = planesTable.cols = {};
+
+
+    cols.icao = {
+        text: 'ICAO',
+        sort: function () { sortBy('icao', compareAlpha, function(x) { return x.icao; }); },
+        value: function(plane) { return plane.icao; },
+        td: '<td class="icaoCodeColumn"></td>' };
+    cols.flag = {
+        text: 'Flag',
+        sort: function () { sortBy('country', compareAlpha, function(x) { return x.icaorange.country; }); },
+        value: function(plane) { return (plane.icaorange.flag_image ? ('<img src="' + FlagPath + plane.icaorange.flag_image + '" title="' + plane.icaorange.country + '"></img>') : ''); },
+        hStyle: 'style="width: 20px"',
+        html: true,
+    };
+    cols.flight = {
+        sort: function () { sortBy('flight', compareBeta, function(x) { return x.flight ? x.flight : x.registration; }); },
+        value: function(plane) { return (flightawareLinks ? getFlightAwareModeSLink(plane.icao, plane.flight, plane.name) : plane.name); },
+        html: flightawareLinks,
+        text: 'Ident' };
+
+    cols.registration = {
+        sort: function () { sortBy('registration', compareAlpha, function(x) { return x.registration; }); },
+        value: function(plane) { return (flightawareLinks ? getFlightAwareIdentLink(plane.registration, plane.registration) : (plane.registration ? plane.registration : "")); },
+        html: flightawareLinks,
+        text: 'Registration' };
+    cols.aircraft_type = {
+        sort: function () { sortBy('type', compareAlpha, function(x) { return x.icaoType; }); },
+        value: function(plane) { return (plane.icaoType != null ? plane.icaoType : ""); },
+        text: 'Type' };
+    cols.squawk = {
+        text: 'Squawk',
+        sort: function () { sortBy('squawk', compareAlpha, function(x) { return x.squawk; }); },
+        value: function(plane) { return (plane.squawk != null ? plane.squawk : ""); },
+        align: 'right' };
+    cols.altitude = {
+        text: 'Altitude',
+        sort: function () { sortBy('altitude',compareNumeric, function(x) { return (x.altitude == "ground" ? -1e9 : x.altitude); }); },
+        value: function(plane) { return format_altitude_brief(plane.altitude, plane.vert_rate, DisplayUnits); },
+        align: 'right',
+        header: function () { return 'Altitude(' + get_unit_label("altitude", DisplayUnits) + ')';},
+    };
+    cols.speed = {
+        text: 'Speed',
+        sort: function () { sortBy('speed', compareNumeric, function(x) { return x.gs; }); },
+        value: function(plane) { return format_speed_brief(plane.gs, DisplayUnits); },
+        align: 'right',
+        header: function () { return 'Speed(' + get_unit_label("speed", DisplayUnits) + ')';},
+    };
+    cols.vert_rate = {
+        text: 'Vertical Rate',
+        sort: function () { sortBy('vert_rate', compareNumeric, function(x) { return x.vert_rate; }); },
+        value: function(plane) { return format_vert_rate_brief(plane.vert_rate, DisplayUnits); },
+        align: 'right',
+        header: function () { return 'V. Rate(' + get_unit_label("verticalRate", DisplayUnits) + ')';},
+    };
+    cols.distance = {
+        text: 'Distance',
+        sort: function () { sortBy('sitedist',compareNumeric, function(x) { return x.sitedist; }); },
+        value: function(plane) { return format_distance_brief(plane.sitedist, DisplayUnits); },
+        align: 'right',
+        header: function () { return 'Dist.(' + get_unit_label("distance", DisplayUnits) + ')';},
+    };
+    cols.track = {
+        text: 'Track',
+        sort: function () { sortBy('track', compareNumeric, function(x) { return x.track; }); },
+        value: function(plane) { return format_track_brief(plane.track); },
+        align: 'right' };
+    cols.msgs = {
+        text: 'Messages',
+        sort: function () { sortBy('msgs', compareNumeric, function(x) { return x.messages; }); },
+        value: function(plane) { return plane.messages; },
+        align: 'right' };
+    cols.seen = {
+        text: 'Seen',
+        sort: function () { sortBy('seen', compareNumeric, function(x) { return x.seen; }); },
+        value: function(plane) { return plane.seen.toFixed(0); },
+        align: 'right' };
+    cols.rssi = {
+        text: 'RSSI',
+        sort: function () { sortBy('rssi', compareNumeric, function(x) { return x.rssi; }); },
+        value: function(plane) { return (plane.rssi != null ? plane.rssi.toFixed(1) : ""); },
+        align: 'right' };
+    cols.lat = {
+        text: 'Latitude',
+        sort: function () { sortBy('lat', compareNumeric, function(x) { return (x.position !== null ? x.position[1] : null); }); },
+        value: function(plane) { return (plane.position != null ? plane.position[1].toFixed(4) : ""); },
+        align: 'right' };
+    cols.lon = {
+        text: 'Longitude',
+        sort: function () { sortBy('lon', compareNumeric, function(x) { return (x.position !== null ? x.position[0] : null); }); },
+        value: function(plane) { return (plane.position != null ? plane.position[0].toFixed(4) : ""); },
+        align: 'right' };
+    cols.data_source = {
+        text: 'Source',
+        sort: function () { sortBy('data_source', compareNumeric, function(x) { return x.getDataSourceNumber() } ); },
+        value: function(plane) { return format_data_source(plane.getDataSource()); },
+        align: 'right' };
+
+    let colsEntries = Object.entries(cols);
+    for (let i in colsEntries) {
+        let key = colsEntries[i][0];
+        let value = colsEntries[i][1];
+        value.id = key;
+        value.text = value.text ? value.text : "";
+        value.header = value.header ? value.header : function() { return value.text; };
+        value.hStyle = value.hStyle ? value.hStyle : "";
+        if (!value.td)
+            value.td = value.align ? ('<td style="text-align: ' + value.align + '"></td>') : '<td></td>';
+    }
+
+    let columns = Object.values(cols);
+    let activeCols = null;
+
+    let initializing = true;
 
     let planeRowTemplate = null;
     let lastRealExtent = null;
     let lastRenderExtent = null;
-    let initializing = true;
+    let htmlTable = null;
+    let tbody = null;
 
     planesTable.init = function () {
-        planeRowTemplate = document.getElementById('plane_row_template');
-
         // initialize columns
-        for (let col of columns) {
+        htmlTable = document.getElementById('planesTable');
+        for (let i in columns) {
+            let col = columns[i];
             col.visible = true;
-            col.toggleKey = col.id.replace('#', 'column_');
+            col.toggleKey = 'column_' + col.id;
 
-            if (HideCols.includes(col.id)) {
-                planesTable.showColumn(col.id, false);
+            if (HideCols.includes('#' + col.id)) {
+                planesTable.setColumnVis(col.id, false);
             }
         }
 
         createColumnToggles();
 
         if (!ShowFlags) {
-            planesTable.removeColumn('#flag');
+            planesTable.setColumnVis('flag', false);
         }
 
+        planesTable.redraw();
         initializing = false;
-
-        planesTable.applyColumnVisibility();
     }
-
-    planesTable.showColumn = function (col, visible) {
-        const column = columns.find(c => c.id === col);
-        column.visible = visible;
-
-        planesTable.applyColumnVisibility();
-
-        return column;
-    }
-
-    planesTable.removeColumn = function (col) {
-        const column = planesTable.showColumn(col, false);
-
-        const toggle = toggles[column.toggleKey];
-        if (toggle) {
-            toggle.hide();
+    planesTable.redraw = function () {
+        activeCols = [];
+        for (let i in columns) {
+            let col = columns[i];
+            if (col.visible || !mapIsVisible) {
+                activeCols.push(col);
+            }
         }
+        for (let i = 0; i < PlanesOrdered.length; ++i) {
+            PlanesOrdered[i].destroyTR();
+        }
+        let table = '';
+        table += '<thead class="aircraft_table_header">';
+        table += '  <tr>';
+        for (let i in activeCols) {
+            let col = activeCols[i];
+            table += '<td id="' + col.id + '" onclick="TAR.planesTable.cols.' + col.id + '.sort();"' + col.hStyle + '>'+ col.header() +'</td>';
+        }
+        table += '  </tr>';
+        table += '</thead>';
+        table += '<tbody>';
+        table += '  <tr id="plane_row_template" class="plane_table_row hidden">';
+        for (let i in activeCols) {
+            let col = activeCols[i];
+            table += col.td;
+        }
+        table += '  </tr>';
+        table += '</tbody>';
+        htmlTable.innerHTML = table;
+        tbody = htmlTable.tBodies[0];
+        planeRowTemplate = document.getElementById('plane_row_template');
+        planesTable.refresh();
+    }
+
+    planesTable.setColumnVis = function (col, visible) {
+        cols[col].visible = visible;
+
+        if (!initializing)
+            planesTable.redraw();
     }
 
     // Refreshes the larger table of all the planes
@@ -2214,8 +2357,10 @@ function refreshFeatures() {
             if (plane.showInTable) {
                 nPlanes++;
 
-                if (plane.tr == null)
-                    plane.makeTR(planeRowTemplate.cloneNode(true));
+                if (plane.tr == null) {
+                    plane.makeTR(planeRowTemplate.cloneNode(true), tbody);
+                    plane.tr.id = plane.icao;
+                }
 
                 if (plane.dataSource == "uat" || (plane.addrtype && plane.addrtype.substring(0, 4) == 'adsr')) {
                     classes += " uat";
@@ -2237,27 +2382,21 @@ function refreshFeatures() {
                     classes = classes + " " + SpecialSquawks[plane.squawk].cssClass;
                 }
 
-                // ICAO doesn't change
-                if (flightawareLinks) {
-                    updateCell(plane, 2, getFlightAwareModeSLink(plane.icao, plane.flight, plane.name), true);
-                    updateCell(plane, 3, getFlightAwareIdentLink(plane.registration, plane.registration), true);
-                } else {
-                    updateCell(plane, 2, plane.name);
-                    updateCell(plane, 3, plane.registration ? plane.registration : "");
+                for (let cell in activeCols) {
+                    let col = activeCols[cell];
+                    if (!col.value)
+                        continue;
+                    let newValue = col.value(plane);
+                    if (newValue != plane.trCache[cell]) {
+                        plane.trCache[cell] = newValue;
+                        if (col.html) {
+                            plane.tr.cells[cell].innerHTML = newValue;
+                        } else {
+                            plane.tr.cells[cell].textContent = newValue;
+                        }
+                    }
                 }
-                updateCell(plane, 4, (plane.icaoType != null ? plane.icaoType : ""));
-                updateCell(plane, 5, (plane.squawk != null ? plane.squawk : ""));
-                updateCell(plane, 6, format_altitude_brief(plane.altitude, plane.vert_rate, DisplayUnits));
-                updateCell(plane, 7, format_speed_brief(plane.gs, DisplayUnits));
-                updateCell(plane, 8, format_vert_rate_brief(plane.vert_rate, DisplayUnits));
-                updateCell(plane, 9, format_distance_brief(plane.sitedist, DisplayUnits));
-                updateCell(plane, 10, format_track_brief(plane.track));
-                updateCell(plane, 11, plane.messages);
-                updateCell(plane, 12, plane.seen.toFixed(0));
-                updateCell(plane, 13, (plane.rssi != null ? plane.rssi.toFixed(1) : ""));
-                updateCell(plane, 14, (plane.position != null ? plane.position[1].toFixed(4) : ""));
-                updateCell(plane, 15, (plane.position != null ? plane.position[0].toFixed(4) : ""));
-                updateCell(plane, 16, format_data_source(plane.getDataSource()));
+
             }
 
             if (plane.tr && plane.classesCache != classes) {
@@ -2272,7 +2411,6 @@ function refreshFeatures() {
         $('#dump1090_total_ac').text(globeIndex ? globeTrackedAircraft : TrackedAircraft);
         $('#dump1090_total_ac_positions').text(TrackedAircraftPositions);
 
-        const tbody = document.getElementById('tableinfo').tBodies[0];
         for (let i = 0; i < PlanesOrdered.length; ++i) {
             const plane = PlanesOrdered[i];
             if (plane.inTable) {
@@ -2289,50 +2427,6 @@ function refreshFeatures() {
     //
     // ---- table sorting begin ----
     //
-
-    function compareAlpha(xa,ya) {
-        if (xa === ya)
-            return 0;
-        if (xa < ya)
-            return -1;
-        return 1;
-    }
-
-    function compareBeta(xa, ya) {
-        if (xa === ya)
-            return 0;
-        if (sortAscending && xa < ya)
-            return -1;
-        if (!sortAscending && (xa.replace(/ /g, "").split("").reverse().join("") > ya.replace(/ /g, "").split("").reverse().join("")))
-            return -1;
-        return 1;
-    }
-
-    function compareNumeric(xf,yf) {
-        if (Math.abs(xf - yf) < 1e-9)
-            return 0;
-
-        return xf - yf;
-    }
-
-    planesTable.sortByICAO = function ()            { sortBy('icao', compareAlpha, function(x) { return x.icao; }); }
-    planesTable.sortByFlight = function ()          { sortBy('flight', compareBeta, function(x) { return x.flight ? x.flight : x.registration; }); }
-    planesTable.sortByRegistration = function ()    { sortBy('registration', compareAlpha, function(x) { return x.registration; }); }
-    planesTable.sortByAircraftType = function ()    { sortBy('icaoType', compareAlpha, function(x) { return x.icaoType; }); }
-    planesTable.sortBySquawk = function ()          { sortBy('squawk', compareAlpha, function(x) { return x.squawk; }); }
-    planesTable.sortByAltitude = function ()        { sortBy('altitude',compareNumeric, function(x) { return (x.altitude == "ground" ? -1e9 : x.altitude); }); }
-    planesTable.sortBySpeed = function ()           { sortBy('speed', compareNumeric, function(x) { return x.gs; }); }
-    planesTable.sortByVerticalRate = function ()    { sortBy('vert_rate', compareNumeric, function(x) { return x.vert_rate; }); }
-    planesTable.sortByDistance = function ()        { sortBy('sitedist',compareNumeric, function(x) { return x.sitedist; }); }
-    planesTable.sortByTrack = function ()           { sortBy('track', compareNumeric, function(x) { return x.track; }); }
-    planesTable.sortByMsgs = function ()            { sortBy('msgs', compareNumeric, function(x) { return x.messages; }); }
-    planesTable.sortBySeen = function ()            { sortBy('seen', compareNumeric, function(x) { return x.seen; }); }
-    planesTable.sortByCountry = function ()         { sortBy('country', compareAlpha, function(x) { return x.icaorange.country; }); }
-    planesTable.sortByRssi = function ()            { sortBy('rssi', compareNumeric, function(x) { return x.rssi; }); }
-    planesTable.sortByLatitude = function ()        { sortBy('lat', compareNumeric, function(x) { return (x.position !== null ? x.position[1] : null); }); }
-    planesTable.sortByLongitude = function ()       { sortBy('lon', compareNumeric, function(x) { return (x.position !== null ? x.position[0] : null); }); }
-    planesTable.sortByDataSource = function ()      { sortBy('data_source', compareNumeric, function(x) { return x.getDataSourceNumber() } ); }
-    planesTable.sortByBaseMarkerKey = function ()   { sortBy('base_marker_key', compareAlpha, function(x) { return x.baseMarkerKey; }); }
 
     let sortId = '';
     let sortCompare = null;
@@ -2454,58 +2548,12 @@ function refreshFeatures() {
     // ---- table sorting end ----
     //
 
-    function renderColumn(table, columnId, visible) {
-        const index = $(columnId).index();
-        columnVis[index] = visible;
-        if (index >= 0) {
-            let cells = $(table).find("td:nth-child(" + (index + 1).toString() + ")");
-            if (visible) {
-                cells.show();
-            } else {
-                cells.hide();
-            }
-        }
-    }
-
-    planesTable.applyColumnVisibility = function () {
-        if (initializing)
-            return;
-
-        const infoTable = $("#tableinfo");
-        const tbody = document.getElementById('tableinfo').tBodies[0];
-
-        for (let i = 0; i < PlanesOrdered.length; ++i) {
-            const plane = PlanesOrdered[i];
-            if (plane.tr) {
-                if (plane.inTable) {
-                    tbody.removeChild(plane.tr);
-                }
-                tbody.appendChild(plane.tr);
-                plane.inTable = true;
-            }
-        }
-
-        for (let col of columns) {
-            renderColumn(infoTable, col.id, col.visible || !mapIsVisible);
-        }
-    }
-
-    function updateCell(plane, cell, newValue, html) {
-        if (columnVis[cell] && newValue != plane.trCache[cell]) {
-            plane.trCache[cell] = newValue;
-            if (html) {
-                plane.tr.cells[cell].innerHTML = newValue;
-            } else {
-                plane.tr.cells[cell].textContent = newValue;
-            }
-        }
-    }
-
     function createColumnToggles() {
         let container = '#columns_block1';
 
-        for (let col of columns) {
-            if (col.id === '#distance') {
+        for (let i in columns) {
+            let col = columns[i];
+            if (col.id === 'distance') {
                 container = '#columns_block2';
             }
 
@@ -2515,8 +2563,7 @@ function refreshFeatures() {
                 container: container,
                 init: col.visible,
                 toggle: function (state) {
-                    planesTable.showColumn(col.id, state);
-                    planesTable.refresh();
+                    planesTable.setColumnVis(col.id, state);
                 }
             });
         }
@@ -2730,10 +2777,9 @@ function expandSidebar(e) {
     $("#splitter").hide();
     $("#shrink_sidebar_button").show();
     $("#sidebar_container").width("100%");
-    TAR.planesTable.applyColumnVisibility();
+    TAR.planesTable.redraw();
     clearTimeout(refreshId);
     fetchData();
-    TAR.planesTable.refresh();
     updateMapSize();
     setSelectedInfoBlockVisibility();
 }
@@ -2745,10 +2791,9 @@ function showMap() {
     $("#toggle_sidebar_control").show();
     $("#splitter").show();
     $("#shrink_sidebar_button").hide();
-    TAR.planesTable.applyColumnVisibility();
+    TAR.planesTable.redraw();
     clearTimeout(refreshId);
     fetchData();
-    TAR.planesTable.refresh();
     updateMapSize();
 }
 
@@ -2819,6 +2864,7 @@ function onDisplayUnitsChanged(e) {
     $(".speedUnit").text(get_unit_label("speed", DisplayUnits));
     $(".distanceUnit").text(get_unit_label("distance", DisplayUnits));
     $(".verticalRateUnit").text(get_unit_label("verticalRate", DisplayUnits));
+    TAR.planesTable.redraw();
 }
 
 function onFilterByAltitude(e) {
@@ -2975,7 +3021,8 @@ function dim(evt) {
         const mapOffsetToAltitude = [[0.033, 500], [0.066, 1000], [0.126, 2000], [0.19, 4000], [0.253, 6000], [0.316, 8000], [0.38, 10000], [0.59, 20000], [0.79, 30000], [1, 40000]];
 
         let stops = '';
-        for (const map of mapOffsetToAltitude) {
+        for (let i in mapOffsetToAltitude) {
+            let map = mapOffsetToAltitude[i];
             const color = altitudeColor(map[1]);
             stops += '<stop offset="' + map[0] + '" stop-color="hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)" />';
         }
@@ -4171,14 +4218,14 @@ function initSitePos() {
         // Add home marker if requested
         createSiteCircleFeatures();
     } else {
-        TAR.planesTable.removeColumn('#distance');
+        TAR.planesTable.setColumnVis('distance', false);
     }
 
     if (SitePosition && !onMobile) {
-        TAR.planesTable.sortByDistance();
+        TAR.planesTable.cols.distance.sort();
     } else {
-        TAR.planesTable.sortByAltitude();
-        TAR.planesTable.sortByAltitude();
+        TAR.planesTable.cols.altitude.sort();
+        TAR.planesTable.cols.altitude.sort();
     }
 }
 
@@ -4528,7 +4575,7 @@ function initHeatmap() {
 
 function setSize(set) {
     let count = 0;
-    for (const i of set.values())
+    for (const i in set.values())
         count++;
     return count;
 }

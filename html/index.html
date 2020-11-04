@@ -916,52 +916,9 @@
 
             </div> <!-- filter_block -->
 
-            <div id="planes_table">
-              <table id="tableinfo" style="width: 100%">
-                <thead class="aircraft_table_header">
-                  <tr>
-                    <td id="icao" onclick="TAR.planesTable.sortByICAO();">ICAO</td>
-                    <td id="flag" onclick="TAR.planesTable.sortByCountry()" style="width: 20px"><!-- column for flag image --></td>
-                    <td id="flight" onclick="TAR.planesTable.sortByFlight();">&nbsp&nbsp&nbsp&nbsp&nbspIdent&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-                    <td id="registration" onclick="TAR.planesTable.sortByRegistration();">Registration</td>
-                    <td id="aircraft_type" onclick="TAR.planesTable.sortByAircraftType();">Type</td>
-                    <td id="squawk" onclick="TAR.planesTable.sortBySquawk();">Squawk</td>
-                    <td id="altitude" onclick="TAR.planesTable.sortByAltitude();">Altitude(<span class="altitudeUnit"></span>)</td>
-                    <td id="speed" onclick="TAR.planesTable.sortBySpeed();">GS(<span class="speedUnit"></span>)</td>
-                    <td id="vert_rate" onclick="TAR.planesTable.sortByVerticalRate();">V. Rate (<span class="verticalRateUnit"></span>)</td>
-                    <td id="distance" onclick="TAR.planesTable.sortByDistance();">Dist. (<span class="distanceUnit"></span>)</td>
-                    <td id="track" onclick="TAR.planesTable.sortByTrack();">Heading</td>
-                    <td id="msgs" onclick="TAR.planesTable.sortByMsgs();">Msgs</td>
-                    <td id="seen" onclick="TAR.planesTable.sortBySeen();">Seen</td>
-                    <td id="rssi" onclick="TAR.planesTable.sortByRssi();">RSSI</td>
-                    <td id="lat" onclick="TAR.planesTable.sortByLatitude();">Latitude</td>
-                    <td id="lon" onclick="TAR.planesTable.sortByLongitude();">Longitude</td>
-                    <td id="data_source" onclick="TAR.planesTable.sortByDataSource();">Source</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr id="plane_row_template" class="plane_table_row hidden">
-                    <td class="icaoCodeColumn">ICAO</td>
-                    <td><img style="width: 20px; height: 12px" src="" alt="Flag"></td>
-                    <td>FLIGHT</td>
-                    <td>REGISTRATION</td>
-                    <td>AIRCRAFT_TYPE</td>
-                    <td style="text-align: right">SQUAWK</td>
-                    <td style="text-align: right">ALTITUDE</td>
-                    <td style="text-align: right">SPEED</td>
-                    <td style="text-align: right">VERT_RATE</td>
-                    <td style="text-align: right">DISTANCE</td>
-                    <td style="text-align: right">TRACK</td>
-                    <td style="text-align: right">MSGS</td>
-                    <td style="text-align: right">SEEN</td>
-                    <td style="text-align: right">RSSI</td>
-                    <td style="text-align: right">LAT</td>
-                    <td style="text-align: right">LON</td>
-                    <td style="text-align: right">DATA_SOURCE</td>
-                  </tr>
-                </tbody>
-              </table>
-              <div class="legend">
+            <table id="planesTable" style="width: 100%">
+            </table>
+            <div class="legend">
                 <div class="legendTitle vPosition">ADS-B</div>
                 <div id="uat_legend_2" class="legendTitle uat">UAT / ADS-R</div>
                 <div id="sat_legend_2" class="legendTitle satellite">ADS-C/R / UAT</div>
@@ -969,8 +926,7 @@
                 <div class="legendTitle tisb">TIS-B</div>
                 <div id="mode_s_legend_2" class="legendTitle other">Mode-S</div>
                 <div id="unknown_legend_2" class="legendTitle unknown">Unknown</div>
-              </div>
-            </div> <!-- planes_table -->
+            </div>
           </div>
 
         </div> <!-- sidebar_canvas -->	
