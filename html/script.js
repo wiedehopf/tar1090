@@ -282,8 +282,6 @@ function fetchData() {
     //console.timeEnd("Starting Fetch");
     //console.time("Starting Fetch");
 
-    updateIconCache();
-
     if (enable_uat) {
         FetchPendingUAT = $.ajax({ url: 'chunks/978.json',
             dataType: 'json' });
@@ -1068,6 +1066,7 @@ function parse_history() {
     //window.setInterval(TAR.planesTable.refresh, 1000);
     //window.setInterval(function() {PendingFetches--;}, 10000);
     setInterval(decrementTraceRate, 1000);
+    setInterval(updateIconCache, 800);
 
     pathName = window.location.pathname;
     processURLParams();
@@ -4811,8 +4810,6 @@ function play() {
 
     if (showTrace)
         return;
-
-    updateIconCache();
 
     last = now;
 

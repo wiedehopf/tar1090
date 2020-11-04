@@ -738,21 +738,23 @@ PlaneObject.prototype.updateIcon = function() {
     if (this.markerStyle == null || this.markerIcon == null || (this.markerSvgKey != svgKey)) {
         //console.log(this.icao + " new icon and style " + this.markerSvgKey + " -> " + svgKey);
 
-        this.markerSvgKey = svgKey;
-        this.rotationCache = this.rotation;
-
         if (iconCache[svgKey] == undefined) {
             let svgURI = svgShapeToURI(this.baseMarker, fillColor, OutlineADSBColor, strokeWidth);
 
             addToIconCache.push([svgKey, null, svgURI]);
 
-            this.markerIcon = new ol.style.Icon({
-                scale: this.scale,
-                imgSize: [this.baseMarker.w, this.baseMarker.h],
-                src: svgURI,
-                rotation: (this.baseMarker.noRotate ? 0 : this.rotation * Math.PI / 180.0),
-                rotateWithView: (this.baseMarker.noRotate ? false : true),
-            });
+            if (TrackedAircraftPositions < 200) {
+                this.markerIcon = new ol.style.Icon({
+                    scale: this.scale,
+                    imgSize: [this.baseMarker.w, this.baseMarker.h],
+                    src: svgURI,
+                    rotation: (this.baseMarker.noRotate ? 0 : this.rotation * Math.PI / 180.0),
+                    rotateWithView: (this.baseMarker.noRotate ? false : true),
+                });
+            } else {
+                this.svgKey = Math.random();
+                return;
+            }
         } else {
             this.markerIcon = new ol.style.Icon({
                 scale: this.scale,
@@ -762,6 +764,9 @@ PlaneObject.prototype.updateIcon = function() {
                 rotateWithView: (this.baseMarker.noRotate ? false : true),
             });
         }
+        this.markerSvgKey = svgKey;
+        this.rotationCache = this.rotation;
+
         //iconCache[svgKey] = undefined; // disable caching for testing
     }
     if (this.styleKey != styleKey) {
