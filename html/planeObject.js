@@ -1413,7 +1413,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
     let moved = false;
 
     const lastVisible = this.visible;
-    this.visible = !this.isFiltered() && this.checkVisible();
+    this.visible = (!this.isFiltered() && this.checkVisible());
 
     if (this.updated) {
         if (this.flight && this.flight.trim()) {
@@ -1453,16 +1453,14 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
             if (this == SelectedPlane && FollowSelected && this.position)
                 OLMap.getView().setCenter(ol.proj.fromLonLat(this.position));
         }
-    } else {
-        if (this.visible) {
-            //console.log("hiding " + this.icao);
-            this.clearMarker();
-            this.clearLines();
-            this.visible = false;
-            this.selected = false;
-            if (SelectedPlane == this.icao)
-                selectPlaneByHex(null,false);
-        }
+    }
+    if (!this.visible && lastVisible) {
+        //console.log("hiding " + this.icao);
+        this.clearMarker();
+        this.clearLines();
+        this.selected = false;
+        if (SelectedPlane == this.icao)
+            selectPlaneByHex(null,false);
     }
 };
 
