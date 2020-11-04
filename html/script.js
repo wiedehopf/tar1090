@@ -2105,7 +2105,8 @@ function refreshFeatures() {
         value: function(plane) { return plane.icao; },
         td: '<td class="icaoCodeColumn"></td>' };
     cols.flag = {
-        text: '',
+        text: 'Flag',
+        header: function() { return ""; },
         sort: function () { sortBy('country', compareAlpha, function(x) { return x.icaorange.country; }); },
         value: function(plane) { return (plane.icaorange.flag_image ? ('<img class="flag" src="' + FlagPath + plane.icaorange.flag_image + '" title="' + plane.icaorange.country + '"></img>') : ''); },
         hStyle: 'style="width: 20px; padding: 3px;"',
