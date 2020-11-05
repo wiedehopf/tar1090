@@ -391,7 +391,7 @@ function wqi(data) {
         ac.tas = u16[28];
         ac.ias = u16[29];
         ac.rc  = u16[30];
-        ac.messages = u16[15];
+        ac.messages = u16[31];
 
         ac.category = u8[64] ? u8[64].toString(16).toUpperCase() : undefined;
         ac.nic      = u8[65];
