@@ -53,7 +53,6 @@ let debugJump = false;
 let jumpTo = null;
 let noMLAT = false;
 let noVanish = false;
-let sidebarVisible = true;
 let filterTracks = false;
 let refreshId = 0;
 let globeIndexGrid = 0;
@@ -634,16 +633,6 @@ function initialize() {
         buttonActive('#P', noVanish);
     }
 
-    $.when(configureReceiver, heatmapDefer).done(function() {
-        configureReceiver = null;
-
-        // Initialize stuff
-        init_page();
-
-        // Wait for history item downloads and append them to the buffer
-        push_history();
-    });
-
     let coll = document.getElementsByClassName("collapseButton");
 
     for (let i = 0; i < coll.length; i++) {
@@ -658,9 +647,21 @@ function initialize() {
         });
     }
 
+    $.when(configureReceiver, heatmapDefer).done(function() {
+        configureReceiver = null;
+
+        // Initialize stuff
+        initPage();
+
+        // Wait for history item downloads and append them to the buffer
+        push_history();
+        $.when(historyLoaded).done(function() {
+            startPage();
+        });
+    });
 }
 
-function init_page() {
+function initPage() {
     // Set page basics
     document.title = PageName;
 
@@ -685,7 +686,7 @@ function init_page() {
         localStorage['sidebar_width'] = $('#sidebar_container').width();
         $('#sidebar_container').width(localStorage['sidebar_width']);
     });
-    
+
     if (localStorage['sidebar_width'] != null)
         $('#sidebar_container').width(localStorage['sidebar_width']);
     else
@@ -742,7 +743,6 @@ function init_page() {
     });
 
     // Set up event handlers for buttons
-    $("#toggle_sidebar_button").click(toggleSidebarVisibility);
     $("#expand_sidebar_button").click(expandSidebar);
     $("#shrink_sidebar_button").click(showMap);
 
@@ -809,7 +809,7 @@ function init_page() {
         display: "Last Leg only",
         container: "#settingsLeft",
         init: true,
-        toggle: function(state) {
+        setState: function(state) {
             lastLeg = state;
             if (SelectedPlane && !showTrace)
                 SelectedPlane.processTrace();
@@ -839,7 +839,7 @@ function init_page() {
         display: "Debug Tracks",
         container: "#settingsLeft",
         init: false,
-        toggle: function(state) {
+        setState: function(state) {
             debugTracks = state;
             remakeTrails();
         }
@@ -850,7 +850,7 @@ function init_page() {
         display: "Debug show all",
         container: "#settingsLeft",
         init: false,
-        toggle: function(state) {
+        setState: function(state) {
             if (state)
                 debugAll = true;
             else
@@ -863,7 +863,7 @@ function init_page() {
         display: "Colored Planes",
         container: "#settingsRight",
         init: true,
-        toggle: function(state) {
+        setState: function(state) {
             if (state)
                 monochromeMarkers = null;
             else
@@ -878,7 +878,7 @@ function init_page() {
         display: "Colored Trails",
         container: "#settingsRight",
         init: true,
-        toggle: function(state) {
+        setState: function(state) {
             if (state)
                 monochromeTracks = null;
             else
@@ -886,6 +886,29 @@ function init_page() {
 
             remakeTrails();
         }
+    });
+
+    new Toggle({
+        key: "sidebar_visible",
+        display: "Sidebar visible",
+        container: null,
+        checkbox: null,
+        button: '#toggle_sidebar_button',
+        init: (onMobile ? false : true),
+        setState: function (state) {
+            if (state) {
+                $("#sidebar_container").show();
+                $("#expand_sidebar_control").show();
+                $("#toggle_sidebar_button").removeClass("show_sidebar");
+                $("#toggle_sidebar_button").addClass("hide_sidebar");
+            } else {
+                $("#sidebar_container").hide();
+                $("#expand_sidebar_control").hide();
+                $("#toggle_sidebar_button").removeClass("hide_sidebar");
+                $("#toggle_sidebar_button").addClass("show_sidebar");
+            }
+            updateMapSize();
+        },
     });
 
     $('#selectall_checkbox').on('click', function() {
@@ -904,8 +927,41 @@ function init_page() {
 
     filterGroundVehicles(false);
     filterBlockedMLAT(false);
-    
+
     TAR.altitudeChart.init();
+
+    if (adsbexchange) {
+        $('#adsbexchange_header').show();
+        if (window.self != window.top) {
+            window.top.location.href = "https://www.adsbexchange.com/"
+            return;
+        }
+    }
+
+    initMap();
+
+    if (!globeIndex) {
+        $('#show_trace').hide();
+    }
+    if (globeIndex) {
+        $('#V').hide();
+        $('#uat_legend_2').hide();
+        $('#mode_s_legend_2').hide();
+    } else {
+        $('#unknown_legend_2').hide();
+        $('#sat_legend_2').hide();
+    }
+
+    if (hideButtons) {
+        $('#large_mode_control').hide();
+        $('#header_top').hide();
+        $('#header_side').hide();
+        $('#splitter').hide();
+        $('#jumpSearch').hide();
+        $('#filterButton').hide();
+        $('.ol-control').hide();
+        $('.ol-attribution').show();
+    }
 }
 
 function push_history() {
@@ -914,9 +970,9 @@ function push_history() {
         push_history_item(i);
     }
     if (globeIndex) {
-        parse_history();
+        parseHistory();
     } else if (!nHistoryItems) {
-        parse_history();
+        parseHistory();
         console.log("History loading failed");
     }
 }
@@ -942,7 +998,7 @@ function push_history_item(i) {
             $("#loader_progress").attr('value',HistoryItemsReturned);
             HistoryItemsReturned++;
             if (HistoryItemsReturned == nHistoryItems) {
-                parse_history();
+                parseHistory();
             }
         })
 
@@ -953,20 +1009,12 @@ function push_history_item(i) {
             //console.log(error);
             HistoryItemsReturned++;
             if (HistoryItemsReturned == nHistoryItems) {
-                parse_history();
+                parseHistory();
             }
         });
 }
 
-function parse_history() {
-
-    if (adsbexchange) {
-        $('#adsbexchange_header').show();
-        if (window.self != window.top) {
-            window.top.location.href = "https://www.adsbexchange.com/"
-            return;
-        }
-    }
+function parseHistory() {
     if (nHistoryItems) {
         console.timeEnd("Downloaded History");
         console.time("Loaded aircraft tracks from History");
@@ -975,7 +1023,6 @@ function parse_history() {
     for (let i in deferHistory)
         deferHistory[i] = null;
 
-    initialize_map();
 
     if (PositionHistoryBuffer.length > 0) {
 
@@ -1049,10 +1096,11 @@ function parse_history() {
     if (nHistoryItems)
         console.timeEnd("Loaded aircraft tracks from History");
 
-    console.log("Completing init");
+    historyLoaded.resolve();
+}
 
-    refreshSelected();
-    refreshHighlighted();
+function startPage() {
+    console.log("Completing init");
 
     // Setup our timer to poll from the server.
     window.setInterval(reaper, 20000);
@@ -1092,40 +1140,7 @@ function parse_history() {
         play(); // kick off first play
     }
 
-    if (!globeIndex) {
-        $('#show_trace').hide();
-    }
-    if (globeIndex) {
-        $('#V').hide();
-        $('#uat_legend_2').hide();
-        $('#mode_s_legend_2').hide();
-    } else {
-        $('#unknown_legend_2').hide();
-        $('#sat_legend_2').hide();
-    }
-
-    updateMapSize();
-
     loadFinished = true;
-
-    //drawAlt();
-
-    if (localStorage['sidebar_visible'] == "false")
-        toggleSidebarVisibility();
-
-    if (onMobile && localStorage['sidebar_visible'] == undefined)
-        toggleSidebarVisibility();
-
-    if (hideButtons) {
-        $('#large_mode_control').hide();
-        $('#header_top').hide();
-        $('#header_side').hide();
-        $('#splitter').hide();
-        $('#jumpSearch').hide();
-        $('#filterButton').hide();
-        $('.ol-control').hide();
-        $('.ol-attribution').show();
-    }
 
     if (tempTrails)
         selectAllPlanes();
@@ -1134,6 +1149,9 @@ function parse_history() {
 
     if (!heatmap)
         $("#loader").addClass("hidden");
+
+    refreshSelected();
+    refreshHighlighted();
 }
 
 //
@@ -1179,7 +1197,7 @@ function parse_history() {
 
 
 // Initalizes the map and starts up our timers to call various functions
-function initialize_map() {
+function initMap() {
     if (receiverJson && receiverJson.lat != null) {
         SiteLat = receiverJson.lat;
         SiteLon = receiverJson.lon;
@@ -1391,7 +1409,7 @@ function initialize_map() {
         display: "Dim Map",
         container: "#settingsLeft",
         init: true,
-        toggle: function(state) {
+        setState: function(state) {
             if (!state) {
                 ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
                     if (lyr.get('type') != 'base')
@@ -1511,8 +1529,7 @@ function initialize_map() {
                     $('#filterButton').show();
                     $('.ol-control').show();
                     $('#expand_sidebar_control').hide();
-                    toggleSidebarVisibility();
-                    toggleSidebarVisibility();
+                    toggles['sidebar_visible'].restore();
                     TAR.altitudeChart.render();
                 }
                 hideButtons = !hideButtons;
@@ -2147,7 +2164,7 @@ function refreshFeatures() {
         sort: function () { sortBy('speed', compareNumeric, function(x) { return x.gs; }); },
         value: function(plane) { return format_speed_brief(plane.gs, DisplayUnits); },
         align: 'right',
-        header: function () { return 'Speed(' + get_unit_label("speed", DisplayUnits) + ')';},
+        header: function () { return 'Spd(' + get_unit_label("speed", DisplayUnits) + ')';},
     };
     cols.vert_rate = {
         text: 'Vertical Rate',
@@ -2307,6 +2324,7 @@ function refreshFeatures() {
             lastRenderExtent = myExtent(OLMap.getView().calculateExtent(size));
         }
 
+        const sidebarVisible = toggles['sidebar_visible'].state;
         for (let i = 0; i < PlanesOrdered.length; ++i) {
             const plane = PlanesOrdered[i];
 
@@ -2565,7 +2583,7 @@ function refreshFeatures() {
                 display: col.text,
                 container: container,
                 init: col.visible,
-                toggle: function (state) {
+                setState: function (state) {
                     planesTable.setColumnVis(col.id, state);
                 }
             });
@@ -2758,18 +2776,8 @@ function resetMap() {
 }
 
 function updateMapSize() {
-    OLMap.updateSize();
-}
-
-function toggleSidebarVisibility(e) {
-    if (e)
-        e.preventDefault();
-    $("#sidebar_container").toggle();
-    $("#expand_sidebar_control").toggle();
-    $("#toggle_sidebar_button").toggleClass("show_sidebar");
-    $("#toggle_sidebar_button").toggleClass("hide_sidebar");
-    localStorage['sidebar_visible'] = sidebarVisible = $("#sidebar_container").is(":visible");
-    updateMapSize();
+    if (OLMap)
+        OLMap.updateSize();
 }
 
 function expandSidebar(e) {
@@ -3063,7 +3071,7 @@ function dim(evt) {
             display: "Altitude Chart",
             container: "#settingsLeft",
             init: (onMobile ? false : true),
-            toggle: altitudeChart.render
+            setState: altitudeChart.render
         });
     }
 
@@ -3860,7 +3868,6 @@ function inView(pos, ex) {
     //console.log((currExtent[2]-currExtent[0])/40075016);
     //console.log([bottomLeft[0], topRight[0]]);
     //console.log([bottomLeft[1], topRight[1]]);
-    //sidebarVisible = $("#sidebar_container").is(":visible");
     //const proj = ol.proj.fromLonLat(pos);
     if (lat < ex.minLat || lat > ex.maxLat)
         return false;

@@ -12,6 +12,7 @@ let chunkNames;
 let PositionHistoryBuffer = [];
 var	receiverJson;
 let deferHistory = [];
+let historyLoaded = $.Deferred();
 let configureReceiver = $.Deferred();
 let historyTimeout = 60;
 let globeIndex = 0;
@@ -39,8 +40,10 @@ try {
     const search = new URLSearchParams(window.location.search);
     if (search.has('reset')) {
         localStorage.clear();
-        if (window.history && window.history.replaceState && window.history.replaceState("object or string", "Title", window.location.pathname))
+        if (window.history && window.history.replaceState) {
+            window.history.replaceState("object or string", "Title", window.location.pathname);
             location.reload();
+        }
     }
     const feed = search.get('feed');
     if (feed != null) {
@@ -343,10 +346,11 @@ const toggles = {};
 function Toggle(arg) {
     this.key = arg.key;
     this.state = (arg.init ? true : false);
-    this.doStuff = arg.toggle;
-    this.checkbox = '#' + this.key + '_cb';
+    this.setState = arg.setState;
+    this.checkbox = (arg.checkbox == undefined) ? ('#' + this.key + '_cb') : null;
     this.display = arg.display;
     this.container = arg.container;
+    this.button = arg.button || this.checkbox;
 
     toggles[this.key] = this;
 
@@ -354,13 +358,16 @@ function Toggle(arg) {
 }
 
 Toggle.prototype.init = function() {
-    $(this.container).append((
-        '<div class="settingsOptionContainer">'
-        + '<div class="settingsCheckbox" id="' + this.key + '_cb' + '"></div>'
-        + '<div class="settingsText">' + this.display + '</div>'
-        + '</div>'));
+    if (this.container) {
+        $(this.container).append((
+            '<div class="settingsOptionContainer">'
+            + '<div class="settingsCheckbox" id="' + this.key + '_cb' + '"></div>'
+            + '<div class="settingsText">' + this.display + '</div>'
+            + '</div>'));
+    }
 
-    $(this.checkbox).on('click', this.toggle.bind(this));
+    if (this.button)
+        $(this.button).on('click', this.toggle.bind(this));
 
     if (localStorage[this.key] == 'true')
         this.state = true;
@@ -380,19 +387,27 @@ Toggle.prototype.toggle = function(override) {
 
     if (this.state == false) {
         localStorage[this.key] = 'false';
-        $(this.checkbox).removeClass('settingsCheckboxChecked');
+        if (this.checkbox)
+            $(this.checkbox).removeClass('settingsCheckboxChecked');
     }
     if (this.state == true) {
         localStorage[this.key] = 'true';
-        $(this.checkbox).addClass('settingsCheckboxChecked');
+        if (this.checkbox)
+            $(this.checkbox).addClass('settingsCheckboxChecked');
     }
 
-    if (this.doStuff)
-        this.doStuff(this.state);
+    if (this.setState)
+        this.setState(this.state);
 }
 
-Toggle.prototype.hide = function () {
-    $(this.checkbox).parent().hide();
+Toggle.prototype.restore = function () {
+    if (this.setState)
+        this.setState(this.state);
+}
+
+Toggle.prototype.hideCheckbox = function () {
+    if (this.checkbox)
+        $(this.checkbox).parent().hide();
 }
 
 // Set the name of the hidden property and the change event for visibility
