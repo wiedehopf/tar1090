@@ -257,12 +257,6 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
     text-transform: uppercase;
 }
 
-.flag {
-    width: 20px;
-    height: 12px;
-}
-
-
 .plane_table_row {
     cursor: default;
     height: var(--FS2);
@@ -512,11 +506,6 @@ select.error, textarea.error, input.error {
 table.infoTable tr td {
     padding: 0;
     margin: 0;
-}
-
-td img {
-    display: block;
-    margin: auto;
 }
 
 .infoRowSpacer {
