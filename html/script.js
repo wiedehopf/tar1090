@@ -737,7 +737,6 @@ function initPage() {
         $('#selected_infoblock').css('top', topCalc + 'px');
     });
     */
-
     $('#sidebar_container').on('resize', function() {
         localStorage['sidebar_width'] = $('#sidebar_container').width();
     });
@@ -1874,6 +1873,7 @@ function refreshSelected() {
     } else {
         $('#selected_seen').text('n/a');
     }
+
     if (selected.seen_pos != null && selected.seen_pos < 1000000) {
         $('#selected_seen_pos').text(format_duration(selected.seen_pos));
     } else {
@@ -1909,7 +1909,13 @@ function refreshSelected() {
     $('#selected_sitedist1').text(format_distance_long(selected.sitedist, DisplayUnits));
     $('#selected_sitedist2').text(format_distance_long(selected.sitedist, DisplayUnits));
     $('#selected_rssi1').text(selected.rssi != null ? selected.rssi.toFixed(1) : "n/a");
-    $('#selected_message_count').text(selected.messages);
+    if (globeIndex && binCraft && !showTrace) {
+        $('#selected_message_count').prev().text('Receivers:');
+        $('#selected_message_count').text(selected.receiverCount);
+    } else {
+        $('#selected_message_count').prev().text('Messages:');
+        $('#selected_message_count').text(selected.messages);
+    }
     $('#selected_message_rate').text((selected.messageRate != null) ? (selected.messageRate.toFixed(1)) : "n/a");
     $('#selected_photo_link').html(getPhotoLink(selected));
 

@@ -1129,7 +1129,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     let seen = isArray? data[6] : data.seen;
     let seen_pos = isArray? data[6] : data.seen_pos;
     seen = (seen == null) ? 5 : seen;
-    seen_pos = (seen_pos == null) ? 5 : seen;
+    seen_pos = (seen_pos == null && lat) ? 5 : seen_pos;
     let type = isArray? data[7] : data.type;
     if (!isArray && data.mlat != null && data.mlat.indexOf("lat") >= 0) type = 'mlat';
     const mlat = (type == 'mlat');
@@ -1313,6 +1313,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     this.ws = data.ws;
     this.oat = data.oat;
     this.tat = data.tat;
+    this.receiverCount = data.receiverCount;
 
     // fields with more complex behaviour
 
@@ -2128,7 +2129,7 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
 
     this.position = [lon, lat];
     this.position_time = _now;
-    this.last_message_time = _now;
+    this.last_message_time = Math.max(_now, this.last_message_time);
     this.altitude = altitude;
     this.alt_rounded = calcAltitudeRounded(this.altitude);
     if (alt_geom) {

@@ -483,6 +483,8 @@ function wqi(data) {
             ac.r += String.fromCharCode(u8[i]);
         }
 
+        ac.receiverCount = u8[104];
+
         if (ac.airground == 1)
             ac.alt_baro = "ground";
 
