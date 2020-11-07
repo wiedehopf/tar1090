@@ -17,9 +17,8 @@ select {
     height: calc(22px * var(--SCALE));
 }
 
-#tableinfo {
+#planesTable {
     font-size: var(--FS2);
-    table-layout: fixed;
     white-space: nowrap;
 }
 
