@@ -419,6 +419,28 @@ function wqi(data) {
         ac.nic_a = (u8[72] & 64) >> 6;
         ac.nic_c = (u8[72] & 128) >> 7;
 
+
+        ac.flight = "";
+        for (let i = 78; u8[i] && i < 86; i++) {
+            ac.flight += String.fromCharCode(u8[i]);
+        }
+
+        ac.rssi = 10 * Math.log(u8[86]*u8[86]/65025 + 1.125e-5)/Math.log(10);
+        ac.dbFlags = u8[87];
+
+        ac.t = "";
+        for (let i = 88; u8[i] && i < 92; i++) {
+            ac.t += String.fromCharCode(u8[i]);
+        }
+        ac.r = "";
+        for (let i = 92; u8[i] && i < 104; i++) {
+            ac.r += String.fromCharCode(u8[i]);
+        }
+
+        ac.receiverCount = u8[104];
+
+        // must come after the stuff above (validity bits)
+
         ac.nic_baro      = (u8[73] & 1);
         ac.alert1        = (u8[73] & 2);
         ac.spi           = (u8[73] & 4);
@@ -465,25 +487,6 @@ function wqi(data) {
         ac.wd                   = (u8[77] & 16)  ? ac.wd               : undefined;
         ac.oat                  = (u8[77] & 32)  ? ac.oat              : undefined;
         ac.tat                  = (u8[77] & 32)  ? ac.tat              : undefined;
-
-        ac.flight = "";
-        for (let i = 78; u8[i] && i < 86; i++) {
-            ac.flight += String.fromCharCode(u8[i]);
-        }
-
-        ac.rssi = 10 * Math.log(u8[86]*u8[86]/65025 + 1.125e-5)/Math.log(10);
-        ac.dbFlags = u8[87];
-
-        ac.t = "";
-        for (let i = 88; u8[i] && i < 92; i++) {
-            ac.t += String.fromCharCode(u8[i]);
-        }
-        ac.r = "";
-        for (let i = 92; u8[i] && i < 104; i++) {
-            ac.r += String.fromCharCode(u8[i]);
-        }
-
-        ac.receiverCount = u8[104];
 
         if (ac.airground == 1)
             ac.alt_baro = "ground";
