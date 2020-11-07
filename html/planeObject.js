@@ -736,8 +736,6 @@ PlaneObject.prototype.updateIcon = function() {
             labelText = " " + this.name + " ";
         }
     }
-    let styleKey = svgKey + '!' + labelText + '!' + this.scale;
-
     if (this.markerStyle == null || this.markerIcon == null || (this.markerSvgKey != svgKey)) {
         //console.log(this.icao + " new icon and style " + this.markerSvgKey + " -> " + svgKey);
 
@@ -755,8 +753,7 @@ PlaneObject.prototype.updateIcon = function() {
                     rotateWithView: (this.baseMarker.noRotate ? false : true),
                 });
             } else {
-                this.svgKey = Math.random();
-                return;
+                svgKey = this.markerSvgKey;
             }
         } else {
             this.markerIcon = new ol.style.Icon({
@@ -772,6 +769,9 @@ PlaneObject.prototype.updateIcon = function() {
 
         //iconCache[svgKey] = undefined; // disable caching for testing
     }
+
+    let styleKey = svgKey + '!' + labelText + '!' + this.scale;
+
     if (this.styleKey != styleKey) {
         this.styleKey = styleKey;
         if (labelText) {
