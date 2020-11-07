@@ -166,6 +166,9 @@ PlaneObject.prototype.isFiltered = function() {
     if (this.selected && !SelectedAllPlanes)
         return false;
 
+    if (noRegOnly && (this.registration || this.icao.startsWith('~')))
+        return true;
+
     if (onlySelected && !this.selected) {
         return true;
     }

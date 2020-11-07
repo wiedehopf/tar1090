@@ -93,6 +93,7 @@ let inactive = 0;
 let firstFetchDone = false;
 let overrideMapType = null;
 let halloween = false;
+let noRegOnly = false;
 
 let shareLink = '';
 
@@ -510,6 +511,8 @@ function initialize() {
             MapDim = true;
         }
 
+        if (search.has('noRegOnly'))
+            noRegOnly = true;
 
         if (search.has('mapContrast')) {
             let contrast = parseFloat(search.get('mapContrast'));
