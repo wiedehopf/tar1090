@@ -1911,9 +1911,15 @@ function refreshSelected() {
     $('#selected_rssi1').text(selected.rssi != null ? selected.rssi.toFixed(1) : "n/a");
     if (globeIndex && binCraft && !showTrace) {
         $('#selected_message_count').prev().text('Receivers:');
-        $('#selected_message_count').text(selected.receiverCount);
+        $('#selected_message_count').prop('title', 'Number of receivers receiving this aircraft');
+        if (selected.receiverCount >= 5 && selected.dataSource != 'mlat') {
+            $('#selected_message_count').text('> ' + selected.receiverCount);
+        } else {
+            $('#selected_message_count').text(selected.receiverCount);
+        }
     } else {
         $('#selected_message_count').prev().text('Messages:');
+        $('#selected_message_count').prop('title', 'The total number of messages received from this aircraft');
         $('#selected_message_count').text(selected.messages);
     }
     $('#selected_message_rate').text((selected.messageRate != null) ? (selected.messageRate.toFixed(1)) : "n/a");
