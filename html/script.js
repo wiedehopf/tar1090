@@ -2145,7 +2145,7 @@ function refreshFeatures() {
         html: true,
     };
     cols.flight = {
-        sort: function () { sortBy('flight', compareBeta, function(x) { return x.flight ? x.flight : x.registration; }); },
+        sort: function () { sortBy('flight', compareAlpha, function(x) { return x.flight }); },
         value: function(plane) { return (flightawareLinks ? getFlightAwareModeSLink(plane.icao, plane.flight, plane.name) : plane.name); },
         html: flightawareLinks,
         text: 'Ident' };
