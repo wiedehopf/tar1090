@@ -752,6 +752,8 @@ PlaneObject.prototype.updateIcon = function() {
                     rotation: (this.baseMarker.noRotate ? 0 : this.rotation * Math.PI / 180.0),
                     rotateWithView: (this.baseMarker.noRotate ? false : true),
                 });
+                this.rotationCache = this.rotation;
+                this.scaleCache = this.scale;
             } else {
                 svgKey = this.markerSvgKey;
             }
@@ -763,12 +765,15 @@ PlaneObject.prototype.updateIcon = function() {
                 rotation: (this.baseMarker.noRotate ? 0 : this.rotation * Math.PI / 180.0),
                 rotateWithView: (this.baseMarker.noRotate ? false : true),
             });
+            this.rotationCache = this.rotation;
+            this.scaleCache = this.scale;
         }
         this.markerSvgKey = svgKey;
-        this.rotationCache = this.rotation;
 
         //iconCache[svgKey] = undefined; // disable caching for testing
     }
+    if (!this.markerIcon)
+        return;
 
     let styleKey = svgKey + '!' + labelText + '!' + this.scale;
 
@@ -805,20 +810,18 @@ PlaneObject.prototype.updateIcon = function() {
         this.markerIcon.setOpacity(opacity);
     }
     */
-    if (this.markerIcon) {
-        const iconRotation = this.baseMarker.noRotate ? 0 : this.rotation;
-        if (this.rotationCache != iconRotation && Math.abs(this.rotationCache - iconRotation) > 0.35) {
-            this.rotationCache = iconRotation;
-            this.markerIcon.setRotation(iconRotation * Math.PI / 180.0);
-        }
-
-        if (this.scaleCache != this.scale) {
-            this.scaleCache = this.scale;
-            this.markerIcon.setScale(this.scale);
-        }
+    const iconRotation = this.baseMarker.noRotate ? 0 : this.rotation;
+    if (this.rotationCache != iconRotation && Math.abs(this.rotationCache - iconRotation) > 0.35) {
+        this.rotationCache = iconRotation;
+        this.markerIcon.setRotation(iconRotation * Math.PI / 180.0);
     }
 
-    return true;
+    if (this.scaleCache != this.scale) {
+        this.scaleCache = this.scale;
+        this.markerIcon.setScale(this.scale);
+    }
+
+    return;
 };
 
 PlaneObject.prototype.processTrace = function() {
