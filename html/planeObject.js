@@ -805,16 +805,17 @@ PlaneObject.prototype.updateIcon = function() {
         this.markerIcon.setOpacity(opacity);
     }
     */
+    if (this.markerIcon) {
+        const iconRotation = this.baseMarker.noRotate ? 0 : this.rotation;
+        if (this.rotationCache != iconRotation && Math.abs(this.rotationCache - iconRotation) > 0.35) {
+            this.rotationCache = iconRotation;
+            this.markerIcon.setRotation(iconRotation * Math.PI / 180.0);
+        }
 
-    const iconRotation = this.baseMarker.noRotate ? 0 : this.rotation;
-    if (this.rotationCache != iconRotation && Math.abs(this.rotationCache - iconRotation) > 0.35) {
-        this.rotationCache = iconRotation;
-        this.markerIcon.setRotation(iconRotation * Math.PI / 180.0);
-    }
-
-    if (this.scaleCache != this.scale) {
-        this.scaleCache = this.scale;
-        this.markerIcon.setScale(this.scale);
+        if (this.scaleCache != this.scale) {
+            this.scaleCache = this.scale;
+            this.markerIcon.setScale(this.scale);
+        }
     }
 
     return true;
