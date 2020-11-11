@@ -185,22 +185,23 @@ do
     sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" \
         -e "s?/INSTANCE??g" -e "s?HTMLPATH?$html_path?g" 95-tar1090-otherport.conf
 
-        if [[ "$instance" == "webroot" ]]
-        then
+    if [[ "$instance" == "webroot" ]]; then
         sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" \
-        -e "s?/INSTANCE??g" -e "s?HTMLPATH?$html_path?g" 88-tar1090.conf
+            -e 's/compress.filetype/deflate.mimetypes/g' \
+            -e "s?/INSTANCE??g" -e "s?HTMLPATH?$html_path?g" 88-tar1090.conf
         sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" \
-        -e "s?/INSTANCE/?/?g" -e "s?HTMLPATH?$html_path?g" nginx.conf
+            -e "s?/INSTANCE/?/?g" -e "s?HTMLPATH?$html_path?g" nginx.conf
         sed -i -e "s?/INSTANCE?/?g" nginx.conf
 
-        else
+    else
 
         sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" \
-        -e "s?INSTANCE?$instance?g" -e "s?HTMLPATH?$html_path?g" 88-tar1090.conf
+            -e 's/compress.filetype/deflate.mimetypes/g' \
+            -e "s?INSTANCE?$instance?g" -e "s?HTMLPATH?$html_path?g" 88-tar1090.conf
         sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" \
-        -e "s?INSTANCE?$instance?g" -e "s?HTMLPATH?$html_path?g" nginx.conf
+            -e "s?INSTANCE?$instance?g" -e "s?HTMLPATH?$html_path?g" nginx.conf
 
-        fi
+    fi
 
     sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" tar1090.service
 
@@ -277,7 +278,7 @@ do
 
     if [[ $lighttpd == yes ]] &>/dev/null
     then
-        if [[ "$otherport" != "done" ]]; then
+        if [[ "$otherport" != "done" ]] && ! lighttpd -v | grep 'lighttpd/1.4.5[6-9]' -qs; then
             cp 95-tar1090-otherport.conf /etc/lighttpd/conf-available/
             ln -f -s /etc/lighttpd/conf-available/95-tar1090-otherport.conf /etc/lighttpd/conf-enabled/95-tar1090-otherport.conf
             otherport="done"
@@ -325,7 +326,7 @@ then
     while read -r FILE; do
         sed -i -e 's/^server.modules.*mod_setenv.*/#\0/'  "$FILE"
         sed -i -e 's/^server.stat-cache-engine.*disable.*/#\0/'  "$FILE"
-    done < <(find /etc/lighttpd/conf-available/* | grep -v dump1090-fa | grep -v readsb)
+    done < <(find /etc/lighttpd/conf-available/* | grep -v dump1090-fa | grep -v readsb | grep -v setenv)
 
     # add mod_setenv to lighttpd modules, check if it's one too much
     echo 'server.modules += ( "mod_setenv" )' > /etc/lighttpd/conf-available/87-mod_setenv.conf
@@ -352,8 +353,6 @@ then
     fi
     #lighttpd -tt -f /etc/lighttpd/lighttpd.conf && echo success || true
     if ! lighttpd -tt -f /etc/lighttpd/lighttpd.conf &>/dev/null; then
-        rm /etc/lighttpd/conf-enabled/47-stat-cache.conf &>/dev/null || true
-        rm /etc/lighttpd/conf-enabled/87-mod_setenv.conf &>/dev/null || true
         echo ----------------
         echo "Lighttpd error, tar1090 will probably not work correctly:"
         lighttpd -tt -f /etc/lighttpd/lighttpd.conf
