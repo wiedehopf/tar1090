@@ -210,18 +210,20 @@ function createBaseLayers() {
         maxZoom: 14,
     }));
 
-    world.push(new ol.layer.Vector({
-        source: new ol.source.Vector({
-            url: 'tfrs.kml',
-            format: new ol.format.KML(),
-        }),
-        name: 'tfr',
-        title: 'TFRs',
-        type: 'overlay',
-        opacity: 0.7,
-        visible: false,
-        zIndex: 99,
-    }));
+    if (tfrs) {
+        world.push(new ol.layer.Vector({
+            source: new ol.source.Vector({
+                url: 'tfrs.kml',
+                format: new ol.format.KML(),
+            }),
+            name: 'tfr',
+            title: 'TFRs',
+            type: 'overlay',
+            opacity: 0.7,
+            visible: true,
+            zIndex: 99,
+        }));
+    }
 
     let nexrad = new ol.layer.Tile({
         name: 'nexrad',

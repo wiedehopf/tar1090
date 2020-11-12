@@ -31,6 +31,7 @@ let pTracks = false;
 let lastTraceGet = 0;
 let traceRate = 0;
 let _aircraft_type_cache = null;
+let tfrs = false;
 
 let databaseFolder = "db2";
 
@@ -56,6 +57,9 @@ try {
             //window.history.pushState(URL, "Title", URL);
             window.location.href = URL;
         }
+    }
+    if (search.has('tfrs')) {
+        tfrs = true;
     }
 
     const customTiles = search.get('customTiles');
