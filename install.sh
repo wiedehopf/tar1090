@@ -337,19 +337,19 @@ then
     #lighttpd -tt -f /etc/lighttpd/lighttpd.conf && echo success || true
     if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep mod_setenv >/dev/null
     then
-        rm /etc/lighttpd/conf-enabled/87-mod_setenv.conf
+        rm -f /etc/lighttpd/conf-enabled/87-mod_setenv.conf
     fi
 
     #lighttpd -tt -f /etc/lighttpd/lighttpd.conf && echo success || true
     if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep stat-cache >/dev/null
     then
-        rm /etc/lighttpd/conf-enabled/47-stat-cache.conf
+        rm -f /etc/lighttpd/conf-enabled/47-stat-cache.conf
     fi
 
     #lighttpd -tt -f /etc/lighttpd/lighttpd.conf && echo success || true
     if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep mod_setenv >/dev/null
     then
-        rm /etc/lighttpd/conf-enabled/87-mod_setenv.conf
+        rm -f /etc/lighttpd/conf-enabled/87-mod_setenv.conf
     fi
     #lighttpd -tt -f /etc/lighttpd/lighttpd.conf && echo success || true
     if ! lighttpd -tt -f /etc/lighttpd/lighttpd.conf &>/dev/null; then
