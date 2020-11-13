@@ -94,7 +94,6 @@ let firstFetchDone = false;
 let overrideMapType = null;
 let halloween = false;
 let noRegOnly = false;
-let adsbygoogle = null;
 
 let shareLink = '';
 
@@ -552,34 +551,7 @@ function initialize() {
         }, 30000);
     }
 
-    if (document.getElementById('adsense') != null || adsbexchange) {
-        setTimeout(function() {
-
-            let countDown = 20;
-            let i = setInterval(function () {
-
-                let b1 = document.getElementById('waittohide');
-                let b2 = document.getElementById('letuserhide');
-
-                if (!b1 || !b2)
-                    return;
-
-                if(countDown === 1) {
-                    if(b1['style'].display == 'none') {
-                        b1['style'].display = 'block';
-                        b2['style'].display = 'none';
-                    } else {
-                        b1['style'].display = 'none';
-                        b2['style'].display = 'block';
-                    }
-                    clearInterval(i);
-                }
-                countDown--;
-                b1.innerHTML = 'Hide in ' + countDown + ' seconds';
-
-
-            }, 1000);
-        }, 2000);
+    if (adsbexchange) {
         setInterval(function(){$.ajax({url:'data/receiver.json',cache:false,});}, 180000);
     }
 
