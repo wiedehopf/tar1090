@@ -553,56 +553,34 @@ function initialize() {
     }
 
     if (document.getElementById('adsense') != null || adsbexchange) {
-        if (onMobile || hideButtons) {
-            try {
-                document.getElementById('adsense').style.display='none';
-            } catch (error) {
-                console.log(error);
-            }
-        } else {
-            setTimeout(function() {
-                try {
-                    (adsbygoogle = window.adsbygoogle || []).push({}); // load the ad
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let countDown = 20;
-                let i = setInterval(function () {
-
-                    let b1 = document.getElementById('waittohide');
-                    let b2 = document.getElementById('letuserhide');
-
-                    if (!b1 || !b2)
-                        return;
-
-                    if(countDown === 1) {
-                        if(b1['style'].display == 'none') {
-                            b1['style'].display = 'block';
-                            b2['style'].display = 'none';
-                        } else {
-                            b1['style'].display = 'none';
-                            b2['style'].display = 'block';
-                        }
-                        clearInterval(i);
-                    }
-                    countDown--;
-                    b1.innerHTML = 'Hide in ' + countDown + ' seconds';
-
-
-                }, 1000);
-            }, 2000);
-        }
-        setInterval(function(){$.ajax({url:'data/receiver.json',cache:false,});}, 180000);
         setTimeout(function() {
-            if (!adsbygoogle) {
-                try {
-                    document.getElementById('adsense').style.display='none';
-                } catch (error) {
-                    console.log(error);
+
+            let countDown = 20;
+            let i = setInterval(function () {
+
+                let b1 = document.getElementById('waittohide');
+                let b2 = document.getElementById('letuserhide');
+
+                if (!b1 || !b2)
+                    return;
+
+                if(countDown === 1) {
+                    if(b1['style'].display == 'none') {
+                        b1['style'].display = 'block';
+                        b2['style'].display = 'none';
+                    } else {
+                        b1['style'].display = 'none';
+                        b2['style'].display = 'block';
+                    }
+                    clearInterval(i);
                 }
-            }
-        }, 5000);
+                countDown--;
+                b1.innerHTML = 'Hide in ' + countDown + ' seconds';
+
+
+            }, 1000);
+        }, 2000);
+        setInterval(function(){$.ajax({url:'data/receiver.json',cache:false,});}, 180000);
     }
 
     mapOrientation *= (Math.PI/180); // adjust to radians
