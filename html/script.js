@@ -2533,7 +2533,7 @@ function refreshFeatures() {
         // Also extract the sort comparison value.
         if (globeIndex) {
             for (let i = 0; i < pList.length; ++i) {
-                pList[i]._sort_pos = pList[i].icao;
+                pList[i]._sort_pos = pList[i].numHex;
                 pList[i]._sort_value = sortExtract(pList[i]);
             }
         } else {

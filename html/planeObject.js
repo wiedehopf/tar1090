@@ -10,6 +10,8 @@ function PlaneObject(icao) {
     this.category  = null;
     this.dataSource = "mode_s";
 
+    this.numHex = parseInt(icao.replace('~', '1'), 16);
+
     // Basic location information
     this.altitude       = null;
     this.alt_baro       = null;
