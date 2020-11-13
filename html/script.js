@@ -657,15 +657,19 @@ function initPage() {
     */
 
     $('#infoblock_close').on('click', function () {
+
+        if (showTrace) {
+            toggleShowTrace();
+        }
         if (SelectedPlane) {
             SelectedPlane.selected = null;
             SelectedPlane.clearLines();
             SelectedPlane.updateMarker();
             SelectedPlane = null;
             refreshSelected();
-            refreshHighlighted();
-            $('#selected_infoblock').hide();
+            setSelectedInfoBlockVisibility();
             TAR.planesTable.refresh();
+            updateAddressBar();
         }
     });
 
