@@ -815,95 +815,74 @@
                   </table>
                 </td>
               </tr>
-
-              <tr class="infoRowSpacer">
-                <td></td>
-              </tr>
-              <tr class="infoblock_heading">
-                <td>
-                  <table id="jumpSearch" style="width: 100%">
-                    <tr>
-                      <td style="width: 50%">
-                        <form id="search_form">
-                          <span class="infoBlockTitleText">Search:</span>
-                          <br>
-                          <input id="search_input" name="searchBox" type="text" class="searchInput" maxlength="8">
-                        </form>
-                      </td>
-                      <td style="width: 50%">
-                        <form id="jump_form">
-                          <span class="infoBlockTitleText">Jump to Airport:</span>
-                          <br>
-                          <input id="jump_input" name="jumpBox" type="text" class="searchInput" maxlength="4">
-                        </form>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-
-              <tr class="infoRowSpacer">
-                <td></td>
-              </tr>
             </table>
 
-            <button id="filterButton" type="button" class="collapseButton">Filters</button>
-            <div class="collapse" id="filter_block">
+            <div id="tabs">
+              <ul>
+                <li><a href="#tab-search">Search</a></li>
+                <li><a href="#tab-filters">Filters</a></li>
+                <li><a href="#tab-columns">Columns</a></li>
+              </ul>
+              <div id="tab-search">
+                <table cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td>
+                      <form id="search_form">
+                        <div class="infoBlockTitleText">Search:</div>
+                        <input id="search_input" name="searchBox" type="text" class="searchInput" maxlength="8">
+                      </form>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td>
+                      <form id="jump_form">
+                        <div class="infoBlockTitleText">Jump to Airport:</div>
+                        <input id="jump_input" name="jumpBox" type="text" class="searchInput" maxlength="4">
+                      </form>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div id="tab-filters">
+                <form id="altitude_filter_form">
+                  <div class="infoBlockTitleText">Filter by altitude:</div>
+                  <input id="altitude_filter_min" name="minAltitude" type="text" class="altitudeFilterInput" maxlength="5">
+                  <label for="minAltitude" class="altitudeUnit"></label>
+                  <span> to </span>
+                  <input id="altitude_filter_max" name="maxAltitude" type="text" class="altitudeFilterInput" maxlength="5">
+                  <label for="maxAltitude" class="altitudeUnit"></label>
+                  <button class="formButton" type="submit">Filter</button>
+                  <button class="formButton" id="altitude_filter_reset_button">Reset</button>
+                </form>
 
-              <form id="altitude_filter_form">
-                <label><span class="infoBlockTitleText">Filter by altitude:</span></label>
-                <br>
-                <input id="altitude_filter_min" name="minAltitude" type="text" class="altitudeFilterInput" maxlength="5">
-                <label for="minAltitude" class="altitudeUnit"></label>
-                <span> to </span>
-                <input id="altitude_filter_max" name="maxAltitude" type="text" class="altitudeFilterInput" maxlength="5">
-                <label for="maxAltitude" class="altitudeUnit"></label>
-                <button class="formButton" type="submit">Filter</button>
-                <button class="formButton" id="altitude_filter_reset_button">Reset</button>
+                <form id="callsign_filter_form">
+                  <div class="infoBlockTitleText">Filter by callsign or squawk:</div>
+                  <input id="callsign_filter" name="callsign" type="text" class="searchInput" maxlength="1024">
+                  <button class="formButton" type="submit">Filter</button>
+                  <button class="formButton" id="callsign_filter_reset_button">Reset</button>
+                </form>
 
-              </form>
+                <form id="type_filter_form">
+                  <div title="ICAO type code (A320, B738, etc.)" class="infoBlockTitleText">Filter by type code:</div>
+                  <input id="type_filter" name="type" type="text" class="searchInput" maxlength="1024">
+                  <button class="formButton" type="submit">Filter</button>
+                  <button class="formButton" id="type_filter_reset_button">Reset</button>
+                </form>
 
-              <form id="callsign_filter_form">
-                <label><span class="infoBlockTitleText">Filter by callsign or squawk:</span></label>
-                <br>
-                <input id="callsign_filter" name="callsign" type="text" class="searchInput" maxlength="1024">
-                <button class="formButton" type="submit">Filter</button>
-                <button class="formButton" id="callsign_filter_reset_button">Reset</button>
+                <form id="description_filter_form">
+                  <div title="ICAO type description (L/S/H Landplane/Seaplane/Helicopter 1/2/3/4 Number of P/T/J Reciprocating/Turboprop/Jet Engines" class="infoBlockTitleText">Filter by type description:</div>
+                  <input id="description_filter" name="description" type="text" class="searchInput" maxlength="1024">
+                  <button class="formButton" type="submit">Filter</button>
+                  <button class="formButton" id="description_filter_reset_button">Reset</button>
+                </form>
 
-              </form>
-
-              <form id="type_filter_form">
-                <label><span title="ICAO type code (A320, B738, etc.)" class="infoBlockTitleText">Filter by type code:</span></label>
-                <br>
-                <input id="type_filter" name="type" type="text" class="searchInput" maxlength="1024">
-                <button class="formButton" type="submit">Filter</button>
-                <button class="formButton" id="type_filter_reset_button">Reset</button>
-
-              </form>
-
-              <form id="description_filter_form">
-                <label><span title="ICAO type description (L/S/H Landplane/Seaplane/Helicopter 1/2/3/4 Number of P/T/J Reciprocating/Turboprop/Jet Engines" class="infoBlockTitleText">Filter by type description:</span></label>
-                <br>
-                <input id="description_filter" name="description" type="text" class="searchInput" maxlength="1024">
-                <button class="formButton" type="submit">Filter</button>
-                <button class="formButton" id="description_filter_reset_button">Reset</button>
-
-              </form>
-
-              <form id="icao_filter_form">
-                <label><span class="infoBlockTitleText">Filter by icao hex id:</span></label>
-                <br>
-                <input id="icao_filter" name="description" type="text" class="searchInput" maxlength="1024">
-                <button class="formButton" type="submit">Filter</button>
-                <button class="formButton" id="icao_filter_reset_button">Reset</button>
-
-              </form>
-
-            </div> <!-- filter_block -->
-
-            <div>
-              <button id="columnsButton" type="button" class="collapseButton">Select Columns</button>
-              <div class="collapse collapseSettings">
+                <form id="icao_filter_form">
+                  <div class="infoBlockTitleText">Filter by icao hex id:</div>
+                  <input id="icao_filter" name="description" type="text" class="searchInput" maxlength="1024">
+                  <button class="formButton" type="submit">Filter</button>
+                  <button class="formButton" id="icao_filter_reset_button">Reset</button>
+                </form>
+              </div>
+              <div id="tab-columns">
                 <div id="settingsLeft" class="settingsColumn">
                   <div id="columns_block1"></div>
                 </div>
@@ -915,14 +894,15 @@
 
             <table id="planesTable" style="width: 100%">
             </table>
+
             <div class="legend">
-                <div class="legendTitle vPosition">ADS-B</div>
-                <div id="uat_legend_2" class="legendTitle uat">UAT / ADS-R</div>
-                <div id="sat_legend_2" class="legendTitle satellite">ADS-C/R / UAT</div>
-                <div class="legendTitle mlat">MLAT</div>
-                <div class="legendTitle tisb">TIS-B</div>
-                <div id="mode_s_legend_2" class="legendTitle other">Mode-S</div>
-                <div id="unknown_legend_2" class="legendTitle unknown">Unknown</div>
+              <div class="legendTitle vPosition">ADS-B</div>
+              <div id="uat_legend_2" class="legendTitle uat">UAT / ADS-R</div>
+              <div id="sat_legend_2" class="legendTitle satellite">ADS-C/R / UAT</div>
+              <div class="legendTitle mlat">MLAT</div>
+              <div class="legendTitle tisb">TIS-B</div>
+              <div id="mode_s_legend_2" class="legendTitle other">Mode-S</div>
+              <div id="unknown_legend_2" class="legendTitle unknown">Unknown</div>
             </div>
           </div>
 

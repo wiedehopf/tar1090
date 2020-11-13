@@ -650,6 +650,14 @@ function initialize() {
         });
     }
 
+    $('#tabs').tabs({
+        active: localStorage['active_tab'],
+        activate: function (event, ui) {
+            localStorage['active_tab'] = $("#tabs").tabs("option", "active");
+        },
+        collapsible: true
+    });
+
     $.when(configureReceiver, heatmapDefer).done(function() {
         configureReceiver = null;
 
@@ -959,7 +967,7 @@ function initPage() {
         $('#header_top').hide();
         $('#header_side').hide();
         $('#splitter').hide();
-        $('#jumpSearch').hide();
+        $('#tabs').hide();
         $('#filterButton').hide();
         $('.ol-control').hide();
         $('.ol-attribution').show();
@@ -1518,7 +1526,7 @@ function initMap() {
                     $('#header_top').hide();
                     $('#header_side').hide();
                     $('#splitter').hide();
-                    $('#jumpSearch').hide();
+                    $('#tabs').hide();
                     $('#filterButton').hide();
                     $('.ol-control').hide();
                     $('.ol-attribution').show();
@@ -1527,7 +1535,7 @@ function initMap() {
                     $('#header_top').show();
                     $('#header_side').show();
                     $('#splitter').show();
-                    $('#jumpSearch').show();
+                    $('#tabs').show();
                     $('#filterButton').show();
                     $('.ol-control').show();
                     $('#expand_sidebar_control').hide();

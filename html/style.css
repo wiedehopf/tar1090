@@ -766,3 +766,11 @@ table.infoTable tr td {
 .active:after {
     content: "\2796\FE0E"; /* Unicode character for "minus" sign (-) */
 }
+
+.ui-tabs-nav li a:focus {
+    outline: none;
+}
+
+.ui-tabs .ui-tabs-panel {
+    padding: 1em 0.5em;
+}
