@@ -333,13 +333,15 @@ then
 
     ln -s -f /etc/lighttpd/conf-available/87-mod_setenv.conf /etc/lighttpd/conf-enabled/87-mod_setenv.conf
     ln -s -f /etc/lighttpd/conf-available/47-stat-cache.conf /etc/lighttpd/conf-enabled/47-stat-cache.conf
-    #lighttpd -tt -f /etc/lighttpd/lighttpd.conf && echo success || true
+
     if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep mod_setenv >/dev/null
     then
         rm -f /etc/lighttpd/conf-enabled/87-mod_setenv.conf
     fi
+    if (( $(cat /etc/lighttpd/conf-enabled/* | grep -c -E -e 'server.modules.?\+=.?\(.?"mod_setenv".?\)') > 1 )); then
+        rm -f /etc/lighttpd/conf-enabled/87-mod_setenv.conf
+    fi
 
-    #lighttpd -tt -f /etc/lighttpd/lighttpd.conf && echo success || true
     if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep stat-cache >/dev/null
     then
         rm -f /etc/lighttpd/conf-enabled/47-stat-cache.conf
