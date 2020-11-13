@@ -792,7 +792,6 @@ let TypeDesignatorIcons = {
     'A4': ['md_a4', 1],
     'TU22': ['hi_perf', 1],
     'VAUT': ['hi_perf', 1],
-    'WB57': ['hi_perf', 1],
     'Y130': ['hi_perf', 1],
     'YK28': ['hi_perf', 1],
     'BE20': ['twin_large', 0.92],

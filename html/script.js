@@ -94,6 +94,7 @@ let firstFetchDone = false;
 let overrideMapType = null;
 let halloween = false;
 let noRegOnly = false;
+let adsbygoogle = null;
 
 let shareLink = '';
 
@@ -1146,8 +1147,8 @@ function startPage() {
     if (!heatmap && !pTracks)
         fetchData();
     if (replay) {
-        initReplay();
-        play(); // kick off first play
+        //initReplay();
+        //play(); // kick off first play
     }
 
     loadFinished = true;
@@ -4804,6 +4805,7 @@ function drawHeatmap() {
     $("#loader").addClass("hidden");
 }
 
+/*
 function initReplay() {
     for (let k = 0; k < heatChunks.length; k++) {
         if (heatChunks[k].byteLength % 16 != 0) {
@@ -4855,6 +4857,7 @@ function play() {
     refreshSelected();
     refreshHighlighted();
 }
+*/
 
 function updateIconCache() {
     let item;
@@ -4966,3 +4969,5 @@ function updateMessageRate(data) {
         MessageRate = null;
     }
 }
+
+initialize();
