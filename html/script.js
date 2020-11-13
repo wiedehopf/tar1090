@@ -1418,7 +1418,7 @@ function initMap() {
         key: "MapDim",
         display: "Dim Map",
         container: "#settingsLeft",
-        init: true,
+        init: MapDim,
         setState: function(state) {
             if (!state) {
                 ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
