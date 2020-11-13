@@ -264,8 +264,7 @@ do
         gzip -k -9 "colors_$TAR_VERSION.css"
         gzip -k -9 "style_$TAR_VERSION.css"
 
-        gzip -k -9 ./jquery/*.js
-        gzip -k -9 ./ol/*.js
+        gzip -k -9 ./libs/*.js
         #gzip -k -9 db2/*.json .... already exists compressed
     fi
 
