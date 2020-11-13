@@ -636,6 +636,20 @@ function initialize() {
         buttonActive('#P', noVanish);
     }
 
+    let coll = document.getElementsByClassName("collapseButton");
+
+    for (let i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            let content = this.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+                content.style.display = "block";
+            }
+        });
+    }
+
     $('#tabs').tabs({
         active: localStorage['active_tab'],
         activate: function (event, ui) {
