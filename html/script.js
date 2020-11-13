@@ -562,7 +562,7 @@ function initialize() {
         } else {
             setTimeout(function() {
                 try {
-                    (adsbygoogle = window.adsbygoogle || []).push({});
+                    (adsbygoogle = window.adsbygoogle || []).push({}); // load the ad
                 } catch (error) {
                     console.log(error);
                 }
@@ -591,7 +591,7 @@ function initialize() {
 
 
                 }, 1000);
-            }, 1000);
+            }, 2000);
         }
         setInterval(function(){$.ajax({url:'data/receiver.json',cache:false,});}, 180000);
         setTimeout(function() {
@@ -602,7 +602,7 @@ function initialize() {
                     console.log(error);
                 }
             }
-        }, 3000);
+        }, 5000);
     }
 
     mapOrientation *= (Math.PI/180); // adjust to radians
