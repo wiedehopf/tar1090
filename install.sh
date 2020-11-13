@@ -192,16 +192,17 @@ do
         sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" \
             -e "s?/INSTANCE/?/?g" -e "s?HTMLPATH?$html_path?g" nginx.conf
         sed -i -e "s?/INSTANCE?/?g" nginx.conf
-
     else
-
         sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" \
             -e 's/compress.filetype/deflate.mimetypes/g' \
             -e "s?INSTANCE?$instance?g" -e "s?HTMLPATH?$html_path?g" 88-tar1090.conf
         sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" \
             -e "s?INSTANCE?$instance?g" -e "s?HTMLPATH?$html_path?g" nginx.conf
-
     fi
+    if lighttpd -v | grep -E 'lighttpd/1.4.(5[6-9]|[6-9])' -qs; then
+        sed -i -e 's/compress.filetype/deflate.mimetypes/g' 88-tar1090.conf
+    fi
+
 
     sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" tar1090.service
 
@@ -277,7 +278,7 @@ do
 
     if [[ $lighttpd == yes ]] &>/dev/null
     then
-        if [[ "$otherport" != "done" ]] && ! lighttpd -v | grep 'lighttpd/1.4.5[6-9]' -qs; then
+        if [[ "$otherport" != "done" ]] && ! lighttpd -v | grep -E 'lighttpd/1.4.(5[6-9]|[6-9])' -qs; then
             cp 95-tar1090-otherport.conf /etc/lighttpd/conf-available/
             ln -f -s /etc/lighttpd/conf-available/95-tar1090-otherport.conf /etc/lighttpd/conf-enabled/95-tar1090-otherport.conf
             otherport="done"
