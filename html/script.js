@@ -1867,7 +1867,7 @@ function refreshSelected() {
         selIcao = selected.icao;
         if (globeIndex) {
             let icao_link = "<a style=\"color: blue\" target=\"_blank\" href=\"" + shareLink + "\">Share</a>";
-            icao_link = NBSP +NBSP +NBSP +NBSP +NBSP +NBSP + icao_link;
+            icao_link = NBSP +NBSP +NBSP + icao_link;
             $('#selected_icao').html(selected.icao.toUpperCase() + icao_link);
         } else {
             $('#selected_icao').text(selected.icao.toUpperCase());
@@ -2140,7 +2140,7 @@ function refreshFeatures() {
 
 
     cols.icao = {
-        text: 'ICAO',
+        text: 'Hex id',
         sort: function () { sortBy('icao', compareAlpha, function(x) { return x.icao; }); },
         value: function(plane) { return plane.icao; },
         td: '<td class="icaoCodeColumn"></td>' };
@@ -2159,7 +2159,7 @@ function refreshFeatures() {
         sort: function () { sortBy('flight', compareAlpha, function(x) { return x.flight }); },
         value: function(plane) { return (flightawareLinks ? getFlightAwareModeSLink(plane.icao, plane.flight, plane.name) : plane.name); },
         html: flightawareLinks,
-        text: 'Ident' };
+        text: 'Callsign' };
 
     cols.registration = {
         sort: function () { sortBy('registration', compareAlpha, function(x) { return x.registration; }); },
@@ -3956,12 +3956,6 @@ function updateAddressBar() {
         return;
     if (icaoFilter)
         return;
-
-    if (SelectedPlane && globeIndex) {
-        let icao_link = "<a style=\"color: blue\" target=\"_blank\" href=\"" + shareLink + "\">Share</a>";
-        icao_link = NBSP +NBSP +NBSP +NBSP +NBSP +NBSP + icao_link;
-        $('#selected_icao').html(SelectedPlane.icao.toUpperCase() + icao_link);
-    }
 
     window.history && window.history.replaceState && window.history.replaceState("object or string", "Title", string);
 }
