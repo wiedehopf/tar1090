@@ -595,14 +595,14 @@ function initialize() {
         }
         setInterval(function(){$.ajax({url:'data/receiver.json',cache:false,});}, 180000);
         setTimeout(function() {
-            if (typeof adsbygoogle == 'undefined') {
+            if (!adsbygoogle) {
                 try {
                     document.getElementById('adsense').style.display='none';
                 } catch (error) {
                     console.log(error);
                 }
             }
-        }, 7000);
+        }, 3000);
     }
 
     mapOrientation *= (Math.PI/180); // adjust to radians
