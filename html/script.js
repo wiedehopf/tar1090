@@ -636,20 +636,6 @@ function initialize() {
         buttonActive('#P', noVanish);
     }
 
-    let coll = document.getElementsByClassName("collapseButton");
-
-    for (let i = 0; i < coll.length; i++) {
-        coll[i].addEventListener("click", function() {
-            this.classList.toggle("active");
-            let content = this.nextElementSibling;
-            if (content.style.display === "block") {
-                content.style.display = "none";
-            } else {
-                content.style.display = "block";
-            }
-        });
-    }
-
     $('#tabs').tabs({
         active: localStorage['active_tab'],
         activate: function (event, ui) {
@@ -4020,8 +4006,6 @@ function toggleShowTrace() {
         showTraceWasIsolation = onlySelected;
         toggleIsolation("on", null);
         shiftTrace();
-        $('#history_collapse')[0].style.display = "block";
-        $('#show_trace').addClass("active");
     } else {
         showTrace = false;
         legSel = -1;
@@ -4032,13 +4016,18 @@ function toggleShowTrace() {
         //window.history.replaceState("object or string", "Title", string);
         //shareLink = string;
         updateAddressBar();
-        $('#history_collapse')[0].style.display = "none";
-        $('#show_trace').removeClass("active");
         const hex = SelectedPlane.icao;
         SelectedPlane = null;
         showTraceExit = true;
         selectPlaneByHex(hex, {follow: true, zoom: ZoomLvl,});
     }
+
+    $('#history_collapse').toggle({
+        duration: 0,
+        complete: function () {
+            $('#show_trace').toggleClass('active');
+        }
+    });
 }
 
 function legShift(offset) {
