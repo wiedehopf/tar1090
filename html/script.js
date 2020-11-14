@@ -2084,7 +2084,8 @@ function refreshFeatures() {
         text: 'Hex id',
         sort: function () { sortBy('icao', compareAlpha, function(x) { return x.icao; }); },
         value: function(plane) { return plane.icao; },
-        td: '<td class="icaoCodeColumn"></td>' };
+        td: '<td class="icaoCodeColumn">',
+    };
     cols.flag = {
         text: 'Flag',
         header: function() { return ""; },
@@ -2189,7 +2190,7 @@ function refreshFeatures() {
         value.header = value.header ? value.header : function() { return value.text; };
         value.hStyle = value.hStyle ? value.hStyle : "";
         if (!value.td)
-            value.td = value.align ? ('<td style="text-align: ' + value.align + '"></td>') : '<td></td>';
+            value.td = value.align ? ('<td style="text-align: ' + value.align + '">') : '<td>';
     }
 
     let columns = Object.values(cols);
@@ -2250,6 +2251,7 @@ function refreshFeatures() {
         for (let i in activeCols) {
             let col = activeCols[i];
             table += col.td;
+            table += '</td>';
         }
         table += '  </tr>';
         table += '</tbody>';
