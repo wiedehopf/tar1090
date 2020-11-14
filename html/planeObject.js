@@ -39,6 +39,7 @@ function PlaneObject(icao) {
     this.rc				= null;
 
     this.rotation       = 0;
+    this.rotationCache = 999;
 
     this.nac_p			= null;
     this.nac_v			= null;
@@ -128,7 +129,7 @@ PlaneObject.prototype.checkLayers = function() {
         this.createFeatures();
     if ((showTrace || trackLabels) && !this.trail_labels)
         this.createLabels();
-}
+};
 
 PlaneObject.prototype.createFeatures = function() {
     this.trail_features = new ol.source.Vector();
@@ -142,7 +143,7 @@ PlaneObject.prototype.createFeatures = function() {
     });
 
     trailGroup.push(this.layer);
-}
+};
 
 PlaneObject.prototype.createLabels = function() {
     this.trail_labels = new ol.source.Vector();
@@ -156,13 +157,13 @@ PlaneObject.prototype.createLabels = function() {
     });
 
     trailGroup.push(this.layer_labels);
-}
+};
 
 PlaneObject.prototype.logSel = function(loggable) {
     if (debugTracks && this.selected && !SelectedAllPlanes)
         console.log(loggable);
     return;
-}
+};
 
 PlaneObject.prototype.isFiltered = function() {
     if (this.selected && !SelectedAllPlanes)
@@ -235,7 +236,7 @@ PlaneObject.prototype.isFiltered = function() {
         return true;
 
     return false;
-}
+};
 
 
 function altFiltered(altitude) {
@@ -260,7 +261,7 @@ PlaneObject.prototype.updateTail = function() {
     this.tail_position = this.prev_position;
 
     return this.updateTrackPrev();
-}
+};
 
 PlaneObject.prototype.updateTrackPrev = function() {
 
@@ -274,7 +275,7 @@ PlaneObject.prototype.updateTrackPrev = function() {
     this.prev_speed = this.speed;
 
     return true;
-}
+};
 
 // Appends data to the running track so we can get a visual tail on the plane
 // Only useful for a long running browser session.
@@ -625,8 +626,8 @@ PlaneObject.prototype.getMarkerColor = function() {
     if (l < 5) l = 5;
     else if (l > 95) l = 95;
 
-    return 'hsl(' + h.toFixed(0) + ',' + s.toFixed(0) + '%,' + l.toFixed(0) + '%)'
-}
+    return [h, s, l];
+};
 
 function altitudeColor(altitude) {
     let h, s, l;
@@ -686,6 +687,14 @@ function altitudeColor(altitude) {
     return [h, s, l];
 }
 
+PlaneObject.prototype.setMarkerRgb = function() {
+    let hsl = this.getMarkerColor();
+    let rgb = hslToRgb(hsl, 'array');
+    this.marker.set('r', rgb[0]);
+    this.marker.set('g', rgb[1]);
+    this.marker.set('b', rgb[2]);
+};
+
 PlaneObject.prototype.updateIcon = function() {
 
     let icaoType = this.icaoType;
@@ -695,7 +704,8 @@ PlaneObject.prototype.updateIcon = function() {
         icaoType = 'TWR';
 
     let eastbound = this.rotation < 180;
-    let fillColor = this.getMarkerColor();
+    let fillColor = hslToRgb(this.getMarkerColor());
+    this.setMarkerRgb();
     let baseMarkerKey = (this.category ? this.category : "A0") + "_"
         + this.typeDescription + "_" + this.wtc  + "_" + icaoType + '_' + (this.altitude == "ground") + eastbound;
 
@@ -715,6 +725,20 @@ PlaneObject.prototype.updateIcon = function() {
     this.scale = scaleFactor * this.baseScale;
     let svgKey  = fillColor + '!' + this.shape + '!' + strokeWidth;
     let labelText = null;
+
+    if (webgl) {
+        const iconRotation = this.baseMarker.noRotate ? 0 : this.rotation;
+        if (this.rotationCache != iconRotation && Math.abs(this.rotationCache - iconRotation) > 0.35) {
+            this.rotationCache = iconRotation;
+            this.marker.set('rotation', iconRotation * Math.PI / 180.0);
+        }
+        if (this.scaleCache != this.scale) {
+            this.scaleCache = this.scale;
+            this.marker.set('scale', this.scale);
+        }
+        this.marker.set('type', this.icaoType);
+        return;
+    }
     if ( enableLabels && !showTrace && (!multiSelect || (multiSelect && this.selected)) &&
         (
             (ZoomLvl >= labelZoom && this.altitude != "ground")
@@ -754,7 +778,6 @@ PlaneObject.prototype.updateIcon = function() {
                     rotation: (this.baseMarker.noRotate ? 0 : this.rotation * Math.PI / 180.0),
                     rotateWithView: (this.baseMarker.noRotate ? false : true),
                 });
-                this.rotationCache = this.rotation;
                 this.scaleCache = this.scale;
             } else {
                 svgKey = this.markerSvgKey;
@@ -767,7 +790,6 @@ PlaneObject.prototype.updateIcon = function() {
                 rotation: (this.baseMarker.noRotate ? 0 : this.rotation * Math.PI / 180.0),
                 rotateWithView: (this.baseMarker.noRotate ? false : true),
             });
-            this.rotationCache = this.rotation;
             this.scaleCache = this.scale;
         }
         this.markerSvgKey = svgKey;
@@ -1117,7 +1139,7 @@ PlaneObject.prototype.processTrace = function() {
     TAR.planesTable.refresh();
 
     console.log(this.history_size + ' ' + points_in_trace);
-}
+};
 
 // Update our data
 PlaneObject.prototype.updateData = function(now, last, data, init) {
@@ -1410,7 +1432,7 @@ PlaneObject.prototype.updateTick = function(redraw) {
         this.updateFeatures(uat_now, uat_last, redraw);
     else
         this.updateFeatures(now, last, redraw);
-}
+};
 
 PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
     // recompute seen and seen_pos
@@ -1492,6 +1514,9 @@ PlaneObject.prototype.updateMarker = function(moved) {
     if (!this.marker) {
         this.marker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
         this.marker.hex = this.icao;
+        this.marker.set('alt', this.alt_rounded == 'ground' ? 0 : this.alt_rounded);
+        this.marker.set('rotation', 0);
+        this.setMarkerRgb();
         PlaneIconFeatures.addFeature(this.marker);
         this.marker.visible = true;
     } else if (moved) {
@@ -1776,7 +1801,7 @@ PlaneObject.prototype.remakeTrail = function() {
     trailGroup.push(this.layer);
     */
 
-}
+};
 
 PlaneObject.prototype.makeTR = function (trTemplate, tbody) {
 
@@ -1812,7 +1837,7 @@ PlaneObject.prototype.makeTR = function (trTemplate, tbody) {
     }
 
     this.tr.addEventListener('click', this.clickListener);
-}
+};
 PlaneObject.prototype.destroyTR = function (trTemplate) {
     if (this.tr == null)
         return;
@@ -1828,7 +1853,7 @@ PlaneObject.prototype.destroyTR = function (trTemplate) {
         this.tr.parentNode.removeChild(this.tr);
 
     this.tr = null;
-}
+};
 
 PlaneObject.prototype.destroy = function() {
     this.clearLines();
@@ -1862,7 +1887,7 @@ function calcAltitudeRounded(altitude) {
     } else {
         return (altitude/125).toFixed(0)*125;
     }
-}
+};
 
 PlaneObject.prototype.drawRedDot = function(bad_position) {
     this.checkLayers();
@@ -1877,7 +1902,7 @@ PlaneObject.prototype.drawRedDot = function(bad_position) {
     let lineFeat = new ol.Feature(geom);
     lineFeat.setStyle(this.dataSource == "mlat" ? badLineMlat : badLine);
     this.trail_features.addFeature(lineFeat);
-}
+};
 
 /**
  * Converts an HSL color value to RGB. Conversion formula
@@ -1919,6 +1944,9 @@ function hslToRgb(arr, opacity){
         b = hue2rgb(p, q, h - 1/3);
     }
 
+    if (opacity == 'array')
+        return [ Math.round(r * 255), Math.round(g * 255), Math.round(b * 255) ];
+
     if (opacity != null)
         return 'rgba(' + Math.round(r * 255) + ', ' + Math.round(g * 255) + ', ' +  Math.round(b * 255) + ', ' + opacity + ')';
     else
@@ -1935,7 +1963,7 @@ PlaneObject.prototype.altBad = function(newAlt, oldAlt, oldTime, data) {
     const delta = Math.abs(newAlt - oldAlt);
     const fpm = (delta < 800) ? 0 : (60 * delta / (now - oldTime + 2));
     return fpm > max_fpm;
-}
+};
 
 PlaneObject.prototype.getAircraftData = function() {
     let req = getAircraftData(this.icao);
@@ -1987,7 +2015,7 @@ PlaneObject.prototype.getAircraftData = function() {
         else
             console.log(this.icao + ': Database load error: ' + textStatus + ' at URL: ' + jqXHR.url);
     }.bind(this));
-}
+};
 
 PlaneObject.prototype.reapTrail = function() {
     const oldSegs = this.track_linesegs;
@@ -2004,7 +2032,7 @@ PlaneObject.prototype.reapTrail = function() {
         this.remakeTrail();
         this.updateTick(true);
     }
-}
+};
 
 
 PlaneObject.prototype.milRange = function() {
@@ -2122,7 +2150,7 @@ PlaneObject.prototype.milRange = function() {
         //e80600-e806ff = chile mil(cq)
         || (i >= 0xe80600 && i <= 0xe806ff)
     );
-}
+};
 
 PlaneObject.prototype.updateTraceData = function(state, _now) {
     const lat = state[1];
@@ -2234,7 +2262,7 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
             this.nav_altitude = null;
         }
     }
-}
+};
 
 PlaneObject.prototype.setNull = function() {
     this.position = null;
@@ -2307,7 +2335,7 @@ PlaneObject.prototype.setNull = function() {
     this.msgs978   = 0;
     this.messageRate = 0;
     this.messageRateOld = 0;
-}
+};
 
 function makeCircle(points, greyskull) {
     let out = points;
@@ -2420,14 +2448,14 @@ PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
         ts: NaN,
         noLabel: true,
     });
-}
+};
 
 PlaneObject.prototype.isNonIcao = function() {
     if (this.icao[0] == '~')
         return true;
     else
         return false;
-}
+};
 
 PlaneObject.prototype.checkVisible = function() {
     const zoomedOut = 40 * Math.max(0, 7 - ZoomLvl);
@@ -2444,7 +2472,7 @@ PlaneObject.prototype.checkVisible = function() {
         || (this.selected && (onlySelected || (!SelectedAllPlanes && !multiSelect)))
         || noVanish
     );
-}
+};
 
 PlaneObject.prototype.setTypeData = function() {
 	if (_aircraft_type_cache == null || !this.icaoType || this.icaoType == this.icaoTypeCache)
@@ -2460,7 +2488,7 @@ PlaneObject.prototype.setTypeData = function() {
         this.typeDescription = typeData.desc;
     if (typeData.wtc != null)
         this.wtc = typeData.wtc;
-}
+};
 
 PlaneObject.prototype.checkForDB = function(t) {
     if (!t) {
@@ -2481,4 +2509,4 @@ PlaneObject.prototype.checkForDB = function(t) {
         this.military = t.dbFlags & 1;
         this.interesting = t.dbFlags & 2;
     }
-}
+};

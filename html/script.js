@@ -5,6 +5,7 @@
 "use strict";
 
 // Define our global variables
+let webgl = false;
 let OLMap = null;
 let OLProj = null;
 let StaticFeatures = new ol.source.Vector();
@@ -1181,15 +1182,67 @@ function initMap() {
     layers_group = createBaseLayers();
     layers = layers_group.getLayers();
 
-    iconLayer = new ol.layer.Vector({
-        name: 'ac_positions',
-        type: 'overlay',
-        title: 'Aircraft positions',
-        source: PlaneIconFeatures,
-        declutter: false,
-        zIndex: 200,
-        renderBuffer: 20,
-    });
+    const glStyle = {
+        symbol: {
+            symbolType: 'triangle',
+            size: 24,
+            //color: '#0F0F0F',
+            //color: 'hsl(233,88%,48%)',
+            //'color': [ 'get', 'fColor' ],
+            color: [
+                'color',
+                [ 'get', 'r' ],
+                [ 'get', 'g' ],
+                [ 'get', 'b' ],
+                1
+            ],
+            rotation: [ 'get', 'rotation' ],
+        }
+    };
+
+    function getURI(type) {
+        return svgShapeToURI(shapes[getBaseMarker(null, type)[0]], '#FFFFFF', '#000000', 0.8);
+    }
+    function getStyle(type) {
+        return {
+            symbol: {
+                symbolType: 'image',
+                src: getURI(type),
+                size: [40, 40],
+                color: [
+                    'color',
+                    [ 'get', 'r' ],
+                    [ 'get', 'g' ],
+                    [ 'get', 'b' ],
+                    1
+                ],
+                rotation: [ 'get', 'rotation' ],
+            },
+        }
+    }
+
+    if (webgl) {
+        iconLayer = new ol.layer.WebGLPoints({
+            style: getStyle('B744'),
+            name: 'ac_positions',
+            type: 'overlay',
+            title: 'Aircraft positions',
+            source: PlaneIconFeatures,
+            declutter: false,
+            zIndex: 200,
+            renderBuffer: 20,
+        });
+    } else {
+        iconLayer = new ol.layer.Vector({
+            name: 'ac_positions',
+            type: 'overlay',
+            title: 'Aircraft positions',
+            source: PlaneIconFeatures,
+            declutter: false,
+            zIndex: 200,
+            renderBuffer: 20,
+        });
+    }
 
     layers.push(
         new ol.layer.Vector({
