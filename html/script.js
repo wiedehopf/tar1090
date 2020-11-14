@@ -1182,6 +1182,27 @@ function initMap() {
     layers_group = createBaseLayers();
     layers = layers_group.getLayers();
 
+    layers.push(
+        new ol.layer.Vector({
+            name: 'site_pos',
+            type: 'overlay',
+            title: 'Site position and range rings',
+            source: StaticFeatures,
+            visible: !adsbexchange,
+            zIndex: 100,
+            renderOrder: null,
+        }));
+
+    trailLayers = new ol.layer.Group({
+        name: 'ac_trail',
+        title: 'Aircraft trails',
+        type: 'overlay',
+        layers: trailGroup,
+        zIndex: 150,
+    });
+
+    layers.push(trailLayers);
+
     function getStyle(shape) {
         return {
             symbol: {
@@ -1204,17 +1225,33 @@ function initMap() {
         }
     }
 
+
+
     if (webgl) {
-        iconLayer = new ol.layer.WebGLPoints({
-            style: getStyle(shapes['heavy_4e']),
-            name: 'ac_positions',
+        let glIcons = new ol.Collection();
+        let kv = Object.entries(shapes);
+        for (let i in kv) {
+            let key = kv[i][0];
+            let shape = kv[i][1];
+            shape.features = new ol.source.Vector();
+            glIcons.push(new ol.layer.WebGLPoints({
+                style: getStyle(shape),
+                name: key,
+                type: 'overlay',
+                source: shape.features,
+                declutter: false,
+                zIndex: 200,
+                renderBuffer: 20,
+            }));
+        }
+
+        layers.push(new ol.layer.Group({
+            name: 'glIcons',
+            title: 'Aircraft icons',
             type: 'overlay',
-            title: 'Aircraft positions',
-            source: PlaneIconFeatures,
-            declutter: false,
+            layers: glIcons,
             zIndex: 200,
-            renderBuffer: 20,
-        });
+        }));
     } else {
         iconLayer = new ol.layer.Vector({
             name: 'ac_positions',
@@ -1225,30 +1262,9 @@ function initMap() {
             zIndex: 200,
             renderBuffer: 20,
         });
+        layers.push(iconLayer);
     }
 
-    layers.push(
-        new ol.layer.Vector({
-            name: 'site_pos',
-            type: 'overlay',
-            title: 'Site position and range rings',
-            source: StaticFeatures,
-            visible: !adsbexchange,
-            zIndex: 100,
-            renderOrder: null,
-        }));
-
-    trailLayers = new ol.layer.Group({
-        name: 'ac_trail',
-        title: 'Aircraft trails',
-        type: 'overlay',
-        layers: trailGroup,
-        zIndex: 150,
-    });
-
-    layers.push(trailLayers);
-
-    layers.push(iconLayer);
 
     let foundType = false;
     let baseCount = 0;

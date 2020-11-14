@@ -1,8 +1,6 @@
 // -*- mode: javascript; indent-tabs-mode: nil; c-basic-offset: 8 -*-
 "use strict";
 
-
-// FA icons
 let shapes = {
     'airliner': {
         w: 28,

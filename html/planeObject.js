@@ -697,37 +697,15 @@ PlaneObject.prototype.setMarkerRgb = function() {
 
 PlaneObject.prototype.updateIcon = function() {
 
-    let icaoType = this.icaoType;
-    if (this.icaoType == 'V22' && this.speed > 120)
-        icaoType = 'V22F';
-    if (icaoType == null && this.squawk == 7777)
-        icaoType = 'TWR';
-
-    let eastbound = this.rotation < 180;
     let fillColor = hslToRgb(this.getMarkerColor());
     this.setMarkerRgb();
-    let baseMarkerKey = (this.category ? this.category : "A0") + "_"
-        + this.typeDescription + "_" + this.wtc  + "_" + icaoType + '_' + (this.altitude == "ground") + eastbound;
-
-    if (!this.baseMarker || this.baseMarkerKey != baseMarkerKey) {
-        this.baseMarkerKey = baseMarkerKey;
-        this.baseMarker = getBaseMarker(this.category, icaoType, this.typeDescription, this.wtc, this.addrtype, this.altitude, eastbound);
-        this.shape = this.baseMarker[0];
-        this.baseScale = this.baseMarker[1] * 0.96;
-        this.baseMarker = shapes[this.shape]
-        if (!this.baseMarker)
-            console.log(baseMarkerKey);
-    }
-
-    let strokeWidth = outlineWidth * ((this.selected && !SelectedAllPlanes && !onlySelected) ? 1.15 : 0.7);
-    strokeWidth /= this.baseScale;
 
     this.scale = scaleFactor * this.baseScale;
-    let svgKey  = fillColor + '!' + this.shape + '!' + strokeWidth;
+    let svgKey  = fillColor + '!' + this.shape + '!' + this.strokeWidth;
     let labelText = null;
 
     if (webgl) {
-        const iconRotation = this.baseMarker.noRotate ? 0 : this.rotation;
+        const iconRotation = this.shape.noRotate ? 0 : this.rotation;
         if (this.rotationCache != iconRotation && Math.abs(this.rotationCache - iconRotation) > 0.35) {
             this.rotationCache = iconRotation;
             this.marker.set('rotation', iconRotation * Math.PI / 180.0);
@@ -765,17 +743,17 @@ PlaneObject.prototype.updateIcon = function() {
         //console.log(this.icao + " new icon and style " + this.markerSvgKey + " -> " + svgKey);
 
         if (iconCache[svgKey] == undefined) {
-            let svgURI = svgShapeToURI(this.baseMarker, fillColor, OutlineADSBColor, strokeWidth);
+            let svgURI = svgShapeToURI(this.shape, fillColor, OutlineADSBColor, this.strokeWidth);
 
             addToIconCache.push([svgKey, null, svgURI]);
 
             if (TrackedAircraftPositions < 200) {
                 this.markerIcon = new ol.style.Icon({
                     scale: this.scale,
-                    imgSize: [this.baseMarker.w, this.baseMarker.h],
+                    imgSize: [this.shape.w, this.shape.h],
                     src: svgURI,
-                    rotation: (this.baseMarker.noRotate ? 0 : this.rotation * Math.PI / 180.0),
-                    rotateWithView: (this.baseMarker.noRotate ? false : true),
+                    rotation: (this.shape.noRotate ? 0 : this.rotation * Math.PI / 180.0),
+                    rotateWithView: (this.shape.noRotate ? false : true),
                 });
                 this.scaleCache = this.scale;
             } else {
@@ -784,10 +762,10 @@ PlaneObject.prototype.updateIcon = function() {
         } else {
             this.markerIcon = new ol.style.Icon({
                 scale: this.scale,
-                imgSize: [this.baseMarker.w, this.baseMarker.h],
+                imgSize: [this.shape.w, this.shape.h],
                 img: iconCache[svgKey],
-                rotation: (this.baseMarker.noRotate ? 0 : this.rotation * Math.PI / 180.0),
-                rotateWithView: (this.baseMarker.noRotate ? false : true),
+                rotation: (this.shape.noRotate ? 0 : this.rotation * Math.PI / 180.0),
+                rotateWithView: (this.shape.noRotate ? false : true),
             });
             this.scaleCache = this.scale;
         }
@@ -813,8 +791,8 @@ PlaneObject.prototype.updateIcon = function() {
                     textAlign: 'left',
                     textBaseline: "top",
                     font: labelFont,
-                    offsetX: (this.baseMarker.w *0.5*0.74*this.scale),
-                    offsetY: (this.baseMarker.w *0.5*0.74*this.scale),
+                    offsetX: (this.shape.w *0.5*0.74*this.scale),
+                    offsetY: (this.shape.w *0.5*0.74*this.scale),
                 }),
                 zIndex: this.zIndex,
             });
@@ -833,7 +811,7 @@ PlaneObject.prototype.updateIcon = function() {
         this.markerIcon.setOpacity(opacity);
     }
     */
-    const iconRotation = this.baseMarker.noRotate ? 0 : this.rotation;
+    const iconRotation = this.shape.noRotate ? 0 : this.rotation;
     if (this.rotationCache != iconRotation && Math.abs(this.rotationCache - iconRotation) > 0.35) {
         this.rotationCache = iconRotation;
         this.markerIcon.setRotation(iconRotation * Math.PI / 180.0);
@@ -1497,7 +1475,10 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
 
 PlaneObject.prototype.clearMarker = function() {
     if (this.marker && this.marker.visible) {
-        PlaneIconFeatures.removeFeature(this.marker);
+        if (webgl && this.shape)
+            this.shape.features.removeFeature(this.marker);
+        else
+            PlaneIconFeatures.removeFeature(this.marker);
         this.marker.visible = false;
     }
 };
@@ -1510,24 +1491,50 @@ PlaneObject.prototype.updateMarker = function(moved) {
         this.clearMarker();
         return;
     }
+
+    let eastbound = this.rotation < 180;
+    let icaoType = this.icaoType;
+    if (icaoType == 'V22' && this.speed > 120)
+        icaoType = 'V22F';
+    if (icaoType == null && this.squawk == 7777)
+        icaoType = 'TWR';
+    let baseMarkerKey = (this.category ? this.category : "A0") + "_"
+        + this.typeDescription + "_" + this.wtc  + "_" + icaoType + '_' + (this.altitude == "ground") + eastbound;
+
+    if (!this.shape || this.baseMarkerKey != baseMarkerKey) {
+        this.baseMarkerKey = baseMarkerKey;
+        let baseMarker = getBaseMarker(this.category, icaoType, this.typeDescription, this.wtc, this.addrtype, this.altitude, eastbound);
+        this.shape = shapes[baseMarker[0]]
+        this.baseScale = baseMarker[1] * 0.96;
+        if (!this.shape)
+            console.log(baseMarkerKey);
+    }
+    this.strokeWidth = outlineWidth * ((this.selected && !SelectedAllPlanes && !onlySelected) ? 1.15 : 0.7) / this.baseScale;
+
     if (!this.marker) {
         this.marker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
         this.marker.hex = this.icao;
+
         this.marker.set('alt', this.alt_rounded == 'ground' ? 0 : this.alt_rounded);
         this.marker.set('rotation', 0);
         this.marker.set('scale', 1);
         this.setMarkerRgb();
-        PlaneIconFeatures.addFeature(this.marker);
-        this.marker.visible = true;
     } else if (moved) {
         this.marker.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
     }
 
     this.updateIcon();
 
+    if (webgl && this.shape != this.shapeCache && this.shapeCache) {
+        this.shapeCache.features.removeFeature(this.marker);
+        this.shapeCache = this.shape;
+    }
     if (!this.marker.visible) {
         this.marker.visible = true;
-        PlaneIconFeatures.addFeature(this.marker);
+        if (webgl)
+            this.shape.features.addFeature(this.marker);
+        else
+            PlaneIconFeatures.addFeature(this.marker);
     }
 };
 
