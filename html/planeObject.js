@@ -736,7 +736,6 @@ PlaneObject.prototype.updateIcon = function() {
             this.scaleCache = this.scale;
             this.marker.set('scale', this.scale);
         }
-        this.marker.set('type', this.icaoType);
         return;
     }
     if ( enableLabels && !showTrace && (!multiSelect || (multiSelect && this.selected)) &&
@@ -1516,6 +1515,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
         this.marker.hex = this.icao;
         this.marker.set('alt', this.alt_rounded == 'ground' ? 0 : this.alt_rounded);
         this.marker.set('rotation', 0);
+        this.marker.set('scale', 1);
         this.setMarkerRgb();
         PlaneIconFeatures.addFeature(this.marker);
         this.marker.visible = true;

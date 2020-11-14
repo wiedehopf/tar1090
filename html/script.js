@@ -1182,48 +1182,31 @@ function initMap() {
     layers_group = createBaseLayers();
     layers = layers_group.getLayers();
 
-    const glStyle = {
-        symbol: {
-            symbolType: 'triangle',
-            size: 24,
-            //color: '#0F0F0F',
-            //color: 'hsl(233,88%,48%)',
-            //'color': [ 'get', 'fColor' ],
-            color: [
-                'color',
-                [ 'get', 'r' ],
-                [ 'get', 'g' ],
-                [ 'get', 'b' ],
-                1
-            ],
-            rotation: [ 'get', 'rotation' ],
-        }
-    };
-
-    function getURI(type) {
-        return svgShapeToURI(shapes[getBaseMarker(null, type)[0]], '#FFFFFF', '#000000', 0.8);
-    }
-    function getStyle(type) {
+    function getStyle(shape) {
         return {
             symbol: {
                 symbolType: 'image',
-                src: getURI(type),
-                size: [40, 40],
-                color: [
+                src: svgShapeToURI(shape, '#FFFFFF', '#000000', 1, 1.8),
+                size: [ 'array',
+                    [ '*', shape.w, [ 'get', 'scale' ]],
+                    [ '*', shape.h, [ 'get', 'scale' ]]
+                ],
+                color: (shape.svg ? '#FFFFFF': [
                     'color',
                     [ 'get', 'r' ],
                     [ 'get', 'g' ],
                     [ 'get', 'b' ],
                     1
-                ],
-                rotation: [ 'get', 'rotation' ],
+                ]),
+                rotateWithView: false,
+                rotation: (shape.noRotate ? 0 : [ 'get', 'rotation' ]),
             },
         }
     }
 
     if (webgl) {
         iconLayer = new ol.layer.WebGLPoints({
-            style: getStyle('B744'),
+            style: getStyle(shapes['heavy_4e']),
             name: 'ac_positions',
             type: 'overlay',
             title: 'Aircraft positions',

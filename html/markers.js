@@ -518,7 +518,7 @@ let shapes = {
     'ground_emergency': {
         w: 6,
         h: 15,
-        svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6 15" width="6px" height="15px"><defs><style>.cls-1{fill:#5a5a5a;stroke:strokeColor;stroke-width:strokeWidth;}.cls-2{fill:#fff;stroke:none;}</style></defs><title>emergency_dark</title><g id="Layer_2" data-name="Layer 2"><g id="Emergency"><path class="cls-1" d="M1.77,0a3.32,3.32,0,0,0-.63.07L1,.11.86.16h0L.7.23.59.3l0,0L.49.38l0,.06a.15.15,0,0,0,0,0h0v0h0V.9l0,0,0,0h0l0,.07V4c0,.13.06.16.1.23v.3H.09c0,1.32,0,3.38,0,4.8l0,.44C.07,9.82,0,9.88,0,10v2.82c0,.09-.05.14.07.18v1.9a50.76,50.76,0,0,0,5.78,0V13.06C6,13,6,12.93,6,12.84V10c0-.15-.05-.2-.11-.22V9.37c0-1.41,0-3.51,0-4.8H5.55v-.3c0-.08.11-.1.09-.23v-3L5.6,1h0l0,0,0,0V.51h0v0h0a.15.15,0,0,0,0,0,.16.16,0,0,0,0-.06L5.41.32l0,0L5.26.23,5.12.17h0L5,.11l-.16,0A3.45,3.45,0,0,0,4,0H1.77Z"/><path class="cls-2" d="M.77,2.77A4.31,4.31,0,0,1,3,2.33a4.31,4.31,0,0,1,2.26.44l-.38.92A7.51,7.51,0,0,0,3,3.41a7.9,7.9,0,0,0-1.91.27Z"/><path class="cls-2" d="M4.35,8.27a1.05,1.05,0,0,1-.59.93A3.5,3.5,0,0,0,2.62,6.63a1.71,1.71,0,0,1-.56,1.26l-.41.38a1.71,1.71,0,0,0-.56,1.26A1.79,1.79,0,0,0,2.4,11.21H3.6A1.79,1.79,0,0,0,4.92,9.52,1.71,1.71,0,0,0,4.35,8.27Z"/></g></g></svg>',
+        svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6 15" SIZE><defs><style>.cls-1{fill:#5a5a5a;stroke:strokeColor;stroke-width:strokeWidth;}.cls-2{fill:#fff;stroke:none;}</style></defs><title>emergency_dark</title><g id="Layer_2" data-name="Layer 2"><g id="Emergency"><path class="cls-1" d="M1.77,0a3.32,3.32,0,0,0-.63.07L1,.11.86.16h0L.7.23.59.3l0,0L.49.38l0,.06a.15.15,0,0,0,0,0h0v0h0V.9l0,0,0,0h0l0,.07V4c0,.13.06.16.1.23v.3H.09c0,1.32,0,3.38,0,4.8l0,.44C.07,9.82,0,9.88,0,10v2.82c0,.09-.05.14.07.18v1.9a50.76,50.76,0,0,0,5.78,0V13.06C6,13,6,12.93,6,12.84V10c0-.15-.05-.2-.11-.22V9.37c0-1.41,0-3.51,0-4.8H5.55v-.3c0-.08.11-.1.09-.23v-3L5.6,1h0l0,0,0,0V.51h0v0h0a.15.15,0,0,0,0,0,.16.16,0,0,0,0-.06L5.41.32l0,0L5.26.23,5.12.17h0L5,.11l-.16,0A3.45,3.45,0,0,0,4,0H1.77Z"/><path class="cls-2" d="M.77,2.77A4.31,4.31,0,0,1,3,2.33a4.31,4.31,0,0,1,2.26.44l-.38.92A7.51,7.51,0,0,0,3,3.41a7.9,7.9,0,0,0-1.91.27Z"/><path class="cls-2" d="M4.35,8.27a1.05,1.05,0,0,1-.59.93A3.5,3.5,0,0,0,2.62,6.63a1.71,1.71,0,0,1-.56,1.26l-.41.38a1.71,1.71,0,0,0-.56,1.26A1.79,1.79,0,0,0,2.4,11.21H3.6A1.79,1.79,0,0,0,4.92,9.52,1.71,1.71,0,0,0,4.35,8.27Z"/></g></g></svg>',
     },
     'ground_service': {
         w: 6,
@@ -528,13 +528,13 @@ let shapes = {
     'ground_unknown': {
         w: 6,
         h: 15,
-        svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6 15" width="6px" height="15px"><defs><style>.cls-1{fill:#5a5a5a;stroke:strokeColor;stroke-width:strokeWidth;}.cls-2{fill:#fff;stroke:none;}</style></defs><title>unknown_dark</title><g id="Layer_2" data-name="Layer 2"><g id="Unknown"><path class="cls-1" d="M1.77,0a3.32,3.32,0,0,0-.63.07L1,.11.86.16h0L.7.23.59.3l0,0L.49.38l0,.06a.15.15,0,0,0,0,0h0v0h0V.9l0,0,0,0h0l0,.07V4c0,.13.06.16.1.23v.3H.09c0,1.32,0,3.38,0,4.8l0,.44C.07,9.82,0,9.88,0,10v2.82c0,.09-.05.14.07.18v1.9a50.76,50.76,0,0,0,5.78,0V13.06C6,13,6,12.93,6,12.84V10c0-.15-.05-.2-.11-.22V9.37c0-1.41,0-3.51,0-4.8H5.55v-.3c0-.08.11-.1.09-.23v-3L5.6,1h0l0,0,0,0V.51h0v0h0a.15.15,0,0,0,0,0,.16.16,0,0,0,0-.06L5.41.32l0,0L5.26.23,5.12.17h0L5,.11l-.16,0A3.45,3.45,0,0,0,4,0H1.77Z"/><path class="cls-2" d="M.77,2.77A4.31,4.31,0,0,1,3,2.33a4.31,4.31,0,0,1,2.26.44l-.38.92A7.51,7.51,0,0,0,3,3.41a7.9,7.9,0,0,0-1.91.27Z"/><path class="cls-2" d="M4.31,7.51A1.1,1.1,0,0,0,4,7.12a1.55,1.55,0,0,0-.5-.3,2.18,2.18,0,0,0-.77-.12,1.81,1.81,0,0,0-.65.11,1.48,1.48,0,0,0-.5.32,1.43,1.43,0,0,0-.32.48,1.62,1.62,0,0,0-.12.6v.12H2.31V8.2a1,1,0,0,1,0-.25.54.54,0,0,1,.09-.19.42.42,0,0,1,.15-.12.49.49,0,0,1,.22,0,.41.41,0,0,1,.29.09.39.39,0,0,1,.1.3.33.33,0,0,1,0,.19A.65.65,0,0,1,3,8.33l-.22.16a1.61,1.61,0,0,0-.25.22A1.28,1.28,0,0,0,2.33,9a1.2,1.2,0,0,0-.11.45v.37H3.29V9.52a.44.44,0,0,1,.09-.22,1,1,0,0,1,.19-.18l.25-.17a1.35,1.35,0,0,0,.27-.23,1.19,1.19,0,0,0,.21-.33,1.23,1.23,0,0,0,.09-.49A1.06,1.06,0,0,0,4.31,7.51Z"/><rect class="cls-2" x="2.18" y="10.26" width="1.12" height="1.02"/></g></g></svg>',
+        svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6 15" SIZE><defs><style>.cls-1{fill:#5a5a5a;stroke:strokeColor;stroke-width:strokeWidth;}.cls-2{fill:#fff;stroke:none;}</style></defs><title>unknown_dark</title><g id="Layer_2" data-name="Layer 2"><g id="Unknown"><path class="cls-1" d="M1.77,0a3.32,3.32,0,0,0-.63.07L1,.11.86.16h0L.7.23.59.3l0,0L.49.38l0,.06a.15.15,0,0,0,0,0h0v0h0V.9l0,0,0,0h0l0,.07V4c0,.13.06.16.1.23v.3H.09c0,1.32,0,3.38,0,4.8l0,.44C.07,9.82,0,9.88,0,10v2.82c0,.09-.05.14.07.18v1.9a50.76,50.76,0,0,0,5.78,0V13.06C6,13,6,12.93,6,12.84V10c0-.15-.05-.2-.11-.22V9.37c0-1.41,0-3.51,0-4.8H5.55v-.3c0-.08.11-.1.09-.23v-3L5.6,1h0l0,0,0,0V.51h0v0h0a.15.15,0,0,0,0,0,.16.16,0,0,0,0-.06L5.41.32l0,0L5.26.23,5.12.17h0L5,.11l-.16,0A3.45,3.45,0,0,0,4,0H1.77Z"/><path class="cls-2" d="M.77,2.77A4.31,4.31,0,0,1,3,2.33a4.31,4.31,0,0,1,2.26.44l-.38.92A7.51,7.51,0,0,0,3,3.41a7.9,7.9,0,0,0-1.91.27Z"/><path class="cls-2" d="M4.31,7.51A1.1,1.1,0,0,0,4,7.12a1.55,1.55,0,0,0-.5-.3,2.18,2.18,0,0,0-.77-.12,1.81,1.81,0,0,0-.65.11,1.48,1.48,0,0,0-.5.32,1.43,1.43,0,0,0-.32.48,1.62,1.62,0,0,0-.12.6v.12H2.31V8.2a1,1,0,0,1,0-.25.54.54,0,0,1,.09-.19.42.42,0,0,1,.15-.12.49.49,0,0,1,.22,0,.41.41,0,0,1,.29.09.39.39,0,0,1,.1.3.33.33,0,0,1,0,.19A.65.65,0,0,1,3,8.33l-.22.16a1.61,1.61,0,0,0-.25.22A1.28,1.28,0,0,0,2.33,9a1.2,1.2,0,0,0-.11.45v.37H3.29V9.52a.44.44,0,0,1,.09-.22,1,1,0,0,1,.19-.18l.25-.17a1.35,1.35,0,0,0,.27-.23,1.19,1.19,0,0,0,.21-.33,1.23,1.23,0,0,0,.09-.49A1.06,1.06,0,0,0,4.31,7.51Z"/><rect class="cls-2" x="2.18" y="10.26" width="1.12" height="1.02"/></g></g></svg>',
     },
     'ground_fixed': {
         w: 12,
         h: 12,
         noRotate: true,
-        svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" width="12px" height="12px"><defs><style>.cls-1{fill:#5a5a5a;stroke:strokeColor;stroke-width:strokeWidth;}.cls-2{fill:#fff;stroke:none;}</style></defs><title>fixed_dark</title><g id="Layer_2" data-name="Layer 2"><g id="Fixed"><polygon class="cls-1" points="0 0 0 0.43 0 12 12 12 12 0 0 0"/><path class="cls-2" d="M3.24,2.73,1.36.86h9.29L8.77,2.73A4.29,4.29,0,0,0,3.24,2.73Z"/><circle class="cls-2" cx="6" cy="6" r="3.58" transform="translate(-2.49 6) rotate(-45)"/><path class="cls-2" d="M2.73,3.23a4.29,4.29,0,0,0,0,5.54L.86,10.62V1.37Z"/><path class="cls-2" d="M3.24,9.28a4.29,4.29,0,0,0,5.54,0l1.87,1.87H1.35Z"/><path class="cls-2" d="M9.28,8.77a4.29,4.29,0,0,0,0-5.54l1.86-1.86v9.26Z"/><circle class="cls-1" cx="6" cy="6" r="2" transform="translate(-2.49 6) rotate(-45)"/></g></g></svg>',
+        svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" SIZE><defs><style>.cls-1{fill:#5a5a5a;stroke:strokeColor;stroke-width:strokeWidth;}.cls-2{fill:#fff;stroke:none;}</style></defs><title>fixed_dark</title><g id="Layer_2" data-name="Layer 2"><g id="Fixed"><polygon class="cls-1" points="0 0 0 0.43 0 12 12 12 12 0 0 0"/><path class="cls-2" d="M3.24,2.73,1.36.86h9.29L8.77,2.73A4.29,4.29,0,0,0,3.24,2.73Z"/><circle class="cls-2" cx="6" cy="6" r="3.58" transform="translate(-2.49 6) rotate(-45)"/><path class="cls-2" d="M2.73,3.23a4.29,4.29,0,0,0,0,5.54L.86,10.62V1.37Z"/><path class="cls-2" d="M3.24,9.28a4.29,4.29,0,0,0,5.54,0l1.87,1.87H1.35Z"/><path class="cls-2" d="M9.28,8.77a4.29,4.29,0,0,0,0-5.54l1.86-1.86v9.26Z"/><circle class="cls-1" cx="6" cy="6" r="2" transform="translate(-2.49 6) rotate(-45)"/></g></g></svg>',
     },
     'ground_tower': {
         w: 22,
@@ -1000,19 +1000,23 @@ function getBaseMarker(category, typeDesignator, typeDescription, wtc, addrtype,
     return ['unknown', 1];
 }
 
-function svgShapeToURI(shape, fillColor, strokeColor, strokeWidth){
+function svgShapeToURI(shape, fillColor, strokeColor, strokeWidth, scale){
+    scale = scale ? scale : 1;
 
     strokeWidth *= (shape.strokeScale ? shape.strokeScale : 1);
+    let wi = shape.w * scale;
+    let he = shape.h * scale;
 
     if (!shape.path) {
         let svg = shape.svg.replace('fillColor', fillColor).replace('strokeColor', strokeColor).replace('strokeWidth', strokeWidth);
+        svg = svg.replace('SIZE', 'width="' + wi + 'px" height="' + he + 'px"');
         return "data:image/svg+xml;base64," + btoa(svg);
     }
 
 
     let svg = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="' + shape.viewBox + '" '
         + (shape.noAspect ? 'preserveAspectRatio="none" ' : '')
-        + 'width="' + shape.w + '" height="' + shape.h + '">'
+        + 'width="' + wi + '" height="' + he + '">'
         + '<g' + (shape.transform ? (' transform="' + shape.transform + '"') : '') + '>';
 
     let path = shape.path;
