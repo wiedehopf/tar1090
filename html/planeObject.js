@@ -701,7 +701,7 @@ PlaneObject.prototype.updateIcon = function() {
     this.setMarkerRgb();
 
     this.scale = scaleFactor * this.baseScale;
-    let svgKey  = fillColor + '!' + this.shape + '!' + this.strokeWidth;
+    let svgKey  = fillColor + '!' + this.shape.name + '!' + this.strokeWidth;
     let labelText = null;
 
     if (webgl) {

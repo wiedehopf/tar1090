@@ -544,6 +544,15 @@ let shapes = {
     },
 }
 
+{
+    let kv = Object.entries(shapes);
+    for (let i in kv) {
+        let key = kv[i][0];
+        let shape = kv[i][1];
+        shape.name = key;
+    }
+}
+
 let TypeDesignatorIcons = {
     'SHIP': ['balloon', 1], // Blimp
     'BALL': ['balloon', 1], // Balloon
