@@ -750,9 +750,9 @@ function initPage() {
 
     $('#grouptype_checkbox').on('click', function() {
         if ($('#grouptype_checkbox').hasClass('settingsCheckboxChecked')) {
-            TAR.planesTable.sortByDistance();
+            TAR.planesTable.cols.distance.sort();
         } else {
-            TAR.planesTable.sortByDataSource();
+            TAR.planesTable.cols.data_source.sort();
         }
     });
 
@@ -2143,9 +2143,6 @@ function refreshFeatures() {
         header: function() { return ""; },
         sort: function () { sortBy('country', compareAlpha, function(x) { return x.icaorange.country; }); },
         value: function(plane) { return (plane.icaorange.flag_image ? ('<img width="20" height="12" style="display: block;margin: auto;" src="' + FlagPath + plane.icaorange.flag_image + '" title="' + plane.icaorange.country + '"></img>') : ''); },
-
-
-
         hStyle: 'style="width: 20px; padding: 3px;"',
         html: true,
     };
