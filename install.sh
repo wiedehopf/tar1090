@@ -344,7 +344,7 @@ then
     then
         rm -f /etc/lighttpd/conf-enabled/87-mod_setenv.conf
     fi
-    if (( $(cat /etc/lighttpd/conf-enabled/* | grep -c -E -e 'server.modules.?\+=.?\(.?"mod_setenv".?\)') > 1 )); then
+    if (( $(cat /etc/lighttpd/conf-enabled/* | grep -c -E -e '^server.modules.?\+=.?\(.?"mod_setenv".?\)') > 1 )); then
         rm -f /etc/lighttpd/conf-enabled/87-mod_setenv.conf
     fi
 
