@@ -1712,7 +1712,7 @@ function refreshSelected() {
         $('#selected_flightaware_link').html(getFlightAwareModeSLink(selected.icao, selected.flight, "Visit Flight Page"));
     }
 
-    if (selected.isNonIcao()) {
+    if (selected.isNonIcao() && selected.source != 'mlat') {
         $('#tisb_info').removeClass('hidden');
         $('#reg_info').addClass('hidden');
     } else {
