@@ -155,6 +155,13 @@ cp install.sh uninstall.sh LICENSE README.md $ipath
 cp default $ipath/example_config_dont_edit
 rm -f $ipath/default
 
+# create 95-tar1090-otherport.conf
+{
+    echo '# serve tar1090 directly on port 8504'
+    echo '$SERVER["socket"] == ":8504" {'
+    cat 88-tar1090.conf
+    echo '}'
+} > 95-tar1090-otherport.conf
 
 services=""
 names=""
