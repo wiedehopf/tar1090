@@ -4008,7 +4008,6 @@ function toggleLargeMode() {
 
 function toggleShowTrace() {
     if (!showTrace) {
-        dbServer = false; // temporary until i get the traces supplemented with registration data
         toggleMultiSelect("off");
         showTrace = true;
         toggleFollow(false);

@@ -116,8 +116,7 @@ function PlaneObject(icao) {
 
     this.regLoaded = false;
     // request metadata
-    if (!dbServer && !this.regLoaded)
-        this.getAircraftData();
+    this.checkForDB({});
 
     // military icao ranges
     if (this.milRange()) {
@@ -2498,15 +2497,16 @@ PlaneObject.prototype.setTypeData = function() {
 };
 
 PlaneObject.prototype.checkForDB = function(t) {
+    if (!this.regLoaded && (!t || !t.r) && (!dbServer || showTrace || this.receiver == 'uat')) {
+        this.getAircraftData();
+        return;
+    }
     if (!t) {
         return;
     }
 
     if (t.desc) this.typeLong = t.desc;
     if (t.r) this.registration = t.r;
-
-    if (!t.r && !dbServer && !this.regLoaded)
-        this.getAircraftData();
 
     if (t.t) {
         this.icaoType = t.t;
