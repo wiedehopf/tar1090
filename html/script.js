@@ -90,7 +90,6 @@ let geoMag = null;
 let globalCompositeTested = false;
 let solidT = false;
 let lastActive = new Date().getTime();
-let inactive = 0;
 let firstFetchDone = false;
 let overrideMapType = null;
 let halloween = false;
@@ -3954,29 +3953,33 @@ function updateAddressBar() {
 
 function refreshInt() {
     let refresh = RefreshInterval;
-    if (!globeIndex)
-        return refresh;
+    if (!globeIndex) {
+        if (document[hidden])
+            return 3 * refresh;
+        else
+            return refresh;
+    }
+
+    if (document[hidden])
+        return 24 * 3600 * 1000; // hidden tab, don't refresh to avoid freeze when the tab is switched to again.
 
     if (adsbexchange && refresh < 2500)
         refresh = 2500;
 
-    inactiveUpdate();
+    let inactive = getInactive();
 
     if (inactive < 70)
         inactive = 70;
-    if (inactive > 400)
-        inactive = 400;
+    if (inactive > 180)
+        inactive = 180;
 
-    if (document[hidden])
-        refresh = 24 * 3600 * 1000; // hidden tab, don't refresh to avoid freeze when the tab is switched to again.
-    else
-        refresh *= inactive / 70;
+    refresh *= inactive / 70;
 
     if (!mapIsVisible)
         refresh *= 2;
 
-    if (onMobile)
-        refresh *= 1.5;
+    //if (onMobile)
+    //    refresh *= 1.5;
 
     return refresh;
 }
@@ -4880,8 +4883,8 @@ function updateIconCache() {
     addToIconCache = tryAgain;
 }
 
-function inactiveUpdate() {
-    inactive = (new Date().getTime() - lastActive) / 1000;
+function getInactive() {
+    return (new Date().getTime() - lastActive) / 1000;
 }
 
 function active() {
