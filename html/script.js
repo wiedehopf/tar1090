@@ -427,10 +427,14 @@ function initialize() {
         largeMode = parseInt(largeModeStorage, 10);
     }
 
+    let drawIcons = false;
     try {
         const search = new URLSearchParams(window.location.search);
         if (search.has('showGrid'))
             showGrid = true;
+
+        if (search.has('iconTest'))
+            drawIcons = true;
 
         if (search.has('halloween'))
             halloween = true;
@@ -595,18 +599,22 @@ function initialize() {
         collapsible: true
     });
 
-    $.when(configureReceiver, heatmapDefer).done(function() {
-        configureReceiver = null;
+    if (drawIcons) {
+        iconTest();
+    } else {
+        $.when(configureReceiver, heatmapDefer).done(function() {
+            configureReceiver = null;
 
-        // Initialize stuff
-        initPage();
+            // Initialize stuff
+            initPage();
 
-        // Wait for history item downloads and append them to the buffer
-        push_history();
-        $.when(historyLoaded).done(function() {
-            startPage();
+            // Wait for history item downloads and append them to the buffer
+            push_history();
+            $.when(historyLoaded).done(function() {
+                startPage();
+            });
         });
-    });
+    }
 }
 
 function initPage() {
