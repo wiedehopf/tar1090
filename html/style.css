@@ -487,14 +487,6 @@ select.error, textarea.error, input.error {
     color: #003f4b;
 }
 
-.infoRowFluid {
-    display: inline-block;
-}
-
-.infoRow {
-    padding-top: calc( 10px * var(--SCALE));
-}
-
 .infoTable {
     width: 100%;
     border-collapse: collapse;
@@ -507,7 +499,7 @@ table.infoTable tr td {
     margin: 0;
 }
 
-.infoRowSpacer {
+.rSpacer {
     padding-top: calc( 3px * var(--SCALE));
     padding-bottom: calc( 3px * var(--SCALE));
 }
@@ -515,6 +507,7 @@ table.infoTable tr td {
 .infoHeading {
     margin-top: calc( 2px * var(--SCALE));
     margin-bottom: calc( 2px * var(--SCALE));
+    display: inline-block;
 }
 
 .infoHeading sub {
@@ -526,6 +519,7 @@ table.infoTable tr td {
     margin-bottom: calc( 2px * var(--SCALE));
     float: right;
     text-align: right;
+    display: inline-block;
 }
 
 .infoBlockSection {

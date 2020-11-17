@@ -1713,10 +1713,16 @@ function refreshSelected() {
     }
 
     if (selected.isNonIcao() && selected.source != 'mlat') {
-        $('#tisb_info').removeClass('hidden');
+        $('#anon_mlat_info').addClass('hidden');
         $('#reg_info').addClass('hidden');
+        $('#tisb_info').removeClass('hidden');
+    } else if (selected.isNonIcao() && selected.source == 'mlat') {
+        $('#reg_info').addClass('hidden');
+        $('#tisb_info').addClass('hidden');
+        $('#anon_mlat_info').removeClass('hidden');
     } else {
         $('#tisb_info').addClass('hidden');
+        $('#anon_mlat_info').addClass('hidden');
         $('#reg_info').removeClass('hidden');
     }
     if (selected.registration != selReg) {
