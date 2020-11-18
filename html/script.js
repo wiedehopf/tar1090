@@ -2454,11 +2454,24 @@ function refreshFeatures() {
                 plane.tr.className = classes;
             }
         }
+
+        // webGL zIndex hack:
+        // sort all planes by altitude
+        // clear the vector source
+        // delete all feature objects so they are recreated, this is important
+        // draw order will be insertion / updateFeatures / updateTick order
+
         addToMap.sort(function(x, y) { return x.altSort - y.altSort; });
-        if (globeIndex && !icaoFilter) {
+        console.log(addToMap.length);
+        if (webgl) {
+            webglFeatures.clear();
             for (let i in addToMap) {
-                addToMap[i].updateFeatures(now, last);
+                delete addToMap[i].glMarker;
             }
+        }
+        if (globeIndex && !icaoFilter) {
+            for (let i in addToMap)
+                addToMap[i].updateFeatures(now, last);
         } else {
             for (let i in addToMap) {
                 addToMap[i].updateTick();
