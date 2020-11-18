@@ -80,6 +80,7 @@ let traceDay = null;
 let traceOpts = {};
 let icaoParam = null;
 let globalScale = 1;
+let iconScale = 1;
 let newWidth = lineWidth;
 let SiteOverride = false;
 let airport = null;
@@ -540,6 +541,12 @@ function initPage() {
             let contrast = parseFloat(search.get('mapContrast'));
             if (!isNaN(contrast))
             mapContrastPercentage = contrast;
+        }
+
+        if (search.has('iconScale')) {
+            let scale = parseFloat(search.get('iconScale'));
+            if (!isNaN(scale))
+                iconScale = scale;
         }
 
         if (search.has('hideButtons'))
@@ -3622,7 +3629,7 @@ function changeZoom(init) {
         scaleFactor = markerSmall;
 
     // scale markers according to global scaling
-    scaleFactor *= Math.pow(1.3, globalScale) * globalScale;
+    scaleFactor *= Math.pow(1.3, globalScale) * globalScale * iconScale;;
 
     if (!init && showTrace)
         updateAddressBar();
