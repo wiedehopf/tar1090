@@ -687,6 +687,8 @@ function altitudeColor(altitude) {
 }
 
 PlaneObject.prototype.setMarkerRgb = function() {
+    if (!this.glMarker)
+        return;
     let hsl = this.getMarkerColor();
     let rgb = hslToRgb(hsl, 'array');
     if (this.shape && this.shape.svg)
@@ -1481,10 +1483,12 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
 
 PlaneObject.prototype.clearMarker = function() {
     if (this.marker && this.marker.visible) {
-        if (webgl && this.shape)
-            webglFeatures.removeFeature(this.glMarker);
         PlaneIconFeatures.removeFeature(this.marker);
         this.marker.visible = false;
+    }
+    if (this.glMarker && this.glMarker.visible) {
+        webglFeatures.removeFeature(this.glMarker);
+        this.glMarker.visible = false;
     }
 };
 
@@ -1519,22 +1523,22 @@ PlaneObject.prototype.updateMarker = function(moved) {
     if (!this.marker) {
         this.marker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
         this.marker.hex = this.icao;
-
-        if (webgl)
-            this.glMarker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
+    }
+    if (moved)
+        this.marker.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
+    if (webgl && !this.glMarker) {
+        this.glMarker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
         this.glMarker.hex = this.icao;
         this.glMarker.set('alt', this.alt_rounded == 'ground' ? 0 : this.alt_rounded);
         this.glMarker.set('rotation', 0);
         this.glMarker.set('scale', 1);
-    } else if (moved) {
-        this.marker.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
-        if (webgl)
-            this.glMarker.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
     }
+    if (webgl && moved)
+        this.glMarker.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
 
     this.updateIcon();
 
-    if (webgl && this.shape != this.shapeCache) {
+    if (webgl && this.glMarker && this.shape != this.shapeCache) {
         this.shapeCache = this.shape;
         this.glMarker.set('cx', getSpriteX(this.shape) / glImapWidth);
         this.glMarker.set('cy', getSpriteY(this.shape) / glImapHeight);
@@ -1544,8 +1548,10 @@ PlaneObject.prototype.updateMarker = function(moved) {
     if (!this.marker.visible) {
         this.marker.visible = true;
         PlaneIconFeatures.addFeature(this.marker);
-        if (webgl)
-            webglFeatures.addFeature(this.glMarker);
+    }
+    if (webgl && this.glMarker && !this.glMarker.visible) {
+        this.glMarker.visible = true;
+        webglFeatures.addFeature(this.glMarker);
     }
 };
 
