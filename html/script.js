@@ -3583,9 +3583,9 @@ function highlight(evt) {
         },
         {
             layerFilter: function(layer) {
-                return (layer == iconLayer);
+                return (layer == iconLayer || layer == webglLayer);
             },
-            hitTolerance:5,
+            hitTolerance: 5 * globalScale,
         }
     );
 

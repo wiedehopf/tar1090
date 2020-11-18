@@ -707,16 +707,10 @@ PlaneObject.prototype.updateIcon = function() {
     let svgKey  = fillColor + '!' + this.shape.name + '!' + this.strokeWidth;
     let labelText = null;
 
-    if (webgl) {
+    if (webgl && this.glMarker) {
         const iconRotation = this.shape.noRotate ? 0 : this.rotation;
-        if (this.rotationCache != iconRotation && Math.abs(this.rotationCache - iconRotation) > 0.35) {
-            this.rotationCache = iconRotation;
-            this.glMarker.set('rotation', iconRotation * Math.PI / 180.0);
-        }
-        if (this.glMcaleCache != this.scale) {
-            this.scaleCache = this.scale;
-            this.glMarker.set('size', this.scale * Math.max(this.shape.w, this.shape.h));
-        }
+        this.glMarker.set('rotation', iconRotation * Math.PI / 180.0);
+        this.glMarker.set('size', this.scale * Math.max(this.shape.w, this.shape.h));
     }
     if ( enableLabels && !showTrace && (!multiSelect || (multiSelect && this.selected)) &&
         (
