@@ -96,7 +96,7 @@ let firstFetchDone = false;
 let overrideMapType = null;
 let halloween = false;
 let noRegOnly = false;
-let queueRefresh = false;
+let triggerMapRefresh = false;
 
 let shareLink = '';
 
@@ -257,10 +257,6 @@ function processReceiverUpdate(data, init) {
 function fetchData() {
     if (heatmap)
         return;
-    ZoomLvl = OLMap.getView().getZoom();
-    let center = ol.proj.toLonLat(OLMap.getView().getCenter());
-    localStorage['CenterLon'] = CenterLon = center[0];
-    localStorage['CenterLat'] = CenterLat = center[1];
     clearTimeout(refreshId);
     refreshId = setTimeout(fetchData, refreshInt());
     //console.log("fetch");
@@ -368,16 +364,14 @@ function fetchData() {
             }
 
             if (PendingFetches <= 1) {
-                queueRefresh = true;
-                refreshSelected();
-                refreshHighlighted();
+                triggerMapRefresh = true;
             }
+            PendingFetches--;
 
             if (globeIndex) {
                 clearTimeout(refreshId);
                 refreshId = setTimeout(fetchData, refreshInt());
             }
-            PendingFetches--;
 
             // Check for stale receiver data
             if (last == now && !globeIndex) {
@@ -3531,13 +3525,16 @@ function checkMovement() {
 function checkRefresh() {
     const center = ol.proj.toLonLat(OLMap.getView().getCenter());
     const zoom = OLMap.getView().getZoom();
-    if (!queueRefresh && ZoomLvl == zoom && center[0] == CenterLon && center[1] == CenterLat)
+    if (!triggerMapRefresh && ZoomLvl == zoom && center[0] == CenterLon && center[1] == CenterLat)
         return;
     //console.time("refreshTable");
+    refreshSelected();
+    refreshHighlighted();
     TAR.planesTable.refresh();
     mapRefresh();
     //console.timeEnd("refreshTable");
-    queueRefresh = false;
+
+    triggerMapRefresh = false;
     changeZoom();
     changeCenter();
 }
@@ -4040,8 +4037,8 @@ function refreshInt() {
     if (document[hidden])
         return 24 * 3600 * 1000; // hidden tab, don't refresh to avoid freeze when the tab is switched to again.
 
-    if (adsbexchange && refresh < 2500)
-        refresh = 2500;
+    if (adsbexchange && refresh < 2700)
+        refresh = 2700;
 
     let inactive = getInactive();
 
@@ -4055,8 +4052,8 @@ function refreshInt() {
     if (!mapIsVisible)
         refresh *= 2;
 
-    //if (onMobile)
-    //    refresh *= 1.5;
+    if (onMobile && TrackedAircraftPositions > 800)
+        refresh *= 1.5;
 
     return refresh;
 }
