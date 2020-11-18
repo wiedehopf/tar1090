@@ -5,7 +5,7 @@
 "use strict";
 
 // Define our global variables
-let webgl = true;
+let webgl = false;
 let webglFeatures = new ol.source.Vector();
 let OLMap = null;
 let OLProj = null;
@@ -1403,18 +1403,31 @@ function initMap() {
         toggleLayer('#acpositions_checkbox', 'ac_positions');
     });
 
-    new Toggle({
-        key: "webgl",
-        display: "WebGL",
-        container: "#settingsLeft",
-        init: true,
-        setState: function(state) {
-            if (state)
-                webgl = true;
-            else
-                webgl = false;
-        },
-    });
+    let webglSupported = false;
+    try {
+        const canvas = document.createElement('canvas');
+        let gl = canvas.getContext("webgl");
+        webglSupported = true;
+    } catch (error) {
+        console.error(error);
+        console.log('disabling webGL support!');
+        webglSupported = false;
+    }
+
+    if (webglSupported) {
+        new Toggle({
+            key: "webgl",
+            display: "WebGL",
+            container: "#settingsLeft",
+            init: true,
+            setState: function(state) {
+                if (state)
+                    webgl = true;
+                else
+                    webgl = false;
+            },
+        });
+    }
     new Toggle({
         key: "MapDim",
         display: "Dim Map",
@@ -3532,7 +3545,7 @@ function checkRefresh() {
     changeCenter();
 }
 function mapRefresh() {
-    console.log('mapRefresh()');
+    //console.log('mapRefresh()');
     let addToMap = [];
     let lastRenderExtent = null;
     const mapSize = OLMap.getSize()
