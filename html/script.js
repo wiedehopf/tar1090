@@ -1403,6 +1403,18 @@ function initMap() {
     });
 
     new Toggle({
+        key: "webgl",
+        display: "WebGL",
+        container: "#settingsLeft",
+        init: true,
+        setState: function(state) {
+            if (state)
+                webgl = true;
+            else
+                webgl = false;
+        },
+    });
+    new Toggle({
         key: "MapDim",
         display: "Dim Map",
         container: "#settingsLeft",

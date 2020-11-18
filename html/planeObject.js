@@ -1553,6 +1553,10 @@ PlaneObject.prototype.updateMarker = function(moved) {
         this.glMarker.visible = true;
         webglFeatures.addFeature(this.glMarker);
     }
+    if (!webgl && this.glMarker && this.glMarker.visible) {
+        webglFeatures.removeFeature(this.glMarker);
+        this.glMarker.visible = false;
+    }
 };
 
 
