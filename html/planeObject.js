@@ -689,9 +689,11 @@ function altitudeColor(altitude) {
 PlaneObject.prototype.setMarkerRgb = function() {
     let hsl = this.getMarkerColor();
     let rgb = hslToRgb(hsl, 'array');
-    this.marker.set('r', rgb[0]);
-    this.marker.set('g', rgb[1]);
-    this.marker.set('b', rgb[2]);
+    if (this.shape && this.shape.svg)
+        rgb = [255, 255, 255];
+    this.glMarker.set('r', rgb[0]);
+    this.glMarker.set('g', rgb[1]);
+    this.glMarker.set('b', rgb[2]);
 };
 
 PlaneObject.prototype.updateIcon = function() {
@@ -707,13 +709,12 @@ PlaneObject.prototype.updateIcon = function() {
         const iconRotation = this.shape.noRotate ? 0 : this.rotation;
         if (this.rotationCache != iconRotation && Math.abs(this.rotationCache - iconRotation) > 0.35) {
             this.rotationCache = iconRotation;
-            this.marker.set('rotation', iconRotation * Math.PI / 180.0);
+            this.glMarker.set('rotation', iconRotation * Math.PI / 180.0);
         }
-        if (this.scaleCache != this.scale) {
+        if (this.glMcaleCache != this.scale) {
             this.scaleCache = this.scale;
-            this.marker.set('size', this.scale * Math.max(this.shape.w, this.shape.h));
+            this.glMarker.set('size', this.scale * Math.max(this.shape.w, this.shape.h));
         }
-        return;
     }
     if ( enableLabels && !showTrace && (!multiSelect || (multiSelect && this.selected)) &&
         (
@@ -738,7 +739,7 @@ PlaneObject.prototype.updateIcon = function() {
             labelText = " " + this.name + " ";
         }
     }
-    if (this.markerStyle == null || this.markerIcon == null || (this.markerSvgKey != svgKey)) {
+    if (!webgl && (this.markerStyle == null || this.markerIcon == null || (this.markerSvgKey != svgKey))) {
         //console.log(this.icao + " new icon and style " + this.markerSvgKey + " -> " + svgKey);
 
         if (iconCache[svgKey] == undefined) {
@@ -772,15 +773,16 @@ PlaneObject.prototype.updateIcon = function() {
 
         //iconCache[svgKey] = undefined; // disable caching for testing
     }
-    if (!this.markerIcon)
+    if (!this.markerIcon && !webgl)
         return;
 
-    let styleKey = svgKey + '!' + labelText + '!' + this.scale;
+    let styleKey = (webgl ? '' : svgKey) + '!' + labelText + '!' + this.scale;
 
     if (this.styleKey != styleKey) {
         this.styleKey = styleKey;
+        let style;
         if (labelText) {
-            this.markerStyle = new ol.style.Style({
+            style = {
                 image: this.markerIcon,
                 text: new ol.style.Text({
                     text: labelText,
@@ -794,15 +796,20 @@ PlaneObject.prototype.updateIcon = function() {
                     offsetY: (this.shape.w *0.5*0.74*this.scale),
                 }),
                 zIndex: this.zIndex,
-            });
+            };
         } else {
-            this.markerStyle = new ol.style.Style({
+            style = {
                 image: this.markerIcon,
                 zIndex: this.zIndex,
-            });
+            };
         }
+        if (webgl)
+            delete style.image;
+        this.markerStyle = new ol.style.Style(style);
         this.marker.setStyle(this.markerStyle);
     }
+    if (webgl)
+        return;
 
     /*
     if (this.opacityCache != opacity) {
@@ -1475,9 +1482,8 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
 PlaneObject.prototype.clearMarker = function() {
     if (this.marker && this.marker.visible) {
         if (webgl && this.shape)
-            webglFeatures.removeFeature(this.marker);
-        else
-            PlaneIconFeatures.removeFeature(this.marker);
+            webglFeatures.removeFeature(this.glMarker);
+        PlaneIconFeatures.removeFeature(this.marker);
         this.marker.visible = false;
     }
 };
@@ -1514,29 +1520,32 @@ PlaneObject.prototype.updateMarker = function(moved) {
         this.marker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
         this.marker.hex = this.icao;
 
-        this.marker.set('alt', this.alt_rounded == 'ground' ? 0 : this.alt_rounded);
-        this.marker.set('rotation', 0);
-        this.marker.set('scale', 1);
-        this.setMarkerRgb();
+        if (webgl)
+            this.glMarker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
+        this.glMarker.hex = this.icao;
+        this.glMarker.set('alt', this.alt_rounded == 'ground' ? 0 : this.alt_rounded);
+        this.glMarker.set('rotation', 0);
+        this.glMarker.set('scale', 1);
     } else if (moved) {
         this.marker.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
+        if (webgl)
+            this.glMarker.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
     }
 
     this.updateIcon();
 
     if (webgl && this.shape != this.shapeCache) {
         this.shapeCache = this.shape;
-        this.marker.set('cx', getSpriteX(this.shape) / glImapWidth);
-        this.marker.set('cy', getSpriteY(this.shape) / glImapHeight);
-        this.marker.set('dx', (getSpriteX(this.shape) + 1) / glImapWidth);
-        this.marker.set('dy', (getSpriteY(this.shape) + 1) / glImapHeight);
+        this.glMarker.set('cx', getSpriteX(this.shape) / glImapWidth);
+        this.glMarker.set('cy', getSpriteY(this.shape) / glImapHeight);
+        this.glMarker.set('dx', (getSpriteX(this.shape) + 1) / glImapWidth);
+        this.glMarker.set('dy', (getSpriteY(this.shape) + 1) / glImapHeight);
     }
     if (!this.marker.visible) {
         this.marker.visible = true;
+        PlaneIconFeatures.addFeature(this.marker);
         if (webgl)
-            webglFeatures.addFeature(this.marker);
-        else
-            PlaneIconFeatures.addFeature(this.marker);
+            webglFeatures.addFeature(this.glMarker);
     }
 };
 

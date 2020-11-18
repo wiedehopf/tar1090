@@ -1117,7 +1117,7 @@ function svgShapeToURI(shape, fillColor, strokeColor, strokeWidth, scale){
 
     return "data:image/svg+xml;base64," + btoa(svg);
 }
-let glIconSize = 92;
+let glIconSize = 80;
 let glImapWidth = 16;
 let glImapHeight = 9;
 function getSpriteX(shape) {
@@ -1161,7 +1161,7 @@ function iconTest() {
         else
             offX = diff / 2;
 
-        let svg = svgShapeToURI(shape, '#FFFFFF', '#000000', 0.72, scale);
+        let svg = svgShapeToURI(shape, '#FFFFFF', '#000000', 0.75, scale);
         let img = document.createElement('img');
         img.onload = function () {
             con.drawImage(this, getSpriteX(shape) * glIconSize + offX, getSpriteY(shape) * glIconSize + offY);

@@ -5,7 +5,7 @@
 "use strict";
 
 // Define our global variables
-let webgl = false;
+let webgl = true;
 let webglFeatures = new ol.source.Vector();
 let OLMap = null;
 let OLProj = null;
@@ -13,6 +13,7 @@ let StaticFeatures = new ol.source.Vector();
 let PlaneIconFeatures = new ol.source.Vector();
 let trailGroup = new ol.Collection();
 let iconLayer;
+let webglLayer;
 let trailLayers;
 let heatFeatures = [];
 let heatFeaturesSpread = 1024;
@@ -1236,28 +1237,27 @@ function initMap() {
     };
 
 
-    if (webgl) {
-        iconLayer = new ol.layer.WebGLPoints({
-            name: 'ac_positions',
-            type: 'overlay',
-            title: 'Aircraft positions',
-            source: webglFeatures,
-            declutter: false,
-            zIndex: 200,
-            renderBuffer: 20,
-            style: glStyle,
-        });
-    } else {
-        iconLayer = new ol.layer.Vector({
-            name: 'ac_positions',
-            type: 'overlay',
-            title: 'Aircraft positions',
-            source: PlaneIconFeatures,
-            declutter: false,
-            zIndex: 200,
-            renderBuffer: 20,
-        });
-    }
+    webglLayer = new ol.layer.WebGLPoints({
+        name: 'ac_positions',
+        type: 'overlay',
+        title: 'Aircraft pos. webGL',
+        source: webglFeatures,
+        declutter: false,
+        zIndex: 200,
+        renderBuffer: 20,
+        style: glStyle,
+    });
+    layers.push(webglLayer);
+
+    iconLayer = new ol.layer.Vector({
+        name: 'ac_positions',
+        type: 'overlay',
+        title: 'Aircraft positions',
+        source: PlaneIconFeatures,
+        declutter: false,
+        zIndex: 200,
+        renderBuffer: 20,
+    });
     layers.push(iconLayer);
 
 
@@ -1373,7 +1373,7 @@ function initMap() {
             },
             {
                 layerFilter: function(layer) {
-                    return (layer == iconLayer || layer.get('isTrail') == true);
+                    return (layer == webglLayer || layer == iconLayer || layer.get('isTrail') == true);
                 },
                 hitTolerance: 6 * globalScale,
             }
