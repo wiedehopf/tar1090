@@ -1121,10 +1121,10 @@ let glIconSize = 92;
 let glImapWidth = 16;
 let glImapHeight = 9;
 function getSpriteX(shape) {
-    return (shape.id % glImapWidth) * glIconSize;
+    return (shape.id % glImapWidth);
 }
 function getSpriteY(shape) {
-    return Math.floor(shape.id / glImapWidth) * glIconSize;
+    return Math.floor(shape.id / glImapWidth);
 }
 function iconTest() {
     $('#large_mode_control').hide();
@@ -1164,7 +1164,7 @@ function iconTest() {
         let svg = svgShapeToURI(shape, '#FFFFFF', '#000000', 0.72, scale);
         let img = document.createElement('img');
         img.onload = function () {
-            con.drawImage(this, getSpriteX(shape) + offX, getSpriteY(shape) + offY);
+            con.drawImage(this, getSpriteX(shape) * glIconSize + offX, getSpriteY(shape) * glIconSize + offY);
         };
         img.src = svg;
     }

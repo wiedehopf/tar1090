@@ -711,7 +711,7 @@ PlaneObject.prototype.updateIcon = function() {
         }
         if (this.scaleCache != this.scale) {
             this.scaleCache = this.scale;
-            this.marker.set('scale', this.scale);
+            this.marker.set('size', this.scale * Math.max(this.shape.w, this.shape.h));
         }
         return;
     }
@@ -1475,7 +1475,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
 PlaneObject.prototype.clearMarker = function() {
     if (this.marker && this.marker.visible) {
         if (webgl && this.shape)
-            this.shape.features.removeFeature(this.marker);
+            webglFeatures.removeFeature(this.marker);
         else
             PlaneIconFeatures.removeFeature(this.marker);
         this.marker.visible = false;
@@ -1524,14 +1524,17 @@ PlaneObject.prototype.updateMarker = function(moved) {
 
     this.updateIcon();
 
-    if (webgl && this.shape != this.shapeCache && this.shapeCache) {
-        this.shapeCache.features.removeFeature(this.marker);
+    if (webgl && this.shape != this.shapeCache) {
         this.shapeCache = this.shape;
+        this.marker.set('cx', getSpriteX(this.shape) / glImapWidth);
+        this.marker.set('cy', getSpriteY(this.shape) / glImapHeight);
+        this.marker.set('dx', (getSpriteX(this.shape) + 1) / glImapWidth);
+        this.marker.set('dy', (getSpriteY(this.shape) + 1) / glImapHeight);
     }
     if (!this.marker.visible) {
         this.marker.visible = true;
         if (webgl)
-            this.shape.features.addFeature(this.marker);
+            webglFeatures.addFeature(this.marker);
         else
             PlaneIconFeatures.addFeature(this.marker);
     }

@@ -6,6 +6,7 @@
 
 // Define our global variables
 let webgl = false;
+let webglFeatures = new ol.source.Vector();
 let OLMap = null;
 let OLProj = null;
 let StaticFeatures = new ol.source.Vector();
@@ -1210,55 +1211,42 @@ function initMap() {
 
     layers.push(trailLayers);
 
-    function getStyle(shape) {
-        return {
-            symbol: {
-                symbolType: 'image',
-                src: svgShapeToURI(shape, '#FFFFFF', '#000000', 1, 1.8),
-                size: [ 'array',
-                    [ '*', shape.w, [ 'get', 'scale' ]],
-                    [ '*', shape.h, [ 'get', 'scale' ]]
-                ],
-                color: (shape.svg ? '#FFFFFF': [
-                    'color',
-                    [ 'get', 'r' ],
-                    [ 'get', 'g' ],
-                    [ 'get', 'b' ],
-                    1
-                ]),
-                rotateWithView: false,
-                rotation: (shape.noRotate ? 0 : [ 'get', 'rotation' ]),
-            },
-        }
-    }
-
+    let glStyle = {
+        symbol: {
+            symbolType: 'image',
+            src: 'images/sprites001.png',
+            size: [ 'get', 'size' ],
+            offset: [0, 0],
+            textureCoord: [ 'array',
+                [ 'get', 'cx' ],
+                [ 'get', 'cy' ],
+                [ 'get', 'dx' ],
+                [ 'get', 'dy' ]
+            ],
+            color: [
+                'color',
+                [ 'get', 'r' ],
+                [ 'get', 'g' ],
+                [ 'get', 'b' ],
+                1
+            ],
+            rotateWithView: false,
+            rotation: [ 'get', 'rotation' ],
+        },
+    };
 
 
     if (webgl) {
-        let glIcons = new ol.Collection();
-        let kv = Object.entries(shapes);
-        for (let i in kv) {
-            let key = kv[i][0];
-            let shape = kv[i][1];
-            shape.features = new ol.source.Vector();
-            glIcons.push(new ol.layer.WebGLPoints({
-                style: getStyle(shape),
-                name: key,
-                type: 'overlay',
-                source: shape.features,
-                declutter: false,
-                zIndex: 200,
-                renderBuffer: 20,
-            }));
-        }
-
-        layers.push(new ol.layer.Group({
-            name: 'glIcons',
-            title: 'Aircraft icons',
+        iconLayer = new ol.layer.WebGLPoints({
+            name: 'ac_positions',
             type: 'overlay',
-            layers: glIcons,
+            title: 'Aircraft positions',
+            source: webglFeatures,
+            declutter: false,
             zIndex: 200,
-        }));
+            renderBuffer: 20,
+            style: glStyle,
+        });
     } else {
         iconLayer = new ol.layer.Vector({
             name: 'ac_positions',
@@ -1269,8 +1257,8 @@ function initMap() {
             zIndex: 200,
             renderBuffer: 20,
         });
-        layers.push(iconLayer);
     }
+    layers.push(iconLayer);
 
 
     let foundType = false;
