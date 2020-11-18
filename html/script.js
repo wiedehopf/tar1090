@@ -2356,8 +2356,6 @@ function refreshFeatures() {
         TrackedHistorySize = 0;
 
         let nPlanes = 0;
-        let nMapPlanes = 0;
-
         if (mapIsVisible || lastRealExtent === null) {
             lastRealExtent = myExtent(OLMap.getView().calculateExtent(OLMap.getSize()));
         }
@@ -2378,7 +2376,6 @@ function refreshFeatures() {
             ) {
                 plane.showInTable = true;
                 TrackedAircraftPositions++;
-                nMapPlanes++;
             }
 
             if (plane.visible) {
@@ -3548,25 +3545,35 @@ function mapRefresh() {
     //console.log('mapRefresh()');
     let addToMap = [];
     let lastRenderExtent = null;
+    let nMapPlanes = 0;
+
     const mapSize = OLMap.getSize()
     const size = [mapSize[0] * 1.2, mapSize[1] * 1.2];
     lastRenderExtent = myExtent(OLMap.getView().calculateExtent(size));
-    for (let i = 0; i < PlanesOrdered.length; ++i) {
-        const plane = PlanesOrdered[i];
-        if (globeIndex && !icaoFilter) {
-            // disable mobile limitations, webGL makes the page much quicker.
-            //if (((nMapPlanes < 100 || !onMobile)
-            //    && (!onMobile || ZoomLvl > 10 || !plane.onGround)
-            if ((!plane.isFiltered() && inView(plane.position, lastRenderExtent))
-                || (plane.selected && !SelectedAllPlanes)) {
+    if (globeIndex && !icaoFilter) {
+        for (let i in PlanesOrdered) {
+            const plane = PlanesOrdered[i];
+            // disable mobile limitations when using webGL
+            if (
+                (!onMobile || webgl || nMapPlanes < 150)
+                && (!onMobile || webgl || ZoomLvl > 10 || !plane.onGround)
+                && !plane.isFiltered()
+                && inView(plane.position, lastRenderExtent)
+            ) {
                 addToMap.push(plane);
+                nMapPlanes++;
+            } else if (plane.selected && !SelectedAllPlanes) {
+                addToMap.push(plane);
+                nMapPlanes++;
             } else if (plane.visible) {
                 plane.clearMarker();
                 plane.clearLines();
                 plane.visible = false;
             }
-        } else {
-            addToMap.push(plane);
+        }
+    } else {
+        for (let i in PlanesOrdered) {
+            addToMap.push(PlanesOrdered[i]);
         }
     }
 
