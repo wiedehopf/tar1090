@@ -1207,7 +1207,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.alt_reliable = Math.min(this.alt_reliable + 1, 3);
     }
 
-    this.alt_rounded = calcAltitudeRounded(this.altitude);
+    this.updateAlt();
 
     if (this.altitude == null) {
         this.onGround = null;
@@ -1523,7 +1523,6 @@ PlaneObject.prototype.updateMarker = function(moved) {
     if (webgl && !this.glMarker) {
         this.glMarker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
         this.glMarker.hex = this.icao;
-        this.glMarker.set('alt', this.alt_rounded == 'ground' ? 0 : this.alt_rounded);
         this.glMarker.set('rotation', 0);
         this.glMarker.set('scale', 1);
     }
@@ -2190,7 +2189,9 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
     this.position_time = _now;
     this.last_message_time = Math.max(_now, this.last_message_time);
     this.altitude = altitude;
-    this.alt_rounded = calcAltitudeRounded(this.altitude);
+
+    this.updateAlt();
+
     if (alt_geom) {
         this.alt_geom = altitude;
         //this.alt_baro = null;
@@ -2533,3 +2534,12 @@ PlaneObject.prototype.checkForDB = function(t) {
         this.interesting = t.dbFlags & 2;
     }
 };
+PlaneObject.prototype.updateAlt = function(t) {
+    this.alt_rounded = calcAltitudeRounded(this.altitude);
+    if (this.altitude == 'ground')
+        this.altSort = -100001;
+    else if (this.altitude)
+        this.altSort = this.altitude;
+    else
+        this.altSort = -100000;
+}

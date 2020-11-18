@@ -2181,7 +2181,7 @@ function refreshFeatures() {
         align: 'right' };
     cols.altitude = {
         text: 'Altitude',
-        sort: function () { sortBy('altitude',compareNumeric, function(x) { return (x.altitude == "ground" ? -1e9 : x.altitude); }); },
+        sort: function () { sortBy('altitude',compareNumeric, function(x) { return (x.altitude == "ground" ? -100000 : x.altitude); }); },
         value: function(plane) { return format_altitude_brief(plane.altitude, plane.vert_rate, DisplayUnits); },
         align: 'right',
         header: function () { return 'Altitude(' + get_unit_label("altitude", DisplayUnits) + ')';},
@@ -2353,6 +2353,7 @@ function refreshFeatures() {
         }
 
         const sidebarVisible = toggles['sidebar_visible'].state;
+        let addToMap = [];
         for (let i = 0; i < PlanesOrdered.length; ++i) {
             const plane = PlanesOrdered[i];
 
@@ -2366,14 +2367,14 @@ function refreshFeatures() {
                     && !plane.isFiltered()
                     && inView(plane.position, lastRenderExtent)
                     ) || (plane.selected && !SelectedAllPlanes)) {
-                    plane.updateFeatures(now, last);
+                    addToMap.push(plane);
                 } else if (plane.visible) {
                     plane.clearMarker();
                     plane.clearLines();
                     plane.visible = false;
                 }
             } else {
-                plane.updateTick();
+                addToMap.push(plane);
             }
 
             plane.showInTable = false;
@@ -2451,6 +2452,16 @@ function refreshFeatures() {
             if (plane.tr && plane.classesCache != classes) {
                 plane.classesCache = classes;
                 plane.tr.className = classes;
+            }
+        }
+        addToMap.sort(function(x, y) { return x.altSort - y.altSort; });
+        if (globeIndex && !icaoFilter) {
+            for (let i in addToMap) {
+                addToMap[i].updateFeatures(now, last);
+            }
+        } else {
+            for (let i in addToMap) {
+                addToMap[i].updateTick();
             }
         }
 
