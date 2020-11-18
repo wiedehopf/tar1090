@@ -6,14 +6,15 @@
 
 // Define our global variables
 let webgl = false;
+let webglSupported = false;
 let webglFeatures = new ol.source.Vector();
+let webglLayer;
 let OLMap = null;
 let OLProj = null;
 let StaticFeatures = new ol.source.Vector();
 let PlaneIconFeatures = new ol.source.Vector();
 let trailGroup = new ol.Collection();
 let iconLayer;
-let webglLayer;
 let trailLayers;
 let heatFeatures = [];
 let heatFeaturesSpread = 1024;
@@ -412,6 +413,32 @@ function fetchData() {
 // this function is called from index.html on body load
 // kicks off the whole rabbit hole
 function initialize() {
+    try {
+        if (new URLSearchParams(window.location.search).has('iconTest')) {
+            iconTest();
+            return;
+        }
+    } catch (error) {
+        console.log(error);
+    }
+
+    $.when(configureReceiver, heatmapDefer).done(function() {
+        configureReceiver = null;
+
+        // Initialize stuff
+        initPage();
+        initMap();
+
+        // Wait for history item downloads and append them to the buffer
+        push_history();
+
+        $.when(historyLoaded).done(function() {
+            startPage();
+        });
+    });
+}
+
+function initPage() {
 
     onMobile = window.mobilecheck();
 
@@ -422,14 +449,10 @@ function initialize() {
         largeMode = parseInt(largeModeStorage, 10);
     }
 
-    let drawIcons = false;
     try {
         const search = new URLSearchParams(window.location.search);
         if (search.has('showGrid'))
             showGrid = true;
-
-        if (search.has('iconTest'))
-            drawIcons = true;
 
         if (search.has('halloween'))
             halloween = true;
@@ -594,25 +617,6 @@ function initialize() {
         collapsible: true
     });
 
-    if (drawIcons) {
-        iconTest();
-    } else {
-        $.when(configureReceiver, heatmapDefer).done(function() {
-            configureReceiver = null;
-
-            // Initialize stuff
-            initPage();
-
-            // Wait for history item downloads and append them to the buffer
-            push_history();
-            $.when(historyLoaded).done(function() {
-                startPage();
-            });
-        });
-    }
-}
-
-function initPage() {
     // Set page basics
     document.title = PageName;
 
@@ -893,31 +897,6 @@ function initPage() {
             return;
         }
     }
-
-    initMap();
-
-    if (!globeIndex) {
-        $('#show_trace').hide();
-    }
-    if (globeIndex) {
-        $('#V').hide();
-        $('#uat_legend_2').hide();
-        $('#mode_s_legend_2').hide();
-    } else {
-        $('#unknown_legend_2').hide();
-        $('#sat_legend_2').hide();
-    }
-
-    if (hideButtons) {
-        $('#large_mode_control').hide();
-        $('#header_top').hide();
-        $('#header_side').hide();
-        $('#splitter').hide();
-        $('#tabs').hide();
-        $('#filterButton').hide();
-        $('.ol-control').hide();
-        $('.ol-attribution').show();
-    }
 }
 
 function push_history() {
@@ -1058,6 +1037,29 @@ function parseHistory() {
 function startPage() {
     console.log("Completing init");
 
+    if (!globeIndex) {
+        $('#show_trace').hide();
+    }
+    if (globeIndex) {
+        $('#V').hide();
+        $('#uat_legend_2').hide();
+        $('#mode_s_legend_2').hide();
+    } else {
+        $('#unknown_legend_2').hide();
+        $('#sat_legend_2').hide();
+    }
+
+    if (hideButtons) {
+        $('#large_mode_control').hide();
+        $('#header_top').hide();
+        $('#header_side').hide();
+        $('#splitter').hide();
+        $('#tabs').hide();
+        $('#filterButton').hide();
+        $('.ol-control').hide();
+        $('.ol-attribution').show();
+    }
+
     // Setup our timer to poll from the server.
     window.setInterval(reaper, 20000);
     if (tempTrails) {
@@ -1151,6 +1153,69 @@ function startPage() {
 // Utils end
 //
 
+function webglInit() {
+    try {
+        const canvas = document.createElement('canvas');
+        let gl = canvas.getContext("webgl");
+        webglSupported = true;
+    } catch (error) {
+        console.error(error);
+        console.log('disabling webGL support!');
+        webglSupported = false;
+    }
+
+    if (webglSupported) {
+        new Toggle({
+            key: "webgl",
+            display: "WebGL",
+            container: "#settingsLeft",
+            init: true,
+            setState: function(state) {
+                if (state)
+                    webgl = true;
+                else
+                    webgl = false;
+            },
+        });
+
+        let glStyle = {
+            symbol: {
+                symbolType: 'image',
+                src: 'images/sprites001.png',
+                size: [ 'get', 'size' ],
+                offset: [0, 0],
+                textureCoord: [ 'array',
+                    [ 'get', 'cx' ],
+                    [ 'get', 'cy' ],
+                    [ 'get', 'dx' ],
+                    [ 'get', 'dy' ]
+                ],
+                color: [
+                    'color',
+                    [ 'get', 'r' ],
+                    [ 'get', 'g' ],
+                    [ 'get', 'b' ],
+                    1
+                ],
+                rotateWithView: false,
+                rotation: [ 'get', 'rotation' ],
+            },
+        };
+
+
+        webglLayer = new ol.layer.WebGLPoints({
+            name: 'webglLayer',
+            type: 'overlay',
+            title: 'Aircraft pos. webGL',
+            source: webglFeatures,
+            declutter: false,
+            zIndex: 200,
+            renderBuffer: 20,
+            style: glStyle,
+        });
+        layers.push(webglLayer);
+    }
+}
 
 // Initalizes the map and starts up our timers to call various functions
 function initMap() {
@@ -1207,45 +1272,10 @@ function initMap() {
 
     layers.push(trailLayers);
 
-    let glStyle = {
-        symbol: {
-            symbolType: 'image',
-            src: 'images/sprites001.png',
-            size: [ 'get', 'size' ],
-            offset: [0, 0],
-            textureCoord: [ 'array',
-                [ 'get', 'cx' ],
-                [ 'get', 'cy' ],
-                [ 'get', 'dx' ],
-                [ 'get', 'dy' ]
-            ],
-            color: [
-                'color',
-                [ 'get', 'r' ],
-                [ 'get', 'g' ],
-                [ 'get', 'b' ],
-                1
-            ],
-            rotateWithView: false,
-            rotation: [ 'get', 'rotation' ],
-        },
-    };
-
-
-    webglLayer = new ol.layer.WebGLPoints({
-        name: 'ac_positions',
-        type: 'overlay',
-        title: 'Aircraft pos. webGL',
-        source: webglFeatures,
-        declutter: false,
-        zIndex: 200,
-        renderBuffer: 20,
-        style: glStyle,
-    });
-    layers.push(webglLayer);
+    webglInit();
 
     iconLayer = new ol.layer.Vector({
-        name: 'ac_positions',
+        name: 'iconLayer',
         type: 'overlay',
         title: 'Aircraft positions',
         source: PlaneIconFeatures,
@@ -1394,34 +1424,9 @@ function initMap() {
         toggleLayer('#nexrad_checkbox', 'nexrad');
         //toggleLayer('#sitepos_checkbox', 'site_pos');
         toggleLayer('#actrail_checkbox', 'ac_trail');
-        toggleLayer('#acpositions_checkbox', 'ac_positions');
+        //toggleLayer('#acpositions_checkbox', 'webglLayer');
     });
 
-    let webglSupported = false;
-    try {
-        const canvas = document.createElement('canvas');
-        let gl = canvas.getContext("webgl");
-        webglSupported = true;
-    } catch (error) {
-        console.error(error);
-        console.log('disabling webGL support!');
-        webglSupported = false;
-    }
-
-    if (webglSupported) {
-        new Toggle({
-            key: "webgl",
-            display: "WebGL",
-            container: "#settingsLeft",
-            init: true,
-            setState: function(state) {
-                if (state)
-                    webgl = true;
-                else
-                    webgl = false;
-            },
-        });
-    }
     new Toggle({
         key: "MapDim",
         display: "Dim Map",
