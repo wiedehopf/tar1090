@@ -93,7 +93,7 @@ function PlaneObject(icao) {
     this.last = 0; // last json this plane was included in
 
     // When was this last updated (seconds before last update)
-    this.seen = null;
+    this.seen = NaN;
     this.seen_pos = null;
 
     // Display info
