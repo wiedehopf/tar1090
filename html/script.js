@@ -96,6 +96,7 @@ let firstFetchDone = false;
 let overrideMapType = null;
 let halloween = false;
 let noRegOnly = false;
+let queueRefresh = false;
 
 let shareLink = '';
 
@@ -367,9 +368,7 @@ function fetchData() {
             }
 
             if (PendingFetches <= 1) {
-                //console.time("refreshTable");
-                TAR.planesTable.refresh();
-                //console.timeEnd("refreshTable");
+                queueRefresh = true;
                 refreshSelected();
                 refreshHighlighted();
             }
@@ -748,6 +747,7 @@ function initPage() {
         refreshSelected();
         refreshHighlighted();
         TAR.planesTable.refresh();
+        mapRefresh();
     });
 
     $('#blockedmlat_filter').on('click', function() {
@@ -755,6 +755,7 @@ function initPage() {
         refreshSelected();
         refreshHighlighted();
         TAR.planesTable.refresh();
+        mapRefresh();
     });
 
     $('#grouptype_checkbox').on('click', function() {
@@ -1551,6 +1552,7 @@ function initMap() {
             case "M":
                 onlyMLAT = !onlyMLAT;
                 TAR.planesTable.refresh();
+                mapRefresh();
                 break;
             case "T":
                 filterTISB = !filterTISB;
@@ -2262,7 +2264,6 @@ function refreshFeatures() {
 
     let planeRowTemplate = null;
     let lastRealExtent = null;
-    let lastRenderExtent = null;
     let htmlTable = null;
     let tbody = null;
 
@@ -2345,37 +2346,17 @@ function refreshFeatures() {
         let nMapPlanes = 0;
 
         if (mapIsVisible || lastRealExtent === null) {
-            const mapSize = OLMap.getSize();
-            lastRealExtent = myExtent(OLMap.getView().calculateExtent(mapSize));
-
-            const size = [mapSize[0] * 1.2, mapSize[1] * 1.2];
-            lastRenderExtent = myExtent(OLMap.getView().calculateExtent(size));
+            lastRealExtent = myExtent(OLMap.getView().calculateExtent(OLMap.getSize()));
         }
 
         const sidebarVisible = toggles['sidebar_visible'].state;
-        let addToMap = [];
+
         for (let i = 0; i < PlanesOrdered.length; ++i) {
             const plane = PlanesOrdered[i];
 
             TrackedHistorySize += plane.history_size;
 
             plane.inView = !plane.isFiltered() && inView(plane.position, lastRealExtent);
-
-            if (globeIndex && !icaoFilter) {
-                if (((nMapPlanes < 100 || !onMobile)
-                    && (!onMobile || ZoomLvl > 10 || !plane.onGround)
-                    && !plane.isFiltered()
-                    && inView(plane.position, lastRenderExtent)
-                    ) || (plane.selected && !SelectedAllPlanes)) {
-                    addToMap.push(plane);
-                } else if (plane.visible) {
-                    plane.clearMarker();
-                    plane.clearLines();
-                    plane.visible = false;
-                }
-            } else {
-                addToMap.push(plane);
-            }
 
             plane.showInTable = false;
 
@@ -2452,29 +2433,6 @@ function refreshFeatures() {
             if (plane.tr && plane.classesCache != classes) {
                 plane.classesCache = classes;
                 plane.tr.className = classes;
-            }
-        }
-
-        // webGL zIndex hack:
-        // sort all planes by altitude
-        // clear the vector source
-        // delete all feature objects so they are recreated, this is important
-        // draw order will be insertion / updateFeatures / updateTick order
-
-        addToMap.sort(function(x, y) { return x.altSort - y.altSort; });
-        console.log(addToMap.length);
-        if (webgl) {
-            webglFeatures.clear();
-            for (let i in addToMap) {
-                delete addToMap[i].glMarker;
-            }
-        }
-        if (globeIndex && !icaoFilter) {
-            for (let i in addToMap)
-                addToMap[i].updateFeatures(now, last);
-        } else {
-            for (let i in addToMap) {
-                addToMap[i].updateTick();
             }
         }
 
@@ -2955,6 +2913,7 @@ function refreshFilter() {
     refreshSelected();
     refreshHighlighted();
     TAR.planesTable.refresh();
+    mapRefresh();
 
     drawHeatmap();
 }
@@ -3514,9 +3473,6 @@ function changeCenter(init) {
     localStorage['CenterLon'] = CenterLon = center[0];
     localStorage['CenterLat'] = CenterLat = center[1];
 
-    if (!onlySelected)
-        TAR.planesTable.refresh();
-
     if (!init && showTrace)
         updateAddressBar();
 
@@ -3544,6 +3500,9 @@ function checkMovement() {
     checkMoveCenter[0] = center[0];
     checkMoveCenter[1] = center[1];
 
+    if (noMovement > 2)
+        checkRefresh();
+
     if (noMovement++ != 3)
         return;
 
@@ -3557,6 +3516,69 @@ function checkMovement() {
     drawHeatmap();
 
     //console.timeEnd("fire!");
+}
+
+function checkRefresh() {
+    const center = ol.proj.toLonLat(OLMap.getView().getCenter());
+    const zoom = OLMap.getView().getZoom();
+    if (!queueRefresh && ZoomLvl == zoom && center[0] == CenterLon && center[1] == CenterLat)
+        return;
+    //console.time("refreshTable");
+    TAR.planesTable.refresh();
+    mapRefresh();
+    //console.timeEnd("refreshTable");
+    queueRefresh = false;
+    changeZoom();
+    changeCenter();
+}
+function mapRefresh() {
+    console.log('mapRefresh()');
+    let addToMap = [];
+    let lastRenderExtent = null;
+    const mapSize = OLMap.getSize()
+    const size = [mapSize[0] * 1.2, mapSize[1] * 1.2];
+    lastRenderExtent = myExtent(OLMap.getView().calculateExtent(size));
+    for (let i = 0; i < PlanesOrdered.length; ++i) {
+        const plane = PlanesOrdered[i];
+        if (globeIndex && !icaoFilter) {
+            // disable mobile limitations, webGL makes the page much quicker.
+            //if (((nMapPlanes < 100 || !onMobile)
+            //    && (!onMobile || ZoomLvl > 10 || !plane.onGround)
+            if ((!plane.isFiltered() && inView(plane.position, lastRenderExtent))
+                || (plane.selected && !SelectedAllPlanes)) {
+                addToMap.push(plane);
+            } else if (plane.visible) {
+                plane.clearMarker();
+                plane.clearLines();
+                plane.visible = false;
+            }
+        } else {
+            addToMap.push(plane);
+        }
+    }
+
+    // webGL zIndex hack:
+    // sort all planes by altitude
+    // clear the vector source
+    // delete all feature objects so they are recreated, this is important
+    // draw order will be insertion / updateFeatures / updateTick order
+
+    addToMap.sort(function(x, y) { return x.altSort - y.altSort; });
+    //console.log('table refresh: ' + addToMap.length);
+    if (webgl) {
+        webglFeatures.clear();
+        for (let i in addToMap) {
+            delete addToMap[i].glMarker;
+        }
+    }
+    if (globeIndex && !icaoFilter) {
+        for (let i in addToMap)
+            addToMap[i].updateFeatures(now, last);
+    } else {
+        for (let i in addToMap) {
+            addToMap[i].updateTick();
+        }
+    }
 }
 
 function changeZoom(init) {
@@ -3579,9 +3601,6 @@ function changeZoom(init) {
 
     // scale markers according to global scaling
     scaleFactor *= Math.pow(1.3, globalScale) * globalScale;
-
-    if (!onlySelected)
-        TAR.planesTable.refresh();
 
     if (!init && showTrace)
         updateAddressBar();
