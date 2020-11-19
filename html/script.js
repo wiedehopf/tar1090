@@ -81,6 +81,7 @@ let traceOpts = {};
 let icaoParam = null;
 let globalScale = 1;
 let iconScale = 1;
+let labelScale = 1;
 let newWidth = lineWidth;
 let SiteOverride = false;
 let airport = null;
@@ -547,6 +548,12 @@ function initPage() {
             let scale = parseFloat(search.get('iconScale'));
             if (!isNaN(scale))
                 iconScale = scale;
+        }
+
+        if (search.has('labelScale')) {
+            let scale = parseFloat(search.get('labelScale'));
+            if (!isNaN(scale))
+                labelScale = scale;
         }
 
         if (search.has('hideButtons'))
@@ -4081,7 +4088,7 @@ function toggleLargeMode() {
     globalScale = Math.pow(base, largeMode) / base;
     root.style.setProperty("--SCALE", globalScale);
 
-    labelFont = "bold " + (12 * globalScale) + "px/" + (14 * globalScale) + "px Tahoma, Verdana, Helvetica, sans-serif";
+    labelFont = "bold " + (12 * globalScale * labelScale) + "px/" + (14 * globalScale * labelScale) + "px Tahoma, Verdana, Helvetica, sans-serif";
 
     localStorage['largeMode'] = largeMode;
 
