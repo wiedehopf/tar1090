@@ -80,6 +80,7 @@ let traceDay = null;
 let traceOpts = {};
 let icaoParam = null;
 let globalScale = 1;
+let userScale = 1;
 let iconScale = 1;
 let labelScale = 1;
 let newWidth = lineWidth;
@@ -554,6 +555,12 @@ function initPage() {
             let scale = parseFloat(search.get('labelScale'));
             if (!isNaN(scale))
                 labelScale = scale;
+        }
+
+        if (search.has('scale')) {
+            let scale = parseFloat(search.get('scale'));
+            if (!isNaN(scale))
+                userScale = scale;
         }
 
         if (search.has('hideButtons'))
@@ -4085,7 +4092,7 @@ function toggleLargeMode() {
     let root = document.documentElement;
 
     const base = 1.2;
-    globalScale = Math.pow(base, largeMode) / base;
+    globalScale = Math.pow(base, largeMode) / base * userScale;
     root.style.setProperty("--SCALE", globalScale);
 
     labelFont = "bold " + (12 * globalScale * labelScale) + "px/" + (14 * globalScale * labelScale) + "px Tahoma, Verdana, Helvetica, sans-serif";
