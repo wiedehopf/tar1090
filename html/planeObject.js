@@ -1232,8 +1232,14 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     }
     // don't expire callsigns
     if (flight != null) {
-        this.flight	= flight;
-        this.name = flight;
+        this.flight = flight;
+    }
+    if (this.flight && this.flight.trim()) {
+        this.name = this.flight;
+    } else if (this.registration) {
+        this.name = '_' + this.registration;
+    } else {
+        this.name = '_' + this.icao.toUpperCase();
     }
 
     if (mlat && noMLAT) {
@@ -1420,15 +1426,6 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
     this.visible = (!this.isFiltered() && this.checkVisible());
 
     if (this.updated) {
-        if (this.flight && this.flight.trim()) {
-            this.name = this.flight;
-        } else if (this.registration) {
-            this.name = '_' + this.registration;
-        } else {
-            this.name = '_' + this.icao.toUpperCase();
-        }
-        this.name = this.name.trim();
-
         moved = this.updateTrack(now, last);
         this.updated = false;
     }
@@ -2256,8 +2253,15 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
 
         if (data.flight != null) {
             this.flight = data.flight;
-            this.name = data.flight.trim();
         }
+        if (this.flight && this.flight.trim()) {
+            this.name = this.flight;
+        } else if (this.registration) {
+            this.name = '_' + this.registration;
+        } else {
+            this.name = '_' + this.icao.toUpperCase();
+        }
+
         this.addrtype = data.type;
 
         this.alt_geom = data.alt_geom;
