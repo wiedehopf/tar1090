@@ -5,6 +5,7 @@ function PlaneObject(icao) {
     this.icao      = icao;
     this.icaorange = findICAORange(icao);
     this.flight    = null;
+    this.name = '_' + this.icao.toUpperCase();
     this.squawk    = null;
     this.selected  = false;
     this.category  = null;
@@ -2317,6 +2318,7 @@ PlaneObject.prototype.setNull = function() {
     this.position_time = NaN;
 
     this.flight    = null;
+    this.name = '_' + this.icao.toUpperCase();
     this.squawk    = null;
     this.altitude       = null;
     this.alt_baro       = null;
