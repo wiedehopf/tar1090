@@ -1747,7 +1747,7 @@ function refreshSelected() {
     const selected = SelectedPlane;
 
     if (SelectedPlane.position)
-        SelectedPlane.updateMarker();
+        SelectedPlane.updateMarker(true);
     if (selected.flight != selCall) {
         selCall = selected.flight;
         if (selected.flight && selected.flight.trim()) {
@@ -2713,7 +2713,7 @@ function selectPlaneByHex(hex, options) {
     }
     if (newPlane && newPlane.position) {
         newPlane.updateLines();
-        newPlane.updateMarker();
+        newPlane.updateMarker(true);
     }
 
     if (options.zoom == 'follow') {

@@ -1116,7 +1116,6 @@ PlaneObject.prototype.updatePositionData = function(now, last, data, init) {
     let newPos = this.updateTrack(now, last);
 
     this.moveMarker |= newPos;
-    this.moveMarkerGL |= newPos;
 
     if (globeIndex && newPos) {
         let state = {};
@@ -1466,13 +1465,15 @@ PlaneObject.prototype.clearMarker = function() {
 };
 
 // Update our marker on the map
-PlaneObject.prototype.updateMarker = function() {
+PlaneObject.prototype.updateMarker = function(moved) {
     if (pTracks)
         return;
     if (!this.visible || this.position == null || this.isFiltered()) {
         this.clearMarker();
         return;
     }
+
+    moved |= this.moveMarker;
 
     let eastbound = this.rotation < 180;
     let icaoType = this.icaoType;
@@ -1497,19 +1498,17 @@ PlaneObject.prototype.updateMarker = function() {
     if (!this.marker) {
         this.marker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
         this.marker.hex = this.icao;
-    } else if (this.moveMarker) {
+    } else if (moved) {
         this.marker.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
     }
-    this.moveMarker = false;
 
     if (webgl) {
         if (!this.glMarker) {
             this.glMarker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
             this.glMarker.hex = this.icao;
-        } else if (this.moveMarker) {
+        } else if (moved) {
             this.glMarker.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
         }
-        this.moveMarkerGL = false;
 
         this.setMarkerRgb();
         const iconRotation = this.shape.noRotate ? 0 : this.rotation;
