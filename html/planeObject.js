@@ -1116,6 +1116,7 @@ PlaneObject.prototype.updatePositionData = function(now, last, data, init) {
     let newPos = this.updateTrack(now, last);
 
     this.moveMarker |= newPos;
+    this.drawLine |= newPos;
 
     if (globeIndex && newPos) {
         let state = {};
@@ -1430,12 +1431,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
         if (SelectedAllPlanes)
             this.selected = true;
 
-        let lines = false;
-
-        if (redraw || lastVisible != this.visible)
-            lines = true;
-
-        if (lines)
+        if (this.drawLine || redraw || lastVisible != this.visible)
             this.updateLines();
 
         this.updateMarker();
@@ -1635,6 +1631,7 @@ function altitudeLines (segment) {
 
 // Update our planes tail line,
 PlaneObject.prototype.updateLines = function() {
+    this.drawLine = false;
     if (!this.visible || this.position == null || (!this.selected && !SelectedAllPlanes) || this.isFiltered())
         return this.clearLines();
 
