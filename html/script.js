@@ -1050,6 +1050,10 @@ function parseHistory() {
 function startPage() {
     console.log("Completing init");
 
+    // Kick off first refresh.
+    if (!heatmap && !pTracks)
+        fetchData();
+
     if (!globeIndex) {
         $('#show_trace').hide();
     }
@@ -1084,8 +1088,7 @@ function startPage() {
     }
     //window.setInterval(TAR.planesTable.refresh, 1000);
     //window.setInterval(function() {PendingFetches--;}, 10000);
-    setInterval(decrementTraceRate, 1000);
-    setInterval(updateIconCache, 800);
+    setInterval(everySecond, 850);
 
     pathName = window.location.pathname;
     processURLParams();
@@ -1111,9 +1114,6 @@ function startPage() {
     if (!heatmap)
         $("#loader").addClass("hidden");
 
-    // And kick off one refresh immediately.
-    if (!heatmap && !pTracks)
-        fetchData();
     if (replay) {
         //initReplay();
         //play(); // kick off first play
@@ -4533,6 +4533,11 @@ function checkFollow() {
     } else {
         toggleFollow(true);
     }
+}
+
+function everySecond() {
+    decrementTraceRate();
+    updateIconCache();
 }
 
 function decrementTraceRate() {
