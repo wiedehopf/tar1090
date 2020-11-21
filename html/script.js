@@ -1108,8 +1108,6 @@ function startPage() {
     if (tempTrails)
         selectAllPlanes();
 
-    geoMag = geoMagFactory(cof2Obj());
-
     if (!heatmap)
         $("#loader").addClass("hidden");
 
@@ -1120,6 +1118,8 @@ function startPage() {
         //initReplay();
         //play(); // kick off first play
     }
+
+    geoMag = geoMagFactory(cof2Obj());
 }
 
 //
