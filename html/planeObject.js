@@ -701,7 +701,6 @@ PlaneObject.prototype.setMarkerRgb = function() {
 PlaneObject.prototype.updateIcon = function() {
 
     let fillColor = hslToRgb(this.getMarkerColor());
-    this.scale = scaleFactor * this.baseScale;
     let svgKey  = fillColor + '!' + this.shape.name + '!' + this.strokeWidth;
     let labelText = null;
 
@@ -1100,7 +1099,7 @@ PlaneObject.prototype.processTrace = function() {
     noPan = false;
     showTraceExit = false;
 
-    this.updateMarker(true);
+    this.updateMarker();
 
     if (!showTime) {
         this.updateLines();
@@ -1113,12 +1112,30 @@ PlaneObject.prototype.processTrace = function() {
     console.log(this.history_size + ' ' + points_in_trace);
 };
 
+PlaneObject.prototype.updatePositionData = function(now, last, data, init) {
+    let newPos = this.updateTrack(now, last);
+
+    this.moveMarker |= newPos;
+    this.moveMarkerGL |= newPos;
+
+    if (globeIndex && newPos) {
+        let state = {};
+        state.now = this.position_time;
+        state.position = this.position;
+        state.altitude = this.altitude;
+        state.alt_rounded = this.alt_rounded;
+        state.speed = this.speed;
+        state.track = this.track;
+        state.rotation = this.rotation;
+        this.trace.push(state);
+        if (this.trace.length > 20) {
+            this.trace.slice(-15);
+        }
+    }
+}
 // Update our data
 PlaneObject.prototype.updateData = function(now, last, data, init) {
     // get location data first, return early if only those are needed.
-
-    this.updated = true;
-    let newPos = false;
 
     let isArray = Array.isArray(data);
     // [.hex, .alt_baro, .gs, .track, .lat, .lon, .seen_pos, "mlat"/"tisb"/.type , .flight, .messages]
@@ -1142,12 +1159,10 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     this.last_message_time = now - seen;
 
     // remember last known position even if stale
-    // some logic for parsing 978 and 1090 aircraft.jsons at the same time.
-    // more logic to not show or process mlat positions when filtered out.
-    if (lat != null && seen_pos < (now - this.position_time + 2) && !(noMLAT && mlat)) {
+    // do not show or process mlat positions when filtered out.
+    if (lat != null && lon != null && !(noMLAT && mlat)) {
         this.position   = [lon, lat];
         this.position_time = now - seen_pos;
-        newPos = true;
     }
 
     // remember last known altitude even if stale
@@ -1262,6 +1277,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 
     if (isArray) {
         this.messages = data[9];
+        this.updatePositionData(now, last, data, init);
         return;
     }
 
@@ -1385,24 +1401,12 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.request_rotation_from_track = true;
     }
 
-    if (globeIndex && newPos) {
-        let state = {};
-        state.now = this.position_time;
-        state.position = this.position;
-        state.altitude = this.altitude;
-        state.alt_rounded = this.alt_rounded;
-        state.speed = this.speed;
-        state.track = this.track;
-        state.rotation = this.rotation;
-        this.trace.push(state);
-        if (this.trace.length > 20) {
-            this.trace.slice(-15);
-        }
-    }
-
     this.checkForDB(data);
 
     this.last = now;
+
+    this.updatePositionData(now, last, data, init);
+    return;
 };
 
 PlaneObject.prototype.updateTick = function(redraw) {
@@ -1420,15 +1424,8 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
     if (globeIndex && this.isFiltered())
         return;
 
-    let moved = false;
-
     const lastVisible = this.visible;
     this.visible = (!this.isFiltered() && this.checkVisible());
-
-    if (this.updated) {
-        moved = this.updateTrack(now, last);
-        this.updated = false;
-    }
 
     if (this.visible) {
         if (SelectedAllPlanes)
@@ -1436,13 +1433,13 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
 
         let lines = false;
 
-        if (redraw || moved || lastVisible != this.visible)
+        if (redraw || lastVisible != this.visible)
             lines = true;
 
         if (lines)
             this.updateLines();
 
-        this.updateMarker(moved);
+        this.updateMarker();
 
         if (this == SelectedPlane && FollowSelected && this.position)
             OLMap.getView().setCenter(ol.proj.fromLonLat(this.position));
@@ -1469,7 +1466,7 @@ PlaneObject.prototype.clearMarker = function() {
 };
 
 // Update our marker on the map
-PlaneObject.prototype.updateMarker = function(moved) {
+PlaneObject.prototype.updateMarker = function() {
     if (pTracks)
         return;
     if (!this.visible || this.position == null || this.isFiltered()) {
@@ -1494,25 +1491,26 @@ PlaneObject.prototype.updateMarker = function(moved) {
         if (!this.shape)
             console.log(baseMarkerKey);
     }
+    this.scale = scaleFactor * this.baseScale;
     this.strokeWidth = outlineWidth * ((this.selected && !SelectedAllPlanes && !onlySelected) ? 1.15 : 0.7) / this.baseScale;
 
     if (!this.marker) {
         this.marker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
         this.marker.hex = this.icao;
-    } else if (moved) {
+    } else if (this.moveMarker) {
         this.marker.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
     }
+    this.moveMarker = false;
 
-    if (webgl && !this.glMarker) {
-        this.glMarker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
-        this.glMarker.hex = this.icao;
-    } else if (webgl && moved) {
-        this.glMarker.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
-    }
+    if (webgl) {
+        if (!this.glMarker) {
+            this.glMarker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
+            this.glMarker.hex = this.icao;
+        } else if (this.moveMarker) {
+            this.glMarker.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
+        }
+        this.moveMarkerGL = false;
 
-    this.updateIcon();
-
-    if (webgl && this.glMarker) {
         this.setMarkerRgb();
         const iconRotation = this.shape.noRotate ? 0 : this.rotation;
         this.glMarker.set('rotation', iconRotation * Math.PI / 180.0);
@@ -1522,6 +1520,8 @@ PlaneObject.prototype.updateMarker = function(moved) {
         this.glMarker.set('dx', (getSpriteX(this.shape) + 1) / glImapWidth);
         this.glMarker.set('dy', (getSpriteY(this.shape) + 1) / glImapHeight);
     }
+
+    this.updateIcon();
     if (!this.marker.visible) {
         this.marker.visible = true;
         PlaneIconFeatures.addFeature(this.marker);
@@ -2040,7 +2040,7 @@ PlaneObject.prototype.getAircraftData = function() {
             refreshSelected();
         }
 
-        this.updateMarker(true);
+        this.updateMarker();
 
         data = null;
     }.bind(this));

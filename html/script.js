@@ -101,6 +101,7 @@ let overrideMapType = null;
 let halloween = false;
 let noRegOnly = false;
 let triggerMapRefresh = false;
+let firstDraw = true;
 
 let shareLink = '';
 
@@ -258,11 +259,15 @@ function processReceiverUpdate(data, init) {
         processAircraft(data.aircraft[j], init, uat);
 }
 
+function fetchSoon() {
+    clearTimeout(refreshId);
+    refreshId = setTimeout(fetchData, refreshInt());
+}
+
 function fetchData() {
     if (heatmap)
         return;
-    clearTimeout(refreshId);
-    refreshId = setTimeout(fetchData, refreshInt());
+    fetchSoon();
     //console.log("fetch");
     if (showTrace)
         return;
@@ -357,12 +362,13 @@ function fetchData() {
                 let ts = new Uint32Array(data.buffer, 0, 2);
                 data.now = ts[0] / 1000 + ts[1] * 4294967.296;
             }
-            if (data.now >= now || globeIndex) {
-                //console.time("Process " + data.globeIndex);
-                processReceiverUpdate(data);
-                //console.timeEnd("Process " + data.globeIndex);
-            }
-            if (uat_data && uat_data.now > uat_now) {
+
+            //console.time("Process " + data.globeIndex);
+            processReceiverUpdate(data);
+            //console.timeEnd("Process " + data.globeIndex);
+            data = null;
+
+            if (uat_data) {
                 processReceiverUpdate(uat_data);
                 uat_data = null;
             }
@@ -372,10 +378,8 @@ function fetchData() {
             }
             PendingFetches--;
 
-            if (globeIndex) {
-                clearTimeout(refreshId);
-                refreshId = setTimeout(fetchData, refreshInt());
-            }
+            if (globeIndex)
+                fetchSoon();
 
             // Check for stale receiver data
             if (last == now && !globeIndex) {
@@ -407,8 +411,7 @@ function fetchData() {
             $("#update_error").css('display','block');
             StaleReceiverCount++;
             PendingFetches--;
-            clearTimeout(refreshId);
-            refreshId = setTimeout(fetchData, refreshInt());
+            fetchSoon();
         });
     }
 }
@@ -1004,17 +1007,6 @@ function parseHistory() {
                 processReceiverUpdate(data, true);
             }
 
-            // update aircraft tracks
-            if (data.uat_978 != "true") {
-                for (let i = 0; i < PlanesOrdered.length; ++i) {
-                    let plane = PlanesOrdered[i];
-                    if (plane.dataSource == "uat")
-                        plane.updateTrack(uat_now, uat_last);
-                    else
-                        plane.updateTrack(now, last);
-                }
-            }
-
             if (h==1) {
                 console.log("Applied history " + h + " from: "
                     + (new Date(now * 1000)).toLocaleTimeString());
@@ -1111,14 +1103,6 @@ function startPage() {
     else
         setInterval(checkMovement, 30);
 
-    // And kick off one refresh immediately.
-    if (!heatmap && !pTracks)
-        fetchData();
-    if (replay) {
-        //initReplay();
-        //play(); // kick off first play
-    }
-
     loadFinished = true;
 
     if (tempTrails)
@@ -1129,8 +1113,13 @@ function startPage() {
     if (!heatmap)
         $("#loader").addClass("hidden");
 
-    refreshSelected();
-    refreshHighlighted();
+    // And kick off one refresh immediately.
+    if (!heatmap && !pTracks)
+        fetchData();
+    if (replay) {
+        //initReplay();
+        //play(); // kick off first play
+    }
 }
 
 //
@@ -1742,7 +1731,7 @@ function refreshSelected() {
     const selected = SelectedPlane;
 
     if (SelectedPlane.position)
-        SelectedPlane.updateMarker(true);
+        SelectedPlane.updateMarker();
     if (selected.flight != selCall) {
         selCall = selected.flight;
         if (selected.flight && selected.flight.trim()) {
@@ -2708,7 +2697,7 @@ function selectPlaneByHex(hex, options) {
     }
     if (newPlane && newPlane.position) {
         newPlane.updateLines();
-        newPlane.updateMarker(true);
+        newPlane.updateMarker();
     }
 
     if (options.zoom == 'follow') {
@@ -3155,7 +3144,7 @@ function toggleLabels() {
     enableLabels = !enableLabels;
     localStorage['enableLabels'] = enableLabels;
     for (let key in PlanesOrdered) {
-        PlanesOrdered[key].updateMarker(false);
+        PlanesOrdered[key].updateMarker();
     }
     buttonActive('#L', enableLabels);
 
@@ -3172,7 +3161,7 @@ function toggleExtendedLabels() {
     console.log(extendedLabels);
     localStorage['extendedLabels'] = extendedLabels;
     for (let key in PlanesOrdered) {
-        PlanesOrdered[key].updateMarker(false);
+        PlanesOrdered[key].updateMarker();
     }
     buttonActive('#O', extendedLabels);
 }
@@ -3521,10 +3510,10 @@ function checkMovement() {
         checkMoveCenter[1] != center[1]
     ) {
         noMovement = 0;
-    }
 
-    if (noMovement == 0)
         checkFollow();
+        active();
+    }
 
     checkMoveZoom = zoom;
     checkMoveCenter[0] = center[0];
@@ -3539,7 +3528,6 @@ function checkMovement() {
     // no zoom/pan inputs for 450 ms after a zoom/pan input
     //
     //console.time("fire!");
-    active();
     changeZoom();
     changeCenter();
 
@@ -3559,6 +3547,13 @@ function checkRefresh() {
     TAR.planesTable.refresh();
     mapRefresh();
     //console.timeEnd("refreshTable");
+
+
+    // work around an issue with webGL not showing planes on first mapRefresh
+    if (false && firstDraw) { // ... doesn't help?
+        mapRefresh();
+        firstDraw = false;
+    }
 
     triggerMapRefresh = false;
     changeZoom();
@@ -4989,8 +4984,7 @@ function getInactive() {
 function active() {
     let now = new Date().getTime();
     if ((now - lastActive) > 200 * 1000) {
-        clearTimeout(refreshId);
-        refreshId = setTimeout(fetchData, RefreshInterval);
+        fetchData();
     }
     lastActive = now;
 }
