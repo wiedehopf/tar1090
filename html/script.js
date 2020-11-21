@@ -5028,7 +5028,6 @@ function drawTileBorder(data) {
 }
 
 function updateMessageRate(data) {
-    let time_delta = now - last;
     if (data.messages && uuid == null) {
         // Detect stats reset
         if (MessageCountHistory.length > 0 && MessageCountHistory[MessageCountHistory.length-1].messages > data.messages) {
@@ -5036,7 +5035,7 @@ function updateMessageRate(data) {
         }
 
         // Note the message count in the history
-        MessageCountHistory.push({ 'time' : now, 'messages' : data.messages});
+        MessageCountHistory.push({ 'time' : data.now, 'messages' : data.messages});
 
         if (MessageCountHistory.length > 1) {
             let message_time_delta = MessageCountHistory[MessageCountHistory.length-1].time - MessageCountHistory[0].time;
@@ -5049,6 +5048,7 @@ function updateMessageRate(data) {
         if ((now - MessageCountHistory[0].time) > 10)
             MessageCountHistory.shift();
     } else if (uuid != null) {
+        let time_delta = now - last;
         if (time_delta > 0.5) {
             let message_delta = 0;
             let acs = data.aircraft;
