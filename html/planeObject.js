@@ -679,8 +679,8 @@ function altitudeColor(altitude) {
         h = h % 360;
     }
 
-    if (s < 5) s = 5;
-    else if (s > 95) s = 95;
+    //if (s < 5) s = 5;
+    if (s > 95) s = 95;
 
     if (l < 5) l = 5;
     else if (l > 95) l = 95;
