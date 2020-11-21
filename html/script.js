@@ -5032,8 +5032,7 @@ function updateMessageRate(data) {
     if (data.messages && uuid == null) {
         // Detect stats reset
         if (MessageCountHistory.length > 0 && MessageCountHistory[MessageCountHistory.length-1].messages > data.messages) {
-            MessageCountHistory = [{'time' : MessageCountHistory[MessageCountHistory.length-1].time,
-                'messages' : 0}];
+            MessageCountHistory = [];
         }
 
         // Note the message count in the history
