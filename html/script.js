@@ -457,6 +457,10 @@ function initPage() {
 
     try {
         const search = new URLSearchParams(window.location.search);
+
+        if (search.has('nowebgl')) {
+            localStorage['webgl'] = "false";
+        }
         if (search.has('showGrid'))
             showGrid = true;
 
@@ -1162,8 +1166,9 @@ function startPage() {
 //
 // Utils end
 //
+//
 
-function webglInit() {
+function webglAddLayer() {
     try {
         const canvas = document.createElement('canvas');
         let gl = canvas.getContext("webgl");
@@ -1172,59 +1177,70 @@ function webglInit() {
         console.error(error);
         console.log('disabling webGL support!');
         webglSupported = false;
+        return false;
     }
 
-    if (webglSupported) {
-        new Toggle({
-            key: "webgl",
-            display: "WebGL",
-            container: "#settingsLeft",
-            init: true,
-            setState: function(state) {
-                if (state)
-                    webgl = true;
-                else
-                    webgl = false;
-            },
-        });
-
-        let glStyle = {
-            symbol: {
-                symbolType: 'image',
-                src: 'images/sprites001.png',
-                size: [ 'get', 'size' ],
-                offset: [0, 0],
-                textureCoord: [ 'array',
-                    [ 'get', 'cx' ],
-                    [ 'get', 'cy' ],
-                    [ 'get', 'dx' ],
-                    [ 'get', 'dy' ]
-                ],
-                color: [
-                    'color',
-                    [ 'get', 'r' ],
-                    [ 'get', 'g' ],
-                    [ 'get', 'b' ],
-                    1
-                ],
-                rotateWithView: false,
-                rotation: [ 'get', 'rotation' ],
-            },
-        };
+    let glStyle = {
+        symbol: {
+            symbolType: 'image',
+            src: 'images/sprites001.png',
+            size: [ 'get', 'size' ],
+            offset: [0, 0],
+            textureCoord: [ 'array',
+                [ 'get', 'cx' ],
+                [ 'get', 'cy' ],
+                [ 'get', 'dx' ],
+                [ 'get', 'dy' ]
+            ],
+            color: [
+                'color',
+                [ 'get', 'r' ],
+                [ 'get', 'g' ],
+                [ 'get', 'b' ],
+                1
+            ],
+            rotateWithView: false,
+            rotation: [ 'get', 'rotation' ],
+        },
+    };
 
 
-        webglLayer = new ol.layer.WebGLPoints({
-            name: 'webglLayer',
-            type: 'overlay',
-            title: 'Aircraft pos. webGL',
-            source: webglFeatures,
-            declutter: false,
-            zIndex: 200,
-            renderBuffer: 20,
-            style: glStyle,
-        });
-        layers.push(webglLayer);
-    }
+    webglLayer = new ol.layer.WebGLPoints({
+        name: 'webglLayer',
+        type: 'overlay',
+        title: 'Aircraft pos. webGL',
+        source: webglFeatures,
+        declutter: false,
+        zIndex: 200,
+        renderBuffer: 20,
+        style: glStyle,
+    });
+    layers.push(webglLayer);
+    return true;
+}
+
+function webglInit() {
+    new Toggle({
+        key: "webgl",
+        display: "WebGL",
+        container: "#settingsLeft",
+        init: true,
+        setState: function(state) {
+            if (state) {
+                try {
+                    if (webglAddLayer())
+                        webgl = true;
+                    else
+                        return false;
+                } catch (error) {
+                    console.error(error);
+                }
+            } else {
+                webgl = false;
+            }
+        },
+    });
+
 }
 
 // Initalizes the map and starts up our timers to call various functions

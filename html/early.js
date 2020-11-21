@@ -389,6 +389,13 @@ Toggle.prototype.toggle = function(override) {
     else
         this.state = !this.state;
 
+    if (this.setState) {
+        if (this.setState(this.state) == false) {
+            this.state = !this.state;
+            return;
+        }
+    }
+
     if (this.state == false) {
         localStorage[this.key] = 'false';
         if (this.checkbox)
@@ -399,9 +406,6 @@ Toggle.prototype.toggle = function(override) {
         if (this.checkbox)
             $(this.checkbox).addClass('settingsCheckboxChecked');
     }
-
-    if (this.setState)
-        this.setState(this.state);
 }
 
 Toggle.prototype.restore = function () {
