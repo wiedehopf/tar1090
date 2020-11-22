@@ -340,16 +340,17 @@ then
     ln -s -f /etc/lighttpd/conf-available/87-mod_setenv.conf /etc/lighttpd/conf-enabled/87-mod_setenv.conf
     ln -s -f /etc/lighttpd/conf-available/47-stat-cache.conf /etc/lighttpd/conf-enabled/47-stat-cache.conf
 
-    if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep mod_setenv >/dev/null
-    then
-        rm -f /etc/lighttpd/conf-enabled/87-mod_setenv.conf
+    if (( $(cat /etc/lighttpd/conf-enabled/* | grep -c -E -e '^server.stat-cache-engine *\= *"disable")') > 1 )); then
+        rm -f /etc/lighttpd/conf-enabled/47-stat-cache.conf
     fi
     if (( $(cat /etc/lighttpd/conf-enabled/* | grep -c -E -e '^server.modules.?\+=.?\(.?"mod_setenv".?\)') > 1 )); then
         rm -f /etc/lighttpd/conf-enabled/87-mod_setenv.conf
     fi
 
-    if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep stat-cache >/dev/null
-    then
+    if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep mod_setenv >/dev/null; then
+        rm -f /etc/lighttpd/conf-enabled/87-mod_setenv.conf
+    fi
+    if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep stat-cache >/dev/null; then
         rm -f /etc/lighttpd/conf-enabled/47-stat-cache.conf
     fi
 
@@ -365,17 +366,17 @@ then
         lighttpd -tt -f /etc/lighttpd/lighttpd.conf
     fi
 
-    if grep -qs -e '^compress.cache-dir' /etc/lighttpd/lighttpd.conf && grep -qs -e '^compress.filetype.*json' /etc/lighttpd/lighttpd.conf; then
+    if grep -qs -e '^compress.cache-dir' /etc/lighttpd/lighttpd.conf; then
         echo -----
-        echo "Disabling compress.cache-dir in /etc/lighttpd/lighttpd.conf due to often causing full disk issues when compression for filetype application/json is enabled."
+        echo "Disabling compress.cache-dir in /etc/lighttpd/lighttpd.conf due to often causing full disk issues as there is no automatic cleanup mechanism. Add a leading space to the compress.cache-dir line if you don't want tar1090 to mess with it in the future."
         echo -----
-        sed -i -e 's$^compress.cache-dir.*$#\0 # disabled by tar1090, often causes full disk$' /etc/lighttpd/lighttpd.conf
-    elif ! grep -qs -e 'full disk when using tar1090' /etc/lighttpd/lighttpd.conf; then
+        sed -i -e 's$^compress.cache-dir.*$#\0 # disabled by tar1090, often causes full disk due to not having a cleanup mechanism$' /etc/lighttpd/lighttpd.conf
+    elif ! grep -qs -e 'disabled by tar1090' /etc/lighttpd/lighttpd.conf; then
         sed -i -e 's$^compress.cache-dir.*$# CAUTION, enabling cache-dir and filetype json will cause full disk when using tar1090\n\0$' /etc/lighttpd/lighttpd.conf
     fi
 fi
 
-if systemctl status lighttpd &>/dev/null; then
+if systemctl show lighttpd 2>/dev/null | grep -qs 'UnitFileState=enabled'; then
     echo "Restarting lighttpd ..."
     systemctl restart lighttpd
 fi
