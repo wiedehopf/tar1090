@@ -885,8 +885,10 @@ function initPage() {
         container: "#settingsRight",
         init: false,
         setState: function(state) {
-            if (loadFinished)
+            if (loadFinished) {
                 refreshFeatures();
+                remakeTrails();
+            }
         }
     });
 
