@@ -4654,13 +4654,9 @@ function getTrace(newPlane, hex, options) {
         let today = new Date();
         //console.log(today.toUTCString() + ' ' + traceDate.toUTCString());
         // use non historic traces for showTrace until 30 min after midnight
-        if (today.getTime() > traceDate.getTime() && today.getTime() < traceDate.getTime() + (24 * 60 * 60 + 30 * 60) * 1000) {
-
-            today.setUTCHours(0);
-            today.setUTCMinutes(0);
-            today.setUTCSeconds(0);
-
-            traceOpts.startStamp = today.getTime() / 1000;
+        if (today.getTime() > traceDate.getTime() && today.getTime() < traceDate.getTime() + (24 * 3600 + 30 * 60) * 1000) {
+            traceOpts.startStamp = traceDate.getTime() / 1000;
+            traceOpts.endStamp = traceOpts.startStamp + 24 * 3600;
         } else {
             URL1 = null;
             URL2 = 'globe_history/' + traceDateString + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json';
