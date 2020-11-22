@@ -1179,46 +1179,50 @@ function startPage() {
 //
 
 function webglAddLayer() {
-    let glStyle = {
-        symbol: {
-            symbolType: 'image',
-            src: 'images/sprites001.png',
-            size: [ 'get', 'size' ],
-            offset: [0, 0],
-            textureCoord: [ 'array',
-                [ 'get', 'cx' ],
-                [ 'get', 'cy' ],
-                [ 'get', 'dx' ],
-                [ 'get', 'dy' ]
-            ],
-            color: [
-                'color',
-                [ 'get', 'r' ],
-                [ 'get', 'g' ],
-                [ 'get', 'b' ],
-                1
-            ],
-            rotateWithView: false,
-            rotation: [ 'get', 'rotation' ],
-        },
-    };
+    try {
+        let glStyle = {
+            symbol: {
+                symbolType: 'image',
+                src: 'images/sprites001.png',
+                size: [ 'get', 'size' ],
+                offset: [0, 0],
+                textureCoord: [ 'array',
+                    [ 'get', 'cx' ],
+                    [ 'get', 'cy' ],
+                    [ 'get', 'dx' ],
+                    [ 'get', 'dy' ]
+                ],
+                color: [
+                    'color',
+                    [ 'get', 'r' ],
+                    [ 'get', 'g' ],
+                    [ 'get', 'b' ],
+                    1
+                ],
+                rotateWithView: false,
+                rotation: [ 'get', 'rotation' ],
+            },
+        };
 
-
-    webglLayer = new ol.layer.WebGLPoints({
-        name: 'webglLayer',
-        type: 'overlay',
-        title: 'Aircraft pos. webGL',
-        source: webglFeatures,
-        declutter: false,
-        zIndex: 200,
-        renderBuffer: 20,
-        style: glStyle,
-    });
-    if (!webglLayer || !webglLayer.getRenderer())
+        webglLayer = new ol.layer.WebGLPoints({
+            name: 'webglLayer',
+            type: 'overlay',
+            title: 'Aircraft pos. webGL',
+            source: webglFeatures,
+            declutter: false,
+            zIndex: 200,
+            renderBuffer: 20,
+            style: glStyle,
+        });
+        if (!webglLayer || !webglLayer.getRenderer())
+            return false;
+        layers.push(webglLayer);
+        webglSupported = true;
+        return true;
+    } catch (error) {
+        console.error(error);
         return false;
-    webglSupported = true;
-    layers.push(webglLayer);
-    return true;
+    }
 }
 
 function webglInit() {
@@ -1229,17 +1233,12 @@ function webglInit() {
         init: true,
         setState: function(state) {
             if (state) {
-                try {
-                    webgl = webglAddLayer();
-                    if (!webgl) {
-                        console.error('Unable to initialize the webGL Layer! Falling back to non-webGL icons, performance will be reduced significantly!');
-                    }
-                    return webgl;
-                    // returning false means the toggle will flip back as the activation of the webgl layer was unsuccessful.
-                } catch (error) {
-                    console.error(error);
-                    return false;
-                }
+                webgl = webglAddLayer();
+                if (!webgl)
+                    console.error('Unable to initialize the webGL Layer! Falling back to non-webGL icons, performance will be reduced significantly!');
+
+                return webgl;
+                // returning false means the toggle will flip back as the activation of the webgl layer was unsuccessful.
             } else {
                 webgl = false;
             }
