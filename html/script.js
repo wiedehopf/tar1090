@@ -1289,10 +1289,15 @@ function webglInit() {
         init: true,
         setState: function(state) {
             if (state) {
-                webgl = webglAddLayer();
-                if (!webgl)
-                    console.error('Unable to initialize the webGL Layer! Falling back to non-webGL icons, performance will be reduced significantly!');
+                if (webglLayer)
+                    webgl = true;
+                else
+                    webgl = webglAddLayer();
 
+                if (!webgl) {
+                    console.error('Unable to initialize the webGL Layer! Falling back to non-webGL icons, performance will be reduced significantly!');
+                    webglLayer = null;
+                }
                 return webgl;
                 // returning false means the toggle will flip back as the activation of the webgl layer was unsuccessful.
             } else {
