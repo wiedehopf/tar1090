@@ -2799,7 +2799,13 @@ function toggleFollow(override) {
     if (FollowSelected) {
         //if (override == undefined && OLMap.getView().getZoom() < 8)
         //    OLMap.getView().setZoom(8);
-        OLMap.getView().setCenter(ol.proj.fromLonLat(SelectedPlane.position));
+        if (traceOpts.animate) {
+            OLMap.getView().setCenter([traceOpts.animateFromLon, traceOpts.animateFromLat]);
+            changeCenter();
+        } else {
+            OLMap.getView().setCenter(ol.proj.fromLonLat(SelectedPlane.position));
+        }
+        SelectedPlane.updateMarker();
     }
     buttonActive('#F', FollowSelected);
 }
@@ -3494,19 +3500,23 @@ function bearingFromLonLat(position1, position2) {
 function zoomIn() {
     const zoom = OLMap.getView().getZoom();
     OLMap.getView().setZoom((zoom+1).toFixed());
+    if (FollowSelected)
+        toggleFollow(true);
 }
 
 function zoomOut() {
     const zoom = OLMap.getView().getZoom();
     OLMap.getView().setZoom((zoom-1).toFixed());
+    if (FollowSelected)
+        toggleFollow(true);
 }
 
 function changeCenter(init) {
     const rawCenter = OLMap.getView().getCenter();
     const center = ol.proj.toLonLat(rawCenter);
 
-    localStorage['CenterLon'] = CenterLon = center[0];
-    localStorage['CenterLat'] = CenterLat = center[1];
+    checkMoveCenter[0] = localStorage['CenterLon'] = CenterLon = center[0];
+    checkMoveCenter[1] = localStorage['CenterLat'] = CenterLat = center[1];
 
     if (!init && showTrace)
         updateAddressBar();
@@ -3555,25 +3565,20 @@ function checkMovement() {
 function checkRefresh() {
     const center = ol.proj.toLonLat(OLMap.getView().getCenter());
     const zoom = OLMap.getView().getZoom();
-    if (!triggerMapRefresh && ZoomLvl == zoom && center[0] == CenterLon && center[1] == CenterLat)
+    if (showTrace)
         return;
-    //console.time("refreshTable");
-    refreshSelected();
-    refreshHighlighted();
-    TAR.planesTable.refresh();
-    mapRefresh();
-    //console.timeEnd("refreshTable");
-
-
-    // work around an issue with webGL not showing planes on first mapRefresh
-    if (false && firstDraw) { // ... doesn't help?
+    if (triggerMapRefresh || ZoomLvl != zoom || center[0] != CenterLon || center[1] != CenterLat) {
+        //console.time("refreshTable");
+        refreshSelected();
+        refreshHighlighted();
+        TAR.planesTable.refresh();
         mapRefresh();
-        firstDraw = false;
-    }
+        //console.timeEnd("refreshTable");
 
-    triggerMapRefresh = false;
-    changeZoom();
-    changeCenter();
+        triggerMapRefresh = false;
+        changeZoom();
+        changeCenter();
+    }
 }
 function mapRefresh() {
     //console.log('mapRefresh()');
@@ -4524,10 +4529,13 @@ function gotoTime(timestamp) {
 
             let animatePos = [traceOpts.animateFromLon, traceOpts.animateFromLat];
             SelectedPlane.marker.setGeometry(new ol.geom.Point(animatePos));
+            if (SelectedPlane.glMarker)
+                SelectedPlane.glMarker.setGeometry(new ol.geom.Point(animatePos));
 
-            //console.log('int:  ', animatePos);
-            if (FollowSelected)
-                OLMap.getView().setCenter(animatePos);
+            if (FollowSelected) {
+                OLMap.getView().setCenter([traceOpts.animateFromLon, traceOpts.animateFromLat]);
+                changeCenter();
+            }
         }
         if (--traceOpts.animateSteps == 1)
             traceOpts.animate = false;
@@ -4536,15 +4544,16 @@ function gotoTime(timestamp) {
 }
 
 function checkFollow() {
-    if (!FollowSelected || traceOpts.showTime)
+    if (!FollowSelected)
         return;
     if (!SelectedPlane || !SelectedPlane.position) {
         toggleFollow(false);
         return;
     }
     const center = ol.proj.toLonLat(OLMap.getView().getCenter());
-    if (Math.abs(center[0] - SelectedPlane.position[0]) > 0.001 ||
-        Math.abs(center[1] - SelectedPlane.position[1]) > 0.001) {
+    let pos = SelectedPlane.position;
+    if (Math.abs(center[0] - pos[0]) > 0.001 ||
+        Math.abs(center[1] - pos[1]) > 0.001) {
         toggleFollow(false);
     } else {
         toggleFollow(true);

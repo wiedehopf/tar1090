@@ -1099,9 +1099,8 @@ PlaneObject.prototype.processTrace = function() {
     noPan = false;
     showTraceExit = false;
 
-    this.updateMarker();
-
     if (!showTime) {
+        this.updateMarker();
         this.updateLines();
     }
 
@@ -1117,6 +1116,9 @@ PlaneObject.prototype.updatePositionData = function(now, last, data, init) {
 
     this.moveMarker |= newPos;
     this.drawLine |= newPos;
+
+    if (this == SelectedPlane && FollowSelected)
+        toggleFollow(true);
 
     if (globeIndex && newPos) {
         let state = {};
