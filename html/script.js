@@ -1425,20 +1425,56 @@ function initMap() {
     */
 
     OLMap.on(['click', 'dblclick'], function(evt) {
-        let res = evt.map.forEachFeatureAtPixel(
-            evt.pixel,
-            function(feature, layer) {
+        let res = null;
+
+        if (!res) {
+            let features = webgl ? webglFeatures : PlaneIconFeatures;
+            let evtCoords = evt.map.getCoordinateFromPixel(evt.pixel);
+            let feature = features.getClosestFeatureToCoordinate(evtCoords);
+            if (!feature)
+                return;
+            let fPixel = evt.map.getPixelFromCoordinate(feature.getGeometry().getCoordinates());
+            let a = fPixel[0] - evt.pixel[0];
+            let b = fPixel[1] - evt.pixel[1];
+            let c = globalScale * 25;
+            if (a**2 + b**2 < c**2)
+                res = feature.hex;
+        }
+
+        if (!res) {
+            let features = evt.map.getFeaturesAtPixel(
+                evt.pixel,
+                {
+                    layerFilter: function(layer) { return (layer.get('isTrail') == true); },
+                    hitTolerance: globalScale * 20,
+                }
+            );
+            if (features.length > 0) {
+                let close = 10000000000000;
+                let closest = null;
+                for (let i in features) {
+                    let feature = features[i];
+                    let coords;
+                    if (feature.isLabel)
+                        coords = feature.getGeometry().getCoordinates();
+                    else
+                        coords = feature.getGeometry().getCoordinates()[0];
+                    let fPixel = evt.map.getPixelFromCoordinate(coords);
+                    let a = fPixel[0] - evt.pixel[0];
+                    let b = fPixel[1] - evt.pixel[1];
+                    let distance = a**2 + b**2;
+                    if (distance < close) {
+                        closest = features[i];
+                        close = distance;
+                    }
+                }
                 if (showTrace)
-                    return feature.timestamp;
-                return feature.hex;
-            },
-            {
-                layerFilter: function(layer) {
-                    return (layer == webglLayer || layer == iconLayer || layer.get('isTrail') == true);
-                },
-                hitTolerance: 6 * globalScale,
+                    res = closest.timestamp;
+                else
+                    res = closest.hex;
             }
-        );
+        }
+
         if (showTrace && res) {
             gotoTime(res);
         } else if (res) {

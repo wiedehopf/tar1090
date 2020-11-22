@@ -1763,6 +1763,8 @@ PlaneObject.prototype.updateLines = function() {
                 })
             );
             seg.label.hex = this.icao;
+            seg.label.timestamp = seg.ts;
+            seg.label.isLabel = true;
             label_add.push(seg.label)
         }
     }
