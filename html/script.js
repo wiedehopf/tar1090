@@ -1179,17 +1179,6 @@ function startPage() {
 //
 
 function webglAddLayer() {
-    try {
-        const canvas = document.createElement('canvas');
-        let gl = canvas.getContext("webgl");
-        webglSupported = true;
-    } catch (error) {
-        console.error(error);
-        console.log('disabling webGL support!');
-        webglSupported = false;
-        return false;
-    }
-
     let glStyle = {
         symbol: {
             symbolType: 'image',
@@ -1225,6 +1214,9 @@ function webglAddLayer() {
         renderBuffer: 20,
         style: glStyle,
     });
+    if (!webglLayer || !webglLayer.getRenderer())
+        return false;
+    webglSupported = true;
     layers.push(webglLayer);
     return true;
 }
@@ -1238,12 +1230,15 @@ function webglInit() {
         setState: function(state) {
             if (state) {
                 try {
-                    if (webglAddLayer())
-                        webgl = true;
-                    else
-                        return false;
+                    webgl = webglAddLayer();
+                    if (!webgl) {
+                        console.error('Unable to initialize the webGL Layer! Falling back to non-webGL icons, performance will be reduced significantly!');
+                    }
+                    return webgl;
+                    // returning false means the toggle will flip back as the activation of the webgl layer was unsuccessful.
                 } catch (error) {
                     console.error(error);
+                    return false;
                 }
             } else {
                 webgl = false;
