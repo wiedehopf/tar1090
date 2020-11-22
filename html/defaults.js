@@ -278,3 +278,33 @@ let filterMaxRange = 1e8; // 100 000 km should include all planes on earth ;)
 
 // legacy variables
 let OutlineMlatColor = null;
+
+let tableColorsDark;
+let tableColorsLight;
+let tableColors = {
+    unselected: {
+        adsb:      "#d8f4ff",
+        mlat:      "#FDF7DD",
+        uat:       "#C4FFDC",
+        adsr:      "#C4FFDC",
+        adsc:      "#C4FFDC",
+        other:     "#d8d8ff",
+        tisb:      "#ffd8e6",
+        unknown:   "#dcdcdc",
+    },
+    selected: {
+        adsb:      "#88DDFF",
+        mlat:      "#F1DD83",
+        uat:       "#66FFA6",
+        adsr:      "#66FFA6",
+        adsc:      "#66FFA6",
+        other:     "#BEBEFF",
+        tisb:      "#FFC1D8",
+        unknown:   "#bcbcbc",
+    },
+    special: {
+        7500:      "#ff5555",
+        7600:      "#00ffff",
+        7700:      "#ffff00",
+    }
+};

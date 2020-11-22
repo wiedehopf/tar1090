@@ -251,3 +251,31 @@ HideCols = [
 //askLocation = false;  // requires https for geolocation (browsers require it)
 //
 //let filterMaxRange = 50; // don't show aircraft further than 50 nmi from the receiver
+//
+//
+
+/*
+tableColors = {
+    unselected: {
+        adsb: "#d8f4ff",
+        mlat:      "#FDF7DD",
+        uat:       "#C4FFDC",
+        satellite: "#C4FFDC",
+        other:     "#d8d8ff",
+        tisb:      "#ffd8e6",
+        unknown:   "#dcdcdc",
+        squawk7500:"#ff5555",
+        squawk7600:"#00ffff",
+        squawk7700:"#ffff00",
+    },
+    selected: {
+        adsb:      "#88DDFF",
+        mlat:      "#F1DD83",
+        uat:       "#66FFA6",
+        satellite: "#66FFA6",
+        other:     "#BEBEFF",
+        tisb:      "#FFC1D8",
+        unknown:   "#bcbcbc",
+    },
+};
+*/

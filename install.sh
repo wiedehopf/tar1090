@@ -218,7 +218,6 @@ do
 
     # keep some stuff around
     mv "$html_path/config.js" "$TMP/config.js" 2>/dev/null || true
-    mv "$html_path"/color*.css "$TMP/colors.css" 2>/dev/null || true
     mv "$html_path/upintheair.json" "$TMP/upintheair.json" 2>/dev/null || true
 
     # bust cache for all css and js files
@@ -239,7 +238,6 @@ do
         -e "s/planeObject.js/planeObject_$TAR_VERSION.js/" \
         -e "s/registrations.js/registrations_$TAR_VERSION.js/" \
         -e "s/script.js/script_$TAR_VERSION.js/" \
-        -e "s/colors.css/colors_$TAR_VERSION.css/" \
         -e "s/style.css/style_$TAR_VERSION.css/" \
         index.html
 
@@ -253,7 +251,6 @@ do
     mv planeObject.js "planeObject_$TAR_VERSION.js"
     mv registrations.js "registrations_$TAR_VERSION.js"
     mv script.js "script_$TAR_VERSION.js"
-    mv colors.css "colors_$TAR_VERSION.css"
     mv style.css "style_$TAR_VERSION.css"
 
     if [[ $nginx == yes ]]; then
@@ -267,7 +264,6 @@ do
         gzip -k -9 "planeObject_$TAR_VERSION.js"
         gzip -k -9 "registrations_$TAR_VERSION.js"
         gzip -k -9 "script_$TAR_VERSION.js"
-        gzip -k -9 "colors_$TAR_VERSION.css"
         gzip -k -9 "style_$TAR_VERSION.css"
 
         gzip -k -9 ./libs/*.js

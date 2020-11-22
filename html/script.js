@@ -107,13 +107,6 @@ let shareLink = '';
 
 let onMobile = false;
 
-let SpecialSquawks = {
-    '7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
-    '7600' : { cssClass: 'squawk7600', markerColor: 'rgb(0, 255, 255)', text: 'Radio Failure' },
-    '7700' : { cssClass: 'squawk7700', markerColor: 'rgb(255, 255, 0)', text: 'General Emergency' }
-};
-
-
 // Get current map settings
 let CenterLat, CenterLon, ZoomLvl, ZoomLvlCache;
 let zoomTimeout;
@@ -887,6 +880,71 @@ function initPage() {
     });
 
     new Toggle({
+        key: "darkerColors",
+        display: "Darker Colors",
+        container: "#settingsRight",
+        init: false,
+        setState: function(state) {
+            if (loadFinished)
+                refreshFeatures();
+        }
+    });
+
+    tableColorsLight = tableColors;
+    tableColorsDark = JSON.parse(JSON.stringify(tableColors));
+    let darkVals = Object.values(tableColorsDark);
+    for (let i in darkVals) {
+        let obj = darkVals[i];
+        let keys = Object.keys(obj)
+        for (let j in keys) {
+            let key = keys[j];
+            let hsl = hexToHSL(obj[key]);
+            hsl[1] *= 0.5;
+            hsl[2] *= 0.6;
+            obj[key] = hslToRgb(hsl);
+        }
+    }
+    new Toggle({
+        key: "darkMode",
+        display: "Dark Mode",
+        container: "#settingsRight",
+        init: false,
+        setState: function(state) {
+            let root = document.documentElement;
+            if (state) {
+                document.body.style.background = '#989898'
+                root.style.setProperty("--BGCOLOR1", '#989898');
+                root.style.setProperty("--BGCOLOR2", '#A8A8A8');
+                tableColors = tableColorsDark;
+            } else {
+                document.body.style.background = '#F8F8F8'
+                root.style.setProperty("--BGCOLOR1", '#F8F8F8');
+                root.style.setProperty("--BGCOLOR2", '#C8C8C8');
+                tableColors = tableColorsLight;
+            }
+            if (loadFinished) {
+                refreshFilter();
+            }
+            let legend = document.getElementById('legend');
+            let colors = tableColors.unselected;
+            let html = '';
+            html += '<div class="legendTitle" style="background-color:' + colors['adsb'] + ';">ADS-B</div>';
+            if (!globeIndex)
+                html += '<div class="legendTitle" style="background-color:' + colors['uat'] + ';">UAT / ADS-R</div>';
+            if (globeIndex)
+                html += '<div class="legendTitle" style="background-color:' + colors['uat'] + ';">ADS-C/R / UAT</div>';
+            html += '<div class="legendTitle" style="background-color:' + colors['mlat'] + ';">MLAT</div>';
+            html += '<div class="legendTitle" style="background-color:' + colors['tisb'] + ';">TIS-B</div>';
+            if (!globeIndex)
+                html += '<div class="legendTitle" style="background-color:' + colors['other'] + ';">Mode-S</div>';
+            if (globeIndex)
+                html += '<div class="legendTitle" style="background-color:' + colors['unknown'] + ';">Unknown</div>';
+
+            legend.innerHTML = html;
+        }
+    });
+
+    new Toggle({
         key: "sidebar_visible",
         display: "Sidebar visible",
         container: null,
@@ -1073,11 +1131,7 @@ function startPage() {
     }
     if (globeIndex) {
         $('#V').hide();
-        $('#uat_legend_2').hide();
-        $('#mode_s_legend_2').hide();
     } else {
-        $('#unknown_legend_2').hide();
-        $('#sat_legend_2').hide();
     }
 
     if (hideButtons) {
@@ -1629,22 +1683,23 @@ function initMap() {
                 // filters
             case "M":
                 onlyMLAT = !onlyMLAT;
-                TAR.planesTable.refresh();
-                mapRefresh();
+                refreshFilter();
                 break;
             case "T":
                 filterTISB = !filterTISB;
+                refreshFilter();
                 break;
             case "u":
                 toggleMilitary();
                 break;
             case "A":
                 onlyADSB = !onlyADSB;
+                refreshFilter();
                 break;
-                // persistance mode
             case "i":
                 toggleIsolation();
                 break;
+                // persistence mode
             case "p":
                 togglePersistence();
                 break;
@@ -2388,7 +2443,7 @@ function refreshFeatures() {
         table += '  </tr>';
         table += '</thead>';
         table += '<tbody>';
-        table += '  <tr id="plane_row_template" class="plane_table_row hidden">';
+        table += '  <tr id="plane_row_template">';
         for (let i in activeCols) {
             let col = activeCols[i];
             table += col.td;
@@ -2458,7 +2513,7 @@ function refreshFeatures() {
                 continue;
             }
 
-            let classes = "plane_table_row";
+            let bgColor = "#F8F8F8"
 
             if (plane.showInTable) {
                 nPlanes++;
@@ -2468,25 +2523,15 @@ function refreshFeatures() {
                     plane.tr.id = plane.icao;
                 }
 
-                if (plane.dataSource == "uat" || (plane.addrtype && plane.addrtype.substring(0, 4) == 'adsr')) {
-                    classes += " uat";
-                } else if (plane.dataSource == "adsb") {
-                    classes += " vPosition";
-                } else if (plane.dataSource == "adsc") {
-                    classes += " satellite";
-                } else if (plane.dataSource == "mode_s") {
-                    classes += " other";
-                } else {
-                    classes += " ";
-                    classes += plane.dataSource;
-                }
+                let colors = tableColors.unselected;
+                if (plane.selected && !SelectedAllPlanes)
+                    colors = tableColors.selected;
 
-                if (plane.selected && !SelectedAllPlanes) {
-                    classes += " selected";
-                }
-                if (plane.squawk in SpecialSquawks) {
-                    classes = classes + " " + SpecialSquawks[plane.squawk].cssClass;
-                }
+                if (plane.dataSource && plane.dataSource in colors)
+                    bgColor = colors[plane.dataSource];
+
+                if (plane.squawk in tableColors.special)
+                    bgColor = tableColors.special[plane.squawk];
 
                 for (let cell in activeCols) {
                     let col = activeCols[cell];
@@ -2505,9 +2550,9 @@ function refreshFeatures() {
 
             }
 
-            if (plane.tr && plane.classesCache != classes) {
-                plane.classesCache = classes;
-                plane.tr.className = classes;
+            if (plane.tr && plane.bgColorCache != bgColor) {
+                plane.bgColorCache = bgColor;
+                plane.tr.style = "background-color: " + bgColor + ";";
             }
         }
 
@@ -3089,8 +3134,8 @@ function dim(evt) {
         if (evt.context.globalCompositeOperation != 'overlay')
             globalCompositeTested = false;
     }
-    const dim = mapDimPercentage;
-    const contrast = mapContrastPercentage;
+    const dim = mapDimPercentage * (1 + 0.25 * toggles['darkerColors'].state);
+    const contrast = mapContrastPercentage * (1 + 0.1 * toggles['darkerColors'].state);
     if (dim > 0.0001) {
         evt.context.globalCompositeOperation = 'multiply';
         evt.context.fillStyle = 'rgba(0,0,0,'+dim+')';

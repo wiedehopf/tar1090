@@ -1,5 +1,7 @@
 :root {
     --SCALE: 1;
+    --BGCOLOR1: #F8F8F8;
+    --BGCOLOR2: #C8C8C8;
     --FS1: calc( 10px * var(--SCALE));
     --FS2: calc( 13px * var(--SCALE));
     --FS3: calc( 17px * var(--SCALE));
@@ -7,7 +9,7 @@
 
 html, body {
     -ms-overflow-style: -ms-autohiding-scrollbar;
-    margin: calc( 0px * var(--SCALE)); padding: calc( 0px * var(--SCALE)); background-color: #F8F8F8; font-family: "Helvetica Neue", Helvetica, Verdana, sans-serif;
+    margin: calc( 0px * var(--SCALE)); padding: calc( 0px * var(--SCALE)); background-color: var(--BGCOLOR1); font-family: "Helvetica Neue", Helvetica, Verdana, sans-serif;
     font-size: var(--FS2); overflow: hidden; height: 100%;
 
 }
@@ -35,7 +37,7 @@ select {
     height: 100%;
     overflow: auto;
     z-index: 9999;
-    background-color: #F8F8F8;
+    background-color: var(--BGCOLOR1);
 }
 .infoblock-container {
     overflow: auto;
@@ -287,12 +289,12 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
 .altitudeFilterInput {
     width: calc( 50px * var(--SCALE));
     height:  calc(15px * var(--SCALE));
-    background-color: #F8F8F8;
+    background-color: var(--BGCOLOR1);
 }
 .searchInput {
     width:  calc(100px * var(--SCALE));
     height:  calc(15px * var(--SCALE));
-    background-color: #F8F8F8;
+    background-color: var(--BGCOLOR1);
 }
 
 .formButton {
@@ -445,7 +447,7 @@ select.error, textarea.error, input.error {
 }
 
 #highlighted_infoblock {
-    background-color: #F8F8F8;
+    background-color: var(--BGCOLOR1);
     position: absolute;
     left: calc( 40px * var(--SCALE));
     top: calc( 60px * var(--SCALE));
@@ -492,6 +494,7 @@ select.error, textarea.error, input.error {
     border-collapse: collapse;
     padding: 0;
     margin: 0;
+    background-color: var(--BGCOLOR1);
 }
 
 table.infoTable tr td {
@@ -566,7 +569,7 @@ table.infoTable tr td {
     padding: calc( 20px * var(--SCALE));
     z-index: 9999;
     display: none;
-    background-color: #F8F8F8;
+    background-color: var(--BGCOLOR1);
 }
 
 .settingsColumn {
@@ -700,9 +703,17 @@ table.infoTable tr td {
         background-image: url("images/zoom-in@3x.png");
     }
 }
-
+.ui-tabs {
+    background-color: var(--BGCOLOR1);
+}
+.ui-tabs-nav {
+    background-color: var(--BGCOLOR2);
+}
+.ui-tabs-panel {
+    background-color: var(--BGCOLOR1);
+}
 .greyButton {
-    background-color: #ddd;
+    background-color: var(--BGCOLOR2);
     cursor: pointer;
     padding: calc( 4px * var(--SCALE));
     width: 100%;

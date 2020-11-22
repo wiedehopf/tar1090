@@ -624,7 +624,7 @@ PlaneObject.prototype.getMarkerColor = function(options) {
     if (s < 0) s = 0;
     else if (s > 95) s = 95;
 
-    if (l < 5) l = 5;
+    if (l < 0) l = 0;
     else if (l > 95) l = 95;
 
     return [h, s, l];
@@ -672,6 +672,10 @@ function altitudeColor(altitude) {
             }
         }
     }
+    if (toggles['darkerColors'].state) {
+        l *= 0.8;
+        s *= 0.7;
+    }
 
     if (h < 0) {
         h = (h % 360) + 360;
@@ -682,7 +686,7 @@ function altitudeColor(altitude) {
     if (s < 0) s = 0;
     else if (s > 95) s = 95;
 
-    if (l < 5) l = 5;
+    if (l < 0) l = 0;
     else if (l > 95) l = 95;
 
     return [h, s, l];
