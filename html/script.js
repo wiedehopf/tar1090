@@ -804,6 +804,16 @@ function initPage() {
         }
     });
 
+    new Toggle({
+        key: "selectedDetails",
+        display: "Selected Aircraft Details",
+        container: "#settingsLeft",
+        init: true,
+        setState: function(state) {
+            setSelectedInfoBlockVisibility();
+        }
+    });
+
     if (onMobile) {
         $('#large_mode_button').css('width', 'calc( 45px * let(--SCALE))');
         $('#large_mode_button').css('height', 'calc( 45px * let(--SCALE))');
@@ -2860,7 +2870,7 @@ function showMap() {
 }
 
 function setSelectedInfoBlockVisibility() {
-    if (SelectedPlane) {
+    if (SelectedPlane && toggles['selectedDetails'].state) {
         $('#selected_infoblock').show();
         if (!mapIsVisible)
             $("#sidebar_container").css('margin-left', '140pt');
@@ -2868,8 +2878,7 @@ function setSelectedInfoBlockVisibility() {
         //
         $('#large_mode_control').css('left', (190 * globalScale) + 'px');
         $('.ol-scale-line').css('left', (180 * globalScale + 8) + 'px');
-    }
-    else {
+    } else {
         $('#selected_infoblock').hide();
         if (!mapIsVisible)
             $("#sidebar_container").css('margin-left', '0');
