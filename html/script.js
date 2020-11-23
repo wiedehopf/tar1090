@@ -1277,6 +1277,7 @@ function webglAddLayer() {
         });
         if (!webglLayer || !webglLayer.getRenderer())
             return false;
+
         layers.push(webglLayer);
 
         webgl = true;
@@ -1286,9 +1287,16 @@ function webglAddLayer() {
 
         success = true;
     } catch (error) {
-        layers.remove(webglLayer);
+        try {
+            layers.remove(webglLayer);
+        } catch (error) {
+            console.error(error);
+        }
         console.error(error);
+        localStorage['webglFailStamp'] = new Date().getTime();
         success = false;
+        if (localStorage['webgl'] == 'true')
+            localStorage.removeItem('webgl');
     }
     delete Planes[plane.icao];
     PlanesOrdered.splice(PlanesOrdered.indexOf(plane), 1);
@@ -1298,11 +1306,18 @@ function webglAddLayer() {
 }
 
 function webglInit() {
+    let init = true;
+    // if webGL failed in the last 7 days, don't even try unless people click the toggle.
+    if (localStorage['webglFailStamp'] && Number(localStorage['webglFailStamp']) +  7 * 24 * 3600 * 1000 > new Date().getTime()) {
+        init = false;
+        if (localStorage['webgl'] == undefined)
+            console.log('webGL failed in the past 7 days, not even trying to initialize it');
+    }
     new Toggle({
         key: "webgl",
         display: "WebGL",
         container: "#settingsLeft",
-        init: true,
+        init: init,
         setState: function(state) {
             if (state) {
                 if (webglLayer) {
@@ -1319,6 +1334,7 @@ function webglInit() {
                 // returning false means the toggle will flip back as the activation of the webgl layer was unsuccessful.
             } else {
                 webgl = false;
+                //refreshFilter();
             }
         },
     });

@@ -378,10 +378,10 @@ Toggle.prototype.init = function() {
     if (localStorage[this.key] == 'false')
         this.state = false
 
-    this.toggle(this.state);
+    this.toggle(this.state, true);
 }
 
-Toggle.prototype.toggle = function(override) {
+Toggle.prototype.toggle = function(override, init) {
     if (override == true)
         this.state = true;
     else if (override == false)
@@ -396,16 +396,16 @@ Toggle.prototype.toggle = function(override) {
         }
     }
 
-    if (this.state == false) {
-        localStorage[this.key] = 'false';
-        if (this.checkbox)
+    if (this.checkbox) {
+        if (this.state == false) {
             $(this.checkbox).removeClass('settingsCheckboxChecked');
-    }
-    if (this.state == true) {
-        localStorage[this.key] = 'true';
-        if (this.checkbox)
+        } else {
             $(this.checkbox).addClass('settingsCheckboxChecked');
+        }
     }
+
+    if (!init)
+        localStorage[this.key] = this.state;
 }
 
 Toggle.prototype.restore = function () {
