@@ -6,7 +6,6 @@
 
 // Define our global variables
 let webgl = false;
-let webglSupported = false;
 let webglFeatures = new ol.source.Vector();
 let webglLayer;
 let OLMap = null;
@@ -35,7 +34,7 @@ let noPan = false;
 let loadFinished = false;
 let mapResizeTimeout;
 let pointerMoveTimeout;
-let scaleFactor;
+let scaleFactor = 1;
 let debugTracks = false;
 let debugAll = false;
 let trackLabels = false;
@@ -1235,6 +1234,12 @@ function startPage() {
 //
 
 function webglAddLayer() {
+    let success = false;
+
+    processAircraft({hex: 'c0ffee', lat: CenterLat, lon: CenterLon, type: 'tisb_other', seen: 0, seen_pos: 0,
+        alt_baro: 25000, });
+    let plane = Planes['c0ffee'];
+
     try {
         let glStyle = {
             symbol: {
@@ -1273,12 +1278,23 @@ function webglAddLayer() {
         if (!webglLayer || !webglLayer.getRenderer())
             return false;
         layers.push(webglLayer);
-        webglSupported = true;
-        return true;
+
+        webgl = true;
+        plane.visible = true;
+        plane.updateMarker();
+        OLMap.renderSync();
+
+        success = true;
     } catch (error) {
+        layers.remove(webglLayer);
         console.error(error);
-        return false;
+        success = false;
     }
+    delete Planes[plane.icao];
+    PlanesOrdered.splice(PlanesOrdered.indexOf(plane), 1);
+    plane.destroy();
+
+    return success;
 }
 
 function webglInit() {
@@ -1289,10 +1305,11 @@ function webglInit() {
         init: true,
         setState: function(state) {
             if (state) {
-                if (webglLayer)
+                if (webglLayer) {
                     webgl = true;
-                else
+                } else {
                     webgl = webglAddLayer();
+                }
 
                 if (!webgl) {
                     console.error('Unable to initialize the webGL Layer! Falling back to non-webGL icons, performance will be reduced significantly!');
@@ -1305,7 +1322,6 @@ function webglInit() {
             }
         },
     });
-
 }
 
 // Initalizes the map and starts up our timers to call various functions
@@ -1337,7 +1353,7 @@ function initMap() {
         MapType_tar1090 = localStorage['MapType_tar1090'];
     }
 
-    // Initialize OL3
+    // Initialize OpenLayers
 
     layers_group = createBaseLayers();
     layers = layers_group.getLayers();
@@ -1353,6 +1369,14 @@ function initMap() {
             renderOrder: null,
         }));
 
+
+    const dummyLayer = new ol.layer.Vector({
+        name: 'dummy',
+        renderOrder: null,
+    });
+
+    trailGroup.push(dummyLayer);
+
     trailLayers = new ol.layer.Group({
         name: 'ac_trail',
         title: 'Aircraft trails',
@@ -1362,8 +1386,6 @@ function initMap() {
     });
 
     layers.push(trailLayers);
-
-    webglInit();
 
     iconLayer = new ol.layer.Vector({
         name: 'iconLayer',
@@ -1377,23 +1399,33 @@ function initMap() {
     layers.push(iconLayer);
 
 
-    let foundType = false;
-    let baseCount = 0;
-
-    const dummyLayer = new ol.layer.Vector({
-        name: 'dummy',
-        renderOrder: null,
+    OLMap = new ol.Map({
+        target: 'map_canvas',
+        layers: layers,
+        view: new ol.View({
+            center: ol.proj.fromLonLat([CenterLon, CenterLat]),
+            zoom: ZoomLvl,
+            minZoom: 2,
+        }),
+        controls: [new ol.control.Zoom({delta: 1, duration: 0, target: 'map_container',}),
+            new ol.control.Attribution({collapsed: true}),
+            new ol.control.ScaleLine({units: DisplayUnits})
+        ],
+        interactions: new ol.interaction.defaults({altShiftDragRotate:false, pinchRotate:false,}),
     });
 
-    trailGroup.push(dummyLayer);
+    console.time('webglInit');
+    webglInit();
+    console.timeEnd('webglInit');
+
+    let foundType = false;
 
     ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
         if (!lyr.get('name'))
             return;
 
-        if (lyr.get('type') === 'base') {
-            baseCount++;
-            if (MapType_tar1090 === lyr.get('name')) {
+        if (lyr.get('type') == 'base') {
+            if (MapType_tar1090 == lyr.get('name')) {
                 foundType = true;
                 lyr.setVisible(true);
             } else {
@@ -1406,11 +1438,8 @@ function initMap() {
                 }
             });
         } else if (lyr.get('type') === 'overlay') {
-            let visible = localStorage['layer_' + lyr.get('name')];
-            if (visible != undefined) {
-                // javascript, why must you taunt me with gratuitous type problems
-                lyr.setVisible(visible === "true");
-            }
+            if (localStorage['layer_' + lyr.get('name')] == 'true')
+                lyr.setVisible(true);
 
             lyr.on('change:visible', function(evt) {
                 localStorage['layer_' + evt.target.get('name')] = evt.target.getVisible();
@@ -1429,30 +1458,14 @@ function initMap() {
         });
     }
 
-    OLMap = new ol.Map({
-        target: 'map_canvas',
-        layers: layers,
-        view: new ol.View({
-            center: ol.proj.fromLonLat([CenterLon, CenterLat]),
-            zoom: ZoomLvl,
-            minZoom: 2,
-        }),
-        controls: [new ol.control.Zoom({delta: 1, duration: 0, target: 'map_container',}),
-            new ol.control.Attribution({collapsed: true}),
-            new ol.control.ScaleLine({units: DisplayUnits})
-        ],
-        interactions: new ol.interaction.defaults({altShiftDragRotate:false, pinchRotate:false,}),
-    });
     OLProj = OLMap.getView().getProjection();
 
     OLMap.getView().setRotation(mapOrientation); // adjust orientation
 
-    if (baseCount > 1) {
-        OLMap.addControl(new ol.control.LayerSwitcher({
-            groupSelectStyle: 'none',
-            target: 'map_container',
-        }));
-    }
+    OLMap.addControl(new ol.control.LayerSwitcher({
+        groupSelectStyle: 'none',
+        target: 'map_container',
+    }));
 
     /*
     // Listeners for newly created Map
@@ -3714,7 +3727,7 @@ function mapRefresh() {
     // draw order will be insertion / updateFeatures / updateTick order
 
     addToMap.sort(function(x, y) { return x.altSort - y.altSort; });
-    //console.log('table refresh: ' + addToMap.length);
+    //console.log('maprefresh(): ' + addToMap.length);
     if (webgl) {
         webglFeatures.clear();
         for (let i in addToMap) {
