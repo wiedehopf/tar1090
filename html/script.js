@@ -1833,7 +1833,7 @@ function reaper(all) {
 
 // Page Title update function
 function refreshPageTitle() {
-    if (pTracks) 
+    if (pTracks)
         return;
     if (!PlaneCountInTitle && !MessageRateInTitle) {
         return;
@@ -2505,7 +2505,7 @@ function refreshFeatures() {
 
     // Refreshes the larger table of all the planes
     planesTable.refresh = function () {
-        if (initializing || pTracks)
+        if (initializing)
             return;
 
         resortTable();
