@@ -122,7 +122,7 @@ function convert_altitude(alt, displayUnits) {
 
 // speed in knots
 function format_speed_brief(speed, displayUnits) {
-	if (speed == null) {
+	if (speed == null || isNaN(speed)) {
 		return "";
 	}
 

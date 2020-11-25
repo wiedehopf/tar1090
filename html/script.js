@@ -2361,11 +2361,11 @@ function refreshFeatures() {
         header: function () { return 'Altitude(' + get_unit_label("altitude", DisplayUnits) + ')';},
     };
     cols.speed = {
-        text: 'Speed',
-        sort: function () { sortBy('speed', compareNumeric, function(x) { return x.gs; }); },
-        value: function(plane) { return format_speed_brief(plane.gs, DisplayUnits); },
+        text: pTracks ? 'Max. Speed' : 'Speed',
+        sort: function () { sortBy('speed', compareNumeric, function(x) { return x.speed; }); },
+        value: function(plane) { return format_speed_brief(plane.speed, DisplayUnits); },
         align: 'right',
-        header: function () { return 'Spd(' + get_unit_label("speed", DisplayUnits) + ')';},
+        header: function () { return (pTracks ? 'Max. ' : '') + 'Spd(' + get_unit_label("speed", DisplayUnits) + ')';},
     };
     cols.vert_rate = {
         text: 'Vertical Rate',
@@ -2375,11 +2375,11 @@ function refreshFeatures() {
         header: function () { return 'V. Rate(' + get_unit_label("verticalRate", DisplayUnits) + ')';},
     };
     cols.distance = {
-        text: 'Distance',
+        text: pTracks ? 'Max. Distance' : 'Distance',
         sort: function () { sortBy('sitedist',compareNumeric, function(x) { return x.sitedist; }); },
         value: function(plane) { return format_distance_brief(plane.sitedist, DisplayUnits); },
         align: 'right',
-        header: function () { return 'Dist.(' + get_unit_label("distance", DisplayUnits) + ')';},
+        header: function () { return (pTracks ? 'Max. ' : '') + 'Dist.(' + get_unit_label("distance", DisplayUnits) + ')';},
     };
     cols.track = {
         text: 'Track',
@@ -2849,7 +2849,7 @@ function selectPlaneByHex(hex, options) {
 
     updateAddressBar();
     refreshSelected();
-    TAR.planesTable.refresh();
+    pTracks || TAR.planesTable.refresh();
 }
 
 // loop through the planes and mark them as selected to show the paths for all planes
@@ -2878,7 +2878,7 @@ function selectAllPlanes() {
 
     refreshSelected();
     refreshHighlighted();
-    TAR.planesTable.refresh();
+    pTracks || TAR.planesTable.refresh();
 }
 
 // deselect all the planes
@@ -2900,7 +2900,7 @@ function deselectAllPlanes(keepMain) {
         SelectedPlane = null;
     refreshFeatures();
     refreshHighlighted();
-    TAR.planesTable.refresh();
+    //TAR.planesTable.refresh();
 
     updateAddressBar();
     refreshSelected();
@@ -3694,7 +3694,7 @@ function checkRefresh() {
         //console.time("refreshTable");
         refreshSelected();
         refreshHighlighted();
-        TAR.planesTable.refresh();
+        pTracks || TAR.planesTable.refresh();
         mapRefresh();
         //console.timeEnd("refreshTable");
 

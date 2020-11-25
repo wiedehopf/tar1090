@@ -294,7 +294,10 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     }
 
     if (this.position && SitePosition) {
-        this.sitedist = ol.sphere.getDistance(SitePosition, this.position);
+        if (pTracks && this.sitedist)
+            this.sitedist = Math.max(ol.sphere.getDistance(SitePosition, this.position), this.sitedist);
+        else
+            this.sitedist = ol.sphere.getDistance(SitePosition, this.position);
     }
 
     let projHere = ol.proj.fromLonLat(this.position);
@@ -1240,7 +1243,18 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.zIndex -= 100000;
 
     // needed for track labels
-    this.speed = gs;
+    if (pTracks) {
+        this.speed = Math.max(this.speed, gs);
+    } else {
+        this.speed = gs;
+    }
+
+    if (gs != null)
+        this.gs = gs;
+    else if (data.speed != null)
+        this.gs = data.speed;
+    else if (!pTracks)
+        this.gs = null;
 
     this.track = track;
     if (track != null) {
@@ -1293,25 +1307,18 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         if (this.receiver == "1090") {
             const messageRate = (data.messages - this.msgs1090)/(now - this.last);
             this.messageRate = (messageRate + this.messageRateOld)/2;
-            this.messageRateOld = messageRate; 
+            this.messageRateOld = messageRate;
             this.msgs1090 = data.messages;
         } else {
             const messageRate = (data.messages - this.msgs978)/(uat_now - uat_last);
             this.messageRate = (messageRate + this.messageRateOld)/2;
-            this.messageRateOld = messageRate; 
+            this.messageRateOld = messageRate;
             this.msgs978 = data.messages;
         }
     }
     this.messages = data.messages;
 
     this.rssi = data.rssi;
-
-    if (data.gs != null)
-        this.gs = data.gs;
-    else if (data.speed != null)
-        this.gs = data.speed;
-    else
-        this.gs = null;
 
     if (data.baro_rate != null)
         this.baro_rate = data.baro_rate;
@@ -1468,9 +1475,7 @@ PlaneObject.prototype.clearMarker = function() {
 
 // Update our marker on the map
 PlaneObject.prototype.updateMarker = function(moved) {
-    if (pTracks)
-        return;
-    if (!this.visible || this.position == null || this.isFiltered()) {
+    if (!this.visible || this.position == null || (pTracks && (SelectedAllPlanes || !this.selected))) {
         this.clearMarker();
         return;
     }
@@ -2220,6 +2225,7 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
     }
     this.speed = gs;
     this.gs = gs;
+
     if (altitude == 'ground') {
         this.true_heading = track;
         this.track = null;
@@ -2229,7 +2235,7 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
     }
 
     if (track)
-        this.rotation = track
+        this.rotation = track;
 
     this.vert_rate = rate;
     if (rate_geom) {
@@ -2541,7 +2547,7 @@ PlaneObject.prototype.setTypeData = function() {
 };
 
 PlaneObject.prototype.checkForDB = function(t) {
-    if (!this.regLoaded && (!t || !t.r) && (!dbServer || showTrace || this.receiver == 'uat')) {
+    if (!this.regLoaded && (!t || !t.r) && (!dbServer || pTracks || showTrace || this.receiver == 'uat')) {
         this.getAircraftData();
         return;
     }
