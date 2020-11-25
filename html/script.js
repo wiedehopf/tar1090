@@ -1515,14 +1515,14 @@ function initMap() {
             let features = webgl ? webglFeatures : PlaneIconFeatures;
             let evtCoords = evt.map.getCoordinateFromPixel(evt.pixel);
             let feature = features.getClosestFeatureToCoordinate(evtCoords);
-            if (!feature)
-                return;
-            let fPixel = evt.map.getPixelFromCoordinate(feature.getGeometry().getCoordinates());
-            let a = fPixel[0] - evt.pixel[0];
-            let b = fPixel[1] - evt.pixel[1];
-            let c = globalScale * 25;
-            if (a**2 + b**2 < c**2)
-                res = feature.hex;
+            if (feature) {
+                let fPixel = evt.map.getPixelFromCoordinate(feature.getGeometry().getCoordinates());
+                let a = fPixel[0] - evt.pixel[0];
+                let b = fPixel[1] - evt.pixel[1];
+                let c = globalScale * 25;
+                if (a**2 + b**2 < c**2)
+                    res = feature.hex;
+            }
         }
 
         if (!res) {
