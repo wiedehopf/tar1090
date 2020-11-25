@@ -1535,21 +1535,24 @@ function initMap() {
             );
             if (features.length > 0) {
                 let close = 10000000000000;
-                let closest = null;
-                for (let i in features) {
-                    let feature = features[i];
+                let closest = features[0];
+                for (let j in features) {
+                    let feature = features[j];
                     let coords;
                     if (feature.isLabel)
-                        coords = feature.getGeometry().getCoordinates();
+                        coords = [feature.getGeometry().getCoordinates()];
                     else
-                        coords = feature.getGeometry().getCoordinates()[0];
-                    let fPixel = evt.map.getPixelFromCoordinate(coords);
-                    let a = fPixel[0] - evt.pixel[0];
-                    let b = fPixel[1] - evt.pixel[1];
-                    let distance = a**2 + b**2;
-                    if (distance < close) {
-                        closest = features[i];
-                        close = distance;
+                        coords = feature.getGeometry().getCoordinates();
+
+                    for (let k in coords) {
+                        let fPixel = evt.map.getPixelFromCoordinate(coords[k]);
+                        let a = fPixel[0] - evt.pixel[0];
+                        let b = fPixel[1] - evt.pixel[1];
+                        let distance = a**2 + b**2;
+                        if (distance < close) {
+                            closest = feature;
+                            close = distance;
+                        }
                     }
                 }
                 if (showTrace)
