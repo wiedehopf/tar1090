@@ -389,6 +389,7 @@ function fetchData() {
                 firstFetchDone = true;
                 if (uuid) {
                     followRandomPlane();
+                    deselectAllPlanes();
                     OLMap.getView().setZoom(6);
                 }
             }
