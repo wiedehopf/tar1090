@@ -1838,6 +1838,8 @@ PlaneObject.prototype.makeTR = function (trTemplate, tbody) {
         evt.preventDefault();
     }.bind(this);
 
+    this.tr.addEventListener('click', this.clickListener);
+
     if (!globeIndex) {
         this.dblclickListener = function(evt) {
             if(!mapIsVisible) {
@@ -1849,13 +1851,12 @@ PlaneObject.prototype.makeTR = function (trTemplate, tbody) {
 
         this.tr.addEventListener('dblclick', this.dblclickListener);
     }
-
-    this.tr.addEventListener('click', this.clickListener);
 };
 PlaneObject.prototype.destroyTR = function (trTemplate) {
     if (this.tr == null)
         return;
 
+    this.bgColorCache = undefined;
     this.tr.removeEventListener('click', this.clickListener);
     this.tr.removeEventListener('dblclick', this.dblclickListener);
 

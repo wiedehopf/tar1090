@@ -2572,6 +2572,11 @@ function refreshFeatures() {
                 if (plane.squawk in tableColors.special)
                     bgColor = tableColors.special[plane.squawk];
 
+                if (plane.bgColorCache != bgColor) {
+                    plane.bgColorCache = bgColor;
+                    plane.tr.style = "background-color: " + bgColor + ";";
+                }
+
                 for (let cell in activeCols) {
                     let col = activeCols[cell];
                     if (!col.value)
@@ -2586,12 +2591,6 @@ function refreshFeatures() {
                         }
                     }
                 }
-
-            }
-
-            if (plane.tr && plane.bgColorCache != bgColor) {
-                plane.bgColorCache = bgColor;
-                plane.tr.style = "background-color: " + bgColor + ";";
             }
         }
 
@@ -2601,15 +2600,14 @@ function refreshFeatures() {
         $('#dump1090_total_ac').text(globeIndex ? globeTrackedAircraft : TrackedAircraft);
         $('#dump1090_total_ac_positions').text(TrackedAircraftPositions);
 
-        for (let i = 0; i < PlanesOrdered.length; ++i) {
+        for (let i in PlanesOrdered) {
             const plane = PlanesOrdered[i];
-            if (plane.inTable) {
-                tbody.removeChild(plane.tr);
-                plane.inTable = false;
-            }
             if (plane.showInTable) {
                 tbody.appendChild(plane.tr);
                 plane.inTable = true;
+            } else if (plane.inTable) {
+                tbody.removeChild(plane.tr);
+                plane.inTable = false;
             }
         }
     }
