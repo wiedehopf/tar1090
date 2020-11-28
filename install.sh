@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+if [ -d /bup ]; then
+    echo Talk to @PIL. Dieses Skript ist nichts fuer dich!
+    exit 1
+fi
+
 trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
 
 srcdir=/run/dump1090-fa
