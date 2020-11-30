@@ -33,8 +33,6 @@ let traceRate = 0;
 let _aircraft_type_cache = null;
 let tfrs = false;
 
-let databaseFolder = "db2";
-
 let uuid = null;
 
 try {

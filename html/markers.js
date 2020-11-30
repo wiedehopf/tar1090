@@ -1120,7 +1120,7 @@ function svgShapeToURI(shape, fillColor, strokeColor, strokeWidth, scale){
 
 let glIconSize = 72;
 let glImapWidth = 8;
-let glImapHeight = 9;
+let glImapHeight = 11;
 
 let refCross = {
     w: glIconSize,
