@@ -103,7 +103,7 @@ else
         echo "Unable to download files, exiting! (Maybe try again?)"
         exit 1
     fi
-    TAR_VERSION="$(git rev-parse --short HEAD)_$DB_VERSION"
+    TAR_VERSION="$(git rev-parse --short HEAD)"
 fi
 
 
