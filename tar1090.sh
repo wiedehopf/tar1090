@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 set -e
 trap 'echo ERROR on line number $LINENO' ERR
 
