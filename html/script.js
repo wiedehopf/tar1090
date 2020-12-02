@@ -1510,7 +1510,7 @@ function initMap() {
     OLMap.on(['click', 'dblclick'], function(evt) {
         let res = null;
 
-        if (!res) {
+        if (!res && !showTrace) {
             let features = webgl ? webglFeatures : PlaneIconFeatures;
             let evtCoords = evt.map.getCoordinateFromPixel(evt.pixel);
             let feature = features.getClosestFeatureToCoordinate(evtCoords);
