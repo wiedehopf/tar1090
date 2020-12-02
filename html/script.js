@@ -1422,7 +1422,7 @@ function initMap() {
         view: new ol.View({
             center: ol.proj.fromLonLat([CenterLon, CenterLat]),
             zoom: ZoomLvl,
-            showFullExtent: true,
+            multiWorld: true,
         }),
         controls: [new ol.control.Zoom({delta: 1, duration: 0, target: 'map_container',}),
             new ol.control.Attribution({collapsed: true}),
@@ -3668,14 +3668,14 @@ function checkMovement() {
     checkMoveCenter[0] = center[0];
     checkMoveCenter[1] = center[1];
 
+    changeZoom();
+    changeCenter();
+
     if (noMovement == 3) {
 
         // no zoom/pan inputs for 450 ms after a zoom/pan input
         //
         //console.time("fire!");
-        changeZoom();
-        changeCenter();
-
         drawHeatmap();
 
         //console.timeEnd("fire!");
@@ -3778,10 +3778,15 @@ function changeZoom(init) {
     localStorage['ZoomLvl'] = ZoomLvl;
     ZoomLvlCache = ZoomLvl;
 
+    let oldScaleFactor = scaleFactor;
+
     if (ZoomLvl > markerZoomDivide)
         scaleFactor = markerBig;
     else
         scaleFactor = markerSmall;
+
+    if (scaleFactor != oldScaleFactor)
+        triggerMapRefresh = true;
 
     // scale markers according to global scaling
     scaleFactor *= Math.pow(1.3, globalScale) * globalScale * iconScale;;
