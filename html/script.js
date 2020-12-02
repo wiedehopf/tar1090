@@ -3643,10 +3643,14 @@ function changeCenter(init) {
     if (!init && showTrace)
         updateAddressBar();
 
-    if (rawCenter[0] < OLProj.extent_[0] || rawCenter[0] > OLProj.extent_[3]) {
+    if (rawCenter[0] < OLProj.extent_[0] || rawCenter[0] > OLProj.extent_[2]) {
         OLMap.getView().setCenter(ol.proj.fromLonLat(center));
         mapRefresh();
     }
+    if (center[1] < -85)
+        OLMap.getView().setCenter(ol.proj.fromLonLat([center[0], -85]));
+    if (center[1] > 85)
+        OLMap.getView().setCenter(ol.proj.fromLonLat([center[0], 85]));
 }
 
 function checkMovement() {
