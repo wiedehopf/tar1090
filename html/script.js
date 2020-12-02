@@ -595,7 +595,7 @@ function initPage() {
     }
 
     if (adsbexchange) {
-        setInterval(function(){$.ajax({url:'data/receiver.json',cache:false,});}, 180000);
+        setInterval(function(){if (!tabHidden) $.ajax({url:'data/receiver.json',cache:false,});}, 180000);
     }
 
     mapOrientation *= (Math.PI/180); // adjust to radians
@@ -1156,8 +1156,6 @@ function startPage() {
     if (enable_pf_data) {
         window.setInterval(fetchPfData, RefreshInterval*10.314);
     }
-    //window.setInterval(TAR.planesTable.refresh, 1000);
-    //window.setInterval(function() {PendingFetches--;}, 10000);
     setInterval(everySecond, 850);
 
     pathName = window.location.pathname;
@@ -1801,6 +1799,8 @@ function initMap() {
 
 // This looks for planes to reap out of the master Planes variable
 function reaper(all) {
+    if (tabHidden)
+        return;
     //console.log("Reaping started..");
     today = new Date().getDate();
     if (noVanish)
@@ -3561,7 +3561,7 @@ function toggleLayer(element, layer) {
 }
 
 function fetchPfData() {
-    if (fetchingPf || pTracks)
+    if (fetchingPf || pTracks || tabHidden)
         return;
     fetchingPf = true;
     for (let i in pf_data) {
@@ -3654,6 +3654,8 @@ function changeCenter(init) {
 }
 
 function checkMovement() {
+    if (tabHidden)
+        return;
     const zoom = OLMap.getView().getZoom();
     const center = ol.proj.toLonLat(OLMap.getView().getCenter());
 
@@ -4021,6 +4023,8 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
 }
 
 function trailReaper() {
+    if (tabHidden)
+        return;
     for (let i in PlanesOrdered) {
         PlanesOrdered[i].reapTrail();
     }
@@ -4204,13 +4208,13 @@ function updateAddressBar() {
 function refreshInt() {
     let refresh = RefreshInterval;
     if (!globeIndex) {
-        if (document[hidden])
+        if (tabHidden)
             return 3 * refresh;
         else
             return refresh;
     }
 
-    if (document[hidden])
+    if (tabHidden)
         return 24 * 3600 * 1000; // hidden tab, don't refresh to avoid freeze when the tab is switched to again.
 
     if (adsbexchange && refresh < 2700)
@@ -4695,6 +4699,8 @@ function checkFollow() {
 }
 
 function everySecond() {
+    if (tabHidden)
+        return;
     decrementTraceRate();
     updateIconCache();
 }

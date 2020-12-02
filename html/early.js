@@ -428,16 +428,27 @@ if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and 
   hidden = "webkitHidden";
   visibilityChange = "webkitvisibilitychange";
 }
+let tabHidden = false;
 
 function handleVisibilityChange() {
+    if (document[hidden])
+        tabHidden = true;
+    else
+        tabHidden = false;
+
     if (!globeIndex)
         return;
     if (heatmap)
         return;
-    if (!document[hidden]) {
+
+    // tab is no longer hidden
+    if (!tabHidden) {
         fetchData();
         if (showTrace)
             return;
+
+        reaper();
+
         let count = 0;
         if (multiSelect && !SelectedAllPlanes) {
             for (let i = 0; i < PlanesOrdered.length; ++i) {
