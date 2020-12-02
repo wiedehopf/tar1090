@@ -1422,7 +1422,7 @@ function initMap() {
         view: new ol.View({
             center: ol.proj.fromLonLat([CenterLon, CenterLat]),
             zoom: ZoomLvl,
-            minZoom: 2,
+            showFullExtent: true,
         }),
         controls: [new ol.control.Zoom({delta: 1, duration: 0, target: 'map_container',}),
             new ol.control.Attribution({collapsed: true}),
@@ -3645,6 +3645,7 @@ function changeCenter(init) {
 
     if (rawCenter[0] < OLProj.extent_[0] || rawCenter[0] > OLProj.extent_[3]) {
         OLMap.getView().setCenter(ol.proj.fromLonLat(center));
+        mapRefresh();
     }
 }
 
@@ -3667,21 +3668,23 @@ function checkMovement() {
     checkMoveCenter[0] = center[0];
     checkMoveCenter[1] = center[1];
 
+    if (noMovement == 3) {
+
+        // no zoom/pan inputs for 450 ms after a zoom/pan input
+        //
+        //console.time("fire!");
+        changeZoom();
+        changeCenter();
+
+        drawHeatmap();
+
+        //console.timeEnd("fire!");
+    }
+
     if (noMovement > 2)
         checkRefresh();
 
-    if (noMovement++ != 3)
-        return;
-
-    // no zoom/pan inputs for 450 ms after a zoom/pan input
-    //
-    //console.time("fire!");
-    changeZoom();
-    changeCenter();
-
-    drawHeatmap();
-
-    //console.timeEnd("fire!");
+    noMovement++;
 }
 
 function checkRefresh() {

@@ -1479,8 +1479,33 @@ PlaneObject.prototype.updateMarker = function(moved) {
         this.clearMarker();
         return;
     }
-
     moved |= this.moveMarker;
+
+    let lon = this.position[0];
+    let lat = this.position[1];
+
+    // manual wrap around
+    if (webgl && Math.abs(CenterLon - lon) > 180) {
+        if (CenterLon < 0)
+            lon -= 360;
+        else
+            lon += 360;
+    }
+
+    let proj = ol.proj.fromLonLat([lon, lat]);
+
+    if (this.proj) {
+        moved |= (this.proj[0] != proj[0] || this.proj[1] != proj[1]);
+    }
+
+    this.proj = proj;
+
+    if (!this.point) {
+        this.point = new ol.geom.Point(proj);
+    } else if (moved) {
+        this.point.setCoordinates(proj);
+    }
+
 
     let eastbound = this.rotation < 180;
     let icaoType = this.icaoType;
@@ -1503,18 +1528,14 @@ PlaneObject.prototype.updateMarker = function(moved) {
     this.strokeWidth = outlineWidth * ((this.selected && !SelectedAllPlanes && !onlySelected) ? 1.15 : 0.7) / this.baseScale;
 
     if (!this.marker) {
-        this.marker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
+        this.marker = new ol.Feature(this.point);
         this.marker.hex = this.icao;
-    } else if (moved) {
-        this.marker.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
     }
 
     if (webgl) {
         if (!this.glMarker) {
-            this.glMarker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
+            this.glMarker = new ol.Feature(this.point);
             this.glMarker.hex = this.icao;
-        } else if (moved) {
-            this.glMarker.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(this.position)));
         }
 
         this.setMarkerRgb();
