@@ -70,6 +70,8 @@ let debugCounter = 0;
 let selectedPhotoCache = null;
 let pathName = null;
 let icaoFilter = null;
+let sourcesFilter = null;
+let sources = ['adsb', 'uat', 'mlat', 'tisb', 'unknown'];
 let showTrace = false;
 let showTraceExit = false;
 let showTraceWasIsolation = false;
@@ -736,6 +738,7 @@ function initPage() {
     $("#type_filter_form").submit(updateTypeFilter);
     $("#description_filter_form").submit(updateDescriptionFilter);
     $("#icao_filter_form").submit(updateIcaoFilter);
+    $("#source_filter_form").submit(updateSourceFilter);
 
     $("#search_form").submit(onSearch);
     $("#jump_form").submit(onJump);
@@ -752,6 +755,7 @@ function initPage() {
     $("#type_filter_reset_button").click(onResetTypeFilter);
     $("#description_filter_reset_button").click(onResetDescriptionFilter);
     $("#icao_filter_reset_button").click(onResetIcaoFilter);
+    $("#source_filter_reset_button").click(onResetSourceFilter);
 
     $('#settingsCog').on('click', function() {
         $('#settings_infoblock').toggle();
@@ -927,22 +931,9 @@ function initPage() {
             if (loadFinished) {
                 refreshFilter();
             }
-            let legend = document.getElementById('legend');
-            let colors = tableColors.unselected;
-            let html = '';
-            html += '<div class="legendTitle" style="background-color:' + colors['adsb'] + ';">ADS-B</div>';
-            if (!globeIndex)
-                html += '<div class="legendTitle" style="background-color:' + colors['uat'] + ';">UAT / ADS-R</div>';
-            if (globeIndex)
-                html += '<div class="legendTitle" style="background-color:' + colors['uat'] + ';">ADS-C/R / UAT</div>';
-            html += '<div class="legendTitle" style="background-color:' + colors['mlat'] + ';">MLAT</div>';
-            html += '<div class="legendTitle" style="background-color:' + colors['tisb'] + ';">TIS-B</div>';
-            if (!globeIndex)
-                html += '<div class="legendTitle" style="background-color:' + colors['other'] + ';">Mode-S</div>';
-            if (globeIndex)
-                html += '<div class="legendTitle" style="background-color:' + colors['unknown'] + ';">Unknown</div>';
 
-            legend.innerHTML = html;
+            initLegend(tableColors.unselected);
+            initSourceFilter(tableColors.unselected);
         }
     });
 
@@ -995,6 +986,55 @@ function initPage() {
             return;
         }
     }
+}
+
+function initLegend(colors) {
+    let html = '';
+    html += '<div class="legendTitle" style="background-color:' + colors['adsb'] + ';">ADS-B</div>';
+    if (!globeIndex)
+        html += '<div class="legendTitle" style="background-color:' + colors['uat'] + ';">UAT / ADS-R</div>';
+    if (globeIndex)
+        html += '<div class="legendTitle" style="background-color:' + colors['uat'] + ';">ADS-C/R / UAT</div>';
+    html += '<div class="legendTitle" style="background-color:' + colors['mlat'] + ';">MLAT</div>';
+    html += '<div class="legendTitle" style="background-color:' + colors['tisb'] + ';">TIS-B</div>';
+    if (!globeIndex)
+        html += '<div class="legendTitle" style="background-color:' + colors['other'] + ';">Mode-S</div>';
+    if (globeIndex)
+        html += '<div class="legendTitle" style="background-color:' + colors['unknown'] + ';">Unknown</div>';
+
+    document.getElementById('legend').innerHTML = html;
+}
+
+function initSourceFilter(colors) {
+    const createFilter = function (color, text) {
+        return '<li class="ui-widget-content" style="background-color:' + color + ';">' + text + '</li>';
+    };
+
+    let html = '';
+    html += createFilter(colors['adsb'], 'ADS-B');
+    
+    if (!globeIndex)
+        html += createFilter(colors['uat'], 'UAT / ADS-R');
+    if (globeIndex)
+        html += createFilter(colors['uat'], 'ADS-C/R / UAT');
+    html += createFilter(colors['mlat'], 'MLAT');
+    html += createFilter(colors['tisb'], 'TIS-B');
+    if (!globeIndex)
+        html += createFilter(colors['other'], 'Mode-S');
+    if (globeIndex)
+        html += createFilter(colors['unknown'], 'Unknown');
+
+    document.getElementById('sourceFilter').innerHTML = html;
+
+    $("#sourceFilter").selectable({
+        stop: function () {
+            sourcesFilter = [];
+            $(".ui-selected", this).each(function () {
+                const index = $("#sourceFilter li").index(this);
+                sourcesFilter.push(sources[index]);
+            });
+        }
+    });
 }
 
 function push_history() {
@@ -3505,6 +3545,24 @@ function getFlightAwareIdentLink(ident, linkText) {
 
     return "";
 }
+
+function onResetSourceFilter(e) {
+    $('#sourceFilter .ui-selected').removeClass('ui-selected');
+
+    sourcesFilter = null;
+
+    updateSourceFilter();
+}
+
+function updateSourceFilter(e) {
+    if (e)
+        e.preventDefault();
+
+    PlaneFilter.sources = sourcesFilter;
+
+    refreshFilter();
+}
+
 
 function getFlightAwareModeSLink(code, ident, linkText) {
     if (code !== null && code.length > 0 && code[0] !== '~' && code !== "000000") {

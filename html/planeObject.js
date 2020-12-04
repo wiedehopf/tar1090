@@ -199,6 +199,10 @@ PlaneObject.prototype.isFiltered = function() {
     if (!filterTracks && altFiltered(this.altitude))
         return true;
 
+    if (PlaneFilter.sources && PlaneFilter.sources.length > 0 && !PlaneFilter.sources.includes(this.dataSource)) {
+        return true;
+    }
+
     if (PlaneFilter.icao && !this.icao.match(PlaneFilter.icao) ) {
         return true;
     }

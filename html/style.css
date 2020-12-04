@@ -740,3 +740,29 @@ table.infoTable tr td {
 .ui-tabs .ui-tabs-panel {
     padding: 1em 0.5em;
 }
+
+#sourceFilter .ui-selected {
+    border-color: orange;
+}
+
+#sourceFilter .ui-selectee {
+    border-width: 2px;
+}
+
+#sourceFilter {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: calc( 240px * var(--SCALE));
+}
+
+#sourceFilter li {
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 1px;
+    float: left;
+    width: calc( 85px * var(--SCALE));
+    color: #000000;
+    font-size: var(--FS2);
+    text-align: center;
+}
