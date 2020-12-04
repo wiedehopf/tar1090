@@ -9,7 +9,7 @@ function PlaneObject(icao) {
     this.squawk    = null;
     this.selected  = false;
     this.category  = null;
-    this.dataSource = "mode_s";
+    this.dataSource = "modeS";
 
     this.numHex = parseInt(icao.replace('~', '1'), 16);
 
@@ -176,15 +176,7 @@ PlaneObject.prototype.isFiltered = function() {
         return true;
     }
 
-    if (onlyMLAT && !(this.dataSource == "mlat" || (this.dataSource == "mode_s" && this.position == null))) {
-        return true;
-    }
-
     if (onlyMilitary && !this.military) {
-        return true;
-    }
-
-    if (onlyADSB && this.dataSource != "adsb" && this.dataSource != "uat") {
         return true;
     }
 
@@ -534,7 +526,7 @@ PlaneObject.prototype.clearLines = function() {
 
 PlaneObject.prototype.getDataSourceNumber = function() {
     // MLAT
-    if (this.dataSource == "mode_s")
+    if (this.dataSource == "modeS")
         return 5;
     if (this.dataSource == "adsc")
         return 6;
@@ -575,7 +567,7 @@ PlaneObject.prototype.getDataSource = function() {
         return "tisb";
 
     // Otherwise Mode S
-    return 'mode_s';
+    return 'modeS';
 
     // TODO: add support for Mode A/C
 };
@@ -1282,13 +1274,15 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     }
 
     if (mlat && noMLAT) {
-        this.dataSource = "mode_s";
+        this.dataSource = "modeS";
     } else if (mlat) {
         this.dataSource = "mlat";
     } else if (!displayUATasADSB && this.receiver == "uat" && !tisb) {
         this.dataSource = "uat";
     } else if (tisb) {
         this.dataSource = "tisb";
+    } else if (type && type.substring(0,4) == "adsr") {
+        this.dataSource = "adsr";
     } else if ((lat != null && type == null) || (type && (type.substring(0,4) == "adsb" || type.substring(0,4) == "adsr"))) {
         this.dataSource = "adsb";
     }
@@ -2273,12 +2267,14 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
     }
 
     if (data != null) {
-        if (data.type.substring(0,4) == "adsb" || data.type.substring(0,4) == "adsr") {
+        if (data.type.substring(0,4) == "adsb") {
             this.dataSource = "adsb";
+        } else if (data.type.substring(0,4) == "adsr") {
+            this.dataSource = "adsr";
         } else if (data.type == "mlat") {
             this.dataSource = "mlat";
         } else if (data.type == "adsb_icao_nt") {
-            this.dataSource = "mode_s";
+            this.dataSource = "modeS";
         } else if (data.type.substring(0,4) == "tisb") {
             this.dataSource = "tisb";
         } else if (data.type == 'adsc') {

@@ -45,9 +45,7 @@ let enableLabels = false;
 let extendedLabels = 0;
 let mapIsVisible = true;
 let tableInView = false;
-let onlyMLAT = false;
 let onlyMilitary = false;
-let onlyADSB = false;
 let onlySelected = false;
 let onlyDataSource = null;
 let fetchingPf = false;
@@ -71,7 +69,7 @@ let selectedPhotoCache = null;
 let pathName = null;
 let icaoFilter = null;
 let sourcesFilter = null;
-let sources = ['adsb', 'uat', 'mlat', 'tisb', 'unknown'];
+let sources = ['adsb', ['uat', 'adsr'], 'mlat', 'tisb', ['modeS', 'unknown'], 'adsc'];
 let showTrace = false;
 let showTraceExit = false;
 let showTraceWasIsolation = false;
@@ -619,11 +617,6 @@ function initPage() {
         debug = true;
     if (localStorage['debugPosFilter'] == "true")
         debugPosFilter = true;
-    if (localStorage['noMLAT'] == "true") {
-        // disable remembering this for now
-        //noMLAT = true;
-        //localStorage['noMLAT'] = "false";
-    }
 
     if (localStorage['noVanish'] == "true") {
         noVanish = true;
@@ -998,7 +991,7 @@ function initLegend(colors) {
     html += '<div class="legendTitle" style="background-color:' + colors['mlat'] + ';">MLAT</div>';
     html += '<div class="legendTitle" style="background-color:' + colors['tisb'] + ';">TIS-B</div>';
     if (!globeIndex)
-        html += '<div class="legendTitle" style="background-color:' + colors['other'] + ';">Mode-S</div>';
+        html += '<div class="legendTitle" style="background-color:' + colors['modeS'] + ';">Mode-S</div>';
     if (globeIndex)
         html += '<div class="legendTitle" style="background-color:' + colors['unknown'] + ';">Unknown</div>';
 
@@ -1012,17 +1005,18 @@ function initSourceFilter(colors) {
 
     let html = '';
     html += createFilter(colors['adsb'], 'ADS-B');
-    
-    if (!globeIndex)
-        html += createFilter(colors['uat'], 'UAT / ADS-R');
-    if (globeIndex)
-        html += createFilter(colors['uat'], 'ADS-C/R / UAT');
+
+    html += createFilter(colors['uat'], 'UAT / ADS-R');
     html += createFilter(colors['mlat'], 'MLAT');
     html += createFilter(colors['tisb'], 'TIS-B');
+
     if (!globeIndex)
-        html += createFilter(colors['other'], 'Mode-S');
+        html += createFilter(colors['modeS'], 'Mode-S');
     if (globeIndex)
         html += createFilter(colors['unknown'], 'Unknown');
+
+    if (globeIndex)
+        html += createFilter(colors['uat'], 'ADS-C');
 
     document.getElementById('sourceFilter').innerHTML = html;
 
@@ -1031,9 +1025,16 @@ function initSourceFilter(colors) {
             sourcesFilter = [];
             $(".ui-selected", this).each(function () {
                 const index = $("#sourceFilter li").index(this);
-                sourcesFilter.push(sources[index]);
+                if (Array.isArray(sources[index]))
+                    sources[index].forEach(member => { sourcesFilter.push(member); });
+                else
+                    sourcesFilter.push(sources[index]);
             });
         }
+    });
+
+    $("#sourceFilter").on("selectablestart", function (event, ui) {
+        event.originalEvent.ctrlKey = true;
     });
 }
 
@@ -1759,20 +1760,12 @@ function initMap() {
                 toggleFollow();
                 break;
                 // filters
-            case "M":
-                onlyMLAT = !onlyMLAT;
-                refreshFilter();
-                break;
             case "T":
                 filterTISB = !filterTISB;
                 refreshFilter();
                 break;
             case "u":
                 toggleMilitary();
-                break;
-            case "A":
-                onlyADSB = !onlyADSB;
-                refreshFilter();
                 break;
             case "i":
                 toggleIsolation();
