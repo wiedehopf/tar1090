@@ -2914,7 +2914,6 @@ function selectAllPlanes() {
 
 // deselect all the planes
 function deselectAllPlanes(keepMain) {
-    console.trace();
     if (showTrace)
         return;
     if (!multiSelect && SelectedPlane)
