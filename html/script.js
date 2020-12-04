@@ -2799,7 +2799,6 @@ function refreshFeatures() {
 
 
 function selectPlaneByHex(hex, options) {
-    //console.trace();
     active();
     //console.log("SELECTING", hex, options);
     options = options || {};
@@ -2915,24 +2914,27 @@ function selectAllPlanes() {
 
 // deselect all the planes
 function deselectAllPlanes(keepMain) {
+    console.trace();
     if (showTrace)
         return;
     if (!multiSelect && SelectedPlane)
         toggleIsolation(false, "off");
     buttonActive('#T', false);
     for(let key in Planes) {
-        if (keepMain && Planes[key] == SelectedPlane)
+        let plane = Planes[key];
+        if (keepMain && plane == SelectedPlane)
             continue;
-        Planes[key].selected = false;
-        $(Planes[key].tr).removeClass("selected");
+        if (plane.selected) {
+            plane.selected = false;
+            plane.updateTick(true);
+        }
     }
     $('#selectall_checkbox').removeClass('settingsCheckboxChecked');
     SelectedAllPlanes = false;
     if (!keepMain)
         SelectedPlane = null;
-    refreshFeatures();
-    refreshHighlighted();
-    //TAR.planesTable.refresh();
+
+    TAR.planesTable.refresh();
 
     updateAddressBar();
     refreshSelected();
@@ -3159,6 +3161,7 @@ function buttonActive(id, state) {
 }
 
 function toggleIsolation(on, off) {
+    let prevState = onlySelected;
     if (showTrace && !on && !off)
         return;
     onlySelected = !onlySelected;
@@ -3169,7 +3172,8 @@ function toggleIsolation(on, off) {
 
     buttonActive('#I', onlySelected);
 
-    refreshFilter();
+    if (prevState != onlySelected)
+        refreshFilter();
 }
 
 function toggleMilitary() {
@@ -3353,6 +3357,7 @@ function toggleTrackLabels() {
 }
 
 function toggleMultiSelect(newState) {
+    let prevState = multiSelect;
     multiSelect = !multiSelect;
 
     if (newState == "on")
@@ -3363,7 +3368,8 @@ function toggleMultiSelect(newState) {
     if (!multiSelect) {
         if (!SelectedPlane)
             toggleIsolation(false, "off");
-        deselectAllPlanes("keepMain");
+        if (prevState != multiSelect)
+            deselectAllPlanes("keepMain");
     }
 
     buttonActive('#M', multiSelect);
@@ -4335,12 +4341,8 @@ function toggleShowTrace() {
         selectPlaneByHex(hex, {follow: true, zoom: ZoomLvl,});
     }
 
-    $('#history_collapse').toggle({
-        duration: 0,
-        complete: function () {
-            $('#show_trace').toggleClass('active');
-        }
-    });
+    $('#history_collapse').toggle();
+    $('#show_trace').toggleClass('active');
 }
 
 function legShift(offset) {
