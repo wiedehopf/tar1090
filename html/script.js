@@ -2897,17 +2897,11 @@ function deselectAllPlanes(keepMain) {
     if (!multiSelect && SelectedPlane)
         toggleIsolation(false, "off");
     buttonActive('#T', false);
-    for(let key in Planes) {
-        let plane = Planes[key];
-        if (keepMain && plane == SelectedPlane)
-            continue;
-        if (plane.selected) {
-            plane.selected = false;
-            plane.updateTick(true);
-        }
-    }
     $('#selectall_checkbox').removeClass('settingsCheckboxChecked');
-    SelectedAllPlanes = false;
+    if (SelectedAllPlanes) {
+        SelectedAllPlanes = false;
+        refreshFeatures();
+    }
     if (!keepMain)
         SelectedPlane = null;
 

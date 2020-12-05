@@ -1432,16 +1432,10 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
     this.seen = Math.max(0, now - this.last_message_time)
     this.seen_pos = Math.max(0, now - this.position_time);
 
-    if (globeIndex && this.isFiltered())
-        return;
-
     const lastVisible = this.visible;
     this.visible = (!this.isFiltered() && this.checkVisible());
 
     if (this.visible) {
-        if (SelectedAllPlanes)
-            this.selected = true;
-
         if (this.drawLine || redraw || lastVisible != this.visible)
             this.updateLines();
 
@@ -1451,7 +1445,6 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
             OLMap.getView().setCenter(ol.proj.fromLonLat(this.position));
     }
     if (!this.visible && lastVisible) {
-        //console.log("hiding " + this.icao);
         this.clearMarker();
         this.clearLines();
         this.selected = false;
