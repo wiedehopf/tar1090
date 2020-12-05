@@ -1168,13 +1168,13 @@ function startPage() {
         trailReaper(now);
     }
     if (enable_pf_data) {
-        $('#pf_info_contianer').show;
+        $('#pf_info_contianer').removeClass('hidden');
         window.setInterval(fetchPfData, RefreshInterval*10.314);
     }
     setInterval(everySecond, 850);
 
     if (showPictures)
-        $('#photo_container').show;
+        $('#photo_container').removeClass('hidden');
 
     pathName = window.location.pathname;
     processURLParams();
@@ -1946,7 +1946,7 @@ function refreshSelected() {
     else
         $('#selected_typelong').text("n/a");
 
-    if (showPictures){
+    if (showPictures) {
         let type = selected.icaoType ? selected.icaoType : 'ZZZZ';
         let new_html = "<img width='151.11' height='35.55' src='aircraft_sil/" + type + ".png' />";
         if (new_html != selectedPhotoCache) {
