@@ -607,6 +607,7 @@ table.infoSectionTable tr td {
     background-image: url('images/close-settings.png');
     background-size: cover;
     width: calc( 20px * var(--SCALE));
+    height: calc( 20px * var(--SCALE));
     cursor: pointer;
 }
 
