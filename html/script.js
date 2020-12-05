@@ -668,17 +668,6 @@ function initPage() {
 
     localStorage['sidebar_width'] = $('#sidebar_container').width();
 
-    /*
-    // Set up datablock splitter
-    $('#selected_infoblock').resizable({
-        handles: {
-            s: '#splitter-infoblock'
-        },
-        containment: "#sidebar_container",
-        minHeight: 50
-    });
-    */
-
     $('#infoblock_close').on('click', function () {
 
         if (showTrace) {
@@ -696,22 +685,6 @@ function initPage() {
         }
     });
 
-    /*
-    // this is a little hacky, but the best, most consitent way of doing this. change the margin bottom of the table container to the height of the overlay
-    $('#selected_infoblock').on('resize', function() {
-        $('#sidebar_canvas').css('margin-bottom', $('#selected_infoblock').height() + 'px');
-    });
-    // look at the window resize to resize the pop-up infoblock so it doesn't float off the bottom or go off the top
-    $(window).on('resize', function() {
-        let topCalc = ($(window).height() - $('#selected_infoblock').height() - 25);
-        // check if the top will be less than zero, which will be overlapping/off the screen, and set the top correctly. 
-        if (topCalc < 0) {
-            topCalc = 0;
-            $('#selected_infoblock').css('height', ($(window).height() - 25) +'px');
-        }
-        $('#selected_infoblock').css('top', topCalc + 'px');
-    });
-    */
     $('#sidebar_container').on('resize', function() {
         localStorage['sidebar_width'] = $('#sidebar_container').width();
     });
@@ -1195,9 +1168,13 @@ function startPage() {
         trailReaper(now);
     }
     if (enable_pf_data) {
+        $('#pf_info_contianer').show;
         window.setInterval(fetchPfData, RefreshInterval*10.314);
     }
     setInterval(everySecond, 850);
+
+    if (showPictures)
+        $('#photo_container').show;
 
     pathName = window.location.pathname;
     processURLParams();
@@ -2081,7 +2058,7 @@ function refreshSelected() {
     if (selected.icao != selIcao) {
         selIcao = selected.icao;
         if (globeIndex) {
-            let icao_link = "<a style=\"color: blue\" target=\"_blank\" href=\"" + shareLink + "\">Share</a>";
+            let icao_link = "<a class='link' target=\"_blank\" href=\"" + shareLink + "\">Share</a>";
             icao_link = NBSP +NBSP +NBSP + icao_link;
             $('#selected_icao').html(selected.icao.toUpperCase() + icao_link);
         } else {
@@ -3019,21 +2996,30 @@ function showMap() {
 
 function setSelectedInfoBlockVisibility() {
     if (SelectedPlane && toggles['selectedDetails'].state) {
-        $('#selected_infoblock').show();
         if (!mapIsVisible)
             $("#sidebar_container").css('margin-left', '140pt');
         //$('#sidebar_canvas').css('margin-bottom', $('#selected_infoblock').height() + 'px');
         //
         $('#large_mode_control').css('left', (190 * globalScale) + 'px');
         $('.ol-scale-line').css('left', (180 * globalScale + 8) + 'px');
+
+        if (document.getElementById('map_canvas').clientWidth < parseFloat($('#selected_infoblock').css('width')) * 2.5) {
+            $('#selected_infoblock').css('height', '300px');
+            $('#large_mode_control').css('left', (5 * globalScale) + 'px');
+        } else {
+            $('#selected_infoblock').css('height', '100%');
+        }
+
+        $('#selected_infoblock').show();
     } else {
-        $('#selected_infoblock').hide();
         if (!mapIsVisible)
             $("#sidebar_container").css('margin-left', '0');
         //$('#sidebar_canvas').css('margin-bottom', 0);
 
         $('#large_mode_control').css('left', (5 * globalScale) + 'px');
         $('.ol-scale-line').css('left', '8px');
+
+        $('#selected_infoblock').hide();
     }
 }
 

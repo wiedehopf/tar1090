@@ -31,8 +31,8 @@ select {
 
 #selected_infoblock {
     position: absolute;
-    left: calc( 0px * var(--SCALE));
-    top: calc( 0px * var(--SCALE));
+    left: 0px;
+    bottom: 0px;
     width:  calc(180px * var(--SCALE));
     height: 100%;
     overflow: auto;
@@ -263,9 +263,6 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
     height: var(--FS2);
 }
 
-.plane_table_row a:link, a:visited {
-    color: black;
-}
 .hidden { display: none; }
 
 .infoblock_heading a  { text-decoration: none; color: blue; font-size: x-small;}
@@ -429,9 +426,8 @@ select.error, textarea.error, input.error {
 }
 
 
-.lightblue-link, .lightblue-link a {
-    color: #67b6c3;
-    font-weight: normal;
+.link, .link a {
+    color: #003f4b;
 }
 
 .settingsContainer {
@@ -451,7 +447,7 @@ select.error, textarea.error, input.error {
     position: absolute;
     left: calc( 40px * var(--SCALE));
     top: calc( 60px * var(--SCALE));
-    min-width:  calc(168px * var(--SCALE));
+    min-width:  calc(132px * var(--SCALE));
     padding-right: calc( 5px * var(--SCALE));
     box-shadow: calc( 4px * var(--SCALE)) calc( 4px * var(--SCALE)) calc( 10px * var(--SCALE)) #444444;
     cursor: pointer;
@@ -460,10 +456,7 @@ select.error, textarea.error, input.error {
 }
 
 .highlightedTitle {
-    height: calc( 50px * var(--SCALE));
     border-bottom: calc( 1px * var(--SCALE)) solid #67b6c3;
-    padding-left: calc( 18px * var(--SCALE));
-    padding-top: calc( 18px * var(--SCALE));
     display: inline-block;
     width: 83%;
 }
@@ -485,19 +478,19 @@ select.error, textarea.error, input.error {
 .identSmall {
     font-size: calc( 14px * var(--SCALE));
     font-weight: bold;
-    line-height: calc( 20px * var(--SCALE));
     color: #003f4b;
 }
 
-.infoTable {
+.infoSectionTable {
     width: 100%;
     border-collapse: collapse;
     padding: 0;
     margin: 0;
     background-color: var(--BGCOLOR1);
+    cursor: default;
 }
 
-table.infoTable tr td {
+table.infoSectionTable tr td {
     padding: 0;
     margin: 0;
 }
@@ -614,7 +607,6 @@ table.infoTable tr td {
     background-image: url('images/close-settings.png');
     background-size: cover;
     width: calc( 20px * var(--SCALE));
-    height: calc( 20px * var(--SCALE));
     cursor: pointer;
 }
 

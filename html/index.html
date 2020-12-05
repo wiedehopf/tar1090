@@ -25,7 +25,7 @@
     <div id="layout_container">
 
       <div id="highlighted_infoblock">
-        <div class="highlightedTitle">
+        <div class="highlightedTitle infoBlockSection">
           <div>
             <span class="identLarge"><span id="highlighted_callsign">n/a</span></span>
           </div>
@@ -35,11 +35,11 @@
         </div>
         <div class="infoBlockSection">
           <div>
-            <div class="infoHeading"><span>Registration: </span></div>
+            <div class="infoHeading"><span>Reg.: </span></div>
             <div class="infoData"><span id="highlighted_registration">n/a</span></div>
           </div>
           <div>
-            <div class="infoHeading"><span>Aircraft Type: </span></div>
+            <div class="infoHeading"><span>Type code: </span></div>
             <div class="infoData"><span id="highlighted_icaotype">n/a</span></div>
           </div>
           <div class="rSpacer">
@@ -70,14 +70,13 @@
         <div id="infoblock_close" class="infoblockCloseBox"></div>
         <div class="infoblock-container">
 
-          <div class="highlightedTitle">
+          <div class="highlightedTitle infoBlockSection">
             <div>
               <span class="identLarge" title="Callsign: Typically the air traffic control callsign or the aircraft's registration, as entered into the transponder by the pilot"><span id="selected_callsign">n/a</span></span>
             </div>
             <div>
               <span class="identSmall" title="ICAO hex id: The aircraft's unique ICAO identification number shown in hexadecimal format">Hex:&nbsp;<span id="selected_icao">n/a</span></span>
             </div>
-
           </div>
           <div id=anon_mlat_info class="infoBlockSection hidden">
             <div>
@@ -122,13 +121,16 @@
             </div>
           </div>
           <div id=reg_info class="infoBlockSection">
-            <table class="infoTable">
-
-              <tr>
+            <table class="infoSectionTable">
+              <tr id=pf_info_container class=hidden>
                 <td>
                   <div>
                     <span class="identMedium" id="selected_pf_info"> </span>
                   </div>
+                </td>
+              </tr>
+              <tr id=photo_container class=hidden>
+                <td>
                   <div class="infoHeading">
                     <span title="Aircraft Photo"id="selected_photo"></span>
                   </div>
@@ -144,38 +146,26 @@
               </tr>
               <tr>
                 <td>
-                  <div class="infoHeading">
-                    <span title="Country of registration">Country: </span>
-                  </div>
                   <div class="infoData">
-                    <span id="selected_country">n/a</span>
+                    <span title="Country of registration" id="selected_country">n/a</span>
                   </div>
                 </td>
               </tr>
               <tr>
                 <td>
-                  <div class="infoHeading">
-                    <span title="ICAO type code (A320/B738)">Type code: </span>
-                  </div>
-                  <div class="infoData">
-                    <span id="selected_icaotype"></span>
-                  </div>
+                  <span class="infoHeading" title="ICAO type code (A320/B738)">Type: </span>
+                  <span class="infoData"id="selected_icaotype"></span>
                 </td>
               </tr>
               <tr>
                 <td>
-                  <span class="infoHeading" title="Full Type">Type: </span>
-                  <span class="infoData" id="selected_typelong"></span>
+                  <span class="infoData" title="Full Type" id="selected_typelong"></span>
                 </td>
               </tr>
               <tr>
                 <td>
-                  <div class="infoHeading">
-                    <span title="ICAO type description (L/S/H Landplane/Seaplane/Helicopter 1/2/3/4 Number of P/T/J Reciprocating/Turboprop/Jet Engines">Type Desc.: </span>
-                  </div>
-                  <div class="infoData">
-                    <span id="selected_typedesc"></span>
-                  </div>
+                  <span class="infoHeading" title="ICAO type description (L/S/H Landplane/Seaplane/Helicopter 1/2/3/4 Number of P/T/J Reciprocating/Turboprop/Jet Engines">Type Desc.: </span>
+                  <span class="infoData"id="selected_typedesc"></span>
                 </td>
               </tr>
               <tr>
@@ -191,7 +181,7 @@
               <tr>
                 <td>
                   <div class="infoHeading">
-                    <span class="lightblue-link" id="selected_photo_link"></span>
+                    <span class="link" id="selected_photo_link"></span>
                   </div>
                 </td>
               </tr>
@@ -251,20 +241,12 @@
           <div class="infoBlockSection">
 
             <div>
-              <div class="infoHeading">
-                <span title="The speed of the aircraft over the ground.">Speed:</span>
-              </div>
-              <div class="infoData">
-                <span id="selected_speed1">n/a</span>
-              </div>
+              <span class="infoHeading" title="The speed of the aircraft over the ground.">Speed:</span>
+              <span class="infoData" id="selected_speed1">n/a</span>
             </div>
             <div>
-              <div class="infoHeading">
-                <span title="The uncorrected pressure-derived height of the aircraft above mean sea level (based on barometric pressure)">Altitude</span>:
-              </div>
-              <div class="infoData">
-                <span id="selected_altitude1"></span>
-              </div>
+              <span class="infoHeading" title="The uncorrected pressure-derived height of the aircraft above mean sea level (based on barometric pressure)">Altitude</span>:
+              <span class="infoData" id="selected_altitude1"></span>
             </div>
             <div>
               <div class="infoHeading">
@@ -774,7 +756,7 @@
               </tr>
 
               <tr class="infoblock_heading">
-                <td style="text-align: right">
+                <td style="text-align: right" class=link>
                   <a href="https://github.com/wiedehopf/tar1090#tar1090" id="dump1090_version" target="_blank">tar1090 on github</a>
                 </td>
               </tr>
