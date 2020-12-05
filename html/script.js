@@ -1969,8 +1969,9 @@ function refreshSelected() {
     else
         $('#selected_typelong').text("n/a");
 
-    if (showPictures && selected.icaoType){
-        let new_html = "<img width='150px' src='aircraft_sil/" + selected.icaoType + ".png' />";
+    if (showPictures){
+        let type = selected.icaoType ? selected.icaoType : 'ZZZZ';
+        let new_html = "<img width='151.11' height='35.55' src='aircraft_sil/" + type + ".png' />";
         if (new_html != selectedPhotoCache) {
             $('#selected_photo').html(new_html);
             selectedPhotoCache = new_html;
