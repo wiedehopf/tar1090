@@ -2998,8 +2998,10 @@ function setSelectedInfoBlockVisibility() {
         $('.ol-scale-line').css('left', (180 * globalScale + 8) + 'px');
 
         if (document.getElementById('map_canvas').clientWidth < parseFloat($('#selected_infoblock').css('width')) * 2.5) {
-            $('#selected_infoblock').css('height', '300px');
+            $('#selected_infoblock').css('height', '290px');
             $('#large_mode_control').css('left', (5 * globalScale) + 'px');
+            $('#photo_container').addClass('hidden');
+            $('#selected_typedesc').parent().parent().hide();
         } else {
             $('#selected_infoblock').css('height', '100%');
         }
