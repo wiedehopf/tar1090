@@ -2899,8 +2899,12 @@ function deselectAllPlanes(keepMain) {
     buttonActive('#T', false);
     $('#selectall_checkbox').removeClass('settingsCheckboxChecked');
     for (let i in PlanesOrdered) {
-        PlanesOrdered[i].selected = false;
-        PlanesOrdered[i].updateTick(true);
+        const plane = PlanesOrdered[i];
+        if (keepMain && plane == SelectedPlane)
+            continue;
+
+        plane.selected = false;
+        plane.updateTick(true);
     }
     if (SelectedAllPlanes) {
         SelectedAllPlanes = false;
