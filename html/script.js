@@ -2898,6 +2898,10 @@ function deselectAllPlanes(keepMain) {
         toggleIsolation(false, "off");
     buttonActive('#T', false);
     $('#selectall_checkbox').removeClass('settingsCheckboxChecked');
+    for (let i in PlanesOrdered) {
+        PlanesOrdered[i].selected = false;
+        PlanesOrdered[i].updateTick(true);
+    }
     if (SelectedAllPlanes) {
         SelectedAllPlanes = false;
         refreshFeatures();
