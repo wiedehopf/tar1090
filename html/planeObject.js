@@ -1035,7 +1035,7 @@ PlaneObject.prototype.processTrace = function() {
     }
 
     if (tempPlane.position_time > this.position_time && !showTrace) {
-        console.log('reusing current aircraft data after processing trace.');
+        //console.log('reusing current aircraft data after processing trace.');
         let newSegs = this.track_linesegs;
         let newSize = this.history_size;
         Object.assign(this, tempPlane);
@@ -1113,7 +1113,7 @@ PlaneObject.prototype.processTrace = function() {
 
     TAR.planesTable.refresh();
 
-    console.log(this.history_size + ' ' + points_in_trace);
+    //console.log(this.history_size + ' ' + points_in_trace);
 };
 
 PlaneObject.prototype.updatePositionData = function(now, last, data, init) {
