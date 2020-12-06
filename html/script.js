@@ -112,6 +112,7 @@ let zoomTimeout;
 let noMovement;
 let checkMoveZoom;
 let checkMoveCenter = [0, 0];
+let refreshZoom, refreshLat, refreshLon;
 
 
 let TrackedAircraft = 0;
@@ -2503,19 +2504,20 @@ function refreshFeatures() {
         }
         table += '  </tr>';
         table += '</thead>';
-        table += '<tbody id=tbody>';
-        table += '  <tr id="plane_row_template">';
-        for (let i in activeCols) {
-            let col = activeCols[i];
-            table += col.td;
-            table += '</td>';
-        }
-        table += '  </tr>';
+        table += '<tbody>';
         table += '</tbody>';
         htmlTable.innerHTML = table;
         tbody = htmlTable.tBodies[0];
-        planeRowTemplate = document.getElementById('plane_row_template');
-        tbody.removeChild(planeRowTemplate);
+
+        planeRowTemplate = document.createElement('tr');
+        let template = ''
+        for (let i in activeCols) {
+            let col = activeCols[i];
+            template += col.td;
+            template += '</td>';
+        }
+        planeRowTemplate.innerHTML = template;
+
         planesTable.refresh();
     }
 
@@ -2553,6 +2555,7 @@ function refreshFeatures() {
 
                 plane.visible = !plane.isFiltered() && plane.checkVisible();
                 plane.inView = plane.visible && inView(plane.position, lastRealExtent);
+
                 plane.showInTable = false;
                 if (plane.inView)
                     pList.push(plane);
@@ -2605,7 +2608,7 @@ function refreshFeatures() {
                 nPlanes++;
 
                 if (plane.tr == null) {
-                    plane.makeTR(planeRowTemplate.cloneNode(true), tbody);
+                    plane.makeTR(planeRowTemplate.cloneNode(true));
                     plane.tr.id = plane.icao;
                     this.refreshTR = true;
                 }
@@ -3784,7 +3787,7 @@ function checkMovement() {
         //console.timeEnd("fire!");
     }
 
-    if (noMovement > 2)
+    if (noMovement >= 3)
         checkRefresh();
 
     noMovement++;
@@ -3795,7 +3798,10 @@ function checkRefresh() {
     const zoom = OLMap.getView().getZoom();
     if (showTrace)
         return;
-    if (triggerMapRefresh || ZoomLvl != zoom || center[0] != CenterLon || center[1] != CenterLat) {
+    if (triggerMapRefresh || refreshZoom != zoom || center[0] != refreshLon || center[1] != refreshLat) {
+        refreshZoom = zoom;
+        refreshLat = center[1];
+        refreshLon = center[0];
         //console.time("refreshTable");
         refreshSelected();
         refreshHighlighted();
@@ -3804,8 +3810,6 @@ function checkRefresh() {
         //console.timeEnd("refreshTable");
 
         triggerMapRefresh = false;
-        changeZoom();
-        changeCenter();
     }
 }
 function mapRefresh() {
@@ -3827,18 +3831,17 @@ function mapRefresh() {
             if (
                 (!onMobile || webgl || nMapPlanes < 150)
                 && (!onMobile || webgl || ZoomLvl > 10 || !plane.onGround)
-                && !plane.isFiltered()
-                && inView(plane.position, lastRenderExtent)
+                && plane.visible
+                && plane.inView
             ) {
                 addToMap.push(plane);
                 nMapPlanes++;
             } else if (plane.selected && !SelectedAllPlanes) {
                 addToMap.push(plane);
                 nMapPlanes++;
-            } else if (plane.visible) {
-                plane.clearMarker();
-                plane.clearLines();
-                plane.visible = false;
+            } else {
+                plane.markerDrawn && plane.clearMarker();
+                plane.linesDrawn && plane.clearLines();
             }
         }
     } else {

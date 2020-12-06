@@ -517,6 +517,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
 
 // This is to remove the line from the screen if we deselect the plane
 PlaneObject.prototype.clearLines = function() {
+    this.linesDrawn = false;
     if (this.layer && this.layer.getVisible()) {
         this.layer.setVisible(false);
     }
@@ -1457,6 +1458,7 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
 };
 
 PlaneObject.prototype.clearMarker = function() {
+    this.markerDrawn = false;
     if (this.marker && this.marker.visible) {
         PlaneIconFeatures.removeFeature(this.marker);
         this.marker.visible = false;
@@ -1473,6 +1475,8 @@ PlaneObject.prototype.updateMarker = function(moved) {
         this.clearMarker();
         return;
     }
+    this.markerDrawn = true;
+
     moved |= this.moveMarker;
 
     let lon = this.position[0];
@@ -1660,6 +1664,8 @@ PlaneObject.prototype.updateLines = function() {
     this.drawLine = false;
     if (!this.visible || this.position == null || (!this.selected && !SelectedAllPlanes) || this.isFiltered())
         return this.clearLines();
+
+    this.linesDrawn = true;
 
     if (this.track_linesegs.length == 0)
         return;
