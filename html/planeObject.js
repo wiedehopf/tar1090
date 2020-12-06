@@ -1432,11 +1432,10 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
     this.seen = Math.max(0, now - this.last_message_time)
     this.seen_pos = Math.max(0, now - this.position_time);
 
-    const lastVisible = this.visible;
     this.visible = (!this.isFiltered() && this.checkVisible());
 
     if (this.visible) {
-        if (this.drawLine || redraw || lastVisible != this.visible)
+        if (this.drawLine || redraw || this.lastVisible != this.visible)
             this.updateLines();
 
         this.updateMarker();
@@ -1444,13 +1443,15 @@ PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
         if (this == SelectedPlane && FollowSelected && this.position)
             OLMap.getView().setCenter(ol.proj.fromLonLat(this.position));
     }
-    if (!this.visible && lastVisible) {
+    if (!this.visible && this.lastVisible) {
         this.clearMarker();
         this.clearLines();
         this.selected = false;
         if (SelectedPlane == this.icao)
             selectPlaneByHex(null,false);
     }
+
+    this.lastVisible = this.visible;
 };
 
 PlaneObject.prototype.clearMarker = function() {
@@ -2540,7 +2541,7 @@ PlaneObject.prototype.checkVisible = function() {
     return (
         (!globeIndex && this.seen < (58 - tisbReduction + jaeroTime))
         || (globeIndex && this.seen_pos < Math.max(getInactive(), 70) / 100 * (40 + zoomedOut + jaeroTime + mlatTime - tisbReduction))
-        || (this.selected && (onlySelected || (!SelectedAllPlanes && !multiSelect)))
+        || (this.selected && (onlySelected || !multiSelect))
         || noVanish
     );
 };

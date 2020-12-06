@@ -2539,6 +2539,7 @@ function refreshFeatures() {
             TrackedHistorySize += plane.history_size;
 
             plane.inView = !plane.isFiltered() && inView(plane.position, lastRealExtent);
+            plane.visible = !plane.isFiltered() && plane.checkVisible();
 
             plane.showInTable = false;
 
@@ -3005,7 +3006,7 @@ function setSelectedInfoBlockVisibility() {
         $('#large_mode_control').css('left', (190 * globalScale) + 'px');
         $('.ol-scale-line').css('left', (180 * globalScale + 8) + 'px');
 
-        if (document.getElementById('map_canvas').clientWidth < parseFloat($('#selected_infoblock').css('width')) * 2.5) {
+        if (mapIsVisible && document.getElementById('map_canvas').clientWidth < parseFloat($('#selected_infoblock').css('width')) * 2.5) {
             $('#selected_infoblock').css('height', '290px');
             $('#large_mode_control').css('left', (5 * globalScale) + 'px');
             $('#photo_container').addClass('hidden');
@@ -3759,6 +3760,8 @@ function checkRefresh() {
     }
 }
 function mapRefresh() {
+    if (!mapIsVisible)
+        return;
     //console.log('mapRefresh()');
     let addToMap = [];
     let lastRenderExtent = null;
