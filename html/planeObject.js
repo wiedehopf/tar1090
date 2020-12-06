@@ -823,6 +823,7 @@ PlaneObject.prototype.updateIcon = function() {
 };
 
 PlaneObject.prototype.processTrace = function() {
+    this.dataChanged();
 
     let options = traceOpts;
 
@@ -1141,6 +1142,7 @@ PlaneObject.prototype.updatePositionData = function(now, last, data, init) {
 // Update our data
 PlaneObject.prototype.updateData = function(now, last, data, init) {
     // get location data first, return early if only those are needed.
+    this.dataChanged();
 
     let isArray = Array.isArray(data);
     // [.hex, .alt_baro, .gs, .track, .lat, .lon, .seen_pos, "mlat"/"tisb"/.type , .flight, .messages]
@@ -1830,9 +1832,8 @@ PlaneObject.prototype.remakeTrail = function() {
 
 };
 
-PlaneObject.prototype.makeTR = function (trTemplate, tbody) {
+PlaneObject.prototype.makeTR = function (trTemplate) {
 
-    this.tbody = tbody;
     this.trCache = [];
     this.classesCache = null;
     this.tr = trTemplate;
@@ -1873,13 +1874,10 @@ PlaneObject.prototype.destroyTR = function (trTemplate) {
     this.tr.removeEventListener('click', this.clickListener);
     this.tr.removeEventListener('dblclick', this.dblclickListener);
 
-    if (this.inTable) {
-        this.tbody.removeChild(this.tr);
-        this.inTable = false;
-    }
     if (this.tr.parentNode)
         this.tr.parentNode.removeChild(this.tr);
 
+    this.inTable = false;
     this.tr = null;
 };
 
@@ -2521,6 +2519,10 @@ PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
         noLabel: true,
     });
 };
+
+PlaneObject.prototype.dataChanged = function() {
+    this.refreshTR = true;
+}
 
 PlaneObject.prototype.isNonIcao = function() {
     if (this.icao[0] == '~')

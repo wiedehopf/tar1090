@@ -2503,7 +2503,7 @@ function refreshFeatures() {
         }
         table += '  </tr>';
         table += '</thead>';
-        table += '<tbody>';
+        table += '<tbody id=tbody>';
         table += '  <tr id="plane_row_template">';
         for (let i in activeCols) {
             let col = activeCols[i];
@@ -2515,6 +2515,7 @@ function refreshFeatures() {
         htmlTable.innerHTML = table;
         tbody = htmlTable.tBodies[0];
         planeRowTemplate = document.getElementById('plane_row_template');
+        tbody.removeChild(planeRowTemplate);
         planesTable.refresh();
     }
 
@@ -2532,6 +2533,7 @@ function refreshFeatures() {
             return;
 
         const ctime = false; // gets enabled for debugging table refresh speed
+        // globeTableLimit = 1000; for testing performance
 
         ctime && console.time("planesTable.refresh()");
 
@@ -2605,61 +2607,71 @@ function refreshFeatures() {
                 if (plane.tr == null) {
                     plane.makeTR(planeRowTemplate.cloneNode(true), tbody);
                     plane.tr.id = plane.icao;
+                    this.refreshTR = true;
                 }
 
-                let colors = tableColors.unselected;
-                if (plane.selected && !SelectedAllPlanes)
-                    colors = tableColors.selected;
+                if (this.refreshTR) {
+                    let colors = tableColors.unselected;
+                    if (plane.selected && !SelectedAllPlanes)
+                        colors = tableColors.selected;
 
-                if (plane.dataSource && plane.dataSource in colors)
-                    bgColor = colors[plane.dataSource];
+                    if (plane.dataSource && plane.dataSource in colors)
+                        bgColor = colors[plane.dataSource];
 
-                if (plane.squawk in tableColors.special)
-                    bgColor = tableColors.special[plane.squawk];
+                    if (plane.squawk in tableColors.special)
+                        bgColor = tableColors.special[plane.squawk];
 
-                if (plane.bgColorCache != bgColor) {
-                    plane.bgColorCache = bgColor;
-                    plane.tr.style = "background-color: " + bgColor + ";";
-                }
+                    if (plane.bgColorCache != bgColor) {
+                        plane.bgColorCache = bgColor;
+                        plane.tr.style = "background-color: " + bgColor + ";";
+                    }
 
-                for (let cell in activeCols) {
-                    let col = activeCols[cell];
-                    if (!col.value)
-                        continue;
-                    let newValue = col.value(plane);
-                    if (newValue != plane.trCache[cell]) {
-                        plane.trCache[cell] = newValue;
-                        if (col.html) {
-                            plane.tr.cells[cell].innerHTML = newValue;
-                        } else {
-                            plane.tr.cells[cell].textContent = newValue;
+                    for (let cell in activeCols) {
+                        let col = activeCols[cell];
+                        if (!col.value)
+                            continue;
+                        let newValue = col.value(plane);
+                        if (newValue != plane.trCache[cell]) {
+                            plane.trCache[cell] = newValue;
+                            if (col.html) {
+                                plane.tr.cells[cell].innerHTML = newValue;
+                            } else {
+                                plane.tr.cells[cell].textContent = newValue;
+                            }
                         }
                     }
                 }
+                this.refreshTR = false;
             }
         }
         ctime && console.timeEnd("modTRs");
 
-        ctime && console.time("DOM-stats");
         global.refreshPageTitle();
         $('#dump1090_total_history').text(TrackedHistorySize);
         $('#dump1090_message_rate').text(MessageRate === null ? 'n/a' : MessageRate.toFixed(1));
         $('#dump1090_total_ac').text(globeIndex ? globeTrackedAircraft : TrackedAircraft);
         $('#dump1090_total_ac_positions').text(TrackedAircraftPositions);
-        ctime && console.timeEnd("DOM-stats");
 
-        ctime && console.time("DOM");
-        for (let i in PlanesOrdered) {
-            const plane = PlanesOrdered[i];
+
+
+        ctime && console.time("DOM1");
+
+        let newBody = document.createElement('tbody');
+        for (let i in pList) {
+            const plane = pList[i];
             if (plane.showInTable) {
-                tbody.appendChild(plane.tr);
+                newBody.appendChild(plane.tr);
                 plane.inTable = true;
-            } else if (plane.inTable) {
-                tbody.removeChild(plane.tr);
-                plane.inTable = false;
             }
         }
-        ctime && console.timeEnd("DOM");
+
+        ctime && console.timeEnd("DOM1");
+        ctime && console.time("DOM2");
+
+        htmlTable.replaceChild(newBody, tbody);
+        tbody = newBody;
+
+        ctime && console.timeEnd("DOM2");
 
         ctime && console.timeEnd("planesTable.refresh()");
     }
