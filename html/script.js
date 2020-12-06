@@ -896,6 +896,7 @@ function initPage() {
                 tableColors = tableColorsLight;
             }
             if (loadFinished) {
+                TAR.planesTable.redraw();
                 refreshFilter();
             }
 
