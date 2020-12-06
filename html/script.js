@@ -1347,11 +1347,21 @@ function webglInit() {
                     console.error('Unable to initialize the webGL Layer! Falling back to non-webGL icons, performance will be reduced significantly!');
                     webglLayer = null;
                 }
-                return webgl;
+                if (!webgl)
+                    return false;
                 // returning false means the toggle will flip back as the activation of the webgl layer was unsuccessful.
             } else {
                 webgl = false;
-                //refreshFilter();
+                if (loadFinished) {
+                    webglFeatures && webglFeatures.clear();
+                    for (let i in PlanesOrdered) {
+                        const plane = PlanesOrdered[i];
+                        delete plane.glMarker;
+                    }
+                }
+            }
+            if (loadFinished) {
+                refreshFilter();
             }
         },
     });
@@ -2521,13 +2531,16 @@ function refreshFeatures() {
         if (initializing)
             return;
 
-        //console.time("planesTable.refresh()");
+        const ctime = false; // gets enabled for debugging table refresh speed
+
+        ctime && console.time("planesTable.refresh()");
 
         if (mapIsVisible || lastRealExtent === null) {
             lastRealExtent = myExtent(OLMap.getView().calculateExtent(OLMap.getSize()));
         }
 
 
+        ctime && console.time("inView");
         let pList = PlanesOrdered;
         if (tableInView) {
             // only sort visible aircraft when only those are being put in the table (avoid 30 ms sorting for 7000 aircraft)
@@ -2535,16 +2548,19 @@ function refreshFeatures() {
             pList = [];
             for (let i = 0; i < PlanesOrdered.length; ++i) {
                 const plane = PlanesOrdered[i];
-                plane.inView = !plane.isFiltered() && inView(plane.position, lastRealExtent);
+
+                plane.visible = !plane.isFiltered() && plane.checkVisible();
+                plane.inView = plane.visible && inView(plane.position, lastRealExtent);
                 plane.showInTable = false;
                 if (plane.inView)
                     pList.push(plane);
             }
         }
+        ctime && console.timeEnd("inView");
 
-        //console.time("resortTable");
+        ctime && console.time("resortTable");
         resortTable(pList);
-        //console.timeEnd("resortTable");
+        ctime && console.timeEnd("resortTable");
 
         TrackedAircraft = 0;
         TrackedAircraftPositions = 0;
@@ -2553,10 +2569,9 @@ function refreshFeatures() {
         let nPlanes = 0;
         const sidebarVisible = toggles['sidebar_visible'].state;
 
+        ctime && console.time("modTRs");
         for (let i = 0; i < pList.length; ++i) {
             const plane = pList[i];
-
-            plane.visible = !plane.isFiltered() && plane.checkVisible();
 
             TrackedHistorySize += plane.history_size;
 
@@ -2623,13 +2638,17 @@ function refreshFeatures() {
                 }
             }
         }
+        ctime && console.timeEnd("modTRs");
 
+        ctime && console.time("DOM-stats");
         global.refreshPageTitle();
         $('#dump1090_total_history').text(TrackedHistorySize);
         $('#dump1090_message_rate').text(MessageRate === null ? 'n/a' : MessageRate.toFixed(1));
         $('#dump1090_total_ac').text(globeIndex ? globeTrackedAircraft : TrackedAircraft);
         $('#dump1090_total_ac_positions').text(TrackedAircraftPositions);
+        ctime && console.timeEnd("DOM-stats");
 
+        ctime && console.time("DOM");
         for (let i in PlanesOrdered) {
             const plane = PlanesOrdered[i];
             if (plane.showInTable) {
@@ -2640,8 +2659,9 @@ function refreshFeatures() {
                 plane.inTable = false;
             }
         }
+        ctime && console.timeEnd("DOM");
 
-        //console.timeEnd("planesTable.refresh()");
+        ctime && console.timeEnd("planesTable.refresh()");
     }
 
     //
@@ -3790,6 +3810,7 @@ function mapRefresh() {
     if (globeIndex && !icaoFilter) {
         for (let i in PlanesOrdered) {
             const plane = PlanesOrdered[i];
+            delete plane.glMarker;
             // disable mobile limitations when using webGL
             if (
                 (!onMobile || webgl || nMapPlanes < 150)
@@ -3810,7 +3831,9 @@ function mapRefresh() {
         }
     } else {
         for (let i in PlanesOrdered) {
-            addToMap.push(PlanesOrdered[i]);
+            const plane = PlanesOrdered[i];
+            addToMap.push(plane);
+            delete plane.glMarker;
         }
     }
 
@@ -3824,13 +3847,11 @@ function mapRefresh() {
     //console.log('maprefresh(): ' + addToMap.length);
     if (webgl) {
         webglFeatures.clear();
-        for (let i in addToMap) {
-            delete addToMap[i].glMarker;
-        }
     }
     if (globeIndex && !icaoFilter) {
-        for (let i in addToMap)
+        for (let i in addToMap) {
             addToMap[i].updateFeatures(now, last);
+        }
     } else {
         for (let i in addToMap) {
             addToMap[i].updateTick();
