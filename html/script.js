@@ -2515,33 +2515,50 @@ function refreshFeatures() {
             planesTable.redraw();
     }
 
+
     // Refreshes the larger table of all the planes
     planesTable.refresh = function () {
         if (initializing)
             return;
 
-        resortTable();
+        //console.time("planesTable.refresh()");
+
+        if (mapIsVisible || lastRealExtent === null) {
+            lastRealExtent = myExtent(OLMap.getView().calculateExtent(OLMap.getSize()));
+        }
+
+
+        let pList = PlanesOrdered;
+        if (tableInView) {
+            // only sort visible aircraft when only those are being put in the table (avoid 30 ms sorting for 7000 aircraft)
+            // well maybe i overestimated the time saved. .... maybe check some other time
+            pList = [];
+            for (let i = 0; i < PlanesOrdered.length; ++i) {
+                const plane = PlanesOrdered[i];
+                plane.inView = !plane.isFiltered() && inView(plane.position, lastRealExtent);
+                plane.showInTable = false;
+                if (plane.inView)
+                    pList.push(plane);
+            }
+        }
+
+        //console.time("resortTable");
+        resortTable(pList);
+        //console.timeEnd("resortTable");
 
         TrackedAircraft = 0;
         TrackedAircraftPositions = 0;
         TrackedHistorySize = 0;
 
         let nPlanes = 0;
-        if (mapIsVisible || lastRealExtent === null) {
-            lastRealExtent = myExtent(OLMap.getView().calculateExtent(OLMap.getSize()));
-        }
-
         const sidebarVisible = toggles['sidebar_visible'].state;
 
-        for (let i = 0; i < PlanesOrdered.length; ++i) {
-            const plane = PlanesOrdered[i];
+        for (let i = 0; i < pList.length; ++i) {
+            const plane = pList[i];
 
-            TrackedHistorySize += plane.history_size;
-
-            plane.inView = !plane.isFiltered() && inView(plane.position, lastRealExtent);
             plane.visible = !plane.isFiltered() && plane.checkVisible();
 
-            plane.showInTable = false;
+            TrackedHistorySize += plane.history_size;
 
             if (tableInView && plane.visible &&
                 (plane.inView || (plane.selected && !SelectedAllPlanes))
@@ -2623,6 +2640,8 @@ function refreshFeatures() {
                 plane.inTable = false;
             }
         }
+
+        //console.timeEnd("planesTable.refresh()");
     }
 
     //
@@ -2651,10 +2670,9 @@ function refreshFeatures() {
         return x._sort_pos - y._sort_pos;
     }
 
-    function resortTable() {
+    function resortTable(pList) {
         if (!sortExtract)
             return;
-        const pList = PlanesOrdered;
         if (globeIndex) {
             // don't presort for globeIndex
         }
@@ -2702,8 +2720,7 @@ function refreshFeatures() {
 
         pList.sort(sortFunction);
 
-        // Put selected planes on top, do a stable sort!
-        // actually that's a bad idea, disable this for now
+        // In multiSelect put selected planes on top, do a stable sort!
         if (!SelectedAllPlanes && multiSelect) {
             for (let i = 0; i < pList.length; ++i) {
                 pList[i]._sort_pos = i;
@@ -3292,7 +3309,7 @@ function followRandomPlane() {
         this_one = PlanesOrdered[Math.floor(Math.random()*PlanesOrdered.length)];
         if (!this_one || tired++ > 1000)
             break;
-    } while (this_one.isFiltered() || !this_one.position || (now - this_one.position_time > 30));
+    } while ((this_one.isFiltered() && !onlySelected) || !this_one.position || (now - this_one.position_time > 30));
     //console.log(this_one.icao);
     if (this_one)
         selectPlaneByHex(this_one.icao, {follow: true});
