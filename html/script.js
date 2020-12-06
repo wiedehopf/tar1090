@@ -2610,10 +2610,10 @@ function refreshFeatures() {
                 if (plane.tr == null) {
                     plane.makeTR(planeRowTemplate.cloneNode(true));
                     plane.tr.id = plane.icao;
-                    this.refreshTR = true;
+                    plane.refreshTR = true;
                 }
 
-                if (this.refreshTR) {
+                if (plane.refreshTR) {
                     let colors = tableColors.unselected;
                     if (plane.selected && !SelectedAllPlanes)
                         colors = tableColors.selected;
@@ -2643,8 +2643,8 @@ function refreshFeatures() {
                             }
                         }
                     }
+                    plane.refreshTR = false;
                 }
-                this.refreshTR = false;
             }
         }
         ctime && console.timeEnd("modTRs");
