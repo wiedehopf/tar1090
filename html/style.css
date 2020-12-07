@@ -307,6 +307,9 @@ select.error, textarea.error, input.error {
     right: calc( 47px * var(--SCALE)) !important;
     z-index: 999;
 }
+.layer-switcher.shown {
+    bottom: 3em;
+}
 
 /* new css */
 .dateTime

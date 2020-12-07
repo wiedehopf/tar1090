@@ -1208,6 +1208,11 @@ function startPage() {
     }
 
     geoMag = geoMagFactory(cof2Obj());
+
+    if (pTracks)
+        setTimeout(TAR.planesTable.refresh, 5000);
+
+    drawUpintheair();
 }
 
 //
@@ -3789,7 +3794,7 @@ function checkRefresh() {
         //console.time("refreshTable");
         refreshSelected();
         refreshHighlighted();
-        pTracks || TAR.planesTable.refresh();
+        TAR.planesTable.refresh();
         mapRefresh();
         //console.timeEnd("refreshTable");
 
@@ -4240,7 +4245,7 @@ function inView(pos, ex) {
 }
 
 function updateAddressBar() {
-    if (heatmap)
+    if (heatmap || pTracks)
         return;
     let posString = 'lat=' + CenterLat.toFixed(3) + '&lon=' + CenterLon.toFixed(3) + '&zoom=' + ZoomLvl.toFixed(1);
     let string;
@@ -4613,7 +4618,6 @@ function remakeTrails() {
 
 function createSiteCircleFeatures() {
     StaticFeatures.clear();
-    drawUpintheair();
 
     // Clear existing circles first
     if (!SitePosition)
@@ -4697,6 +4701,17 @@ function drawUpintheair() {
             cache: true,
             dataType: 'json' });
         request.done(function(data) {
+            let outlineFeatures = new ol.source.Vector();
+            layers.insertAt(3,
+                new ol.layer.Vector({
+                    name: 'upintheair',
+                    type: 'overlay',
+                    title: 'terrain-based range outline',
+                    source: outlineFeatures,
+                    visible: !adsbexchange,
+                    zIndex: 100,
+                    renderOrder: null,
+                }));
             for (let i = 0; i < data.rings.length; ++i) {
                 let geom = null;
                 let points = data.rings[i].points;
@@ -4723,7 +4738,7 @@ function drawUpintheair() {
 
                     let feature = new ol.Feature(geom);
                     feature.setStyle(ringStyle);
-                    StaticFeatures.addFeature(feature);
+                    outlineFeatures.addFeature(feature);
                 }
             }
         });

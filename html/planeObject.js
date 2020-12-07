@@ -2061,6 +2061,9 @@ PlaneObject.prototype.getAircraftData = function() {
             this.military = (data[2][0] == '1');
             this.interesting = (data[2][1] == '1');
         }
+
+        this.dataChanged();
+
         if (this.selected) {
             refreshSelected();
         }
@@ -2569,7 +2572,7 @@ PlaneObject.prototype.setTypeData = function() {
 };
 
 PlaneObject.prototype.checkForDB = function(t) {
-    if (!this.regLoaded && (!t || !t.r) && (!dbServer || pTracks || showTrace || this.receiver == 'uat')) {
+    if (!this.regLoaded && (!t || !t.r) && (!dbServer || showTrace || this.receiver == 'uat')) {
         this.getAircraftData();
         return;
     }
@@ -2588,6 +2591,7 @@ PlaneObject.prototype.checkForDB = function(t) {
         this.military = t.dbFlags & 1;
         this.interesting = t.dbFlags & 2;
     }
+    this.dataChanged();
 };
 PlaneObject.prototype.updateAlt = function(t) {
     this.alt_rounded = calcAltitudeRounded(this.altitude);
