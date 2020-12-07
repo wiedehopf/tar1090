@@ -2544,20 +2544,35 @@ function refreshFeatures() {
             lastRealExtent = myExtent(OLMap.getView().calculateExtent(OLMap.getSize()));
         }
 
+        TrackedAircraft = 0;
+        TrackedAircraftPositions = 0;
+        TrackedHistorySize = 0;
 
         ctime && console.time("inView");
-        let pList = [];
-        // only sort visible aircraft when only those are being put in the table (avoid 30 ms sorting for 7000 aircraft)
-        // well maybe i overestimated the time saved. .... still saves a couple of cpu cycles
+        let pList = []; // list of planes that might go in the table and need sorting
         for (let i = 0; i < PlanesOrdered.length; ++i) {
             const plane = PlanesOrdered[i];
 
             plane.visible = !plane.isFiltered() && plane.checkVisible();
             plane.inView = plane.visible && inView(plane.position, lastRealExtent);
 
-            plane.showInTable = false;
-            if (plane.inView || !tableInView)
-                pList.push(plane);
+            TrackedHistorySize += plane.history_size;
+
+            if (tableInView) {
+                if (plane.visible)
+                    TrackedAircraft++;
+                if (plane.inView || (plane.selected && !SelectedAllPlanes)) {
+                    pList.push(plane);
+                    TrackedAircraftPositions++;
+                }
+            } else {
+                if (plane.visible) {
+                    TrackedAircraft++;
+                    pList.push(plane);
+                    if (plane.position != null)
+                        TrackedAircraftPositions++;
+                }
+            }
         }
         ctime && console.timeEnd("inView");
 
@@ -2565,83 +2580,57 @@ function refreshFeatures() {
         resortTable(pList);
         ctime && console.timeEnd("resortTable");
 
-        TrackedAircraft = 0;
-        TrackedAircraftPositions = 0;
-        TrackedHistorySize = 0;
-
-        let nPlanes = 0;
         const sidebarVisible = toggles['sidebar_visible'].state;
 
+        let inTable = []; // list of planes that will actually be displayed in the table
+
         ctime && console.time("modTRs");
-        for (let i = 0; i < pList.length; ++i) {
+        for (let i in pList) {
             const plane = pList[i];
 
-            TrackedHistorySize += plane.history_size;
+            if (!sidebarVisible || (inTable.length > globeTableLimit && mapIsVisible && globeIndex)) {
+                break;
+            }
+            inTable.push(plane);
 
-            if (tableInView && plane.visible &&
-                (plane.inView || (plane.selected && !SelectedAllPlanes))
-            ) {
-                plane.showInTable = true;
-                TrackedAircraftPositions++;
+            if (plane.tr == null) {
+                plane.makeTR(planeRowTemplate.cloneNode(true));
+                plane.tr.id = plane.icao;
+                plane.refreshTR = true;
             }
 
-            if (plane.visible) {
-                TrackedAircraft++;
+            if (plane.refreshTR) {
+                plane.refreshTR = false;
+                let colors = tableColors.unselected;
+                let bgColor = "#F8F8F8"
 
-                if (!tableInView && plane.position != null)
-                    TrackedAircraftPositions++;
+                if (plane.selected)
+                    colors = tableColors.selected;
 
-                if (!tableInView)
-                    plane.showInTable = true;
-            }
+                if (plane.dataSource && plane.dataSource in colors)
+                    bgColor = colors[plane.dataSource];
 
-            if (!sidebarVisible || (nPlanes > globeTableLimit && mapIsVisible && globeIndex)) {
-                plane.showInTable = false;
-                continue;
-            }
+                if (plane.squawk in tableColors.special)
+                    bgColor = tableColors.special[plane.squawk];
 
-            let bgColor = "#F8F8F8"
-
-            if (plane.showInTable) {
-                nPlanes++;
-
-                if (plane.tr == null) {
-                    plane.makeTR(planeRowTemplate.cloneNode(true));
-                    plane.tr.id = plane.icao;
-                    plane.refreshTR = true;
+                if (plane.bgColorCache != bgColor) {
+                    plane.bgColorCache = bgColor;
+                    plane.tr.style = "background-color: " + bgColor + ";";
                 }
 
-                if (plane.refreshTR) {
-                    let colors = tableColors.unselected;
-                    if (plane.selected && !SelectedAllPlanes)
-                        colors = tableColors.selected;
-
-                    if (plane.dataSource && plane.dataSource in colors)
-                        bgColor = colors[plane.dataSource];
-
-                    if (plane.squawk in tableColors.special)
-                        bgColor = tableColors.special[plane.squawk];
-
-                    if (plane.bgColorCache != bgColor) {
-                        plane.bgColorCache = bgColor;
-                        plane.tr.style = "background-color: " + bgColor + ";";
-                    }
-
-                    for (let cell in activeCols) {
-                        let col = activeCols[cell];
-                        if (!col.value)
-                            continue;
-                        let newValue = col.value(plane);
-                        if (newValue != plane.trCache[cell]) {
-                            plane.trCache[cell] = newValue;
-                            if (col.html) {
-                                plane.tr.cells[cell].innerHTML = newValue;
-                            } else {
-                                plane.tr.cells[cell].textContent = newValue;
-                            }
+                for (let cell in activeCols) {
+                    let col = activeCols[cell];
+                    if (!col.value)
+                        continue;
+                    let newValue = col.value(plane);
+                    if (newValue != plane.trCache[cell]) {
+                        plane.trCache[cell] = newValue;
+                        if (col.html) {
+                            plane.tr.cells[cell].innerHTML = newValue;
+                        } else {
+                            plane.tr.cells[cell].textContent = newValue;
                         }
                     }
-                    plane.refreshTR = false;
                 }
             }
         }
@@ -2658,12 +2647,9 @@ function refreshFeatures() {
         ctime && console.time("DOM1");
 
         let newBody = document.createElement('tbody');
-        for (let i in pList) {
-            const plane = pList[i];
-            if (plane.showInTable) {
-                newBody.appendChild(plane.tr);
-                plane.inTable = true;
-            }
+        for (let i in inTable) {
+            const plane = inTable[i];
+            newBody.appendChild(plane.tr);
         }
 
         ctime && console.timeEnd("DOM1");

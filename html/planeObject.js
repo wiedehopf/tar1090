@@ -1841,7 +1841,7 @@ PlaneObject.prototype.remakeTrail = function() {
 PlaneObject.prototype.makeTR = function (trTemplate) {
 
     this.trCache = [];
-    this.classesCache = null;
+    this.bgColorCache = undefined;
     this.tr = trTemplate;
 
     this.clickListener = function(evt) {
@@ -1876,14 +1876,12 @@ PlaneObject.prototype.destroyTR = function (trTemplate) {
     if (this.tr == null)
         return;
 
-    this.bgColorCache = undefined;
     this.tr.removeEventListener('click', this.clickListener);
     this.tr.removeEventListener('dblclick', this.dblclickListener);
 
     if (this.tr.parentNode)
         this.tr.parentNode.removeChild(this.tr);
 
-    this.inTable = false;
     this.tr = null;
 };
 
