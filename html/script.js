@@ -2546,21 +2546,18 @@ function refreshFeatures() {
 
 
         ctime && console.time("inView");
-        let pList = PlanesOrdered;
-        if (tableInView) {
-            // only sort visible aircraft when only those are being put in the table (avoid 30 ms sorting for 7000 aircraft)
-            // well maybe i overestimated the time saved. .... maybe check some other time
-            pList = [];
-            for (let i = 0; i < PlanesOrdered.length; ++i) {
-                const plane = PlanesOrdered[i];
+        let pList = [];
+        // only sort visible aircraft when only those are being put in the table (avoid 30 ms sorting for 7000 aircraft)
+        // well maybe i overestimated the time saved. .... still saves a couple of cpu cycles
+        for (let i = 0; i < PlanesOrdered.length; ++i) {
+            const plane = PlanesOrdered[i];
 
-                plane.visible = !plane.isFiltered() && plane.checkVisible();
-                plane.inView = plane.visible && inView(plane.position, lastRealExtent);
+            plane.visible = !plane.isFiltered() && plane.checkVisible();
+            plane.inView = plane.visible && inView(plane.position, lastRealExtent);
 
-                plane.showInTable = false;
-                if (plane.inView)
-                    pList.push(plane);
-            }
+            plane.showInTable = false;
+            if (plane.inView || !tableInView)
+                pList.push(plane);
         }
         ctime && console.timeEnd("inView");
 
