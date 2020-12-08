@@ -36,12 +36,29 @@ select {
     width:  calc(180px * var(--SCALE));
     height: 100%;
     overflow: auto;
-    z-index: 9999;
+    z-index: 1;
     background-color: var(--BGCOLOR1);
 }
-.infoblock-container {
+.adsbx-selected-bg:before {
+    content: ' ';
+    position:absolute;
+    display:block;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background-size: calc( 148 * var(--SCALE)) calc( 148 * var(--SCALE));
+    background-repeat: no-repeat;
+    background-position: calc( 7px * var(--SCALE)) calc( 108px * var(--SCALE));
+    background-image: url("images/cropped-Stealth-1-192x192.png");
+    z-index:2;
+    opacity: 0.12;
+}
+#infoblock-container {
+    position:relative;
     overflow: auto;
     height: 100%;
+    z-index:3;
 }
 #sidebar_canvas { 
     padding: calc( 5px * var(--SCALE));
@@ -519,7 +536,6 @@ select.error, textarea.error, input.error {
     border-collapse: collapse;
     padding: 0;
     margin: 0;
-    background-color: var(--BGCOLOR1);
     cursor: default;
 }
 

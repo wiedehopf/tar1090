@@ -950,6 +950,7 @@ function initPage() {
     if (adsbexchange) {
         $('#adsbexchange_header').show();
         $('#credits').show();
+        $('#selected_infoblock').addClass('adsbx-selected-bg');
         if (window.self != window.top) {
             window.top.location.href = "https://www.adsbexchange.com/"
             return;
