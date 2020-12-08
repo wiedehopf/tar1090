@@ -486,8 +486,8 @@ select.error, textarea.error, input.error {
     cursor: pointer;
     margin-top: calc( 11px * var(--SCALE));
     margin-bottom: calc( 11px * var(--SCALE));
-    background-image: url('images/settings-icon.png');
-    background-size: calc( 33px * var(--SCALE));
+    background-image: url('images/settings-icon01.png');
+    background-size: calc( 36px * var(--SCALE));
     background-repeat: no-repeat;
     background-position: center;
 }
