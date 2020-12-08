@@ -782,7 +782,7 @@
               </tr>
             </table>
 
-            <div id="tabs">
+            <div id="tabs" style="min-height: 10px; overflow: auto">
               <ul>
                 <li><a href="#tab-search">Search</a></li>
                 <li><a href="#tab-filters">Filters</a></li>
@@ -852,19 +852,10 @@
                   <ol id="sourceFilter"></ol>
                   <button class="formButton" type="submit">Filter</button>
                   <button class="formButton" id="source_filter_reset_button">Reset</button>
-                  <br />
-                  <br />
-                  <br />
-                  <br />
                 </form>
               </div>
               <div id="tab-columns">
-                <div id="settingsLeft" class="settingsColumn">
-                  <div id="columns_block1"></div>
-                </div>
-                <div id="settingsRight" class="settingsColumn">
-                  <div id="columns_block2"></div>
-                </div>
+                <ul id="sortableColumns"></ul>
               </div>
             </div>
 

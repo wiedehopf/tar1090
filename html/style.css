@@ -609,8 +609,9 @@ table.infoSectionTable tr td {
 }
 
 .settingsCheckbox {
-    width: calc( 20px * var(--SCALE));
+    width: calc( 12px * var(--SCALE));
     height: calc( 11px * var(--SCALE));
+    margin-left: calc( 5px * var(--SCALE));
     margin-right: calc( 5px * var(--SCALE));
     background-image: url('images/box-empty.png');
     background-repeat: no-repeat;
@@ -791,4 +792,20 @@ table.infoSectionTable tr td {
     color: #000000;
     font-size: var(--FS2);
     text-align: center;
+}
+
+#sortableColumns {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    max-width: calc( 2 * 130px * var(--SCALE));
+}
+
+#sortableColumns li {
+    margin: 5px 5px 5px 0;
+    padding: calc( 1px * var(--SCALE));
+    float: left;
+    width: calc( 120px * var(--SCALE));
+    border-color: gainsboro; 
+    background-color: ghostwhite;
 }
