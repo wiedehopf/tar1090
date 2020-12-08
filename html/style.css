@@ -123,11 +123,41 @@ select {
     height: calc( 30px * var(--SCALE));
     background-size: calc( 30px * var(--SCALE)) calc( 30px * var(--SCALE));
     background-repeat: no-repeat;
-    background-position: calc( 0px * var(--SCALE));
+    background-position: 0;
     background-color: transparent;
     border: none;
     background-image: url("images/zoom-in@3x.png");
     z-index: 99;
+}
+#credits {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    position: absolute;
+    bottom: calc( 10px * var(--SCALE));
+    left: calc(50% - 60px * var(--SCALE));
+}
+.credits-text {
+    font-size: var(--FS2);
+}
+.credits-image {
+    display: block;
+    width: calc( 24px * var(--SCALE));
+    height: calc( 24px * var(--SCALE));
+    background-size: calc( 24px * var(--SCALE)) calc( 24px * var(--SCALE));
+    background-repeat: no-repeat;
+    background-position: 0;
+    background-color: transparent;
+    border: none;
+    background-image: url("images/cropped-Stealth-1-48x48.png");
+    z-index: 99;
+    opacity: 0.7;
+    margin: 4px;
+}
+.withOverflowingBackground::before {
+   z-index: -1;
+   background-image: url(https://www.exratione.com/assets/color_background.png);
 }
 
 #expand_sidebar_control {
@@ -461,7 +491,7 @@ select.error, textarea.error, input.error {
 .highlightedTitle {
     border-bottom: calc( 1px * var(--SCALE)) solid #67b6c3;
     display: inline-block;
-    width: 83%;
+    width: 90%;
 }
 
 .identLarge {

@@ -72,10 +72,9 @@
 
           <div class="highlightedTitle infoBlockSection">
             <div>
-              <span class="identLarge" title="Callsign: Typically the air traffic control callsign or the aircraft's registration, as entered into the transponder by the pilot"><span id="selected_callsign">n/a</span></span>
+              <span class="identLarge" title="Callsign: Typically the air traffic control callsign or the aircraft's registration, as entered into the transponder by the pilot" id="selected_callsign">n/a</span>
             </div>
-            <div>
-              <span class="identSmall" title="ICAO hex id: The aircraft's unique ICAO identification number shown in hexadecimal format">Hex:&nbsp;<span id="selected_icao">n/a</span></span>
+            <div id="selected_icao" title="ICAO hex id: The aircraft's unique ICAO identification number shown in hexadecimal format">
             </div>
           </div>
           <div id=anon_mlat_info class="infoBlockSection hidden">
@@ -690,6 +689,10 @@
         </div>
         <div id="large_mode_control" class="ol-unselectable ol-control">
           <button id="large_mode_button" title="Large Icons"></button>
+        </div>
+        <div style="display: none" id="credits">
+            <span class=credits-image></span>
+            <span class=credits-text>adsbexchange.com</span>
         </div>
         <div id="header_top" class="infoHeading">
           <div class="buttonContainer">

@@ -949,6 +949,7 @@ function initPage() {
 
     if (adsbexchange) {
         $('#adsbexchange_header').show();
+        $('#credits').show();
         if (window.self != window.top) {
             window.top.location.href = "https://www.adsbexchange.com/"
             return;
@@ -2074,13 +2075,12 @@ function refreshSelected() {
     $('#selected_geom_rate').text(format_vert_rate_long(selected.geom_rate, DisplayUnits));
     if (selected.icao != selIcao) {
         selIcao = selected.icao;
+        let hex_html = "<span style='font-family: monospace;' class=identSmall>Hex:" + NBSP + selected.icao.toUpperCase() + "</span>";
         if (globeIndex) {
-            let icao_link = "<a class='link' target=\"_blank\" href=\"" + shareLink + "\">Share</a>";
-            icao_link = NBSP +NBSP +NBSP + icao_link;
-            $('#selected_icao').html(selected.icao.toUpperCase() + icao_link);
-        } else {
-            $('#selected_icao').text(selected.icao.toUpperCase());
+            let icao_link = "<span  class=identSmall><a class='link identSmall' target=\"_blank\" href=\"" + shareLink + "\">Share</a></span>";
+            hex_html = hex_html + NBSP + NBSP + NBSP + icao_link;
         }
+        $('#selected_icao').html(hex_html);
     }
     $('#selected_pf_info').text((selected.pfRoute ? selected.pfRoute : "") );
     //+" "+ (selected.pfFlightno ? selected.pfFlightno : "")
@@ -3047,13 +3047,17 @@ function setSelectedInfoBlockVisibility() {
         $('#large_mode_control').css('left', (190 * globalScale) + 'px');
         $('.ol-scale-line').css('left', (180 * globalScale + 8) + 'px');
 
-        if (mapIsVisible && document.getElementById('map_canvas').clientWidth < parseFloat($('#selected_infoblock').css('width')) * 2.5) {
+        if (mapIsVisible && document.getElementById('map_canvas').clientWidth < parseFloat($('#selected_infoblock').css('width')) * 3) {
             $('#selected_infoblock').css('height', '290px');
             $('#large_mode_control').css('left', (5 * globalScale) + 'px');
             $('#photo_container').addClass('hidden');
             $('#selected_typedesc').parent().parent().hide();
+            $('#credits').css('bottom', '295px');
+            $('#credits').css('left', '5px');
         } else {
             $('#selected_infoblock').css('height', '100%');
+            $('#credits').css('bottom', '');
+            $('#credits').css('left', '');
         }
 
         $('#selected_infoblock').show();
@@ -3064,6 +3068,8 @@ function setSelectedInfoBlockVisibility() {
 
         $('#large_mode_control').css('left', (5 * globalScale) + 'px');
         $('.ol-scale-line').css('left', '8px');
+        $('#credits').css('bottom', '');
+        $('#credits').css('left', '');
 
         $('#selected_infoblock').hide();
     }
