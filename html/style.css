@@ -604,8 +604,8 @@ table.infoSectionTable tr td {
 }
 .settingsOptionContainer {
     display: table;
-    padding-top: calc( 5px * var(--SCALE));
-    padding-bottom: calc( 5px * var(--SCALE));
+    padding-top: calc( 3.5px * var(--SCALE));
+    padding-bottom: calc( 3.5px * var(--SCALE));
 }
 
 .settingsCheckbox {
@@ -802,8 +802,8 @@ table.infoSectionTable tr td {
 }
 
 #sortableColumns li {
-    margin: 5px 5px 5px 0;
-    padding: calc( 1px * var(--SCALE));
+    margin: 3px 3px 3px 3px;
+    padding: calc( 0px * var(--SCALE));
     float: left;
     width: calc( 120px * var(--SCALE));
     border-color: gainsboro; 
