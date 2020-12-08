@@ -2340,8 +2340,7 @@ function refreshFeatures() {
         return xf - yf;
     }
 
-    let cols = planesTable.cols = {};
-
+    const cols = planesTable.cols = {};
 
     cols.icao = {
         text: 'Hex id',
@@ -2362,7 +2361,6 @@ function refreshFeatures() {
         value: function(plane) { return (flightawareLinks ? getFlightAwareModeSLink(plane.icao, plane.flight, plane.name) : plane.name); },
         html: flightawareLinks,
         text: 'Callsign' };
-
     cols.registration = {
         sort: function () { sortBy('registration', compareAlpha, function(x) { return x.registration; }); },
         value: function(plane) { return (flightawareLinks ? getFlightAwareIdentLink(plane.registration, plane.registration) : (plane.registration ? plane.registration : "")); },
@@ -2441,7 +2439,7 @@ function refreshFeatures() {
         value: function(plane) { return format_data_source(plane.getDataSource()); },
         align: 'right' };
 
-    let colsEntries = Object.entries(cols);
+    const colsEntries = Object.entries(cols);
     for (let i in colsEntries) {
         let key = colsEntries[i][0];
         let value = colsEntries[i][1];
@@ -2453,7 +2451,7 @@ function refreshFeatures() {
             value.td = value.align ? ('<td style="text-align: ' + value.align + '">') : '<td>';
     }
 
-    let columns = Object.values(cols);
+    let columns = createOrderedColumns();
     let activeCols = null;
 
     let initializing = true;
@@ -2485,6 +2483,7 @@ function refreshFeatures() {
         planesTable.redraw();
         initializing = false;
     }
+
     planesTable.redraw = function () {
         activeCols = [];
         for (let i in columns) {
@@ -2528,7 +2527,6 @@ function refreshFeatures() {
         if (!initializing)
             planesTable.redraw();
     }
-
 
     // Refreshes the larger table of all the planes
     planesTable.refresh = function () {
@@ -2671,7 +2669,6 @@ function refreshFeatures() {
     let sortCompare = null;
     let sortExtract = null;
     let sortAscending = true;
-    let columnVis = Array(30).fill(true);
 
     function sortFunction(x,y) {
         const xv = x._sort_value;
@@ -2786,24 +2783,51 @@ function refreshFeatures() {
     //
 
     function createColumnToggles() {
-        let container = '#columns_block1';
+        const prefix = 'dd_';
+        const sortableColumns = $('#sortableColumns').sortable({
+            update: function (event, ui) {
+                const order = [];
+                $('#sortableColumns li').each(function (e) {
+                    order.push($(this).attr('id').replace(prefix, ''));
+                });
 
-        for (let i in columns) {
-            let col = columns[i];
-            if (col.id === 'distance') {
-                container = '#columns_block2';
+                localStorage['columnOrder'] = JSON.stringify(order);
+                columns = createOrderedColumns();
+
+                planesTable.redraw();
             }
+        });
 
+        for (let col of columns) {
+            sortableColumns.append(`<li class="ui-state-default" id="${prefix + col.id}"></li>`);
+            
             new Toggle({
                 key: col.toggleKey,
                 display: col.text,
-                container: container,
+                container: $(`#${prefix + col.id}`),
                 init: col.visible,
                 setState: function (state) {
                     planesTable.setColumnVis(col.id, state);
                 }
             });
         }
+    }
+
+    function createOrderedColumns() {
+        const order = localStorage['columnOrder'];
+        if (order !== undefined) {
+            const columns = [];
+            for (let col of JSON.parse(order)) {
+                const column = cols[col];
+                if (column !== undefined) {
+                    columns.push(column);
+                }
+            }
+            if (columns.length > 0) {
+                return columns;
+            }
+        }
+        return Object.values(cols);
     }
 
     return TAR;
