@@ -101,6 +101,7 @@ let halloween = false;
 let noRegOnly = false;
 let triggerMapRefresh = 0;
 let firstDraw = true;
+const renderBuffer = 45;
 
 let shareLink = '';
 
@@ -1301,6 +1302,7 @@ function webglAddLayer() {
             declutter: false,
             zIndex: 200,
             style: glStyle,
+            renderBuffer: renderBuffer,
         });
         if (!webglLayer || !webglLayer.getRenderer())
             return false;
@@ -1420,6 +1422,7 @@ function initMap() {
             visible: !adsbexchange,
             zIndex: 100,
             renderOrder: null,
+            renderBuffer: renderBuffer,
         }));
 
 
@@ -1447,6 +1450,7 @@ function initMap() {
         source: PlaneIconFeatures,
         declutter: false,
         zIndex: 200,
+        renderBuffer: renderBuffer,
     });
     layers.push(iconLayer);
 
@@ -2546,8 +2550,7 @@ function refreshFeatures() {
 
 
         if (mapIsVisible || planeMan.lastRenderExtent === null) {
-            const margin = 50 * globalScale;
-            const size = [OLMap.getSize()[0] + margin, OLMap.getSize()[1] + margin];
+            const size = [OLMap.getSize()[0] + 45, OLMap.getSize()[1] + 45];
             planeMan.lastRenderExtent = myExtent(OLMap.getView().calculateExtent(size));
         }
 
@@ -4737,6 +4740,7 @@ function drawUpintheair() {
                     visible: !adsbexchange,
                     zIndex: 100,
                     renderOrder: null,
+                    renderBuffer: renderBuffer,
                 }));
             for (let i = 0; i < data.rings.length; ++i) {
                 let geom = null;
