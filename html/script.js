@@ -2887,7 +2887,7 @@ function selectPlaneByHex(hex, options) {
     }
     if (!multiSelect && oldPlane) {
         oldPlane.selected = false;
-        newPlane.updateTick(true);
+        oldPlane.updateTick(true);
         $(oldPlane.tr).removeClass("selected");
         SelectedPlane = null;
         // scroll the infoblock back to the top for the next plane to be selected
