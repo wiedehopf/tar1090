@@ -361,9 +361,9 @@ function fetchData() {
             }
 
             if (PendingFetches <= 1) {
+                clearTimeout(refreshId);
                 triggerMapRefresh++;
-                if (TrackedAircraftPositions < 500)
-                    checkRefresh(); // immediately trigger refresh if aircraft count is low enough
+                checkMovement();
             }
             PendingFetches--;
 
@@ -3842,7 +3842,7 @@ function checkMovement() {
         drawHeatmap();
         checkMoveDone = 1;
     }
-    if (elapsed > 100 || (!onMobile && elapsed > 45)) {
+    if (elapsed > 500 || (!onMobile && elapsed > 45)) {
         checkRefresh();
     }
 }
