@@ -60,6 +60,7 @@ let refreshMultiplier = 1;
 let globeIndexGrid = 0;
 let globeIndexNow = {};
 let globeIndexSpecialTiles;
+let globeTilesViewCount = 0;
 let globeSimLoad = 4;
 let globeTableLimit = 80;
 let showGrid = false;
@@ -4207,6 +4208,7 @@ function globeIndexes() {
             }
         }
     }
+    globeTilesViewCount = indexes.length;
     return indexes;
 }
 
