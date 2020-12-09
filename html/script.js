@@ -1185,7 +1185,8 @@ function startPage() {
     changeZoom("init");
     changeCenter("init");
 
-    checkMoveSetInterval();
+    setInterval(checkMovement, 50);
+
 
     loadFinished = true;
 
@@ -1513,7 +1514,6 @@ function initMap() {
 
     OLMap.on('moveend', function(event) {
         checkMovement();
-        checkMoveSetInterval();
     });
     /*
     // Listeners for newly created Map
@@ -3806,37 +3806,27 @@ function changeCenter(init) {
         OLMap.getView().setCenter(ol.proj.fromLonLat([center[0], 85]));
 }
 
-let checkMoveTimer;
-
-function checkMoveSetInterval() {
-    clearInterval(checkMoveTimer);
-
-    let interval = 30;
-    if (heatmap) interval = 250;
-    else if (onMobile) interval = 60;
-
-    checkMoveTimer = setInterval(checkMovement, interval);
-}
-
-let noMovement;
+let lastMovement = 0;
 let checkMoveZoom;
 let checkMoveCenter = [0, 0];
+let checkMoveDone = 0;
 
 function checkMovement() {
     if (tabHidden)
         return;
     const zoom = OLMap.getView().getZoom();
     const center = ol.proj.toLonLat(OLMap.getView().getCenter());
+    const ts = new Date().getTime();
 
     if (
         checkMoveZoom != zoom ||
         checkMoveCenter[0] != center[0] ||
         checkMoveCenter[1] != center[1]
     ) {
-        noMovement = 0;
-
+        checkMoveDone = 0;
         checkFollow();
         active();
+        lastMovement = ts;
     }
 
     checkMoveZoom = zoom;
@@ -3846,15 +3836,15 @@ function checkMovement() {
     changeZoom();
     changeCenter();
 
-    if (noMovement == 2) {
-        drawHeatmap();
-    }
+    const elapsed = Math.abs(ts - lastMovement);
 
-    if (noMovement >= 1) {
+    if (!checkMoveDone && heatmap && elapsed > 300) {
+        drawHeatmap();
+        checkMoveDone = 1;
+    }
+    if (elapsed > 100 || (!onMobile && elapsed > 45)) {
         checkRefresh();
     }
-
-    noMovement++;
 }
 
 let lastRefresh = 0;
@@ -3867,9 +3857,9 @@ function checkRefresh() {
 
     if (triggerMapRefresh || refreshZoom != zoom || center[0] != refreshLon || center[1] != refreshLat) {
 
-        const ts = new Date().getTime() / 1000;
+        const ts = new Date().getTime();
         const elapsed = Math.abs(ts - lastRefresh);
-        let num = Math.min(1.5, Math.max(0.25, TrackedAircraftPositions / 300 * 0.25));
+        let num = Math.min(1500, Math.max(250, TrackedAircraftPositions / 300 * 250));
         if (elapsed < num) {
             return;
         }
