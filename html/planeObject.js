@@ -1111,7 +1111,7 @@ PlaneObject.prototype.processTrace = function() {
 
     refreshSelected();
 
-    TAR.planesTable.refresh();
+    TAR.planeMan.refresh();
 
     //console.log(this.history_size + ' ' + points_in_trace);
 };

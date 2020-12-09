@@ -639,7 +639,7 @@ function initPage() {
     // Set page basics
     document.title = PageName;
 
-    TAR.planesTable.init();
+    TAR.planeMan.init();
 
     if (ExtendedData || window.location.hash == '#extended') {
         $("#extendedData").removeClass("hidden");
@@ -683,7 +683,7 @@ function initPage() {
             SelectedPlane = null;
             refreshSelected();
             setSelectedInfoBlockVisibility();
-            TAR.planesTable.refresh();
+            TAR.planeMan.refresh();
             updateAddressBar();
         }
     });
@@ -738,7 +738,7 @@ function initPage() {
         filterGroundVehicles(true);
         refreshSelected();
         refreshHighlighted();
-        TAR.planesTable.refresh();
+        TAR.planeMan.refresh();
         mapRefresh();
     });
 
@@ -746,15 +746,15 @@ function initPage() {
         filterBlockedMLAT(true);
         refreshSelected();
         refreshHighlighted();
-        TAR.planesTable.refresh();
+        TAR.planeMan.refresh();
         mapRefresh();
     });
 
     $('#grouptype_checkbox').on('click', function() {
         if ($('#grouptype_checkbox').hasClass('settingsCheckboxChecked')) {
-            TAR.planesTable.cols.distance.sort();
+            TAR.planeMan.cols.distance.sort();
         } else {
-            TAR.planesTable.cols.data_source.sort();
+            TAR.planeMan.cols.data_source.sort();
         }
     });
 
@@ -898,7 +898,7 @@ function initPage() {
                 tableColors = tableColorsLight;
             }
             if (loadFinished) {
-                TAR.planesTable.redraw();
+                TAR.planeMan.redraw();
                 refreshFilter();
             }
 
@@ -1130,7 +1130,7 @@ function parseHistory() {
         }
 
         refreshFeatures();
-        TAR.planesTable.refresh();
+        TAR.planeMan.refresh();
     }
 
     PositionHistoryBuffer = null;
@@ -1214,7 +1214,7 @@ function startPage() {
     geoMag = geoMagFactory(cof2Obj());
 
     if (pTracks)
-        setTimeout(TAR.planesTable.refresh, 5000);
+        setTimeout(TAR.planeMan.refresh, 5000);
 
     drawUpintheair();
 }
@@ -1300,7 +1300,6 @@ function webglAddLayer() {
             source: webglFeatures,
             declutter: false,
             zIndex: 200,
-            renderBuffer: 20,
             style: glStyle,
         });
         if (!webglLayer || !webglLayer.getRenderer())
@@ -1448,7 +1447,6 @@ function initMap() {
         source: PlaneIconFeatures,
         declutter: false,
         zIndex: 200,
-        renderBuffer: 20,
     });
     layers.push(iconLayer);
 
@@ -2321,7 +2319,7 @@ function refreshFeatures() {
 // Planes table begin
 //
 (function (global, $, TAR) {
-    let planesTable = TAR.planesTable = TAR.planesTable || {};
+    let planeMan = TAR.planeMan = TAR.planeMan || {};
 
     function compareAlpha(xa,ya) {
         if (xa === ya)
@@ -2348,7 +2346,7 @@ function refreshFeatures() {
         return xf - yf;
     }
 
-    const cols = planesTable.cols = {};
+    const cols = planeMan.cols = {};
 
     cols.icao = {
         text: 'Hex id',
@@ -2465,11 +2463,11 @@ function refreshFeatures() {
     let initializing = true;
 
     let planeRowTemplate = null;
-    let lastRealExtent = null;
+    planeMan.lastRenderExtent = null;
     let htmlTable = null;
     let tbody = null;
 
-    planesTable.init = function () {
+    planeMan.init = function () {
         // initialize columns
         htmlTable = document.getElementById('planesTable');
         for (let i in columns) {
@@ -2478,21 +2476,21 @@ function refreshFeatures() {
             col.toggleKey = 'column_' + col.id;
 
             if (HideCols.includes('#' + col.id)) {
-                planesTable.setColumnVis(col.id, false);
+                planeMan.setColumnVis(col.id, false);
             }
         }
 
         createColumnToggles();
 
         if (!ShowFlags) {
-            planesTable.setColumnVis('flag', false);
+            planeMan.setColumnVis('flag', false);
         }
 
-        planesTable.redraw();
+        planeMan.redraw();
         initializing = false;
     }
 
-    planesTable.redraw = function () {
+    planeMan.redraw = function () {
         activeCols = [];
         for (let i in columns) {
             let col = columns[i];
@@ -2508,7 +2506,7 @@ function refreshFeatures() {
         table += '  <tr>';
         for (let i in activeCols) {
             let col = activeCols[i];
-            table += '<td id="' + col.id + '" onclick="TAR.planesTable.cols.' + col.id + '.sort();"' + col.hStyle + '>'+ col.header() +'</td>';
+            table += '<td id="' + col.id + '" onclick="TAR.planeMan.cols.' + col.id + '.sort();"' + col.hStyle + '>'+ col.header() +'</td>';
         }
         table += '  </tr>';
         table += '</thead>';
@@ -2526,28 +2524,31 @@ function refreshFeatures() {
         }
         planeRowTemplate.innerHTML = template;
 
-        planesTable.refresh();
+        planeMan.refresh();
     }
 
-    planesTable.setColumnVis = function (col, visible) {
+    planeMan.setColumnVis = function (col, visible) {
         cols[col].visible = visible;
 
         if (!initializing)
-            planesTable.redraw();
+            planeMan.redraw();
     }
 
     // Refreshes the larger table of all the planes
-    planesTable.refresh = function () {
+    planeMan.refresh = function () {
         if (initializing)
             return;
 
         const ctime = false; // gets enabled for debugging table refresh speed
         // globeTableLimit = 1000; for testing performance
 
-        ctime && console.time("planesTable.refresh()");
+        ctime && console.time("planeMan.refresh()");
 
-        if (mapIsVisible || lastRealExtent === null) {
-            lastRealExtent = myExtent(OLMap.getView().calculateExtent(OLMap.getSize()));
+
+        if (mapIsVisible || planeMan.lastRenderExtent === null) {
+            const margin = 50 * globalScale;
+            const size = [OLMap.getSize()[0] + margin, OLMap.getSize()[1] + margin];
+            planeMan.lastRenderExtent = myExtent(OLMap.getView().calculateExtent(size));
         }
 
         TrackedAircraft = 0;
@@ -2560,7 +2561,7 @@ function refreshFeatures() {
             const plane = PlanesOrdered[i];
 
             plane.visible = !plane.isFiltered() && plane.checkVisible();
-            plane.inView = plane.visible && inView(plane.position, lastRealExtent);
+            plane.inView = plane.visible && inView(plane.position, planeMan.lastRenderExtent);
 
             TrackedHistorySize += plane.history_size;
 
@@ -2666,7 +2667,7 @@ function refreshFeatures() {
 
         ctime && console.timeEnd("DOM2");
 
-        ctime && console.timeEnd("planesTable.refresh()");
+        ctime && console.timeEnd("planeMan.refresh()");
     }
 
     //
@@ -2783,7 +2784,7 @@ function refreshFeatures() {
         sortCompare = sc;
         sortExtract = se;
 
-        planesTable.refresh();
+        planeMan.refresh();
     }
 
     //
@@ -2802,7 +2803,7 @@ function refreshFeatures() {
                 localStorage['columnOrder'] = JSON.stringify(order);
                 columns = createOrderedColumns();
 
-                planesTable.redraw();
+                planeMan.redraw();
             }
         });
 
@@ -2815,7 +2816,7 @@ function refreshFeatures() {
                 container: $(`#${prefix + col.id}`),
                 init: col.visible,
                 setState: function (state) {
-                    planesTable.setColumnVis(col.id, state);
+                    planeMan.setColumnVis(col.id, state);
                 }
             });
         }
@@ -2927,7 +2928,7 @@ function selectPlaneByHex(hex, options) {
 
     updateAddressBar();
     refreshSelected();
-    pTracks || TAR.planesTable.refresh();
+    pTracks || TAR.planeMan.refresh();
 }
 
 // loop through the planes and mark them as selected to show the paths for all planes
@@ -2956,7 +2957,7 @@ function selectAllPlanes() {
 
     refreshSelected();
     refreshHighlighted();
-    pTracks || TAR.planesTable.refresh();
+    pTracks || TAR.planeMan.refresh();
 }
 
 // deselect all the planes
@@ -2982,7 +2983,7 @@ function deselectAllPlanes(keepMain) {
     if (!keepMain)
         SelectedPlane = null;
 
-    TAR.planesTable.refresh();
+    TAR.planeMan.refresh();
 
     updateAddressBar();
     refreshSelected();
@@ -3045,7 +3046,7 @@ function expandSidebar(e) {
     $("#splitter").hide();
     $("#shrink_sidebar_button").show();
     $("#sidebar_container").width("100%");
-    TAR.planesTable.redraw();
+    TAR.planeMan.redraw();
     clearTimeout(refreshId);
     fetchData();
     updateMapSize();
@@ -3059,7 +3060,7 @@ function showMap() {
     $("#toggle_sidebar_control").show();
     $("#splitter").show();
     $("#shrink_sidebar_button").hide();
-    TAR.planesTable.redraw();
+    TAR.planeMan.redraw();
     clearTimeout(refreshId);
     fetchData();
     updateMapSize();
@@ -3148,7 +3149,7 @@ function onDisplayUnitsChanged(e) {
     $(".speedUnit").text(get_unit_label("speed", DisplayUnits));
     $(".distanceUnit").text(get_unit_label("distance", DisplayUnits));
     $(".verticalRateUnit").text(get_unit_label("verticalRate", DisplayUnits));
-    TAR.planesTable.redraw();
+    TAR.planeMan.redraw();
 }
 
 function onFilterByAltitude(e) {
@@ -3175,7 +3176,7 @@ function refreshFilter() {
 
     refreshSelected();
     refreshHighlighted();
-    TAR.planesTable.refresh();
+    TAR.planeMan.refresh();
     mapRefresh();
 
     drawHeatmap();
@@ -3377,7 +3378,7 @@ function toggleTableInView(switchOn) {
         tableInView = true;
     } else {
         tableInView = !tableInView;
-        TAR.planesTable.refresh();
+        TAR.planeMan.refresh();
     }
     localStorage['tableInView'] = tableInView;
 
@@ -3827,7 +3828,7 @@ function checkRefresh() {
         //console.time("refreshTable");
         refreshSelected();
         refreshHighlighted();
-        TAR.planesTable.refresh();
+        TAR.planeMan.refresh();
         mapRefresh();
         //console.timeEnd("refreshTable");
 
@@ -3839,12 +3840,7 @@ function mapRefresh() {
         return;
     //console.log('mapRefresh()');
     let addToMap = [];
-    let lastRenderExtent = null;
     let nMapPlanes = 0;
-
-    const mapSize = OLMap.getSize()
-    const size = [mapSize[0] * 1.2, mapSize[1] * 1.2];
-    lastRenderExtent = myExtent(OLMap.getView().calculateExtent(size));
     if (globeIndex && !icaoFilter) {
         for (let i in PlanesOrdered) {
             const plane = PlanesOrdered[i];
@@ -4614,14 +4610,14 @@ function initSitePos() {
         // Add home marker if requested
         createSiteCircleFeatures();
     } else {
-        TAR.planesTable.setColumnVis('distance', false);
+        TAR.planeMan.setColumnVis('distance', false);
     }
 
     if (SitePosition && !onMobile) {
-        TAR.planesTable.cols.distance.sort();
+        TAR.planeMan.cols.distance.sort();
     } else {
-        TAR.planesTable.cols.altitude.sort();
-        TAR.planesTable.cols.altitude.sort();
+        TAR.planeMan.cols.altitude.sort();
+        TAR.planeMan.cols.altitude.sort();
     }
 }
 
@@ -5238,7 +5234,7 @@ function play() {
             plane.last_message_time = now - ac.seen;
     }
 
-    TAR.planesTable.refresh();
+    TAR.planeMan.refresh();
     refreshSelected();
     refreshHighlighted();
 }
