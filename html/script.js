@@ -65,7 +65,6 @@ let globeTableLimit = 80;
 let showGrid = false;
 let lastGlobeExtent;
 let pendingFetches = 0;
-let totalFetches = 0;
 let firstFetch = true;
 let debugCounter = 0;
 let selectedPhotoCache = null;
@@ -308,13 +307,8 @@ function fetchData() {
             return (globeIndexNow[x] - globeIndexNow[y]);
         });
 
-        if (totalFetches < 20) {
-            indexes = indexes.slice(0, globeSimLoad * 4);
-        } else {
-            indexes = indexes.slice(0, globeSimLoad * 2);
-            refreshMultiplier = Math.max(1, indexes.length / globeSimLoad);
-        }
-        totalFetches += indexes.length;
+        indexes = indexes.slice(0, globeSimLoad * 2);
+        refreshMultiplier = Math.max(1, indexes.length / globeSimLoad);
 
         let suffix = binCraft ? '.binCraft' : '.json'
         let mid = (binCraft && onlyMilitary) ? 'Mil_' : '_';
