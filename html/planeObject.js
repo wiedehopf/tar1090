@@ -1424,18 +1424,15 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 };
 
 PlaneObject.prototype.updateTick = function(redraw) {
-    if (this.dataSource == "uat")
+    this.visible = this.checkVisible() && !this.isFiltered();
+    if (this.dataSource == "uat") {
         this.updateFeatures(uat_now, uat_last, redraw);
-    else
+    } else {
         this.updateFeatures(now, last, redraw);
+    }
 };
 
 PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
-    // recompute seen and seen_pos
-    this.seen = Math.max(0, now - this.last_message_time)
-    this.seen_pos = Math.max(0, now - this.position_time);
-
-    this.visible = (!this.isFiltered() && this.checkVisible());
 
     if (this.visible) {
         if (this.drawLine || redraw || this.lastVisible != this.visible)
@@ -1525,9 +1522,13 @@ PlaneObject.prototype.updateMarker = function(moved) {
     this.scale = scaleFactor * this.baseScale;
     this.strokeWidth = outlineWidth * ((this.selected && !SelectedAllPlanes && !onlySelected) ? 1.15 : 0.7) / this.baseScale;
 
-    if (!this.marker) {
+    if (!this.marker && (!webgl || enableLabels)) {
         this.marker = new ol.Feature(this.point);
         this.marker.hex = this.icao;
+    }
+    if (webgl && !enableLabels && this.marker && this.marker.visible) {
+        PlaneIconFeatures.removeFeature(this.marker);
+        delete this.marker;
     }
 
     if (webgl) {
@@ -1546,10 +1547,12 @@ PlaneObject.prototype.updateMarker = function(moved) {
         this.glMarker.set('dy', (getSpriteY(this.shape) + 1) / glImapHeight);
     }
 
-    this.updateIcon();
-    if (!this.marker.visible) {
-        this.marker.visible = true;
-        PlaneIconFeatures.addFeature(this.marker);
+    if (this.marker) {
+        this.updateIcon();
+        if (!this.marker.visible) {
+            this.marker.visible = true;
+            PlaneIconFeatures.addFeature(this.marker);
+        }
     }
     if (webgl && this.glMarker && !this.glMarker.visible) {
         this.glMarker.visible = true;
@@ -1662,8 +1665,10 @@ function altitudeLines (segment) {
 // Update our planes tail line,
 PlaneObject.prototype.updateLines = function() {
     this.drawLine = false;
-    if (!this.visible || this.position == null || (!this.selected && !SelectedAllPlanes) || this.isFiltered())
-        return this.clearLines();
+    if (!this.visible || this.position == null || (!this.selected && !SelectedAllPlanes)) {
+        if (this.linesDrawn) this.clearLines();
+        return;
+    }
 
     this.linesDrawn = true;
 
@@ -2546,6 +2551,12 @@ PlaneObject.prototype.checkVisible = function() {
     // If no packet in over 58 seconds, clear the plane.
     // Only clear the plane if it's not selected individually
 
+    let __now = now;
+    if (this.dataSource == "uat")
+        __now = uat_now;
+    // recompute seen and seen_pos
+    this.seen = Math.max(0, __now - this.last_message_time);
+    this.seen_pos = Math.max(0, __now - this.position_time);
 
     return (
         (!globeIndex && this.seen < (58 - tisbReduction + jaeroTime))

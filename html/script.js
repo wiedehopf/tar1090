@@ -56,6 +56,7 @@ let noMLAT = false;
 let noVanish = false;
 let filterTracks = false;
 let refreshId = 0;
+let refreshMultiplier = 1;
 let globeIndexGrid = 0;
 let globeIndexNow = {};
 let globeIndexSpecialTiles;
@@ -306,10 +307,12 @@ function fetchData() {
             return (globeIndexNow[x] - globeIndexNow[y]);
         });
 
-        if (fetches < 20)
+        if (fetches < 20) {
             indexes = indexes.slice(0, 20);
-        else
-            indexes = indexes.slice(0, globeSimLoad);
+        } else {
+            indexes = indexes.slice(0, globeSimLoad * 2);
+            refreshMultiplier = Math.max(1, indexes.length / globeSimLoad);
+        }
 
         let suffix = binCraft ? '.binCraft' : '.json'
         let mid = (binCraft && onlyMilitary) ? 'Mil_' : '_';
@@ -1913,8 +1916,6 @@ function refreshSelected() {
     }
     const selected = SelectedPlane;
 
-    if (SelectedPlane.position)
-        SelectedPlane.updateMarker(true);
     if (selected.flight != selCall) {
         selCall = selected.flight;
         if (selected.flight && selected.flight.trim()) {
@@ -2562,7 +2563,7 @@ function refreshFeatures() {
         for (let i = 0; i < PlanesOrdered.length; ++i) {
             const plane = PlanesOrdered[i];
 
-            plane.visible = !plane.isFiltered() && plane.checkVisible();
+            plane.visible = plane.checkVisible() && !plane.isFiltered()
             plane.inView = plane.visible && inView(plane.position, planeMan.lastRenderExtent);
 
             TrackedHistorySize += plane.history_size;
@@ -2888,8 +2889,7 @@ function selectPlaneByHex(hex, options) {
     }
     if (!multiSelect && oldPlane) {
         oldPlane.selected = false;
-        oldPlane.clearLines();
-        oldPlane.updateMarker();
+        newPlane.updateTick(true);
         $(oldPlane.tr).removeClass("selected");
         SelectedPlane = null;
         // scroll the infoblock back to the top for the next plane to be selected
@@ -2915,10 +2915,6 @@ function selectPlaneByHex(hex, options) {
             options.zoom = 'follow';
     } else {
         toggleFollow(false);
-    }
-    if (newPlane && newPlane.position) {
-        newPlane.updateLines();
-        newPlane.updateMarker(true);
     }
 
     if (options.zoom == 'follow') {
@@ -3174,11 +3170,9 @@ function refreshFilter() {
     if (filterTracks)
         remakeTrails();
 
-    refreshFeatures();
-
+    TAR.planeMan.refresh();
     refreshSelected();
     refreshHighlighted();
-    TAR.planeMan.refresh();
     mapRefresh();
 
     drawHeatmap();
@@ -3876,9 +3870,9 @@ function checkRefresh() {
         refreshLat = center[1];
         refreshLon = center[0];
         //console.time("refreshTable");
+        TAR.planeMan.refresh();
         refreshSelected();
         refreshHighlighted();
-        TAR.planeMan.refresh();
         mapRefresh();
         //console.timeEnd("refreshTable");
 
@@ -4369,7 +4363,7 @@ function refreshInt() {
     if (onMobile && TrackedAircraftPositions > 800)
         refresh *= 1.5;
 
-    return refresh;
+    return refresh * refreshMultiplier;
 }
 
 function toggleLargeMode() {
