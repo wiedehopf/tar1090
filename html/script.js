@@ -64,7 +64,9 @@ let globeSimLoad = 4;
 let globeTableLimit = 80;
 let showGrid = false;
 let lastGlobeExtent;
-let PendingFetches = 0;
+let pendingFetches = 0;
+let totalFetches = 0;
+let firstFetch = true;
 let debugCounter = 0;
 let selectedPhotoCache = null;
 let pathName = null;
@@ -96,7 +98,6 @@ let geoMag = null;
 let globalCompositeTested = false;
 let solidT = false;
 let lastActive = new Date().getTime();
-let fetches = 0;
 let overrideMapType = null;
 let halloween = false;
 let noRegOnly = false;
@@ -259,7 +260,7 @@ function fetchData() {
     //console.log("fetch");
     if (showTrace)
         return;
-    if (PendingFetches > 0)
+    if (pendingFetches > 0)
         return;
     for (let i in FetchPending) {
         if (FetchPending[i] != null && FetchPending[i].state() == 'pending') {
@@ -273,7 +274,7 @@ function fetchData() {
         return;
     }
 
-    PendingFetches = 1;
+    pendingFetches = 1;
 
     //console.timeEnd("Starting Fetch");
     //console.time("Starting Fetch");
@@ -307,12 +308,13 @@ function fetchData() {
             return (globeIndexNow[x] - globeIndexNow[y]);
         });
 
-        if (fetches < 20) {
-            indexes = indexes.slice(0, 20);
+        if (totalFetches < 20) {
+            indexes = indexes.slice(0, globeSimLoad * 4);
         } else {
             indexes = indexes.slice(0, globeSimLoad * 2);
             refreshMultiplier = Math.max(1, indexes.length / globeSimLoad);
         }
+        totalFetches += indexes.length;
 
         let suffix = binCraft ? '.binCraft' : '.json'
         let mid = (binCraft && onlyMilitary) ? 'Mil_' : '_';
@@ -323,7 +325,7 @@ function fetchData() {
         ac_url[0] = 'data/aircraft.json';
     }
 
-    PendingFetches = ac_url.length;
+    pendingFetches = ac_url.length;
 
     if (globeIndex) {
         clearTimeout(refreshId);
@@ -368,7 +370,7 @@ function fetchData() {
                 uat_data = null;
             }
 
-            if (PendingFetches <= 1) {
+            if (pendingFetches <= 1) {
                 if (globeIndex)
                     clearTimeout(refreshId);
 
@@ -378,7 +380,7 @@ function fetchData() {
                 if (globeIndex)
                     fetchSoon();
             }
-            PendingFetches--;
+            pendingFetches--;
 
 
             // Check for stale receiver data
@@ -393,7 +395,8 @@ function fetchData() {
                 $("#update_error").css('display','none');
             }
 
-            if (!fetches++) {
+            if (firstFetch) {
+                firstFetch = false;
                 if (uuid) {
                     followRandomPlane();
                     deselectAllPlanes();
@@ -410,7 +413,7 @@ function fetchData() {
             console.log(error);
             $("#update_error").css('display','block');
             StaleReceiverCount++;
-            PendingFetches--;
+            pendingFetches--;
             fetchSoon();
         });
     }
