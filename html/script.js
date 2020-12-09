@@ -102,7 +102,6 @@ let noRegOnly = false;
 let triggerMapRefresh = 0;
 let firstDraw = true;
 const renderBuffer = 45;
-let checkMoveTimer;
 
 let shareLink = '';
 
@@ -1186,10 +1185,7 @@ function startPage() {
     changeZoom("init");
     changeCenter("init");
 
-    if (heatmap)
-        checkMoveTimer = setInterval(checkMovement, 250);
-    else
-        checkMoveTimer = setInterval(checkMovement, globeIndex ? 60 : 30);
+    checkMoveSetInterval();
 
     loadFinished = true;
 
@@ -1516,9 +1512,8 @@ function initMap() {
     }));
 
     OLMap.on('moveend', function(event) {
-        clearInterval(checkMoveTimer);
         checkMovement();
-        checkMoveTimer = setInterval(checkMovement, globeIndex ? 60 : 30);
+        checkMoveSetInterval();
     });
     /*
     // Listeners for newly created Map
@@ -3811,6 +3806,18 @@ function changeCenter(init) {
         OLMap.getView().setCenter(ol.proj.fromLonLat([center[0], 85]));
 }
 
+let checkMoveTimer;
+
+function checkMoveSetInterval() {
+    clearInterval(checkMoveTimer);
+
+    let interval = 30;
+    if (heatmap) interval = 250;
+    else if (onMobile) interval = 60;
+
+    checkMoveTimer = setInterval(checkMovement, interval);
+}
+
 let noMovement;
 let checkMoveZoom;
 let checkMoveCenter = [0, 0];
@@ -3839,18 +3846,13 @@ function checkMovement() {
     changeZoom();
     changeCenter();
 
-    if (noMovement == 3) {
-
-        // no zoom/pan inputs for 450 ms after a zoom/pan input
-        //
-        //console.time("fire!");
+    if (noMovement == 2) {
         drawHeatmap();
-
-        //console.timeEnd("fire!");
     }
 
-    if (noMovement >= 1);
+    if (noMovement >= 1) {
         checkRefresh();
+    }
 
     noMovement++;
 }
