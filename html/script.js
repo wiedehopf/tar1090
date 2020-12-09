@@ -99,7 +99,7 @@ let firstFetchDone = false;
 let overrideMapType = null;
 let halloween = false;
 let noRegOnly = false;
-let triggerMapRefresh = false;
+let triggerMapRefresh = 0;
 let firstDraw = true;
 
 let shareLink = '';
@@ -367,7 +367,9 @@ function fetchData() {
             }
 
             if (PendingFetches <= 1) {
-                triggerMapRefresh = true;
+                triggerMapRefresh++;
+                if (TrackedAircraftPositions < 500)
+                    checkRefresh(); // immediately trigger refresh if aircraft count is low enough
             }
             PendingFetches--;
 
@@ -3807,7 +3809,7 @@ function checkMovement() {
         //console.timeEnd("fire!");
     }
 
-    if (noMovement >= 3)
+    if (noMovement >= 3 || triggerMapRefresh > 1)
         checkRefresh();
 
     noMovement++;
@@ -3829,7 +3831,7 @@ function checkRefresh() {
         mapRefresh();
         //console.timeEnd("refreshTable");
 
-        triggerMapRefresh = false;
+        triggerMapRefresh = 0;
     }
 }
 function mapRefresh() {
@@ -3913,9 +3915,6 @@ function changeZoom(init) {
         scaleFactor = markerBig;
     else
         scaleFactor = markerSmall;
-
-    if (scaleFactor != oldScaleFactor)
-        triggerMapRefresh = true;
 
     // scale markers according to global scaling
     scaleFactor *= Math.pow(1.3, globalScale) * globalScale * iconScale;;
