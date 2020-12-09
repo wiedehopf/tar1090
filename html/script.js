@@ -102,19 +102,13 @@ let noRegOnly = false;
 let triggerMapRefresh = 0;
 let firstDraw = true;
 const renderBuffer = 45;
+let checkMoveTimer;
 
 let shareLink = '';
 
 let onMobile = false;
 
-// Get current map settings
 let CenterLat, CenterLon, ZoomLvl, ZoomLvlCache;
-let zoomTimeout;
-let noMovement;
-let checkMoveZoom;
-let checkMoveCenter = [0, 0];
-let refreshZoom, refreshLat, refreshLon;
-
 
 let TrackedAircraft = 0;
 let globeTrackedAircraft = 0;
@@ -1193,11 +1187,9 @@ function startPage() {
     changeCenter("init");
 
     if (heatmap)
-        setInterval(checkMovement, 250);
-    else if (globeIndex)
-        setInterval(checkMovement, 80);
+        checkMoveTimer = setInterval(checkMovement, 250);
     else
-        setInterval(checkMovement, 30);
+        checkMoveTimer = setInterval(checkMovement, globeIndex ? 60 : 30);
 
     loadFinished = true;
 
@@ -1524,7 +1516,9 @@ function initMap() {
     }));
 
     OLMap.on('moveend', function(event) {
+        clearInterval(checkMoveTimer);
         checkMovement();
+        checkMoveTimer = setInterval(checkMovement, globeIndex ? 60 : 30);
     });
     /*
     // Listeners for newly created Map
@@ -3762,12 +3756,47 @@ function zoomOut() {
         toggleFollow(true);
 }
 
+function changeZoom(init) {
+    if (!OLMap)
+        return;
+
+    ZoomLvl = OLMap.getView().getZoom();
+
+    // small zoomstep, no need to change aircraft scaling
+    if (!init && Math.abs(ZoomLvl-ZoomLvlCache) < 0.4)
+        return;
+
+    localStorage['ZoomLvl'] = ZoomLvl;
+    ZoomLvlCache = ZoomLvl;
+
+    let oldScaleFactor = scaleFactor;
+
+    if (ZoomLvl > markerZoomDivide)
+        scaleFactor = markerBig;
+    else
+        scaleFactor = markerSmall;
+
+    // scale markers according to global scaling
+    scaleFactor *= Math.pow(1.3, globalScale) * globalScale * iconScale;;
+
+    if (!init && showTrace)
+        updateAddressBar();
+
+    if (ZoomLvl > 5.5 && enableMouseover) {
+        OLMap.on('pointermove', onPointermove);
+    } else {
+        OLMap.un('pointermove', onPointermove);
+        removeHighlight();
+    }
+}
+
+
 function changeCenter(init) {
     const rawCenter = OLMap.getView().getCenter();
     const center = ol.proj.toLonLat(rawCenter);
 
-    checkMoveCenter[0] = localStorage['CenterLon'] = CenterLon = center[0];
-    checkMoveCenter[1] = localStorage['CenterLat'] = CenterLat = center[1];
+    localStorage['CenterLon'] = CenterLon = center[0];
+    localStorage['CenterLat'] = CenterLat = center[1];
 
     if (!init && showTrace)
         updateAddressBar();
@@ -3781,6 +3810,10 @@ function changeCenter(init) {
     if (center[1] > 85)
         OLMap.getView().setCenter(ol.proj.fromLonLat([center[0], 85]));
 }
+
+let noMovement;
+let checkMoveZoom;
+let checkMoveCenter = [0, 0];
 
 function checkMovement() {
     if (tabHidden)
@@ -3816,18 +3849,30 @@ function checkMovement() {
         //console.timeEnd("fire!");
     }
 
-    if (noMovement >= 3 || triggerMapRefresh > 1 || TrackedAircraftPositions < 500)
+    if (noMovement >= 1);
         checkRefresh();
 
     noMovement++;
 }
 
+let lastRefresh = 0;
+let refreshZoom, refreshLat, refreshLon;
 function checkRefresh() {
     const center = ol.proj.toLonLat(OLMap.getView().getCenter());
     const zoom = OLMap.getView().getZoom();
     if (showTrace)
         return;
+
     if (triggerMapRefresh || refreshZoom != zoom || center[0] != refreshLon || center[1] != refreshLat) {
+
+        const ts = new Date().getTime() / 1000;
+        const elapsed = Math.abs(ts - lastRefresh);
+        let num = Math.min(1.5, Math.max(0.25, TrackedAircraftPositions / 300 * 0.25));
+        if (elapsed < num) {
+            return;
+        }
+        lastRefresh = ts;
+
         refreshZoom = zoom;
         refreshLat = center[1];
         refreshLon = center[0];
@@ -3895,40 +3940,6 @@ function mapRefresh() {
         for (let i in addToMap) {
             addToMap[i].updateTick();
         }
-    }
-}
-
-function changeZoom(init) {
-    if (!OLMap)
-        return;
-
-    ZoomLvl = OLMap.getView().getZoom();
-
-    // small zoomstep, no need to change aircraft scaling
-    if (!init && Math.abs(ZoomLvl-ZoomLvlCache) < 0.4)
-        return;
-
-    localStorage['ZoomLvl'] = ZoomLvl;
-    ZoomLvlCache = ZoomLvl;
-
-    let oldScaleFactor = scaleFactor;
-
-    if (ZoomLvl > markerZoomDivide)
-        scaleFactor = markerBig;
-    else
-        scaleFactor = markerSmall;
-
-    // scale markers according to global scaling
-    scaleFactor *= Math.pow(1.3, globalScale) * globalScale * iconScale;;
-
-    if (!init && showTrace)
-        updateAddressBar();
-
-    if (ZoomLvl > 5.5 && enableMouseover) {
-        OLMap.on('pointermove', onPointermove);
-    } else {
-        OLMap.un('pointermove', onPointermove);
-        removeHighlight();
     }
 }
 
