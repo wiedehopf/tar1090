@@ -95,7 +95,7 @@ let geoMag = null;
 let globalCompositeTested = false;
 let solidT = false;
 let lastActive = new Date().getTime();
-let firstFetchDone = false;
+let fetches = 0;
 let overrideMapType = null;
 let halloween = false;
 let noRegOnly = false;
@@ -305,7 +305,12 @@ function fetchData() {
                 return 1;
             return (globeIndexNow[x] - globeIndexNow[y]);
         });
-        indexes = indexes.slice(0, globeSimLoad);
+
+        if (fetches < 20)
+            indexes = indexes.slice(0, 20);
+        else
+            indexes = indexes.slice(0, globeSimLoad);
+
         let suffix = binCraft ? '.binCraft' : '.json'
         let mid = (binCraft && onlyMilitary) ? 'Mil_' : '_';
         for (let i in indexes) {
@@ -382,8 +387,7 @@ function fetchData() {
                 $("#update_error").css('display','none');
             }
 
-            if (!firstFetchDone) {
-                firstFetchDone = true;
+            if (!fetches++) {
                 if (uuid) {
                     followRandomPlane();
                     deselectAllPlanes();
