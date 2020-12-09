@@ -4349,8 +4349,8 @@ function refreshInt() {
 
     if (inactive < 70)
         inactive = 70;
-    if (inactive > 180)
-        inactive = 180;
+    if (inactive > 240)
+        inactive = 240;
 
     refresh *= inactive / 70;
 
