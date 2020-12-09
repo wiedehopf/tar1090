@@ -366,14 +366,17 @@ function fetchData() {
             }
 
             if (PendingFetches <= 1) {
-                clearTimeout(refreshId);
+                if (globeIndex)
+                    clearTimeout(refreshId);
+
                 triggerMapRefresh++;
                 checkMovement();
+
+                if (globeIndex)
+                    fetchSoon();
             }
             PendingFetches--;
 
-            if (globeIndex)
-                fetchSoon();
 
             // Check for stale receiver data
             if (last == now && !globeIndex) {
