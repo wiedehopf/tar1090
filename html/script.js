@@ -1523,6 +1523,9 @@ function initMap() {
         target: 'map_container',
     }));
 
+    OLMap.on('moveend', function(event) {
+        checkMovement();
+    });
     /*
     // Listeners for newly created Map
     OLMap.getView().on('change:center', function(event) {
@@ -3813,7 +3816,7 @@ function checkMovement() {
         //console.timeEnd("fire!");
     }
 
-    if (noMovement >= 3 || triggerMapRefresh > 1)
+    if (noMovement >= 3 || triggerMapRefresh > 1 || TrackedAircraftPositions < 500)
         checkRefresh();
 
     noMovement++;
