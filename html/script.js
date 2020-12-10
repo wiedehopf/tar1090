@@ -3400,7 +3400,7 @@ function toggleExtendedLabels() {
 
     extendedLabels++;
     extendedLabels %= 3;
-    console.log(extendedLabels);
+    //console.log(extendedLabels);
     localStorage['extendedLabels'] = extendedLabels;
     for (let key in PlanesOrdered) {
         PlanesOrdered[key].updateMarker();

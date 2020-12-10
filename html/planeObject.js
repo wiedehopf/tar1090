@@ -1465,7 +1465,8 @@ PlaneObject.prototype.clearMarker = function() {
 // Update our marker on the map
 PlaneObject.prototype.updateMarker = function(moved) {
     if (!this.visible || this.position == null || (pTracks && (SelectedAllPlanes || !this.selected))) {
-        this.clearMarker();
+        if (this.markerDrawn)
+            this.clearMarker();
         return;
     }
     this.markerDrawn = true;
