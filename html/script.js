@@ -2313,7 +2313,7 @@ function removeHighlight() {
 
 function refreshFeatures() {
     for (let i in PlanesOrdered) {
-        PlanesOrdered[i].updateTick(true);
+        PlanesOrdered[i].updateFeatures(true);
     }
 }
 
@@ -2970,7 +2970,7 @@ function deselectAllPlanes(keepMain) {
             continue;
 
         plane.selected = false;
-        plane.updateTick(true);
+        plane.updateFeatures(true);
     }
     if (SelectedAllPlanes) {
         SelectedAllPlanes = false;
@@ -3387,6 +3387,7 @@ function toggleLabels() {
     for (let key in PlanesOrdered) {
         PlanesOrdered[key].updateMarker();
     }
+    refreshFeatures();
     buttonActive('#L', enableLabels);
 
     if (showTrace)
@@ -3925,7 +3926,7 @@ function mapRefresh() {
     }
     if (globeIndex && !icaoFilter) {
         for (let i in addToMap) {
-            addToMap[i].updateFeatures(now, last);
+            addToMap[i].updateFeatures();
         }
     } else {
         for (let i in addToMap) {
@@ -4647,7 +4648,7 @@ function drawAlt() {
 function remakeTrails() {
     for (let i in PlanesOrdered) {
         PlanesOrdered[i].remakeTrail();
-        PlanesOrdered[i].updateTick(true);
+        PlanesOrdered[i].updateFeatures(true);
     }
 }
 

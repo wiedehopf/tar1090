@@ -1081,7 +1081,7 @@ PlaneObject.prototype.processTrace = function() {
     this.visible = true;
 
     if (!showTime) {
-        this.updateFeatures(now, _last);
+        this.updateFeatures(true);
     }
 
     if (showTime && FollowSelected) {
@@ -1425,14 +1425,10 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 
 PlaneObject.prototype.updateTick = function(redraw) {
     this.visible = this.checkVisible() && !this.isFiltered();
-    if (this.dataSource == "uat") {
-        this.updateFeatures(uat_now, uat_last, redraw);
-    } else {
-        this.updateFeatures(now, last, redraw);
-    }
+    this.updateFeatures(redraw);
 };
 
-PlaneObject.prototype.updateFeatures = function(now, last, redraw) {
+PlaneObject.prototype.updateFeatures = function(redraw) {
 
     if (this.visible) {
         if (this.drawLine || redraw || this.lastVisible != this.visible)
@@ -1526,9 +1522,11 @@ PlaneObject.prototype.updateMarker = function(moved) {
         this.marker = new ol.Feature(this.point);
         this.marker.hex = this.icao;
     }
-    if (webgl && !enableLabels && this.marker && this.marker.visible) {
-        PlaneIconFeatures.removeFeature(this.marker);
-        delete this.marker;
+    if (webgl && !enableLabels && this.marker) {
+        if (this.marker.visible) {
+            PlaneIconFeatures.removeFeature(this.marker);
+            this.marker.visible = false;
+        }
     }
 
     if (webgl) {
@@ -1547,7 +1545,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
         this.glMarker.set('dy', (getSpriteY(this.shape) + 1) / glImapHeight);
     }
 
-    if (this.marker) {
+    if (this.marker && (!webgl || enableLabels)) {
         this.updateIcon();
         if (!this.marker.visible) {
             this.marker.visible = true;
