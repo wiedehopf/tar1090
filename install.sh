@@ -284,7 +284,7 @@ do
 
     if [[ $lighttpd == yes ]] &>/dev/null
     then
-        if [[ "$otherport" != "done" ]] && ! lighttpd -v | grep -E 'lighttpd/1.4.(5[6-9]|[6-9])' -qs; then
+        if [[ "$otherport" != "done" ]]; then
             cp 95-tar1090-otherport.conf /etc/lighttpd/conf-available/
             ln -f -s /etc/lighttpd/conf-available/95-tar1090-otherport.conf /etc/lighttpd/conf-enabled/95-tar1090-otherport.conf
             otherport="done"

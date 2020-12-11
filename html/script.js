@@ -2248,9 +2248,9 @@ function refreshSelected() {
 
 function refreshHighlighted() {
     // this is following nearly identical logic, etc, as the refreshSelected function, but doing less junk for the highlighted pane
-    let highlighted = false;
+    let highlighted = Planes[HighlightedPlane];
 
-    if (!HighlightedPlane || !(highlighted = Planes[HighlightedPlane]) ) {
+    if (!highlighted) {
         $('#highlighted_infoblock').hide();
         return;
     }
@@ -2259,8 +2259,7 @@ function refreshHighlighted() {
 
     let infoBox = $('#highlighted_infoblock');
 
-
-    let marker = highlighted.marker;
+    let marker = highlighted.marker || highlighted.glMarker;
     let geom;
     let markerCoordinates;
     if (!marker || !(geom = marker.getGeometry()) || !(markerCoordinates = geom.getCoordinates()) ) {
@@ -3954,15 +3953,18 @@ function highlight(evt) {
         }
     );
 
-    clearTimeout(pointerMoveTimeout);
+    if (hex == HighlightedPlane)
+        return;
+
+    //clearTimeout(pointerMoveTimeout);
 
     if (hex) {
         HighlightedPlane = hex;
-        pointerMoveTimeout = setTimeout(refreshHighlighted(), 300);
     } else {
         HighlightedPlane = null;
-        pointerMoveTimeout = setTimeout(removeHighlight(), 300);
     }
+    //pointerMoveTimeout = setTimeout(refreshHighlighted(), 300);
+    refreshHighlighted();
 }
 
 function processURLParams(){
