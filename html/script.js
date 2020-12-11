@@ -1371,6 +1371,7 @@ function webglInit() {
             }
             if (loadFinished) {
                 refreshFilter();
+                checkPointermove();
             }
         },
     });
@@ -3776,7 +3777,11 @@ function changeZoom(init) {
     if (!init && showTrace)
         updateAddressBar();
 
-    if (ZoomLvl > 5.5 && enableMouseover) {
+    checkPointermove();
+}
+
+function checkPointermove() {
+    if ((webgl || ZoomLvl > 5.5) && enableMouseover && !onMobile) {
         OLMap.on('pointermove', onPointermove);
     } else {
         OLMap.un('pointermove', onPointermove);
