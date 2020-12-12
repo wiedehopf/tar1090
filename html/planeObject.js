@@ -1538,7 +1538,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
 
         this.setMarkerRgb();
         const iconRotation = this.shape.noRotate ? 0 : this.rotation;
-        this.glMarker.set('rotation', iconRotation * Math.PI / 180.0);
+        this.glMarker.set('rotation', iconRotation * Math.PI / 180.0 + mapOrientation);
         this.glMarker.set('size', this.scale * Math.max(this.shape.w, this.shape.h));
         this.glMarker.set('cx', getSpriteX(this.shape) / glImapWidth);
         this.glMarker.set('cy', getSpriteY(this.shape) / glImapHeight);
