@@ -4896,7 +4896,7 @@ function getTrace(newPlane, hex, options) {
             traceOpts.endStamp = traceOpts.startStamp + 24 * 3600;
         } else {
             URL1 = null;
-            URL2 = 'globe_history/' + traceDateString + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json';
+            URL2 = 'globe_history/' + traceDateString.replace(/-/g, '/') + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json';
         }
     } else {
         traceRate += 2;
