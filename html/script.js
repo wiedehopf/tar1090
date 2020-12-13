@@ -2607,11 +2607,12 @@ function refreshFeatures() {
                 plane.refreshTR = true;
             }
 
-            if (plane.refreshTR) {
+            if (plane.refreshTR || plane.selected != plane.selectCache) {
                 plane.refreshTR = false;
                 let colors = tableColors.unselected;
                 let bgColor = "#F8F8F8"
 
+                plane.selectCache = plane.selected;
                 if (plane.selected)
                     colors = tableColors.selected;
 
@@ -2869,7 +2870,6 @@ function selectPlaneByHex(hex, options) {
         newPlane.selected = false;
         newPlane.clearLines();
         newPlane.updateMarker();
-        $(newPlane.tr).removeClass("selected");
         if (SelectedPlane == newPlane)
             SelectedPlane = null;
         newPlane = null;
@@ -2888,7 +2888,6 @@ function selectPlaneByHex(hex, options) {
     if (!multiSelect && oldPlane) {
         oldPlane.selected = false;
         oldPlane.updateTick(true);
-        $(oldPlane.tr).removeClass("selected");
         SelectedPlane = null;
         // scroll the infoblock back to the top for the next plane to be selected
         //$('.infoblock-container').scrollTop(0);
@@ -2902,7 +2901,6 @@ function selectPlaneByHex(hex, options) {
         SelectedPlane = newPlane;
         newPlane.selected = true;
         newPlane.updateTick(true);
-        $(newPlane.tr).addClass("selected");
         newPlane.logSel(newPlane.history_size);
         //console.log(newPlane.baseMarkerKey);
     }
@@ -2941,7 +2939,6 @@ function selectAllPlanes() {
         SelectedPlane.selected = false;
         SelectedPlane.clearLines();
         SelectedPlane.updateMarker();
-        $(SelectedPlane.tr).removeClass("selected");
     }
 
     SelectedPlane = null;

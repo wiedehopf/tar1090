@@ -22,6 +22,7 @@ select {
 #planesTable {
     font-size: var(--FS2);
     white-space: nowrap;
+    cursor: default;
 }
 
 #layout_container {
