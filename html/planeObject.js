@@ -1075,6 +1075,8 @@ PlaneObject.prototype.processTrace = function() {
 
     this.visible = true;
 
+    if (traceOpts.follow)
+        toggleFollow(true);
     if (traceOpts.showTime) {
         this.updateMarker(true);
     } else {
