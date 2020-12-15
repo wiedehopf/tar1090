@@ -443,6 +443,15 @@ function initialize() {
     });
 }
 
+function replaySpeedChange(arg) {
+    traceOpts.replaySpeed = arg;
+    console.log(arg);
+    if (traceOpts.animate)
+        return;
+    legShift(0);
+};
+
+
 function initPage() {
 
     onMobile = window.mobilecheck();
@@ -795,11 +804,11 @@ function initPage() {
     toggleLargeMode();
 
     $('#tStop').on('click', function() { traceOpts.replaySpeed = 0; gotoTime(traceOpts.showTime); });
-    $('#t1x').on('click', function() { traceOpts.replaySpeed = 1; traceOpts.animate || legShift(); });
-    $('#t5x').on('click', function() { traceOpts.replaySpeed = 5; traceOpts.animate || legShift(); });
-    $('#t10x').on('click', function() { traceOpts.replaySpeed = 10; traceOpts.animate || legShift(); });
-    $('#t20x').on('click', function() { traceOpts.replaySpeed = 20; traceOpts.animate || legShift(); });
-    $('#t40x').on('click', function() { traceOpts.replaySpeed = 40; traceOpts.animate || legShift(); });
+    $('#t1x').on('click', function() { replaySpeedChange(1); });
+    $('#t5x').on('click', function() { replaySpeedChange(5); });
+    $('#t10x').on('click', function() { replaySpeedChange(10); });
+    $('#t20x').on('click', function() { replaySpeedChange(20); });
+    $('#t40x').on('click', function() { replaySpeedChange(40); });
 
     new Toggle({
         key: "debugTracks",
@@ -4807,6 +4816,7 @@ function gotoTime(timestamp) {
         }
         if (--traceOpts.animateCounter == 1) {
             traceOpts.animate = false;
+            traceOpts.showTime = traceOpts.showTimeEnd;
         }
 
         traceOpts.animateStepTime = traceOpts.animateRealtime / traceOpts.replaySpeed / traceOpts.animateSteps;

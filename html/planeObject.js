@@ -826,11 +826,6 @@ PlaneObject.prototype.updateIcon = function() {
 PlaneObject.prototype.processTrace = function() {
     this.dataChanged();
 
-    let showTime = false;
-    if (traceOpts.showTime != null) {
-        showTime = true;
-    }
-
     if (showTrace)
         this.setNull();
 
@@ -844,7 +839,7 @@ PlaneObject.prototype.processTrace = function() {
 
     let tempPlane = {};
     const oldSegs = this.track_linesegs;
-    if (!showTime) {
+    if (!traceOpts.showTime) {
         this.track_linesegs = [];
         this.remakeTrail();
     }
@@ -938,44 +933,44 @@ PlaneObject.prototype.processTrace = function() {
                 //console.log(timestamp);
                 //console.log(traceOpts.startStamp);
             }
-            if (showTime && timestamp > traceOpts.showTime) {
-                if (traceOpts.showTime) {
-                    clearTimeout(traceOpts.showTimeout);
-                    if (traceOpts.replaySpeed > 0) {
-                        traceOpts.animateRealtime = (timestamp - traceOpts.showTime) * 1000;
-                        traceOpts.animateTime = traceOpts.animateRealtime / traceOpts.replaySpeed;
-                        let fps = webgl ? 28 : 1;
-                        traceOpts.animateSteps = Math.round(traceOpts.animateTime / (1000 / fps));
-                        traceOpts.animateCounter = traceOpts.animateSteps; // will count down
+            if (traceOpts.showTime && timestamp > traceOpts.showTime) {
+                clearTimeout(traceOpts.showTimeout);
+                traceOpts.showTimeEnd = timestamp;
+                if (traceOpts.replaySpeed > 0) {
+                    traceOpts.animateRealtime = (timestamp - traceOpts.showTime) * 1000;
+                    traceOpts.animateTime = traceOpts.animateRealtime / traceOpts.replaySpeed;
+                    let fps = webgl ? 28 : 1;
+                    traceOpts.animateSteps = Math.round(traceOpts.animateTime / (1000 / fps));
+                    traceOpts.animateCounter = traceOpts.animateSteps; // will count down
 
-                        traceOpts.animateStepTime = traceOpts.animateRealtime / traceOpts.replaySpeed / traceOpts.animateSteps;
-                        if (traceOpts.animateSteps < 2) {
-                            traceOpts.showTimeout = setTimeout(gotoTime, traceOpts.animateTime);
-                            traceOpts.animate = false;
-                        } else {
-                            //console.timeEnd('step');
-                            //console.time('step');
-                            //console.log(traceOpts.animateTime);
-                            traceOpts.animate = true;
+                    traceOpts.animateStepTime = traceOpts.animateRealtime / traceOpts.replaySpeed / traceOpts.animateSteps;
 
-                            traceOpts.animateFromLon = this.position[0];
-                            traceOpts.animateFromLat = this.position[1];
-                            traceOpts.animateToLon = state[2];
-                            traceOpts.animateToLat = state[1];
+                    if (traceOpts.animateSteps < 2) {
+                        traceOpts.showTimeout = setTimeout(gotoTime, traceOpts.animateTime);
+                        traceOpts.animate = false;
+                    } else {
+                        //console.timeEnd('step');
+                        //console.time('step');
+                        //console.log(traceOpts.animateTime);
+                        traceOpts.animate = true;
 
-                            traceOpts.animatePos = [traceOpts.animateFromLon, traceOpts.animateFromLat];
+                        traceOpts.animateFromLon = this.position[0];
+                        traceOpts.animateFromLat = this.position[1];
+                        traceOpts.animateToLon = state[2];
+                        traceOpts.animateToLat = state[1];
 
-                            //console.log('from: ', fromProj);
-                            //console.log('to:   ', toProj);
+                        traceOpts.animatePos = [traceOpts.animateFromLon, traceOpts.animateFromLat];
 
-                            traceOpts.showTimeout = setTimeout(gotoTime, traceOpts.animateStepTime);
-                        }
+                        //console.log('from: ', fromProj);
+                        //console.log('to:   ', toProj);
+
+                        traceOpts.showTimeout = setTimeout(gotoTime, traceOpts.animateStepTime);
                     }
                 }
-                traceOpts.showTime = timestamp;
                 stop = 1;
                 break;
             }
+
             if (traceOpts.startStamp != null && timestamp < traceOpts.startStamp)
                 continue;
             if (traceOpts.endStamp != null && timestamp > traceOpts.endStamp)
@@ -999,7 +994,7 @@ PlaneObject.prototype.processTrace = function() {
                 stale = true;
             }
 
-            if (!showTime) {
+            if (!traceOpts.showTime) {
                 this.updateTrack(_now, _last, true, stale);
             }
             _last = _now;
@@ -1043,7 +1038,7 @@ PlaneObject.prototype.processTrace = function() {
         this.history_size = newSize;
     }
 
-    if (showTrace && !showTime) {
+    if (showTrace && !traceOpts.showTime) {
 
         if (this.track_linesegs.length > 0 && this.position) {
             const proj = ol.proj.fromLonLat(this.position);
@@ -1080,7 +1075,7 @@ PlaneObject.prototype.processTrace = function() {
 
     this.visible = true;
 
-    if (showTime) {
+    if (traceOpts.showTime) {
         this.updateMarker(true);
     } else {
         this.updateFeatures(true);
@@ -1088,7 +1083,7 @@ PlaneObject.prototype.processTrace = function() {
 
     let mapSize = OLMap.getSize();
     let size = [Math.max(5, mapSize[0] - 280), mapSize[1]];
-    if (!showTime && (showTrace || showTraceExit)
+    if (!traceOpts.showTime && (showTrace || showTraceExit)
         && this.position
         && !noPan
         && !inView(this.position, myExtent(OLMap.getView().calculateExtent(size)))
