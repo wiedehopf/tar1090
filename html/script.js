@@ -100,6 +100,7 @@ let globalCompositeTested = false;
 let solidT = false;
 let lastActive = new Date().getTime();
 let overrideMapType = null;
+let enableOverlays = [];
 let halloween = false;
 let noRegOnly = false;
 let triggerMapRefresh = 0;
@@ -583,6 +584,9 @@ function initPage() {
 
         if (search.has('baseMap'))
             overrideMapType = search.get('baseMap');
+
+        if (search.has('overlays'))
+            enableOverlays = search.get('overlays').split(',');
 
         icaoFilter = search.get('icaoFilter');
         if (icaoFilter)
@@ -1502,7 +1506,7 @@ function initMap() {
                 }
             });
         } else if (lyr.get('type') === 'overlay') {
-            if (localStorage['layer_' + lyr.get('name')] == 'true')
+            if (localStorage['layer_' + lyr.get('name')] == 'true' || enableOverlays.indexOf(lyr.get('name')) >= 0)
                 lyr.setVisible(true);
 
             lyr.on('change:visible', function(evt) {
