@@ -826,19 +826,16 @@ PlaneObject.prototype.updateIcon = function() {
 PlaneObject.prototype.processTrace = function() {
     this.dataChanged();
 
-    let options = traceOpts;
-
     let showTime = false;
-    if (options.showTime != null) {
+    if (traceOpts.showTime != null) {
         showTime = true;
     }
 
     if (showTrace)
         this.setNull();
 
-    let legStart = options.legStart;
-    let legEnd = options.legEnd;
-    let follow = options.follow;
+    let legStart = traceOpts.legStart;
+    let legEnd = traceOpts.legEnd;
     this.checkLayers();
     let trace = null;
     let timeZero, _now, _last = 0;
@@ -939,36 +936,39 @@ PlaneObject.prototype.processTrace = function() {
 
             if (i == start) {
                 //console.log(timestamp);
-                //console.log(options.startStamp);
+                //console.log(traceOpts.startStamp);
             }
-            if (showTime && timestamp > options.showTime) {
+            if (showTime && timestamp > traceOpts.showTime) {
                 if (traceOpts.showTime) {
+                    clearTimeout(traceOpts.showTimeout);
                     if (traceOpts.replaySpeed > 0) {
-                        clearTimeout(traceOpts.showTimeout);
-                        let delay = (timestamp - options.showTime) / traceOpts.replaySpeed * 1000;
-                        let steps = Math.round(delay / 1000);
-                        traceOpts.animateInterval = delay / steps;
-                        traceOpts.animateSteps = steps;
-                        if (steps < 2) {
-                            traceOpts.showTimeout = setTimeout(gotoTime, delay);
+                        traceOpts.animateRealtime = (timestamp - traceOpts.showTime) * 1000;
+                        traceOpts.animateTime = traceOpts.animateRealtime / traceOpts.replaySpeed;
+                        let fps = webgl ? 28 : 1;
+                        traceOpts.animateSteps = Math.round(traceOpts.animateTime / (1000 / fps));
+                        traceOpts.animateCounter = traceOpts.animateSteps; // will count down
+
+                        traceOpts.animateStepTime = traceOpts.animateRealtime / traceOpts.replaySpeed / traceOpts.animateSteps;
+                        if (traceOpts.animateSteps < 2) {
+                            traceOpts.showTimeout = setTimeout(gotoTime, traceOpts.animateTime);
                             traceOpts.animate = false;
                         } else {
                             //console.timeEnd('step');
                             //console.time('step');
-                            //console.log(delay);
+                            //console.log(traceOpts.animateTime);
                             traceOpts.animate = true;
 
-                            let fromProj = ol.proj.fromLonLat(this.position);
-                            let toProj = ol.proj.fromLonLat([state[2], state[1]]);
-                            traceOpts.animateFromLon = fromProj[0]
-                            traceOpts.animateFromLat = fromProj[1];
-                            traceOpts.animateToLon = toProj[0];
-                            traceOpts.animateToLat = toProj[1];
+                            traceOpts.animateFromLon = this.position[0];
+                            traceOpts.animateFromLat = this.position[1];
+                            traceOpts.animateToLon = state[2];
+                            traceOpts.animateToLat = state[1];
+
+                            traceOpts.animatePos = [traceOpts.animateFromLon, traceOpts.animateFromLat];
 
                             //console.log('from: ', fromProj);
                             //console.log('to:   ', toProj);
 
-                            traceOpts.showTimeout = setTimeout(gotoTime, traceOpts.animateInterval);
+                            traceOpts.showTimeout = setTimeout(gotoTime, traceOpts.animateStepTime);
                         }
                     }
                 }
@@ -976,9 +976,9 @@ PlaneObject.prototype.processTrace = function() {
                 stop = 1;
                 break;
             }
-            if (options.startStamp != null && timestamp < options.startStamp)
+            if (traceOpts.startStamp != null && timestamp < traceOpts.startStamp)
                 continue;
-            if (options.endStamp != null && timestamp > options.endStamp)
+            if (traceOpts.endStamp != null && timestamp > traceOpts.endStamp)
                 break;
 
             points_in_trace++;
@@ -1080,14 +1080,10 @@ PlaneObject.prototype.processTrace = function() {
 
     this.visible = true;
 
-    if (!showTime) {
+    if (showTime) {
+        this.updateMarker(true);
+    } else {
         this.updateFeatures(true);
-    }
-
-    if (showTime && FollowSelected) {
-        OLMap.getView().setCenter(ol.proj.fromLonLat(this.position));
-    } else if (this.position && follow) {
-        toggleFollow(true);
     }
 
     let mapSize = OLMap.getSize();
@@ -1104,11 +1100,6 @@ PlaneObject.prototype.processTrace = function() {
     noPan = false;
     showTraceExit = false;
 
-    if (!showTime) {
-        this.updateMarker();
-        this.updateLines();
-    }
-
     refreshSelected();
 
     TAR.planeMan.refresh();
@@ -1119,11 +1110,7 @@ PlaneObject.prototype.processTrace = function() {
 PlaneObject.prototype.updatePositionData = function(now, last, data, init) {
     let newPos = this.updateTrack(now, last);
 
-    this.moveMarker |= newPos;
     this.drawLine |= newPos;
-
-    if (this == SelectedPlane && FollowSelected)
-        toggleFollow(true);
 
     if (globeIndex && newPos) {
         let state = {};
@@ -1434,10 +1421,7 @@ PlaneObject.prototype.updateFeatures = function(redraw) {
         if (this.drawLine || redraw || this.lastVisible != this.visible)
             this.updateLines();
 
-        this.updateMarker();
-
-        if (this == SelectedPlane && FollowSelected && this.position)
-            OLMap.getView().setCenter(ol.proj.fromLonLat(this.position));
+        this.updateMarker(redraw);
     }
     if (!this.visible && this.lastVisible) {
         this.clearMarker();
@@ -1471,33 +1455,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
     }
     this.markerDrawn = true;
 
-    moved |= this.moveMarker;
-
-    let lon = this.position[0];
-    let lat = this.position[1];
-
-    // manual wrap around
-    if (webgl && Math.abs(CenterLon - lon) > 180) {
-        if (CenterLon < 0)
-            lon -= 360;
-        else
-            lon += 360;
-    }
-
-    let proj = ol.proj.fromLonLat([lon, lat]);
-
-    if (this.proj) {
-        moved |= (this.proj[0] != proj[0] || this.proj[1] != proj[1]);
-    }
-
-    this.proj = proj;
-
-    if (!this.point) {
-        this.point = new ol.geom.Point(proj);
-    } else if (moved) {
-        this.point.setCoordinates(proj);
-    }
-
+    this.setProjection();
 
     let eastbound = this.rotation < 180;
     let icaoType = this.icaoType;
@@ -1520,7 +1478,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
     this.strokeWidth = outlineWidth * ((this.selected && !SelectedAllPlanes && !onlySelected) ? 1.15 : 0.7) / this.baseScale;
 
     if (!this.marker && (!webgl || enableLabels)) {
-        this.marker = new ol.Feature(this.point);
+        this.marker = new ol.Feature(this.olPoint);
         this.marker.hex = this.icao;
     }
     if (webgl && !enableLabels && this.marker) {
@@ -1532,7 +1490,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
 
     if (webgl) {
         if (!this.glMarker) {
-            this.glMarker = new ol.Feature(this.point);
+            this.glMarker = new ol.Feature(this.olPoint);
             this.glMarker.hex = this.icao;
         }
 
@@ -2612,3 +2570,42 @@ PlaneObject.prototype.updateAlt = function(t) {
     else
         this.altSort = -100000;
 }
+PlaneObject.prototype.setProjection = function(arg) {
+    let pos = traceOpts.animate ? traceOpts.animatePos : this.position;
+
+    let lon = pos[0];
+    let lat = pos[1];
+    let moved = false;
+
+    //let trace = new Error().stack.toString();
+    //console.log(lat + ' ' + trace);
+
+    // manual wrap around
+    if (webgl && Math.abs(CenterLon - lon) > 180) {
+        if (CenterLon < 0)
+            lon -= 360;
+        else
+            lon += 360;
+    }
+    //console.log([lat, lon]);
+
+    let proj = ol.proj.fromLonLat([lon, lat]);
+
+    if (this.selected && (arg == 'follow' || checkFollow())) {
+        OLMap.getView().setCenter(proj);
+    }
+
+    if (this.proj) {
+        moved |= (this.proj[0] != proj[0] || this.proj[1] != proj[1]);
+    } else {
+        moved = true;
+    }
+    this.proj = proj;
+
+    if (!this.olPoint) {
+        this.olPoint = new ol.geom.Point(proj);
+    } else if (moved) {
+        this.olPoint.setCoordinates(proj);
+    }
+}
+
