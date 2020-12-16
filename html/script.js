@@ -4821,6 +4821,7 @@ function gotoTime(timestamp) {
         if (--traceOpts.animateCounter == 1) {
             traceOpts.animate = false;
             traceOpts.showTime = traceOpts.showTimeEnd;
+            console.log(traceOpts.showTime);
         }
 
         traceOpts.animateStepTime = traceOpts.animateRealtime / traceOpts.replaySpeed / traceOpts.animateSteps;
