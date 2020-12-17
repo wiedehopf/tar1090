@@ -717,18 +717,19 @@ PlaneObject.prototype.updateIcon = function() {
         )
     ) {
         if (extendedLabels == 2) {
-            labelText = NBSP + (this.icaoType ? this.icaoType : "  ?  ") + NBSP + "\n" + NBSP + (this.registration ? this.registration : "  ?  ")+ NBSP + "\n" + NBSP + this.name + NBSP;
+            let unknown = NBSP+NBSP+"?"+NBSP+NBSP;
+            labelText = NBSP + (this.icaoType ? this.icaoType : unknown) + NBSP + "\n" + NBSP + (this.registration ? this.registration : unknown)+ NBSP + "\n" + NBSP + this.name + NBSP;
         } else if (extendedLabels == 1 ) {
-            const altitude = (this.altitude == null) ? '  ?  ' : this.altitude;
+            const altitude = (this.altitude == null) ? unknown : this.altitude;
             if ((!this.onGround || (this.speed && this.speed > 18) || (this.selected && !SelectedAllPlanes))) {
-                let speedString = (this.speed == null) ? ' ? ' : Number(this.speed).toFixed(0).toString().padStart(4, NBSP);
-                labelText =  speedString + "  "
-                    + altitude.toString().padStart(5, NBSP) + " \n " + this.name + " ";
+                let speedString = (this.speed == null) ? (NBSP+'?'+NBSP) : Number(this.speed).toFixed(0).toString().padStart(4, NBSP);
+                labelText =  speedString + NBSP + NBSP
+                    + altitude.toString().padStart(5, NBSP) + NBSP + "\n" + NBSP + this.name + NBSP;
             } else {
-                labelText =  " " + this.name + " ";
+                labelText =  NBSP + this.name + NBSP;
             }
         } else {
-            labelText = " " + this.name + " ";
+            labelText = NBSP + this.name + NBSP;
         }
     }
     if (!webgl && (this.markerStyle == null || this.markerIcon == null || (this.markerSvgKey != svgKey))) {
@@ -934,9 +935,9 @@ PlaneObject.prototype.processTrace = function() {
                 //console.log(traceOpts.startStamp);
             }
             if (traceOpts.showTime && timestamp > traceOpts.showTime) {
-                clearTimeout(traceOpts.showTimeout);
                 traceOpts.showTimeEnd = timestamp;
                 if (traceOpts.replaySpeed > 0) {
+                    clearTimeout(traceOpts.showTimeout);
                     traceOpts.animateRealtime = (timestamp - traceOpts.showTime) * 1000;
                     traceOpts.animateTime = traceOpts.animateRealtime / traceOpts.replaySpeed;
                     let fps = webgl ? 28 : 1;
@@ -1253,7 +1254,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.flight = flight;
     }
     if (this.flight && this.flight.trim()) {
-        this.name = this.flight;
+        this.name = this.flight.trim();
     } else if (this.registration) {
         this.name = '_' + this.registration;
     } else {
@@ -2245,7 +2246,7 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
             this.flight = data.flight;
         }
         if (this.flight && this.flight.trim()) {
-            this.name = this.flight;
+            this.name = this.flight.trim();
         } else if (this.registration) {
             this.name = '_' + this.registration;
         } else {
