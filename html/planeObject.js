@@ -711,7 +711,7 @@ PlaneObject.prototype.updateIcon = function() {
     if ( enableLabels && !showTrace && (!multiSelect || (multiSelect && this.selected)) &&
         (
             (ZoomLvl >= labelZoom && this.altitude != "ground")
-            || (ZoomLvl >= labelZoomGround-2 && this.speed > 5)
+            || (ZoomLvl >= labelZoomGround-2 && this.speed > 5 && this.icao[0] != '~')
             || ZoomLvl >= labelZoomGround
             || (this.selected && !SelectedAllPlanes)
         )
