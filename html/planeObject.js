@@ -716,8 +716,8 @@ PlaneObject.prototype.updateIcon = function() {
             || (this.selected && !SelectedAllPlanes)
         )
     ) {
+        const unknown = NBSP+NBSP+"?"+NBSP+NBSP;
         if (extendedLabels == 2) {
-            let unknown = NBSP+NBSP+"?"+NBSP+NBSP;
             labelText = NBSP + (this.icaoType ? this.icaoType : unknown) + NBSP + "\n" + NBSP + (this.registration ? this.registration : unknown)+ NBSP + "\n" + NBSP + this.name + NBSP;
         } else if (extendedLabels == 1 ) {
             const altitude = (this.altitude == null) ? unknown : this.altitude;
