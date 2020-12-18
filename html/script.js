@@ -4046,6 +4046,7 @@ function processURLParams(){
                     console.log('ICAO id not found: ' + icao);
                 }
             }
+            updateAddressBar();
         } else if (callsign != null) {
             findPlanes(callsign, false, true, false, false);
         }
