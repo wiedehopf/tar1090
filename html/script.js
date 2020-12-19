@@ -62,9 +62,8 @@ let globeIndexGrid = 0;
 let globeIndexNow = {};
 let globeIndexSpecialTiles;
 let globeTilesViewCount = 0;
-let globeSimLoad = 4;
+let globeSimLoad = 12;
 let globeTableLimit = 80;
-let showGrid = false;
 let lastGlobeExtent;
 let pendingFetches = 0;
 let firstFetch = true;
@@ -232,15 +231,12 @@ function processReceiverUpdate(data, init) {
     }
 
     if (globeIndex) {
-        if (!binCraft && (showGrid || localStorage['globeGrid'] == 'true')
+        if ((showGrid || localStorage['globeGrid'] == 'true')
             && globeIndexNow[data.globeIndex] == null)
             drawTileBorder(data);
-        if (binCraft)
-            wqi(data);
         globeTrackedAircraft = data.global_ac_count_withpos;
         globeIndexNow[data.globeIndex] = data.now;
     }
-
 
     if (!uat && !init && !globeIndex && !binCraft)
         updateMessageRate(data);
@@ -310,7 +306,7 @@ function fetchData() {
             return (globeIndexNow[x] - globeIndexNow[y]);
         });
 
-        indexes = indexes.slice(0, globeSimLoad * 2);
+        indexes = indexes.slice(0, globeSimLoad * 1.5);
         refreshMultiplier = Math.max(1, indexes.length / globeSimLoad);
 
         let suffix = binCraft ? '.binCraft' : '.json'
@@ -353,8 +349,7 @@ function fetchData() {
             }
             if (binCraft) {
                 data = { buffer: data, };
-                let ts = new Uint32Array(data.buffer, 0, 2);
-                data.now = ts[0] / 1000 + ts[1] * 4294967.296;
+                wqi(data);
             }
 
             //console.time("Process " + data.globeIndex);

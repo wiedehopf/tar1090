@@ -34,6 +34,8 @@ let DefaultCenterLon = -73.66
 // The google maps zoom level, 0 - 16, lower is further out
 let DefaultZoomLvl   = 9;
 
+let showGrid = false;
+
 // Center marker. If dump1090 provides a receiver location,
 // that location is used and these settings are ignored.
 
