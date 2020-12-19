@@ -41,7 +41,7 @@ fi
 
 if (( GZIP_LVL < 1 || GZIP_LVL > 9 )); then
     echo "gzip level unspecified, using level 1"
-    GZIP_LVL=3
+    GZIP_LVL=1
 fi
 
 

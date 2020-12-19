@@ -13,7 +13,7 @@ ENABLE_978=no
 URL_978="http://127.0.0.1/skyaware978"
 
 # 1-9 are valid, lower lvl: less CPU usage, higher level: less network bandwidth used when loading the page
-GZIP_LVL=3
+GZIP_LVL=1
 
 # hours of tracks that /?pTracks will show
 PTRACKS=8
