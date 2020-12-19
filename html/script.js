@@ -62,7 +62,7 @@ let globeIndexGrid = 0;
 let globeIndexNow = {};
 let globeIndexSpecialTiles;
 let globeTilesViewCount = 0;
-let globeSimLoad = 18;
+let globeSimLoad = 4;
 let globeTableLimit = 80;
 let lastGlobeExtent;
 let pendingFetches = 0;
@@ -634,7 +634,7 @@ function initPage() {
 
     if (localStorage['noVanish'] == "true") {
         noVanish = true;
-        filterTracks = noVanish;
+        //filterTracks = noVanish;
         //localStorage['noVanish'] = "false";
         buttonActive('#P', noVanish);
     }
@@ -1398,6 +1398,7 @@ function initMap() {
     if (receiverJson && receiverJson.globeIndexGrid != null) {
         globeIndexGrid = receiverJson.globeIndexGrid;
         globeIndex = 1;
+        globeSimLoad = globeIndexGrid < 5 ? 16 : 4;
         globeIndexSpecialTiles = [];
         for (let i = 0; i < receiverJson.globeIndexSpecialTiles.length; i++) {
             let tile = receiverJson.globeIndexSpecialTiles[i];
@@ -3247,7 +3248,7 @@ function toggleMilitary() {
 
 function togglePersistence() {
     noVanish = !noVanish;
-    filterTracks = noVanish;
+    //filterTracks = noVanish;
 
     buttonActive('#P', noVanish);
 
@@ -4185,10 +4186,10 @@ function globeIndexes() {
         x1 = -179;
         x2 = 179;
     }
-    if (y1 < -90)
-        y1 = -89;
-    if (y2 > 90)
-        y2 = 89;
+    if (y1 < -89.5)
+        y1 = -89.5;
+    if (y2 > 89.5)
+        y2 = 89.5;
     let indexes = [];
     //console.log(x1 + ' ' + x2);
     let grid = globeIndexGrid;
