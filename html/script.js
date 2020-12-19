@@ -62,7 +62,7 @@ let globeIndexGrid = 0;
 let globeIndexNow = {};
 let globeIndexSpecialTiles;
 let globeTilesViewCount = 0;
-let globeSimLoad = 12;
+let globeSimLoad = 18;
 let globeTableLimit = 80;
 let lastGlobeExtent;
 let pendingFetches = 0;
@@ -1398,7 +1398,11 @@ function initMap() {
     if (receiverJson && receiverJson.globeIndexGrid != null) {
         globeIndexGrid = receiverJson.globeIndexGrid;
         globeIndex = 1;
-        globeIndexSpecialTiles = receiverJson.globeIndexSpecialTiles;
+        globeIndexSpecialTiles = [];
+        for (let i = 0; i < receiverJson.globeIndexSpecialTiles.length; i++) {
+            let tile = receiverJson.globeIndexSpecialTiles[i];
+            globeIndexSpecialTiles.push([tile.south, tile.west, tile.north, tile.east]);
+        }
         $('#dump1090_total_history_td').hide();
         $('#dump1090_message_rate_td').hide();
     }
@@ -4166,7 +4170,7 @@ function trailReaper() {
 function globeIndexes() {
     if (mapIsVisible || lastGlobeExtent == null) {
         let mapSize = OLMap.getSize();
-        let size = [mapSize[0] * 1.1, mapSize[1] * 1.1];
+        let size = [mapSize[0] * 1.02, mapSize[1] * 1.02];
         lastGlobeExtent = myExtent(OLMap.getView().calculateExtent(size));
     }
     let extent = lastGlobeExtent.extent;
@@ -4178,34 +4182,39 @@ function globeIndexes() {
     let y2 = topRight[1];
     if (Math.abs(extent[2] - extent[0]) > 40075016) {
         // all longtitudes in view, only check latitude
-        x1 = -180;
-        x2 = 180;
+        x1 = -179;
+        x2 = 179;
     }
     if (y1 < -90)
-        y1 = -90;
+        y1 = -89;
     if (y2 > 90)
-        y2 = 90;
+        y2 = 89;
     let indexes = [];
     //console.log(x1 + ' ' + x2);
     let grid = globeIndexGrid;
 
-    let x3 = (x1 < x2) ? x2 : 300;
+    let x3 = x1 < x2 ? x2 : 199;
     let count = 0;
 
+    console.time('indexes');
     for (let lon = x1; lon < x3 + grid; lon += grid) {
-        if (x1 >= x2 && lon > 180) {
+        if (x1 > x2 && lon > 180) {
             lon -= 360;
             x3 = x2;
         }
         if (lon > x3)
             lon = x3 + 0.01;
+        if (count++ > 360 / grid) {
+            console.log("globeIndexes fail, lon: " + lon);
+        }
+        let count2 = 0;
         for (let lat = y1; lat < y2 + grid; lat += grid) {
-            if (lat > y2)
-                lat = y2 + 0.01;
-            if (count++ > 2000) {
+            if (count2++ > 180 / grid) {
                 console.log("globeIndexes fail, lon: " + lon + ", lat: " + lat);
                 break;
             }
+            if (lat > y2)
+                lat = y2 + 0.01;
             if (lat > 90)
                 break;
             let index = globe_index(lat, lon);
@@ -4215,6 +4224,7 @@ function globeIndexes() {
             }
         }
     }
+    console.timeEnd('indexes');
     globeTilesViewCount = indexes.length;
     return indexes;
 }
@@ -4225,6 +4235,7 @@ function globe_index(lat, lon) {
     lat = grid * Math.floor((lat + 90) / grid) - 90;
     lon = grid * Math.floor((lon + 180) / grid) - 180;
 
+    /*
     for (let i = 0; i < globeIndexSpecialTiles.length; i++) {
         let tile = globeIndexSpecialTiles[i];
         if (lat >= tile.south && lat < tile.north) {
@@ -4234,6 +4245,15 @@ function globe_index(lat, lon) {
             if (tile.west > tile.east && (lon >= tile.west || lon < tile.east)) {
                 return i;
             }
+        }
+    }
+    */
+    for (let i = 0; i < globeIndexSpecialTiles.length; i++) {
+        let tile = globeIndexSpecialTiles[i];
+        if ((lat >= tile[0] && lat < tile[2])
+            && ((tile[1] < tile[3] && lon >= tile[1] && lon < tile[3])
+                || (tile[1] > tile[3] && (lon >= tile[1] || lon < tile[3])))) {
+            return i;
         }
     }
 
