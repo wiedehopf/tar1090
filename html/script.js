@@ -4199,7 +4199,7 @@ function globeIndexes() {
     let x3 = x1 < x2 ? x2 : 199;
     let count = 0;
 
-    console.time('indexes');
+    //console.time('indexes');
     for (let lon = x1; lon < x3 + grid; lon += grid) {
         if (x1 > x2 && lon > 180) {
             lon -= 360;
@@ -4227,7 +4227,7 @@ function globeIndexes() {
             }
         }
     }
-    console.timeEnd('indexes');
+    //console.timeEnd('indexes');
     globeTilesViewCount = indexes.length;
     return indexes;
 }
