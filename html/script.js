@@ -57,6 +57,7 @@ let noMLAT = false;
 let noVanish = false;
 let filterTracks = false;
 let refreshId = 0;
+let lastFetch = 0;
 let refreshMultiplier = 1;
 let globeIndexGrid = 0;
 let globeIndexNow = {};
@@ -256,6 +257,11 @@ function fetchData() {
         return;
     fetchSoon();
     //console.log("fetch");
+    let currentTime = new Date().getTime();
+    if (currentTime - lastFetch < refreshInt()) {
+        return;
+    }
+    lastFetch = currentTime;
     if (showTrace)
         return;
     if (pendingFetches > 0)
@@ -398,11 +404,10 @@ function fetchData() {
         });
 
         req.fail(function(jqxhr, status, error) {
-            $("#update_error_detail").text("AJAX call failed (" + status + (error ? (": " + error) : "") + ").");
-            console.log("AJAX call failed (" + status + (error ? (": " + error) : "") + ").");
-            console.log(jqxhr);
-            console.log(status);
-            console.log(error);
+            status = jqxhr.status;
+            let errText = status + (error ? (": " + error) : "");
+            $("#update_error_detail").text(errText);
+            //console.error(errText);
             $("#update_error").css('display','block');
             StaleReceiverCount++;
             pendingFetches--;
