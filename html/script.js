@@ -465,8 +465,10 @@ function initPage() {
         if (search.has('nowebgl')) {
             localStorage['webgl'] = "false";
         }
-        if (search.has('showGrid'))
+        if (search.has('showGrid')) {
             showGrid = true;
+            localStorage['layer_site_pos'] = 'true';
+        }
 
         if (search.has('halloween'))
             halloween = true;
