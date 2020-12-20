@@ -592,7 +592,8 @@ PlaneObject.prototype.getMarkerColor = function(options) {
     l = colorArr[2];
 
     // If we have not seen a recent position update, change color
-    if (this.seen_pos > 15 && !globeIndex)  {
+    if ((this.dataSource == 'adsc' && this.seen_pos > 20 * 60)
+        || (!globeIndex && this.dataSource != 'adsc' && this.seen_pos > 15))  {
         h += ColorByAlt.stale.h;
         s += ColorByAlt.stale.s;
         l += ColorByAlt.stale.l;
