@@ -61,6 +61,8 @@ let lastFetch = 0;
 let refreshMultiplier = 1;
 let globeIndexGrid = 0;
 let globeIndexNow = {};
+let globeIndexDist = {};
+let globeIndexSpecialLookup = {};
 let globeIndexSpecialTiles;
 let globeTilesViewCount = 0;
 let globeSimLoad = 4;
@@ -303,8 +305,9 @@ function fetchData() {
     } else if (globeIndex) {
         let indexes = globeIndexes();
         indexes.sort(function(x,y) {
-            if (!globeIndexNow[x] && !globeIndexNow[y])
-                return 0;
+            if (!globeIndexNow[x] && !globeIndexNow[y]) {
+                return globeIndexDist[x] - globeIndexDist[y];
+            }
             if (globeIndexNow[x] == null)
                 return -1;
             if (globeIndexNow[y] == null)
@@ -4176,6 +4179,7 @@ function trailReaper() {
 }
 
 function globeIndexes() {
+    const center = ol.proj.toLonLat(OLMap.getView().getCenter());
     if (mapIsVisible || lastGlobeExtent == null) {
         let mapSize = OLMap.getSize();
         let size = [mapSize[0] * 1.02, mapSize[1] * 1.02];
@@ -4228,6 +4232,7 @@ function globeIndexes() {
             let index = globe_index(lat, lon);
             //console.log(lat + ' ' + lon + ' ' + index);
             if (!indexes.includes(index)) {
+                globeIndexDist[index] = ol.sphere.getDistance(center, [lon, lat]);
                 indexes.push(index);
             }
         }
@@ -4256,20 +4261,33 @@ function globe_index(lat, lon) {
         }
     }
     */
-    for (let i = 0; i < globeIndexSpecialTiles.length; i++) {
-        let tile = globeIndexSpecialTiles[i];
-        if ((lat >= tile[0] && lat < tile[2])
-            && ((tile[1] < tile[3] && lon >= tile[1] && lon < tile[3])
-                || (tile[1] > tile[3] && (lon >= tile[1] || lon < tile[3])))) {
-            return i;
-        }
-    }
 
     let i = Math.floor((lat+90) / grid);
     let j = Math.floor((lon+180) / grid);
 
     let lat_multiplier = Math.floor(360 / grid + 1);
-    return (i * lat_multiplier + j + 1000);
+    let defaultIndex = i * lat_multiplier + j + 1000;
+
+    let index = globeIndexSpecialLookup[defaultIndex];
+    if (index) {
+        return index;
+    }
+
+    // not yet in lookup, check special tiles
+    for (let i = 0; i < globeIndexSpecialTiles.length; i++) {
+        let tile = globeIndexSpecialTiles[i];
+        if ((lat >= tile[0] && lat < tile[2])
+            && ((tile[1] < tile[3] && lon >= tile[1] && lon < tile[3])
+                || (tile[1] > tile[3] && (lon >= tile[1] || lon < tile[3])))) {
+            globeIndexSpecialLookup[defaultIndex] = index = i;
+        }
+    }
+    if (index == null) {
+        // not a special tile, set lookup to default index
+        globeIndexSpecialLookup[defaultIndex] = index = defaultIndex;
+    }
+
+    return index;
 }
 
 function myExtent(extent) {
