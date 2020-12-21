@@ -117,7 +117,7 @@ function PlaneObject(icao) {
 
     this.regLoaded = false;
     // request metadata
-    this.checkForDB({});
+    this.checkForDB();
 
     // military icao ranges
     if (this.milRange()) {
@@ -854,9 +854,6 @@ PlaneObject.prototype.processTrace = function() {
 
     let onlyRecent = 0;
 
-    this.checkForDB(this.recentTrace);
-    this.checkForDB(this.fullTrace);
-
     if (lastLeg && !showTrace && this.recentTrace && this.recentTrace.trace) {
         trace = this.recentTrace.trace;
         for (let i = trace.length - 1; i >= 0; i--) {
@@ -1099,6 +1096,7 @@ PlaneObject.prototype.processTrace = function() {
     noPan = false;
     showTraceExit = false;
 
+    this.checkForDB(this.recentTrace || this.fullTrace);
     refreshSelected();
 
     TAR.planeMan.refresh();
@@ -2539,7 +2537,7 @@ PlaneObject.prototype.setTypeData = function() {
 };
 
 PlaneObject.prototype.checkForDB = function(t) {
-    if (!this.regLoaded && (!t || !t.r) && (!dbServer || showTrace || this.receiver == 'uat')) {
+    if (!this.regLoaded && (!dbServer || showTrace || this.receiver == 'uat')) {
         this.getAircraftData();
         return;
     }
