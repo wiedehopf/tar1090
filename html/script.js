@@ -1281,9 +1281,9 @@ function startPage() {
 function webglAddLayer() {
     let success = false;
 
-    processAircraft({hex: 'c0ffee', lat: CenterLat, lon: CenterLon, type: 'tisb_other', seen: 0, seen_pos: 0,
+    processAircraft({hex: '~c0ffee', lat: CenterLat, lon: CenterLon, type: 'tisb_other', seen: 0, seen_pos: 0,
         alt_baro: 25000, });
-    let plane = Planes['c0ffee'];
+    let plane = Planes['~c0ffee'];
 
     try {
         let glStyle = {

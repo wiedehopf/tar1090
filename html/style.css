@@ -105,7 +105,8 @@ select {
 }
 
 #toggle_sidebar_button.show_sidebar {
-    background-image: url("images/show_sidebar.png");
+    transform: scaleX(-1);
+    background-image: url("images/hide_sidebar.png");
 }
 
 #toggle_sidebar_button.hide_sidebar {
@@ -144,7 +145,7 @@ select {
     background-position: 0;
     background-color: transparent;
     border: none;
-    background-image: url("images/zoom-in@3x.png");
+    background-image: url("images/zoom-in.png");
     z-index: 99;
 }
 #credits {
@@ -195,7 +196,8 @@ select {
     background-position: calc( 0px * var(--SCALE));
     background-color: transparent;
     border: none;
-    background-image: url("images/show_sidebar.png");
+    transform: scaleX(-1);
+    background-image: url("images/hide_sidebar.png");
 }
 
 
@@ -213,7 +215,7 @@ select {
     background-position: calc( 0px * var(--SCALE));
     background-color: transparent;
     border: none;
-    background-image: url("images/toggle-width@2x.png");
+    background-image: url("images/toggle-width.png");
     background-size: cover;
 }
 
@@ -244,7 +246,7 @@ select {
 }
 
 .ol-zoom-in {
-    background-image: url("images/zoom-in@2x.png");
+    background-image: url("images/zoom-in.png");
     background-size: cover;
     color:transparent !important;
     width: calc( 25px * var(--SCALE)) !important;
@@ -254,7 +256,7 @@ select {
 }
 
 .ol-zoom-out {
-    background-image: url("images/zoom-out@2x.png");
+    background-image: url("images/zoom-out.png");
     background-size: cover;
     color:transparent !important;
     width: calc( 25px * var(--SCALE)) !important;
@@ -710,44 +712,6 @@ table.infoSectionTable tr td {
     display: inline;
 }
 
-
-/* Retina 2x images */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { 
-    .settingsCloseBox {
-        background-image: url('images/close-settings@2x.png');
-    }
-    .settingsCheckboxChecked {
-        background-image: url('images/box-checked@2x.png') !important;
-    }
-    .settingsCheckbox {
-        background-image: url('images/box-empty@2x.png');
-    }
-    .ol-zoom-out {
-        background-image: url("images/zoom-out@2x.png");
-    }
-    .ol-zoom-in {
-        background-image: url("images/zoom-in@2x.png");
-    }
-}
-
-/* Retina 3x images */
-@media (-webkit-min-device-pixel-ratio: 3), (min-resolution: 192dpi) { 
-    .settingsCloseBox {
-        background-image: url('images/close-settings@3x.png');
-    }
-    .settingsCheckboxChecked {
-        background-image: url('images/box-checked@3x.png') !important;
-    }
-    .settingsCheckbox {
-        background-image: url('images/box-empty@3x.png');
-    }
-    .ol-zoom-out {
-        background-image: url("images/zoom-out@3x.png");
-    }
-    .ol-zoom-in {
-        background-image: url("images/zoom-in@3x.png");
-    }
-}
 .ui-tabs {
     background-color: var(--BGCOLOR1);
 }
