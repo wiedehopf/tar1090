@@ -376,6 +376,26 @@ function fetchData() {
                     clearTimeout(refreshId);
 
                 triggerMapRefresh++;
+                if (firstFetch) {
+                    firstFetch = false;
+                    if (uuid) {
+                        const ext = myExtent(OLMap.getView().calculateExtent(size));
+                        let jump = true;
+                        for (let i = 0; i < PlanesOrdered.length; ++i) {
+                            const plane = PlanesOrdered[i];
+                            if (plane.visible && inView(plane.position, ext)) {
+                                jump = false;
+                                break;
+                            }
+                        }
+                        if (jump) {
+                            followRandomPlane();
+                            deselectAllPlanes();
+                            OLMap.getView().setZoom(6);
+                        }
+                    }
+                    checkRefresh();
+                }
                 checkMovement();
 
                 if (globeIndex)
@@ -394,15 +414,6 @@ function fetchData() {
             } else if (StaleReceiverCount > 0){
                 StaleReceiverCount = 0;
                 $("#update_error").css('display','none');
-            }
-
-            if (firstFetch) {
-                firstFetch = false;
-                if (uuid) {
-                    followRandomPlane();
-                    deselectAllPlanes();
-                    OLMap.getView().setZoom(6);
-                }
             }
         });
 
@@ -1234,6 +1245,7 @@ function startPage() {
         setTimeout(TAR.planeMan.refresh, 5000);
 
     drawUpintheair();
+    mapRefresh();
 }
 
 //
@@ -3468,8 +3480,10 @@ function onJump(e) {
         if (coords) {
             OLMap.getView().setCenter(ol.proj.fromLonLat([coords[1], coords[0]]));
 
-            if (ZoomLvl >= 7)
+            if (ZoomLvl >= 7) {
+                pendingFetches = 0;
                 fetchData();
+            }
 
             refreshFilter();
         }
