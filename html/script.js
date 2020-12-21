@@ -4178,6 +4178,19 @@ function trailReaper() {
     }
 }
 
+function setIndexDistance(index, center, coords) {
+    if (index >= 1000) {
+        globeIndexDist[index] = ol.sphere.getDistance(center, coords);
+        return;
+    }
+    let tile = globeIndexSpecialTiles[index];
+    let min = ol.sphere.getDistance(center, [tile[1], tile[0]]);
+    min = Math.min(min, ol.sphere.getDistance(center, [tile[1], tile[2]]));
+    min = Math.min(min, ol.sphere.getDistance(center, [tile[3], tile[0]]));
+    min = Math.min(min, ol.sphere.getDistance(center, [tile[3], tile[2]]));
+    globeIndexDist[index] = min;
+}
+
 function globeIndexes() {
     const center = ol.proj.toLonLat(OLMap.getView().getCenter());
     if (mapIsVisible || lastGlobeExtent == null) {
@@ -4232,7 +4245,7 @@ function globeIndexes() {
             let index = globe_index(lat, lon);
             //console.log(lat + ' ' + lon + ' ' + index);
             if (!indexes.includes(index)) {
-                globeIndexDist[index] = ol.sphere.getDistance(center, [lon, lat]);
+                setIndexDistance(index, center, [lon, lat]);
                 indexes.push(index);
             }
         }
@@ -4247,20 +4260,6 @@ function globe_index(lat, lon) {
 
     lat = grid * Math.floor((lat + 90) / grid) - 90;
     lon = grid * Math.floor((lon + 180) / grid) - 180;
-
-    /*
-    for (let i = 0; i < globeIndexSpecialTiles.length; i++) {
-        let tile = globeIndexSpecialTiles[i];
-        if (lat >= tile.south && lat < tile.north) {
-            if (tile.west < tile.east && lon >= tile.west && lon < tile.east) {
-                return i;
-            }
-            if (tile.west > tile.east && (lon >= tile.west || lon < tile.east)) {
-                return i;
-            }
-        }
-    }
-    */
 
     let i = Math.floor((lat+90) / grid);
     let j = Math.floor((lon+180) / grid);
