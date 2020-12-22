@@ -379,7 +379,7 @@ function fetchData() {
                 if (firstFetch) {
                     firstFetch = false;
                     if (uuid) {
-                        const ext = myExtent(OLMap.getView().calculateExtent(size));
+                        const ext = myExtent(OLMap.getView().calculateExtent(OLMap.getSize()));
                         let jump = true;
                         for (let i = 0; i < PlanesOrdered.length; ++i) {
                             const plane = PlanesOrdered[i];
