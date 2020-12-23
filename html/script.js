@@ -65,7 +65,7 @@ let globeIndexDist = {};
 let globeIndexSpecialLookup = {};
 let globeIndexSpecialTiles;
 let globeTilesViewCount = 0;
-let globeSimLoad = 4;
+let globeSimLoad = 16;
 let globeTableLimit = 80;
 let lastGlobeExtent;
 let pendingFetches = 0;
@@ -1420,7 +1420,6 @@ function initMap() {
     if (receiverJson && receiverJson.globeIndexGrid != null) {
         globeIndexGrid = receiverJson.globeIndexGrid;
         globeIndex = 1;
-        globeSimLoad = globeIndexGrid < 5 ? 16 : 4;
         globeIndexSpecialTiles = [];
         for (let i = 0; i < receiverJson.globeIndexSpecialTiles.length; i++) {
             let tile = receiverJson.globeIndexSpecialTiles[i];

@@ -629,7 +629,8 @@ table.infoSectionTable tr td {
 
 .settingsCheckbox {
     width: calc( 12px * var(--SCALE));
-    height: calc( 11px * var(--SCALE));
+    height: calc( 12px * var(--SCALE));
+    background-size: calc( 12px * var(--SCALE)) calc( 12px * var(--SCALE));
     margin-left: calc( 5px * var(--SCALE));
     margin-right: calc( 5px * var(--SCALE));
     background-image: url('images/box-empty.png');
