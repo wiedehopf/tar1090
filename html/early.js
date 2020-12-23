@@ -75,7 +75,41 @@ try {
     if (search.has('L3Harris') || search.has('l3harris'))
         l3harris = true;
 
-    if (search.has('heatmap') || search.has('replay')) {
+    if (search.has('replay')) {
+        replay = {
+            ts: (new Date().getTime() - 3600 * 1000),
+            ival: 60 * 1000,
+            speed: 5,
+            defer: $.Deferred(),
+        };
+        let xhrOverride = new XMLHttpRequest();
+        xhrOverride.responseType = 'arraybuffer';
+
+        let time = new Date(replay.ts);
+        let sDate = sDateString(time);
+        let index = 2 * time.getUTCHours() + Math.floor(time.getUTCMinutes() / 30);
+
+        let base = "globe_history/";
+
+        let URL = base + sDate + "/heatmap/" + index.toString().padStart(2, '0') + ".bin.ttf";
+        let req = $.ajax({
+            url: URL,
+            method: 'GET',
+            num: i,
+            xhr: function() {
+                return xhrOverride;
+            }
+        });
+        req.done(function (responseData) {
+            replay.data = responseData;
+            replay.defer.resolve();
+        });
+        req.fail(function(jqxhr, status, error) {
+            replay.data = null;
+            replay.defer.resolve();
+        });
+    }
+    if (search.has('heatmap')) {
 
         heatmap = {};
 
@@ -83,13 +117,6 @@ try {
         heatmap.init = true;
         heatmap.duration = 24;
         heatmap.end = (new Date()).getTime();
-
-        if (search.has('replay')) {
-            replay = {
-                ival: 60 * 1000,
-                speed: 5,
-            };
-        }
 
         let tmp = parseFloat(search.get('heatDuration'));
         if (!isNaN(tmp))
@@ -149,9 +176,9 @@ function zDateString(date) {
     return string;
 }
 
-function lDateString(date) {
-    let string = date.getFullYear() + '-'
-        + (date.getMonth() + 1).toString().padStart(2, '0') + '-'
+function sDateString(date) {
+    let string = date.getFullYear() + '/'
+        + (date.getMonth() + 1).toString().padStart(2, '0') + '/'
         + date.getDate().toString().padStart(2, '0')
     return string;
 }
@@ -198,12 +225,12 @@ if (!heatmap) {
         xhrOverride.responseType = 'arraybuffer';
 
         let time = new Date(start + i * interval);
-        let zDate = zDateString(time);
+        let sDate = sDateString(time);
         let index = 2 * time.getUTCHours() + Math.floor(time.getUTCMinutes() / 30);
 
         let base = "globe_history/";
 
-        let URL = base + zDate + "/heatmap/" +
+        let URL = base + sDate + "/heatmap/" +
             index.toString().padStart(2, '0') + ".bin.ttf";
         let req = $.ajax({
             url: URL,

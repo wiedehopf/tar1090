@@ -255,7 +255,7 @@ function fetchSoon() {
 }
 
 function fetchData() {
-    if (heatmap)
+    if (heatmap || replay)
         return;
     fetchSoon();
     //console.log("fetch");
@@ -1235,8 +1235,8 @@ function startPage() {
         $("#loader").addClass("hidden");
 
     if (replay) {
-        //initReplay();
-        //play(); // kick off first play
+        initReplay(replay.data);
+        play(); // kick off first play
     }
 
     geoMag = geoMagFactory(cof2Obj());
@@ -1754,7 +1754,7 @@ function initMap() {
                 toggleTableInView();
                 break;
             case "r":
-                if (heatmap && !replay)
+                if (heatmap)
                     drawHeatmap();
                 else
                     followRandomPlane();
@@ -5075,7 +5075,7 @@ function setSize(set) {
 }
 
 function drawHeatmap() {
-    if (!heatmap || replay)
+    if (!heatmap)
         return;
     if (heatmap.init) {
         initHeatmap();
@@ -5271,26 +5271,29 @@ function drawHeatmap() {
     $("#loader").addClass("hidden");
 }
 
-/*
-function initReplay() {
-    for (let k = 0; k < heatChunks.length; k++) {
-        if (heatChunks[k].byteLength % 16 != 0) {
-            console.log("Invalid heatmap file (byteLength): " + k);
-            continue;
-        }
-        let points = heatPoints[k] = new Int32Array(heatChunks[k]);
-        let found = 0;
-        for (let i = 0; i < points.length; i += 4) {
-            if (points[i] == 0xe7f7c9d) {
-                found = 1;
-                break;
-            }
-        }
-        if (!found) {
-            heatPoints[k] = heatChunks[k] = null;
-            console.log("Invalid heatmap file (magic number): " + k);
+function initReplay(data) {
+    if (!data) {
+        console.log("initReplay: no data!");
+        return;
+    }
+    if (data.byteLength % 16 != 0) {
+        console.log("Invalid heatmap file (byteLength)");
+        return;
+    }
+    points = new Int32Array(data);
+    let found = 0;
+    for (let i = 0; i < points.length; i += 4) {
+        if (points[i] == 0xe7f7c9d) {
+            found = 1;
+            break;
         }
     }
+    if (!found) {
+        console.log("Invalid heatmap file (magic number)");
+        replay.points = null;
+        return;
+    }
+    replay.points = points;
 }
 
 function play() {
@@ -5301,13 +5304,16 @@ function play() {
     let center = ol.proj.toLonLat(OLMap.getView().getCenter());
     localStorage['CenterLon'] = CenterLon = center[0];
     localStorage['CenterLat'] = CenterLat = center[1];
+
     clearTimeout(refreshId);
-    refreshId = setTimeout(replay, replay.ival / replay.speed);
+    refreshId = setTimeout(play, replay.ival / replay.speed);
 
     if (showTrace)
         return;
 
     last = now;
+
+    let acs = [];
 
     for (let j=0; j < acs.length; j++) {
         if (icaoFilter && !icaoFilter.includes(hex))
@@ -5323,7 +5329,6 @@ function play() {
     refreshSelected();
     refreshHighlighted();
 }
-*/
 
 function updateIconCache() {
     let item;
