@@ -2500,7 +2500,7 @@ PlaneObject.prototype.isNonIcao = function() {
 
 PlaneObject.prototype.checkVisible = function() {
     const zoomedOut = refreshInt() / globeSimLoad * globeTilesViewCount / 1000;
-    const jaeroTime = (this.dataSource == "adsc") ? 35*60 : 0;
+    const jaeroTime = (this.dataSource == "adsc") ? jaeroTimeout : 0;
     const mlatTime = (this.dataSource == "mlat") ? 25 : 0;
     const tisbReduction = (this.icao[0] == '~') ? 15 : 0;
     // If no packet in over 58 seconds, clear the plane.

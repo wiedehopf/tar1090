@@ -1417,6 +1417,10 @@ function initMap() {
         DefaultCenterLon = receiverJson.lon;
     }
 
+    if (receiverJson && receiverJson.jaeroTimeout) {
+        jaeroTimeout = receiverJson.jaeroTimeout * 60;
+    }
+
     if (receiverJson && receiverJson.globeIndexGrid != null) {
         globeIndexGrid = receiverJson.globeIndexGrid;
         globeIndex = 1;
