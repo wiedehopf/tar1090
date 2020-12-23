@@ -4018,7 +4018,7 @@ function processURLParams(){
             }
         }
 
-        icaos = valid;
+        icaos = valid.reverse();
 
         traceDateString = search.get('showTrace');
         const callsign = search.get('callsign');
@@ -4345,12 +4345,16 @@ function inView(pos, ex) {
     }
 }
 let lastAddressBarUpdate = 0;
+let updateAddressBarTimeout;
 function updateAddressBar() {
     if (heatmap || pTracks)
         return;
     let now = new Date().getTime();
-    if (now < lastAddressBarUpdate + 300)
+    if (now < lastAddressBarUpdate + 200) {
+        clearTimeout(updateAddressBarTimeout);
+        updateAddressBarTimeout = setTimeout(updateAddressBar, 205);
         return;
+    }
     lastAddressBarUpdate = now;
 
     let posString = 'lat=' + CenterLat.toFixed(3) + '&lon=' + CenterLon.toFixed(3) + '&zoom=' + ZoomLvl.toFixed(1);
@@ -4366,14 +4370,15 @@ function updateAddressBar() {
 
     let planes = [];
     if (multiSelect && !SelectedAllPlanes) {
-          for (let i = 0; i < PlanesOrdered.length; ++i) {
-              let plane = PlanesOrdered[i];
-              if (plane.selected)
-                  planes.push(plane);
-          }
-    } else if (SelectedPlane) {
-        planes.push(SelectedPlane);
+        for (let i = 0; i < PlanesOrdered.length; ++i) {
+            let plane = PlanesOrdered[i];
+            if (plane.selected && plane != SelectedPlane)
+                planes.push(plane);
+        }
+        planes.sort(function(a, b) { if (a.icao > b.icao) return 1; if (a.icao < b.icao) return -1; return 0; });
     }
+    if (SelectedPlane)
+        planes.unshift(SelectedPlane);
 
     string = pathName;
     if (planes.length > 0) {

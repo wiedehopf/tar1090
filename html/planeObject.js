@@ -1100,6 +1100,7 @@ PlaneObject.prototype.processTrace = function() {
     refreshSelected();
 
     TAR.planeMan.refresh();
+    updateAddressBar();
 
     //console.log(this.history_size + ' ' + points_in_trace);
 };
