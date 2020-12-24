@@ -254,26 +254,18 @@ function fetchSoon() {
     refreshId = setTimeout(fetchData, refreshInt());
 }
 
-function fetchData() {
-    if (heatmap || replay)
+function fetchData(options) {
+    options = options || {};
+    if (heatmap || replay || showTrace)
         return;
     fetchSoon();
     //console.log("fetch");
     let currentTime = new Date().getTime();
-    if (currentTime - lastFetch < refreshInt()) {
+    if (!options.force && (currentTime - lastFetch < refreshInt() || pendingFetches > 0)) {
         return;
     }
     lastFetch = currentTime;
-    if (showTrace)
-        return;
-    if (pendingFetches > 0)
-        return;
-    for (let i in FetchPending) {
-        if (FetchPending[i] != null && FetchPending[i].state() == 'pending') {
-            // don't double up on fetches, let the last one resolve
-            return;
-        }
-    }
+
     FetchPending = [];
     if (FetchPendingUAT != null) {
         // don't double up on fetches, let the last one resolve
@@ -315,8 +307,10 @@ function fetchData() {
             return (globeIndexNow[x] - globeIndexNow[y]);
         });
 
-        indexes = indexes.slice(0, globeSimLoad * 1.5);
+        indexes = indexes.slice(0, globeSimLoad);
         refreshMultiplier = Math.max(1, indexes.length / globeSimLoad);
+        if (indexes.length <= 4)
+            refreshMultiplier *= 0.8
 
         let suffix = binCraft ? '.binCraft' : '.json'
         let mid = (binCraft && onlyMilitary) ? 'Mil_' : '_';
@@ -3484,8 +3478,7 @@ function onJump(e) {
             OLMap.getView().setCenter(ol.proj.fromLonLat([coords[1], coords[0]]));
 
             if (ZoomLvl >= 7) {
-                pendingFetches = 0;
-                fetchData();
+                fetchData({force: true});
             }
 
             refreshFilter();
