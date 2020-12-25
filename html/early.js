@@ -34,8 +34,10 @@ let lastTraceGet = 0;
 let traceRate = 0;
 let _aircraft_type_cache = null;
 let tfrs = false;
+let initialURL = window.location.href;
 
 let uuid = null;
+
 
 try {
     const search = new URLSearchParams(window.location.search);
@@ -77,39 +79,6 @@ try {
     if (search.has('L3Harris') || search.has('l3harris'))
         l3harris = true;
 
-    if (search.has('replay') || replay) {
-        replay = {
-            ts: (new Date().getTime() - 3600 * 1000),
-            ival: 60 * 1000,
-            speed: 20,
-            defer: $.Deferred(),
-        };
-        let xhrOverride = new XMLHttpRequest();
-        xhrOverride.responseType = 'arraybuffer';
-
-        let time = new Date(replay.ts);
-        let sDate = sDateString(time);
-        let index = 2 * time.getUTCHours() + Math.floor(time.getUTCMinutes() / 30);
-
-        let base = "globe_history/";
-
-        let URL = base + sDate + "/heatmap/" + index.toString().padStart(2, '0') + ".bin.ttf";
-        let req = $.ajax({
-            url: URL,
-            method: 'GET',
-            xhr: function() {
-                return xhrOverride;
-            }
-        });
-        req.done(function (responseData) {
-            replay.data = responseData;
-            replay.defer.resolve(replay.data);
-        });
-        req.fail(function(jqxhr, status, error) {
-            replay.data = null;
-            replay.defer.resolve();
-        });
-    }
     if (search.has('heatmap')) {
 
         heatmap = {};

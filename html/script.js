@@ -606,8 +606,27 @@ function initPage() {
                 filterMaxRange = tmp;
         }
         filterMaxRange *= 1852; // convert from nmi to meters
+
+
+        if (search.has('r')) {
+            let numbers = search.get('r').split('-');
+            let ts = new Date();
+            ts.setUTCFullYear(numbers[0]);
+            ts.setUTCMonth(numbers[1] - 1);
+            ts.setUTCDate(numbers[2]);
+            ts.setUTCHours(numbers[3]);
+            ts.setUTCMinutes(numbers[4]);
+
+            replay = {
+                ts: ts,
+                ival: 60 * 1000,
+                speed: 40,
+            };
+        }
+
+
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 
     if (onMobile)
@@ -1227,7 +1246,7 @@ function startPage() {
         $("#loader").addClass("hidden");
 
     if (replay)
-        replay.defer.done(initReplay);
+        loadReplay(replay.ts);
 
     geoMag = geoMagFactory(cof2Obj());
 
@@ -4333,11 +4352,8 @@ function updateAddressBar() {
 
     let posString = 'lat=' + CenterLat.toFixed(3) + '&lon=' + CenterLon.toFixed(3) + '&zoom=' + ZoomLvl.toFixed(1);
     let string;
-    if (showTrace) {
-        if (SelectedPlane)
-            posString = "&" + posString;
-        else
-            posString = "?" + posString;
+    if ((showTrace || replay) && SelectedPlane) {
+        posString = "&" + posString;
     } else {
         posString = ""
     }
@@ -4366,7 +4382,7 @@ function updateAddressBar() {
 
     string += posString;
 
-    if (SelectedPlane && showTrace) {
+    if (SelectedPlane && (showTrace || replay)) {
         string += '&showTrace=' + traceDateString;
         if (legSel != -1)
             string += '&leg=' + (legSel + 1);
@@ -4378,6 +4394,9 @@ function updateAddressBar() {
         return;
     if (icaoFilter)
         return;
+
+    if (!SelectedPlane && planes.length == 0)
+        string = initialURL;
 
     window.history && window.history.replaceState && window.history.replaceState("object or string", "Title", string);
 }
@@ -4943,6 +4962,14 @@ function getTrace(newPlane, hex, options) {
             URL1 = null;
             URL2 = 'globe_history/' + traceDateString.replace(/-/g, '/') + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json';
         }
+    } else if (replay) {
+        traceRate += 3;
+        let today = new Date();
+        if (today.getTime() > traceDate.getTime() && today.getTime() < traceDate.getTime() + (24 * 3600 + 30 * 60) * 1000) {
+        } else {
+            URL1 = null;
+            URL2 = 'globe_history/' + traceDateString.replace(/-/g, '/') + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json';
+        }
     } else {
         traceRate += 2;
     }
@@ -5256,6 +5283,38 @@ function currentExtent(factor) {
     return myExtent(OLMap.getView().calculateExtent(size));
 }
 
+function loadReplay(ts) {
+    let xhrOverride = new XMLHttpRequest();
+    xhrOverride.responseType = 'arraybuffer';
+
+    let time = new Date(ts);
+    let sDate = sDateString(time);
+    let index = 2 * time.getUTCHours() + Math.floor(time.getUTCMinutes() / 30);
+
+    let base = "globe_history/";
+    let URL = base + sDate + "/heatmap/" + index.toString().padStart(2, '0') + ".bin.ttf";
+    let req = $.ajax({
+        url: URL,
+        method: 'GET',
+        xhr: function() {
+            return xhrOverride;
+        }
+    });
+
+    traceDate = new Date(ts);
+    traceDate.setUTCHours(0);
+    traceDate.setUTCMinutes(0);
+    traceDate.setUTCSeconds(0);
+    traceDay = traceDate.getUTCDate();
+    traceDateString = zDateString(traceDate);
+
+    req.done(initReplay);
+    req.fail(function(jqxhr, status, error) {
+        $("#update_error_detail").text(jqxhr.status + ' --> No data for this timestamp!');
+        $("#update_error").css('display','block');
+        setTimeout(function() {$("#update_error").css('display','none');}, 5000);
+    });
+}
 function initReplay(data) {
     if (!data) {
         console.log("initReplay: no data!");
@@ -5344,6 +5403,7 @@ function play(index) {
                     ac.flight += String.fromCharCode(replay.pointsU8[4 * (i + 2) + j]);
                 }
             }
+            ac.squawk = (lat ^ (1<<30)).toString(10).padStart(4, '0');
             processAircraft(ac, false, false);
             continue;
         }

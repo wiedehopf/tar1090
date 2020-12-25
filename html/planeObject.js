@@ -406,6 +406,8 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
         if (this.dataSource == "adsc")
             stale_timeout = jaeroTimeout;
     }
+    if (replay)
+        stale_timeout = replay.ival / 1000 + 5;
 
     // Also check if the position was already stale when it was exported by dump1090
     // Makes stale check more accurate for example for 30s spaced history points
@@ -1341,7 +1343,8 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     this.nav_qnh = data.nav_qnh;
     this.geom_rate = data.geom_rate;
     this.rc = data.rc;
-    this.squawk = data.squawk;
+    if (!replay || data.squawk != null)
+        this.squawk = data.squawk;
     this.wd = data.wd;
     this.ws = data.ws;
     this.oat = data.oat;
@@ -2548,7 +2551,7 @@ PlaneObject.prototype.setTypeData = function() {
 };
 
 PlaneObject.prototype.checkForDB = function(t) {
-    if (!this.regLoaded && (!dbServer || showTrace || !globeIndex)) {
+    if (!this.regLoaded && (!dbServer || showTrace || !globeIndex || replay)) {
         this.getAircraftData();
         return;
     }
