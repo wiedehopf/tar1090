@@ -400,6 +400,13 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     if (on_ground)
         stale_timeout = 30;
 
+    if (pTracks) {
+        stale = false;
+        stale_timeout = 60;
+        if (this.dataSource == "adsc")
+            stale_timeout = jaeroTimeout;
+    }
+
     // Also check if the position was already stale when it was exported by dump1090
     // Makes stale check more accurate for example for 30s spaced history points
 
@@ -464,7 +471,9 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
             && !(elapsed > 3600 && distance / elapsed * 3.6 < 100)
             // don't draw a line if a long time has elapsed but no great distance was traveled
         ) {
-            estimated = true;
+            if (!pTracks) {
+                estimated = true;
+            }
             let nPoints = distance / 19000;
             let greyskull = Math.ceil(Math.log(nPoints) / Math.log(2));
             //console.log(Math.round(nPoints) + ' ' + greyskull);
@@ -1275,9 +1284,9 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.dataSource = "adsb";
     }
 
-    if (data.type == 'adsc') {
+    if (type == 'adsc') {
         this.dataSource = "adsc";
-    } else if (data.type == 'unknown' || data.type == 'other') {
+    } else if (type == 'unknown' || type == 'other') {
         this.dataSource = "unknown";
     }
 
@@ -1353,8 +1362,8 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     else
         this.true_heading = null;
 
-    if (data.type != null)
-        this.addrtype = data.type;
+    if (type != null)
+        this.addrtype = type;
     else
         this.addrtype = null;
 
@@ -1651,22 +1660,6 @@ PlaneObject.prototype.updateLines = function() {
         this.elastic_feature = null;
     }
 
-    let lastseg = this.track_linesegs[this.track_linesegs.length - 1];
-    let lastfixed = lastseg.fixed.getCoordinateAt(1.0);
-    let geom = new ol.geom.LineString([lastfixed, ol.proj.fromLonLat(this.position)]);
-
-
-    if (!showTrace) {
-        this.elastic_feature = new ol.Feature(geom);
-        if (filterTracks && altFiltered(lastseg.altitude)) {
-            this.elastic_feature.setStyle(nullStyle);
-        } else {
-            this.elastic_feature.setStyle(altitudeLines(lastseg));
-        }
-
-        trail_add.push(this.elastic_feature);
-    }
-
     // create any missing fixed line features
 
     for (let i = this.track_linesegs.length-1; i >= 0; i--) {
@@ -1758,6 +1751,23 @@ PlaneObject.prototype.updateLines = function() {
             label_add.push(seg.label)
         }
     }
+
+    let lastseg = this.track_linesegs[this.track_linesegs.length - 1];
+    let lastfixed = lastseg.fixed.getCoordinateAt(1.0);
+    let geom = new ol.geom.LineString([lastfixed, ol.proj.fromLonLat(this.position)]);
+
+
+    if (!showTrace) {
+        this.elastic_feature = new ol.Feature(geom);
+        if (filterTracks && altFiltered(lastseg.altitude)) {
+            this.elastic_feature.setStyle(nullStyle);
+        } else {
+            this.elastic_feature.setStyle(altitudeLines(lastseg));
+        }
+        this.elastic_feature.hex = this.icao;
+        trail_add.push(this.elastic_feature);
+    }
+
 
     if (trail_add.length > 0)
         this.trail_features.addFeatures(trail_add);
@@ -2538,7 +2548,7 @@ PlaneObject.prototype.setTypeData = function() {
 };
 
 PlaneObject.prototype.checkForDB = function(t) {
-    if (!this.regLoaded && (!dbServer || showTrace || this.receiver == 'uat')) {
+    if (!this.regLoaded && (!dbServer || showTrace || pTracks || this.receiver == 'uat')) {
         this.getAircraftData();
         return;
     }
