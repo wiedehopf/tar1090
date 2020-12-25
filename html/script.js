@@ -59,7 +59,6 @@ let filterTracks = false;
 let refreshId = 0;
 let lastFetch = 0;
 let refreshMultiplier = 1;
-let globeIndexGrid = 0;
 let globeIndexNow = {};
 let globeIndexDist = {};
 let globeIndexSpecialLookup = {};

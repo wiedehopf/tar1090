@@ -16,6 +16,7 @@ let historyLoaded = $.Deferred();
 let configureReceiver = $.Deferred();
 let historyTimeout = 60;
 let globeIndex = 0;
+let globeIndexGrid = 0;
 let globeIndexSpecialTiles;
 let binCraft = false;
 let dbServer = false;
