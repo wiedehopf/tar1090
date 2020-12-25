@@ -177,8 +177,15 @@ function zDateString(date) {
 }
 
 function sDateString(date) {
-    let string = date.getFullYear() + '/'
-        + (date.getMonth() + 1).toString().padStart(2, '0') + '/'
+    let string = date.getUTCFullYear() + '/'
+        + (date.getUTCMonth() + 1).toString().padStart(2, '0') + '/'
+        + date.getUTCDate().toString().padStart(2, '0')
+    return string;
+}
+
+function lDateString(date) {
+    let string = date.getFullYear() + '-'
+        + (date.getMonth() + 1).toString().padStart(2, '0') + '-'
         + date.getDate().toString().padStart(2, '0')
     return string;
 }
