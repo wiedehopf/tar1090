@@ -63,7 +63,6 @@ let globeIndexGrid = 0;
 let globeIndexNow = {};
 let globeIndexDist = {};
 let globeIndexSpecialLookup = {};
-let globeIndexSpecialTiles;
 let globeTilesViewCount = 0;
 let globeSimLoad = 16;
 let globeTableLimit = 80;
@@ -1404,25 +1403,7 @@ function webglInit() {
 
 // Initalizes the map and starts up our timers to call various functions
 function initMap() {
-    if (receiverJson && receiverJson.lat != null) {
-        SiteLat = receiverJson.lat;
-        SiteLon = receiverJson.lon;
-        DefaultCenterLat = receiverJson.lat;
-        DefaultCenterLon = receiverJson.lon;
-    }
-
-    if (receiverJson && receiverJson.jaeroTimeout) {
-        jaeroTimeout = receiverJson.jaeroTimeout * 60;
-    }
-
-    if (receiverJson && receiverJson.globeIndexGrid != null) {
-        globeIndexGrid = receiverJson.globeIndexGrid;
-        globeIndex = 1;
-        globeIndexSpecialTiles = [];
-        for (let i = 0; i < receiverJson.globeIndexSpecialTiles.length; i++) {
-            let tile = receiverJson.globeIndexSpecialTiles[i];
-            globeIndexSpecialTiles.push([tile.south, tile.west, tile.north, tile.east]);
-        }
+    if (globeIndex) {
         $('#dump1090_total_history_td').hide();
         $('#dump1090_message_rate_td').hide();
     }
@@ -1883,7 +1864,7 @@ function reaper(all) {
         plane.seen = now - plane.last_message_time;
         if ( (!plane.selected || SelectedAllPlanes)
             && (all || plane.seen > 300)
-            && (plane.dataSource != 'adsc' || plane.seen > 35*60)
+            && (plane.dataSource != 'adsc' || plane.seen > jaeroTimeout)
         ) {
             // Reap it.                                
             //console.log("Removed " + plane.icao);

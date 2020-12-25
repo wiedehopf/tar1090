@@ -16,6 +16,7 @@ let historyLoaded = $.Deferred();
 let configureReceiver = $.Deferred();
 let historyTimeout = 60;
 let globeIndex = 0;
+let globeIndexSpecialTiles;
 let binCraft = false;
 let dbServer = false;
 let l3harris = false;
@@ -292,12 +293,33 @@ if (uuid != null) {
         nHistoryItems = (data.history < 2) ? 0 : data.history;
         binCraft = data.binCraft ? true : false;
         dbServer = data.dbServer ? true : false;
+
+        if (receiverJson.lat != null) {
+            SiteLat = receiverJson.lat;
+            SiteLon = receiverJson.lon;
+            DefaultCenterLat = receiverJson.lat;
+            DefaultCenterLon = receiverJson.lon;
+        }
+        if (receiverJson.jaeroTimeout) {
+            jaeroTimeout = receiverJson.jaeroTimeout * 60;
+        }
+
         if (data.globeIndexGrid != null || heatmap) {
-                HistoryChunks = false;
-                nHistoryItems = 0;
-                globeIndex = 1;
-                get_history();
-                configureReceiver.resolve();
+            HistoryChunks = false;
+            nHistoryItems = 0;
+            globeIndex = 1;
+
+
+            globeIndexGrid = receiverJson.globeIndexGrid;
+            globeIndex = 1;
+            globeIndexSpecialTiles = [];
+            for (let i = 0; i < receiverJson.globeIndexSpecialTiles.length; i++) {
+                let tile = receiverJson.globeIndexSpecialTiles[i];
+                globeIndexSpecialTiles.push([tile.south, tile.west, tile.north, tile.east]);
+            }
+
+            get_history();
+            configureReceiver.resolve();
         } else {
             $.when(test_chunk_defer).done(function(data) {
                 HistoryChunks = true;
@@ -318,8 +340,6 @@ if (uuid != null) {
         }
     });
 }
-
-
 
 function get_history() {
 
