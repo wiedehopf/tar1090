@@ -2548,7 +2548,7 @@ PlaneObject.prototype.setTypeData = function() {
 };
 
 PlaneObject.prototype.checkForDB = function(t) {
-    if (!this.regLoaded && (!dbServer || showTrace || pTracks || this.receiver == 'uat')) {
+    if (!this.regLoaded && (!dbServer || showTrace || !globeIndex)) {
         this.getAircraftData();
         return;
     }
