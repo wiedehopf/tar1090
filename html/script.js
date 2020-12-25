@@ -1226,10 +1226,8 @@ function startPage() {
     if (!heatmap)
         $("#loader").addClass("hidden");
 
-    if (replay) {
-        initReplay(replay.data);
-        play(); // kick off first play
-    }
+    if (replay)
+        replay.defer.done(initReplay);
 
     geoMag = geoMagFactory(cof2Obj());
 
@@ -1861,9 +1859,9 @@ function reaper(all) {
         if (plane == null)
             continue;
         plane.seen = now - plane.last_message_time;
-        if ( (!plane.selected || SelectedAllPlanes)
-            && (all || plane.seen > 300)
-            && (plane.dataSource != 'adsc' || plane.seen > jaeroTimeout)
+        if ( all || ((!plane.selected || SelectedAllPlanes)
+            && plane.seen > 300
+            && (plane.dataSource != 'adsc' || plane.seen > jaeroTimeout))
         ) {
             // Reap it.                                
             //console.log("Removed " + plane.icao);
@@ -3862,7 +3860,7 @@ function checkRefresh() {
     if (showTrace)
         return;
 
-    if (triggerMapRefresh || refreshZoom != zoom || center[0] != refreshLon || center[1] != refreshLat) {
+    if (triggerMapRefresh || zoom != refreshZoom || center[0] != refreshLon || center[1] != refreshLat) {
 
         const ts = new Date().getTime();
         const elapsed = Math.abs(ts - lastRefresh);
@@ -4928,7 +4926,10 @@ function getTrace(newPlane, hex, options) {
         SelectedPlane = newPlane;
     }
 
+    let endStamp = traceOpts.endStamp;
     traceOpts = options;
+    if (replay)
+        traceOpts.endStamp = endStamp;
 
     if (showTrace) {
         traceRate += 3;
@@ -5248,6 +5249,13 @@ function drawHeatmap() {
     $("#loader").addClass("hidden");
 }
 
+function currentExtent(factor) {
+    let size = OLMap.getSize();
+    if (factor != null)
+        size = [size[0] * factor, size[1] * factor];
+    return myExtent(OLMap.getView().calculateExtent(size));
+}
+
 function initReplay(data) {
     if (!data) {
         console.log("initReplay: no data!");
@@ -5257,30 +5265,34 @@ function initReplay(data) {
         console.log("Invalid heatmap file (byteLength)");
         return;
     }
-    points = new Int32Array(data);
+    let points = new Int32Array(data);
+    let pointsU = new Uint32Array(data);
+    let pointsU8 = new Uint8Array(data);
     let found = 0;
+    replay.slices = [];
     for (let i = 0; i < points.length; i += 4) {
         if (points[i] == 0xe7f7c9d) {
             found = 1;
-            break;
+            replay.slices.push(i);
         }
     }
     if (!found) {
         console.log("Invalid heatmap file (magic number)");
         replay.points = null;
+        replay.pointsU = null;
+        replay.pointsU8 = null;
         return;
     }
     replay.points = points;
+    replay.pointsU = pointsU;
+    replay.pointsU8 = pointsU8;
+
+    play(0); // kick off first play
 }
 
-function play() {
+function play(index) {
     if (!replay)
         return;
-
-    ZoomLvl = OLMap.getView().getZoom();
-    let center = ol.proj.toLonLat(OLMap.getView().getCenter());
-    localStorage['CenterLon'] = CenterLon = center[0];
-    localStorage['CenterLat'] = CenterLat = center[1];
 
     clearTimeout(refreshId);
     refreshId = setTimeout(play, replay.ival / replay.speed);
@@ -5288,23 +5300,97 @@ function play() {
     if (showTrace)
         return;
 
+    if (index == null) {
+        index = replay.index + 1;
+    }
+    if (index >= replay.slices.length) {
+        index = 0;
+        reaper(true);
+        refreshFilter();
+    }
+    replay.index = index;
+
+
+    let points = replay.points;
+    let i = replay.slices[index];
+
+    console.log('index: ' + index + ', i: ' + i);
+
     last = now;
+    now = replay.pointsU[i + 2] / 1000 + replay.pointsU[i + 1] * 4294967.296;
 
-    let acs = [];
+    traceOpts.endStamp = now;
 
-    for (let j=0; j < acs.length; j++) {
+    replay.ival = (replay.pointsU[i + 3] & 65535);
+
+    i += 4;
+
+    let ext = currentExtent(1.4);
+    ext.maxLat *= 1e6;
+    ext.maxLon *= 1e6;
+    ext.minLat *= 1e6;
+    ext.minLon *= 1e6;
+    for (; i < points.length && points[i] != 0xe7f7c9d; i += 4) {
+        let lat = points[i + 1];
+        let lon = points[i + 2];
+        let pos = [lon, lat];
+        if (lat >= 1073741824) {
+            let ac = {seen:0, seen_pos:0,};
+            ac.hex = (points[i] & ((1<<24) - 1)).toString(16).padStart(6, '0');
+            ac.hex = (points[i] & (1<<24)) ? ('~' + ac.hex) : ac.hex;
+            ac.flight = "";
+            if (replay.pointsU8[4 * (i + 2)] != 0) {
+                for (let j = 0; j < 8; j++) {
+                    ac.flight += String.fromCharCode(replay.pointsU8[4 * (i + 2) + j]);
+                }
+            }
+            processAircraft(ac, false, false);
+            continue;
+        }
+        if (!inView(pos, ext)) {
+            continue;
+        }
+
+        lat /= 1e6;
+        lon /= 1e6;
+        pos = [lon, lat];
+
+        let hex = (points[i] & ((1<<24) - 1)).toString(16).padStart(6, '0');
+        hex = (points[i] & (1<<24)) ? ('~' + hex) : hex;
+
+
+        let alt = points[i + 3] & 65535;
+        if (alt & 32768)
+            alt |= -65536;
+        if (alt == -123)
+            alt = 'ground';
+        else
+            alt *= 25;
+
+        let gs = points[i + 3] >> 16;
+        if (gs == -1)
+            gs = null;
+        else
+            gs /= 10;
+
         if (icaoFilter && !icaoFilter.includes(hex))
             continue;
 
-        if (!onlyMilitary || plane.military)
-            plane.updateData(now, last, ac, init);
-        else
-            plane.last_message_time = now - ac.seen;
+        let ac = {
+            seen: 0,
+            seen_pos: 0,
+            hex: hex,
+            lat: lat,
+            lon: lon,
+            alt_baro: alt,
+            gs: gs,
+        };
+        processAircraft(ac, false, false);
     }
 
-    TAR.planeMan.refresh();
-    refreshSelected();
-    refreshHighlighted();
+    checkMovement();
+    triggerMapRefresh = 1;
+    checkRefresh();
 }
 
 function updateIconCache() {

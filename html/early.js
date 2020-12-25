@@ -77,11 +77,11 @@ try {
     if (search.has('L3Harris') || search.has('l3harris'))
         l3harris = true;
 
-    if (search.has('replay')) {
+    if (search.has('replay') || replay) {
         replay = {
             ts: (new Date().getTime() - 3600 * 1000),
             ival: 60 * 1000,
-            speed: 5,
+            speed: 20,
             defer: $.Deferred(),
         };
         let xhrOverride = new XMLHttpRequest();
@@ -97,14 +97,13 @@ try {
         let req = $.ajax({
             url: URL,
             method: 'GET',
-            num: i,
             xhr: function() {
                 return xhrOverride;
             }
         });
         req.done(function (responseData) {
             replay.data = responseData;
-            replay.defer.resolve();
+            replay.defer.resolve(replay.data);
         });
         req.fail(function(jqxhr, status, error) {
             replay.data = null;
@@ -168,7 +167,7 @@ try {
     }
 
 } catch (error) {
-    console.log(error);
+    console.error(error);
 }
 
 function zDateString(date) {
