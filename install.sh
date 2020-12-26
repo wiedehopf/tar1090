@@ -75,7 +75,7 @@ fi
 
 { [[ "$1" == "test" ]] && cd "$ipath/git-db" && git rev-parse; } ||
     { cd "$ipath/git-db" &>/dev/null && git fetch --depth 1 origin master && git reset --hard FETCH_HEAD; } ||
-    { cd && rm -rf "$ipath/git-db" && git clone --depth 1 "$db_repo" "$ipath/git-db"; }
+    { cd /tmp && rm -rf "$ipath/git-db" && git clone --depth 1 "$db_repo" "$ipath/git-db"; }
 
 if ! cd $ipath/git-db || ! git rev-parse
 then
@@ -96,7 +96,7 @@ then
     TAR_VERSION=$(date +%s)
 else
     { cd "$ipath/git" &>/dev/null && git fetch origin master && git reset --hard FETCH_HEAD; } ||
-        { rm -rf "$ipath/git" && git clone --depth 1 "$repo" "$ipath/git"; }
+        { cd /tmp && rm -rf "$ipath/git" && git clone --depth 1 "$repo" "$ipath/git"; }
 
     if ! cd $ipath/git || ! git rev-parse
     then
