@@ -160,7 +160,7 @@ PlaneObject.prototype.createLabels = function() {
 };
 
 PlaneObject.prototype.logSel = function(loggable) {
-    if (debugTracks && this.selected && !SelectedAllPlanes)
+    if (debugTracks && this.selected && !SelectedAllPlanes && !globeIndex)
         console.log(loggable);
     return;
 };
@@ -849,6 +849,7 @@ PlaneObject.prototype.processTrace = function() {
     let timeZero, _now, _last = 0;
     this.history_size = 0;
     let points_in_trace = 0;
+    let pointsRecent = 0;
 
     let tempPlane = {};
     const oldSegs = this.track_linesegs;
@@ -986,6 +987,10 @@ PlaneObject.prototype.processTrace = function() {
             if (traceOpts.endStamp != null && timestamp > traceOpts.endStamp)
                 break;
 
+            if (now - timestamp < 3 * 60 * 60) {
+                pointsRecent++;
+            }
+
             points_in_trace++;
 
             this.updateTraceData(state, _now);
@@ -1113,7 +1118,9 @@ PlaneObject.prototype.processTrace = function() {
     TAR.planeMan.refresh();
     updateAddressBar();
 
-    //console.log(this.history_size + ' ' + points_in_trace);
+    if (debugTracks) {
+        console.log('3h: ' + pointsRecent.toString().padStart(4, ' ') + ' total: ' + points_in_trace);
+    }
 };
 
 PlaneObject.prototype.updatePositionData = function(now, last, data, init) {

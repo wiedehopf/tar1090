@@ -4892,6 +4892,10 @@ function checkFollow() {
     const center = OLMap.getView().getCenter();
     let proj = SelectedPlane.proj;
 
+    if (!proj) {
+        return false;
+    }
+
     if (Math.abs(center[0] - proj[0]) > 1 ||
         Math.abs(center[1] - proj[1]) > 1)
     {
