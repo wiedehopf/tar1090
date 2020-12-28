@@ -1333,6 +1333,23 @@ function webglAddLayer() {
                 rotation: [ 'get', 'rotation' ],
             },
         };
+        if (heatmap) {
+            glStyle = {
+                symbol: {
+                    symbolType: "circle",
+                    size: heatmap.radius * globalScale * 2.5,
+                    offset: [0, 0],
+                    opacity: heatmap.alpha || 1,
+                    color: [
+                        'color',
+                        [ 'get', 'r' ],
+                        [ 'get', 'g' ],
+                        [ 'get', 'b' ],
+                        1
+                    ],
+                }
+            }
+        }
 
         webglLayer = new ol.layer.WebGLPoints({
             name: 'webglLayer',
@@ -5099,6 +5116,7 @@ function drawHeatmap() {
     let maxLat = ext.maxLat * 1000000;
     let minLat = ext.minLat * 1000000;
 
+    webglFeatures.clear();
     for (let i = 0; i < heatFeaturesSpread; i++)
         heatFeatures[i].clear();
     realHeatFeatures.clear();
@@ -5183,10 +5201,15 @@ function drawHeatmap() {
 
     let offsets = Array(myPoints.length).fill(0);
 
-    while (pointCount < heatmap.max && setSize(done) < myPoints.length && iterations++ < maxIter) {
+    while (pointCount < heatmap.max && done.size < myPoints.length && iterations++ < maxIter) {
         for (let k = 0; k < myPoints.length && pointCount < heatmap.max; k++) {
-            if (offsets[k] >= indexes[k].length) {
+
+            if (offsets[k] > indexes[k].length) {
+                continue;
+            }
+            if (offsets[k] == indexes[k].length) {
                 done.add(k);
+                offsets[k]++;
                 continue;
             }
 
@@ -5238,10 +5261,10 @@ function drawHeatmap() {
                 alt = calcAltitudeRounded(alt);
                 let projHere = ol.proj.fromLonLat(pos);
                 let style = lineStyleCache[alt];
+                let hsl = altitudeColor(alt);
+                hsl[1] = hsl[1] * 0.85;
+                hsl[2] = hsl[2] * 0.8;
                 if (!style) {
-                    let hsl = altitudeColor(alt);
-                    hsl[1] = hsl[1] * 0.85;
-                    hsl[2] = hsl[2] * 0.8;
                     let col;
                     if (heatmap.alpha == null)
                         col = hslToRgb(hsl);
@@ -5260,7 +5283,14 @@ function drawHeatmap() {
                     lineStyleCache[alt] = style;
                 }
                 let feat = new ol.Feature(new ol.geom.Point(projHere));
-                feat.setStyle(style);
+                if (webgl) {
+                    let rgb = hslToRgb(hsl, 'array');
+                    feat.set('r', rgb[0]);
+                    feat.set('g', rgb[1]);
+                    feat.set('b', rgb[2]);
+                } else {
+                    feat.setStyle(style);
+                }
                 features.push(feat);
                 //console.log(alt);
             }
@@ -5274,9 +5304,15 @@ function drawHeatmap() {
     if (heatmap.real) {
         realHeatFeatures.addFeatures(features);
     } else {
-        for (let i = 0; i < heatFeaturesSpread; i++) {
-            heatFeatures[i].addFeatures(features.splice(0, pointCount / heatFeaturesSpread + 1));
-            //console.log(features.length);
+
+        if (webgl) {
+            webglFeatures.addFeatures(features);
+        } else {
+            for (let i = 0; i < heatFeaturesSpread; i++) {
+
+                heatFeatures[i].addFeatures(features.splice(0, pointCount / heatFeaturesSpread + 1));
+                //console.log(features.length);
+            }
         }
     }
     console.timeEnd("drawHeat");

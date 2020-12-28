@@ -85,7 +85,7 @@ try {
 
         heatmap = {};
 
-        heatmap.max = 16000;
+        heatmap.max = 32000;
         heatmap.init = true;
         heatmap.duration = 24;
         heatmap.end = (new Date()).getTime();
