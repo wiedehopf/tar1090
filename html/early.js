@@ -78,7 +78,9 @@ try {
 
     if (search.has('L3Harris') || search.has('l3harris'))
         l3harris = true;
-
+    if (search.has('r')) {
+        replay = true;
+    }
     if (search.has('heatmap')) {
 
         heatmap = {};
@@ -273,18 +275,20 @@ if (uuid != null) {
             jaeroTimeout = receiverJson.jaeroTimeout * 60;
         }
 
-        if (data.globeIndexGrid != null || heatmap) {
+        if (data.globeIndexGrid != null || heatmap || replay) {
             HistoryChunks = false;
             nHistoryItems = 0;
             globeIndex = 1;
 
 
-            globeIndexGrid = receiverJson.globeIndexGrid;
-            globeIndex = 1;
-            globeIndexSpecialTiles = [];
-            for (let i = 0; i < receiverJson.globeIndexSpecialTiles.length; i++) {
-                let tile = receiverJson.globeIndexSpecialTiles[i];
-                globeIndexSpecialTiles.push([tile.south, tile.west, tile.north, tile.east]);
+            if (receiverJson.globeIndexGrid) {
+                globeIndexGrid = receiverJson.globeIndexGrid;
+                globeIndex = 1;
+                globeIndexSpecialTiles = [];
+                for (let i = 0; i < receiverJson.globeIndexSpecialTiles.length; i++) {
+                    let tile = receiverJson.globeIndexSpecialTiles[i];
+                    globeIndexSpecialTiles.push([tile.south, tile.west, tile.north, tile.east]);
+                }
             }
 
             get_history();

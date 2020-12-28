@@ -609,13 +609,16 @@ function initPage() {
 
 
         if (search.has('r')) {
-            let numbers = search.get('r').split('-');
+            let numbers = (search.get('r') || "").split('-');
             let ts = new Date();
-            ts.setUTCFullYear(numbers[0]);
-            ts.setUTCMonth(numbers[1] - 1);
-            ts.setUTCDate(numbers[2]);
-            ts.setUTCHours(numbers[3]);
-            ts.setUTCMinutes(numbers[4]);
+            ts.setUTCHours(ts.getUTCHours() - 1);
+            if (numbers.length == 5) {
+                ts.setUTCFullYear(numbers[0]);
+                ts.setUTCMonth(numbers[1] - 1);
+                ts.setUTCDate(numbers[2]);
+                ts.setUTCHours(numbers[3]);
+                ts.setUTCMinutes(numbers[4]);
+            }
 
             replay = {
                 ts: ts,
