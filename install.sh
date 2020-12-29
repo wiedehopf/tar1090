@@ -329,27 +329,28 @@ done < <(echo "$instances")
 
 if [ -d /etc/lighttpd/conf-enabled/ ] && [ -f /etc/lighttpd/lighttpd.conf ]
 then
+    rm -f /etc/lighttpd/conf-available/87-mod_setenv.conf /etc/lighttpd/conf-enabled/87-mod_setenv.conf
     while read -r FILE; do
         sed -i -e 's/^server.modules.*mod_setenv.*/#\0/'  "$FILE"
         sed -i -e 's/^server.stat-cache-engine.*disable.*/#\0/'  "$FILE"
     done < <(find /etc/lighttpd/conf-available/* | grep -v setenv)
 
     # add mod_setenv to lighttpd modules, check if it's one too much
-    echo 'server.modules += ( "mod_setenv" )' > /etc/lighttpd/conf-available/87-mod_setenv.conf
+    echo 'server.modules += ( "mod_setenv" )' > /etc/lighttpd/conf-available/07-mod_setenv.conf
     echo 'server.stat-cache-engine = "disable"' > /etc/lighttpd/conf-available/47-stat-cache.conf
 
-    ln -s -f /etc/lighttpd/conf-available/87-mod_setenv.conf /etc/lighttpd/conf-enabled/87-mod_setenv.conf
+    ln -s -f /etc/lighttpd/conf-available/07-mod_setenv.conf /etc/lighttpd/conf-enabled/07-mod_setenv.conf
     ln -s -f /etc/lighttpd/conf-available/47-stat-cache.conf /etc/lighttpd/conf-enabled/47-stat-cache.conf
 
     if (( $(cat /etc/lighttpd/conf-enabled/* | grep -c -E -e '^server.stat-cache-engine *\= *"disable")') > 1 )); then
         rm -f /etc/lighttpd/conf-enabled/47-stat-cache.conf
     fi
     if (( $(cat /etc/lighttpd/conf-enabled/* | grep -c -E -e '^server.modules.?\+=.?\(.?"mod_setenv".?\)') > 1 )); then
-        rm -f /etc/lighttpd/conf-enabled/87-mod_setenv.conf
+        rm -f /etc/lighttpd/conf-available/07-mod_setenv.conf /etc/lighttpd/conf-enabled/07-mod_setenv.conf
     fi
 
     if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep mod_setenv >/dev/null; then
-        rm -f /etc/lighttpd/conf-enabled/87-mod_setenv.conf
+        rm -f /etc/lighttpd/conf-available/07-mod_setenv.conf /etc/lighttpd/conf-enabled/07-mod_setenv.conf
     fi
     if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep stat-cache >/dev/null; then
         rm -f /etc/lighttpd/conf-enabled/47-stat-cache.conf
@@ -358,7 +359,7 @@ then
     #lighttpd -tt -f /etc/lighttpd/lighttpd.conf && echo success || true
     if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep mod_setenv >/dev/null
     then
-        rm -f /etc/lighttpd/conf-enabled/87-mod_setenv.conf
+        rm -f /etc/lighttpd/conf-available/07-mod_setenv.conf /etc/lighttpd/conf-enabled/07-mod_setenv.conf
     fi
     #lighttpd -tt -f /etc/lighttpd/lighttpd.conf && echo success || true
     if ! lighttpd -tt -f /etc/lighttpd/lighttpd.conf &>/dev/null; then
