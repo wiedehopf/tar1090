@@ -1965,6 +1965,8 @@ function refreshSelected() {
     }
     const selected = SelectedPlane;
 
+    selected.checkForDB();
+
     if (selected.flight != selCall) {
         selCall = selected.flight;
         if (selected.flight && selected.flight.trim()) {
