@@ -332,7 +332,7 @@ then
     while read -r FILE; do
         sed -i -e 's/^server.modules.*mod_setenv.*/#\0/'  "$FILE"
         sed -i -e 's/^server.stat-cache-engine.*disable.*/#\0/'  "$FILE"
-    done < <(find /etc/lighttpd/conf-available/* | grep -v dump1090-fa | grep -v readsb | grep -v setenv)
+    done < <(find /etc/lighttpd/conf-available/* | grep -v setenv)
 
     # add mod_setenv to lighttpd modules, check if it's one too much
     echo 'server.modules += ( "mod_setenv" )' > /etc/lighttpd/conf-available/87-mod_setenv.conf
