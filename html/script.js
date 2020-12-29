@@ -4359,7 +4359,10 @@ function inView(pos, ex) {
 }
 let lastAddressBarUpdate = 0;
 let updateAddressBarTimeout;
+let updateAddressBarPushed = false;
 function updateAddressBar() {
+    if (!window.history || !window.history.replaceState)
+        return;
     if (heatmap || pTracks)
         return;
     let now = new Date().getTime();
@@ -4415,10 +4418,17 @@ function updateAddressBar() {
     if (icaoFilter)
         return;
 
-    if (!SelectedPlane && planes.length == 0)
+    if (!SelectedPlane && planes.length == 0 && initialURL && initialURL.indexOf("icao") < 0)
         string = initialURL;
 
-    window.history && window.history.replaceState && window.history.replaceState("object or string", "Title", string);
+    if (!updateAddressBarPushed) {
+        // make sure we keep the thing we clicked on first in the browser history
+        window.history.pushState("object or string", "Title", string);
+        updateAddressBarPushed = true;
+    } else {
+        // but don't create a new history entry for every plane we click on
+        window.history.replaceState("object or string", "Title", string);
+    }
 }
 
 function refreshInt() {
@@ -4486,6 +4496,7 @@ function toggleShowTrace() {
         shiftTrace();
     } else {
         showTrace = false;
+        fetchData();
         legSel = -1;
         $('#leg_sel').text('Legs: All');
         if (!showTraceWasIsolation)
