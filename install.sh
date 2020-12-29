@@ -378,7 +378,7 @@ then
     fi
 fi
 
-if systemctl show lighttpd 2>/dev/null | grep -qs 'UnitFileState=enabled'; then
+if systemctl show lighttpd 2>/dev/null | grep -qs -F -e 'UnitFileState=enabled' -e 'ActiveState=active'; then
     echo "Restarting lighttpd ..."
     systemctl restart lighttpd
 fi
