@@ -336,7 +336,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     let derivedMach = 0.01;
     let filterSpeed = 10000;
 
-    const pFilter = (positionFilter == true || (positionFilter == 'onlyMLAT' && this.dataSource == "mlat"));
+    const pFilter = !serverTrack && (positionFilter == true || (positionFilter == 'onlyMLAT' && this.dataSource == "mlat"));
 
     if (pFilter) {
         derivedMach = (distance/(this.position_time - this.prev_time + 0.4))/343;
@@ -432,20 +432,16 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     if (
         this.prev_alt_rounded !== lastseg.altitude
         || this.prev_time > lastseg.ts + 300
-        || (!noVanish && this.prev_time > lastseg.ts + 60)
+        || (!pTracks && this.prev_time > lastseg.ts + 15)
         || estimated != lastseg.estimated
+        || estimated
         || tempTrails
-        || debugAll ||
-        (
-            serverTrack && !noVanish &&
-            (
-                this.prev_time - lastseg.ts > 5
-                || estimated
-                || track_change > 2
-                || Math.abs(this.prev_speed - lastseg.speed) > 5
-                || Math.abs(this.prev_alt - lastseg.alt_real) > 50
-                || is_leg
-            )
+        || debugAll
+        || serverTrack
+        || !globeIndex && (
+            track_change > 5
+            || Math.abs(this.prev_speed - lastseg.speed) > 10
+            || Math.abs(this.prev_alt - lastseg.alt_real) > 200
         )
 
         //lastseg.ground != on_ground
