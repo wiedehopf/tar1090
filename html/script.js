@@ -194,8 +194,13 @@ function processAircraft(ac, init, uat) {
             plane.updateData(now, last, ac, init);
         else
             plane.last_message_time = now - ac.seen;
-    } else if (uat) {
-        if (plane.receiver == "uat" || ac.seen_pos < 1.8 || init) {
+
+        return;
+    }
+    if (uat) {
+        if (plane.receiver == "uat"
+            || (ac.seen_pos < 1.8 && (plane.seen_pos > 2 || plane.dataSource == "mlat"))
+            || init) {
             let tisb = Array.isArray(ac) ? (ac[7] == "tisb") : (ac.tisb != null && ac.tisb.indexOf("lat") >= 0);
             if (tisb && plane.dataSource == "adsb") {
                 // ignore TIS-B data for current ADS-B 1090 planes
@@ -206,7 +211,7 @@ function processAircraft(ac, init, uat) {
         }
     } else {
         if (plane.receiver == "1090"
-            || (ac.seen_pos < 1.8 && (plane.seen_pos > 5 || !(ac.mlat && ac.mlat.indexOf("lat") >= 0)))
+            || (ac.seen_pos < 1.8 && plane.seen_pos > 2 && (plane.seen_pos > 5 || !(ac.mlat && ac.mlat.indexOf("lat") >= 0)))
             || init) {
             plane.receiver = "1090";
             plane.updateData(now, last, ac, init);
