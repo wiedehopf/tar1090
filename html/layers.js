@@ -229,7 +229,7 @@ function createBaseLayers() {
         name: 'nexrad',
         title: 'NEXRAD',
         type: 'overlay',
-        opacity: 0.3,
+        opacity: 0.35,
         visible: false,
         zIndex: 99,
         maxZoom: 14,
@@ -246,6 +246,21 @@ function createBaseLayers() {
 
     refreshNexrad();
     window.setInterval(refreshNexrad, 300 * 1000);
+
+    let noaaRadarSource = new ol.source.ImageWMS({
+        attributions: ['NOAA'],
+        url: 'https://nowcoast.noaa.gov/arcgis/services/nowcoast/radar_meteo_imagery_nexrad_time/MapServer/WMSServer',
+        params: {'LAYERS': '1'},
+        projection: 'EPSG:3857',
+    });
+
+    let noaaRadar = new ol.layer.Image({
+        title: 'NOAA Radar',
+        zIndex: 99,
+        visible: true,
+        source: noaaRadarSource,
+        opacity: 0.35,
+    });
 
     let dwd;
     if (enableDWD) {
@@ -276,6 +291,7 @@ function createBaseLayers() {
     }
 
     us.push(nexrad);
+    us.push(noaaRadar);
 
     let createGeoJsonLayer = function (title, name, url, fill, stroke, showLabel = true) {
         return new ol.layer.Vector({
