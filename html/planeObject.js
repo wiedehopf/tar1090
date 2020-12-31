@@ -1732,6 +1732,7 @@ PlaneObject.prototype.updateLines = function() {
                 fill = new ol.style.Fill({color: '#8888CC' });
                 zIndex += 123455;
             }
+            const otherDiag = seg.track != null && ((seg.track > 270 && seg.track < 360) || (seg.track > 90 && seg.track < 180));
             seg.label.setStyle(
                 new ol.style.Style({
                     text: new ol.style.Text({
@@ -1739,10 +1740,11 @@ PlaneObject.prototype.updateLines = function() {
                         fill: fill,
                         stroke: labelStroke,
                         textAlign: 'left',
-                        textBaseline: "top",
+                        //backgroundFill: bgFill,
+                        textBaseline: otherDiag ? 'bottom' : 'top',
                         font: labelFont,
-                        offsetX: 8 * globalScale,
-                        offsetY: 8 * globalScale,
+                        offsetX: (otherDiag ? 4 : 8) * globalScale,
+                        offsetY: (otherDiag ? -4 : 8) * globalScale,
                     }),
                     image: new ol.style.Circle({
                         radius: 2 * globalScale,
