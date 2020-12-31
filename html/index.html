@@ -687,12 +687,6 @@
             </div>
           </div>
         </div>
-        <div id="toggle_sidebar_control" class="ol-unselectable ol-control">
-          <button id="toggle_sidebar_button" class="hide_sidebar" title="Toggle Sidebar"></button>
-        </div>
-        <div id="expand_sidebar_control" class="ol-unselectable ol-control">
-          <button id="expand_sidebar_button" title="Expand Sidebar"></button>
-        </div>
         <div id="large_mode_control" class="ol-unselectable ol-control">
           <button id="large_mode_button" title="Large Icons"></button>
         </div>
@@ -709,6 +703,12 @@
         </div>
         <div id="header_side" class="infoHeading">
           <div class="buttonContainer">
+            <div id="toggle_sidebar_control">
+              <button id="toggle_sidebar_button" class="hide_sidebar sidebar_button " title="Toggle Sidebar"></button>
+            </div>
+            <div id="expand_sidebar_control">
+              <button id="expand_sidebar_button" class="sidebar_button" title="Expand Sidebar"></button>
+            </div>
             <div id="settingsCog" class="settingsContainer"></div>
             <div id="L" title="Toggle (L)abels" class="button inActiveButton" onclick="toggleLabels();"><span class="buttonText">L</span></div>
             <div id="O" title="Toggle Label Extensi(O)ns" class="button inActiveButton" onclick="toggleExtendedLabels();"><span class="buttonText">O</span></div>
@@ -743,7 +743,7 @@
             <table style="width: 100%">
               <tr>
                 <td>
-                  <button id="shrink_sidebar_button" class="shrink_sidebar hidden" title="Show Map"></button>
+                  <button id="shrink_sidebar_button" class="shrink_sidebar hidden sidebar_button" title="Show Map"></button>
                 </td>
               </tr>
 

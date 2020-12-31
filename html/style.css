@@ -65,6 +65,7 @@ select {
     padding: calc( 5px * var(--SCALE));
     overflow: auto;
 }
+
 #sidebar_container {
     display: flex;
     flex-direction: column;
@@ -85,22 +86,17 @@ select {
     height: 100%;
 }
 
-#toggle_sidebar_control {
-    display: block;
-    position: absolute;
-    top: calc( 3px * var(--SCALE));
-    right: calc( 0px * var(--SCALE));
-}
+.sidebar_button {
+    width: calc( 32px * var(--SCALE));
+    height: calc( 38px * var(--SCALE));
+    border-radius: calc( 2px * var(--SCALE));
+    background-color: rgba(255,255,255,.2);
 
-#toggle_sidebar_button {
     cursor: pointer;
-    float: right;
-    width: calc( 30px * var(--SCALE));
-    height: calc( 36px * var(--SCALE));
-    background-size: calc( 28px * var(--SCALE)) calc( 32px * var(--SCALE));
+    background-size: calc( 26px * var(--SCALE)) calc( 30px * var(--SCALE));
     background-repeat: no-repeat;
-    background-position: calc( 0px * var(--SCALE));
-    background-color: transparent;
+    background-position: center;
+
     border: none;
 }
 
@@ -114,17 +110,14 @@ select {
 }
 
 #shrink_sidebar_button {
-    cursor: pointer;
-    width: calc( 30px * var(--SCALE));
-    height: calc( 36px * var(--SCALE));
-    background-size: calc( 28px * var(--SCALE)) calc( 32px * var(--SCALE));
-    background-repeat: no-repeat;
-    background-position: calc( 0px * var(--SCALE));
-    background-color: transparent;
-    border: none;
-    float: left;
     background-image: url("images/hide_sidebar.png");
 }
+
+#expand_sidebar_button {
+    transform: scaleX(-1);
+    background-image: url("images/hide_sidebar.png");
+}
+
 
 #large_mode_control {
     display: block;
@@ -179,44 +172,22 @@ select {
    background-image: url(https://www.exratione.com/assets/color_background.png);
 }
 
-#expand_sidebar_control {
-    display: block;
-    position: absolute;
-    top: calc( 55px * var(--SCALE));
-    right: calc( 0px * var(--SCALE));
-}
-
-#expand_sidebar_button {
-    cursor: pointer;
-    float: right;
-    width: calc( 30px * var(--SCALE));
-    height: calc( 36px * var(--SCALE));
-    background-size: calc( 28px * var(--SCALE)) calc( 32px * var(--SCALE));
-    background-repeat: no-repeat;
-    background-position: calc( 0px * var(--SCALE));
-    background-color: transparent;
-    border: none;
-    transform: scaleX(-1);
-    background-image: url("images/hide_sidebar.png");
-}
-
-
 #splitter {
     cursor: ew-resize;
     display: block;
     position: absolute;
-    top:  calc(108px * var(--SCALE));
-    left: calc( -30px * var(--SCALE));
+    top:  calc( 5px * var(--SCALE));
+    left: calc( 0px * var(--SCALE));
     float: right;
     width: calc( 30px * var(--SCALE));
     height: calc( 30px * var(--SCALE));
     background-size: calc( 30px * var(--SCALE)) calc( 30px * var(--SCALE));
     background-repeat: no-repeat;
-    background-position: calc( 0px * var(--SCALE));
     background-color: transparent;
     border: none;
     background-image: url("images/toggle-width.png");
     background-size: cover;
+    transform: scaleX(-1);
 }
 
 #splitter-infoblock {
@@ -323,7 +294,7 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
 
 .sidebarButton {
     background-color: #409EDF;
-    padding: calc( 4px * var(--SCALE)) calc( 15px * var(--SCALE)) calc( 4px * var(--SCALE)) calc( 15px * var(--SCALE));
+    padding: calc( 4px * var(--SCALE));
     color: #FFFFFF;
     font-weight: normal;
     font-size: var(--FS2);
@@ -354,7 +325,7 @@ select.error, textarea.error, input.error {
 
 .layer-switcher {
     top: calc( 3px * var(--SCALE)) !important;
-    right: calc( 47px * var(--SCALE)) !important;
+    right: calc( 44px * var(--SCALE)) !important;
     z-index: 999;
 }
 .layer-switcher.shown {
@@ -424,7 +395,7 @@ select.error, textarea.error, input.error {
 #header_side {
     position: absolute;
     right: calc( 0px * var(--SCALE));
-    top:  calc(140px * var(--SCALE));
+    top:  calc( 0px * var(--SCALE));
     width: calc( 38px * var(--SCALE));
     z-index: 9;
 }
@@ -435,6 +406,18 @@ select.error, textarea.error, input.error {
     top: calc( 0px * var(--SCALE));
     height: calc( 38px * var(--SCALE));
     z-index: 9;
+}
+
+.button {
+    background-color: #00596b;
+    width: calc( 27px * var(--SCALE));
+    height: calc( 27px * var(--SCALE));
+    border-radius: calc( 2px * var(--SCALE));
+    margin: calc( 2px * var(--SCALE));
+    display: inline-block;
+    cursor: pointer;
+    text-align: center;
+    background-clip: padding-box;
 }
 
 
@@ -451,7 +434,7 @@ select.error, textarea.error, input.error {
 {
     font-weight: bold;
     font-size: calc( 15px * var(--SCALE));
-    line-height:  calc( 30px * var(--SCALE));
+    line-height:  calc( 27px * var(--SCALE));
     text-align: center;
     margin: calc( 5px * var(--SCALE));
 }
@@ -464,21 +447,6 @@ select.error, textarea.error, input.error {
     color: #FFFFFF;
 }
 
-
-.button {
-    background-color: #00596b;
-    width: calc( 28px * var(--SCALE));
-    height: calc( 28px * var(--SCALE));
-    border-radius: calc( 2px * var(--SCALE));
-    -moz-border-radius: calc( 2px * var(--SCALE));
-    -webkit-border-radius: calc( 2px * var(--SCALE));
-    display: inline-block;
-    margin: calc( 2px * var(--SCALE));
-    cursor: pointer;
-    text-align: center;
-}
-
-
 .link, .link a {
     color: #003f4b;
 }
@@ -487,12 +455,12 @@ select.error, textarea.error, input.error {
     width: calc( 36px * var(--SCALE));
     height: calc( 36px * var(--SCALE));
     cursor: pointer;
-    margin-top: calc( 11px * var(--SCALE));
-    margin-bottom: calc( 11px * var(--SCALE));
     background-image: url('images/settings-icon01.png');
-    background-size: calc( 36px * var(--SCALE));
+    background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
+    margin-top: calc( 6px * var(--SCALE));
+    margin-bottom: calc( 6px * var(--SCALE));
 }
 
 #highlighted_infoblock {
@@ -607,7 +575,7 @@ table.infoSectionTable tr td {
 #settings_infoblock {
     position: absolute;
     top: 1%;
-    right: calc( 50px * var(--SCALE));
+    right: calc( 45px * var(--SCALE));
     overflow: auto;
     max-height: 90%;
     box-shadow: calc( 4px * var(--SCALE)) calc( 4px * var(--SCALE)) calc( 10px * var(--SCALE)) #444444;
@@ -789,6 +757,6 @@ table.infoSectionTable tr td {
     padding: calc( 0px * var(--SCALE));
     float: left;
     width: calc( 120px * var(--SCALE));
-    border-color: gainsboro; 
+    border-color: gainsboro;
     background-color: ghostwhite;
 }
