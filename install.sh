@@ -209,7 +209,7 @@ do
         sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" \
             -e "s?INSTANCE?$instance?g" -e "s?HTMLPATH?$html_path?g" nginx.conf
     fi
-    if lighttpd -v | grep -E 'lighttpd/1.4.(5[6-9]|[6-9])' -qs; then
+    if [[ $lighttpd == yes ]] && lighttpd -v | grep -E 'lighttpd/1.4.(5[6-9]|[6-9])' -qs; then
         sed -i -e 's/compress.filetype/deflate.mimetypes/g' 88-tar1090.conf
     fi
 
@@ -282,8 +282,7 @@ do
 
     cp nginx.conf "$ipath/nginx-$service.conf"
 
-    if [[ $lighttpd == yes ]] &>/dev/null
-    then
+    if [[ $lighttpd == yes ]]; then
         if [[ "$otherport" != "done" ]]; then
             cp 95-tar1090-otherport.conf /etc/lighttpd/conf-available/
             ln -f -s /etc/lighttpd/conf-available/95-tar1090-otherport.conf /etc/lighttpd/conf-enabled/95-tar1090-otherport.conf
@@ -327,8 +326,7 @@ do
 done < <(echo "$instances")
 
 
-if [ -d /etc/lighttpd/conf-enabled/ ] && [ -f /etc/lighttpd/lighttpd.conf ]
-then
+if [[ $lighttpd == yes ]]; then
     rm -f /etc/lighttpd/conf-available/87-mod_setenv.conf /etc/lighttpd/conf-enabled/87-mod_setenv.conf
     while read -r FILE; do
         sed -i -e 's/^server.modules.*mod_setenv.*/#\0/'  "$FILE"
