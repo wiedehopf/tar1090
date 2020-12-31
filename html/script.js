@@ -706,10 +706,12 @@ function initPage() {
     });
 
     $("#splitter").dblclick(function() {
+        $('#legend').hide();
         $('#sidebar_container').width('auto');
         updateMapSize();
         localStorage['sidebar_width'] = $('#sidebar_container').width();
         $('#sidebar_container').width(localStorage['sidebar_width']);
+        $('#legend').show();
     });
 
     if (localStorage['sidebar_width'] != null)
@@ -1019,6 +1021,7 @@ function initLegend(colors) {
     if (globeIndex)
         html += '<div class="legendTitle" style="background-color:' + colors['uat'] + ';">ADS-C/R / UAT</div>';
     html += '<div class="legendTitle" style="background-color:' + colors['mlat'] + ';">MLAT</div>';
+    html += '<br>';
     html += '<div class="legendTitle" style="background-color:' + colors['tisb'] + ';">TIS-B</div>';
     if (!globeIndex)
         html += '<div class="legendTitle" style="background-color:' + colors['modeS'] + ';">Mode-S</div>';

@@ -366,12 +366,10 @@ select.error, textarea.error, input.error {
 
 .legend
 {
-    width: 100%;
     font-size: 110%;
     color: #000000;
-    color: rgb(0, 0, 0);
-    display: inline-flex;
-    justify-content: space-around;
+    display: flex;
+    flex-wrap: wrap;
     padding-top: calc( 10px * var(--SCALE));
 }
 
@@ -566,10 +564,9 @@ table.infoSectionTable tr td {
 
 .legendTitle {
     line-height: calc( 19px * var(--SCALE));
-    display: inline-block;
-    padding-right: calc( 5px * var(--SCALE));
-    padding-left: calc( 5px * var(--SCALE));
-    white-space: nowrap;
+    padding-right: calc( 3px * var(--SCALE));
+    padding-left: calc( 3px * var(--SCALE));
+    margin: calc( 2px * var(--SCALE));
 }
 
 #settings_infoblock {
