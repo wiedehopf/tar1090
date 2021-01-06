@@ -690,7 +690,7 @@ let TypeDesignatorIcons = {
     'B74D': ['heavy_4e', 0.96],
     'B74S': ['heavy_4e', 0.96],
     'B74R': ['heavy_4e', 0.96],
-    'BLCF': ['heavy_2e', 0.96],
+    'BLCF': ['heavy_4e', 0.96],
     'BSCA': ['heavy_4e', 0.96], // hah!
     'B748': ['heavy_4e', 0.98],
 
