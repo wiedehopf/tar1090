@@ -802,6 +802,7 @@ let TypeDesignatorIcons = {
 
     'C97': ['super_guppy', 1],
     'A3ST': ['beluga', 1],
+    'A337': ['beluga', 1.06],
     'WB57': ['wb57', 1],
 
     'A37': ['hi_perf', 1],
