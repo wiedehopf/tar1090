@@ -2190,7 +2190,8 @@ PlaneObject.prototype.milRange = function() {
         || (i >= 0xe40000 && i <= 0xe41fff)
 
         //e80600-e806ff = chile mil(cq)
-        || (i >= 0xe80600 && i <= 0xe806ff)
+        //|| (i >= 0xe80600 && i <= 0xe806ff)
+        // disabled due to civilian aircraft in hex range
     );
 };
 
