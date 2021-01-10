@@ -328,7 +328,7 @@ function fetchData(options) {
 
     if (globeIndex) {
         clearTimeout(refreshId);
-        refreshId = setTimeout(fetchData, 25000);
+        refreshId = setTimeout(fetchData, 10000);
     } else {
         $("#lastLeg_cb").parent().hide();
     }
