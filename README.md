@@ -246,6 +246,12 @@ It will be available at /
 If nginx is installed, the install script should give you a configuration file
 you can include.  The configuration needs to go into the appropriate server { }
 section.
+In the usual configuration that means to add this line:
+```
+include /usr/local/share/tar1090/nginx-tar1090.conf;
+```
+in the server { } section of either `/etc/nginx/sites-enabled/default` or `/etc/nginx/conf.d/default.conf` depending on your system configuration.
+Don't forget to restart the nginx service.
 
 ## heywhatsthat.com range outline:
 
