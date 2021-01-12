@@ -310,15 +310,21 @@ function fetchData(options) {
             return (globeIndexNow[x] - globeIndexNow[y]);
         });
 
-        indexes = indexes.slice(0, globeSimLoad);
-        refreshMultiplier = 1;
-        if (indexes.length <= 4 && TrackedAircraftPositions < 150 || fetchCounter < 50)
-            refreshMultiplier = 0.7;
+        if (binCraft && onlyMilitary && indexes.length > 2 * globeSimLoad) {
+            ac_url.push('data/globeMil_42777.binCraft');
+            refreshMultiplier = Math.min(5, indexes.length / globeSimLoad);
+        } else {
 
-        let suffix = binCraft ? '.binCraft' : '.json'
-        let mid = (binCraft && onlyMilitary) ? 'Mil_' : '_';
-        for (let i in indexes) {
-            ac_url.push('data/globe' + mid + indexes[i].toString().padStart(4, '0') + suffix);
+            indexes = indexes.slice(0, globeSimLoad);
+            refreshMultiplier = 1;
+            if (indexes.length <= 4 && TrackedAircraftPositions < 150 || fetchCounter < 50)
+                refreshMultiplier = 0.7;
+
+            let suffix = binCraft ? '.binCraft' : '.json'
+            let mid = (binCraft && onlyMilitary) ? 'Mil_' : '_';
+            for (let i in indexes) {
+                ac_url.push('data/globe' + mid + indexes[i].toString().padStart(4, '0') + suffix);
+            }
         }
     } else {
         ac_url[0] = 'data/aircraft.json';
