@@ -253,9 +253,11 @@ function processReceiverUpdate(data, init) {
         processAircraft(data.aircraft[j], init, uat);
 }
 
+let nextFetch = 0;
 function fetchSoon() {
     clearTimeout(refreshId);
     refreshId = setTimeout(fetchData, refreshInt());
+    nextFetch = new Date().getTime() + refreshInt();
 }
 
 function fetchData(options) {
@@ -334,8 +336,7 @@ function fetchData(options) {
     fetchCounter += pendingFetches;
 
     if (globeIndex) {
-        clearTimeout(refreshId);
-        refreshId = setTimeout(fetchData, 10000);
+        fetchSoon();
     } else {
         $("#lastLeg_cb").parent().hide();
     }
@@ -5557,10 +5558,14 @@ function getInactive() {
 
 function active() {
     let now = new Date().getTime();
-    if ((now - lastActive) > 200 * 1000) {
+    if ((now - lastActive) > 90 * 1000) {
         fetchData();
     }
     lastActive = now;
+    // avoid long periods of not fetching data for active users
+    if ((nextFetch - lastFetch) > 8000) {
+        fetchData();
+    }
 }
 
 function drawTileBorder(data) {
