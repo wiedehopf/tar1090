@@ -63,8 +63,9 @@ let globeIndexNow = {};
 let globeIndexDist = {};
 let globeIndexSpecialLookup = {};
 let globeTilesViewCount = 0;
-let globeSimLoad = 16;
+let globeSimLoad = 12;
 let globeTableLimit = 80;
+let fetchCounter = 0;
 let lastGlobeExtent;
 let pendingFetches = 0;
 let firstFetch = true;
@@ -292,7 +293,6 @@ function fetchData(options) {
             FetchPendingUAT = null;
         });
     }
-    buttonActive('#F', FollowSelected);
 
     let ac_url = [];
     if (uuid != null) {
@@ -311,9 +311,9 @@ function fetchData(options) {
         });
 
         indexes = indexes.slice(0, globeSimLoad);
-        refreshMultiplier = Math.max(1, indexes.length / globeSimLoad);
-        if (indexes.length <= 4)
-            refreshMultiplier *= 0.8
+        refreshMultiplier = 1;
+        if (indexes.length <= 4 && TrackedAircraftPositions < 150 || fetchCounter < 50)
+            refreshMultiplier = 0.7;
 
         let suffix = binCraft ? '.binCraft' : '.json'
         let mid = (binCraft && onlyMilitary) ? 'Mil_' : '_';
@@ -325,6 +325,7 @@ function fetchData(options) {
     }
 
     pendingFetches = ac_url.length;
+    fetchCounter += pendingFetches;
 
     if (globeIndex) {
         clearTimeout(refreshId);
