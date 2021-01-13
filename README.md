@@ -12,8 +12,6 @@ Provides an improved webinterface for use with ADS-B decoders readsb / dump1090-
 - Multiple aircraft can be selected
 - Labels with the callsign can be switched on and off
 
-See the bottom of the page for screenshots
-
 ## NO WARRANTY
 
 See the bottom of this page or the LICENSE for details.
@@ -269,10 +267,12 @@ sudo wget -O /usr/local/share/tar1090/html/upintheair.json "http://www.heywhatst
 
 ## /tar1090/?pTracks
 
-- Add /?pTracks to the normal /tar1090 URL you put in
+![Screenshot2](https://raw.githubusercontent.com/wiedehopf/tar1090/screenshots/screenshot4.png)
+
+- Add /?pTracks to the normal /tar1090 URL you put in (http://192.168.x.yy/tar1090/?pTracks)
 - Shows the last 8 hours of traces you have seen, gives a nice visual representation of your coverage / range
 - Can be filtered by altitude with the altitude filter
-- Configure a longer duration than 8 hours via the [configuration](#configuration-optional):
+- Configure a longer duration than 8 hours via the [configuration](#configuration-optional)
 
 ## 0800-DESTROY-SD-CARD
 
