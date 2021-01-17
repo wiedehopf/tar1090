@@ -38,107 +38,120 @@ let initialURL = window.location.href;
 
 let uuid = null;
 
-
+let usp;
 try {
-    const search = new URLSearchParams(window.location.search);
-    if (search.has('reset')) {
-        localStorage.clear();
-        if (window.history && window.history.replaceState) {
-            window.history.replaceState("object or string", "Title", window.location.pathname);
-            location.reload();
-        }
+    // let's make this case insensitive
+    usp = {
+        params: new URLSearchParams(window.location.search),
+        has: function(s) {return this.params.has(s.toLowerCase());},
+        get: function(s) {return this.params.get(s.toLowerCase());},
+    };
+    for (const [k, v] of usp.params) {
+        usp.params[k.toLowerCase()] = v;
     }
-    const feed = search.get('feed');
-    if (feed != null) {
-        uuid = feed;
-        console.log('uuid: ' + uuid);
-        if (uuid.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i)) {
-            console.log('redirecting the idiot, oui!');
-            let URL = 'https://www.adsbexchange.com/api/feeders/tar1090/?feed=' + uuid;
-            console.log(URL);
-            //window.history.pushState(URL, "Title", URL);
-            window.location.href = URL;
-        }
-    }
-    if (search.has('tfrs')) {
-        tfrs = true;
-    }
-
-    const customTiles = search.get('customTiles');
-    if (customTiles)
-        localStorage['customTiles'] = customTiles;
-    if (customTiles == 'remove')
-        localStorage.removeItem('customTiles');
-
-    const bingKey = search.get('BingMapsAPIKey');
-    if (bingKey)
-        localStorage['bingKey'] = bingKey;
-    if (bingKey == 'remove')
-        localStorage.removeItem('bingKey');
-
-    if (search.has('L3Harris') || search.has('l3harris'))
-        l3harris = true;
-    if (search.has('r')) {
-        replay = true;
-    }
-    if (search.has('heatmap')) {
-
-        heatmap = {};
-
-        heatmap.max = 32000;
-        heatmap.init = true;
-        heatmap.duration = 24;
-        heatmap.end = (new Date()).getTime();
-
-        let tmp = parseFloat(search.get('heatDuration'));
-        if (!isNaN(tmp))
-            heatmap.duration = tmp;
-        if (heatmap.duration < 0.5)
-            heatmap.duration = 0.5;
-        tmp = parseFloat(search.get('heatEnd'));
-        if (!isNaN(tmp))
-            heatmap.end -= tmp * 3600 * 1000;
-        if (search.has('heatLines'))
-            heatmap.lines = true;
-        tmp = parseFloat(search.get('heatAlpha'));
-        if (!isNaN(tmp)) {
-            heatmap.alpha = tmp;
-            console.log('heatmap.alpha = ' + tmp);
-        }
-        heatmap.radius = 2.5;
-        if (search.has('realHeat')) {
-            heatmap.max = 50000;
-            heatmap.real = true;
-            heatmap.radius = 1.5;
-            heatmap.blur = 4;
-            heatmap.weight = 0.25;
-
-            tmp = parseFloat(search.get('heatBlur'));
-            if (!isNaN(tmp))
-                heatmap.blur = tmp;
-
-            tmp = parseFloat(search.get('heatWeight'));
-            if (!isNaN(tmp))
-                heatmap.weight = tmp;
-        }
-        tmp = parseFloat(search.get('heatRadius'));
-        if (!isNaN(tmp))
-            heatmap.radius = tmp;
-        let val;
-        if (val = parseInt(search.get('heatmap'), 10))
-            heatmap.max = val;
-    }
-
-    if (search.has('pTracks')) {
-        let tmp = parseFloat(search.get('pTracks'))
-        if (tmp > 0 && tmp < 9999)
-            pTracks = tmp;
-        else
-            pTracks = 9999;
-    }
-
 } catch (error) {
     console.error(error);
+    usp = {
+        has: function() {return false;},
+        get: function() {return null;},
+    }
+}
+
+if (usp.has('reset')) {
+    localStorage.clear();
+    if (window.history && window.history.replaceState) {
+        window.history.replaceState("object or string", "Title", window.location.pathname);
+        location.reload();
+    }
+}
+const feed = usp.get('feed');
+if (feed != null) {
+    uuid = feed;
+    console.log('uuid: ' + uuid);
+    if (uuid.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i)) {
+        console.log('redirecting the idiot, oui!');
+        let URL = 'https://www.adsbexchange.com/api/feeders/tar1090/?feed=' + uuid;
+        console.log(URL);
+        //window.history.pushState(URL, "Title", URL);
+        window.location.href = URL;
+    }
+}
+if (usp.has('tfrs')) {
+    tfrs = true;
+}
+
+const customTiles = usp.get('customTiles');
+if (customTiles)
+    localStorage['customTiles'] = customTiles;
+if (customTiles == 'remove')
+    localStorage.removeItem('customTiles');
+
+const bingKey = usp.get('BingMapsAPIKey');
+if (bingKey)
+    localStorage['bingKey'] = bingKey;
+if (bingKey == 'remove')
+    localStorage.removeItem('bingKey');
+
+if (usp.has('L3Harris') || usp.has('l3harris'))
+    l3harris = true;
+if (usp.has('r')) {
+    replay = true;
+}
+
+if (usp.has('heatmap')) {
+
+    heatmap = {};
+
+    heatmap.max = 32000;
+    heatmap.init = true;
+    heatmap.duration = 24;
+    heatmap.end = (new Date()).getTime();
+
+    let tmp = parseFloat(usp.get('heatDuration'));
+    if (!isNaN(tmp))
+        heatmap.duration = tmp;
+    if (heatmap.duration < 0.5)
+        heatmap.duration = 0.5;
+    tmp = parseFloat(usp.get('heatEnd'));
+    if (!isNaN(tmp))
+        heatmap.end -= tmp * 3600 * 1000;
+    if (usp.has('heatLines'))
+        heatmap.lines = true;
+    tmp = parseFloat(usp.get('heatAlpha'));
+    if (!isNaN(tmp)) {
+        heatmap.alpha = tmp;
+        console.log('heatmap.alpha = ' + tmp);
+    }
+    heatmap.radius = 2.5;
+    if (usp.has('realHeat')) {
+        heatmap.max = 50000;
+        heatmap.real = true;
+        heatmap.radius = 1.5;
+        heatmap.blur = 4;
+        heatmap.weight = 0.25;
+
+        tmp = parseFloat(usp.get('heatBlur'));
+        if (!isNaN(tmp))
+            heatmap.blur = tmp;
+
+        tmp = parseFloat(usp.get('heatWeight'));
+        if (!isNaN(tmp))
+            heatmap.weight = tmp;
+    }
+    tmp = parseFloat(usp.get('heatRadius'));
+    if (!isNaN(tmp))
+        heatmap.radius = tmp;
+    let val;
+    if (val = parseInt(usp.get('heatmap'), 10))
+        heatmap.max = val;
+}
+
+if (usp.has('pTracks')) {
+    let tmp = parseFloat(usp.get('pTracks'))
+    if (tmp > 0 && tmp < 9999)
+        pTracks = tmp;
+    else
+        pTracks = 9999;
 }
 
 function zDateString(date) {

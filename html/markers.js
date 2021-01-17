@@ -1181,7 +1181,7 @@ function iconTest() {
         };
         img.src = svg;
 
-        if (new URLSearchParams(window.location.search).has('grid')) {
+        if (usp.has('grid')) {
             let svg = svgShapeToURI(refCross, '#FFFFFF', '#000000', 0.75, 1);
             let img = document.createElement('img');
             img.onload = function () {

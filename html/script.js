@@ -438,13 +438,9 @@ function fetchData(options) {
 // this function is called from index.html on body load
 // kicks off the whole rabbit hole
 function initialize() {
-    try {
-        if (new URLSearchParams(window.location.search).has('iconTest')) {
-            iconTest();
-            return;
-        }
-    } catch (error) {
-        console.log(error);
+    if (usp.has('iconTest')) {
+        iconTest();
+        return;
     }
 
     $.when(configureReceiver, heatmapDefer).done(function() {
@@ -483,174 +479,166 @@ function initPage() {
         largeMode = parseInt(largeModeStorage, 10);
     }
 
-    try {
-        const search = new URLSearchParams(window.location.search);
+    if (usp.has('nowebgl')) {
+        localStorage['webgl'] = "false";
+    }
+    if (usp.has('showGrid')) {
+        showGrid = true;
+        localStorage['layer_site_pos'] = 'true';
+    }
 
-        if (search.has('nowebgl')) {
-            localStorage['webgl'] = "false";
+    if (usp.has('halloween'))
+        halloween = true;
+
+    if (usp.has('onlyDataSource'))
+        onlyDataSource = usp.get('onlyDataSource');
+
+    if (usp.has('outlineWidth')) {
+        let tmp = parseInt(usp.get('outlineWidth'));
+        if (!isNaN(tmp))
+            outlineWidth = tmp;
+    }
+
+    if (usp.has('kiosk')) {
+        tempTrails = true;
+        hideButtons = true;
+        largeMode = 2;
+    }
+
+    if (pTracks) {
+        noVanish = true;
+        buttonActive('#P', noVanish);
+        filterTracks = true;
+        selectAllPlanes();
+    }
+
+    if (usp.has('largeMode')) {
+        let tmp = parseInt(usp.get('largeMode'));
+        console.log(tmp);
+        if (!isNaN(tmp))
+            largeMode = tmp;
+    }
+
+    if (usp.has('mobile'))
+        onMobile = true;
+    if (usp.has('desktop'))
+        onMobile = false;
+
+    if (usp.has('hideSidebar'))
+        localStorage['sidebar_visible'] = "false";
+    if (usp.has('sidebarWidth')) {
+        localStorage['sidebar_width'] = usp.get('sidebarWidth');
+        localStorage['sidebar_visible'] = "true";
+    }
+
+    if (usp.has('SiteLat') && usp.has('SiteLon')) {
+        localStorage['SiteLat'] = usp.get('SiteLat');
+        localStorage['SiteLon'] = usp.get('SiteLon');
+    }
+    if (localStorage['SiteLat'] != null && localStorage['SiteLon'] != null) {
+        if (usp.has('SiteClear')
+            || isNaN(parseFloat(localStorage['SiteLat']))
+            || isNaN(parseFloat(localStorage['SiteLat']))) {
+            localStorage.removeItem('SiteLat');
+            localStorage.removeItem('SiteLon');
+        } else {
+            SiteLat = CenterLat = DefaultCenterLat = parseFloat(localStorage['SiteLat']);
+            SiteLon = CenterLon = DefaultCenterLon = parseFloat(localStorage['SiteLon']);
+            SiteOverride = true;
         }
-        if (search.has('showGrid')) {
-            showGrid = true;
-            localStorage['layer_site_pos'] = 'true';
-        }
+    }
 
-        if (search.has('halloween'))
-            halloween = true;
+    if (usp.has('tempTrails')) {
+        tempTrails = true;
+        let tmp = parseInt(usp.get('tempTrails'));
+        if (tmp > 0)
+            tempTrailsTimeout = tmp;
+    }
+    if (usp.has('squareMania')) {
+        squareMania = true;
+    }
+    if (usp.has('mapDim')) {
+        let dim = parseFloat(usp.get('mapDim'));
+        if (!isNaN(dim))
+            mapDimPercentage = dim;
+    } else if (heatmap) {
+        mapDimPercentage = 0.6;
+        MapDim = true;
+    }
 
-        if (search.has('onlyDataSource'))
-            onlyDataSource = search.get('onlyDataSource');
+    if (usp.has('noRegOnly'))
+        noRegOnly = true;
 
-        if (search.has('outlineWidth')) {
-            let tmp = parseInt(search.get('outlineWidth'));
-            if (!isNaN(tmp))
-                outlineWidth = tmp;
-        }
-
-        if (search.has('kiosk')) {
-            tempTrails = true;
-            hideButtons = true;
-            largeMode = 2;
-        }
-
-        if (search.has('pTracks')) {
-            noVanish = true;
-            buttonActive('#P', noVanish);
-            filterTracks = true;
-            selectAllPlanes();
-        }
-
-        if (search.has('largeMode')) {
-            let tmp = parseInt(search.get('largeMode'));
-            console.log(tmp);
-            if (!isNaN(tmp))
-                largeMode = tmp;
-        }
-
-        if (search.has('mobile'))
-            onMobile = true;
-        if (search.has('desktop'))
-            onMobile = false;
-
-        if (search.has('hideSidebar'))
-            localStorage['sidebar_visible'] = "false";
-        if (search.has('sidebarWidth')) {
-            localStorage['sidebar_width'] = search.get('sidebarWidth');
-            localStorage['sidebar_visible'] = "true";
-        }
-
-        if (search.has('SiteLat') && search.has('SiteLon')) {
-            localStorage['SiteLat'] = search.get('SiteLat');
-            localStorage['SiteLon'] = search.get('SiteLon');
-        }
-        if (localStorage['SiteLat'] != null && localStorage['SiteLon'] != null) {
-            if (search.has('SiteClear')
-                || isNaN(parseFloat(localStorage['SiteLat']))
-                || isNaN(parseFloat(localStorage['SiteLat']))) {
-                localStorage.removeItem('SiteLat');
-                localStorage.removeItem('SiteLon');
-            } else {
-                SiteLat = CenterLat = DefaultCenterLat = parseFloat(localStorage['SiteLat']);
-                SiteLon = CenterLon = DefaultCenterLon = parseFloat(localStorage['SiteLon']);
-                SiteOverride = true;
-            }
-        }
-
-        if (search.has('tempTrails')) {
-            tempTrails = true;
-            let tmp = parseInt(search.get('tempTrails'));
-            if (tmp > 0)
-                tempTrailsTimeout = tmp;
-        }
-        if (search.has('squareMania')) {
-            squareMania = true;
-        }
-        if (search.has('mapDim')) {
-            let dim = parseFloat(search.get('mapDim'));
-            if (!isNaN(dim))
-                mapDimPercentage = dim;
-        } else if (heatmap) {
-            mapDimPercentage = 0.6;
-            MapDim = true;
-        }
-
-        if (search.has('noRegOnly'))
-            noRegOnly = true;
-
-        if (search.has('mapContrast')) {
-            let contrast = parseFloat(search.get('mapContrast'));
-            if (!isNaN(contrast))
+    if (usp.has('mapContrast')) {
+        let contrast = parseFloat(usp.get('mapContrast'));
+        if (!isNaN(contrast))
             mapContrastPercentage = contrast;
+    }
+
+    if (usp.has('iconScale')) {
+        let scale = parseFloat(usp.get('iconScale'));
+        if (!isNaN(scale))
+            iconScale = scale;
+    }
+
+    if (usp.has('labelScale')) {
+        let scale = parseFloat(usp.get('labelScale'));
+        if (!isNaN(scale))
+            labelScale = scale;
+    }
+
+    if (usp.has('scale')) {
+        let scale = parseFloat(usp.get('scale'));
+        if (!isNaN(scale))
+            userScale = scale;
+    }
+
+    if (usp.has('hideButtons'))
+        hideButtons = true;
+
+    if (usp.has('baseMap'))
+        overrideMapType = usp.get('baseMap');
+
+    if (usp.has('overlays'))
+        enableOverlays = usp.get('overlays').split(',');
+
+    icaoFilter = usp.get('icaoFilter');
+    if (icaoFilter)
+        icaoFilter = icaoFilter.toLowerCase().split(',');
+
+    if (usp.has('filterMaxRange')) {
+        let tmp = parseFloat(usp.get('filterMaxRange'));
+        if (!isNaN(tmp))
+            filterMaxRange = tmp;
+    }
+    filterMaxRange *= 1852; // convert from nmi to meters
+
+
+    if (usp.has('r')) {
+        let numbers = (usp.get('r') || "").split('-');
+        let ts = new Date();
+        ts.setUTCHours(ts.getUTCHours() - 1);
+        if (numbers.length == 5) {
+            ts.setUTCFullYear(numbers[0]);
+            ts.setUTCMonth(numbers[1] - 1);
+            ts.setUTCDate(numbers[2]);
+            ts.setUTCHours(numbers[3]);
+            ts.setUTCMinutes(numbers[4]);
         }
 
-        if (search.has('iconScale')) {
-            let scale = parseFloat(search.get('iconScale'));
-            if (!isNaN(scale))
-                iconScale = scale;
-        }
-
-        if (search.has('labelScale')) {
-            let scale = parseFloat(search.get('labelScale'));
-            if (!isNaN(scale))
-                labelScale = scale;
-        }
-
-        if (search.has('scale')) {
-            let scale = parseFloat(search.get('scale'));
-            if (!isNaN(scale))
-                userScale = scale;
-        }
-
-        if (search.has('hideButtons'))
-            hideButtons = true;
-
-        if (search.has('baseMap'))
-            overrideMapType = search.get('baseMap');
-
-        if (search.has('overlays'))
-            enableOverlays = search.get('overlays').split(',');
-
-        icaoFilter = search.get('icaoFilter');
-        if (icaoFilter)
-            icaoFilter = icaoFilter.toLowerCase().split(',');
-
-        if (search.has('filterMaxRange')) {
-            let tmp = parseFloat(search.get('filterMaxRange'));
-            if (!isNaN(tmp))
-                filterMaxRange = tmp;
-        }
-        filterMaxRange *= 1852; // convert from nmi to meters
-
-
-        if (search.has('r')) {
-            let numbers = (search.get('r') || "").split('-');
-            let ts = new Date();
-            ts.setUTCHours(ts.getUTCHours() - 1);
-            if (numbers.length == 5) {
-                ts.setUTCFullYear(numbers[0]);
-                ts.setUTCMonth(numbers[1] - 1);
-                ts.setUTCDate(numbers[2]);
-                ts.setUTCHours(numbers[3]);
-                ts.setUTCMinutes(numbers[4]);
-            }
-
-            replay = {
-                ts: ts,
-                ival: 60 * 1000,
-                speed: 40,
-            };
-        }
-
-
-    } catch (error) {
-        console.error(error);
+        replay = {
+            ts: ts,
+            ival: 60 * 1000,
+            speed: 40,
+        };
     }
 
     if (onMobile)
         enableMouseover = false;
 
     if (false && iOSVersion() <= 12 && !('PointerEvent' in window)) {
-            $("#generic_error_detail").text("Enable Settings - Safari - Advanced - Experimental features - Pointer Events");
-            $("#generic_error").css('display','block');
+        $("#generic_error_detail").text("Enable Settings - Safari - Advanced - Experimental features - Pointer Events");
+        $("#generic_error").css('display','block');
         setTimeout(function() {
             $("#generic_error").css('display','none');
         }, 30000);
@@ -4031,130 +4019,125 @@ function highlight(evt) {
 }
 
 function processURLParams(){
-    try {
-        const search = new URLSearchParams(window.location.search);
 
-        let icaos = [];
-        let valid = [];
-        let icao = null;
-        if (search.has('icao')) {
-            icaos = search.get('icao').toLowerCase().split(',');
-            for (let i = 0; i < icaos.length; i++) {
-                icao = icaos[i].toLowerCase();
-                if (icao && (icao.length == 7 || icao.length == 6) && icao.toLowerCase().match(/[a-f,0-9]{6}/)) {
-                    valid.push(icao);
-                    if (i == 0)
-                        icaoParam = icao;
-                }
+    let icaos = [];
+    let valid = [];
+    let icao = null;
+    if (usp.has('icao')) {
+        icaos = usp.get('icao').toLowerCase().split(',');
+        for (let i = 0; i < icaos.length; i++) {
+            icao = icaos[i].toLowerCase();
+            if (icao && (icao.length == 7 || icao.length == 6) && icao.toLowerCase().match(/[a-f,0-9]{6}/)) {
+                valid.push(icao);
+                if (i == 0)
+                    icaoParam = icao;
             }
         }
+    }
 
-        icaos = valid.reverse();
+    icaos = valid.reverse();
 
-        traceDateString = search.get('showTrace');
-        const callsign = search.get('callsign');
-        let zoom = null;
-        let follow = true;
-        if (search.get("zoom")) {
-            try {
-                zoom = parseFloat(search.get("zoom"));
-                if (zoom === 0)
-                    zoom = 8;
-            } catch (error) {
-                console.log("Error parsing zoom:", error);
-            }
+    traceDateString = usp.get('showTrace');
+    const callsign = usp.get('callsign');
+    let zoom = null;
+    let follow = true;
+    if (usp.get("zoom")) {
+        try {
+            zoom = parseFloat(usp.get("zoom"));
+            if (zoom === 0)
+                zoom = 8;
+        } catch (error) {
+            console.log("Error parsing zoom:", error);
         }
+    }
 
-        if (search.get("lat") && search.get("lon")) {
-            try {
-                const lat = parseFloat(search.get("lat"));
-                const lon = parseFloat(search.get("lon"));
-                OLMap.getView().setCenter(ol.proj.fromLonLat([lon, lat]));
-                follow = false;
-                noPan = true;
-            }
-            catch (error) {
-                console.log("Error parsing lat/lon:", error);
-            }
+    if (usp.get("lat") && usp.get("lon")) {
+        try {
+            const lat = parseFloat(usp.get("lat"));
+            const lon = parseFloat(usp.get("lon"));
+            OLMap.getView().setCenter(ol.proj.fromLonLat([lon, lat]));
+            follow = false;
+            noPan = true;
         }
+        catch (error) {
+            console.log("Error parsing lat/lon:", error);
+        }
+    }
 
-        if (icaos.length > 0) {
-            if (!search.has('noIsolation'))
-                toggleIsolation("on", false);
-            if (icaos.length > 1)
-                toggleMultiSelect("on");
-            for (let i = 0; i < icaos.length; i++) {
-                icao = icaos[i];
-                if (Planes[icao] || globeIndex) {
-                    console.log('Selected ICAO id: '+ icao);
-                    let selectOptions = {follow: follow};
-                    if (traceDateString != null) {
-                        toggleShowTrace();
-                        if (!zoom)
-                            zoom = 5;
-                    } else {
-                        if (!zoom)
-                            zoom = 7;
-                        selectPlaneByHex(icao, selectOptions)
-                    }
+    if (icaos.length > 0) {
+        if (!usp.has('noIsolation'))
+            toggleIsolation("on", false);
+        if (icaos.length > 1)
+            toggleMultiSelect("on");
+        for (let i = 0; i < icaos.length; i++) {
+            icao = icaos[i];
+            if (Planes[icao] || globeIndex) {
+                console.log('Selected ICAO id: '+ icao);
+                let selectOptions = {follow: follow};
+                if (traceDateString != null) {
+                    toggleShowTrace();
+                    if (!zoom)
+                        zoom = 5;
                 } else {
-                    console.log('ICAO id not found: ' + icao);
+                    if (!zoom)
+                        zoom = 7;
+                    selectPlaneByHex(icao, selectOptions)
                 }
+            } else {
+                console.log('ICAO id not found: ' + icao);
             }
-            updateAddressBar();
-        } else if (callsign != null) {
-            findPlanes(callsign, false, true, false, false);
         }
+        updateAddressBar();
+    } else if (callsign != null) {
+        findPlanes(callsign, false, true, false, false);
+    }
 
-        if (zoom) {
-            OLMap.getView().setZoom(zoom);
-        }
+    if (zoom) {
+        OLMap.getView().setZoom(zoom);
+    }
 
-        if (search.has('mil'))
-            toggleMilitary();
+    if (usp.has('mil'))
+        toggleMilitary();
 
-        if (search.has('airport')) {
-            airport = search.get('airport').trim().toUpperCase();
-            onJump();
-        }
+    if (usp.has('airport')) {
+        airport = usp.get('airport').trim().toUpperCase();
+        onJump();
+    }
 
-        if (search.has('leg')) {
-            legSel = parseInt(search.get('leg'), 10);
-            if (isNaN(legSel) || legSel < -1)
-                legSel = -1;
-            else
-                legSel--;
-        }
+    if (usp.has('leg')) {
+        legSel = parseInt(usp.get('leg'), 10);
+        if (isNaN(legSel) || legSel < -1)
+            legSel = -1;
+        else
+            legSel--;
+    }
 
-        let tracks = search.get('monochromeTracks');
-        if (tracks != undefined) {
-            if (tracks.length == 6)
-                monochromeTracks = '#' + tracks;
-            else
-                monochromeTracks = "#000000";
-        }
+    let tracks = usp.get('monochromeTracks');
+    if (tracks != undefined) {
+        if (tracks.length == 6)
+            monochromeTracks = '#' + tracks;
+        else
+            monochromeTracks = "#000000";
+    }
 
-        let markers = search.get('monochromeMarkers');
-        if (markers != undefined) {
-            if (markers.length == 6)
-                monochromeMarkers = '#' + markers;
-            else
-                monochromeMarkers = "#FFFFFF";
-        }
+    let markers = usp.get('monochromeMarkers');
+    if (markers != undefined) {
+        if (markers.length == 6)
+            monochromeMarkers = '#' + markers;
+        else
+            monochromeMarkers = "#FFFFFF";
+    }
 
-        let outlineColor = search.get('outlineColor');
-        if (outlineColor != undefined) {
-            if (outlineColor.length == 6)
-                OutlineADSBColor = '#' + outlineColor;
-            else
-                OutlineADSBColor = "#000000";
-        }
+    let outlineColor = usp.get('outlineColor');
+    if (outlineColor != undefined) {
+        if (outlineColor.length == 6)
+            OutlineADSBColor = '#' + outlineColor;
+        else
+            OutlineADSBColor = "#000000";
+    }
 
-        if (search.has('centerReceiver')) {
-            OLMap.getView().setCenter(ol.proj.fromLonLat([SiteLon, SiteLat]));
-        }
-    } catch (error) {
-        console.log(error);
+    if (usp.has('centerReceiver')) {
+        OLMap.getView().setCenter(ol.proj.fromLonLat([SiteLon, SiteLat]));
     }
 }
 
