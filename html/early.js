@@ -42,12 +42,13 @@ let usp;
 try {
     // let's make this case insensitive
     usp = {
-        params: new URLSearchParams(window.location.search),
+        params: new URLSearchParams(),
         has: function(s) {return this.params.has(s.toLowerCase());},
         get: function(s) {return this.params.get(s.toLowerCase());},
     };
-    for (const [k, v] of usp.params) {
-        usp.params[k.toLowerCase()] = v;
+    const inputParams = new URLSearchParams(window.location.search);
+    for (const [k, v] of inputParams) {
+        usp.params.append(k.toLowerCase(), v);
     }
 } catch (error) {
     console.error(error);
