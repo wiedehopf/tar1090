@@ -63,7 +63,7 @@ let globeIndexNow = {};
 let globeIndexDist = {};
 let globeIndexSpecialLookup = {};
 let globeTilesViewCount = 0;
-let globeSimLoad = 12;
+let globeSimLoad = 9;
 let globeTableLimit = 80;
 let fetchCounter = 0;
 let lastGlobeExtent;
@@ -314,12 +314,12 @@ function fetchData(options) {
 
         if (binCraft && onlyMilitary && indexes.length > 2 * globeSimLoad) {
             ac_url.push('data/globeMil_42777.binCraft');
-            refreshMultiplier = Math.min(5, indexes.length / globeSimLoad);
+            refreshMultiplier = Math.min(8, indexes.length / globeSimLoad);
         } else {
 
             indexes = indexes.slice(0, globeSimLoad);
             refreshMultiplier = 1;
-            if (indexes.length <= 4 && TrackedAircraftPositions < 150 || fetchCounter < 50)
+            if (indexes.length <= 4 && TrackedAircraftPositions < 150 || fetchCounter < 25)
                 refreshMultiplier = 0.7;
 
             let suffix = binCraft ? '.binCraft' : '.json'
@@ -425,10 +425,12 @@ function fetchData(options) {
         req.fail(function(jqxhr, status, error) {
             status = jqxhr.status;
             let errText = status + (error ? (": " + error) : "");
-            $("#update_error_detail").text(errText);
-            //console.error(errText);
-            $("#update_error").css('display','block');
-            StaleReceiverCount++;
+            if (status != 429 && status != '429') {
+                $("#update_error_detail").text(errText);
+                //console.error(errText);
+                $("#update_error").css('display','block');
+                StaleReceiverCount++;
+            }
             pendingFetches--;
             fetchSoon();
         });
