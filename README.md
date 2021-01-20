@@ -42,7 +42,7 @@ Check further down for keyboard shortcuts.
 ## Update (same command as installation)
 
 ```
-sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"
+sudo bash -c "$(wget -nv -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"
 ```
 
 Configuration should be preserved.
