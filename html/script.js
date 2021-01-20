@@ -63,7 +63,7 @@ let globeIndexNow = {};
 let globeIndexDist = {};
 let globeIndexSpecialLookup = {};
 let globeTilesViewCount = 0;
-let globeSimLoad = 4;
+let globeSimLoad = 6;
 let globeTableLimit = 80;
 let fetchCounter = 0;
 let lastGlobeExtent;
@@ -312,9 +312,9 @@ function fetchData(options) {
             return (globeIndexNow[x] - globeIndexNow[y]);
         });
 
-        if (binCraft && onlyMilitary && indexes.length > 3 * globeSimLoad) {
+        if (binCraft && onlyMilitary && indexes.length > 12) {
             ac_url.push('data/globeMil_42777.binCraft');
-            refreshMultiplier = Math.min(4, indexes.length / globeSimLoad);
+            refreshMultiplier = Math.min(6, indexes.length / 4);
         } else {
 
             indexes = indexes.slice(0, globeSimLoad);
@@ -4447,7 +4447,7 @@ function refreshInt() {
         return 24 * 3600 * 1000; // hidden tab, don't refresh to avoid freeze when the tab is switched to again.
 
     if (adsbexchange)
-        refresh = 4500;
+        refresh = 1800;
 
     let inactive = getInactive();
 
