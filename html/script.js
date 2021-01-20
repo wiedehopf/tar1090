@@ -63,7 +63,7 @@ let globeIndexNow = {};
 let globeIndexDist = {};
 let globeIndexSpecialLookup = {};
 let globeTilesViewCount = 0;
-let globeSimLoad = 9;
+let globeSimLoad = 4;
 let globeTableLimit = 80;
 let fetchCounter = 0;
 let lastGlobeExtent;
@@ -312,15 +312,15 @@ function fetchData(options) {
             return (globeIndexNow[x] - globeIndexNow[y]);
         });
 
-        if (binCraft && onlyMilitary && indexes.length > 2 * globeSimLoad) {
+        if (binCraft && onlyMilitary && indexes.length > 3 * globeSimLoad) {
             ac_url.push('data/globeMil_42777.binCraft');
-            refreshMultiplier = Math.min(8, indexes.length / globeSimLoad);
+            refreshMultiplier = Math.min(4, indexes.length / globeSimLoad);
         } else {
 
             indexes = indexes.slice(0, globeSimLoad);
             refreshMultiplier = 1;
-            if (indexes.length <= 4 && TrackedAircraftPositions < 150 || fetchCounter < 25)
-                refreshMultiplier = 0.7;
+            //if (indexes.length <= 4 && TrackedAircraftPositions < 150 || fetchCounter < 25)
+            //    refreshMultiplier = 0.7;
 
             let suffix = binCraft ? '.binCraft' : '.json'
             let mid = (binCraft && onlyMilitary) ? 'Mil_' : '_';
@@ -4446,8 +4446,8 @@ function refreshInt() {
     if (tabHidden)
         return 24 * 3600 * 1000; // hidden tab, don't refresh to avoid freeze when the tab is switched to again.
 
-    if (adsbexchange && refresh < 2700)
-        refresh = 2700;
+    if (adsbexchange)
+        refresh = 4500;
 
     let inactive = getInactive();
 
