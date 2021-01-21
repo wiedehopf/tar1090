@@ -8,7 +8,7 @@ let enable_pf_data = false;
 let HistoryChunks = false;
 let nHistoryItems = 0;
 let HistoryItemsReturned = 0;
-let chunkNames;
+let chunkNames = [];
 let PositionHistoryBuffer = [];
 var	receiverJson;
 let deferHistory = [];
@@ -308,9 +308,9 @@ if (uuid != null) {
             get_history();
             configureReceiver.resolve();
         } else {
-            $.when(test_chunk_defer).done(function(data) {
+            test_chunk_defer.done(function(data) {
                 HistoryChunks = true;
-                chunkNames = pTracks ? data.chunks_all : data.chunks;
+                chunkNames = (pTracks ? data.chunks_all : data.chunks) || [];
                 nHistoryItems = chunkNames.length;
                 enable_uat = (data.enable_uat == "true");
                 enable_pf_data = (data.pf_data == "true");
