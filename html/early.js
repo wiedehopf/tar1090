@@ -310,13 +310,15 @@ if (uuid != null) {
         } else {
             test_chunk_defer.done(function(data) {
                 HistoryChunks = true;
-                chunkNames = (pTracks ? data.chunks_all : data.chunks) || [];
+                console.log("Chunks enabled, loading this list of files:");
+                chunkNames = pTracks ? data.chunks_all : data.chunks;
+                console.log(chunkNames);
+                chunkNames = chunkNames || [];
                 nHistoryItems = chunkNames.length;
                 enable_uat = (data.enable_uat == "true");
                 enable_pf_data = (data.pf_data == "true");
                 if (enable_uat)
                     console.log("UAT/978 enabled!");
-                console.log("Chunks enabled");
                 get_history();
                 configureReceiver.resolve();
             }).fail(function() {
