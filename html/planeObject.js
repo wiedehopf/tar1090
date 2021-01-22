@@ -2521,7 +2521,7 @@ PlaneObject.prototype.isNonIcao = function() {
 };
 
 PlaneObject.prototype.checkVisible = function() {
-    const zoomedOut = 1.2 * refreshInt() / globeSimLoad * globeTilesViewCount / 1000;
+    const zoomedOut = 2 * refreshInt() / globeSimLoad * globeTilesViewCount / 1000;
     const jaeroTime = (this.dataSource == "adsc") ? jaeroTimeout : 0;
     const mlatTime = (this.dataSource == "mlat") ? 25 : 0;
     const tisbReduction = (this.icao[0] == '~') ? 15 : 0;

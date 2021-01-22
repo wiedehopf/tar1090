@@ -64,6 +64,7 @@ let globeIndexDist = {};
 let globeIndexSpecialLookup = {};
 let globeTilesViewCount = 0;
 let globeSimLoad = 6;
+let globeUseBigMil = false;
 let globeTableLimit = 80;
 let fetchCounter = 0;
 let lastGlobeExtent;
@@ -314,13 +315,11 @@ function fetchData(options) {
 
         if (binCraft && onlyMilitary && indexes.length > 12) {
             ac_url.push('data/globeMil_42777.binCraft');
-            refreshMultiplier = Math.min(6, indexes.length / 4);
+            globeUseBigMil = true;
         } else {
+            globeUseBigMil = false;
 
             indexes = indexes.slice(0, globeSimLoad);
-            refreshMultiplier = 1;
-            //if (indexes.length <= 4 && TrackedAircraftPositions < 150 || fetchCounter < 25)
-            //    refreshMultiplier = 0.7;
 
             let suffix = binCraft ? '.binCraft' : '.json'
             let mid = (binCraft && onlyMilitary) ? 'Mil_' : '_';
@@ -647,7 +646,7 @@ function initPage() {
     }
 
     if (adsbexchange) {
-        setInterval(function(){if (!tabHidden) $.ajax({url:'data/receiver.json',cache:false,});}, 180000);
+        setInterval(globeRateUpdate(), 300000);
     }
 
     mapOrientation *= (Math.PI/180); // adjust to radians
@@ -4436,6 +4435,8 @@ function updateAddressBar() {
 
 function refreshInt() {
     let refresh = RefreshInterval;
+
+    // handle non globe case
     if (!globeIndex) {
         if (tabHidden)
             return 3 * refresh;
@@ -4443,11 +4444,13 @@ function refreshInt() {
             return refresh;
     }
 
+    // handle globe case
+
     if (tabHidden)
         return 24 * 3600 * 1000; // hidden tab, don't refresh to avoid freeze when the tab is switched to again.
 
-    if (adsbexchange)
-        refresh = 1800;
+    if (globeUseBigMil)
+        refresh = 10000;
 
     let inactive = getInactive();
 
@@ -5543,14 +5546,11 @@ function getInactive() {
 
 function active() {
     let now = new Date().getTime();
-    if ((now - lastActive) > 90 * 1000) {
-        fetchData();
+    // avoid long periods of not fetching data for active users or returning users
+    if (now - lastActive > 90 * 1000 || nextFetch - lastFetch > 1.5 * refreshInt()) {
+        fetchData({force: true});
     }
     lastActive = now;
-    // avoid long periods of not fetching data for active users
-    if ((nextFetch - lastFetch) > 8000) {
-        fetchData();
-    }
 }
 
 function drawTileBorder(data) {
@@ -5621,6 +5621,16 @@ function updateMessageRate(data) {
     } else {
         MessageRate = null;
     }
+}
+
+function globeRateUpdate() {
+    if (tabHidden) return;
+    $.ajax({url:'/globeRates.json', cache:false, dataType: 'json', }).done(function(data) {
+        if (data.simload != null)
+            globeSimLoad = data.simload;
+        if (data.refresh != null)
+            RefreshInterval = data.refresh;
+    });
 }
 
 initialize();
