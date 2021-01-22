@@ -349,7 +349,8 @@ function fetchData(options) {
             xhrOverride.responseType = 'arraybuffer';
             req = $.ajax({
                 url: ac_url[i], method: 'GET',
-                xhr: function() { return xhrOverride; }
+                xhr: function() { return xhrOverride; },
+                timeout: 5000,
             });
         } else {
             req = $.ajax({ url: ac_url[i], dataType: 'json' });

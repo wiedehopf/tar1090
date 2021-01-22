@@ -487,7 +487,6 @@ function handleVisibilityChange() {
     // tab is no longer hidden
     if (!tabHidden) {
         active();
-        fetchData();
         if (showTrace)
             return;
 
