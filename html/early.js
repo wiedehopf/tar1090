@@ -178,8 +178,9 @@ function lDateString(date) {
 
 let get_receiver_defer;
 let test_chunk_defer;
-
-if (!window.location.href.match(/globe.*adsbexchange.com/)) {
+if (uuid) {
+    // don't need receiver / chunks json
+} else if (!window.location.href.match(/globe.*adsbexchange.com/)) {
     // get configuration json files, will be used in initialize function
     get_receiver_defer = $.ajax({ url: 'data/receiver.json',
         cache: false,
@@ -250,7 +251,6 @@ if (!heatmap) {
 }
 
 if (uuid != null) {
-    get_receiver_defer = null;
     receiverJson = null;
     Dump1090Version = 'unknown';
     RefreshInterval = 5000;
@@ -486,6 +486,7 @@ function handleVisibilityChange() {
 
     // tab is no longer hidden
     if (!tabHidden) {
+        active();
         fetchData();
         if (showTrace)
             return;

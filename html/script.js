@@ -645,7 +645,7 @@ function initPage() {
         }, 30000);
     }
 
-    if (adsbexchange) {
+    if (adsbexchange && !uuid) {
         setInterval(globeRateUpdate(), 300000);
     }
 
@@ -4837,7 +4837,7 @@ function drawUpintheair() {
     // NB: altitudes are in _meters_, you can specify a list of altitudes
 
     // kick off an ajax request that will add the rings when it's done
-    if (!globeIndex) {
+    if (!globeIndex && !uuid) {
         let request = $.ajax({ url: 'upintheair.json',
             cache: true,
             dataType: 'json' });
