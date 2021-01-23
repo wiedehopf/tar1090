@@ -302,6 +302,11 @@ function fetchData(options) {
         ac_url[0] = 'uuid/?feed=' + encodeURIComponent(uuid);
     } else if (globeIndex) {
         let indexes = globeIndexes();
+        const ancient = (currentTime - 2 * refreshInt() / globeSimLoad * globeTilesViewCount) / 1000;
+        for (let i in indexes) {
+            if (globeIndexNow[i] < ancient)
+                globeIndexNow[i] = null;
+        }
         indexes.sort(function(x,y) {
             if (!globeIndexNow[x] && !globeIndexNow[y]) {
                 return globeIndexDist[x] - globeIndexDist[y];
