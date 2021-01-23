@@ -304,8 +304,11 @@ function fetchData(options) {
         let indexes = globeIndexes();
         const ancient = (currentTime - 2 * refreshInt() / globeSimLoad * globeTilesViewCount) / 1000;
         for (let i in indexes) {
-            if (globeIndexNow[i] < ancient)
-                globeIndexNow[i] = null;
+            const k = indexes[i];
+            if (globeIndexNow[k] < ancient) {
+                globeIndexNow[k] = null;
+                console.log(k);
+            }
         }
         indexes.sort(function(x,y) {
             if (!globeIndexNow[x] && !globeIndexNow[y]) {
