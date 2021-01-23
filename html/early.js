@@ -182,14 +182,16 @@ if (uuid) {
     // don't need receiver / chunks json
 } else if (!window.location.href.match(/globe.*adsbexchange.com/)) {
     // get configuration json files, will be used in initialize function
-    get_receiver_defer = $.ajax({ url: 'data/receiver.json',
+    get_receiver_defer = $.ajax({
+        url: 'data/receiver.json',
         cache: false,
-        datatype: 'json',
+        dataType: 'json',
         timeout: 10000,
     });
     test_chunk_defer = $.ajax({
         url:'chunks/chunks.json',
-        datatype: 'json',
+        cache: false,
+        dataType: 'json',
         timeout: 4000,
     });
 } else {
@@ -271,7 +273,6 @@ if (uuid != null) {
         }, 10000);
     });
     get_receiver_defer.done(function(data){
-        get_receiver_defer = null;
         receiverJson = data;
         Dump1090Version = data.version;
         RefreshInterval = data.refresh;
@@ -310,10 +311,8 @@ if (uuid != null) {
         } else {
             test_chunk_defer.done(function(data) {
                 HistoryChunks = true;
-                console.log("Chunks enabled, loading this list of files:");
-                chunkNames = pTracks ? data.chunks_all : data.chunks;
-                console.log(chunkNames);
-                chunkNames = chunkNames || [];
+                console.log("Chunks enabled!");
+                chunkNames = (pTracks ? data.chunks_all : data.chunks) || [];
                 nHistoryItems = chunkNames.length;
                 enable_uat = (data.enable_uat == "true");
                 enable_pf_data = (data.pf_data == "true");
