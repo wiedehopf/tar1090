@@ -18,6 +18,7 @@ let historyTimeout = 60;
 let globeIndex = 0;
 let globeIndexGrid = 0;
 let globeIndexSpecialTiles;
+let dynGlobeRate = false;
 let binCraft = false;
 let dbServer = false;
 let l3harris = false;

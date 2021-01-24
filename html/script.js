@@ -307,7 +307,6 @@ function fetchData(options) {
             const k = indexes[i];
             if (globeIndexNow[k] < ancient) {
                 globeIndexNow[k] = null;
-                console.log(k);
             }
         }
         indexes.sort(function(x,y) {
@@ -654,7 +653,7 @@ function initPage() {
         }, 30000);
     }
 
-    if (adsbexchange && !uuid) {
+    if ((adsbexchange || dynGlobeRate) && !uuid) {
         setInterval(globeRateUpdate(), 300000);
     }
 
