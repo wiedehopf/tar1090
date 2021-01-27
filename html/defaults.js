@@ -48,6 +48,7 @@ let SiteName    = "My Radar Site"; // tooltip of the marker
 let range_outline_color = '#0000DD';
 let range_outline_width = 1.7;
 let range_outline_colored_by_altitude = false;
+let range_outline_dash = null;
 
 // which map is displayed to new visitors
 let MapType_tar1090 = "osm_adsbx";

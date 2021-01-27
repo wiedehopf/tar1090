@@ -4871,11 +4871,12 @@ function drawUpintheair() {
                     let colorArr = altitudeColor(altitude);
                     color = 'hsl(' + colorArr[0].toFixed(0) + ',' + colorArr[1].toFixed(0) + '%,' + colorArr[2].toFixed(0) + '%)';
                 }
-                let ringStyle = new ol.style.Style({
+                let outlineStyle = new ol.style.Style({
                     fill: null,
                     stroke: new ol.style.Stroke({
                         color: color,
                         width: range_outline_width,
+                        lineDash: range_outline_dash,
                     })
                 });
                 if (points.length > 0) {
@@ -4887,7 +4888,7 @@ function drawUpintheair() {
                     geom.transform('EPSG:4326', 'EPSG:3857');
 
                     let feature = new ol.Feature(geom);
-                    feature.setStyle(ringStyle);
+                    feature.setStyle(outlineStyle);
                     outlineFeatures.addFeature(feature);
                 }
             }
