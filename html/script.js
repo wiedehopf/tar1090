@@ -1271,6 +1271,10 @@ function startPage() {
 
     drawUpintheair();
     mapRefresh();
+
+    if (heatmap) {
+        drawHeatmap();
+    }
 }
 
 //
@@ -3898,7 +3902,8 @@ function checkMovement() {
     const elapsed = Math.abs(ts - lastMovement);
 
     if (!checkMoveDone && heatmap && elapsed > 300) {
-        drawHeatmap();
+        if (!heatmap.manualRedraw)
+            drawHeatmap();
         checkMoveDone = 1;
     }
     if (elapsed > 500 || (!onMobile && elapsed > 45)) {
@@ -3938,7 +3943,7 @@ function checkRefresh() {
     }
 }
 function mapRefresh() {
-    if (!mapIsVisible)
+    if (!mapIsVisible || heatmap)
         return;
     //console.log('mapRefresh()');
     let addToMap = [];

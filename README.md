@@ -383,6 +383,20 @@ for i in *; do if [ -f "../conf-available/$i" ]; then sudo ln -s -f "../conf-ava
 After that rerun the install script.
 If you still have history loading issues, get back to me via the github issues or the various forums i frequent.
 
+## heatmap in conjunction with readsb wiedehopf fork --heatmap feature:
+
+First parameter after /tar1090 in the URL mandatory, rest are optional
+- maximum number of dots to draw: /?heatmap=200000
+- duration in hours that shall be displayed: &heatDuration=48 (default: 24)
+- set the end of the duration 48 hours into the past: &heatEnd=48 (default:0)
+- radius of the dots: &heatRadius=2
+- opacity of the dots: &heatAlpha=2
+- only redraw the dots when pressing R on the keyboard: &heatManualRedraw
+
+alternative display style: &realHeat
+- blurryness: &heatBlur=2
+- weight of each dot for the heatmap: &heatWeight=4
+
 ## NO WARRANTY - Excerpt from the License:
 
   11. BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY

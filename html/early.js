@@ -146,6 +146,8 @@ if (usp.has('heatmap')) {
     let val;
     if (val = parseInt(usp.get('heatmap'), 10))
         heatmap.max = val;
+    if (usp.has('heatManualRedraw'))
+        heatmap.manualRedraw = true;
 }
 
 if (usp.has('pTracks')) {
