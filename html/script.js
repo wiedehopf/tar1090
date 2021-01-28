@@ -2039,7 +2039,7 @@ function refreshSelected() {
 
     if (showPictures) {
         let type = selected.icaoType ? selected.icaoType : 'ZZZZ';
-        let new_html = "<img width='151.11' height='35.55' src='aircraft_sil/" + type + ".png' />";
+        let new_html = "<img width='"+ 151.11 * globalScale + "' height='" + 35.55 * globalScale + "' src='aircraft_sil/" + type + ".png' />";
         if (new_html != selectedPhotoCache) {
             $('#selected_photo').html(new_html);
             selectedPhotoCache = new_html;

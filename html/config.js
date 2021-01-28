@@ -242,6 +242,13 @@ HideCols = [
 ]
 
 
+// showing small pictures / silhouettes
+//showPictures = true;
+// this shows small pictures in the details but they need to be provided by the user in the folder /usr/local/share/tar1090/aircraft_sil
+// pictures need to be named A330.png and so forth with the type code in the form TYPE.png
+// provide ZZZZ.png to be shown when the type is not known.
+// this feature is provided as is please don't expect tar1090's support for getting the pictures right.
+
 //enableDWD = true;
 
 // Display only the last leg of a flight in globeIndex mode.

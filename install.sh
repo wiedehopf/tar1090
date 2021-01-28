@@ -16,6 +16,8 @@ lighttpd=no
 nginx=no
 
 mkdir -p $ipath
+mkdir -p $ipath/aircraft_sil
+
 
 if ! id -u tar1090 &>/dev/null
 then
