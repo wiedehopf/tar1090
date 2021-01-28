@@ -3766,21 +3766,20 @@ function fetchPfData() {
     }
 }
 
-function solidGoldT() {
+function solidGoldT(arg) {
     solidT = true;
     let list = [[], [], [], []];
     for (let i = 0; i < PlanesOrdered.length; i++) {
         let plane = PlanesOrdered[i];
         //console.log(plane);
-        if (plane.seen_pos && plane.seen_pos < 1200) {
-            plane.visible = true;
+        if (plane.visible) {
             list[Math.floor(4*i/PlanesOrdered.length)].push(plane);
         }
     }
-    getTrace(null, null, {onlyFull: true, list: list[0],});
-    getTrace(null, null, {onlyFull: true, list: list[1],});
-    getTrace(null, null, {onlyFull: true, list: list[2],});
-    getTrace(null, null, {onlyFull: true, list: list[3],});
+    getTrace(null, null, {onlyRecent: arg == 2, onlyFull: arg == 1, list: list[0],});
+    getTrace(null, null, {onlyRecent: arg == 2, onlyFull: arg == 1, list: list[1],});
+    getTrace(null, null, {onlyRecent: arg == 2, onlyFull: arg == 1, list: list[2],});
+    getTrace(null, null, {onlyRecent: arg == 2, onlyFull: arg == 1, list: list[3],});
 }
 
 function bearingFromLonLat(position1, position2) {
@@ -4980,7 +4979,7 @@ function getTrace(newPlane, hex, options) {
 
     let now = new Date().getTime();
     let backoff = 200;
-    if (!showTrace && traceRate > 140 && now < lastTraceGet + backoff) {
+    if (!showTrace && !solidT && traceRate > 140 && now < lastTraceGet + backoff) {
         setTimeout(getTrace, lastTraceGet + backoff + 20 - now, newPlane, hex, options);
         return;
     }
@@ -5054,13 +5053,6 @@ function getTrace(newPlane, hex, options) {
         fake1 = true;
     }
 
-    req2 = $.ajax({ url: URL2,
-        dataType: 'json',
-        options: options,
-    });
-
-    options.req2 = req2;
-
     if (!fake1) {
         req1.done(function(data) {
             let plane = data.plane || this.options.plane;
@@ -5069,31 +5061,45 @@ function getTrace(newPlane, hex, options) {
                 plane.processTrace();
             let defer = data.defer || this.options.defer;
             defer.resolve(plane);
+            if (options.onlyRecent && options.list) {
+                newPlane.updateLines();
+                getTrace(null, null, options);
+            }
         });
     }
-    req2.done(function(data) {
-        let plane = this.options.plane;
-        plane.fullTrace = data;
-        this.options.defer.done(function(plane) {
+    if (!options.onlyRecent) {
+
+        req2 = $.ajax({ url: URL2,
+            dataType: 'json',
+            options: options,
+        });
+
+        options.req2 = req2;
+
+        req2.done(function(data) {
+            let plane = this.options.plane;
+            plane.fullTrace = data;
+            this.options.defer.done(function(plane) {
+                if (showTrace)
+                    legShift(0);
+                else
+                    plane.processTrace();
+            });
+            if (options.list) {
+                newPlane.updateLines();
+                getTrace(null, null, options);
+            }
+        });
+        req2.fail(function() {
             if (showTrace)
                 legShift(0);
             else
-                plane.processTrace();
-        });
-        if (options.list) {
-            newPlane.updateLines();
-            getTrace(null, null, options);
-        }
-    });
-    req2.fail(function() {
-        if (showTrace)
-            legShift(0);
-        else
-            this.options.plane.processTrace();
+                this.options.plane.processTrace();
 
-        if (options.list)
-            getTrace(null, null, options);
-    });
+            if (options.list)
+                getTrace(null, null, options);
+        });
+    }
 
     return newPlane;
 }
