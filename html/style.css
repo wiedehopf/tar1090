@@ -154,7 +154,8 @@ select {
     font-size: var(--FS2);
 }
 .credits-image {
-    display: block;
+    display: flex;
+    padding-left: calc( 8px * var(--SCALE));
     width: calc( 24px * var(--SCALE));
     height: calc( 24px * var(--SCALE));
     background-size: calc( 24px * var(--SCALE)) calc( 24px * var(--SCALE));
@@ -165,7 +166,7 @@ select {
     background-image: url("images/cropped-Stealth-1-48x48.png");
     z-index: 99;
     opacity: 0.7;
-    margin: 4px;
+    margin: 4px calc(8px * var(--SCALE)) 4px 4px;
 }
 .withOverflowingBackground::before {
    z-index: -1;
