@@ -327,11 +327,18 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
         return this.updateTail();
     }
 
-    if (!this.prev_position)
+    let lastseg = this.track_linesegs[this.track_linesegs.length - 1];
+
+    if (!this.prev_position) {
         return this.updateTail();
+    }
 
     let projPrev = ol.proj.fromLonLat(this.prev_position);
-    let lastseg = this.track_linesegs[this.track_linesegs.length - 1];
+
+    if (!this.tail_position) {
+        lastseg.fixed.appendCoordinate(projPrev);
+        return this.updateTail();
+    }
 
     let distance = ol.sphere.getDistance(this.position, this.prev_position);
     let elapsed = this.position_time - this.prev_time;
