@@ -269,7 +269,7 @@ sudo wget -O /usr/local/share/tar1090/html/upintheair.json "http://www.heywhatst
 
 ![Screenshot2](https://raw.githubusercontent.com/wiedehopf/tar1090/screenshots/screenshot4.png)
 
-- Add /?pTracks to the normal /tar1090 URL you put in (http://192.168.x.yy/tar1090/?pTracks)
+- Add /?pTracks to the usual /tar1090 URL, should look like this: http://192.168.x.yy/tar1090/?pTracks
 - Shows the last 8 hours of traces you have seen, gives a nice visual representation of your coverage / range
 - Can be filtered by altitude with the altitude filter
 - Configure a longer duration than 8 hours via the [configuration](#configuration-optional)
