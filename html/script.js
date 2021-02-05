@@ -432,14 +432,16 @@ function fetchData(options) {
         req.fail(function(jqxhr, status, error) {
             status = jqxhr.status;
             let errText = status + (error ? (": " + error) : "");
+            console.log(jqxhr);
+            console.log(error);
             if (status != 429 && status != '429') {
                 $("#update_error_detail").text(errText);
-                //console.error(errText);
                 $("#update_error").css('display','block');
                 StaleReceiverCount++;
             }
             pendingFetches--;
-            fetchSoon();
+            if (globeIndex)
+                fetchSoon();
         });
     }
 }
