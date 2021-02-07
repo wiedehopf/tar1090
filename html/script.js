@@ -431,6 +431,7 @@ function fetchData(options) {
 
         req.fail(function(jqxhr, status, error) {
             status = jqxhr.status;
+            if (jqxhr.readyState == 0) error = "Can't connect to server, check your network!";
             let errText = status + (error ? (": " + error) : "");
             console.log(jqxhr);
             console.log(error);
