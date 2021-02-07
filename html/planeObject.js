@@ -1313,18 +1313,20 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 
     // Update all of our data
 
-    if (now - this.last > 0) {
+    if (data.messages < this.messages && binCraft) this.messages -= 65536;
+    const elapsed = now - this.last;
+    if (elapsed > 0) {
+        let messageRate = 0;
         if (this.receiver == "1090") {
-            const messageRate = (data.messages - this.msgs1090)/(now - this.last);
-            this.messageRate = (messageRate + this.messageRateOld)/2;
-            this.messageRateOld = messageRate;
+            messageRate = (data.messages - this.msgs1090)/(now - this.last);
             this.msgs1090 = data.messages;
         } else {
-            const messageRate = (data.messages - this.msgs978)/(uat_now - uat_last);
-            this.messageRate = (messageRate + this.messageRateOld)/2;
-            this.messageRateOld = messageRate;
+            messageRate = (data.messages - this.msgs978)/(uat_now - uat_last);
             this.msgs978 = data.messages;
         }
+        if (elapsed > 60) messageRate = 0;
+        this.messageRate = (messageRate + this.messageRateOld)/2;
+        this.messageRateOld = messageRate;
     }
     this.messages = data.messages;
 
