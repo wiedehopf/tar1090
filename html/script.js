@@ -263,7 +263,7 @@ function fetchSoon() {
 
 function fetchData(options) {
     options = options || {};
-    if (heatmap || replay || showTrace)
+    if (heatmap || replay || showTrace || pTracks)
         return;
     fetchSoon();
     //console.log("fetch");
@@ -1207,8 +1207,7 @@ function startPage() {
     console.log("Completing init");
 
     // Kick off first refresh.
-    if (!heatmap && !pTracks)
-        fetchData();
+    fetchData();
 
     if (!globeIndex) {
         $('#show_trace').hide();
@@ -1269,15 +1268,17 @@ function startPage() {
 
     geoMag = geoMagFactory(cof2Obj());
 
-    if (pTracks)
-        setTimeout(TAR.planeMan.refresh, 5000);
-
     drawUpintheair();
     mapRefresh();
 
     if (heatmap) {
         drawHeatmap();
     }
+
+    handleVisibilityChange();
+
+    if (pTracks)
+        setTimeout(TAR.planeMan.refresh, 10000);
 }
 
 //
