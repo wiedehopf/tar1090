@@ -281,7 +281,7 @@ if (uuid != null) {
         RefreshInterval = data.refresh;
         nHistoryItems = (data.history < 2) ? 0 : data.history;
         binCraft = data.binCraft ? true : false;
-        dbServer = data.dbServer ? true : false;
+        dbServer = (data.dbServer && data.globeIndexGrid != null) ? true : false;
 
         if (receiverJson.lat != null) {
             SiteLat = receiverJson.lat;

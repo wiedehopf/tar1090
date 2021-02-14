@@ -1056,7 +1056,7 @@ function initSourceFilter(colors) {
     if (globeIndex)
         html += createFilter(colors['unknown'], 'Unknown');
 
-    if (globeIndex || dbServer)
+    if (globeIndex)
         html += createFilter(colors['uat'], 'ADS-C');
 
     document.getElementById('sourceFilter').innerHTML = html;
