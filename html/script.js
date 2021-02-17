@@ -2941,7 +2941,7 @@ function selectPlaneByHex(hex, options) {
         SelectedPlane = oldPlane = null;
 
     // multiSelect deselect
-    if (multiSelect && newPlane && newPlane.selected && !options.follow && !onlySelected) {
+    if (multiSelect && newPlane && newPlane.selected && !options.follow && !onlySelected && !options.noDeselect) {
         newPlane.selected = false;
         newPlane.clearLines();
         newPlane.updateMarker();
@@ -4088,13 +4088,15 @@ function processURLParams(){
     if (icaos.length > 0) {
         if (!usp.has('noIsolation'))
             toggleIsolation("on", false);
-        if (icaos.length > 1)
+        if (icaos.length > 1) {
             toggleMultiSelect("on");
+            //follow = false;
+        }
         for (let i = 0; i < icaos.length; i++) {
             icao = icaos[i];
             if (Planes[icao] || globeIndex) {
                 console.log('Selected ICAO id: '+ icao);
-                let selectOptions = {follow: follow};
+                let selectOptions = {follow: follow, noDeselect: true};
                 if (traceDateString != null) {
                     toggleShowTrace();
                     if (!zoom)
@@ -5065,8 +5067,11 @@ function getTrace(newPlane, hex, options) {
         req1.done(function(data) {
             let plane = data.plane || this.options.plane;
             plane.recentTrace = data;
-            if (!showTrace)
+            if (!showTrace) {
                 plane.processTrace();
+                if (options.follow)
+                    toggleFollow(true);
+            }
             let defer = data.defer || this.options.defer;
             defer.resolve(plane);
             if (options.onlyRecent && options.list) {
@@ -5088,10 +5093,13 @@ function getTrace(newPlane, hex, options) {
             let plane = this.options.plane;
             plane.fullTrace = data;
             this.options.defer.done(function(plane) {
-                if (showTrace)
+                if (showTrace) {
                     legShift(0);
-                else
+                } else {
                     plane.processTrace();
+                    if (options.follow)
+                        toggleFollow(true);
+                }
             });
             if (options.list) {
                 newPlane.updateLines();
