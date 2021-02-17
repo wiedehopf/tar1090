@@ -1326,7 +1326,11 @@ function startPage() {
 function webglAddLayer() {
     let success = false;
 
-    processAircraft({hex: '~c0ffee', lat: CenterLat, lon: CenterLon, type: 'tisb_other', seen: 0, seen_pos: 0,
+    const icao = '~c0ffee';
+    if (icaoFilter) {
+        icaoFilter.push(icao);
+    }
+    processAircraft({hex: icao, lat: CenterLat, lon: CenterLon, type: 'tisb_other', seen: 0, seen_pos: 0,
         alt_baro: 25000, });
     let plane = Planes['~c0ffee'];
 
