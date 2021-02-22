@@ -141,14 +141,14 @@ UAT traffic will be displayed as ADS-B, this can't be avoided.
 
 
 ```
-wget -q -O /tmp/install.sh https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh
+wget -nv -O /tmp/install.sh https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh
 sudo bash /tmp/install.sh /run/combine1090
 ```
 
 ## Remove / Uninstall
 
 ```
-sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/uninstall.sh)"
+sudo bash -c "$(wget -nv -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/uninstall.sh)"
 ```
 
 ## Keyboard Shortcuts
@@ -259,7 +259,7 @@ Don't forget to restart the nginx service.
 - Near the top of the page, an URL for the panorama is mentioned.
 - Replace teh XXXXXX in the following command with the ID contained in your panorama URL
 ```
-sudo wget -O /usr/local/share/tar1090/html/upintheair.json "http://www.heywhatsthat.com/api/upintheair.json?id=XXXXXXXX&refraction=0.25&alts=12192"
+sudo wget -nv -O /usr/local/share/tar1090/html/upintheair.json "http://www.heywhatsthat.com/api/upintheair.json?id=XXXXXXXX&refraction=0.25&alts=12192"
 ```
 - You should now have a range outline for the theoretical range for aircraft at 40000 ft on your tar1090 map
 
@@ -337,7 +337,7 @@ put in these two lines if you're using dump1090-fa
 
 if you then run the tar1090 install script afterwards you'll have an extra instance you can configure the history retention for.
 ```
-sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"
+sudo bash -c "$(wget -nv -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"
 sudo nano /etc/default/tar1090-persist
 ```
 
