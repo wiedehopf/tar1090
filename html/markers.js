@@ -851,7 +851,6 @@ let TypeDesignatorIcons = {
     'LANC': ['lancaster', 1],
     'B17': ['lancaster', 1],
     'B29': ['lancaster', 1],
-    'FOUG': ['hi_perf', 1],
     'J8A': ['hi_perf', 1],
     'J8B': ['hi_perf', 1],
     'JH7': ['hi_perf', 1],
@@ -887,6 +886,7 @@ let TypeDesignatorIcons = {
     'MRF1': ['miragef1', 1],
     'M326': ['m326', 1],
     'M339': ['m326', 1],
+    'FOUG': ['m326', 1],
 
     'A225': ['a225', 1],
     'A124': ['b707', 1.18],
@@ -915,9 +915,9 @@ let TypeDesignatorIcons = {
     'NH90': ['blackhawk', 1], // 11t
 
     // Puma, Super Puma, Oryx, Cougar (ICAO'S AS32 & AS3B & PUMA)
-    'AS32': ['puma', 1], // 9t
-    'AS3B': ['puma', 1], // 9t
-    'PUMA': ['puma', 1], // 9t
+    'AS32': ['puma', 1.03], // 9t
+    'AS3B': ['puma', 1.03], // 9t
+    'PUMA': ['puma', 1.03], // 9t
 
     // 5 bladed
     'EC55': ['s61', 0.92], // 5t
