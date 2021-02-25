@@ -847,7 +847,6 @@ function initPage() {
         $('#large_mode_button').css('height', 'calc( 45px * let(--SCALE))');
         if (localStorage['largeMode'] == undefined && largeMode == 1)
             largeMode = 2;
-        globeTableLimitBase = 40;
     }
 
     largeMode--;
@@ -969,25 +968,37 @@ function initPage() {
         }
     });
 
-    new Toggle({
-        key: "moreTableLines1",
-        display: "More Table Lines",
-        container: "#sidebar-table",
-        init: false,
-        setState: function(state) {
-            let mult = 1 + 3 * toggles['moreTableLines1'].state + 6 * (toggles['moreTableLines2'] && toggles['moreTableLines2'].state);
+    if (globeIndex) {
+        function setGlobeTableLimit() {
+            let mult = 1 + 4 * toggles['moreTableLines1'].state + 16 * (toggles['moreTableLines2'] && toggles['moreTableLines2'].state);
             globeTableLimit = globeTableLimitBase * mult;
-        }
-    });
-    new Toggle({
-        key: "moreTableLines2",
-        display: "Even More Table Lines",
-        container: "#sidebar-table",
-        init: false,
-        setState: function(state) {
-            globeTableLimit = globeTableLimitBase * (1 + 3 * toggles['moreTableLines1'].state + 6 * toggles['moreTableLines2'].state);
-        }
-    });
+            if (toggles['allTableLines'] && toggles['allTableLines'].state)
+                globeTableLimit = 1e9;
+            if (onMobile)
+                globeTableLimit /= 2;
+        };
+        new Toggle({
+            key: "moreTableLines1",
+            display: "More Table Lines",
+            container: "#sidebar-table",
+            init: false,
+            setState: setGlobeTableLimit,
+        });
+        new Toggle({
+            key: "moreTableLines2",
+            display: "Even More Table Lines",
+            container: "#sidebar-table",
+            init: false,
+            setState: setGlobeTableLimit,
+        });
+        new Toggle({
+            key: "allTableLines",
+            display: "All Table Lines",
+            container: "#sidebar-table",
+            init: false,
+            setState: setGlobeTableLimit,
+        });
+    }
 
     new Toggle({
         key: "sidebar_visible",
