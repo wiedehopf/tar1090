@@ -65,6 +65,7 @@ let globeIndexSpecialLookup = {};
 let globeTilesViewCount = 0;
 let globeSimLoad = 6;
 let globeUseBigMil = false;
+let globeTableLimitBase = 80;
 let globeTableLimit = 80;
 let fetchCounter = 0;
 let lastGlobeExtent;
@@ -846,7 +847,7 @@ function initPage() {
         $('#large_mode_button').css('height', 'calc( 45px * let(--SCALE))');
         if (localStorage['largeMode'] == undefined && largeMode == 1)
             largeMode = 2;
-        globeTableLimit = 40;
+        globeTableLimitBase = 40;
     }
 
     largeMode--;
@@ -965,6 +966,26 @@ function initPage() {
 
             initLegend(tableColors.unselected);
             initSourceFilter(tableColors.unselected);
+        }
+    });
+
+    new Toggle({
+        key: "moreTableLines1",
+        display: "More Table Lines",
+        container: "#sidebar-table",
+        init: false,
+        setState: function(state) {
+            let mult = 1 + 3 * toggles['moreTableLines1'].state + 6 * (toggles['moreTableLines2'] && toggles['moreTableLines2'].state);
+            globeTableLimit = globeTableLimitBase * mult;
+        }
+    });
+    new Toggle({
+        key: "moreTableLines2",
+        display: "Even More Table Lines",
+        container: "#sidebar-table",
+        init: false,
+        setState: function(state) {
+            globeTableLimit = globeTableLimitBase * (1 + 3 * toggles['moreTableLines1'].state + 6 * toggles['moreTableLines2'].state);
         }
     });
 
