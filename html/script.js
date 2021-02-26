@@ -2072,10 +2072,20 @@ function refreshSelected() {
     else
         $('#selected_typedesc').text("n/a");
 
+    let typeLine = "";
+    if (selected.year)
+        typeLine += selected.year + " "
     if (selected.typeLong)
-        $('#selected_typelong').text(selected.typeLong);
+        typeLine += selected.typeLong;
+    if (!typeLine)
+        typeLine = "n/a"
+
+    $('#selected_typelong').text(typeLine);
+
+    if (selected.ownOp)
+        $('#selected_ownop').text(selected.ownOp);
     else
-        $('#selected_typelong').text("n/a");
+        $('#selected_ownop').text("");
 
     if (showPictures) {
         let type = selected.icaoType ? selected.icaoType : 'ZZZZ';

@@ -2580,6 +2580,9 @@ PlaneObject.prototype.checkForDB = function(t) {
     if (t.desc) this.typeLong = t.desc;
     if (t.r) this.registration = t.r;
 
+    if (t.ownOp) this.ownOp = t.ownOp;
+    if (t.year) this.year = t.year;
+
     if (t.t) {
         this.icaoType = t.t;
         this.setTypeData();
