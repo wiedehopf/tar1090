@@ -253,8 +253,11 @@ Don't forget to restart the nginx service.
 
 ## heywhatsthat.com range outline:
 
+#### 1: create panorama and look at your outline on the heywhatsthat page
 - Create a panorama on http://www.heywhatsthat.com/
-- You an use up in the air on the map and set altitudes to view the outlines
+- Use the "up in the air" button on the map, reduce map magnification and set altitudes to view the outlines for your location
+
+#### 2: integrate the outline into your local tar1090 display
 - For use on the tar1090 map the altitude will be set by changing the download URL
 - Near the top of the page, an URL for the panorama is mentioned.
 - Replace teh XXXXXX in the following command with the ID contained in your panorama URL
