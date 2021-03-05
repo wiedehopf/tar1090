@@ -627,6 +627,11 @@ function initPage() {
     filterMaxRange *= 1852; // convert from nmi to meters
 
 
+    if (usp.has('mapOrientation')) {
+        mapOrientation = parseFloat(usp.get('mapOrientation'));
+    }
+    mapOrientation *= (Math.PI/180); // adjust to radians
+
     if (usp.has('r')) {
         let numbers = (usp.get('r') || "").split('-');
         let ts = new Date();
@@ -660,8 +665,6 @@ function initPage() {
     if ((adsbexchange || dynGlobeRate) && !uuid) {
         setInterval(globeRateUpdate(), 300000);
     }
-
-    mapOrientation *= (Math.PI/180); // adjust to radians
 
     if (localStorage['enableLabels'] == 'true'){
         toggleLabels();
