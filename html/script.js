@@ -779,9 +779,12 @@ function initPage() {
     $("#jump_form").submit(onJump);
 
     $("#show_trace").click(toggleShowTrace);
+    $("#trace_back_1d").click(function() {shiftTrace(-1)});
+    $("#trace_jump_1d").click(function() {shiftTrace(1)});
     $(".datepicker").datepicker({ maxDate: new Date});
     $("#findHistory").click(function(){
-      switchDate($(".datepicker").val())
+      traceDate=new Date($(".datepicker").val())
+      shiftTrace(0);
     });
 
     $("#leg_prev").click(function() {legShift(-1)});
@@ -4664,27 +4667,7 @@ function legShift(offset) {
 
     updateAddressBar();
 }
-function switchDate(date) {
-  $('#leg_sel').text("Loading");
-  traceDate=new Date(date)
-  traceDate.setUTCHours(0);
-  traceDate.setUTCMinutes(0);
-  traceDate.setUTCSeconds(0);
 
-  traceDay = traceDate.getUTCDate();
-
-  traceDateString = zDateString(traceDate);
-
-  $('#trace_date').text('UTC day:\n' + traceDateString);
-
-  let hex = SelectedPlane ? SelectedPlane.icao : icaoParam;
-
-  let selectOptions = {noDeselect: true, zoom: ZoomLvl};
-  selectPlaneByHex(hex, selectOptions);
-
-  updateAddressBar();
-
-}
 function shiftTrace(offset) {
     if (traceRate > 180) {
         $('#leg_sel').text('Slow down! ...');
