@@ -779,8 +779,6 @@ function initPage() {
     $("#jump_form").submit(onJump);
 
     $("#show_trace").click(toggleShowTrace);
-    $("#trace_back_1d").click(function() {shiftTrace(-1)});
-    $("#trace_jump_1d").click(function() {shiftTrace(1)});
     $(".datepicker").datepicker()
     $("#findHistory").click(function(){
       switchDate($(".datepicker").val())
