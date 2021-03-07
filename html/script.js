@@ -4667,9 +4667,10 @@ function legShift(offset) {
 }
 function switchDate(date) {
   $('#leg_sel').text(date);
+  dateObject=new Date(date)
   console.log(traceDate)
   console.log(traceDateString)
-  console.log(date)
+  console.log(dateObject)
   /*
   if (traceDateString && !traceDate) {
       let numbers = traceDateString.split('-');
