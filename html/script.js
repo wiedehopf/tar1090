@@ -4685,7 +4685,7 @@ function switchDate(date) {
   selectPlaneByHex(hex, selectOptions);
 
   updateAddressBar();
-*/
+
 }
 function shiftTrace(offset) {
     if (traceRate > 180) {
