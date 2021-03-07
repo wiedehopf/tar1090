@@ -780,6 +780,8 @@ function initPage() {
     $("#show_trace").click(toggleShowTrace);
     $("#trace_back_1d").click(function() {shiftTrace(-1)});
     $("#trace_jump_1d").click(function() {shiftTrace(1)});
+    $(".datepicker").datepicker()
+    $("#findHistory").click(function(){switchDate($(".datepicker").val()});
 
     $("#leg_prev").click(function() {legShift(-1)});
     $("#leg_next").click(function() {legShift(1)});
@@ -1962,7 +1964,7 @@ function reaper(all) {
             && plane.seen > 300
             && (plane.dataSource != 'adsc' || plane.seen > jaeroTimeout))
         ) {
-            // Reap it.                                
+            // Reap it.
             //console.log("Removed " + plane.icao);
             delete Planes[plane.icao];
             plane.destroy();
@@ -2931,7 +2933,7 @@ function refreshFeatures() {
 
         for (let col of columns) {
             sortableColumns.append(`<li class="ui-state-default" id="${prefix + col.id}"></li>`);
-            
+
             new Toggle({
                 key: col.toggleKey,
                 display: col.text,
@@ -3766,7 +3768,7 @@ function getPhotoLink(ac) {
 // takes in an elemnt jQuery path and the OL3 layer name and toggles the visibility based on clicking it
 function toggleLayer(element, layer) {
     // set initial checked status
-    ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) { 
+    ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
         if (lyr.get('name') === layer && lyr.getVisible()) {
             $(element).addClass('settingsCheckboxChecked');
         }
@@ -3776,7 +3778,7 @@ function toggleLayer(element, layer) {
         if ($(element).hasClass('settingsCheckboxChecked')) {
             visible = true;
         }
-        ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) { 
+        ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
             if (lyr.get('name') === layer) {
                 if (visible) {
                     lyr.setVisible(false);
@@ -4661,7 +4663,39 @@ function legShift(offset) {
 
     updateAddressBar();
 }
+function switchDate(date){
+  $('#leg_sel').text(date);
+  /*if (traceDateString && !traceDate) {
+      let numbers = traceDateString.split('-');
+      traceDate = new Date();
+      traceDate.setUTCFullYear(numbers[0]);
+      traceDate.setUTCMonth(numbers[1] - 1);
+      traceDate.setUTCDate(numbers[2]);
+  }
+  if (!traceDate || offset == "today") {
+      traceDate = new Date();
+  } else if (offset) {
+      let sinceEpoch = traceDate.getTime();
+      traceDate.setTime(sinceEpoch + offset * 86400 * 1000);
+  }
+  traceDate.setUTCHours(0);
+  traceDate.setUTCMinutes(0);
+  traceDate.setUTCSeconds(0);
 
+  traceDay = traceDate.getUTCDate();
+
+  traceDateString = zDateString(traceDate);
+
+  $('#trace_date').text('UTC day:\n' + traceDateString);
+
+  let hex = SelectedPlane ? SelectedPlane.icao : icaoParam;
+
+  let selectOptions = {noDeselect: true, zoom: ZoomLvl};
+  selectPlaneByHex(hex, selectOptions);
+
+  updateAddressBar();
+
+}*/
 function shiftTrace(offset) {
     if (traceRate > 180) {
         $('#leg_sel').text('Slow down! ...');
