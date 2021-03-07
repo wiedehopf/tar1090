@@ -4665,7 +4665,7 @@ function legShift(offset) {
 
     updateAddressBar();
 }
-function switchDate(date){
+function switchDate(date) {
   $('#leg_sel').text(date);
   /*if (traceDateString && !traceDate) {
       let numbers = traceDateString.split('-');
@@ -4696,8 +4696,8 @@ function switchDate(date){
   selectPlaneByHex(hex, selectOptions);
 
   updateAddressBar();
-
-}*/
+*/
+}
 function shiftTrace(offset) {
     if (traceRate > 180) {
         $('#leg_sel').text('Slow down! ...');
