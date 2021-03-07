@@ -781,6 +781,19 @@ function initPage() {
     $("#trace_back_1d").click(function() {shiftTrace(-1)});
     $("#trace_jump_1d").click(function() {shiftTrace(1)});
 
+    $("#histDatePicker").datepicker({
+        maxDate: '+1d',
+        dateFormat: "yy-mm-dd",
+        onSelect: function(date){
+            traceDate = null;
+            traceDateString = date;
+            shiftTrace();
+            $("#histDatePicker").blur();
+        },
+        autoSize: true,
+    });
+
+
     $("#leg_prev").click(function() {legShift(-1)});
     $("#leg_next").click(function() {legShift(1)});
 
@@ -4689,7 +4702,8 @@ function shiftTrace(offset) {
 
     traceDateString = zDateString(traceDate);
 
-    $('#trace_date').text('UTC day:\n' + traceDateString);
+    //$('#trace_date').text('UTC day:\n' + traceDateString);
+    $("#histDatePicker").datepicker('setDate', traceDateString);
 
     let hex = SelectedPlane ? SelectedPlane.icao : icaoParam;
 
