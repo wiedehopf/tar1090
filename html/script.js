@@ -4667,7 +4667,11 @@ function legShift(offset) {
 }
 function switchDate(date) {
   $('#leg_sel').text(date);
-  /*if (traceDateString && !traceDate) {
+  console.log(traceDate)
+  console.log(traceDateString)
+  console.log(date)
+  /*
+  if (traceDateString && !traceDate) {
       let numbers = traceDateString.split('-');
       traceDate = new Date();
       traceDate.setUTCFullYear(numbers[0]);
