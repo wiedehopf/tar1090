@@ -4667,25 +4667,8 @@ function legShift(offset) {
     updateAddressBar();
 }
 function switchDate(date) {
-  $('#leg_sel').text(date);
-  dateObject=new Date(date)
-  console.log(traceDate)
-  console.log(traceDateString)
-  console.log(dateObject)
-  /*
-  if (traceDateString && !traceDate) {
-      let numbers = traceDateString.split('-');
-      traceDate = new Date();
-      traceDate.setUTCFullYear(numbers[0]);
-      traceDate.setUTCMonth(numbers[1] - 1);
-      traceDate.setUTCDate(numbers[2]);
-  }
-  if (!traceDate || offset == "today") {
-      traceDate = new Date();
-  } else if (offset) {
-      let sinceEpoch = traceDate.getTime();
-      traceDate.setTime(sinceEpoch + offset * 86400 * 1000);
-  }
+  $('#leg_sel').text("Loading");
+  traceDate=new Date(date)
   traceDate.setUTCHours(0);
   traceDate.setUTCMinutes(0);
   traceDate.setUTCSeconds(0);
