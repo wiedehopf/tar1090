@@ -782,7 +782,7 @@ function initPage() {
     $("#trace_jump_1d").click(function() {shiftTrace(1)});
     $(".datepicker").datepicker()
     $("#findHistory").click(function(){
-      switchDate($(".datepicker").val();)
+      switchDate($(".datepicker").val())
     });
 
     $("#leg_prev").click(function() {legShift(-1)});
