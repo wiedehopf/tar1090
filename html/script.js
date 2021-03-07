@@ -779,7 +779,7 @@ function initPage() {
     $("#jump_form").submit(onJump);
 
     $("#show_trace").click(toggleShowTrace);
-    $(".datepicker").datepicker()
+    $(".datepicker").datepicker({ maxDate: new Date});
     $("#findHistory").click(function(){
       switchDate($(".datepicker").val())
     });
