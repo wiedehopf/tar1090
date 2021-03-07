@@ -781,7 +781,7 @@ function initPage() {
     $("#trace_back_1d").click(function() {shiftTrace(-1)});
     $("#trace_jump_1d").click(function() {shiftTrace(1)});
     $(".datepicker").datepicker()
-    $("#findHistory").click(function(){switchDate($(".datepicker").val()});
+    $("#findHistory").click(function(){switchDate($(".datepicker").val();});
 
     $("#leg_prev").click(function() {legShift(-1)});
     $("#leg_next").click(function() {legShift(1)});
