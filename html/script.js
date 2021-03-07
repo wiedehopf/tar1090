@@ -109,6 +109,7 @@ let noRegOnly = false;
 let triggerMapRefresh = 0;
 let firstDraw = true;
 const renderBuffer = 45;
+let dateObject=null;
 
 let shareLink = '';
 
