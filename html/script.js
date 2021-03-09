@@ -791,6 +791,12 @@ function initPage() {
             $("#histDatePicker").blur();
         },
         autoSize: true,
+        onClose: !onMobile ? null : function(dateText, inst){
+            $("#histDatePicker").attr("disabled", false);
+        },
+        beforeShow: !onMobile ? null : function(input, inst){
+            $("#histDatePicker").attr("disabled", true);
+        },
     });
 
 
