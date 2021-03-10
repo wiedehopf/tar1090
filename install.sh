@@ -21,9 +21,10 @@ mkdir -p $ipath/aircraft_sil
 
 if ! id -u tar1090 &>/dev/null
 then
-    adduser --system --home $ipath --no-create-home --quiet tar1090
+    adduser --system --home $ipath --no-create-home --quiet tar1090 || adduser --system --home-dir $ipath --no-create-home tar1090
 fi
 
+# terminate with /
 command_package="git git/jq jq/"
 packages=()
 
@@ -31,13 +32,17 @@ while read -r -d '/' CMD PKG
 do
     if ! command -v "$CMD" &>/dev/null
     then
-        echo "command $CMD not found, will try to install package $PKG"
+        #echo "command $CMD not found, will try to install package $PKG"
         packages+=("$PKG")
     fi
 done < <(echo "$command_package")
 
-if [[ -n "${packages[*]}" ]]
-then
+if [[ -n "${packages[*]}" ]]; then
+    if ! command -v "apt-get" &>/dev/null; then
+        echo "Please install the following packages and rerun the install:"
+        echo "${packages[*]}"
+        exit 1
+    fi
     echo "Installing required packages: ${packages[*]}"
     apt-get update || true
     apt-get install -y --no-install-suggests --no-install-recommends "${packages[@]}" || true
