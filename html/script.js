@@ -109,9 +109,7 @@ let noRegOnly = false;
 let triggerMapRefresh = 0;
 let firstDraw = true;
 
-let cachedAirplane = "";
 let photoShown = null;
-let cachedSilhouette = "";
 let infoBlockWidth = baseInfoBlockWidth;
 
 const renderBuffer = 45;
@@ -2064,11 +2062,28 @@ function displaySil() {
     let type = selected.icaoType ? selected.icaoType : 'ZZZZ';
     let hex = selected.icao.toUpperCase();
     new_html = "<img id='silhouette' width='"+ 151 * globalScale + "' src='aircraft_sil/" + type + ".png' />";
-    if ( hex != cachedSilhouette) {
-        $('#selected_photo').html(new_html);
-        cachedSilhouette =  selected.icao.toUpperCase();
-        $('#copyrightInfo').html("<span></span>");
+    $('#selected_photo').html(new_html);
+    selected.icao.toUpperCase();
+    $('#copyrightInfo').html("<span></span>");
+}
+
+function displayPhoto() {
+    let photos = SelectedPlane.psAPIresponse["photos"];
+    if (!photos || photos.length == 0) {
+        photoShown = false;
+        displaySil();
+        setSelectedInfoBlockVisibility()
+        return;
     }
+    let new_html="";
+    let photoToPull = photos[0]["thumbnail"]["src"];
+    let linkToPicture = photos[0]["link"];
+    console.log(linkToPicture);
+    new_html = '<a href="'+linkToPicture+'" target="_blank" rel="noopener noreferrer"><img id=\"airplanePhoto\" src=' +photoToPull+'></a>';
+    $('#copyrightInfo').html("<span>Image © " + photos[0]["photographer"]+"</span>");
+    $('#selected_photo').html(new_html);
+    setSelectedInfoBlockVisibility();
+    photoShown = true;
 }
 
 let selCall = null;
@@ -2162,35 +2177,24 @@ function refreshSelected() {
 
     let planeHex = selected.icao.toUpperCase();
 
-    if (showPictures && planeHex != cachedAirplane) {
-        cachedAirplane = selected.icao.toUpperCase();
+    if (showPictures) {
         $('#selected_photo').html("<p>Loading image...</p>");
         $('#copyrightInfo').html("<span></span>");
-        let req = $.ajax({
-            url: 'https://api.planespotters.net/v1/photos/hex/'+planeHex,
-            dataType: 'json',
-            headers: { 'x-auth-token': 'gbn39gVQb0iIqukMQnuLjrAzDqq5alCB' },
-        });
+        if (selected.psAPIresponse) {
+            displayPhoto();
+        } else {
+            let req = $.ajax({
+                url: 'https://api.planespotters.net/v1/photos/hex/'+planeHex,
+                dataType: 'json',
+                headers: { 'x-auth-token': 'gbn39gVQb0iIqukMQnuLjrAzDqq5alCB' },
+                hex: selected.icao,
+            });
 
-        req.done(function(data) {
-            console.log(data)
-            let photos = data["photos"];
-            if (!photos || photos.length == 0) {
-                photoShown = false;
-                displaySil();
-                setSelectedInfoBlockVisibility()
-                return;
-            }
-            let new_html="";
-            let photoToPull = photos[0]["thumbnail"]["src"];
-            let linkToPicture = photos[0]["link"];
-            console.log(linkToPicture);
-            new_html = '<a href="'+linkToPicture+'" target="_blank" rel="noopener noreferrer"><img id=\"airplanePhoto\" src=' +photoToPull+'></a>';
-            $('#copyrightInfo').html("<span>Image © " + photos[0]["photographer"]+"</span>");
-            $('#selected_photo').html(new_html);
-            setSelectedInfoBlockVisibility();
-            photoShown = true;
-        });
+            req.done(function(data) {
+                Planes[this.hex].psAPIresponse = data;
+                displayPhoto();
+            });
+        }
     } else {
         displaySil();
     }
