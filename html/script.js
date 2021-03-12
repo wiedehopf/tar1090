@@ -2064,6 +2064,8 @@ function displaySil() {
 }
 
 function displayPhoto() {
+    if (!SelectedPlane || !SelectedPlane.psAPIresponse)
+        return;
     let photos = SelectedPlane.psAPIresponse["photos"];
     if (!photos || photos.length == 0) {
         displaySil();
@@ -2074,7 +2076,7 @@ function displayPhoto() {
     let photoToPull = photos[0]["thumbnail"]["src"];
     let linkToPicture = photos[0]["link"];
     //console.log(linkToPicture);
-    new_html = '<a href="'+linkToPicture+'" target="_blank" rel="noopener noreferrer"><img id=\"airplanePhoto\" src=' +photoToPull+'></a>';
+    new_html = '<a href="'+linkToPicture+'" target="_blank" rel="noopener noreferrer"><img id="airplanePhoto" src=' +photoToPull+'></a>';
     $('#copyrightInfo').html("<span>Image © " + photos[0]["photographer"]+"</span>");
     $('#selected_photo').html(new_html);
     setSelectedInfoBlockVisibility();
@@ -2174,19 +2176,23 @@ function refreshSelected() {
     if (showPictures) {
         $('#selected_photo').html("<p>Loading image...</p>");
         $('#copyrightInfo').html("<span></span>");
+        const ts = new Date().getTime();
         if (selected.psAPIresponse) {
             displayPhoto();
-        } else {
+        } else if (!selected.psAPIresponseTS || selected.psAPIresponseTS - ts > 10000) {
+            //console.log(ts/1000 + 'sending psAPI request');
+            selected.psAPIresponseTS = ts;
             let req = $.ajax({
                 url: 'https://api.planespotters.net/v1/photos/hex/'+planeHex,
                 dataType: 'json',
                 headers: { 'x-auth-token': 'gbn39gVQb0iIqukMQnuLjrAzDqq5alCB' },
-                hex: selected.icao,
+                plane: selected,
             });
 
             req.done(function(data) {
-                Planes[this.hex].psAPIresponse = data;
-                displayPhoto();
+                this.plane.psAPIresponse = data;
+                if (SelectedPlane && SelectedPlane.icao == this.hex)
+                    displayPhoto();
             });
         }
     } else {
@@ -3273,6 +3279,7 @@ function setSelectedInfoBlockVisibility() {
     }
     $('#selected_infoblock').css("width", infoBlockWidth * globalScale + 'px');
     $('#airplanePhoto').css("width", (infoBlockWidth - 29) * globalScale + 'px');
+    $('#selected_photo').css("width", (infoBlockWidth - 29) * globalScale + 'px');
     $('#large_mode_control').css('left', (infoBlockWidth * globalScale + 10) + 'px');
     $('.ol-scale-line').css('left', (infoBlockWidth * globalScale + 8) + 'px');
 
