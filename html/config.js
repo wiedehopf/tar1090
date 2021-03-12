@@ -245,7 +245,10 @@ HideCols = [
 
 // showing Pictures from the planespotters.net api
 // showPictures = true;
-// showing small pictures / silhouettes if photo is unavialable or planespotters.net photo is not aviablable
+
+
+// showing small pictures / silhouettes if planespotters.net photo is not aviablable
+// or instead of the planespotters pictures if those are disabled
 // showSil = true;
 // this shows small pictures in the details but they need to be provided by the user in the folder /usr/local/share/tar1090/aircraft_sil
 // pictures need to be named A330.png and so forth with the type code in the form TYPE.png

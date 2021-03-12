@@ -537,10 +537,10 @@ table.infoSectionTable tr td {
 }
 
 .infoBlockSection {
-    padding-top: calc( 8px * var(--SCALE));
-    padding-bottom: calc( 8px * var(--SCALE));
-    padding-left: calc( 10px * var(--SCALE));
-    padding-right: calc( 5px * var(--SCALE));
+    padding-top: calc( 7px * var(--SCALE));
+    padding-bottom: calc( 7px * var(--SCALE));
+    padding-left: calc( 7px * var(--SCALE));
+    padding-right: calc( 7px * var(--SCALE));
 }
 
 .largeText a {

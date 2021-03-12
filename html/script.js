@@ -1064,13 +1064,13 @@ function initPage() {
         container: "#settingsRight",
         init: showPictures,
         setState: function(state) {
+            showPictures = state;
             if (state) {
-              showPictures=true;
-            }else{
-              showPictures=false;
-              $('#selected_photo').html("<p></p>");
-              $('#copyrightInfo').html("<span></span>");
+                $('#photo_container').removeClass('hidden');
+            } else {
+                $('#photo_container').addClass('hidden');
             }
+            refreshSelected();
         }
     });
 
@@ -1323,9 +1323,6 @@ function startPage() {
         window.setInterval(fetchPfData, RefreshInterval*10.314);
     }
     setInterval(everySecond, 850);
-
-    if (showPictures)
-        $('#photo_container').removeClass('hidden');
 
     pathName = window.location.pathname;
     processURLParams();
@@ -2052,7 +2049,7 @@ function refreshPageTitle() {
 }
 
 function displaySil() {
-    if (!silAvailable || !showSil) {
+    if (!showSil) {
         $('#selected_photo').html("");
         return;
     }
@@ -2195,9 +2192,6 @@ function refreshSelected() {
     } else {
         displaySil();
     }
-
-    //$('#airplanePhoto').css("width",""+infoBlockWidth*0.85+"");
-
 
     $("#selected_altitude1").text(format_altitude_long(selected.altitude, selected.vert_rate, DisplayUnits));
     $("#selected_altitude2").text(format_altitude_long(selected.altitude, selected.vert_rate, DisplayUnits));
@@ -3272,7 +3266,18 @@ function showMap() {
 }
 
 function setSelectedInfoBlockVisibility() {
-    setInfoblockWidth();
+    if (wideInfoBlock ) {
+        infoBlockWidth = baseInfoBlockWidth + 40;
+    } else {
+        infoBlockWidth = baseInfoBlockWidth;
+    }
+    $('#selected_infoblock').css("width", infoBlockWidth * globalScale + 'px');
+    $('#airplanePhoto').css("width", (infoBlockWidth - 29) * globalScale + 'px');
+    $('#large_mode_control').css('left', (infoBlockWidth * globalScale + 10) + 'px');
+    $('.ol-scale-line').css('left', (infoBlockWidth * globalScale + 8) + 'px');
+
+	$('#photo_container').css('height', infoBlockWidth * 0.76 + 'px');
+
     if (SelectedPlane && toggles['selectedDetails'].state) {
         if (!mapIsVisible)
             $("#sidebar_container").css('margin-left', '140pt');
@@ -4794,21 +4799,6 @@ function shiftTrace(offset) {
     selectPlaneByHex(hex, selectOptions);
 
     updateAddressBar();
-}
-
-function setInfoblockWidth() {
-    if (wideInfoBlock ) {
-        infoBlockWidth = baseInfoBlockWidth * 1.333333333333;
-    } else {
-        infoBlockWidth = baseInfoBlockWidth;
-    }
-
-    $('#selected_infoblock').css("width",infoBlockWidth*globalScale);
-    $('#silhouette').css("width",151*globalScale);
-    $('#selected_photo').css("width",""+(infoBlockWidth - 30) * globalScale+"");
-    $('#airplanePhoto').css("width",""+(infoBlockWidth - 30) * globalScale+"");
-    $('#large_mode_control').css('left', (infoBlockWidth * globalScale + 10) + 'px');
-    $('.ol-scale-line').css('left', (infoBlockWidth * globalScale + 8) + 'px');
 }
 
 
