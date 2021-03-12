@@ -10,8 +10,8 @@
 //MessageRateInTitle = false;
 
 // -- Output Settings -------------------------------------
-// The DisplayUnits setting controls whether nautical (ft, NM, knots), 
-// metric (m, km, km/h) or imperial (ft, mi, mph) units are used in the 
+// The DisplayUnits setting controls whether nautical (ft, NM, knots),
+// metric (m, km, km/h) or imperial (ft, mi, mph) units are used in the
 // plane table and in the detailed plane info. Valid values are
 // "nautical", "metric", or "imperial".
 //DisplayUnits = "nautical";
@@ -242,8 +242,11 @@ HideCols = [
 ]
 
 
-// showing small pictures / silhouettes
-//showPictures = true;
+
+//showing Pictures from the planespotters.net api
+showPictures = true;
+// showing small pictures / silhouettes if photo is unavialable or planespotters.net photo is not aviablable
+showSilhouettes=true;
 // this shows small pictures in the details but they need to be provided by the user in the folder /usr/local/share/tar1090/aircraft_sil
 // pictures need to be named A330.png and so forth with the type code in the form TYPE.png
 // provide ZZZZ.png to be shown when the type is not known.

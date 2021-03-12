@@ -61,7 +61,7 @@ select {
     height: 100%;
     z-index:3;
 }
-#sidebar_canvas { 
+#sidebar_canvas {
     padding: calc( 5px * var(--SCALE));
     overflow: auto;
 }
@@ -259,7 +259,7 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
 #loader_progress { width:  calc(250px * var(--SCALE)); height: calc( 20px * var(--SCALE)); position: absolute; top: 50%; left: 50%; margin:  calc(128px * var(--SCALE)) 0 0 - calc(125px * var(--SCALE)); }
 
 
-.aircraft_table_header { 
+.aircraft_table_header {
     background-color: #00596b;
     color: #FFFFFF;
     cursor: pointer;
@@ -756,4 +756,12 @@ table.infoSectionTable tr td {
     width: calc( 120px * var(--SCALE));
     border-color: gainsboro;
     background-color: ghostwhite;
+}
+#copyrightInfo {
+  position: Relative;
+  font-size:8px;
+}
+#selected_photo{
+  position:relative;
+  
 }

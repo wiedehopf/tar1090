@@ -108,6 +108,16 @@ let halloween = false;
 let noRegOnly = false;
 let triggerMapRefresh = 0;
 let firstDraw = true;
+let new_html="";
+let cachedAirplane="";
+let loadedPhoto=null;
+//FIGURE OUT WHY IT"S NOT WORKING FROM CONFIG
+
+let silhouettesAviablable=true;
+let type=null;
+let photoShown=null;
+let cachedSilhouette = "";
+
 const renderBuffer = 45;
 
 let shareLink = '';
@@ -146,6 +156,8 @@ let badLine;
 let badLineMlat;
 let badDot;
 let badDotMlat;
+
+let infoBlockWidth=180;
 
 // TAR1090 application object
 let TAR;
@@ -1044,6 +1056,45 @@ function initPage() {
             updateMapSize();
         },
     });
+
+    new Toggle({
+        key: "wideInfoblock",
+        display: "Wider infoblock",
+        container: "#settingsRight",
+        init: false,
+        setState: function(state) {
+          console.log("state "+state);
+            if (state) {
+              infoBlockWidth=240*globalScale;
+
+              setInfoblockWidth();
+              setSelectedInfoBlockVisibility();
+            }else{
+              infoBlockWidth=180*globalScale;
+              $('#selected_photo').css("left","0%");
+              setInfoblockWidth();
+              setSelectedInfoBlockVisibility();
+            }
+        }
+    });
+    new Toggle({
+        key: "showPictures",
+        display: "Show Pictures",
+        container: "#settingsRight",
+        init: true,
+        setState: function(state) {
+          console.log("state "+state);
+            if (state) {
+              showPictures=true;
+            }else{
+              showPictures=false;
+              $('#selected_photo').html("<p></p>");
+              $('#copyrightInfo').html("<span></span>");
+
+            }
+        }
+    });
+
 
     $('#selectall_checkbox').on('click', function() {
         if ($('#selectall_checkbox').hasClass('settingsCheckboxChecked')) {
@@ -1981,7 +2032,7 @@ function reaper(all) {
             && plane.seen > 300
             && (plane.dataSource != 'adsc' || plane.seen > jaeroTimeout))
         ) {
-            // Reap it.                                
+            // Reap it.
             //console.log("Removed " + plane.icao);
             delete Planes[plane.icao];
             plane.destroy();
@@ -2109,16 +2160,61 @@ function refreshSelected() {
     else
         $('#selected_ownop').text("");
 
+
     if (showPictures) {
-        let type = selected.icaoType ? selected.icaoType : 'ZZZZ';
-        let new_html = "<img width='"+ 151.11 * globalScale + "' height='" + 35.55 * globalScale + "' src='aircraft_sil/" + type + ".png' />";
-        if (new_html != selectedPhotoCache) {
-            $('#selected_photo').html(new_html);
-            selectedPhotoCache = new_html;
+        let planeHex = selected.icao.toUpperCase();
+
+        if (planeHex != cachedAirplane) {
+          cachedAirplane=selected.icao.toUpperCase();
+        $('#selected_photo').html("<p>Loading image...</p>");
+        $('#copyrightInfo').html("<span></span>");
+        $.ajax({
+      url: 'https://api.planespotters.net/v1/photos/hex/'+planeHex,
+      dataType: 'application/json',
+      headers: { 'x-auth-token': 'gbn39gVQb0iIqukMQnuLjrAzDqq5alCB' },
+      complete: function(data){
+        console.log(data)
+        try{
+        let  apiResponse=JSON.parse(data["responseText"]);
+        let photoToPull = apiResponse["photos"][0]["thumbnail"]["src"];
+        let linkToPicture = apiResponse["photos"][0]["link"];
+        console.log(linkToPicture);
+        setInfoblockWidth();
+        new_html = '<a href="'+linkToPicture+'" target="_blank" rel="noopener noreferrer"><img id=\"airplanePhoto\" src=' +photoToPull+'></a>';
+        $('#copyrightInfo').html("<span>Image © "+apiResponse["photos"][0]["photographer"]+"</span>");
+        $('#selected_photo').html(new_html);
+        setSelectedInfoBlockVisibility();
+        photoShown=true;
+      }
+        catch(e){
+          if (silhouettesAviablable){
+
+            type = selected.icaoType ? selected.icaoType : 'ZZZZ';
+            let hex= selected.icao.toUpperCase();
+            new_html = "<img id='silhouette' width='"+ 151 * globalScale + "' src='aircraft_sil/" + type + ".png' />";
+                if ( hex != cachedSilhouette) {
+                 $('#selected_photo').html(new_html);
+                 cachedSilhouette =  selected.icao.toUpperCase();
+                 setInfoblockWidth();
+                 setSelectedInfoBlockVisibility()
+                 photoShown=false;
+                 $('#copyrightInfo').html("<span></span>");
+          }
+        }else{
+          $('#selected_photo').html("");
+          setInfoblockWidth();
+          setSelectedInfoBlockVisibility()
+          photoShown=false;
         }
-    } else {
-        $('#selected_photo').text("");
-    }
+   }
+
+ }})}}
+
+
+
+
+        //$('#airplanePhoto').css("width",""+infoBlockWidth*0.85+"");
+
 
     $("#selected_altitude1").text(format_altitude_long(selected.altitude, selected.vert_rate, DisplayUnits));
     $("#selected_altitude2").text(format_altitude_long(selected.altitude, selected.vert_rate, DisplayUnits));
@@ -2950,7 +3046,7 @@ function refreshFeatures() {
 
         for (let col of columns) {
             sortableColumns.append(`<li class="ui-state-default" id="${prefix + col.id}"></li>`);
-            
+
             new Toggle({
                 key: col.toggleKey,
                 display: col.text,
@@ -3198,13 +3294,13 @@ function setSelectedInfoBlockVisibility() {
             $("#sidebar_container").css('margin-left', '140pt');
         //$('#sidebar_canvas').css('margin-bottom', $('#selected_infoblock').height() + 'px');
         //
-        $('#large_mode_control').css('left', (190 * globalScale) + 'px');
-        $('.ol-scale-line').css('left', (180 * globalScale + 8) + 'px');
+        $('#large_mode_control').css('left', (infoBlockWidth * globalScale + 10) + 'px');
+        $('.ol-scale-line').css('left', (infoBlockWidth * globalScale + 8) + 'px');
 
         if (mapIsVisible && document.getElementById('map_canvas').clientWidth < parseFloat($('#selected_infoblock').css('width')) * 3) {
             $('#selected_infoblock').css('height', '290px');
             $('#large_mode_control').css('left', (5 * globalScale) + 'px');
-            $('#photo_container').addClass('hidden');
+          // $('#photo_container').addClass('hidden');
             $('#selected_typedesc').parent().parent().hide();
             $('#credits').css('bottom', '295px');
             $('#credits').css('left', '5px');
@@ -3215,6 +3311,7 @@ function setSelectedInfoBlockVisibility() {
         }
 
         $('#selected_infoblock').show();
+        setInfoblockWidth();
     } else {
         if (!mapIsVisible)
             $("#sidebar_container").css('margin-left', '0');
@@ -3785,7 +3882,7 @@ function getPhotoLink(ac) {
 // takes in an elemnt jQuery path and the OL3 layer name and toggles the visibility based on clicking it
 function toggleLayer(element, layer) {
     // set initial checked status
-    ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) { 
+    ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
         if (lyr.get('name') === layer && lyr.getVisible()) {
             $(element).addClass('settingsCheckboxChecked');
         }
@@ -3795,7 +3892,7 @@ function toggleLayer(element, layer) {
         if ($(element).hasClass('settingsCheckboxChecked')) {
             visible = true;
         }
-        ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) { 
+        ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
             if (lyr.get('name') === layer) {
                 if (visible) {
                     lyr.setVisible(false);
@@ -4718,6 +4815,25 @@ function shiftTrace(offset) {
 
     updateAddressBar();
 }
+
+function setInfoblockWidth(){
+  //$('#large_mode_control').css('left', (infoBlockWidth * globalScale) + 'px');
+  //$('.ol-scale-line').css('left', (infoBlockWidth * globalScale + 8) + 'px');
+  if (photoShown==false && showPictures && infoBlockWidth==240*globalScale){
+    $('#selected_photo').css("left","15%");}
+  else{
+    $('#selected_photo').css("left","0%");
+  }
+  $('#selected_infoblock').css("width",infoBlockWidth*globalScale);
+  $('#selected_photo').css("width",""+infoBlockWidth*0.87*globalScale+"");
+  $('#airplanePhoto').css("width",""+infoBlockWidth*0.87*globalScale+"");
+  $('#silhouette').css("width",151*globalScale);
+
+
+
+
+}
+
 
 function setLineWidth() {
     newWidth = lineWidth * Math.pow(2, globalScale) / 2 * globalScale
