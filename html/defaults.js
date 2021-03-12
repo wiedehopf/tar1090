@@ -264,7 +264,11 @@ let HideCols = [
 ]
 
 
-let showPictures = false;
+let showPictures = true;
+let silAvailable = true;
+let showSil = true;
+let wideInfoBlock = false;
+let baseInfoBlockWidth = 180;
 
 // enable DWD Radolan (NEXRAD like weather for Germany)
 let enableDWD = true;
