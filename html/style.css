@@ -759,9 +759,10 @@ table.infoSectionTable tr td {
 }
 #copyrightInfo {
   position: Relative;
-  font-size:8px;
+  font-size: var(--FS1);
+
 }
 #selected_photo{
-  position:relative;
-  
+  text-align: center;
+  display: block;
 }
