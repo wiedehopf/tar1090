@@ -264,9 +264,21 @@ let HideCols = [
 ]
 
 
-let showPictures = false;
+// show aircraft pictures
+let showPictures = true;
+// get pictures from planespotter API
+let planespottersAPI = true;
+
 let showSil = false;
-let silAvailable = false;
+// this shows small pictures in the details but they need to be provided by the user in the folder /usr/local/share/tar1090/aircraft_sil
+// showPictures needs to be enabled as well
+// to only get these pictures disable the planespottersAPI
+// pictures need to be named A330.png and so forth with the type code in the form TYPE.png
+// provide ZZZZ.png to be shown when the type is not known.
+// this feature is provided as is please don't expect tar1090's support for getting the pictures right.
+
+
+
 let wideInfoBlock = false;
 let baseInfoBlockWidth = 200;
 

@@ -241,17 +241,15 @@ HideCols = [
 	"#data_source",
 ]
 
-
-
-// showing Pictures from the planespotters.net api
+// show aircraft pictures
 // showPictures = true;
+// get pictures from planespotter API
+// planespottersAPI = true;
 
-
-// showing small pictures / silhouettes if planespotters.net photo is not aviablable
-// or instead of the planespotters pictures if those are disabled
-// showSil = true;
-// silAvailable = true // set this instead of showSil to only show silhouettes as a fallback when planespotter pictures are toggled on
+// showSil = false;
 // this shows small pictures in the details but they need to be provided by the user in the folder /usr/local/share/tar1090/aircraft_sil
+// showPictures needs to be enabled as well
+// to only get these pictures disable the planespottersAPI
 // pictures need to be named A330.png and so forth with the type code in the form TYPE.png
 // provide ZZZZ.png to be shown when the type is not known.
 // this feature is provided as is please don't expect tar1090's support for getting the pictures right.
