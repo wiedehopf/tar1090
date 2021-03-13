@@ -3337,7 +3337,7 @@ function adjustInfoBlock() {
 
     if (showPictures) {
         if (planespottersAPI)
-            $('#photo_container').css('height', infoBlockWidth * 0.76 + 'px');
+            $('#photo_container').css('height', photoWidth * 0.883 + 'px');
         else
             $('#photo_container').css('height', '40px');
     }
