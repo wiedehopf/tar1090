@@ -749,7 +749,7 @@ function initPage() {
             SelectedPlane.updateMarker();
             SelectedPlane = null;
             refreshSelected();
-            setSelectedInfoBlockVisibility();
+            adjustInfoBlock();
             TAR.planeMan.refresh();
             updateAddressBar();
         }
@@ -862,7 +862,7 @@ function initPage() {
         container: "#settingsLeft",
         init: true,
         setState: function(state) {
-            setSelectedInfoBlockVisibility();
+            adjustInfoBlock();
         }
     });
 
@@ -1054,7 +1054,7 @@ function initPage() {
         init: wideInfoBlock,
         setState: function(state) {
             wideInfoBlock = state;
-            setSelectedInfoBlockVisibility();
+            adjustInfoBlock();
         }
     });
 
@@ -2073,7 +2073,7 @@ function displayPhoto() {
     let photos = SelectedPlane.psAPIresponse["photos"];
     if (!photos || photos.length == 0) {
         displaySil();
-        setSelectedInfoBlockVisibility();
+        adjustInfoBlock();
         return;
     }
     let new_html="";
@@ -2083,7 +2083,7 @@ function displayPhoto() {
     new_html = '<a href="'+linkToPicture+'" target="_blank" rel="noopener noreferrer"><img id="airplanePhoto" src=' +photoToPull+'></a>';
     $('#copyrightInfo').html("<span>Image © " + photos[0]["photographer"]+"</span>");
     setPhotoHtml(new_html);
-    setSelectedInfoBlockVisibility();
+    adjustInfoBlock();
 }
 
 let selCall = null;
@@ -2104,7 +2104,7 @@ function refreshSelected() {
     */
 
     if (!SelectedPlane) {
-        setSelectedInfoBlockVisibility();
+        adjustInfoBlock();
         return;
     }
     const selected = SelectedPlane;
@@ -2465,7 +2465,7 @@ function refreshSelected() {
         $('#selected_version').text('v' + selected.version);
     }
 
-    setSelectedInfoBlockVisibility();
+    adjustInfoBlock();
 }
 
 function refreshHighlighted() {
@@ -3258,7 +3258,7 @@ function expandSidebar(e) {
     clearTimeout(refreshId);
     fetchData();
     updateMapSize();
-    setSelectedInfoBlockVisibility();
+    adjustInfoBlock();
 }
 
 function showMap() {
@@ -3285,24 +3285,13 @@ function setPhotoHtml(source) {
     $('#selected_photo').html(source);
 }
 
-function setSelectedInfoBlockVisibility() {
+function adjustInfoBlock() {
     if (wideInfoBlock ) {
         infoBlockWidth = baseInfoBlockWidth + 40;
     } else {
         infoBlockWidth = baseInfoBlockWidth;
     }
     $('#selected_infoblock').css("width", infoBlockWidth * globalScale + 'px');
-    $('#airplanePhoto').css("width", (infoBlockWidth - 29) * globalScale + 'px');
-    $('#selected_photo').css("width", (infoBlockWidth - 29) * globalScale + 'px');
-    $('#large_mode_control').css('left', (infoBlockWidth * globalScale + 10) + 'px');
-    $('.ol-scale-line').css('left', (infoBlockWidth * globalScale + 8) + 'px');
-
-    if (showPictures) {
-        if (planespottersAPI)
-            $('#photo_container').css('height', infoBlockWidth * 0.76 + 'px');
-        else
-            $('#photo_container').css('height', '40px');
-    }
 
     if (SelectedPlane && toggles['selectedDetails'].state) {
         if (!mapIsVisible)
@@ -3312,7 +3301,6 @@ function setSelectedInfoBlockVisibility() {
         if (mapIsVisible && document.getElementById('map_canvas').clientWidth < parseFloat($('#selected_infoblock').css('width')) * 3) {
             $('#selected_infoblock').css('height', '290px');
             $('#large_mode_control').css('left', (5 * globalScale) + 'px');
-          // $('#photo_container').addClass('hidden');
             $('#selected_typedesc').parent().parent().hide();
             $('#credits').css('bottom', '295px');
             $('#credits').css('left', '5px');
@@ -3334,6 +3322,24 @@ function setSelectedInfoBlockVisibility() {
         $('#credits').css('left', '');
 
         $('#selected_infoblock').hide();
+    }
+
+    let photoWidth = document.getElementById('photo_container').clientWidth;
+    let refWidth = (infoBlockWidth - 29) * globalScale;
+    if (Math.abs(photoWidth / refWidth - 1) > 0.05)
+        photoWidth = refWidth;
+
+    $('#airplanePhoto').css("width", photoWidth + 'px');
+    $('#selected_photo').css("width", photoWidth + 'px');
+
+    $('#large_mode_control').css('left', (infoBlockWidth * globalScale + 10) + 'px');
+    $('.ol-scale-line').css('left', (infoBlockWidth * globalScale + 8) + 'px');
+
+    if (showPictures) {
+        if (planespottersAPI)
+            $('#photo_container').css('height', infoBlockWidth * 0.76 + 'px');
+        else
+            $('#photo_container').css('height', '40px');
     }
 }
 
