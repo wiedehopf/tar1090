@@ -3293,6 +3293,9 @@ function adjustInfoBlock() {
     }
     $('#selected_infoblock').css("width", infoBlockWidth * globalScale + 'px');
 
+    $('#large_mode_control').css('left', (infoBlockWidth * globalScale + 10) + 'px');
+    $('.ol-scale-line').css('left', (infoBlockWidth * globalScale + 8) + 'px');
+
     if (SelectedPlane && toggles['selectedDetails'].state) {
         if (!mapIsVisible)
             $("#sidebar_container").css('margin-left', '140pt');
@@ -3331,9 +3334,6 @@ function adjustInfoBlock() {
 
     $('#airplanePhoto').css("width", photoWidth + 'px');
     $('#selected_photo').css("width", photoWidth + 'px');
-
-    $('#large_mode_control').css('left', (infoBlockWidth * globalScale + 10) + 'px');
-    $('.ol-scale-line').css('left', (infoBlockWidth * globalScale + 8) + 'px');
 
     if (showPictures) {
         if (planespottersAPI)
