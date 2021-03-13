@@ -1058,6 +1058,9 @@ function initPage() {
             setSelectedInfoBlockVisibility();
         }
     });
+    if (showSil)
+        $('#photo_container').removeClass('hidden');
+
     new Toggle({
         key: "showPictures",
         display: "Show Pictures",
@@ -1067,7 +1070,7 @@ function initPage() {
             showPictures = state;
             if (state) {
                 $('#photo_container').removeClass('hidden');
-            } else {
+            } else if (!showSil) {
                 $('#photo_container').addClass('hidden');
             }
             refreshSelected();
@@ -2049,7 +2052,7 @@ function refreshPageTitle() {
 }
 
 function displaySil() {
-    if (!showSil) {
+    if (!showSil && !silAvailable) {
         $('#selected_photo').html("");
         return;
     }
@@ -3283,7 +3286,11 @@ function setSelectedInfoBlockVisibility() {
     $('#large_mode_control').css('left', (infoBlockWidth * globalScale + 10) + 'px');
     $('.ol-scale-line').css('left', (infoBlockWidth * globalScale + 8) + 'px');
 
-	$('#photo_container').css('height', infoBlockWidth * 0.76 + 'px');
+    if (showPictures) {
+        $('#photo_container').css('height', infoBlockWidth * 0.76 + 'px');
+    } else if (showSil) {
+        $('#photo_container').css('height', '40px');
+    }
 
     if (SelectedPlane && toggles['selectedDetails'].state) {
         if (!mapIsVisible)

@@ -266,6 +266,7 @@ let HideCols = [
 
 let showPictures = false;
 let showSil = false;
+let silAvailable = false;
 let wideInfoBlock = false;
 let baseInfoBlockWidth = 200;
 
