@@ -259,7 +259,7 @@ function format_data_source(source) {
 		case 'tisb_other':
 		case 'tisb':
 			return "TIS-B";
-		case 'mode_s':
+		case 'modeS':
 			return "Mode S";
 		case 'mode_ac':
 			return "Mode A/C";
