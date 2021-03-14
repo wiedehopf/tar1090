@@ -2091,20 +2091,28 @@ function refreshPhoto(selected) {
         displaySil();
         return;
     }
-    if (selected.psAPIresponse) {
-        displayPhoto();
-        return;
-    }
-    const ts = new Date().getTime();
-    if (selected.psAPIresponseTS && selected.psAPIresponseTS - ts < 10000)
-        return;
-
     let urlTail;
+    let param;
     if (selected.registration != null) {
         urlTail = 'reg/' + selected.registration;
+        param = 'reg';
     } else {
         urlTail = 'hex/' + selected.icao.toUpperCase();
+        param = 'hex';
     }
+
+    const ts = new Date().getTime();
+    if (param == selected.psAPIparam) {
+        if (selected.psAPIresponse) {
+            displayPhoto();
+            return;
+        }
+        if (selected.psAPIresponseTS && selected.psAPIresponseTS - ts < 10000) {
+            return;
+        }
+    }
+    selected.psAPIparam = param;
+
     setPhotoHtml("<p>Loading image...</p>");
     $('#copyrightInfo').html("<span></span>");
     //console.log(ts/1000 + 'sending psAPI request');
@@ -2117,8 +2125,9 @@ function refreshPhoto(selected) {
 
     req.done(function(data) {
         this.plane.psAPIresponse = data;
-        if (SelectedPlane && SelectedPlane.icao == this.hex)
+        if (SelectedPlane == this.plane) {
             displayPhoto();
+        }
     });
 }
 
@@ -5306,6 +5315,8 @@ function getTrace(newPlane, hex, options) {
 
             if (options.list)
                 getTrace(null, null, options);
+
+            this.options.plane.getAircraftData();
         });
     }
 

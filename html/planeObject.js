@@ -2054,12 +2054,6 @@ PlaneObject.prototype.getAircraftData = function() {
 
         this.dataChanged();
 
-        if (this.selected) {
-            refreshSelected();
-        }
-
-        this.updateMarker();
-
         data = null;
     }.bind(this));
 
@@ -2520,6 +2514,12 @@ PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
 
 PlaneObject.prototype.dataChanged = function() {
     this.refreshTR = true;
+
+    if (this.selected) {
+        refreshSelected();
+    }
+
+    this.updateMarker();
 }
 
 PlaneObject.prototype.isNonIcao = function() {
