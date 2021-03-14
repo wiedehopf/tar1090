@@ -155,6 +155,18 @@ TAR = (function (global, $, TAR) {
     return TAR;
 }(window, jQuery, TAR || {}));
 
+
+function getPlaneObject(hex) {
+    let plane = Planes[hex];
+    if (!plane) {
+        plane = new PlaneObject(hex);
+
+        Planes[hex] = plane;
+        PlanesOrdered.push(plane);
+    }
+    return plane;
+}
+
 function processAircraft(ac, init, uat) {
     let isArray = Array.isArray(ac);
     let hex = isArray ? ac[0] : ac.hex;
@@ -192,6 +204,7 @@ function processAircraft(ac, init, uat) {
     if (uat) {
         if (plane.receiver == "uat"
             || (ac.seen_pos < 1.8 && (plane.seen_pos > 2 || plane.dataSource == "mlat"))
+            || plane.seen > 10 || isNaN(plane.seen)
             || init) {
             let tisb = Array.isArray(ac) ? (ac[7] == "tisb") : (ac.tisb != null && ac.tisb.indexOf("lat") >= 0);
             if (tisb && plane.dataSource == "adsb") {
@@ -204,6 +217,7 @@ function processAircraft(ac, init, uat) {
     } else {
         if (plane.receiver == "1090"
             || (ac.seen_pos < 1.8 && plane.seen_pos > 2 && (plane.seen_pos > 5 || !(ac.mlat && ac.mlat.indexOf("lat") >= 0)))
+            || plane.seen > 10 || isNaN(plane.seen)
             || init) {
             plane.receiver = "1090";
             plane.updateData(now, last, ac, init);

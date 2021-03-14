@@ -2645,14 +2645,3 @@ PlaneObject.prototype.setProjection = function(arg) {
     }
 }
 
-function getPlaneObject(hex) {
-    let plane = Planes[hex];
-    if (!plane) {
-        plane = new PlaneObject(hex);
-
-        Planes[hex] = plane;
-        PlanesOrdered.push(plane);
-    }
-    return plane;
-}
-
