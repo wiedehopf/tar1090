@@ -2017,7 +2017,7 @@ PlaneObject.prototype.altBad = function(newAlt, oldAlt, oldTime, data) {
 };
 
 PlaneObject.prototype.getAircraftData = function() {
-    let req = getAircraftData(this.icao);
+    let req = dbLoad(this.icao);
 
     req.done(function(data) {
         this.regLoaded = true;
@@ -2594,6 +2594,7 @@ PlaneObject.prototype.checkForDB = function(t) {
         this.military = t.dbFlags & 1;
         this.interesting = t.dbFlags & 2;
     }
+    this.regLoaded = true;
     this.dataChanged();
 };
 PlaneObject.prototype.updateAlt = function(t) {
@@ -2642,5 +2643,16 @@ PlaneObject.prototype.setProjection = function(arg) {
     } else if (moved) {
         this.olPoint.setCoordinates(proj);
     }
+}
+
+function getPlaneObject(hex) {
+    let plane = Planes[hex];
+    if (!plane) {
+        plane = new PlaneObject(hex);
+
+        Planes[hex] = plane;
+        PlanesOrdered.push(plane);
+    }
+    return plane;
 }
 

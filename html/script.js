@@ -158,7 +158,6 @@ TAR = (function (global, $, TAR) {
 function processAircraft(ac, init, uat) {
     let isArray = Array.isArray(ac);
     let hex = isArray ? ac[0] : ac.hex;
-    let plane = null;
 
     // Do we already have this plane object in Planes?
     // If not make it.
@@ -171,24 +170,12 @@ function processAircraft(ac, init, uat) {
     if (icaoFilter && !icaoFilter.includes(hex))
         return;
 
-    plane = Planes[hex];
-
     if (uatNoTISB && uat && ac.type && ac.type.substring(0,4) == "tisb") {
         // drop non ADS-B planes from UAT (TIS-B)
         return;
     }
 
-    if (!plane) {
-        plane = new PlaneObject(hex);
-
-        Planes[hex] = plane;
-        PlanesOrdered.push(plane);
-        if (uat) {
-            plane.receiver = "uat";
-        } else {
-            plane.receiver = "1090";
-        }
-    }
+    let plane = getPlaneObject(hex);
 
     if (showTrace)
         return;
@@ -2101,10 +2088,13 @@ function refreshPhoto(selected) {
     if (selected.registration != null) {
         urlTail = 'reg/' + selected.registration;
         param = 'reg';
+    } else if (!selected.regLoaded) {
+        return;
     } else {
         urlTail = 'hex/' + selected.icao.toUpperCase();
         param = 'hex';
     }
+
 
     const ts = new Date().getTime();
     if (param == selected.psAPIparam) {
@@ -5206,8 +5196,7 @@ function getTrace(newPlane, hex, options) {
     //console.log('Requesting trace: ' + hex);
 
     if (!newPlane) {
-        processAircraft({hex: hex, });
-        newPlane = Planes[hex];
+        newPlane = getPlaneObject(hex);
         newPlane.last_message_time = NaN;
         newPlane.position_time = NaN;
         newPlane.selected = true;
@@ -5317,10 +5306,12 @@ function getTrace(newPlane, hex, options) {
             else
                 this.options.plane.processTrace();
 
-            if (options.list)
+            if (options.list) {
                 getTrace(null, null, options);
-
-            this.options.plane.getAircraftData();
+            } else {
+                this.options.plane.getAircraftData();
+                refreshSelected();
+            }
         });
     }
 

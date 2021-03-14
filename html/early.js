@@ -476,6 +476,7 @@ if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and 
 let tabHidden = false;
 
 function handleVisibilityChange() {
+    const prevHidden = tabHidden;
     if (document[hidden])
         tabHidden = true;
     else
@@ -487,7 +488,7 @@ function handleVisibilityChange() {
         return;
 
     // tab is no longer hidden
-    if (!tabHidden) {
+    if (!tabHidden && prevHidden) {
         active();
         if (showTrace)
             return;

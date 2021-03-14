@@ -30,7 +30,7 @@ let _request_cache = {};
 
 let regCache = null;
 
-function getAircraftData(icao) {
+function dbLoad(icao) {
 	let defer = $.Deferred();
 	if (icao.charAt(0) == '~') {
 		defer.resolve(null);
