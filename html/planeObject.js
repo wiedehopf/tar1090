@@ -98,7 +98,7 @@ function PlaneObject(icao) {
     this.seen_pos = null;
 
     // Display info
-    this.visible = true;
+    this.visible = false;
     this.marker = null;
     this.markerStyle = null;
     this.markerIcon = null;
@@ -2522,8 +2522,6 @@ PlaneObject.prototype.dataChanged = function() {
     if (this == HighlightedPlane) {
         refreshHighlighted();
     }
-
-    this.updateMarker();
 }
 
 PlaneObject.prototype.isNonIcao = function() {
@@ -2559,6 +2557,7 @@ PlaneObject.prototype.checkVisible = function() {
 PlaneObject.prototype.setTypeData = function() {
 	if (_aircraft_type_cache == null || !this.icaoType || this.icaoType == this.icaoTypeCache)
         return;
+    this.updateMarker();
     this.icaoTypeCache = this.icaoType;
 
     let typeDesignator = this.icaoType.toUpperCase();
