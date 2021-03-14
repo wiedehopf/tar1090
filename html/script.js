@@ -2086,6 +2086,42 @@ function displayPhoto() {
     adjustInfoBlock();
 }
 
+function refreshPhoto(selected) {
+    if (!showPictures || !planespottersAPI || selected.icao[0] == '~') {
+        displaySil();
+        return;
+    }
+    if (selected.psAPIresponse) {
+        displayPhoto();
+        return;
+    }
+    const ts = new Date().getTime();
+    if (selected.psAPIresponseTS && selected.psAPIresponseTS - ts < 10000)
+        return;
+
+    let urlTail;
+    if (selected.registration != null) {
+        urlTail = 'reg/' + selected.registration;
+    } else {
+        urlTail = 'hex/' + selected.icao.toUpperCase();
+    }
+    setPhotoHtml("<p>Loading image...</p>");
+    $('#copyrightInfo').html("<span></span>");
+    //console.log(ts/1000 + 'sending psAPI request');
+    selected.psAPIresponseTS = ts;
+    let req = $.ajax({
+        url: 'https://api.planespotters.net/pub/photos/' + urlTail,
+        dataType: 'json',
+        plane: selected,
+    });
+
+    req.done(function(data) {
+        this.plane.psAPIresponse = data;
+        if (SelectedPlane && SelectedPlane.icao == this.hex)
+            displayPhoto();
+    });
+}
+
 let selCall = null;
 let selIcao = null;
 let selReg = null;
@@ -2110,6 +2146,8 @@ function refreshSelected() {
     const selected = SelectedPlane;
 
     selected.checkForDB();
+
+    refreshPhoto(selected);
 
     if (selected.flight != selCall) {
         selCall = selected.flight;
@@ -2175,32 +2213,6 @@ function refreshSelected() {
         $('#selected_ownop').text("");
 
 
-    let planeHex = selected.icao.toUpperCase();
-
-    if (showPictures && selected.icao[0] != '~' && planespottersAPI) {
-        const ts = new Date().getTime();
-        if (selected.psAPIresponse) {
-            displayPhoto();
-        } else if (!selected.psAPIresponseTS || selected.psAPIresponseTS - ts > 10000) {
-            setPhotoHtml("<p>Loading image...</p>");
-            $('#copyrightInfo').html("<span></span>");
-            //console.log(ts/1000 + 'sending psAPI request');
-            selected.psAPIresponseTS = ts;
-            let req = $.ajax({
-                url: 'https://api.planespotters.net/pub/photos/hex/' + planeHex,
-                dataType: 'json',
-                plane: selected,
-            });
-
-            req.done(function(data) {
-                this.plane.psAPIresponse = data;
-                if (SelectedPlane && SelectedPlane.icao == this.hex)
-                    displayPhoto();
-            });
-        }
-    } else {
-        displaySil();
-    }
 
     $("#selected_altitude1").text(format_altitude_long(selected.altitude, selected.vert_rate, DisplayUnits));
     $("#selected_altitude2").text(format_altitude_long(selected.altitude, selected.vert_rate, DisplayUnits));
