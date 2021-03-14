@@ -105,7 +105,7 @@ let overrideMapType = null;
 let enableOverlays = [];
 let halloween = false;
 let noRegOnly = false;
-let triggerMapRefresh = 0;
+let triggerRefresh = 0;
 let firstDraw = true;
 
 let infoBlockWidth = baseInfoBlockWidth;
@@ -390,7 +390,7 @@ function fetchData(options) {
                 if (globeIndex)
                     clearTimeout(refreshId);
 
-                triggerMapRefresh++;
+                triggerRefresh++;
                 if (firstFetch) {
                     firstFetch = false;
                     if (uuid) {
@@ -2491,7 +2491,7 @@ function refreshSelected() {
 
 function refreshHighlighted() {
     // this is following nearly identical logic, etc, as the refreshSelected function, but doing less junk for the highlighted pane
-    let highlighted = Planes[HighlightedPlane];
+    let highlighted = HighlightedPlane;
 
     if (!highlighted) {
         $('#highlighted_infoblock').hide();
@@ -4125,7 +4125,7 @@ function checkRefresh() {
     if (showTrace)
         return;
 
-    if (triggerMapRefresh || zoom != refreshZoom || center[0] != refreshLon || center[1] != refreshLat) {
+    if (triggerRefresh || zoom != refreshZoom || center[0] != refreshLon || center[1] != refreshLat) {
 
         const ts = new Date().getTime();
         const elapsed = Math.abs(ts - lastRefresh);
@@ -4138,14 +4138,13 @@ function checkRefresh() {
         refreshZoom = zoom;
         refreshLat = center[1];
         refreshLon = center[0];
+
         //console.time("refreshTable");
         TAR.planeMan.refresh();
-        refreshSelected();
-        refreshHighlighted();
-        mapRefresh();
         //console.timeEnd("refreshTable");
+        mapRefresh();
 
-        triggerMapRefresh = 0;
+        triggerRefresh = 0;
     }
 }
 function mapRefresh() {
@@ -4224,13 +4223,13 @@ function highlight(evt) {
         }
     );
 
-    if (hex == HighlightedPlane)
+    if (HighlightedPlane && hex == HighlightedPlane.icao)
         return;
 
     //clearTimeout(pointerMoveTimeout);
 
     if (hex) {
-        HighlightedPlane = hex;
+        HighlightedPlane = Planes[hex];
     } else {
         HighlightedPlane = null;
     }
@@ -5748,7 +5747,7 @@ function play(index) {
     }
 
     checkMovement();
-    triggerMapRefresh = 1;
+    triggerRefresh = 1;
     checkRefresh();
 }
 

@@ -2519,6 +2519,10 @@ PlaneObject.prototype.dataChanged = function() {
         refreshSelected();
     }
 
+    if (this == HighlightedPlane) {
+        refreshHighlighted();
+    }
+
     this.updateMarker();
 }
 
