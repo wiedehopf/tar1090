@@ -156,17 +156,6 @@ TAR = (function (global, $, TAR) {
 }(window, jQuery, TAR || {}));
 
 
-function getPlaneObject(hex) {
-    let plane = Planes[hex];
-    if (!plane) {
-        plane = new PlaneObject(hex);
-
-        Planes[hex] = plane;
-        PlanesOrdered.push(plane);
-    }
-    return plane;
-}
-
 function processAircraft(ac, init, uat) {
     let isArray = Array.isArray(ac);
     let hex = isArray ? ac[0] : ac.hex;
@@ -187,7 +176,14 @@ function processAircraft(ac, init, uat) {
         return;
     }
 
-    let plane = getPlaneObject(hex);
+    let plane = Planes[hex]
+
+    if (!plane) {
+        plane = new PlaneObject(hex);
+        if (uat)
+            plane.uat = true;
+    }
+
 
     if (showTrace)
         return;
@@ -198,11 +194,10 @@ function processAircraft(ac, init, uat) {
             plane.updateData(now, last, ac, init);
         else
             plane.last_message_time = now - ac.seen;
-
         return;
     }
     if (uat) {
-        if (plane.receiver == "uat"
+        if (plane.uat
             || (ac.seen_pos < 1.8 && (plane.seen_pos > 2 || plane.dataSource == "mlat"))
             || plane.seen > 10 || isNaN(plane.seen)
             || init) {
@@ -210,16 +205,15 @@ function processAircraft(ac, init, uat) {
             if (tisb && plane.dataSource == "adsb") {
                 // ignore TIS-B data for current ADS-B 1090 planes
             } else {
-                plane.receiver = "uat";
+                plane.uat = true;
                 plane.updateData(uat_now, uat_last, ac, init);
             }
         }
     } else {
-        if (plane.receiver == "1090"
+        if (!plane.uat
             || (ac.seen_pos < 1.8 && plane.seen_pos > 2 && (plane.seen_pos > 5 || !(ac.mlat && ac.mlat.indexOf("lat") >= 0)))
             || plane.seen > 10 || isNaN(plane.seen)
             || init) {
-            plane.receiver = "1090";
             plane.updateData(now, last, ac, init);
         }
     }
@@ -1255,7 +1249,7 @@ function parseHistory() {
             if (plane.position && SitePosition)
                 plane.sitedist = ol.sphere.getDistance(SitePosition, plane.position);
 
-            if (uatNoTISB && plane.receiver == "uat" && plane.type && plane.type.substring(0,4) == "tisb") {
+            if (uatNoTISB && plane.uat && plane.type && plane.type.substring(0,4) == "tisb") {
                 plane.last_message_time -= 999;
             }
         }
@@ -5210,7 +5204,7 @@ function getTrace(newPlane, hex, options) {
     //console.log('Requesting trace: ' + hex);
 
     if (!newPlane) {
-        newPlane = getPlaneObject(hex);
+        newPlane = Planes[hex] || new PlaneObject(hex);
         newPlane.last_message_time = NaN;
         newPlane.position_time = NaN;
         newPlane.selected = true;

@@ -1,6 +1,10 @@
 "use strict";
 
 function PlaneObject(icao) {
+
+    Planes[icao] = this;
+    PlanesOrdered.push(this);
+
     // Info about the plane
     this.icao      = icao;
     this.icaorange = findICAORange(icao);
@@ -1148,11 +1152,12 @@ PlaneObject.prototype.updatePositionData = function(now, last, data, init) {
             this.trace.slice(-15);
         }
     }
+
+    this.dataChanged();
 }
 // Update our data
 PlaneObject.prototype.updateData = function(now, last, data, init) {
     // get location data first, return early if only those are needed.
-    this.dataChanged();
 
     let isArray = Array.isArray(data);
     // [.hex, .alt_baro, .gs, .track, .lat, .lon, .seen_pos, "mlat"/"tisb"/.type , .flight, .messages]
@@ -1289,7 +1294,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.dataSource = "modeS";
     } else if (mlat) {
         this.dataSource = "mlat";
-    } else if (!displayUATasADSB && this.receiver == "uat" && !tisb) {
+    } else if (!displayUATasADSB && this.uat && !tisb) {
         this.dataSource = "uat";
     } else if (tisb) {
         this.dataSource = "tisb";
@@ -1317,7 +1322,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     const elapsed = now - this.last;
     if (elapsed > 0) {
         let messageRate = 0;
-        if (this.receiver == "1090") {
+        if (!this.uat) {
             messageRate = (data.messages - this.msgs1090)/(now - this.last);
             this.msgs1090 = data.messages;
         } else {
@@ -1428,9 +1433,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     }
 
     this.checkForDB(data);
-
     this.last = now;
-
     this.updatePositionData(now, last, data, init);
     return;
 };
@@ -2516,10 +2519,12 @@ PlaneObject.prototype.dataChanged = function() {
     this.refreshTR = true;
 
     if (this.selected) {
+        this.checkVisible();
         refreshSelected();
     }
 
     if (this == HighlightedPlane) {
+        this.checkVisible();
         refreshHighlighted();
     }
 }
