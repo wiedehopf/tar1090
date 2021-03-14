@@ -1803,6 +1803,11 @@ function initMap() {
             } else {
                 $('#photo_container').addClass('hidden');
             }
+            if (showPictures && planespottersAPI && !flightawareLinks) {
+                $('#photoLinkRow').addClass('hidden');
+            } else {
+                $('#photoLinkRow').removeClass('hidden');
+            }
             refreshSelected();
         }
     });
