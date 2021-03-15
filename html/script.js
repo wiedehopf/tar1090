@@ -2093,7 +2093,7 @@ function refreshPhoto(selected) {
     }
     let urlTail;
     let param;
-    if (selected.registration != null) {
+    if (selected.registration != null && (selected.registration.length > 3 || !selected.registration.match(/^[0-9]+$/))) {
         urlTail = 'reg/' + selected.registration;
         param = 'reg';
     } else if (!selected.regLoaded) {
