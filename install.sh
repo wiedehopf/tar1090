@@ -114,10 +114,10 @@ else
 fi
 
 
-if [ -f /etc/default/tar1090_instances ]; then
-    true
-elif [[ -n $1 ]] && [ "$1" != "test" ] ; then
+if [[ -n $1 ]] && [ "$1" != "test" ] ; then
     srcdir=$1
+elif [ -f /etc/default/tar1090_instances ]; then
+    true
 elif [[ -f /run/dump1090-fa/aircraft.json ]] ; then
     srcdir=/run/dump1090-fa
 elif [[ -f /run/readsb/aircraft.json ]]; then
@@ -138,7 +138,11 @@ else
     exit 1
 fi
 
-if [ -f /etc/default/tar1090_instances ]; then
+if [[ -n $2 ]]; then
+    instances="$srcdir $2"
+elif [[ -n $1 ]] && [ "$1" != "test" ] ; then
+    instances="$srcdir tar1090"
+elif [ -f /etc/default/tar1090_instances ]; then
     instances=$(</etc/default/tar1090_instances)	
 else
     instances="$srcdir tar1090"
