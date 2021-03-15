@@ -3,6 +3,8 @@
 Description=SERVICE - compress dump1090 json data
 Wants=network.target
 After=network.target
+After=readsb
+After=dump1090-fa
 
 [Service]
 User=tar1090
