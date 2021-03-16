@@ -367,13 +367,13 @@ function wqi(data) {
         ac.seen_pos = u16[2] / 10;
         ac.seen = u16[3] / 10;
 
-        ac.lat = s32[2] / 1e6;
-        ac.lon = s32[3] / 1e6;
+        ac.lon = s32[2] / 1e6;
+        ac.lat = s32[3] / 1e6;
 
-        ac.alt_baro = s16[8] * 25;
-        ac.alt_geom = s16[9] * 25;
-        ac.baro_rate = s16[10] * 8;
-        ac.geom_rate = s16[11] * 8;
+        ac.baro_rate = s16[8] * 8;
+        ac.geom_rate = s16[9] * 8;
+        ac.alt_baro = s16[10] * 25;
+        ac.alt_geom = s16[11] * 25;
 
         ac.nav_altitude_mcp = u16[12] * 4;
         ac.nav_altitude_fms = u16[13] * 4;
@@ -432,8 +432,7 @@ function wqi(data) {
             ac.flight += String.fromCharCode(u8[i]);
         }
 
-        ac.rssi = 10 * Math.log(u8[86]*u8[86]/65025 + 1.125e-5)/Math.log(10);
-        ac.dbFlags = u8[87];
+        ac.dbFlags = u16[43];
 
         ac.t = "";
         for (let i = 88; u8[i] && i < 92; i++) {
@@ -443,6 +442,7 @@ function wqi(data) {
         for (let i = 92; u8[i] && i < 104; i++) {
             ac.r += String.fromCharCode(u8[i]);
         }
+        ac.rssi = 10 * Math.log(u8[105]*u8[105]/65025 + 1.125e-5)/Math.log(10);
 
         ac.receiverCount = u8[104];
 
