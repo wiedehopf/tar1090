@@ -107,10 +107,11 @@ const registration_from_hexid = (function () {
     }
 
     function lookup(hexid) {
+        hexid = +("0x" + hexid);
+
         if (isNaN(hexid)) {
             return null;
         }
-        hexid = +("0x" + hexid);
 
         let reg;
         reg = n_reg(hexid);
