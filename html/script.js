@@ -2225,14 +2225,19 @@ function refreshSelected() {
         $('#anon_mlat_info').addClass('hidden');
         $('#reg_info').removeClass('hidden');
     }
-    if (selected.registration != selReg) {
-        selReg = selected.registration
+    let checkReg = selected.registration + ' ' + selected.regLoaded;
+    if (checkReg != selReg) {
+        selReg = checkReg;
         if (selected.registration) {
             if (flightawareLinks) {
                 $('#selected_registration').html(getFlightAwareIdentLink(selected.registration, selected.registration));
+            } else if (selected.ladd) {
+                $('#selected_registration').html(selected.registration + ' (<a style="color: blue" target="_blank" href="https://ladd.faa.gov/" rel="noreferrer">LADD</a>)');
             } else {
                 $('#selected_registration').text(selected.registration);
             }
+        } else if (selected.pia) {
+            $('#selected_registration').html('n/a (<a style="color: blue" target="_blank" href="https://www.faa.gov/nextgen/equipadsb/privacy/" rel="noreferrer">PIA</a>)');
         } else {
             $('#selected_registration').text("n/a");
         }

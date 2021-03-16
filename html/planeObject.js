@@ -2068,6 +2068,8 @@ PlaneObject.prototype.getAircraftData = function() {
             this.interesting = (data[2][1] == '1');
             this.pia = (data[2][2] == '1');
             this.ladd = (data[2][3] == '1');
+            if (this.pia)
+                this.registration = null;
         }
 
         this.dataChanged();
@@ -2617,6 +2619,8 @@ PlaneObject.prototype.checkForDB = function(t) {
         this.interesting = t.dbFlags & 2;
         this.pia = t.dbFlags & 4;
         this.ladd = t.dbFlags & 8;
+        if (this.pia)
+            this.registration = null;
     }
     this.regLoaded = true;
     this.dataChanged();
