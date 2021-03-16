@@ -2093,9 +2093,9 @@ function refreshPhoto(selected) {
     }
     let urlTail;
     let param;
-    if (selected.registration != null && (selected.registration.length > 3 || !selected.registration.match(/^[0-9]+$/))) {
-        urlTail = 'reg/' + selected.registration;
-        param = 'reg';
+    if (selected.registration != null) {
+        urlTail = '/hex/' + selected.icao.toUpperCase() + '?reg=' + selected.registration;
+        param = 'hex+reg';
     } else if (!selected.regLoaded) {
         return;
     } else {
