@@ -2095,7 +2095,10 @@ function refreshPhoto(selected) {
     let param;
     if (selected.registration != null) {
         urlTail = '/hex/' + selected.icao.toUpperCase() + '?reg=' + selected.registration;
-        param = 'hex+reg';
+        if (selected.icaoType) {
+            urlTail += '&icaoType=' + selected.icaoType;
+        }
+        param = 'DB';
     } else if (!selected.regLoaded) {
         return;
     } else {
