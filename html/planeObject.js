@@ -199,6 +199,19 @@ PlaneObject.prototype.isFiltered = function() {
         return true;
     }
 
+    let flags = PlaneFilter.flagFilter;
+    if (flags && flags.length > 0) {
+        let found = false;
+        for (let i in flags) {
+            if (this[flags[i]]) {
+                found = true;
+            }
+        }
+        if (!found) {
+            return true;
+        }
+    }
+
     if (PlaneFilter.icao && !this.icao.match(PlaneFilter.icao) ) {
         return true;
     }

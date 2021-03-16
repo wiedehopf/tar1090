@@ -76,6 +76,8 @@ let pathName = null;
 let icaoFilter = null;
 let sourcesFilter = null;
 let sources = ['adsb', ['uat', 'adsr'], 'mlat', 'tisb', ['modeS', 'unknown'], 'adsc'];
+let flagFilter = null;
+let flagFilterValues = ['military', 'pia', 'ladd'];
 let showTrace = false;
 let showTraceExit = false;
 let showTraceWasIsolation = false;
@@ -770,6 +772,7 @@ function initPage() {
     $("#description_filter_form").submit(updateDescriptionFilter);
     $("#icao_filter_form").submit(updateIcaoFilter);
     $("#source_filter_form").submit(updateSourceFilter);
+    $("#flag_filter_form").submit(updateFlagFilter);
 
     $("#search_form").submit(onSearch);
     $("#jump_form").submit(onJump);
@@ -806,6 +809,7 @@ function initPage() {
     $("#description_filter_reset_button").click(onResetDescriptionFilter);
     $("#icao_filter_reset_button").click(onResetIcaoFilter);
     $("#source_filter_reset_button").click(onResetSourceFilter);
+    $("#flag_filter_reset_button").click(onResetFlagFilter);
 
     $('#settingsCog').on('click', function() {
         $('#settings_infoblock').toggle();
@@ -984,6 +988,7 @@ function initPage() {
 
             initLegend(tableColors.unselected);
             initSourceFilter(tableColors.unselected);
+            initFlagFilter(tableColors.unselected);
         }
     });
 
@@ -1138,6 +1143,37 @@ function initSourceFilter(colors) {
     });
 
     $("#sourceFilter").on("selectablestart", function (event, ui) {
+        event.originalEvent.ctrlKey = true;
+    });
+}
+
+function initFlagFilter(colors) {
+    const createFilter = function (color, text) {
+        return '<li class="ui-widget-content" style="background-color:' + color + ';">' + text + '</li>';
+    };
+
+    let html = '';
+    html += createFilter(colors['tisb'], 'Military');
+    //html += createFilter(colors['mlat'], 'Interesting');
+    html += createFilter(colors['uat'], 'PIA');
+    html += createFilter(colors['adsb'], 'LADD');
+
+    document.getElementById('flagFilter').innerHTML = html;
+
+    $("#flagFilter").selectable({
+        stop: function () {
+            flagFilter = [];
+            $(".ui-selected", this).each(function () {
+                const index = $("#flagFilter li").index(this);
+                if (Array.isArray(flagFilterValues[index]))
+                    flagFilterValues[index].forEach(member => { flagFilter.push(member); });
+                else
+                    flagFilter.push(flagFilterValues[index]);
+            });
+        }
+    });
+
+    $("#flagFilter").on("selectablestart", function (event, ui) {
         event.originalEvent.ctrlKey = true;
     });
 }
@@ -3891,6 +3927,23 @@ function updateSourceFilter(e) {
         e.preventDefault();
 
     PlaneFilter.sources = sourcesFilter;
+
+    refreshFilter();
+}
+
+function onResetFlagFilter(e) {
+    $('#flagFilter .ui-selected').removeClass('ui-selected');
+
+    flagFilter = null;
+
+    updateFlagFilter();
+}
+
+function updateFlagFilter(e) {
+    if (e)
+        e.preventDefault();
+
+    PlaneFilter.flagFilter = flagFilter;
 
     refreshFilter();
 }

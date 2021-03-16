@@ -716,22 +716,22 @@ table.infoSectionTable tr td {
     padding: 1em 0.5em;
 }
 
-#sourceFilter .ui-selected {
+.buttonFilter .ui-selected {
     border-color: orange;
 }
 
-#sourceFilter .ui-selectee {
+.buttonFilter .ui-selectee {
     border-width: 2px;
 }
 
-#sourceFilter {
+.buttonFilter {
     list-style-type: none;
     margin: 0;
     padding: 0;
     width: calc( 240px * var(--SCALE));
 }
 
-#sourceFilter li {
+.buttonFilter li {
     margin-right: 5px;
     margin-bottom: 5px;
     padding: 1px;

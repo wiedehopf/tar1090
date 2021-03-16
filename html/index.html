@@ -823,51 +823,88 @@
                 </table>
               </div>
               <div id="tab-filters">
-                <form id="altitude_filter_form">
-                  <div class="infoBlockTitleText">Filter by altitude:</div>
-                  <input id="altitude_filter_min" name="minAltitude" type="text" class="altitudeFilterInput" maxlength="5">
-                  <label for="minAltitude" class="altitudeUnit"></label>
-                  <span> to </span>
-                  <input id="altitude_filter_max" name="maxAltitude" type="text" class="altitudeFilterInput" maxlength="5">
-                  <label for="maxAltitude" class="altitudeUnit"></label>
-                  <button class="formButton" type="submit">Filter</button>
-                  <button class="formButton" id="altitude_filter_reset_button">Reset</button>
-                </form>
+                  <table cellpadding="0" cellspacing="0">
+                      <tr>
+                          <td>
+                              <form id="altitude_filter_form">
+                                  <div class="infoBlockTitleText">Filter by altitude:</div>
+                                  <input id="altitude_filter_min" name="minAltitude" type="text" class="altitudeFilterInput" maxlength="5">
+                                  <label for="minAltitude" class="altitudeUnit"></label>
+                                  <span> to </span>
+                                  <input id="altitude_filter_max" name="maxAltitude" type="text" class="altitudeFilterInput" maxlength="5">
+                                  <label for="maxAltitude" class="altitudeUnit"></label>
+                                  <button class="formButton" type="submit">Filter</button>
+                                  <button class="formButton" id="altitude_filter_reset_button">Reset</button>
+                              </form>
+                          </td>
+                      </tr>
 
-                <form id="callsign_filter_form">
-                  <div class="infoBlockTitleText">Filter by callsign or squawk:</div>
-                  <input id="callsign_filter" name="callsign" type="text" class="searchInput" maxlength="1024">
-                  <button class="formButton" type="submit">Filter</button>
-                  <button class="formButton" id="callsign_filter_reset_button">Reset</button>
-                </form>
+                      <tr>
+                          <td>
+                              <form id="callsign_filter_form">
+                                  <div class="infoBlockTitleText">Filter by callsign or squawk:</div>
+                                  <input id="callsign_filter" name="callsign" type="text" class="searchInput" maxlength="1024">
+                                  <button class="formButton" type="submit">Filter</button>
+                                  <button class="formButton" id="callsign_filter_reset_button">Reset</button>
+                              </form>
+                          </td>
+                      </tr>
 
-                <form id="type_filter_form">
-                  <div title="ICAO type code (A320, B738, etc.)" class="infoBlockTitleText">Filter by type code:</div>
-                  <input id="type_filter" name="type" type="text" class="searchInput" maxlength="1024">
-                  <button class="formButton" type="submit">Filter</button>
-                  <button class="formButton" id="type_filter_reset_button">Reset</button>
-                </form>
+                      <tr>
+                          <td>
+                              <form id="type_filter_form">
+                                  <div title="ICAO type code (A320, B738, etc.)" class="infoBlockTitleText">Filter by type code:</div>
+                                  <input id="type_filter" name="type" type="text" class="searchInput" maxlength="1024">
+                                  <button class="formButton" type="submit">Filter</button>
+                                  <button class="formButton" id="type_filter_reset_button">Reset</button>
+                              </form>
+                          </td>
+                      </tr>
 
-                <form id="description_filter_form">
-                  <div title="ICAO type description (L/S/H Landplane/Seaplane/Helicopter 1/2/3/4 Number of P/T/J Reciprocating/Turboprop/Jet Engines" class="infoBlockTitleText">Filter by type description:</div>
-                  <input id="description_filter" name="description" type="text" class="searchInput" maxlength="1024">
-                  <button class="formButton" type="submit">Filter</button>
-                  <button class="formButton" id="description_filter_reset_button">Reset</button>
-                </form>
+                      <tr>
+                          <td>
+                              <form id="description_filter_form">
+                                  <div title="ICAO type description (L/S/H Landplane/Seaplane/Helicopter 1/2/3/4 Number of P/T/J Reciprocating/Turboprop/Jet Engines" class="infoBlockTitleText">Filter by type description:</div>
+                                  <input id="description_filter" name="description" type="text" class="searchInput" maxlength="1024">
+                                  <button class="formButton" type="submit">Filter</button>
+                                  <button class="formButton" id="description_filter_reset_button">Reset</button>
+                              </form>
+                          </td>
+                      </tr>
 
-                <form id="icao_filter_form">
-                  <div class="infoBlockTitleText">Filter by ICAO hex id:</div>
-                  <input id="icao_filter" name="description" type="text" class="searchInput" maxlength="1024">
-                  <button class="formButton" type="submit">Filter</button>
-                  <button class="formButton" id="icao_filter_reset_button">Reset</button>
-                </form>
+                      <tr>
+                          <td>
+                              <form id="icao_filter_form">
+                                  <div class="infoBlockTitleText">Filter by ICAO hex id:</div>
+                                  <input id="icao_filter" name="description" type="text" class="searchInput" maxlength="1024">
+                                  <button class="formButton" type="submit">Filter</button>
+                                  <button class="formButton" id="icao_filter_reset_button">Reset</button>
+                              </form>
+                          </td>
+                      </tr>
 
-                <form id="source_filter_form">
-                  <div class="infoBlockTitleText">Filter by source:</div>
-                  <ol id="sourceFilter"></ol>
-                  <button class="formButton" type="submit">Filter</button>
-                  <button class="formButton" id="source_filter_reset_button">Reset</button>
-                </form>
+                      <tr>
+                          <td>
+                              <form id="source_filter_form">
+                                  <div class="infoBlockTitleText">Filter by source:</div>
+                                  <ol id="sourceFilter" class="buttonFilter"></ol>
+                                  <button class="formButton" type="submit">Filter</button>
+                                  <button class="formButton" id="source_filter_reset_button">Reset</button>
+                              </form>
+                          </td>
+                      </tr>
+
+                      <tr>
+                          <td>
+                              <form id="flag_filter_form">
+                                  <div class="infoBlockTitleText">Filter by DB flags:</div>
+                                  <ol id="flagFilter" class="buttonFilter"></ol>
+                                  <button class="formButton" type="submit">Filter</button>
+                                  <button class="formButton" id="flag_filter_reset_button">Reset</button>
+                              </form>
+                          </td>
+                      </tr>
+                  </table>
               </div>
               <div id="tab-columns">
                 <ul id="sortableColumns"></ul>
