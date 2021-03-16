@@ -482,15 +482,20 @@ function handleVisibilityChange() {
     else
         tabHidden = false;
 
-    if (!globeIndex)
-        return;
-    if (heatmap)
-        return;
-
     // tab is no longer hidden
     if (!tabHidden && prevHidden) {
+        refreshHighlighted();
+        refreshSelected();
         active();
+        checkMovement();
+        triggerRefresh = 1;
+        checkRefresh();
+
         if (showTrace)
+            return;
+        if (!globeIndex)
+            return;
+        if (heatmap)
             return;
 
         reaper();

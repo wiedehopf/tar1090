@@ -2517,6 +2517,8 @@ PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
 
 PlaneObject.prototype.dataChanged = function() {
     this.refreshTR = true;
+    if (tabHidden)
+        return;
 
     if (this.selected) {
         this.checkVisible();

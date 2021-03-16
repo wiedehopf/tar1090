@@ -4123,6 +4123,8 @@ function checkMovement() {
 let lastRefresh = 0;
 let refreshZoom, refreshLat, refreshLon;
 function checkRefresh() {
+    if (tabHidden)
+        return;
     const center = ol.proj.toLonLat(OLMap.getView().getCenter());
     const zoom = OLMap.getView().getZoom();
     if (showTrace)
@@ -4662,7 +4664,7 @@ function refreshInt() {
     // handle non globe case
     if (!globeIndex) {
         if (tabHidden)
-            return 3 * refresh;
+            return Math.min(4000, refresh);
         else
             return refresh;
     }
