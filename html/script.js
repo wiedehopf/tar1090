@@ -786,8 +786,7 @@ function initPage() {
         maxDate: '+1d',
         dateFormat: "yy-mm-dd",
         onSelect: function(date){
-            traceDate = null;
-            traceDateString = date;
+            setTraceDate(date);
             shiftTrace();
             $("#histDatePicker").blur();
         },
@@ -4340,7 +4339,22 @@ function processURLParams(){
 
     icaos = valid.reverse();
 
-    traceDateString = usp.get('showTrace');
+    if (usp.has('showTrace')) {
+        let date = setTraceDate(usp.get('showTrace'));
+        if (date && usp.has('startTime')) {
+            let numbers =  usp.get('startTime').split(':');
+            traceOpts.startHours = numbers[0] ? numbers[0] : 0;
+            traceOpts.startMinutes = numbers[1] ? numbers[1] : 0;
+            traceOpts.startSeconds = numbers[2] ? numbers[2] : 0;
+        }
+        if (date && usp.has('endTime')) {
+            let numbers = usp.get('endTime').split(':');
+            traceOpts.endHours = numbers[0] ? numbers[0] : 24;
+            traceOpts.endMinutes = numbers[1] ? numbers[1] : 0;
+            traceOpts.endSeconds = numbers[2] ? numbers[2] : 0;
+        }
+    }
+
     const callsign = usp.get('callsign');
     let zoom = null;
     let follow = true;
@@ -4379,7 +4393,7 @@ function processURLParams(){
             if (Planes[icao] || globeIndex) {
                 console.log('Selected ICAO id: '+ icao);
                 let selectOptions = {follow: follow, noDeselect: true};
-                if (traceDateString != null) {
+                if (traceDate != null) {
                     let newPlane = Planes[icao] || new PlaneObject(icao);
                     newPlane.last_message_time = NaN;
                     newPlane.position_time = NaN;
@@ -4396,7 +4410,7 @@ function processURLParams(){
                 console.log('ICAO id not found: ' + icao);
             }
         }
-        if (traceDateString != null)
+        if (traceDate != null)
             toggleShowTrace();
         updateAddressBar();
     } else if (callsign != null) {
@@ -4709,6 +4723,18 @@ function updateAddressBar() {
         string += '&showTrace=' + traceDateString;
         if (legSel != -1)
             string += '&leg=' + (legSel + 1);
+        if (traceOpts.startHours != null) {
+            string += '&startTime=';
+            string += traceOpts.startHours + ':'
+            string += traceOpts.startMinutes + ':';
+            string += traceOpts.startSeconds;
+        }
+        if (traceOpts.endHours != null) {
+            string += '&endTime=';
+            string += traceOpts.endHours + ':'
+            string += traceOpts.endMinutes + ':';
+            string += traceOpts.endSeconds;
+        }
     }
 
     shareLink = string;
@@ -4898,19 +4924,24 @@ function legShift(offset, plane) {
     updateAddressBar();
 }
 
+function setTraceDate(string) {
+    let numbers = string.split('-');
+    if (numbers.length != 3)
+        return null;
+    traceDate = new Date();
+    traceDate.setUTCFullYear(numbers[0]);
+    traceDate.setUTCMonth(numbers[1] - 1);
+    traceDate.setUTCDate(numbers[2]);
+    traceDateString = zDateString(traceDate);
+    return traceDate;
+}
+
 function shiftTrace(offset) {
     if (traceRate > 180) {
         $('#leg_sel').text('Slow down! ...');
         return;
     }
     $('#leg_sel').text('Loading ...');
-    if (traceDateString && !traceDate) {
-        let numbers = traceDateString.split('-');
-        traceDate = new Date();
-        traceDate.setUTCFullYear(numbers[0]);
-        traceDate.setUTCMonth(numbers[1] - 1);
-        traceDate.setUTCDate(numbers[2]);
-    }
     if (!traceDate || offset == "today") {
         traceDate = new Date();
     } else if (offset) {
@@ -5290,10 +5321,7 @@ function getTrace(newPlane, hex, options) {
         select(newPlane, options);
     }
 
-    let endStamp = traceOpts.endStamp;
-    traceOpts = jQuery.extend(true, {}, options)
-    if (replay)
-        traceOpts.endStamp = endStamp;
+    traceOpts.follow = options.follow == true;
 
     if (showTrace) {
         traceRate += 3;
@@ -5301,12 +5329,21 @@ function getTrace(newPlane, hex, options) {
         //console.log(today.toUTCString() + ' ' + traceDate.toUTCString());
         // use non historic traces for showTrace until 30 min after midnight
         if (today.getTime() > traceDate.getTime() && today.getTime() < traceDate.getTime() + (24 * 3600 + 30 * 60) * 1000) {
-            traceOpts.startStamp = traceDate.getTime() / 1000;
-            traceOpts.endStamp = traceOpts.startStamp + 24 * 3600;
         } else {
             URL1 = null;
             URL2 = 'globe_history/' + traceDateString.replace(/-/g, '/') + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json';
         }
+
+        if (traceOpts.startHours == null || traceOpts.startHours < 0)
+            traceOpts.startStamp = traceDate.getTime() / 1000;
+        else
+            traceOpts.startStamp = traceDate.getTime() / 1000 + traceOpts.startHours * 3600 + traceOpts.startMinutes * 60 + traceOpts.startSeconds;
+
+        if (traceOpts.endHours == null || traceOpts.endHours >= 24)
+            traceOpts.endStamp = traceDate.getTime() / 1000 + 24 * 3600;
+        else
+            traceOpts.endStamp = traceDate.getTime() / 1000 + traceOpts.endHours * 3600 + traceOpts.endMinutes * 60 + traceOpts.endSeconds;
+
     } else if (replay) {
         traceRate += 3;
         let today = new Date();
