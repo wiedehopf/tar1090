@@ -743,7 +743,7 @@ PlaneObject.prototype.updateIcon = function() {
     let svgKey  = fillColor + '!' + this.shape.name + '!' + this.strokeWidth;
     let labelText = null;
 
-    if ( enableLabels && !showTrace && (!multiSelect || (multiSelect && this.selected)) &&
+    if ( enableLabels && (!multiSelect || (multiSelect && this.selected)) &&
         (
             (ZoomLvl >= labelZoom && this.altitude != "ground")
             || (ZoomLvl >= labelZoomGround-2 && this.speed > 5 && this.icao[0] != '~')
