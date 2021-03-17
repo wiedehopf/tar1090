@@ -27,6 +27,7 @@ let Planes        = {};
 let PlanesOrdered = [];
 let PlaneFilter   = {};
 let SelectedPlane = null;
+let SelPlanes = [];
 let SelectedAllPlanes = false;
 let HighlightedPlane = null;
 let FollowSelected = false;
@@ -1777,7 +1778,8 @@ function initMap() {
         if (showTrace && res) {
             gotoTime(res);
         } else if (res) {
-            selectPlaneByHex(res, {follow: (evt.type === 'dblclick')});
+            const double = (evt.type === 'dblclick');
+            selectPlaneByHex(res, {noDeselect: double, follow: double});
         } else if (!multiSelect) {
             deselectAllPlanes();
         }
@@ -2040,7 +2042,7 @@ function reaper(all) {
         if (plane == null)
             continue;
         plane.seen = now - plane.last_message_time;
-        if ( all || ((!plane.selected || SelectedAllPlanes)
+        if ( all || ((!plane.selected)
             && plane.seen > 300
             && (plane.dataSource != 'adsc' || plane.seen > jaeroTimeout))
         ) {
@@ -2866,7 +2868,7 @@ function refreshFeatures() {
             if (tableInView) {
                 if (plane.visible)
                     TrackedAircraft++;
-                if (plane.inView || (plane.selected && !SelectedAllPlanes)) {
+                if (plane.inView || plane.selected) {
                     pList.push(plane);
                     TrackedAircraftPositions++;
                 }
@@ -3045,7 +3047,7 @@ function refreshFeatures() {
         pList.sort(sortFunction);
 
         // In multiSelect put selected planes on top, do a stable sort!
-        if (!SelectedAllPlanes && multiSelect) {
+        if (multiSelect) {
             for (let i = 0; i < pList.length; ++i) {
                 pList[i]._sort_pos = i;
             }
@@ -3144,6 +3146,41 @@ function refreshFeatures() {
 // Planes table end
 //
 
+function deselect(plane) {
+    if (!plane || !plane.selected)
+        return;
+    plane.selected = false;
+    const index = SelPlanes.indexOf(plane);
+    if (index > -1)
+        SelPlanes.splice(index, 1);
+    if (plane == SelectedPlane) {
+        SelectedPlane = null;
+        refreshSelected();
+    }
+
+    plane.updateTick('redraw');
+}
+let scount = 0;
+function select(plane, options) {
+    if (!plane)
+        return;
+    options = options || {};
+    plane.selected = true;
+    if (!SelPlanes.includes(plane))
+        SelPlanes.push(plane);
+
+    SelectedPlane = plane;
+    refreshSelected();
+    plane.updateTick('redraw');
+
+    if (options.follow) {
+        toggleFollow(true);
+        if (!options.zoom)
+            options.zoom = 'follow';
+    } else {
+        toggleFollow(false);
+    }
+}
 
 function selectPlaneByHex(hex, options) {
     active();
@@ -3159,54 +3196,39 @@ function selectPlaneByHex(hex, options) {
     // plane to be selected
     let newPlane = Planes[hex];
 
-    if (newPlane && (showTrace || showTraceExit))
-        SelectedPlane = oldPlane = null;
-
-    // multiSelect deselect
-    if (multiSelect && newPlane && newPlane.selected && !options.follow && !onlySelected && !options.noDeselect) {
-        newPlane.selected = false;
-        newPlane.clearLines();
-        newPlane.updateMarker();
-        if (SelectedPlane == newPlane)
-            SelectedPlane = null;
-        newPlane = null;
-        hex = null;
-    }
-    // If we are clicking the same plane, we are deselecting it.
-    // (unless it was a doubleclick..)
-    if (oldPlane == newPlane) {
-        if (options.follow || options.noDeselect) {
-            oldPlane = null;
+    // If we are clicking the same plane, we are deselecting it unless noDeselect is specified
+    if (options.noDeselect) {
+        oldPlane = null;
+    } else {
+        if (multiSelect) {
+            // multiSelect deselect
+            if (newPlane && newPlane.selected && !onlySelected && !options.noDeselect) {
+                deselect(newPlane);
+                newPlane = null;
+                hex = null;
+            }
         } else {
+            // normal deselect
+            if (oldPlane && oldPlane != newPlane) {
+                deselect(oldPlane);
+                oldPlane = null;
+            }
+        }
+        if (oldPlane == newPlane) {
+            deselect(newPlane);
+            oldPlane = null;
             newPlane = null;
             hex = null;
         }
-    }
-    if (!multiSelect && oldPlane) {
-        oldPlane.selected = false;
-        oldPlane.updateTick(true);
-        SelectedPlane = null;
-        // scroll the infoblock back to the top for the next plane to be selected
-        //$('.infoblock-container').scrollTop(0);
     }
 
     if (!options.noFetch && globeIndex && hex)
         newPlane = getTrace(newPlane, hex, options);
 
-    if (newPlane) {
-        // Assign the new selected
-        SelectedPlane = newPlane;
-        newPlane.selected = true;
-        newPlane.updateTick(true);
-        newPlane.logSel(newPlane.history_size);
-        //console.log(newPlane.baseMarkerKey);
-    }
+    // Assign the new selected
+    select(newPlane, options);
 
-    if (newPlane && options.follow) {
-        toggleFollow(true);
-        if (!options.zoom)
-            options.zoom = 'follow';
-    } else {
+    if (!newPlane) {
         toggleFollow(false);
     }
 
@@ -3218,7 +3240,6 @@ function selectPlaneByHex(hex, options) {
     }
 
     updateAddressBar();
-    refreshSelected();
     pTracks || TAR.planeMan.refresh();
 }
 
@@ -3232,15 +3253,10 @@ function selectAllPlanes() {
     }
     buttonActive('#T', true);
     // If SelectedPlane has something in it, clear out the selected
-    if (SelectedPlane != null) {
-        SelectedPlane.selected = false;
-        SelectedPlane.clearLines();
-        SelectedPlane.updateMarker();
-    }
+    if (SelectedPlane)
+        deselect(SelectedPlane);
 
-    SelectedPlane = null;
     SelectedAllPlanes = true;
-
     refreshFeatures();
 
     $('#selectall_checkbox').addClass('settingsCheckboxChecked');
@@ -3256,27 +3272,23 @@ function deselectAllPlanes(keepMain) {
         return;
     if (!multiSelect && SelectedPlane)
         toggleIsolation(false, "off");
-    buttonActive('#T', false);
-    $('#selectall_checkbox').removeClass('settingsCheckboxChecked');
-    for (let i in PlanesOrdered) {
-        const plane = PlanesOrdered[i];
+
+    if (SelectedAllPlanes) {
+        buttonActive('#T', false);
+        $('#selectall_checkbox').removeClass('settingsCheckboxChecked');
+        SelectedAllPlanes = false;
+        refreshFilter();
+        return;
+    }
+
+    for (let i in SelPlanes) {
+        const plane = SelPlanes[i];
         if (keepMain && plane == SelectedPlane)
             continue;
-
-        plane.selected = false;
-        plane.updateFeatures(true);
+        deselect(plane);
     }
-    if (SelectedAllPlanes) {
-        SelectedAllPlanes = false;
-        refreshFeatures();
-    }
-    if (!keepMain)
-        SelectedPlane = null;
-
-    TAR.planeMan.refresh();
 
     updateAddressBar();
-    refreshSelected();
 }
 
 function toggleFollow(override) {
@@ -4240,7 +4252,7 @@ function mapRefresh() {
             ) {
                 addToMap.push(plane);
                 nMapPlanes++;
-            } else if (plane.selected && !SelectedAllPlanes) {
+            } else if (plane.selected) {
                 addToMap.push(plane);
                 nMapPlanes++;
             } else {
@@ -4322,8 +4334,6 @@ function processURLParams(){
             icao = icaos[i].toLowerCase();
             if (icao && (icao.length == 7 || icao.length == 6) && icao.toLowerCase().match(/[a-f,0-9]{6}/)) {
                 valid.push(icao);
-                if (i == 0)
-                    icaoParam = icao;
             }
         }
     }
@@ -4370,7 +4380,11 @@ function processURLParams(){
                 console.log('Selected ICAO id: '+ icao);
                 let selectOptions = {follow: follow, noDeselect: true};
                 if (traceDateString != null) {
-                    toggleShowTrace();
+                    let newPlane = Planes[icao] || new PlaneObject(icao);
+                    newPlane.last_message_time = NaN;
+                    newPlane.position_time = NaN;
+                    newPlane.selected = true;
+                    select(newPlane);
                     if (!zoom)
                         zoom = 5;
                 } else {
@@ -4382,6 +4396,8 @@ function processURLParams(){
                 console.log('ICAO id not found: ' + icao);
             }
         }
+        if (traceDateString != null)
+            toggleShowTrace();
         updateAddressBar();
     } else if (callsign != null) {
         findPlanes(callsign, false, true, false, false);
@@ -4677,24 +4693,12 @@ function updateAddressBar() {
         posString = ""
     }
 
-    let planes = [];
-    if (multiSelect && !SelectedAllPlanes) {
-        for (let i = 0; i < PlanesOrdered.length; ++i) {
-            let plane = PlanesOrdered[i];
-            if (plane.selected && plane != SelectedPlane)
-                planes.push(plane);
-        }
-        planes.sort(function(a, b) { if (a.icao > b.icao) return 1; if (a.icao < b.icao) return -1; return 0; });
-    }
-    if (SelectedPlane)
-        planes.unshift(SelectedPlane);
-
     string = pathName;
-    if (planes.length > 0) {
+    if (SelPlanes.length > 0) {
         string += '?icao=';
-        for (let i = 0; i < planes.length; i++) {
-            string += planes[i].icao;
-            if (i < planes.length - 1)
+        for (let i in SelPlanes) {
+            string += SelPlanes[i].icao;
+            if (i < SelPlanes.length - 1)
                 string += ',';
         }
     }
@@ -4714,7 +4718,7 @@ function updateAddressBar() {
     if (icaoFilter)
         return;
 
-    if (!SelectedPlane && planes.length == 0 && initialURL && initialURL.indexOf("icao") < 0)
+    if (SelPlanes.length == 0 && initialURL && initialURL.indexOf("icao") < 0)
         string = initialURL;
 
     if (!updateAddressBarPushed) {
@@ -4788,7 +4792,6 @@ function toggleLargeMode() {
 
 function toggleShowTrace() {
     if (!showTrace) {
-        toggleMultiSelect("off");
         showTrace = true;
         toggleFollow(false);
         showTraceWasIsolation = onlySelected;
@@ -4815,27 +4818,33 @@ function toggleShowTrace() {
     $('#show_trace').toggleClass('active');
 }
 
-function legShift(offset) {
+function legShift(offset, plane) {
     if(!offset)
         offset = 0;
+    if (!plane) {
+        legSel += offset;
+        for (let i in SelPlanes) {
+            legShift(offset, SelPlanes[i]);
+        }
+        return;
+    }
 
-    legSel += offset;
 
     if (offset != 0)
         traceOpts.showTime = null;
 
-    if (!SelectedPlane.fullTrace) {
+    if (!multiSelect && !plane.fullTrace) {
         $('#leg_sel').text('No Data available for\n' + traceDateString);
         $('#trace_time').text('UTC:\n');
-        SelectedPlane.processTrace();
-        return;
     }
+    if (!plane.fullTrace)
+        return;
 
-    let trace = SelectedPlane.fullTrace.trace;
+    let trace = plane.fullTrace.trace;
     let legStart = null;
     let legEnd = null;
     let count = 0;
-    let timeZero = SelectedPlane.fullTrace.timestamp;
+    let timeZero = plane.fullTrace.timestamp;
 
     for (let i = 1; i < trace.length; i++) {
         let timestamp = timeZero + trace[i][0];
@@ -4863,7 +4872,7 @@ function legShift(offset) {
         $('#leg_sel').text('Legs: All');
         traceOpts.legStart = null;
         traceOpts.legEnd = null;
-        SelectedPlane.processTrace();
+        plane.processTrace();
         updateAddressBar();
         return;
     }
@@ -4884,7 +4893,7 @@ function legShift(offset) {
     $('#leg_sel').text('Leg: ' + (legSel + 1));
     traceOpts.legStart = legStart;
     traceOpts.legEnd = legEnd;
-    SelectedPlane.processTrace();
+    plane.processTrace();
 
     updateAddressBar();
 }
@@ -4919,10 +4928,10 @@ function shiftTrace(offset) {
     //$('#trace_date').text('UTC day:\n' + traceDateString);
     $("#histDatePicker").datepicker('setDate', traceDateString);
 
-    let hex = SelectedPlane ? SelectedPlane.icao : icaoParam;
-
     let selectOptions = {noDeselect: true, zoom: ZoomLvl};
-    selectPlaneByHex(hex, selectOptions);
+    for (let i in SelPlanes) {
+        selectPlaneByHex(SelPlanes[i].icao, selectOptions);
+    }
 
     updateAddressBar();
 }
@@ -5278,12 +5287,11 @@ function getTrace(newPlane, hex, options) {
         newPlane = Planes[hex] || new PlaneObject(hex);
         newPlane.last_message_time = NaN;
         newPlane.position_time = NaN;
-        newPlane.selected = true;
-        SelectedPlane = newPlane;
+        select(newPlane, options);
     }
 
     let endStamp = traceOpts.endStamp;
-    traceOpts = options;
+    traceOpts = jQuery.extend(true, {}, options)
     if (replay)
         traceOpts.endStamp = endStamp;
 
@@ -5367,7 +5375,7 @@ function getTrace(newPlane, hex, options) {
             plane.fullTrace = data;
             this.options.defer.done(function(plane) {
                 if (showTrace) {
-                    legShift(0);
+                    legShift(0, plane);
                 } else {
                     plane.processTrace();
                     if (options.follow)
@@ -5380,15 +5388,16 @@ function getTrace(newPlane, hex, options) {
             }
         });
         req2.fail(function() {
+            let plane = this.options.plane;
             if (showTrace)
-                legShift(0);
+                legShift(0, plane);
             else
-                this.options.plane.processTrace();
+                plane.processTrace();
 
             if (options.list) {
                 getTrace(null, null, options);
             } else {
-                this.options.plane.getAircraftData();
+                plane.getAircraftData();
                 refreshSelected();
             }
         });

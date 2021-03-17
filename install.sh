@@ -148,6 +148,8 @@ else
     instances="$srcdir tar1090"
 fi
 
+instances=$(echo "$instances" | grep -v -e '^#')
+
 if ! diff tar1090.sh /usr/local/share/tar1090/tar1090.sh &>/dev/null; then
     changed=yes
     while read -r srcdir instance; do

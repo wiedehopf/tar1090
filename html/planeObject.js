@@ -1467,9 +1467,7 @@ PlaneObject.prototype.updateFeatures = function(redraw) {
     if (!this.visible && this.lastVisible) {
         this.clearMarker();
         this.clearLines();
-        this.selected = false;
-        if (SelectedPlane == this.icao)
-            selectPlaneByHex(null,false);
+        deselect(this);
     }
 
     this.lastVisible = this.visible;
@@ -1895,6 +1893,7 @@ PlaneObject.prototype.destroy = function() {
     this.clearLines();
     this.clearMarker();
     this.visible = false;
+    deselect(this);
     this.destroyTR();
     if (this.layer) {
         trailGroup.remove(this.layer);
@@ -1906,8 +1905,6 @@ PlaneObject.prototype.destroy = function() {
         this.trail_labels.clear();
         this.layer_labels = null;
     }
-    if (this.icao == SelectedPlane)
-        SelectedPlane = null;
     for (let key in Object.keys(this)) {
         delete this[key];
     }
