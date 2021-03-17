@@ -3214,7 +3214,7 @@ function selectPlaneByHex(hex, options) {
                 oldPlane = null;
             }
         }
-        if (oldPlane == newPlane) {
+        if (oldPlane != null && oldPlane == newPlane) {
             deselect(newPlane);
             oldPlane = null;
             newPlane = null;
