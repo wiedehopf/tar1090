@@ -4863,8 +4863,10 @@ function legShift(offset, plane) {
         $('#leg_sel').text('No Data available for\n' + traceDateString);
         $('#trace_time').text('UTC:\n');
     }
-    if (!plane.fullTrace)
+    if (!plane.fullTrace) {
+        plane.processTrace();
         return;
+    }
 
     let trace = plane.fullTrace.trace;
     let legStart = null;
