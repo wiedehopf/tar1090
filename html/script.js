@@ -3276,7 +3276,11 @@ function deselectAllPlanes(keepMain) {
         buttonActive('#T', false);
         $('#selectall_checkbox').removeClass('settingsCheckboxChecked');
         SelectedAllPlanes = false;
-        refreshFilter();
+        for (let i in PlanesOrdered) {
+            const plane = PlanesOrdered[i];
+            plane.updateTick(true);
+        }
+        mapRefresh();
         return;
     }
 
