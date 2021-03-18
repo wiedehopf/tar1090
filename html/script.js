@@ -4829,6 +4829,7 @@ function toggleShowTrace() {
         shiftTrace();
     } else {
         showTrace = false;
+        traceOpts = {};
         fetchData();
         legSel = -1;
         $('#leg_sel').text('Legs: All');
