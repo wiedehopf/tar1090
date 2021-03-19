@@ -5202,7 +5202,7 @@ function drawUpintheair() {
                 let points = data.rings[i].points;
                 let altitude = (3.28084 * data.rings[i].alt).toFixed(0);
                 let color = range_outline_color;
-                if (range_outline_colored_by_altitude) {
+                if (range_outline_color) {
                     let colorArr = altitudeColor(altitude);
                     color = 'hsl(' + colorArr[0].toFixed(0) + ',' + colorArr[1].toFixed(0) + '%,' + colorArr[2].toFixed(0) + '%)';
                 }
