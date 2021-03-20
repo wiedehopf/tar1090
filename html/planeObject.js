@@ -1268,19 +1268,19 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     if (this.icao[0] == '~')
         this.zIndex -= 100000;
 
-    // needed for track labels
-    if (pTracks) {
-        this.speed = Math.max(this.speed, gs);
-    } else {
-        this.speed = gs;
-    }
-
     if (gs != null)
         this.gs = gs;
     else if (data.speed != null)
         this.gs = data.speed;
     else if (!pTracks)
         this.gs = null;
+
+    // needed for track labels
+    if (pTracks) {
+        this.speed = Math.max(this.speed, gs);
+    } else {
+        this.speed = gs;
+    }
 
     this.track = track;
     if (track != null) {

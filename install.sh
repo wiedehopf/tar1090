@@ -1,12 +1,14 @@
 #!/bin/bash
+
 set -e
+trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
+renice 10 $$
 
 if [ -d /bup ]; then
     echo Talk to @PIL. Dieses Skript ist nichts fuer dich!
     exit 1
 fi
 
-trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
 
 srcdir=/run/dump1090-fa
 repo="https://github.com/wiedehopf/tar1090"
