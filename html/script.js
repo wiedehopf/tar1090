@@ -1305,9 +1305,6 @@ function parseHistory() {
 function startPage() {
     console.log("Completing init");
 
-    // Kick off first refresh.
-    fetchData();
-
     if (!globeIndex) {
         $('#show_trace').hide();
     }
@@ -1341,6 +1338,9 @@ function startPage() {
 
     pathName = window.location.pathname;
     processURLParams();
+
+    // Kick off first refresh.
+    fetchData();
 
     if (!icaoFilter && globeIndex)
         toggleTableInView(true);
