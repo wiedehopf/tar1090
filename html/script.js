@@ -5710,6 +5710,7 @@ function currentExtent(factor) {
 }
 
 function loadReplay(ts) {
+    replay.ts = ts;
     let xhrOverride = new XMLHttpRequest();
     xhrOverride.responseType = 'arraybuffer';
 
@@ -5772,7 +5773,18 @@ function initReplay(data) {
     replay.pointsU = pointsU;
     replay.pointsU8 = pointsU8;
 
-    play(0); // kick off first play
+    clearTimeout(refreshId);
+    reaper(true);
+    refreshFilter();
+
+    replay.ival = (replay.pointsU[replay.slices[0] + 3] & 65535) / 1000;
+    replay.halfHour = (replay.ts.getUTCMinutes() >= 30) ? 1 : 0;
+    let startIndex = Math.round (((replay.ts.getUTCMinutes() % 30) * 60 + replay.ts.getUTCSeconds()) / replay.ival);
+    play(startIndex); // kick off first play
+}
+
+function updateReplayInterface(date) {
+    console.log(date);
 }
 
 function play(index) {
@@ -5795,18 +5807,24 @@ function play(index) {
     }
     replay.index = index;
 
+    //console.log(replay.ts);
+    let date = new Date(replay.ts);
+    date.setUTCMinutes(replay.halfHour * 30 + replay.ival * replay.index / 60);
+    date.setUTCSeconds(0);
+
+    updateReplayInterface(date);
 
     let points = replay.points;
     let i = replay.slices[index];
 
-    console.log('index: ' + index + ', i: ' + i);
+    //console.log('index: ' + index + ', i: ' + i);
 
     last = now;
     now = replay.pointsU[i + 2] / 1000 + replay.pointsU[i + 1] * 4294967.296;
 
     traceOpts.endStamp = now;
 
-    replay.ival = (replay.pointsU[i + 3] & 65535);
+    replay.ival = (replay.pointsU[i + 3] & 65535) / 1000;
 
     i += 4;
 
