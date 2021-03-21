@@ -36,6 +36,7 @@ let traceRate = 0;
 let _aircraft_type_cache = null;
 let tfrs = false;
 let initialURL = window.location.href;
+let milRanges = [];
 
 let uuid = null;
 
@@ -206,6 +207,20 @@ if (uuid) {
 
 $.getJSON(databaseFolder + "/icao_aircraft_types.js").done(function(typeLookupData) {
     _aircraft_type_cache = typeLookupData;
+});
+$.getJSON(databaseFolder + "/ranges.js").done(function(ranges) {
+    if (!ranges || !ranges.military) {
+        console.error("couldn't load milRanges.");
+        return;
+    }
+    for (let i in ranges.military) {
+        const r = ranges.military[i];
+        const a = +("0x" + r[0]);
+        const b = +("0x" + r[1]);
+        if (isNaN(a) || isNaN(b))
+            continue;
+        milRanges.push([a, b]);
+    }
 });
 
 

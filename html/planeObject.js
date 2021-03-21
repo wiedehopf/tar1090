@@ -2103,119 +2103,13 @@ PlaneObject.prototype.reapTrail = function() {
 PlaneObject.prototype.milRange = function() {
     if (this.icao[0] == '~')
         return false;
-    let i = parseInt(this.icao, 16);
-    return (
-        false
-        // us military
-        //adf7c8-adf7cf = united states mil_5(uf)
-        //adf7d0-adf7df = united states mil_4(uf)
-        //adf7e0-adf7ff = united states mil_3(uf)
-        //adf800-adffff = united states mil_2(uf)
-        //ae0000-afffff = united states mil_1(uf)
-        || (i >= 0xadf7c8 && i <= 0xafffff)
-
-        //010070-01008f = egypt_mil
-        || (i >= 0x010070 && i <= 0x01008f)
-
-        //0a4000-0a4fff = algeria mil(ap)
-        || (i >= 0x0a4000 && i <= 0x0a4fff)
-
-        //33ff00-33ffff = italy mil(iy)
-        || (i >= 0x33ff00 && i <= 0x33ffff)
-
-        //350000-37ffff = spain mil(sp)
-        || (i >= 0x350000 && i <= 0x37ffff)
-
-        //3a8000-3affff = france mil_1(fs)
-        || (i >= 0x3a8000 && i <= 0x3affff)
-        //3b0000-3bffff = france mil_2(fs)
-        || (i >= 0x3b0000 && i <= 0x3bffff)
-
-        //3ea000-3ebfff = germany mil_1(df)
-        || (i >= 0x3ea000 && i <= 0x3ebfff)
-        //3f4000-3f7fff = germany mil_2(df)
-        //3f8000-3fbfff = germany mil_3(df)
-        || (i >= 0x3f4000 && i <= 0x3fbfff)
-
-        //400000-40003f = united kingdom mil_1(ra)
-        || (i >= 0x400000 && i <= 0x40003f)
-        //43c000-43cfff = united kingdom mil(ra)
-        || (i >= 0x43c000 && i <= 0x43cfff)
-
-        //444000-446fff = austria mil(aq)
-        || (i >= 0x444000 && i <= 0x446fff)
-
-        //44f000-44ffff = belgium mil(bc)
-        || (i >= 0x44f000 && i <= 0x44ffff)
-
-        //457000-457fff = bulgaria mil(bu)
-        || (i >= 0x457000 && i <= 0x457fff)
-
-        //45f400-45f4ff = denmark mil(dg)
-        || (i >= 0x45f400 && i <= 0x45f4ff)
-
-        //468000-4683ff = greece mil(gc)
-        || (i >= 0x468000 && i <= 0x4683ff)
-
-        //473c00-473c0f = hungary mil(hm)
-        || (i >= 0x473c00 && i <= 0x473c0f)
-
-        //478100-4781ff = norway mil(nn)
-        || (i >= 0x478100 && i <= 0x4781ff)
-        //480000-480fff = netherlands mil(nm)
-        || (i >= 0x480000 && i <= 0x480fff)
-        //48d800-48d87f = poland mil(po)
-        || (i >= 0x48d800 && i <= 0x48d87f)
-        //497c00-497cff = portugal mil(pu)
-        || (i >= 0x497c00 && i <= 0x497cff)
-        //498420-49842f = czech republic mil(ct)
-        || (i >= 0x498420 && i <= 0x49842f)
-
-        //4b7000-4b7fff = switzerland mil(su)
-        || (i >= 0x4b7000 && i <= 0x4b7fff)
-        //4b8200-4b82ff = turkey mil(tq)
-        || (i >= 0x4b8200 && i <= 0x4b82ff)
-
-        //506f00-506fff = slovenia mil(sj)
-        || (i >= 0x506f00 && i <= 0x506fff)
-
-        //70c070-70c07f = oman mil(on)
-        || (i >= 0x70c070 && i <= 0x70c07f)
-
-        //710258-71025f = saudi arabia mil_1(sx)
-        //710260-71027f = saudi arabia mil_2(sx)
-        //710280-71028f = saudi arabia mil_3(sx)
-        || (i >= 0x710258 && i <= 0x71028f)
-        //710380-71039f = saudi arabia mil_4(sx)
-        || (i >= 0x710380 && i <= 0x71039f)
-
-        //738a00-738aff = israel mil(iz)
-        || (i >= 0x738a00 && i <= 0x738aff)
-
-        //7c822e-7c84ff = australia mil_1(av)
-        || (i >= 0x7c822e && i <= 0x7c84ff)
-        //7c8800-7c8fff = australia mil_7(av)
-        || (i >= 0x7c8800 && i <= 0x7c88ff)
-        //7c9000-7c9fff = australia mil_8(av)
-        //7ca000-7cbfff = australia mil_9(av)
-        || (i >= 0x7c9000 && i <= 0x7cbfff)
-        //7d0000-7dffff = australia mil_11(av)
-        //7e0000-7fffff = australia mil_12(av)
-        || (i >= 0x7d0000 && i <= 0x7fffff)
-
-        //800200-8002ff = india mil(im)
-        || (i >= 0x800200 && i <= 0x8002ff)
-
-        //c20000-c3ffff = canada mil(cb)
-        || (i >= 0xc20000 && i <= 0xc3ffff)
-
-        //e40000-e41fff = brazil mil(bq)
-        || (i >= 0xe40000 && i <= 0xe41fff)
-
-        //e80600-e806ff = chile mil(cq)
-        //|| (i >= 0xe80600 && i <= 0xe806ff)
-        // disabled due to civilian aircraft in hex range
-    );
+    let hex = parseInt(this.icao, 16);
+    for (let i in milRanges) {
+        const r = milRanges[i];
+        if (hex >= r[0] && hex <= r[1])
+            return true;
+    }
+    return false;
 };
 
 PlaneObject.prototype.updateTraceData = function(state, _now) {
