@@ -16,6 +16,7 @@ function PlaneObject(icao) {
     this.dataSource = "modeS";
 
     this.numHex = parseInt(icao.replace('~', '1'), 16);
+    this.fakeHex = this.numHex > 16777215; // non-icao hex
 
     // Basic location information
     this.altitude       = null;
@@ -746,7 +747,7 @@ PlaneObject.prototype.updateIcon = function() {
     if ( enableLabels && (!multiSelect || (multiSelect && this.selected)) &&
         (
             (ZoomLvl >= labelZoom && this.altitude != "ground")
-            || (ZoomLvl >= labelZoomGround-2 && this.speed > 5 && this.icao[0] != '~')
+            || (ZoomLvl >= labelZoomGround-2 && this.speed > 5 && !this.fakeHex)
             || ZoomLvl >= labelZoomGround
             || (this.selected && !SelectedAllPlanes)
         )
@@ -1265,7 +1266,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     if (this.category == 'C3' || this.icaoType == 'TWR') {
         this.zIndex = 1;
     }
-    if (this.icao[0] == '~')
+    if (this.fakeHex)
         this.zIndex -= 100000;
 
     if (gs != null)
@@ -2099,14 +2100,12 @@ PlaneObject.prototype.reapTrail = function() {
     }
 };
 
-
 PlaneObject.prototype.milRange = function() {
-    if (this.icao[0] == '~')
+    if (this.fakeHex) // non-icao hex
         return false;
-    let hex = parseInt(this.icao, 16);
     for (let i in milRanges) {
         const r = milRanges[i];
-        if (hex >= r[0] && hex <= r[1])
+        if (this.numHex >= r[0] && this.numHex <= r[1])
             return true;
     }
     return false;
