@@ -1,0 +1,259 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+ 	{
+      "type": "Feature",
+      "properties": {"stroke":"#55FF55","stroke-width":1,"stroke-opacity":1,"name":"NAT-Q"},
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -50,
+            58
+          ],
+          [
+            -40,
+            58
+          ],
+          [
+            -30,
+            57
+          ],
+          [
+            -20,
+            57
+          ]
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {"stroke":"#55FF55","stroke-width":1,"stroke-opacity":1,"name":"NAT-R"},
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -50,
+            48
+          ],
+          [
+            -40,
+            49
+          ],
+          [
+            -30,
+            50
+          ],
+          [
+            -20,
+            52
+          ]
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {"stroke":"#55FF55","stroke-width":1,"stroke-opacity":1,"name":"NAT-S"},
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -50,
+            47
+          ],
+          [
+            -40,
+            48
+          ],
+          [
+            -30,
+            49
+          ],
+          [
+            -20,
+            51
+          ]
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {"stroke":"#55FF55","stroke-width":1,"stroke-opacity":1,"name":"NAT-T"},
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -50,
+            46.30
+          ],
+          [
+            -40,
+            47.30
+          ],
+          [
+            -30,
+            48.30
+          ],
+          [
+            -20,
+            50.3
+          ]
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {"stroke":"#55FF55","stroke-width":1,"stroke-opacity":1,"name":"NAT-U"},
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -50,
+            46
+          ],
+          [
+            -40,
+            47
+          ],
+          [
+            -30,
+            48
+          ],
+          [
+            -20,
+            50
+          ]
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {"stroke":"#55FF55","stroke-width":1,"stroke-opacity":1,"name":"NAT-V"},
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -50,
+            45
+          ],
+          [
+            -40,
+            46
+          ],
+          [
+            -30,
+            47
+          ],
+          [
+            -20,
+            49
+          ]
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {"stroke":"#55FF55","stroke-width":1,"stroke-opacity":1,"name":"NAT-W"},
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -50,
+            45
+          ],
+          [
+            -40,
+            48
+          ],
+          [
+            -30,
+            50
+          ],
+          [
+            -20,
+            52
+          ]
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {"stroke":"#55FF55","stroke-width":1,"stroke-opacity":1,"name":"NAT-X"},
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -50,
+            45
+          ],
+          [
+            -40,
+            47
+          ],
+          [
+            -30,
+            50
+          ],
+          [
+            -20,
+            52
+          ]
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {"stroke":"#55FF55","stroke-width":1,"stroke-opacity":1,"name":"NAT-Y"},
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+		  [
+		    -60,
+			42
+		  ],
+          [
+           -50,
+            44
+          ],
+          [
+            -40,
+            46
+          ],
+          [
+            -30,
+            49
+          ],
+          [
+            -20,
+            51
+          ]
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {"stroke":"#55FF55","stroke-width":1,"stroke-opacity":1,"name":"NAT-Z"},
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -50,
+            51
+          ],
+          [
+            -40,
+            53
+          ],
+          [
+            -30,
+            55
+          ],
+          [
+            -20,
+            56
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -343,6 +343,10 @@ function createBaseLayers() {
 
     us.push(createGeoJsonLayer('US ARTCC Boundaries', 'usartccboundaries', 'geojson/US_ARTCC_boundaries.geojson', 'rgba(255, 0, 255, 0.3)', 'rgba(255, 0, 255, 1)', false));
 
+    //north atlantic tracks
+    world.push(createGeoJsonLayer('NAT-East','nateast', 'geojson/NAT_East.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)')); 
+    world.push(createGeoJsonLayer('NAT-West','natwest', 'geojson/NAT_West.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
+
     if (l3harris) {
         let c = 1;
         /*
