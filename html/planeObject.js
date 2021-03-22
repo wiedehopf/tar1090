@@ -900,14 +900,12 @@ PlaneObject.prototype.processTrace = function() {
         }
     }
 
-    let stopFullForRecent = 1e9;
     if (this.fullTrace && this.fullTrace.trace
         && this.recentTrace && this.recentTrace.trace) {
         let t1 = this.fullTrace.trace;
         let t2 = this.recentTrace.trace;
         let end1 = this.fullTrace.timestamp + t1[t1.length-1][0];
         let start2 = this.recentTrace.timestamp;
-        stopFullForRecent = start2;
         if (end1 < start2)
             console.log("Insufficient recent trace overlap!");
     }
@@ -916,14 +914,16 @@ PlaneObject.prototype.processTrace = function() {
     for (let j = 0; j < 2 && !stop; j++) {
         let start;
         let end;
-        let stopTime;
+        let nextTraceStart;
         if (j == 0) {
             if (!this.fullTrace || !this.fullTrace.trace)
                 continue;
             if (onlyRecent)
                 continue;
             timeZero = this.fullTrace.timestamp;
-            stopTime = stopFullForRecent; // stop processing when we have the timestamp in recent
+
+            // stop processing when we have the timestamp in recent
+            nextTraceStart = this.recentTrace ? this.recentTrace.timestamp : timeZero + 1e9;
 
             _last = timeZero - 1;
 
@@ -941,7 +941,7 @@ PlaneObject.prototype.processTrace = function() {
             if (!this.recentTrace || !this.recentTrace.trace)
                 continue;
             timeZero = this.recentTrace.timestamp;
-            stopTime = timeZero + 1e9; // disable Stoptime
+            nextTraceStart = timeZero + 864000; // no next trace, set it 10 days in the future
             if (!trace) {
                 _last = timeZero - 1;
             }
@@ -965,7 +965,7 @@ PlaneObject.prototype.processTrace = function() {
             let stale = state[6] & 1;
             const leg_marker = state[6] & 2;
 
-            if (timestamp >= stopTime)
+            if (timestamp >= nextTraceStart)
                 break;
 
             _now = timestamp;
