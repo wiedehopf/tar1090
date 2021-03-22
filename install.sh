@@ -224,8 +224,14 @@ do
         sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?$service?g" \
             -e "s?INSTANCE?$instance?g" -e "s?HTMLPATH?$html_path?g" nginx.conf
     fi
+
     if [[ $lighttpd == yes ]] && lighttpd -v | grep -E 'lighttpd/1.4.(5[6-9]|[6-9])' -qs; then
-        sed -i -e 's/compress.filetype/deflate.mimetypes/g' 88-tar1090.conf
+        sed -i -e 's/compress.filetype/deflate.mimetypes/' 88-tar1090.conf
+        sed -i -e 's/compress.filetype/deflate.mimetypes/' 95-tar1090-otherport.conf
+        if ! grep -qs -e '^[^#]*"mod_deflate"' /etc/lighttpd/lighttpd.conf /etc/lighttpd/conf-enabled/*; then
+            sed -i -e 's/^[^#]*deflate.mimetypes/#\0/' 88-tar1090.conf
+            sed -i -e 's/^[^#]*deflate.mimetypes/#\0/' 95-tar1090-otherport.conf
+        fi
     fi
 
 
@@ -399,6 +405,14 @@ if [[ $lighttpd == yes ]]; then
         sed -i -e 's$^compress.cache-dir.*$#\0 # disabled by tar1090, often causes full disk due to not having a cleanup mechanism$' /etc/lighttpd/lighttpd.conf
     elif ! grep -qs -e 'disabled by tar1090' /etc/lighttpd/lighttpd.conf; then
         sed -i -e 's$^compress.cache-dir.*$# CAUTION, enabling cache-dir and filetype json will cause full disk when using tar1090\n\0$' /etc/lighttpd/lighttpd.conf
+    fi
+    if grep -qs -e '^deflate.cache-dir' /etc/lighttpd/lighttpd.conf; then
+        echo -----
+        echo "Disabling deflate.cache-dir in /etc/lighttpd/lighttpd.conf due to often causing full disk issues as there is no automatic cleanup mechanism. Add a leading space to the deflate.cache-dir line if you don't want tar1090 to mess with it in the future."
+        echo -----
+        sed -i -e 's$^deflate.cache-dir.*$#\0 # disabled by tar1090, often causes full disk due to not having a cleanup mechanism$' /etc/lighttpd/lighttpd.conf
+    elif ! grep -qs -e 'disabled by tar1090' /etc/lighttpd/lighttpd.conf; then
+        sed -i -e 's$^deflate.cache-dir.*$# CAUTION, enabling cache-dir and filetype json will cause full disk when using tar1090\n\0$' /etc/lighttpd/lighttpd.conf
     fi
 fi
 
