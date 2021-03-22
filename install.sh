@@ -82,9 +82,23 @@ if (( $( { du -s "$ipath/git-db" 2>/dev/null || echo 0; } | cut -f1) > 150000 ))
     rm -rf "$ipath/git-db"
 fi
 
-{ [[ "$1" == "test" ]] && cd "$ipath/git-db" && git rev-parse; } ||
-    { cd "$ipath/git-db" &>/dev/null && git fetch --depth 1 origin master && git reset --hard FETCH_HEAD; } ||
-    { cd /tmp && rm -rf "$ipath/git-db" && git clone --depth 1 "$db_repo" "$ipath/git-db"; }
+function getGIT() {
+    # getGIT $REPO $BRANCH $TARGET-DIR
+    if [[ -z "$1" ]] || [[ -z "$2" ]] || [[ -z "$3" ]]; then
+        echo "getGIT wrong usage, check your script or tell the author!" 1>&2
+        return 1
+    fi
+    if ! cd "$3" &>/dev/null || ! git fetch origin "$2" || ! git reset --hard FETCH_HEAD; then
+        if ! rm -rf "$3" || ! git clone --depth 2 --single-branch --branch "$2" "$1" "$3"; then
+            return 1
+        fi
+    fi
+    return 0
+}
+
+if ! { [[ "$1" == "test" ]] && cd "$ipath/git-db" && git rev-parse; }; then
+    getGIT "$db_repo" "master" "$ipath/git-db" || true
+fi
 
 if ! cd $ipath/git-db || ! git rev-parse
 then
@@ -104,10 +118,7 @@ then
     cd /tmp/tar1090-test
     TAR_VERSION=$(date +%s)
 else
-    { cd "$ipath/git" &>/dev/null && git fetch origin master && git reset --hard FETCH_HEAD; } ||
-        { cd /tmp && rm -rf "$ipath/git" && git clone --depth 1 "$repo" "$ipath/git"; }
-
-    if ! cd $ipath/git || ! git rev-parse
+    if ! getGIT "$repo" "master" "$ipath/git" || ! cd "$ipath/git" || ! git rev-parse
     then
         echo "Unable to download files, exiting! (Maybe try again?)"
         exit 1
