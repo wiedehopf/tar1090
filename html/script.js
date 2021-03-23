@@ -786,7 +786,7 @@ function initPage() {
         maxDate: '+1d',
         dateFormat: "yy-mm-dd",
         onSelect: function(date){
-            setTraceDate(date);
+            setTraceDate({string: date});
             shiftTrace();
             $("#histDatePicker").blur();
         },
@@ -4344,7 +4344,7 @@ function processURLParams(){
     icaos = valid.reverse();
 
     if (usp.has('showTrace')) {
-        let date = setTraceDate(usp.get('showTrace'));
+        let date = setTraceDate({string: usp.get('showTrace')});
         if (date && usp.has('startTime')) {
             let numbers =  usp.get('startTime').split(':');
             traceOpts.startHours = numbers[0] ? numbers[0] : 0;
@@ -4931,15 +4931,31 @@ function legShift(offset, plane) {
     updateAddressBar();
 }
 
-function setTraceDate(string) {
-    let numbers = string.split('-');
-    if (numbers.length != 3)
+function setTraceDate(options) {
+    options = options || {};
+    let numbers = options.string ? options.string.split('-') : [];
+    if (numbers.length == 3) {
+        traceDate = new Date();
+        traceDate.setUTCFullYear(numbers[0]);
+        traceDate.setUTCMonth(numbers[1] - 1);
+        traceDate.setUTCDate(numbers[2]);
+    } else if (options.ts) {
+        traceDate = new Date(options.ts);
+    } else {
         return null;
-    traceDate = new Date();
-    traceDate.setUTCFullYear(numbers[0]);
-    traceDate.setUTCMonth(numbers[1] - 1);
-    traceDate.setUTCDate(numbers[2]);
+    }
+    traceDate.setUTCHours(0);
+    traceDate.setUTCMinutes(0);
+    traceDate.setUTCSeconds(0);
+
+    let tomorrow = (new Date()).getTime() + 86400e3;
+    if (traceDate.getTime() > tomorrow) {
+        traceDate = new Date(tomorrow);
+    }
+
     traceDateString = zDateString(traceDate);
+    traceDay = traceDate.getUTCDate();
+
     return traceDate;
 }
 
@@ -4951,18 +4967,10 @@ function shiftTrace(offset) {
     traceOpts = { follow: traceOpts.follow, };
     $('#leg_sel').text('Loading ...');
     if (!traceDate || offset == "today") {
-        traceDate = new Date();
+        setTraceDate({ ts: new Date().getTime() });
     } else if (offset) {
-        let sinceEpoch = traceDate.getTime();
-        traceDate.setTime(sinceEpoch + offset * 86400 * 1000);
+        setTraceDate({ ts: traceDate.getTime() + offset * 86400 * 1000 });
     }
-    traceDate.setUTCHours(0);
-    traceDate.setUTCMinutes(0);
-    traceDate.setUTCSeconds(0);
-
-    traceDay = traceDate.getUTCDate();
-
-    traceDateString = zDateString(traceDate);
 
     //$('#trace_date').text('UTC day:\n' + traceDateString);
     $("#histDatePicker").datepicker('setDate', traceDateString);
@@ -5729,12 +5737,7 @@ function loadReplay(ts) {
         }
     });
 
-    traceDate = new Date(ts);
-    traceDate.setUTCHours(0);
-    traceDate.setUTCMinutes(0);
-    traceDate.setUTCSeconds(0);
-    traceDay = traceDate.getUTCDate();
-    traceDateString = zDateString(traceDate);
+    setTraceDate({ts: ts});
 
     req.done(initReplay);
     req.fail(function(jqxhr, status, error) {
@@ -5793,7 +5796,7 @@ function play(index) {
         return;
 
     clearTimeout(refreshId);
-    refreshId = setTimeout(play, replay.ival / replay.speed);
+    refreshId = setTimeout(play, replay.ival / replay.speed * 1000);
 
     if (showTrace)
         return;
@@ -5893,8 +5896,8 @@ function play(index) {
         processAircraft(ac, false, false);
     }
 
-    checkMovement();
     triggerRefresh = 1;
+    checkMovement();
     checkRefresh();
 }
 
