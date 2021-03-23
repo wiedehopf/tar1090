@@ -4948,6 +4948,7 @@ function shiftTrace(offset) {
         $('#leg_sel').text('Slow down! ...');
         return;
     }
+    traceOpts = { follow: traceOpts.follow, };
     $('#leg_sel').text('Loading ...');
     if (!traceDate || offset == "today") {
         traceDate = new Date();
