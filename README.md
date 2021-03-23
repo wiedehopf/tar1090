@@ -48,7 +48,7 @@ sudo bash -c "$(wget -nv -O - https://raw.githubusercontent.com/wiedehopf/tar109
 Configuration should be preserved.
 
 
-## Configuration (optional):
+## Configuration part 1: History interval and number of snapshots / ptracks duration (optional)
 
 Edit the configuration file to change the interval in seconds and number of history files saved:
 ```
@@ -63,7 +63,7 @@ sudo systemctl restart tar1090
 
 The duration of the history in seconds can be calculated as interval times history_size.
 
-## Configuring the web interface (optional):
+## Configuring part 2: the web interface (optional):
 
 Remove the // at the start of a line, otherwise the setting will not be used.
 
@@ -115,6 +115,7 @@ Then Ctrl-F5 to refresh the web interface in the browser.
 
 ## UAT receiver running dump978-fa and skyaware978:
 
+See the instructions for "Configuration part 1".
 This is the relevant part in the configuration file:
 ```
 # Change to yes to enable UAT/978 display in tar1090
