@@ -708,7 +708,7 @@ function altitudeColor(altitude) {
             }
         }
     }
-    if (toggles['darkerColors'].state) {
+    if (darkerColors) {
         l *= 0.8;
         s *= 0.7;
     }

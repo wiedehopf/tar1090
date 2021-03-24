@@ -110,6 +110,7 @@ let halloween = false;
 let noRegOnly = false;
 let triggerRefresh = 0;
 let firstDraw = true;
+let darkerColors = false;
 
 let infoBlockWidth = baseInfoBlockWidth;
 
@@ -1768,8 +1769,9 @@ function initMap() {
         key: "darkerColors",
         display: "Darker Colors",
         container: "#settingsLeft",
-        init: false,
+        init: darkerColors,
         setState: function(state) {
+            darkerColors = state;
             if (loadFinished) {
                 refreshFeatures();
                 remakeTrails();
