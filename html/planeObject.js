@@ -914,7 +914,7 @@ PlaneObject.prototype.processTrace = function() {
     for (let j = 0; j < 2 && !stop; j++) {
         let start;
         let end;
-        let nextTraceStart;
+        let nextTraceStart = null;
         if (j == 0) {
             if (!this.fullTrace || !this.fullTrace.trace)
                 continue;
@@ -922,8 +922,8 @@ PlaneObject.prototype.processTrace = function() {
                 continue;
             timeZero = this.fullTrace.timestamp;
 
-            // stop processing when we have the timestamp in recent
-            nextTraceStart = this.recentTrace ? this.recentTrace.timestamp : timeZero + 1e9;
+            // after fullTrace, recentTrace will be processed, set to null if no recentTrace
+            nextTraceStart = this.recentTrace ? this.recentTrace.timestamp : null;
 
             _last = timeZero - 1;
 
@@ -941,7 +941,10 @@ PlaneObject.prototype.processTrace = function() {
             if (!this.recentTrace || !this.recentTrace.trace)
                 continue;
             timeZero = this.recentTrace.timestamp;
-            nextTraceStart = timeZero + 864000; // no next trace, set it 10 days in the future
+
+            // no next trace to process
+            nextTraceStart = null;
+
             if (!trace) {
                 _last = timeZero - 1;
             }
@@ -965,7 +968,9 @@ PlaneObject.prototype.processTrace = function() {
             let stale = state[6] & 1;
             const leg_marker = state[6] & 2;
 
-            if (timestamp >= nextTraceStart)
+            // data from recentTrace are preferred due to leg marking internals
+            // stop processing when we have the timestamp in recent
+            if (nextTraceStart && timestamp >= nextTraceStart)
                 break;
 
             _now = timestamp;
