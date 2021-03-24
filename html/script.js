@@ -936,62 +936,6 @@ function initPage() {
         }
     });
 
-    new Toggle({
-        key: "darkerColors",
-        display: "Darker Colors",
-        container: "#settingsRight",
-        init: false,
-        setState: function(state) {
-            if (loadFinished) {
-                refreshFeatures();
-                remakeTrails();
-            }
-        }
-    });
-
-    tableColorsLight = tableColors;
-    tableColorsDark = JSON.parse(JSON.stringify(tableColors));
-    let darkVals = Object.values(tableColorsDark);
-    for (let i in darkVals) {
-        let obj = darkVals[i];
-        let keys = Object.keys(obj)
-        for (let j in keys) {
-            let key = keys[j];
-            let hsl = hexToHSL(obj[key]);
-            hsl[1] *= 0.5;
-            hsl[2] *= 0.6;
-            obj[key] = hslToRgb(hsl);
-        }
-    }
-    new Toggle({
-        key: "darkMode",
-        display: "Dark Mode",
-        container: "#settingsRight",
-        init: false,
-        setState: function(state) {
-            let root = document.documentElement;
-            if (state) {
-                document.body.style.background = '#989898'
-                root.style.setProperty("--BGCOLOR1", '#989898');
-                root.style.setProperty("--BGCOLOR2", '#A8A8A8');
-                tableColors = tableColorsDark;
-            } else {
-                document.body.style.background = '#F8F8F8'
-                root.style.setProperty("--BGCOLOR1", '#F8F8F8');
-                root.style.setProperty("--BGCOLOR2", '#C8C8C8');
-                tableColors = tableColorsLight;
-            }
-            if (loadFinished) {
-                TAR.planeMan.redraw();
-                refreshFilter();
-            }
-
-            initLegend(tableColors.unselected);
-            initSourceFilter(tableColors.unselected);
-            initFlagFilter(tableColors.unselected);
-        }
-    });
-
     if (globeIndex) {
         function setGlobeTableLimit() {
             let mult = 1 + 4 * toggles['moreTableLines1'].state + 16 * (toggles['moreTableLines2'] && toggles['moreTableLines2'].state);
@@ -1045,6 +989,27 @@ function initPage() {
             }
             updateMapSize();
         },
+    });
+
+    new Toggle({
+        key: "showPictures",
+        display: "Show Pictures",
+        container: "#settingsRight",
+        init: showPictures,
+        setState: function(state) {
+            showPictures = state;
+            if (state) {
+                $('#photo_container').removeClass('hidden');
+            } else {
+                $('#photo_container').addClass('hidden');
+            }
+            if (showPictures && planespottersAPI && !flightawareLinks) {
+                $('#photoLinkRow').addClass('hidden');
+            } else {
+                $('#photoLinkRow').removeClass('hidden');
+            }
+            refreshSelected();
+        }
     });
 
     new Toggle({
@@ -1800,6 +1765,63 @@ function initMap() {
     });
 
     new Toggle({
+        key: "darkerColors",
+        display: "Darker Colors",
+        container: "#settingsLeft",
+        init: false,
+        setState: function(state) {
+            if (loadFinished) {
+                refreshFeatures();
+                remakeTrails();
+            }
+        }
+    });
+
+    tableColorsLight = tableColors;
+    tableColorsDark = JSON.parse(JSON.stringify(tableColors));
+    let darkVals = Object.values(tableColorsDark);
+    for (let i in darkVals) {
+        let obj = darkVals[i];
+        let keys = Object.keys(obj)
+        for (let j in keys) {
+            let key = keys[j];
+            let hsl = hexToHSL(obj[key]);
+            hsl[1] *= 0.5;
+            hsl[2] *= 0.6;
+            obj[key] = hslToRgb(hsl);
+        }
+    }
+    new Toggle({
+        key: "darkMode",
+        display: "Dark Mode",
+        container: "#settingsLeft",
+        init: false,
+        setState: function(state) {
+            let root = document.documentElement;
+            if (state) {
+                document.body.style.background = '#989898'
+                root.style.setProperty("--BGCOLOR1", '#989898');
+                root.style.setProperty("--BGCOLOR2", '#A8A8A8');
+                tableColors = tableColorsDark;
+            } else {
+                document.body.style.background = '#F8F8F8'
+                root.style.setProperty("--BGCOLOR1", '#F8F8F8');
+                root.style.setProperty("--BGCOLOR2", '#C8C8C8');
+                tableColors = tableColorsLight;
+            }
+            if (loadFinished) {
+                TAR.planeMan.redraw();
+                refreshFilter();
+            }
+
+            initLegend(tableColors.unselected);
+            initSourceFilter(tableColors.unselected);
+            initFlagFilter(tableColors.unselected);
+        }
+    });
+
+
+    new Toggle({
         key: "MapDim",
         display: "Dim Map",
         container: "#settingsLeft",
@@ -1820,27 +1842,6 @@ function initMap() {
             }
             OLMap.render();
             buttonActive('#B', state);
-        }
-    });
-
-    new Toggle({
-        key: "showPictures",
-        display: "Show Pictures",
-        container: "#settingsLeft",
-        init: showPictures,
-        setState: function(state) {
-            showPictures = state;
-            if (state) {
-                $('#photo_container').removeClass('hidden');
-            } else {
-                $('#photo_container').addClass('hidden');
-            }
-            if (showPictures && planespottersAPI && !flightawareLinks) {
-                $('#photoLinkRow').addClass('hidden');
-            } else {
-                $('#photoLinkRow').removeClass('hidden');
-            }
-            refreshSelected();
         }
     });
 
