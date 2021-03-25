@@ -4405,7 +4405,7 @@ function processURLParams(){
             }
         }
         if (traceDate != null)
-            toggleShowTrace(traceOpts);
+            toggleShowTrace();
         updateAddressBar();
     } else if (callsign != null) {
         findPlanes(callsign, false, true, false, false);
@@ -4814,7 +4814,7 @@ function toggleLargeMode() {
     remakeTrails();
 }
 
-function toggleShowTrace(traceOpts) {
+function toggleShowTrace() {
     if (!showTrace) {
         showTrace = true;
         toggleFollow(false);
@@ -5332,7 +5332,7 @@ function getTrace(newPlane, hex, options) {
         select(newPlane, options);
     }
 
-    traceOpts.follow = options.follow == true;
+    traceOpts.follow = (options.follow == true);
 
     if (showTrace) {
         traceRate += 3;
