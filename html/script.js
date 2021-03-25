@@ -4136,11 +4136,14 @@ function changeCenter(init) {
     const rawCenter = OLMap.getView().getCenter();
     const center = ol.proj.toLonLat(rawCenter);
 
+    const centerChanged = (CenterLon != center[0] || CenterLat != center[1]);
+
     localStorage['CenterLon'] = CenterLon = center[0];
     localStorage['CenterLat'] = CenterLat = center[1];
 
-    if (!init && showTrace)
+    if (!init && showTrace && centerChanged) {
         updateAddressBar();
+    }
 
     if (rawCenter[0] < OLProj.extent_[0] || rawCenter[0] > OLProj.extent_[2]) {
         OLMap.getView().setCenter(ol.proj.fromLonLat(center));
