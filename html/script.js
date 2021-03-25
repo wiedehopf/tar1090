@@ -739,19 +739,14 @@ function initPage() {
 
     $('#infoblock_close').on('click', function () {
 
-        if (showTrace) {
+        if (showTrace)
             toggleShowTrace();
-        }
-        if (SelectedPlane) {
-            SelectedPlane.selected = null;
-            SelectedPlane.clearLines();
-            SelectedPlane.updateMarker();
-            SelectedPlane = null;
-            refreshSelected();
-            adjustInfoBlock();
-            TAR.planeMan.refresh();
-            updateAddressBar();
-        }
+        if (onlySelected)
+            toggleIsolation();
+
+        deselect(SelectedPlane);
+        refreshFilter();
+        updateAddressBar();
     });
 
     $('#sidebar_container').on('resize', function() {
@@ -1750,8 +1745,10 @@ function initMap() {
             selectPlaneByHex(hex, {noDeselect: double, follow: double});
         }
 
-        if (!hex && !multiSelect && !showTrace) {
-            deselectAllPlanes();
+        if (!hex && !multiSelect && !onlySelected) {
+            deselect(SelectedPlane);
+            refreshFilter();
+            updateAddressBar();
         }
         evt.stopPropagation();
     });
@@ -2190,14 +2187,6 @@ let selReg = null;
 function refreshSelected() {
 
     buttonActive('#F', FollowSelected);
-
-    /*
-    if (SelectedPlane && SelectedPlane.isFiltered()) {
-        SelectedPlane.selected = false;
-        SelectedPlane.clearLines();
-        SelectedPlane = null;
-    }
-    */
 
     if (!SelectedPlane) {
         adjustInfoBlock();
@@ -3275,7 +3264,7 @@ function selectAllPlanes() {
 
 // deselect all the planes
 function deselectAllPlanes(keepMain) {
-    if (showTrace)
+    if (showTrace && !keepMain)
         return;
     if (!multiSelect && SelectedPlane)
         toggleIsolation(false, "off");
@@ -3284,21 +3273,21 @@ function deselectAllPlanes(keepMain) {
         buttonActive('#T', false);
         $('#selectall_checkbox').removeClass('settingsCheckboxChecked');
         SelectedAllPlanes = false;
-        for (let i in PlanesOrdered) {
-            const plane = PlanesOrdered[i];
-            plane.updateTick(true);
-        }
-        mapRefresh();
+        refreshFilter();
         return;
     }
 
+    let bounce = [];
     for (let i in SelPlanes) {
         const plane = SelPlanes[i];
         if (keepMain && plane == SelectedPlane)
             continue;
-        deselect(plane);
+        bounce.push(plane);
     }
-
+    for (let i in bounce) {
+        deselect(bounce[i]);
+    }
+    refreshFilter();
     updateAddressBar();
 }
 
@@ -3496,13 +3485,6 @@ function onFilterByAltitude(e) {
     $("#altitude_filter_min").blur();
     $("#altitude_filter_max").blur();
 
-
-    if (SelectedPlane && SelectedPlane.isFiltered()) {
-        SelectedPlane.selected = false;
-        SelectedPlane.clearLines();
-        SelectedPlane = null;
-    }
-
     updateAltFilter();
     refreshFilter();
 }
@@ -3565,7 +3547,7 @@ function buttonActive(id, state) {
 
 function toggleIsolation(on, off) {
     let prevState = onlySelected;
-    if (showTrace && !on && !off)
+    if (showTrace && !on)
         return;
     onlySelected = !onlySelected;
     if (on)
