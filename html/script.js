@@ -3204,23 +3204,23 @@ function selectPlaneByHex(hex, options) {
     } else {
         if (multiSelect) {
             // multiSelect deselect
-            if (newPlane && newPlane.selected && !onlySelected && !options.noDeselect) {
+            if (newPlane && newPlane.selected && !onlySelected) {
                 deselect(newPlane);
                 newPlane = null;
                 hex = null;
             }
-        } else {
+        } else if (oldPlane) {
             // normal deselect
-            if (oldPlane && oldPlane != newPlane) {
+            if (oldPlane != newPlane) {
                 deselect(oldPlane);
                 oldPlane = null;
             }
-        }
-        if (oldPlane != null && oldPlane == newPlane) {
-            deselect(newPlane);
-            oldPlane = null;
-            newPlane = null;
-            hex = null;
+            if (oldPlane == newPlane) {
+                deselect(newPlane);
+                oldPlane = null;
+                newPlane = null;
+                hex = null;
+            }
         }
     }
 
