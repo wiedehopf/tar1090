@@ -957,7 +957,7 @@ let TypeDesignatorIcons = {
 
     'TIGR': ['tiger', 1.00],
     'MI24': ['mil24', 1.00],
-    'AS65': ['dauphin', 1.00],
+    'AS65': ['dauphin', 0.8],
     'GAZL': ['gazelle', 1.00],
     'AS50': ['gazelle', 1.00],
     'AS55': ['gazelle', 1.00],
