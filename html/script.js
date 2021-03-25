@@ -4350,15 +4350,15 @@ function processURLParams(){
         let date = setTraceDate({string: usp.get('showTrace')});
         if (date && usp.has('startTime')) {
             let numbers =  usp.get('startTime').split(':');
-            traceOpts.startHours = numbers[0] ? numbers[0] : 0;
-            traceOpts.startMinutes = numbers[1] ? numbers[1] : 0;
-            traceOpts.startSeconds = numbers[2] ? numbers[2] : 0;
+            traceOpts.startHours = numbers[0] ? parseInt(numbers[0]) : 0;
+            traceOpts.startMinutes = numbers[1] ? parseInt(numbers[1]) : 0;
+            traceOpts.startSeconds = numbers[2] ? parseInt(numbers[2]) : 0;
         }
         if (date && usp.has('endTime')) {
             let numbers = usp.get('endTime').split(':');
-            traceOpts.endHours = numbers[0] ? numbers[0] : 24;
-            traceOpts.endMinutes = numbers[1] ? numbers[1] : 0;
-            traceOpts.endSeconds = numbers[2] ? numbers[2] : 0;
+            traceOpts.endHours = numbers[0] ? parseInt(numbers[0]) : 24;
+            traceOpts.endMinutes = numbers[1] ? parseInt(numbers[1]) : 0;
+            traceOpts.endSeconds = numbers[2] ? parseInt(numbers[2]) : 0;
         }
     }
 
@@ -4418,7 +4418,7 @@ function processURLParams(){
             }
         }
         if (traceDate != null)
-            toggleShowTrace();
+            toggleShowTrace(traceOpts);
         updateAddressBar();
     } else if (callsign != null) {
         findPlanes(callsign, false, true, false, false);
@@ -4732,15 +4732,19 @@ function updateAddressBar() {
             string += '&leg=' + (legSel + 1);
         if (traceOpts.startHours != null) {
             string += '&startTime=';
-            string += traceOpts.startHours + ':'
-            string += traceOpts.startMinutes + ':';
-            string += traceOpts.startSeconds;
+            string += traceOpts.startHours.toString().padStart(2, '0');
+            string += ':' + traceOpts.startMinutes.toString().padStart(2, '0');
+            if (traceOpts.startSeconds) {
+                string += ':' + traceOpts.startSeconds.toString().padStart(2, '0');
+            }
         }
         if (traceOpts.endHours != null) {
             string += '&endTime=';
-            string += traceOpts.endHours + ':'
-            string += traceOpts.endMinutes + ':';
-            string += traceOpts.endSeconds;
+            string += traceOpts.endHours.toString().padStart(2, '0');
+            string += ':' + traceOpts.endMinutes.toString().padStart(2, '0');
+            if (traceOpts.endSeconds) {
+                string += ':' + traceOpts.endSeconds.toString().padStart(2, '0');
+            }
         }
     }
 
@@ -4823,7 +4827,7 @@ function toggleLargeMode() {
     remakeTrails();
 }
 
-function toggleShowTrace() {
+function toggleShowTrace(traceOpts) {
     if (!showTrace) {
         showTrace = true;
         toggleFollow(false);
@@ -4967,7 +4971,8 @@ function shiftTrace(offset) {
         $('#leg_sel').text('Slow down! ...');
         return;
     }
-    traceOpts = { follow: traceOpts.follow, };
+    traceOpts.startStamp = null;
+    traceOpts.endStamp = null;
     $('#leg_sel').text('Loading ...');
     if (!traceDate || offset == "today") {
         setTraceDate({ ts: new Date().getTime() });
