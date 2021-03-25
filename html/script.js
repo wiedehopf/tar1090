@@ -1687,23 +1687,23 @@ function initMap() {
     */
 
     OLMap.on(['click', 'dblclick'], function(evt) {
-        let res = null;
+        let trailHex = null;
+        let trailTS = null;
+        let planeHex = null;
 
-        if (!res && !showTrace) {
-            let features = webgl ? webglFeatures : PlaneIconFeatures;
-            let evtCoords = evt.map.getCoordinateFromPixel(evt.pixel);
-            let feature = features.getClosestFeatureToCoordinate(evtCoords);
-            if (feature) {
-                let fPixel = evt.map.getPixelFromCoordinate(feature.getGeometry().getCoordinates());
-                let a = fPixel[0] - evt.pixel[0];
-                let b = fPixel[1] - evt.pixel[1];
-                let c = globalScale * 25;
-                if (a**2 + b**2 < c**2)
-                    res = feature.hex;
-            }
+        let features = webgl ? webglFeatures : PlaneIconFeatures;
+        let evtCoords = evt.map.getCoordinateFromPixel(evt.pixel);
+        let feature = features.getClosestFeatureToCoordinate(evtCoords);
+        if (feature) {
+            let fPixel = evt.map.getPixelFromCoordinate(feature.getGeometry().getCoordinates());
+            let a = fPixel[0] - evt.pixel[0];
+            let b = fPixel[1] - evt.pixel[1];
+            let c = globalScale * 25;
+            if (a**2 + b**2 < c**2)
+                planeHex = feature.hex;
         }
 
-        if (!res) {
+        if (!planeHex || showTrace) {
             let features = evt.map.getFeaturesAtPixel(
                 evt.pixel,
                 {
@@ -1734,17 +1734,20 @@ function initMap() {
                     }
                 }
                 if (showTrace)
-                    res = closest.timestamp;
+                    trailTS = closest.timestamp;
                 else
-                    res = closest.hex;
+                    trailHex = closest.hex;
             }
         }
 
-        if (showTrace && res) {
-            gotoTime(res);
-        } else if (res) {
-            const double = (evt.type === 'dblclick');
-            selectPlaneByHex(res, {noDeselect: double, follow: double});
+        const double = (evt.type === 'dblclick');
+
+        if (showTrace && trailTS) {
+            gotoTime(trailTS);
+        }
+        let hex = planeHex || trailHex;
+        if (hex) {
+            selectPlaneByHex(hex, {noDeselect: double, follow: double});
         } else if (!multiSelect) {
             deselectAllPlanes();
         }
