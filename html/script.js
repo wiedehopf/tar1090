@@ -1748,7 +1748,9 @@ function initMap() {
         let hex = planeHex || trailHex;
         if (hex) {
             selectPlaneByHex(hex, {noDeselect: double, follow: double});
-        } else if (!multiSelect) {
+        }
+
+        if (!hex && !multiSelect && !showTrace) {
             deselectAllPlanes();
         }
         evt.stopPropagation();
@@ -3202,7 +3204,7 @@ function selectPlaneByHex(hex, options) {
     let newPlane = Planes[hex];
 
     // If we are clicking the same plane, we are deselecting it unless noDeselect is specified
-    if (options.noDeselect) {
+    if (options.noDeselect || showTrace || onlySelected) {
         oldPlane = null;
     } else {
         if (multiSelect) {
@@ -3512,7 +3514,7 @@ function refreshFilter() {
     TAR.planeMan.refresh();
     refreshSelected();
     refreshHighlighted();
-    mapRefresh();
+    mapRefresh(true);
 
     drawHeatmap();
 }
@@ -4242,7 +4244,7 @@ function checkRefresh() {
         triggerRefresh = 0;
     }
 }
-function mapRefresh() {
+function mapRefresh(redraw) {
     if (!mapIsVisible || heatmap)
         return;
     //console.log('mapRefresh()');
@@ -4290,11 +4292,11 @@ function mapRefresh() {
     }
     if (globeIndex && !icaoFilter) {
         for (let i in addToMap) {
-            addToMap[i].updateFeatures();
+            addToMap[i].updateFeatures(redraw);
         }
     } else {
         for (let i in addToMap) {
-            addToMap[i].updateTick();
+            addToMap[i].updateTick(redraw);
         }
     }
 }
