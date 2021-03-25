@@ -737,18 +737,6 @@ function initPage() {
 
     localStorage['sidebar_width'] = $('#sidebar_container').width();
 
-    $('#infoblock_close').on('click', function () {
-
-        if (showTrace)
-            toggleShowTrace();
-        if (onlySelected)
-            toggleIsolation();
-
-        deselect(SelectedPlane);
-        refreshFilter();
-        updateAddressBar();
-    });
-
     $('#sidebar_container').on('resize', function() {
         localStorage['sidebar_width'] = $('#sidebar_container').width();
     });
@@ -1745,12 +1733,26 @@ function initMap() {
             selectPlaneByHex(hex, {noDeselect: double, follow: double});
         }
 
-        if (!hex && !multiSelect && !onlySelected) {
+        if (!hex && !multiSelect && !showTrace) {
+            if (onlySelected)
+                toggleIsolation();
             deselect(SelectedPlane);
             refreshFilter();
             updateAddressBar();
         }
         evt.stopPropagation();
+    });
+
+    $('#infoblock_close').on('click', function () {
+
+        if (showTrace)
+            toggleShowTrace();
+        if (onlySelected)
+            toggleIsolation();
+
+        deselect(SelectedPlane);
+        refreshFilter();
+        updateAddressBar();
     });
 
 
@@ -3193,7 +3195,7 @@ function selectPlaneByHex(hex, options) {
     let newPlane = Planes[hex];
 
     // If we are clicking the same plane, we are deselecting it unless noDeselect is specified
-    if (options.noDeselect || showTrace || onlySelected) {
+    if (options.noDeselect || showTrace) {
         oldPlane = null;
     } else {
         if (multiSelect) {
@@ -3251,6 +3253,8 @@ function selectAllPlanes() {
     // If SelectedPlane has something in it, clear out the selected
     if (SelectedPlane)
         deselect(SelectedPlane);
+
+    toggleIsolation(false, "off");
 
     SelectedAllPlanes = true;
     refreshFeatures();
