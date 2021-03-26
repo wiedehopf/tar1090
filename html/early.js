@@ -39,6 +39,7 @@ let initialURL = window.location.href;
 let milRanges = [];
 
 let uuid = null;
+let uuidCache = [];
 
 let usp;
 try {

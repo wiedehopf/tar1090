@@ -365,9 +365,10 @@ function fetchData(options) {
                 url: ac_url[i], method: 'GET',
                 xhr: function() { return xhrOverride; },
                 timeout: 5000,
+                urlIndex: i,
             });
         } else {
-            req = $.ajax({ url: ac_url[i], dataType: 'json' });
+            req = $.ajax({ url: ac_url[i], dataType: 'json', urlIndex: i });
         }
         FetchPending.push(req);
 
@@ -379,6 +380,7 @@ function fetchData(options) {
                 data = { buffer: data, };
                 wqi(data);
             }
+            data.urlIndex = this.urlIndex;
 
             //console.time("Process " + data.globeIndex);
             processReceiverUpdate(data);
@@ -5981,7 +5983,7 @@ function drawTileBorder(data) {
 }
 
 function updateMessageRate(data) {
-    if (data.messages && uuid == null) {
+    if (data.messages && data.messages > 1) {
         // Detect stats reset
         if (MessageCountHistory.length > 0 && MessageCountHistory[MessageCountHistory.length-1].messages > data.messages) {
             MessageCountHistory = [];
@@ -6001,17 +6003,27 @@ function updateMessageRate(data) {
         if ((now - MessageCountHistory[0].time) > 10)
             MessageCountHistory.shift();
     } else if (uuid != null) {
-        let time_delta = now - last;
+        const cache = uuidCache[data.urlIndex] || { now: 0 };
+        let time_delta = now - cache.now;
         if (time_delta > 0.5) {
+            let newCache = uuidCache[data.urlIndex] = { now: now };
             let message_delta = 0;
             let acs = data.aircraft;
             for (let j=0; j < acs.length; j++) {
-                let plane = Planes[acs[j].hex]
-                if (plane) {
-                    message_delta += (acs[j].messages - plane.messages);
+                const hex = acs[j].hex;
+                const messages = acs[j].messages
+                let cachedMessages = cache[hex];
+                if (cachedMessages) {
+                    message_delta += (messages - cachedMessages);
                 }
+                newCache[hex] = messages;
             }
-            MessageRate = message_delta / time_delta;
+            newCache.rate = message_delta / time_delta;
+        }
+        MessageRate = 0;
+        for (let i in uuidCache) {
+            const c = uuidCache[i];
+            MessageRate += c ? c.rate : 0;
         }
     } else {
         MessageRate = null;
