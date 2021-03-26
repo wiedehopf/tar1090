@@ -200,6 +200,9 @@ function processAircraft(ac, init, uat) {
             plane.last_message_time = now - ac.seen;
         return;
     }
+    // don't use data if the position is more than 1 second older than the position we have
+    if (ac.seen_pos != null && plane.position_time > now - ac.seen_pos + 1)
+        return;
     if (uat) {
         if (plane.uat
             || (ac.seen_pos < 1.8 && (plane.seen_pos > 2 || plane.dataSource == "mlat"))
@@ -232,7 +235,7 @@ function processReceiverUpdate(data, init) {
         uat_last = uat_now;
         uat_now = data.now;
     } else {
-        if (data.now <= now && !globeIndex)
+        if (data.now <= now && !globeIndex && !uuid)
             return;
         if (data.now > now) {
             last = now;
@@ -301,7 +304,9 @@ function fetchData(options) {
 
     let ac_url = [];
     if (uuid != null) {
-        ac_url[0] = 'uuid/?feed=' + encodeURIComponent(uuid);
+        for (let i in uuid) {
+            ac_url.push('uuid/?feed=' + uuid[i]);
+        }
     } else if (globeIndex) {
         let indexes = globeIndexes();
         const ancient = (currentTime - 2 * refreshInt() / globeSimLoad * globeTilesViewCount) / 1000;
