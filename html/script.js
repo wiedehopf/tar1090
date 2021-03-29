@@ -4945,8 +4945,7 @@ function setTraceDate(options) {
     if (numbers.length == 3) {
         traceDate = new Date();
         traceDate.setUTCFullYear(numbers[0]);
-        traceDate.setUTCMonth(numbers[1] - 1);
-        traceDate.setUTCDate(numbers[2]);
+        traceDate.setUTCMonth(numbers[1] - 1, numbers[2]);
     } else if (options.ts) {
         traceDate = new Date(options.ts);
     } else {
