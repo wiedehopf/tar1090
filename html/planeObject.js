@@ -2558,7 +2558,7 @@ PlaneObject.prototype.setProjection = function(arg) {
 
     let proj = ol.proj.fromLonLat([lon, lat]);
 
-    if (this.selected && (arg == 'follow' || checkFollow())) {
+    if (this == SelectedPlane && (arg == 'follow' || checkFollow())) {
         OLMap.getView().setCenter(proj);
     }
 
