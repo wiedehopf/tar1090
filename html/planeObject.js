@@ -1327,7 +1327,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.dataSource = "tisb";
     } else if (type && type.substring(0,4) == "adsr") {
         this.dataSource = "adsr";
-    } else if ((lat != null && type == null) || (type && (type.substring(0,4) == "adsb" || type.substring(0,4) == "adsr"))) {
+    } else if ((lat != null && type == null) || (type && (type.substring(0,4) == "adsb"))) {
         this.dataSource = "adsb";
     }
 

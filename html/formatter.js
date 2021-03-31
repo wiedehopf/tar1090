@@ -246,11 +246,13 @@ function format_data_source(source) {
 			return "UAT";
 		case 'mlat':
 			return "MLAT";
+		case 'adsb':
 		case 'adsb_icao':
 		case 'adsb_other':
 			return "ADS-B";
 		case 'adsb_icao_nt':
 			return "ADS-B noTP";
+		case 'adsr':
 		case 'adsr_icao':
 		case 'adsr_other':
 			return "ADS-R or UAT";
@@ -264,7 +266,9 @@ function format_data_source(source) {
 		case 'mode_ac':
 			return "Mode A/C";
         case 'adsc':
-            return "Sat. ADS-C"
+            return "Sat. ADS-C";
+        case 'other':
+            return "Other";
 	}
 
 	return "Unknown";
