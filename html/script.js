@@ -2144,7 +2144,7 @@ function refreshPhoto(selected) {
     }
     let urlTail;
     let param;
-    if (selected.registration != null) {
+    if (selected.registration != null && !(selected.registration.length <= 4 &&  selected.registration.match(/^[0-9]*$/))) {
         urlTail = '/hex/' + selected.icao.toUpperCase() + '?reg=' + selected.registration;
         if (selected.icaoType) {
             urlTail += '&icaoType=' + selected.icaoType;
