@@ -2144,14 +2144,17 @@ function refreshPhoto(selected) {
     }
     let urlTail;
     let param;
-    if (selected.registration != null && !(selected.registration.length <= 4 &&  selected.registration.match(/^[0-9]*$/))) {
+    if (!selected.regLoaded) {
+        return;
+    } else if (selected.registration != null && selected.registration.length <= 4 && selected.registration.match(/^[0-9]*$/)) {
+        displaySil();
+        return;
+    } else if (selected.registration != null) {
         urlTail = '/hex/' + selected.icao.toUpperCase() + '?reg=' + selected.registration;
         if (selected.icaoType) {
             urlTail += '&icaoType=' + selected.icaoType;
         }
         param = 'DB';
-    } else if (!selected.regLoaded) {
-        return;
     } else {
         urlTail = 'hex/' + selected.icao.toUpperCase();
         param = 'hex';
