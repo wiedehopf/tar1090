@@ -205,8 +205,8 @@ function processAircraft(ac, init, uat) {
         return;
     if (uat) {
         if (plane.uat
-            || (ac.seen_pos < 1.8 && (plane.seen_pos > 2 || plane.dataSource == "mlat"))
-            || plane.seen > 10 || isNaN(plane.seen)
+            || (ac.seen_pos < 2 && (plane.seen_pos > 4 || plane.dataSource == "mlat"))
+            || (plane.seen > 10 && ac.seen < 0.8 * plane.seen) || isNaN(plane.seen)
             || init) {
             let tisb = Array.isArray(ac) ? (ac[7] == "tisb") : (ac.tisb != null && ac.tisb.indexOf("lat") >= 0);
             if (tisb && plane.dataSource == "adsb") {
@@ -218,9 +218,10 @@ function processAircraft(ac, init, uat) {
         }
     } else {
         if (!plane.uat
-            || (ac.seen_pos < 1.8 && plane.seen_pos > 2 && (plane.seen_pos > 5 || !(ac.mlat && ac.mlat.indexOf("lat") >= 0)))
-            || plane.seen > 10 || isNaN(plane.seen)
+            || (ac.seen_pos < 2 && plane.seen_pos > 4)
+            || (plane.seen > 10 && ac.seen < 0.8 * plane.seen) || isNaN(plane.seen)
             || init) {
+            plane.uat = false;
             plane.updateData(now, last, ac, init);
         }
     }
