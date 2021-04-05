@@ -59,7 +59,6 @@ let noVanish = false;
 let filterTracks = false;
 let refreshId = 0;
 let lastFetch = 0;
-let refreshMultiplier = 1;
 let globeIndexNow = {};
 let globeIndexDist = {};
 let globeIndexSpecialLookup = {};
@@ -76,7 +75,7 @@ let debugCounter = 0;
 let pathName = null;
 let icaoFilter = null;
 let sourcesFilter = null;
-let sources = ['adsb', ['uat', 'adsr'], 'mlat', 'tisb', ['modeS', 'unknown'], 'adsc'];
+let sources = ['adsb', ['uat', 'adsr'], 'mlat', 'tisb', ['modeS', 'other'], 'adsc'];
 let flagFilter = null;
 let flagFilterValues = ['military', 'pia', 'ladd'];
 let showTrace = false;
@@ -1059,7 +1058,7 @@ function initLegend(colors) {
     if (!globeIndex)
         html += '<div class="legendTitle" style="background-color:' + colors['modeS'] + ';">Mode-S</div>';
     if (globeIndex)
-        html += '<div class="legendTitle" style="background-color:' + colors['unknown'] + ';">Unknown</div>';
+        html += '<div class="legendTitle" style="background-color:' + colors['other'] + ';">Other</div>';
 
     document.getElementById('legend').innerHTML = html;
 }
@@ -1079,7 +1078,7 @@ function initSourceFilter(colors) {
     if (!globeIndex)
         html += createFilter(colors['modeS'], 'Mode-S');
     if (globeIndex)
-        html += createFilter(colors['unknown'], 'Unknown');
+        html += createFilter(colors['other'], 'Other');
 
     if (globeIndex)
         html += createFilter(colors['uat'], 'ADS-C');
@@ -2436,7 +2435,7 @@ function refreshSelected() {
     if (selected.position && SitePosition) {
         selected.sitedist = ol.sphere.getDistance(SitePosition, selected.position);
     }
-    $('#selected_source').text(format_data_source(selected.getDataSource()));
+    $('#selected_source').text(format_data_source(selected.dataSource));
     $('#selected_category').text(selected.category ? selected.category : "n/a");
     $('#selected_sitedist1').text(format_distance_long(selected.sitedist, DisplayUnits));
     $('#selected_sitedist2').text(format_distance_long(selected.sitedist, DisplayUnits));
@@ -4807,7 +4806,7 @@ function refreshInt() {
     if (onMobile && TrackedAircraftPositions > 800)
         refresh *= 1.5;
 
-    return refresh * refreshMultiplier;
+    return refresh;
 }
 
 function toggleLargeMode() {

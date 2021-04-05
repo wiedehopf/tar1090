@@ -561,51 +561,29 @@ PlaneObject.prototype.clearLines = function() {
 };
 
 PlaneObject.prototype.getDataSourceNumber = function() {
-    // MLAT
     if (this.dataSource == "modeS")
         return 5;
     if (this.dataSource == "adsc")
         return 6;
-    if (this.dataSource == "mlat") {
+    if (this.dataSource == "mlat")
         return 3;
-    }
+
     if (this.dataSource == "uat" || (this.addrtype && this.addrtype.substring(0,4) == "adsr"))
         return 2; // UAT
 
-    // Not MLAT, but position reported - ADSB or letiants
     if (this.dataSource == "tisb")
         return 4; // TIS-B
     if (this.dataSource == "adsb")
         return 1;
 
-    // Otherwise Mode S
-    return 7;
+    if (this.dataSource == "other")
+        return 7;
 
-    // TODO: add support for Mode A/C
+    return 8;
 };
 
 PlaneObject.prototype.getDataSource = function() {
-    // MLAT
-    if (this.dataSource == "mlat") {
-        return 'mlat';
-    }
-    if (this.dataSource == "uat" && this.dataSource != "tisb")
-        return 'uat';
-
-    if (this.addrtype) {
-        return this.addrtype;
-    }
-
-    if (this.dataSource == "adsb")
-        return "adsb_icao";
-
-    if (this.dataSource == "tisb")
-        return "tisb";
-
-    // Otherwise Mode S
-    return 'modeS';
-
-    // TODO: add support for Mode A/C
+    return this.dataSource;
 };
 
 PlaneObject.prototype.getMarkerColor = function(options) {
@@ -1329,11 +1307,11 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.dataSource = "adsr";
     } else if ((lat != null && type == null) || (type && (type.substring(0,4) == "adsb"))) {
         this.dataSource = "adsb";
-    }
-
-    if (type == 'adsc') {
+    } else if (type == 'adsc') {
         this.dataSource = "adsc";
-    } else if (type == 'unknown' || type == 'other') {
+    } else if (type == 'other') {
+        this.dataSource = "other";
+    } else if (type == 'unknown') {
         this.dataSource = "unknown";
     }
 
@@ -2186,6 +2164,8 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
             this.dataSource = "tisb";
         } else if (data.type == 'adsc') {
             this.dataSource = "adsc";
+        } else if (data.type == 'other') {
+            this.dataSource = "other";
         } else if (data.type == 'unknown') {
             this.dataSource = "unknown";
         }

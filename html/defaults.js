@@ -312,6 +312,7 @@ let tableColors = {
         modeS:     "#d8d8ff",
         tisb:      "#ffd8e6",
         unknown:   "#dcdcdc",
+        other:   "#dcdcdc",
     },
     selected: {
         adsb:      "#88DDFF",
@@ -322,6 +323,7 @@ let tableColors = {
         modeS:     "#BEBEFF",
         tisb:      "#FFC1D8",
         unknown:   "#bcbcbc",
+        other:   "#bcbcbc",
     },
     special: {
         7500:      "#ff5555",
