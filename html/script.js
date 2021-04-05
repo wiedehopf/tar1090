@@ -1808,18 +1808,38 @@ function initMap() {
         key: "darkMode",
         display: "Dark Mode",
         container: "#settingsLeft",
-        init: false,
+        init: isDarkModeEnabled(),
         setState: function(state) {
             let root = document.documentElement;
+            $(".layer-switcher .panel").css("background", "var(--BGCOLOR1)");
+            $(".layer-switcher .panel").css("border", "4px solid var(--BGCOLOR1)");
             if (state) {
-                document.body.style.background = '#989898'
-                root.style.setProperty("--BGCOLOR1", '#989898');
-                root.style.setProperty("--BGCOLOR2", '#A8A8A8');
+                document.body.style.background = '#1a1a1a'
+                root.style.setProperty("--BGCOLOR1", '#1a1a1a');
+                root.style.setProperty("--BGCOLOR2", '#444');
+                root.style.setProperty("--TXCOLOR","#FFFFFF");
+                root.style.setProperty("--TXCOLOR2","#FFFFFF");
+                //invert the "x" images
+                $(".infoblockCloseBox").css('filter','invert(100%)');
+                $(".infoblockCloseBox").css(' -webkit-filter','invert(100%)');
+                $(".settingsCloseBox").css('filter','invert(100%)');
+                $(".settingsCloseBox").css(' -webkit-filter','invert(100%)');
+                //layer_switcher
+                $(".layer-switcher .panel").css("background", "var(--BGCOLOR1)");
+                $(".layer-switcher .panel").css("border", "4px solid var(--BGCOLOR1)");
                 tableColors = tableColorsDark;
             } else {
                 document.body.style.background = '#F8F8F8'
                 root.style.setProperty("--BGCOLOR1", '#F8F8F8');
                 root.style.setProperty("--BGCOLOR2", '#C8C8C8');
+                root.style.setProperty("--TXCOLOR","#003f4b");
+                root.style.setProperty("--TXCOLOR2","rgb(0,0,0)");
+                $(".infoblockCloseBox").css('filter','invert(0%)');
+                $(".infoblockCloseBox").css(' -webkit-filter','invert(0%)');
+                $(".settingsCloseBox").css('filter','invert(0%)');
+                $(".settingsCloseBox").css(' -webkit-filter','invert(0%)');
+
+                
                 tableColors = tableColorsLight;
             }
             if (loadFinished) {
@@ -3628,7 +3648,15 @@ function dim(evt) {
     }
     evt.context.globalCompositeOperation = 'source-over';
 }
+function invertMap(evt){
+  const ctx=evt.context;
+  ctx.globalCompositeOperation='difference';
+  ctx.fillStyle = "white";
+  ctx.globalAlpha = alpha;  // alpha 0 = no effect 1 = full effect
+  ctx.fillRect(0, 0, evt.ctx.canvas.width, ctx.canvas.height);
 
+  
+}
 //
 // Altitude Chart begin
 //
@@ -6073,5 +6101,8 @@ function setCookie(cname, cvalue, exdays) {
     document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
 
+function isDarkModeEnabled() {
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+}
 
 initialize();
