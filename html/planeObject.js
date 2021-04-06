@@ -883,7 +883,7 @@ PlaneObject.prototype.processTrace = function() {
         let t1 = this.fullTrace.trace;
         let t2 = this.recentTrace.trace;
         let end1 = this.fullTrace.timestamp + t1[t1.length-1][0];
-        let start2 = this.recentTrace.timestamp;
+        let start2 = this.recentTrace.timestamp + t2[0][0];
         if (end1 < start2)
             console.log("Insufficient recent trace overlap!");
     }
@@ -901,7 +901,7 @@ PlaneObject.prototype.processTrace = function() {
             timeZero = this.fullTrace.timestamp;
 
             // after fullTrace, recentTrace will be processed, set to null if no recentTrace
-            nextTraceStart = this.recentTrace ? this.recentTrace.timestamp : null;
+            nextTraceStart = this.recentTrace ? this.recentTrace.timestamp + this.recentTrace.trace[0][0] : null;
 
             _last = timeZero - 1;
 
