@@ -4128,7 +4128,7 @@ function changeZoom(init) {
         scaleFactor = markerSmall;
 
     // scale markers according to global scaling
-    scaleFactor *= Math.pow(1.3, globalScale) * globalScale * iconScale;;
+    scaleFactor *= Math.pow(1.3, globalScale) * globalScale * iconScale;
 
     if (!init && showTrace)
         updateAddressBar();
@@ -5361,8 +5361,8 @@ function getTrace(newPlane, hex, options) {
         traceRate += 3;
         let today = new Date();
         //console.log(today.toUTCString() + ' ' + traceDate.toUTCString());
-        // use non historic traces for showTrace until 30 min after midnight
-        if (today.getTime() > traceDate.getTime() && today.getTime() < traceDate.getTime() + (24 * 3600 + 30 * 60) * 1000) {
+        // use non historic traces for showTrace until 60 min after midnight
+        if (today.getTime() > traceDate.getTime() && today.getTime() < traceDate.getTime() + (24 * 3600 + 60 * 60) * 1000) {
         } else {
             URL1 = null;
             URL2 = 'globe_history/' + traceDateString.replace(/-/g, '/') + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json';
