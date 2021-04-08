@@ -1813,33 +1813,31 @@ function initMap() {
             let root = document.documentElement;
             $(".layer-switcher .panel").css("background", "var(--BGCOLOR1)");
             $(".layer-switcher .panel").css("border", "4px solid var(--BGCOLOR1)");
+            $(".ui-state-default").css("background", "var(--BGCOLOR1)");
+            $(".ui-state-default").css("color", "var(--TXTCOLOR1)");
+            $(".ui-widget-content").css("color", "var(--TXTCOLOR1)");
+            $(".ui-state-default a:link").css("color", "var(--TXTCOLOR1)");
             if (state) {
-                document.body.style.background = '#1a1a1a'
                 root.style.setProperty("--BGCOLOR1", '#1a1a1a');
                 root.style.setProperty("--BGCOLOR2", '#444');
-                root.style.setProperty("--TXCOLOR","#FFFFFF");
-                root.style.setProperty("--TXCOLOR2","#FFFFFF");
+                root.style.setProperty("--TXTCOLOR1","#CCCCCC");
+                root.style.setProperty("--TXTCOLOR2","#CCCCCC");
                 //invert the "x" images
                 $(".infoblockCloseBox").css('filter','invert(100%)');
                 $(".infoblockCloseBox").css(' -webkit-filter','invert(100%)');
                 $(".settingsCloseBox").css('filter','invert(100%)');
                 $(".settingsCloseBox").css(' -webkit-filter','invert(100%)');
-                //layer_switcher
-                $(".layer-switcher .panel").css("background", "var(--BGCOLOR1)");
-                $(".layer-switcher .panel").css("border", "4px solid var(--BGCOLOR1)");
                 tableColors = tableColorsDark;
             } else {
-                document.body.style.background = '#F8F8F8'
                 root.style.setProperty("--BGCOLOR1", '#F8F8F8');
                 root.style.setProperty("--BGCOLOR2", '#C8C8C8');
-                root.style.setProperty("--TXCOLOR","#003f4b");
-                root.style.setProperty("--TXCOLOR2","rgb(0,0,0)");
+                root.style.setProperty("--TXTCOLOR1","#003f4b");
+                root.style.setProperty("--TXTCOLOR2","#050505");
                 $(".infoblockCloseBox").css('filter','invert(0%)');
                 $(".infoblockCloseBox").css(' -webkit-filter','invert(0%)');
                 $(".settingsCloseBox").css('filter','invert(0%)');
                 $(".settingsCloseBox").css(' -webkit-filter','invert(0%)');
 
-                
                 tableColors = tableColorsLight;
             }
             if (loadFinished) {
