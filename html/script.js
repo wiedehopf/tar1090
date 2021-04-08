@@ -1799,8 +1799,8 @@ function initMap() {
         for (let j in keys) {
             let key = keys[j];
             let hsl = hexToHSL(obj[key]);
-            hsl[1] *= 0.5;
-            hsl[2] *= 0.6;
+            hsl[1] *= 0.4;
+            hsl[2] *= 0.3;
             obj[key] = hslToRgb(hsl);
         }
     }
@@ -1813,15 +1813,11 @@ function initMap() {
             let root = document.documentElement;
             $(".layer-switcher .panel").css("background", "var(--BGCOLOR1)");
             $(".layer-switcher .panel").css("border", "4px solid var(--BGCOLOR1)");
-            $(".ui-state-default").css("background", "var(--BGCOLOR1)");
-            $(".ui-state-default").css("color", "var(--TXTCOLOR1)");
-            $(".ui-widget-content").css("color", "var(--TXTCOLOR1)");
-            $(".ui-state-default a:link").css("color", "var(--TXTCOLOR1)");
             if (state) {
-                root.style.setProperty("--BGCOLOR1", '#1a1a1a');
-                root.style.setProperty("--BGCOLOR2", '#444');
-                root.style.setProperty("--TXTCOLOR1","#CCCCCC");
-                root.style.setProperty("--TXTCOLOR2","#CCCCCC");
+                root.style.setProperty("--BGCOLOR1", '#242424');
+                root.style.setProperty("--BGCOLOR2", '#2f2f2f');
+                root.style.setProperty("--TXTCOLOR1","#D8D8D8");
+                root.style.setProperty("--TXTCOLOR2","#D8D8D8");
                 //invert the "x" images
                 $(".infoblockCloseBox").css('filter','invert(100%)');
                 $(".infoblockCloseBox").css(' -webkit-filter','invert(100%)');
@@ -1830,7 +1826,7 @@ function initMap() {
                 tableColors = tableColorsDark;
             } else {
                 root.style.setProperty("--BGCOLOR1", '#F8F8F8');
-                root.style.setProperty("--BGCOLOR2", '#C8C8C8');
+                root.style.setProperty("--BGCOLOR2", '#CCCCCC');
                 root.style.setProperty("--TXTCOLOR1","#003f4b");
                 root.style.setProperty("--TXTCOLOR2","#050505");
                 $(".infoblockCloseBox").css('filter','invert(0%)');

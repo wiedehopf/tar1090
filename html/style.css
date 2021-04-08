@@ -1,7 +1,8 @@
 :root {
     --SCALE: 1;
     --BGCOLOR1: #F8F8F8;
-    --BGCOLOR2: #C8C8C8;
+    --BGCOLOR2: #CCCCCC;
+    --ACCENT: #00596b;
     --FS1: calc( 10px * var(--SCALE));
     --FS2: calc( 13px * var(--SCALE));
     --FS3: calc( 17px * var(--SCALE));
@@ -268,7 +269,7 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
 
 
 .aircraft_table_header {
-    background-color: #00596b;
+    background-color: var(--ACCENT);
     color: #FFFFFF;
     cursor: pointer;
 }
@@ -375,7 +376,7 @@ select.error, textarea.error, input.error {
 .legend
 {
     font-size: 110%;
-    color: #000000;
+    color:var(--TXTCOLOR2);
     display: flex;
     flex-wrap: wrap;
     padding-top: calc( 10px * var(--SCALE));
@@ -415,7 +416,7 @@ select.error, textarea.error, input.error {
 }
 
 .button {
-    background-color: #00596b;
+    background-color: var(--ACCENT);
     width: calc( 27px * var(--SCALE));
     height: calc( 27px * var(--SCALE));
     border-radius: calc( 2px * var(--SCALE));
@@ -736,6 +737,7 @@ table.infoSectionTable tr td {
     margin: 0;
     padding: 0;
     width: calc( 240px * var(--SCALE));
+    cursor: pointer;
 }
 
 .buttonFilter li {
@@ -744,9 +746,13 @@ table.infoSectionTable tr td {
     padding: 1px;
     float: left;
     width: calc( 85px * var(--SCALE));
-    color: #000000;
+    color:var(--TXTCOLOR2);
     font-size: var(--FS2);
     text-align: center;
+}
+.formButton {
+    color:var(--TXTCOLOR2);
+    background-color: var(--BGCOLOR2);
 }
 
 #sortableColumns {
@@ -761,8 +767,8 @@ table.infoSectionTable tr td {
     padding: calc( 0px * var(--SCALE));
     float: left;
     width: calc( 120px * var(--SCALE));
-    border-color: gainsboro;
-    background-color: ghostwhite;
+    border-color: var(--ACCENT);
+    background-color: var(--BGCOLOR2);
 }
 #copyrightInfo {
   position: Relative;
@@ -772,6 +778,24 @@ table.infoSectionTable tr td {
 #selected_photo{
   text-align: center;
   display: block;
+}
+.ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default, .ui-button, html .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active {
+  background: var(--BGCOLOR1);
+}
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover{
+  background: #3d7382;
+}
+.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited, a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
+  color:var(--TXTCOLOR2);
+}
+ .ui-widget-header .ui-state-default, .ui-button, html .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active {
+  color:var(--TXTCOLOR2);
+}
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default, .ui-button, html .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active {
+    color:var(--TXTCOLOR2);
+}
+.ui-widget-content {
+  color:var(--TXTCOLOR2);
 }
 
 input{
