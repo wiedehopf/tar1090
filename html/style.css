@@ -5,12 +5,15 @@
     --FS1: calc( 10px * var(--SCALE));
     --FS2: calc( 13px * var(--SCALE));
     --FS3: calc( 17px * var(--SCALE));
+    --TXCOLOR: #003f4b; 
+    --TXCOLOR2: rgb(0,0,0);
 }
 
 html, body {
     -ms-overflow-style: -ms-autohiding-scrollbar;
     margin: calc( 0px * var(--SCALE)); padding: calc( 0px * var(--SCALE)); background-color: var(--BGCOLOR1); font-family: "Helvetica Neue", Helvetica, Verdana, sans-serif;
     font-size: var(--FS2); overflow: hidden; height: 100%;
+    color:var(--TXCOLOR2);
 
 }
 
@@ -378,7 +381,7 @@ select.error, textarea.error, input.error {
 {
     font-size: calc( 14px * var(--SCALE));
     line-height: calc( 20px * var(--SCALE));
-    color: rgb(0, 0, 0);
+
 }
 
 .link
@@ -437,16 +440,15 @@ select.error, textarea.error, input.error {
     margin: calc( 5px * var(--SCALE));
 }
 
-.activeButton {
-    color: #000000;
+activeButton {
+ color:#000
 }
-
 .inActiveButton {
-    color: #FFFFFF;
+ color:#fff
 }
-
+.link,
 .link, .link a {
-    color: #003f4b;
+    color: var(--TXCOLOR);
 }
 
 .settingsContainer {
@@ -483,21 +485,21 @@ select.error, textarea.error, input.error {
 .identLarge {
     font-size: calc( 22px * var(--SCALE));
     line-height: calc( 24px * var(--SCALE));
-    color: #003f4b;
+    color: var(--TXCOLOR);
     font-weight: lighter;
 }
 
 .identMedium {
     font-size: calc( 17px * var(--SCALE));
     line-height: calc( 22px * var(--SCALE));
-    color: #003f4b;
+    color: var(--TXCOLOR);
     font-weight: lighter;
 }
 
 .identSmall {
     font-size: calc( 14px * var(--SCALE));
     font-weight: bold;
-    color: #003f4b;
+    color: var(--TXCOLOR);
 }
 
 .infoSectionTable {
@@ -545,19 +547,19 @@ table.infoSectionTable tr td {
 
 .largeText a {
     font-weight: bold;
-    color: #003f4b;
+    color: var(--TXCOLOR);
     font-size: var(--FS3);
 }
 
 .largeText {
     font-weight: bold;
-    color: #003f4b;
+    color: var(--TXCOLOR);
     font-size: var(--FS3);
 }
 
 .infoBlockTitleText {
     font-weight: bold;
-    color: #003f4b;
+    color: var(--TXCOLOR);
 }
 
 
@@ -667,7 +669,7 @@ table.infoSectionTable tr td {
     padding-top: calc( 10px * var(--SCALE));
     padding-bottom: calc( 10px * var(--SCALE));
     text-align: center;
-    color: #003f4b;
+    color: var(--TXCOLOR);
     line-height: calc( 18px * var(--SCALE));
 }
 .bottom-info-container img {
@@ -697,7 +699,7 @@ table.infoSectionTable tr td {
     outline: none;
     font-size: calc( 15px * var(--SCALE));
     font-weight: bold;
-    color: #003f4b;
+    color: var(--TXCOLOR);
 }
 .greyButton:after {
     content: '\02795\FE0E'; /* Unicode character for "plus" sign (+) */
@@ -765,4 +767,11 @@ table.infoSectionTable tr td {
 #selected_photo{
   text-align: center;
   display: block;
+}
+
+input{
+  color:var(--TXCOLOR);
+}
+#histDatePicker{
+  background: var(--BGCOLOR1);
 }
