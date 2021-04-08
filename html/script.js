@@ -3204,6 +3204,9 @@ function selectPlaneByHex(hex, options) {
     // plane to be selected
     let newPlane = Planes[hex];
 
+    if (!options.noFetch && globeIndex && hex)
+        newPlane = getTrace(newPlane, hex, options);
+
     // If we are clicking the same plane, we are deselecting it unless noDeselect is specified
     if (options.noDeselect || showTrace) {
         oldPlane = null;
@@ -3229,9 +3232,6 @@ function selectPlaneByHex(hex, options) {
             }
         }
     }
-
-    if (!options.noFetch && globeIndex && hex)
-        newPlane = getTrace(newPlane, hex, options);
 
     // Assign the new selected
     select(newPlane, options);
@@ -4483,9 +4483,10 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
     query = query.toLowerCase();
     let results = [];
     if (byReg) {
+        let upper = query.toUpperCase();
         if (regCache) {
-            if (regCache[query.toUpperCase()]) {
-                selectPlaneByHex(regCache[query.toUpperCase()].toLowerCase(), {follow: true});
+            if (regCache[upper]) {
+                selectPlaneByHex(regCache[upper].toLowerCase(), {follow: true});
                 return;
             }
         } else {
@@ -4493,12 +4494,13 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
             let req = $.ajax({ url: req_url,
                 cache: true,
                 timeout: 10000,
-                dataType : 'json'
+                dataType : 'json',
+                upper: upper,
             });
             req.done(function(data) {
                 regCache = data;
-                if (regCache[query.toUpperCase()]) {
-                    selectPlaneByHex(regCache[query.toUpperCase()].toLowerCase(), {follow: true});
+                if (regCache[this.upper]) {
+                    selectPlaneByHex(regCache[this.upper].toLowerCase(), {follow: true});
                     return;
                 }
             });
@@ -4527,7 +4529,7 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
         console.log("query selected: " + query);
     } else {
         console.log("No match found for query: " + query);
-        if (globeIndex && query.length == 6 && query.toLowerCase().match(/[a-f,0-9]{6}/)) {
+        if (globeIndex && query.toLowerCase().match(/~?[a-f,0-9]{6}/)) {
             console.log("maybe it's an icao, let's try to fetch the history for it!");
             selectPlaneByHex(query, {follow: true})
         }
