@@ -1814,8 +1814,8 @@ function initMap() {
             $(".layer-switcher .panel").css("background", "var(--BGCOLOR1)");
             $(".layer-switcher .panel").css("border", "4px solid var(--BGCOLOR1)");
             if (state) {
-                root.style.setProperty("--BGCOLOR1", '#242424');
-                root.style.setProperty("--BGCOLOR2", '#2f2f2f');
+                root.style.setProperty("--BGCOLOR1", '#313131');
+                root.style.setProperty("--BGCOLOR2", '#242424');
                 root.style.setProperty("--TXTCOLOR1","#D8D8D8");
                 root.style.setProperty("--TXTCOLOR2","#D8D8D8");
                 //invert the "x" images

@@ -446,7 +446,7 @@ select.error, textarea.error, input.error {
     margin: calc( 5px * var(--SCALE));
 }
 
-activeButton {
+.activeButton {
  color:#000
 }
 .inActiveButton {
@@ -723,6 +723,17 @@ table.infoSectionTable tr td {
 .ui-tabs .ui-tabs-panel {
     padding: 1em 0.5em;
 }
+.ui-tabs .ui-tabs-nav {
+    padding: 2px;
+    margin: 1px;
+    margin-bottom: 1px;
+}
+.ui-tabs .ui-tabs-nav li.ui-tabs-active {
+    padding-bottom: 0px;
+}
+.ui-corner-all, .ui-corner-top, .ui-corner-right, .ui-corner-tr {
+    border-radius: 3px;
+}
 
 .buttonFilter .ui-selected {
     border-color: orange;
@@ -781,6 +792,7 @@ table.infoSectionTable tr td {
 }
 .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default, .ui-button, html .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active {
   background: var(--BGCOLOR1);
+  border: none;
 }
 .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover{
   background: #3d7382;
@@ -790,6 +802,9 @@ table.infoSectionTable tr td {
 }
  .ui-widget-header .ui-state-default, .ui-button, html .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active {
   color:var(--TXTCOLOR2);
+}
+.ui-widget-header, .ui-widget.ui-widget-content {
+    border: none;
 }
 .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default, .ui-button, html .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active {
     color:var(--TXTCOLOR2);
