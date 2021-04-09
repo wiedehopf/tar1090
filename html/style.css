@@ -8,6 +8,7 @@
     --FS3: calc( 17px * var(--SCALE));
     --TXTCOLOR1: #003f4b;
     --TXTCOLOR2: #050505;
+    --TXTCOLOR3: #101010;
 }
 
 html, body {
@@ -316,16 +317,23 @@ div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right:
 .altitudeFilterInput {
     width: calc( 50px * var(--SCALE));
     height:  calc(15px * var(--SCALE));
-    background-color: var(--BGCOLOR1);
+    color:var(--TXTCOLOR2);
+    background-color: var(--BGCOLOR2);
+    border-color: var(--BGCOLOR1);
 }
 .searchInput {
     width:  calc(100px * var(--SCALE));
     height:  calc(15px * var(--SCALE));
-    background-color: var(--BGCOLOR1);
+    color:var(--TXTCOLOR2);
+    background-color: var(--BGCOLOR2);
+    border-color: var(--BGCOLOR1);
 }
 
 .formButton {
     font-size: var(--FS2);
+    color:var(--TXTCOLOR3);
+    background-color: var(--BGCOLOR2);
+    border-color: var(--BGCOLOR1);
 }
 
 select.error, textarea.error, input.error {
@@ -365,7 +373,7 @@ select.error, textarea.error, input.error {
     width: 100%;
     text-transform: uppercase;
     text-align: center;
-    color: #fff;
+    color: #e8e8e8;
     background: #003f4b;
 }
 
@@ -565,7 +573,7 @@ table.infoSectionTable tr td {
 
 .infoBlockTitleText {
     font-weight: bold;
-    color: var(--TXTCOLOR1);
+    color:var(--TXTCOLOR3);
 }
 
 
@@ -735,14 +743,6 @@ table.infoSectionTable tr td {
     border-radius: 3px;
 }
 
-.buttonFilter .ui-selected {
-    border-color: orange;
-}
-
-.buttonFilter .ui-selectee {
-    border-width: 2px;
-}
-
 .buttonFilter {
     list-style-type: none;
     margin: 0;
@@ -751,7 +751,14 @@ table.infoSectionTable tr td {
     cursor: pointer;
 }
 
+.ui-widget-content .ui-selectable .ui-selected {
+    border-color: #cc6600;
+}
+
+
 .buttonFilter li {
+    border-width: 2px;
+    border-color: var(--BGCOLOR2);
     margin-right: 5px;
     margin-bottom: 5px;
     padding: 1px;
@@ -760,10 +767,6 @@ table.infoSectionTable tr td {
     color:var(--TXTCOLOR2);
     font-size: var(--FS2);
     text-align: center;
-}
-.formButton {
-    color:var(--TXTCOLOR2);
-    background-color: var(--BGCOLOR2);
 }
 
 #sortableColumns {

@@ -1816,8 +1816,9 @@ function initMap() {
             if (state) {
                 root.style.setProperty("--BGCOLOR1", '#313131');
                 root.style.setProperty("--BGCOLOR2", '#242424');
-                root.style.setProperty("--TXTCOLOR1","#D8D8D8");
+                root.style.setProperty("--TXTCOLOR1","#BFBFBF");
                 root.style.setProperty("--TXTCOLOR2","#D8D8D8");
+                root.style.setProperty("--TXTCOLOR3","#a8a8a8");
                 //invert the "x" images
                 $(".infoblockCloseBox").css('filter','invert(100%)');
                 $(".infoblockCloseBox").css(' -webkit-filter','invert(100%)');
@@ -1829,6 +1830,7 @@ function initMap() {
                 root.style.setProperty("--BGCOLOR2", '#CCCCCC');
                 root.style.setProperty("--TXTCOLOR1","#003f4b");
                 root.style.setProperty("--TXTCOLOR2","#050505");
+                root.style.setProperty("--TXTCOLOR3","#003f4b");
                 $(".infoblockCloseBox").css('filter','invert(0%)');
                 $(".infoblockCloseBox").css(' -webkit-filter','invert(0%)');
                 $(".settingsCloseBox").css('filter','invert(0%)');
