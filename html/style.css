@@ -398,12 +398,8 @@ select.error, textarea.error, input.error {
 
 }
 
-.link
-{
-    font-size: var(--FS2);
-    line-height: calc( 20px * var(--SCALE));
-    color: #0000C8;
-    color: rgb(0, 0, 200);
+.link, .link a {
+    color: var(--TXTCOLOR1);
     text-decoration: underline;
 }
 
@@ -459,10 +455,6 @@ select.error, textarea.error, input.error {
 }
 .inActiveButton {
  color:#fff
-}
-.link,
-.link, .link a {
-    color: var(--TXTCOLOR1);
 }
 
 .settingsContainer {

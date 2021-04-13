@@ -2147,7 +2147,7 @@ function displayPhoto() {
     let photoToPull = photos[0]["thumbnail"]["src"];
     let linkToPicture = photos[0]["link"];
     //console.log(linkToPicture);
-    new_html = '<a href="'+linkToPicture+'" target="_blank" rel="noopener noreferrer"><img id="airplanePhoto" src=' +photoToPull+'></a>';
+    new_html = '<a class=\"link\" href="'+linkToPicture+'" target="_blank" rel="noopener noreferrer"><img id="airplanePhoto" src=' +photoToPull+'></a>';
     $('#copyrightInfo').html("<span>Image © " + photos[0]["photographer"]+"</span>");
     setPhotoHtml(new_html);
     adjustInfoBlock();
@@ -2266,9 +2266,9 @@ function refreshSelected() {
     }
     let dbFlags = "";
     if (selected.ladd)
-        dbFlags += ' <a style="color: blue" target="_blank" href="https://ladd.faa.gov/" rel="noreferrer">LADD</a> / ';
+        dbFlags += ' <a class="link" target="_blank" href="https://ladd.faa.gov/" rel="noreferrer">LADD</a> / ';
     if (selected.pia)
-        dbFlags += '<a style="color: blue" target="_blank" href="https://www.faa.gov/nextgen/equipadsb/privacy/" rel="noreferrer">PIA</a> / ';
+        dbFlags += '<a class="link" target="_blank" href="https://www.faa.gov/nextgen/equipadsb/privacy/" rel="noreferrer">PIA</a> / ';
     if (selected.military)
         dbFlags += 'military / ';
     if (dbFlags.length == 0) {
@@ -3964,7 +3964,7 @@ function getFlightAwareIdentLink(ident, linkText) {
         if (!linkText) {
             linkText = ident;
         }
-        return "<a target=\"_blank\" href=\"https://flightaware.com/live/flight/" + ident.trim() + "\" rel=\"noreferrer\">" + linkText + "</a>";
+        return '<a class="link" target="_blank" href="https://flightaware.com/live/flight/' + ident.trim() + '" rel="noreferrer">' + linkText + '</a>';
     }
 
     return "";
@@ -4011,7 +4011,7 @@ function getFlightAwareModeSLink(code, ident, linkText) {
             linkText = "FlightAware: " + code.toUpperCase();
         }
 
-        let linkHtml = "<a target=\"_blank\" href=\"https://flightaware.com/live/modes/" + code ;
+        let linkHtml = "<a class=\"link\" target=\"_blank\" href=\"https://flightaware.com/live/modes/" + code ;
         if (ident != null && ident !== "") {
             linkHtml += "/ident/" + ident.trim();
         }
@@ -4026,9 +4026,9 @@ function getPhotoLink(ac) {
     if (flightawareLinks) {
         if (ac.registration == null || ac.registration == "")
             return "";
-        return "<a target=\"_blank\" href=\"https://flightaware.com/photos/aircraft/" + ac.registration.replace(/[^0-9a-z]/ig,'') + "\" rel=\"noreferrer\">See Photos</a>";
+        return "<a class=\"link\" target=\"_blank\" href=\"https://flightaware.com/photos/aircraft/" + ac.registration.replace(/[^0-9a-z]/ig,'') + "\" rel=\"noreferrer\">See Photos</a>";
     } else {
-        return "<a target=\"_blank\" href=\"https://www.planespotters.net/hex/" + ac.icao.toUpperCase() + "\" rel=\"noreferrer\">View on Planespotters</a>";
+        return "<a class=\"link\" target=\"_blank\" href=\"https://www.planespotters.net/hex/" + ac.icao.toUpperCase() + "\" rel=\"noreferrer\">View on Planespotters</a>";
     }
 }
 
