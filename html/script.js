@@ -382,6 +382,16 @@ function fetchData(options) {
             }
             data.urlIndex = this.urlIndex;
 
+            if (!data.aircraft || !data.now) {
+                let error = data.error;
+                if (error) {
+                    $("#update_error_detail").text(error);
+                    $("#update_error").css('display','block');
+                    StaleReceiverCount++;
+                }
+                return;
+            }
+
             //console.time("Process " + data.globeIndex);
             processReceiverUpdate(data);
             //console.timeEnd("Process " + data.globeIndex);

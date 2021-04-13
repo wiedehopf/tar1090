@@ -259,6 +259,7 @@ select {
 .error_box {
     position: absolute; bottom: calc( 25px * var(--SCALE)); left: calc( 25px * var(--SCALE)); border: calc( 2px * var(--SCALE)) solid red;
     background-color: #FFFFA3; opacity: 0.75; filter:alpha(opacity=75); padding: calc( 5px * var(--SCALE));
+    color: black;
     font-weight: bold;
     font-size: var(--FS3);
     line-height: 150%;
