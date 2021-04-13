@@ -465,6 +465,18 @@ function initialize() {
     }
 
     $.when(configureReceiver, heatmapDefer).done(function() {
+
+        if (receiverJson) {
+            if (receiverJson.lat != null) {
+                SiteLat = receiverJson.lat;
+                SiteLon = receiverJson.lon;
+                DefaultCenterLat = receiverJson.lat;
+                DefaultCenterLon = receiverJson.lon;
+            }
+            if (receiverJson.jaeroTimeout) {
+                jaeroTimeout = receiverJson.jaeroTimeout * 60;
+            }
+        }
         configureReceiver = null;
 
         // Initialize stuff

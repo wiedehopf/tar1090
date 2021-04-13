@@ -307,16 +307,6 @@ if (uuid != null) {
         binCraft = data.binCraft ? true : false;
         dbServer = (data.dbServer && data.globeIndexGrid != null) ? true : false;
 
-        if (receiverJson.lat != null) {
-            SiteLat = receiverJson.lat;
-            SiteLon = receiverJson.lon;
-            DefaultCenterLat = receiverJson.lat;
-            DefaultCenterLon = receiverJson.lon;
-        }
-        if (receiverJson.jaeroTimeout) {
-            jaeroTimeout = receiverJson.jaeroTimeout * 60;
-        }
-
         if (data.globeIndexGrid != null || heatmap || replay) {
             HistoryChunks = false;
             nHistoryItems = 0;
