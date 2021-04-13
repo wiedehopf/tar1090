@@ -839,7 +839,9 @@ PlaneObject.prototype.updateIcon = function() {
 };
 
 PlaneObject.prototype.processTrace = function() {
-    this.dataChanged();
+
+    if (!now)
+        now = new Date().getTime()/1000;
 
     if (showTrace)
         this.setNull();
@@ -1128,10 +1130,12 @@ PlaneObject.prototype.processTrace = function() {
     showTraceExit = false;
 
     this.checkForDB(this.recentTrace || this.fullTrace);
-    refreshSelected();
+
+    this.dataChanged();
 
     TAR.planeMan.refresh();
     updateAddressBar();
+
 
     if (debugTracks) {
         console.log('3h: ' + pointsRecent.toString().padStart(4, ' ') + ' total: ' + points_in_trace);
