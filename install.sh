@@ -161,7 +161,12 @@ else
     instances="$srcdir tar1090"
 fi
 
-instances=$(echo "$instances" | grep -v -e '^#')
+if [[ -d /usr/local/share/adsbexchange-978 ]]; then
+    instances+="\n /run/adsbexchange-978 ax978"
+fi
+
+instances=$(echo -e "$instances" | grep -v -e '^#')
+
 
 if ! diff tar1090.sh /usr/local/share/tar1090/tar1090.sh &>/dev/null; then
     changed=yes
