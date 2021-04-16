@@ -88,7 +88,7 @@ function getGIT() {
         echo "getGIT wrong usage, check your script or tell the author!" 1>&2
         return 1
     fi
-    if ! cd "$3" &>/dev/null || ! git fetch origin "$2" || ! git reset --hard FETCH_HEAD; then
+    if ! cd "$3" &>/dev/null || ! git fetch --depth 2 origin "$2" || ! git reset --hard FETCH_HEAD; then
         if ! rm -rf "$3" || ! git clone --depth 2 --single-branch --branch "$2" "$1" "$3"; then
             return 1
         fi
