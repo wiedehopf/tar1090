@@ -2029,6 +2029,10 @@ PlaneObject.prototype.getAircraftData = function() {
     let req = dbLoad(this.icao);
 
     req.done(function(data) {
+        if (this.regLoaded) {
+            return;
+        }
+        //console.log('fromDB');
         this.regLoaded = true;
         if (data == null) {
             //console.log(this.icao + ': Not found in database!');
@@ -2483,7 +2487,7 @@ PlaneObject.prototype.setTypeData = function() {
 };
 
 PlaneObject.prototype.checkForDB = function(t) {
-    if (!this.regLoaded && (!dbServer || showTrace || (!globeIndex && this.selected) || replay)) {
+    if (!(t && (t.r || t.t)) && !this.regLoaded && (!dbServer || showTrace || (!globeIndex && this.selected) || replay)) {
         this.getAircraftData();
         return;
     }
@@ -2509,7 +2513,10 @@ PlaneObject.prototype.checkForDB = function(t) {
         if (this.pia)
             this.registration = null;
     }
-    this.regLoaded = true;
+    if (t.r || t.t) {
+        //console.log('fromTrace');
+        this.regLoaded = true;
+    }
     this.dataChanged();
 };
 PlaneObject.prototype.updateAlt = function(t) {
