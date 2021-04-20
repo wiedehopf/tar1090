@@ -2183,6 +2183,7 @@ function refreshPhoto(selected) {
     let urlTail;
     let param;
     if (!selected.regLoaded) {
+        displaySil();
         return;
     } else if (selected.registration != null && selected.registration.length <= 4 && selected.registration.match(/^[0-9]*$/)) {
         displaySil();
