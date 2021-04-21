@@ -77,9 +77,9 @@ if (feed != null) {
         for (let i in split) {
             uuid.push(encodeURIComponent(split[i]));
         }
-        if (feed[0].length > 18) {
+        if (uuid[0].length > 18) {
             console.log('redirecting the idiot, oui!');
-            let URL = 'https://www.adsbexchange.com/api/feeders/tar1090/?feed=' + feed[0];
+            let URL = 'https://www.adsbexchange.com/api/feeders/tar1090/?feed=' + uuid[0];
             console.log(URL);
             //window.history.pushState(URL, "Title", URL);
             window.location.href = URL;
