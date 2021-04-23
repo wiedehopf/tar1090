@@ -344,19 +344,11 @@ function createBaseLayers() {
     us.push(createGeoJsonLayer('US ARTCC Boundaries', 'usartccboundaries', 'geojson/US_ARTCC_boundaries.geojson', 'rgba(255, 0, 255, 0.3)', 'rgba(255, 0, 255, 1)', false));
 
     if (l3harris) {
-        let c = 1;
-        /*
-        us.push(createGeoJsonLayer('L3 Area Labels Brown', 'harris' + c++, 'geojson/L3Harris/Area_Labels_Brown.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
-        us.push(createGeoJsonLayer('L3 Area Labels Green', 'harris' + c++, 'geojson/L3Harris/Area_Labels_Green.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
-        us.push(createGeoJsonLayer('L3 Den App GPS', 'harris' + c++, 'geojson/L3Harris/Den_Apch_Inbound_Call_Points_GPS.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
-        us.push(createGeoJsonLayer('L3 Den App Visual', 'harris' + c++, 'geojson/L3Harris/Den_Apch_Inbound_Call_Points_Visual.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
-        us.push(createGeoJsonLayer('L3 Harris', 'harris' + c++, 'geojson/L3Harris/L3Harris.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
-        us.push(createGeoJsonLayer('L3 Pueblo Inbound', 'harris' + c++, 'geojson/L3Harris/Pueblo_Tower_Inbound_Call_Points_Visual.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
-        us.push(createGeoJsonLayer('L3 Routes', 'harris' + c++, 'geojson/L3Harris/Route_Name_Labels.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
-        */
-        us.push(createGeoJsonLayer('L3 Training Areas', 'harris' + c++, 'geojson/L3Harris/L3Harris_Training_Areas.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
-        us.push(createGeoJsonLayer('L3 USAFA Training', 'harris' + c++, 'geojson/L3Harris/USAFA_Training_Areas.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
-        us.push(createGeoJsonLayer('L3 VNAV', 'harris' + c++, 'geojson/L3Harris/L3Harris_VNAV.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
+        let files = ['IFT_NAV_Routes.geojson','IFT_Training_Areas.geojson','USAFA_Training_Areas.geojson'];
+        for (let i in files) {
+            let name = files[i].split('.')[0];
+            us.push(createGeoJsonLayer(name, 'ift' + i, 'geojson/IFT/' + files[i], 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
+        }
     }
 
     if (custom.getLength() > 0) {

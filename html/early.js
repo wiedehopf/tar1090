@@ -104,8 +104,9 @@ if (bingKey)
 if (bingKey == 'remove')
     localStorage.removeItem('bingKey');
 
-if (usp.has('L3Harris') || usp.has('l3harris'))
+if (usp.has('l3harris') || usp.has('ift')) {
     l3harris = true;
+}
 if (usp.has('r')) {
     replay = true;
 }
