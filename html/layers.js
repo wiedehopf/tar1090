@@ -64,6 +64,19 @@ function createBaseLayers() {
     }));
 
     /*
+    world.push(new ol.layer.VectorTile({
+        source: new ol.source.VectorTile({
+            "url": "https://basemaps.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer/tile/{z}/{y}/{x}.pbf",
+            format: new ol.format.MVT(),
+        }),
+        name: 'ag_base',
+        title: 'arcgis base v2',
+        type: 'base',
+        renderMode: 'image',
+    }));
+    */
+
+    /*
     world.push(new ol.layer.Tile({
         source: new ol.source.OSM({
             "url" : "http://{a-d}.tile.stamen.com/terrain/{z}/{x}/{y}.png", 
