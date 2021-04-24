@@ -44,12 +44,14 @@ function createBaseLayers() {
     }));
     */
 
-    world.push(new ol.layer.Tile({
-        source: new ol.source.OSM(),
-        name: 'osm',
-        title: 'OpenStreetMap',
-        type: 'base',
-    }));
+    if (!adsbexchange) {
+        world.push(new ol.layer.Tile({
+            source: new ol.source.OSM(),
+            name: 'osm',
+            title: 'OpenStreetMap',
+            type: 'base',
+        }));
+    }
 
     world.push(new ol.layer.Tile({
         source: new ol.source.XYZ({
@@ -103,19 +105,21 @@ function createBaseLayers() {
         "light_all", "light_nolabels"
     ]
 
-    for (let i in basemaps) {
-        let basemap_id = basemaps[i];
+    if (!adsbexchange) {
+        for (let i in basemaps) {
+            let basemap_id = basemaps[i];
 
-        world.push(new ol.layer.Tile({
-            source: new ol.source.OSM({
-                "url" : "https://{a-d}.basemaps.cartocdn.com/"+ basemap_id + "/{z}/{x}/{y}.png",
-                "attributions" : 'Courtesy of <a href="https://carto.com">CARTO.com</a>'
-                + ' using data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
-            }),
-            name: "carto_" + basemap_id,
-            title: 'carto.com ' +basemap_id,
-            type: 'base',
-        }));
+            world.push(new ol.layer.Tile({
+                source: new ol.source.OSM({
+                    "url" : "https://{a-d}.basemaps.cartocdn.com/"+ basemap_id + "/{z}/{x}/{y}.png",
+                    "attributions" : 'Courtesy of <a href="https://carto.com">CARTO.com</a>'
+                    + ' using data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
+                }),
+                name: "carto_" + basemap_id,
+                title: 'carto.com ' +basemap_id,
+                type: 'base',
+            }));
+        }
     }
 
     if (localStorage['bingKey'] != undefined)
