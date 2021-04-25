@@ -1149,15 +1149,15 @@ PlaneObject.prototype.updatePositionData = function(now, last, data, init) {
     this.drawLine |= newPos;
 
     if (globeIndex && newPos) {
-        let state = {};
-        state.now = this.position_time;
-        state.position = this.position;
-        state.altitude = this.altitude;
-        state.alt_rounded = this.alt_rounded;
-        state.speed = this.speed;
-        state.track = this.track;
-        state.rotation = this.rotation;
-        this.trace.push(state);
+        this.trace.push({
+            now: this.position_time,
+            position: this.position,
+            altitude: this.altitude,
+            alt_rounded: this.alt_rounded,
+            speed: this.speed,
+            track: this.track,
+            rotation: this.rotation,
+        });
         if (this.trace.length > 20) {
             this.trace.slice(-15);
         }
