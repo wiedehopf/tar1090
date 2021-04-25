@@ -1,6 +1,7 @@
 "use strict";
 
 function PlaneObject(icao) {
+    icao = `${icao}`;
 
     Planes[icao] = this;
     PlanesOrdered.push(this);
@@ -1289,7 +1290,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     }
     // don't expire callsigns
     if (flight != null) {
-        this.flight = flight;
+        this.flight = `${flight}`;
     }
     if (this.flight && this.flight.trim()) {
         this.name = this.flight.trim();
@@ -1373,7 +1374,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     this.geom_rate = data.geom_rate;
     this.rc = data.rc;
     if (!replay || data.squawk != null)
-        this.squawk = data.squawk;
+        this.squawk = `${data.squawk}`;
     this.wd = data.wd;
     this.ws = data.ws;
     this.oat = data.oat;
@@ -1386,7 +1387,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.version = data.version;
     }
     if (data.category != null) {
-        this.category = data.category;
+        this.category = `${data.category}`;
     }
 
     if (data.true_heading != null)
@@ -2048,16 +2049,16 @@ PlaneObject.prototype.getAircraftData = function() {
         // format [r:0, t:1, f:2]
 
         if (data[0]) {
-            this.registration = data[0];
+            this.registration = `${data[0]}`;
         }
 
         if (data[1]) {
-            this.icaoType = data[1];
+            this.icaoType = `${data[1]}`;
             this.setTypeData();
         }
 
         if (data[3]) {
-            this.typeLong = data[3];
+            this.typeLong = `${data[3]}`;
         }
 
         if (data[2]) {
@@ -2179,7 +2180,7 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
         }
 
         if (data.flight != null) {
-            this.flight = data.flight;
+            this.flight = `${data.flight}`;
         }
         if (this.flight && this.flight.trim()) {
             this.name = this.flight.trim();
@@ -2189,7 +2190,7 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
             this.name = '_' + this.icao.toUpperCase();
         }
 
-        this.addrtype = data.type;
+        this.addrtype = `${data.type}`;
 
         this.alt_geom = data.alt_geom;
         this.ias = data.ias;
@@ -2212,7 +2213,7 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
         this.baro_rate = data.baro_rate;
         this.geom_rate = data.geom_rate;
         this.rc = data.rc;
-        this.squawk = data.squawk;
+        this.squawk = `${data.squawk}`;
 
         this.wd = data.wd;
         this.ws = data.ws;
@@ -2223,7 +2224,7 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
 
         this.version = data.version;
         if (data.category != null) {
-            this.category = data.category;
+            this.category = `${data.category}`;
         }
 
         if (data.nav_altitude_fms != null) {
@@ -2481,9 +2482,9 @@ PlaneObject.prototype.setTypeData = function() {
 
     let typeData = _aircraft_type_cache[typeDesignator];
     if (typeData.desc != null && typeData.desc.length == 3)
-        this.typeDescription = typeData.desc;
+        this.typeDescription = `${typeData.desc}`;
     if (typeData.wtc != null)
-        this.wtc = typeData.wtc;
+        this.wtc = `${typeData.wtc}`;
 };
 
 PlaneObject.prototype.checkForDB = function(t) {
@@ -2495,14 +2496,14 @@ PlaneObject.prototype.checkForDB = function(t) {
         return;
     }
 
-    if (t.desc) this.typeLong = t.desc;
-    if (t.r) this.registration = t.r;
+    if (t.desc) this.typeLong = `${t.desc}`;
+    if (t.r) this.registration = `${t.r}`;
 
-    if (t.ownOp) this.ownOp = t.ownOp;
-    if (t.year) this.year = t.year;
+    if (t.ownOp) this.ownOp = `${t.ownOp}`;
+    if (t.year) this.year = `${t.year}`;
 
     if (t.t) {
-        this.icaoType = t.t;
+        this.icaoType = `${t.t}`;
         this.setTypeData();
     }
     if (t.dbFlags) {

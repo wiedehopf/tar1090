@@ -359,16 +359,17 @@ function fetchData(options) {
         //console.log(ac_url[i]);
         let req;
         if (binCraft) {
-            let xhrOverride = new XMLHttpRequest();
-            xhrOverride.responseType = 'arraybuffer';
             req = $.ajax({
-                url: ac_url[i], method: 'GET',
-                xhr: function() { return xhrOverride; },
+                url: `${ac_url[i]}`, method: 'GET',
+                xhr: function() {
+                    let xhrOverride = new XMLHttpRequest();
+                    xhrOverride.responseType = 'arraybuffer';
+                    return xhrOverride; },
                 timeout: 5000,
                 urlIndex: i,
             });
         } else {
-            req = $.ajax({ url: ac_url[i], dataType: 'json', urlIndex: i });
+            req = $.ajax({ url: `${ac_url[i]}`, dataType: 'json', urlIndex: i });
         }
         FetchPending.push(req);
 
@@ -2217,7 +2218,7 @@ function refreshPhoto(selected) {
     //console.log(ts/1000 + 'sending psAPI request');
     selected.psAPIresponseTS = ts;
     let req = $.ajax({
-        url: 'https://api.planespotters.net/pub/photos/' + urlTail,
+        url: 'https://api.planespotters.net/pub/photos/' + `${urlTail}`,
         dataType: 'json',
         plane: selected,
     });
@@ -4542,7 +4543,7 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
                 cache: true,
                 timeout: 10000,
                 dataType : 'json',
-                upper: upper,
+                upper: `${upper}`,
             });
             req.done(function(data) {
                 regCache = data;
