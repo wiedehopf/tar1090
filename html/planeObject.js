@@ -1098,9 +1098,9 @@ PlaneObject.prototype.processTrace = function() {
                 + ":" + date.getUTCMinutes().toString().padStart(2,'0')
                 + ":" + date.getUTCSeconds().toString().padStart(2,'0')
                 + NBSP + "Z";
-            $('#trace_time').text('UTC:\n' + timestamp);
+            jQuery('#trace_time').text('UTC:\n' + timestamp);
         } else {
-            $('#trace_time').text('UTC:\n');
+            jQuery('#trace_time').text('UTC:\n');
         }
         this.seen = 0;
         this.seen_pos = 0;

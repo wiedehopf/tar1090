@@ -1196,15 +1196,15 @@ function getSpriteY(shape) {
     return Math.floor(shape.id / glImapWidth);
 }
 function iconTest() {
-    $('#large_mode_control').hide();
-    $('#header_top').hide();
-    $('#header_side').hide();
-    $('#splitter').hide();
-    $('#tabs').hide();
-    $('#filterButton').hide();
-    $('.ol-control').hide();
-    $('.ol-attribution').show();
-    $("#loader").addClass("hidden");
+    jQuery('#large_mode_control').hide();
+    jQuery('#header_top').hide();
+    jQuery('#header_side').hide();
+    jQuery('#splitter').hide();
+    jQuery('#tabs').hide();
+    jQuery('#filterButton').hide();
+    jQuery('.ol-control').hide();
+    jQuery('.ol-attribution').show();
+    jQuery("#loader").addClass("hidden");
     let mapdiv = document.getElementById('map_canvas');
     console.log(mapdiv);
     let iconSize = glIconSize;

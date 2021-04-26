@@ -291,9 +291,9 @@ if (uuid != null) {
         StaleReceiverCount++;
 
         setTimeout(function() {
-            $("#loader").addClass("hidden");
-            $("#update_error_detail").text("Seems the decoder / receiver / backend isn't working correctly!");
-            $("#update_error").css('display','block');
+            jQuery("#loader").addClass("hidden");
+            jQuery("#update_error_detail").text("Seems the decoder / receiver / backend isn't working correctly!");
+            jQuery("#update_error").css('display','block');
         }, 2000);
 
         setTimeout(function() {
@@ -421,7 +421,7 @@ function Toggle(arg) {
 
 Toggle.prototype.init = function() {
     if (this.container) {
-        $(this.container).append((
+        jQuery(this.container).append((
             '<div class="settingsOptionContainer">'
             + '<div class="settingsCheckbox" id="' + this.key + '_cb' + '"></div>'
             + '<div class="settingsText">' + this.display + '</div>'
@@ -429,7 +429,7 @@ Toggle.prototype.init = function() {
     }
 
     if (this.button)
-        $(this.button).on('click', this.toggle.bind(this));
+        jQuery(this.button).on('click', this.toggle.bind(this));
 
     if (localStorage[this.key] == 'true')
         this.state = true;
@@ -456,9 +456,9 @@ Toggle.prototype.toggle = function(override, init) {
 
     if (this.checkbox) {
         if (this.state == false) {
-            $(this.checkbox).removeClass('settingsCheckboxChecked');
+            jQuery(this.checkbox).removeClass('settingsCheckboxChecked');
         } else {
-            $(this.checkbox).addClass('settingsCheckboxChecked');
+            jQuery(this.checkbox).addClass('settingsCheckboxChecked');
         }
     }
 
@@ -473,7 +473,7 @@ Toggle.prototype.restore = function () {
 
 Toggle.prototype.hideCheckbox = function () {
     if (this.checkbox)
-        $(this.checkbox).parent().hide();
+        jQuery(this.checkbox).parent().hide();
 }
 
 // Set the name of the hidden property and the change event for visibility
