@@ -2197,7 +2197,7 @@ function refreshPhoto(selected) {
     if (!selected.regLoaded) {
         displaySil();
         return;
-    } else if (selected.registration != null && selected.registration.length <= 4 && selected.registration.match(/^[0-9]*$/)) {
+    } else if (selected.registration != null && selected.registration.match(/^[0-9]{0,2}\+?[0-9]{0,2}$/)) {
         displaySil();
         return;
     } else if (selected.registration != null) {
