@@ -1623,6 +1623,16 @@ function initMap() {
     console.timeEnd('webglInit');
 
     let foundType = false;
+    ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
+        if (lyr.get('name') && lyr.get('type') == 'base') {
+            if (MapType_tar1090 == lyr.get('name')) {
+                foundType = true;
+            }
+        }
+    });
+    if (!foundType) {
+        MapType_tar1090 = "osm_adsbx";
+    }
 
     ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
         if (!lyr.get('name'))
