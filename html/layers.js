@@ -64,16 +64,24 @@ function createBaseLayers() {
     }));
 
     /*
-    world.push(new ol.layer.VectorTile({
+    let vtlayer;
+    world.push(vtlayer = new ol.layer.VectorTile({
         source: new ol.source.VectorTile({
-            "url": "https://basemaps.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer/tile/{z}/{y}/{x}.pbf",
+            "url": "http://test02.dev.adsbexchange.com/tiles/{z}/{x}/{y}.pbf",
             format: new ol.format.MVT(),
         }),
-        name: 'ag_base',
-        title: 'arcgis base v2',
+        name: 'vtlayer',
+        title: 'test vtlayer',
         type: 'base',
         renderMode: 'image',
     }));
+    fetch('osm-liberty/style.json').then(function(response) {
+        response.json().then(function(glStyle) {
+            console.log(vtlayer.styleFunction);
+            ol.mbstylefunction(vtlayer, glStyle, 'openmaptiles');
+            console.log(vtlayer.styleFunction);
+        });
+    });
     */
 
     /*

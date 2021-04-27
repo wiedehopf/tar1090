@@ -1374,7 +1374,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     this.geom_rate = data.geom_rate;
     this.rc = data.rc;
     if (!replay || data.squawk != null)
-        this.squawk = `${data.squawk}`;
+        this.squawk = (data.squawk == null) ? null : `${data.squawk}`;
     this.wd = data.wd;
     this.ws = data.ws;
     this.oat = data.oat;
@@ -2190,7 +2190,7 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
             this.name = '_' + this.icao.toUpperCase();
         }
 
-        this.addrtype = `${data.type}`;
+        this.addrtype = (data.type == null) ? null : `${data.type}`;
 
         this.alt_geom = data.alt_geom;
         this.ias = data.ias;
@@ -2213,7 +2213,7 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
         this.baro_rate = data.baro_rate;
         this.geom_rate = data.geom_rate;
         this.rc = data.rc;
-        this.squawk = `${data.squawk}`;
+        this.squawk = (data.squawk == null) ? null : `${data.squawk}`;
 
         this.wd = data.wd;
         this.ws = data.ws;

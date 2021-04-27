@@ -2229,7 +2229,7 @@ function refreshPhoto(selected) {
     //console.log(ts/1000 + 'sending psAPI request');
     selected.psAPIresponseTS = ts;
     let req = $.ajax({
-        url: 'https://api.planespotters.net/pub/photos/' + `${urlTail}`,
+        url: 'https://api.planespotters.net/pub/photos/' + urlTail,
         dataType: 'json',
         plane: selected,
     });
@@ -4549,8 +4549,7 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
                 return;
             }
         } else {
-            let req_url = databaseFolder + "/regIcao.js";
-            let req = $.ajax({ url: req_url,
+            let req = $.ajax({ url: databaseFolder + "/regIcao.js",
                 cache: true,
                 timeout: 10000,
                 dataType : 'json',
@@ -5465,7 +5464,7 @@ function getTrace(newPlane, hex, options) {
     let fake1 = false;
 
     if (URL1 && !options.onlyFull) {
-        req1 = $.ajax({ url: URL1,
+        req1 = $.ajax({ url: `${URL1}`,
             dataType: 'json',
             options: options,
         });
@@ -5493,7 +5492,7 @@ function getTrace(newPlane, hex, options) {
     }
     if (!options.onlyRecent) {
 
-        req2 = $.ajax({ url: URL2,
+        req2 = $.ajax({ url: `${URL2}`,
             dataType: 'json',
             options: options,
         });
@@ -5804,10 +5803,8 @@ function loadReplay(ts) {
     let sDate = sDateString(time);
     let index = 2 * time.getUTCHours() + Math.floor(time.getUTCMinutes() / 30);
 
-    let base = "globe_history/";
-    let URL = base + sDate + "/heatmap/" + index.toString().padStart(2, '0') + ".bin.ttf";
     let req = $.ajax({
-        url: URL,
+        url: "globe_history/" + sDate + "/heatmap/" + index.toString().padStart(2, '0') + ".bin.ttf",
         method: 'GET',
         xhr: function() {
             return xhrOverride;
