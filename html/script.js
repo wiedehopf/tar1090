@@ -4172,6 +4172,8 @@ function changeZoom(init) {
 
     ZoomLvl = OLMap.getView().getZoom();
 
+    checkScale();
+
     // small zoomstep, no need to change aircraft scaling
     if (!init && Math.abs(ZoomLvl-ZoomLvlCache) < 0.4)
         return;
@@ -4179,8 +4181,13 @@ function changeZoom(init) {
     localStorage['ZoomLvl'] = ZoomLvl;
     ZoomLvlCache = ZoomLvl;
 
-    let oldScaleFactor = scaleFactor;
+    if (!init && showTrace)
+        updateAddressBar();
 
+    checkPointermove();
+}
+
+function checkScale() {
     if (ZoomLvl > markerZoomDivide)
         scaleFactor = markerBig;
     else
@@ -4188,11 +4195,7 @@ function changeZoom(init) {
 
     // scale markers according to global scaling
     scaleFactor *= Math.pow(1.3, globalScale) * globalScale * iconScale;
-
-    if (!init && showTrace)
-        updateAddressBar();
-
-    checkPointermove();
+    scaleFactor *= 1 - 0.37 * Math.pow(TrackedAircraftPositions + 1, 0.8) / Math.pow(10000, 0.8);
 }
 
 function checkPointermove() {
