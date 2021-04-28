@@ -870,16 +870,6 @@ function initPage() {
         }
     });
 
-    new Toggle({
-        key: "selectedDetails",
-        display: "Selected Aircraft Details",
-        container: "#settingsLeft",
-        init: true,
-        setState: function(state) {
-            adjustInfoBlock();
-        }
-    });
-
     if (onMobile) {
         jQuery('#large_mode_button').css('width', 'calc( 45px * let(--SCALE))');
         jQuery('#large_mode_button').css('height', 'calc( 45px * let(--SCALE))');
@@ -1028,8 +1018,18 @@ function initPage() {
     });
 
     new Toggle({
+        key: "selectedDetails",
+        display: "Enable Infoblock",
+        container: "#settingsRight",
+        init: true,
+        setState: function(state) {
+            adjustInfoBlock();
+        }
+    });
+
+    new Toggle({
         key: "wideInfoblock",
-        display: "Wide infoblock",
+        display: "Wide Infoblock",
         container: "#settingsRight",
         init: wideInfoBlock,
         setState: function(state) {
@@ -1503,7 +1503,7 @@ function webglInit() {
     new Toggle({
         key: "webgl",
         display: "WebGL",
-        container: "#settingsLeft",
+        container: "#settingsRight",
         init: init,
         setState: function(state) {
             if (state) {
@@ -1804,9 +1804,9 @@ function initMap() {
 
     // handle the layer settings pane checkboxes
     OLMap.once('postrender', function(e) {
-        toggleLayer('#nexrad_checkbox', 'nexrad');
+        //toggleLayer('#nexrad_checkbox', 'nexrad');
         //toggleLayer('#sitepos_checkbox', 'site_pos');
-        toggleLayer('#actrail_checkbox', 'ac_trail');
+        //toggleLayer('#actrail_checkbox', 'ac_trail');
         //toggleLayer('#acpositions_checkbox', 'webglLayer');
     });
 
@@ -3738,7 +3738,7 @@ function invertMap(evt){
         new Toggle({
             key: "altitudeChart",
             display: "Altitude Chart",
-            container: "#settingsLeft",
+            container: "#settingsRight",
             init: (onMobile ? false : true),
             setState: altitudeChart.render
         });
