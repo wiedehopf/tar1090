@@ -663,25 +663,25 @@
         <div id="settings_infoblock">
           <div id="settings_close" class="settingsCloseBox"></div>
           <div class="settingsOptionContainer">
-            <label for="units_selector"><span class="infoBlockTitleText">Units:&nbsp;&nbsp;</span></label>
-            <select name="units_selector" id="units_selector">
-              <option value="nautical">Aeronautical</option>
-              <option value="metric">Metric</option>
-              <option value="imperial">Imperial</option>
-            </select>
-          </div>
-          <div class="settingsOptionContainer">
-              <div class="settingsText">Text and Icon size:</div>
+            <div class="settingsText">Text and Icon size:</div>
           </div>
           <div style="display: block, width: 100%" id="userScaleSlider"></div>
           <div class="settingsOptionContainer">
-              <div class="settingsText">Icon size multiplier:</div>
+            <div class="settingsText">Icon size multiplier:</div>
           </div>
           <div style="display: block, width: 100%" id="iconScaleSlider"></div>
           <div class="rSpacer">
-              <hr />
+            <hr />
           </div>
           <div id="settingsLeft" class="settingsColumn">
+            <div class="settingsOptionContainer">
+              <label for="units_selector"><span class="infoBlockTitleText">Units:&nbsp;&nbsp;</span></label>
+              <select name="units_selector" id="units_selector">
+                <option value="nautical">Aeronautical</option>
+                <option value="metric">Metric</option>
+                <option value="imperial">Imperial</option>
+              </select>
+            </div>
             <div class="settingsOptionContainer">
               <div class="settingsCheckbox" id="groundvehicle_filter"></div>
               <div class="settingsText">Ground Vehicles</div>
@@ -692,6 +692,9 @@
             </div>
           </div>
           <div id="settingsRight" class="settingsColumn">
+            <div class="settingsOptionContainer">
+              <button class="formButton" onclick="resetSettings();">Reset All Settings</button>
+            </div>
             <div class="settingsOptionContainer">
               <div class="settingsCheckbox" id="grouptype_checkbox"></div>
               <div class="settingsText">Group by Data Type</div>

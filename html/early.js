@@ -68,13 +68,15 @@ try {
         get: function() {return null;},
     }
 }
-
-if (usp.has('reset')) {
+function resetSettings() {
     localStorage.clear();
     if (window.history && window.history.replaceState) {
         window.history.replaceState("object or string", "Title", window.location.pathname);
         location.reload();
     }
+}
+if (usp.has('reset')) {
+    resetSettings;
 }
 const feed = usp.get('feed');
 if (feed != null) {
