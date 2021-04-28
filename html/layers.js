@@ -27,7 +27,7 @@ function createBaseLayers() {
         custom.push(new ol.layer.Tile({
             source: new ol.source.OSM({
                 "url" : localStorage['customTiles'],
-                maxZoom: 14,
+                maxZoom: 15,
             }),
             name: 'custom_tiles',
             title: 'Custom tiles',
@@ -51,7 +51,8 @@ function createBaseLayers() {
             "url" : "https://map.adsbexchange.com/mapproxy/tiles/1.0.0/osm/osm_grid/{z}/{x}/{y}.png",
              //'hosted by <a href="https://adsbexchange.com/">adsbexchange.com</a> '
             "attributions" : '© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>  contributors.',
-            maxZoom: 14,
+            attributionsCollapsible: false,
+            maxZoom: 15,
         }),
         name: 'osm_adsbx',
         title: 'OpenStreetMap ADSBx',
@@ -69,8 +70,11 @@ function createBaseLayers() {
 
     world.push(new ol.layer.Tile({
         source: new ol.source.XYZ({
-            "url" : "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-            attributions : "Powered by Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+            url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+
+            attributions: 'Powered by <a href="https://www.esri.com">Esri.com</a>' +
+            '— Sources: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+            attributionsCollapsible: false,
             maxZoom: 20,
         }),
         name: 'esri',
@@ -81,7 +85,7 @@ function createBaseLayers() {
     if (0) {
         let vtlayer = new ol.layer.VectorTile({
             source: new ol.source.VectorTile({
-                "url": "http://test02.dev.adsbexchange.com/tiles/{z}/{x}/{y}.pbf",
+                url: "http://test02.dev.adsbexchange.com/tiles/{z}/{x}/{y}.pbf",
                 format: new ol.format.MVT(),
                 maxZoom: 7,
             }),
@@ -102,15 +106,20 @@ function createBaseLayers() {
         world.push(vtlayer);
     }
 
+    const date = new Date(Date.now() - 86400 * 1000);
+    const yesterday = date.getUTCFullYear() + '-' + (date.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + date.getUTCDate().toString().padStart(2, '0');
     world.push(new ol.layer.Tile({
         source: new ol.source.OSM({
             url: 'https://gibs-{a-c}.earthdata.nasa.gov/wmts/epsg3857/best/' +
-            'MODIS_Terra_CorrectedReflectance_TrueColor/default/2019-07-22/' +
+            'MODIS_Terra_CorrectedReflectance_TrueColor/default/' +
+            yesterday + '/' +
             'GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg',
+            attributions: '<a href="https://terra.nasa.gov/about/terra-instruments/modis">MODIS Terra</a> ' +
+            yesterday + ' Provided by NASA\'s Global Imagery Browse Services (GIBS), part of NASA\'s Earth Observing System Data and Information System (EOSDIS)',
             maxZoom: 9,
         }),
         name: 'gibs',
-        title: 'GIBS',
+        title: 'NASA GIBS ' + yesterday,
         type: 'base',
     }));
     // carto.com basemaps, see the following URLs for details on them:
@@ -121,19 +130,20 @@ function createBaseLayers() {
         "light_all", "light_nolabels"
     ]
 
-    if (!adsbexchange) {
+    if (1) {
         for (let i in basemaps) {
             let basemap_id = basemaps[i];
 
             world.push(new ol.layer.Tile({
                 source: new ol.source.OSM({
                     "url" : "https://{a-d}.basemaps.cartocdn.com/"+ basemap_id + "/{z}/{x}/{y}.png",
-                    "attributions" : 'Courtesy of <a href="https://carto.com">CARTO.com</a>'
+                    "attributions" : 'Powered by <a href="https://carto.com">CARTO.com</a>'
                     + ' using data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
-                    maxZoom: 16,
+                    attributionsCollapsible: false,
+                    maxZoom: 15,
                 }),
                 name: "carto_" + basemap_id,
-                title: 'carto.com ' +basemap_id,
+                title: 'CARTO.com ' +basemap_id,
                 type: 'base',
             }));
         }
@@ -177,6 +187,7 @@ function createBaseLayers() {
                     params: {LAYERS: type},
                     projection: 'EPSG:3857',
                     attributions: 'Tiles courtesy of <a href="http://www.chartbundle.com/">ChartBundle</a>',
+                    attributionsCollapsible: false,
                     maxZoom: 12, // doesn't work for WMS
                 }),
                 name: 'chartbundle_' + type,
@@ -199,6 +210,7 @@ function createBaseLayers() {
                     params: {LAYERS: type},
                     projection: 'EPSG:3857',
                     attributions: 'Tiles courtesy of <a href="http://www.chartbundle.com/">ChartBundle</a>',
+                    attributionsCollapsible: false,
                     maxZoom: 12, // doesn't work for WMS
                 }),
                 name: 'chartbundle_' + type,
@@ -212,6 +224,7 @@ function createBaseLayers() {
         source: new ol.source.XYZ({
             "url" : "https://map.adsbexchange.com/mapproxy/tiles/1.0.0/openaip/ul_grid/{z}/{x}/{y}.png",
             "attributions" : "openAIP.net",
+            attributionsCollapsible: false,
             maxZoom: 11,
         }),
         name: 'openaip',
@@ -252,6 +265,7 @@ function createBaseLayers() {
         nexrad.setSource(new ol.source.XYZ({
             url : 'https://mesonet{1-3}.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0q-900913/{z}/{x}/{y}.png?_=' + now,
             attributions: 'NEXRAD courtesy of <a href="https://mesonet.agron.iastate.edu/">IEM</a>',
+            attributionsCollapsible: false,
             maxZoom: 8,
         }));
     };
@@ -261,6 +275,7 @@ function createBaseLayers() {
 
     let noaaRadarSource = new ol.source.ImageWMS({
         attributions: ['NOAA'],
+        attributionsCollapsible: false,
         url: 'https://nowcoast.noaa.gov/arcgis/services/nowcoast/radar_meteo_imagery_nexrad_time/MapServer/WMSServer',
         params: {'LAYERS': '1'},
         projection: 'EPSG:3857',
@@ -284,6 +299,7 @@ function createBaseLayers() {
                 params: {LAYERS: 'dwd:RX-Produkt', validtime: (new Date()).getTime()},
                 projection: 'EPSG:3857',
                 attributions: 'Deutscher Wetterdienst (DWD)',
+                attributionsCollapsible: false,
                 maxZoom: 8,
             }),
             name: 'radolan',
