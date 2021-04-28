@@ -324,7 +324,21 @@ select.error, textarea.error, input.error {
     right: calc( 44px * var(--SCALE)) !important;
     z-index: 999;
 }
-.layer-switcher.shown {
+.layer-switcher button {
+    background-size: calc( 26px * var(--SCALE)) calc( 26px * var(--SCALE));
+    background-repeat: no-repeat;
+    background-position: center;
+    width: calc( 30px * var(--SCALE));
+    height: calc( 30px * var(--SCALE));
+}
+.layer-switcher !.shown {
+    top: calc( 3px * var(--SCALE)) !important;
+    right: calc( 44px * var(--SCALE)) !important;
+    width: calc( 32px * var(--SCALE));
+    height: calc( 32px * var(--SCALE));
+    z-index: 999;
+}
+.layer-switcher .shown {
     bottom: 3em;
 }
 

@@ -653,19 +653,10 @@ function initPage() {
             mapRefresh();
             localStorage['userScale'] = userScale;
 
-            globalScale = userScale;
-            document.documentElement.style.setProperty("--SCALE", globalScale);
-
-            labelFont = "bold " + (12 * globalScale * labelScale) + "px/" + (14 * globalScale * labelScale) + "px Tahoma, Verdana, Helvetica, sans-serif";
-
-            checkScale();
-            setLineWidth();
-            refreshFeatures();
-            refreshSelected();
-            refreshHighlighted();
-            remakeTrails();
+            setGlobalScale(userScale);
         },
     });
+    setGlobalScale(userScale, "init");
 
     if (usp.has('hideButtons'))
         hideButtons = true;
@@ -3491,7 +3482,7 @@ function adjustInfoBlock() {
     }
 
     let photoWidth = document.getElementById('photo_container').clientWidth;
-    let refWidth = (infoBlockWidth - 29) * globalScale;
+    let refWidth = infoBlockWidth * globalScale - 29;
     if (Math.abs(photoWidth / refWidth - 1) > 0.05)
         photoWidth = refWidth;
 
@@ -4207,6 +4198,21 @@ function checkScale() {
     iconSize *= Math.pow(1.3, globalScale) * globalScale * iconScale;
     // disable, doesn't work well
     // iconSize *= 1 - 0.37 * Math.pow(TrackedAircraftPositions + 1, 0.8) / Math.pow(10000, 0.8);
+}
+function setGlobalScale(scale, init) {
+    globalScale = scale;
+    document.documentElement.style.setProperty("--SCALE", globalScale);
+
+    labelFont = "bold " + (12 * globalScale * labelScale) + "px/" + (14 * globalScale * labelScale) + "px Tahoma, Verdana, Helvetica, sans-serif";
+
+    checkScale();
+    setLineWidth();
+    if (!init) {
+    refreshFeatures();
+    refreshSelected();
+    refreshHighlighted();
+    remakeTrails();
+    }
 }
 
 function checkPointermove() {
