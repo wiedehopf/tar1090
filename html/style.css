@@ -338,8 +338,9 @@ select.error, textarea.error, input.error {
     height: calc( 32px * var(--SCALE));
     z-index: 999;
 }
-.layer-switcher .shown {
-    bottom: 3em;
+.layer-switcher.shown .panel {
+    overflow-y: auto;
+    height: 95vh;
 }
 
 /* new css */
