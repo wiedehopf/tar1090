@@ -48,6 +48,14 @@ try {
         params: new URLSearchParams(),
         has: function(s) {return this.params.has(s.toLowerCase());},
         get: function(s) {return this.params.get(s.toLowerCase());},
+        getFloat: function(s) {
+            if (!this.params.has(s.toLowerCase())) return null;
+            const param =  this.params.get(s.toLowerCase());
+            if (!param) return null;
+            const val = parseFloat(param);
+            if (isNaN(val)) return null;
+            return val;
+        },
     };
     const inputParams = new URLSearchParams(window.location.search);
     for (const [k, v] of inputParams) {

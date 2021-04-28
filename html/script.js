@@ -36,7 +36,7 @@ let noPan = false;
 let loadFinished = false;
 let mapResizeTimeout;
 let pointerMoveTimeout;
-let scaleFactor = 1;
+let iconSize = 1;
 let debugTracks = false;
 let debugAll = false;
 let trackLabels = false;
@@ -513,15 +513,10 @@ function replaySpeedChange(arg) {
 
 
 function initPage() {
-
+    let value;
     onMobile = window.mobilecheck();
 
     today = new Date().getDate();
-
-    let largeModeStorage = localStorage['largeMode'];
-    if (largeModeStorage != undefined && parseInt(largeModeStorage, 10)) {
-        largeMode = parseInt(largeModeStorage, 10);
-    }
 
     if (usp.has('nowebgl')) {
         localStorage['webgl'] = "false";
@@ -546,7 +541,7 @@ function initPage() {
     if (usp.has('kiosk')) {
         tempTrails = true;
         hideButtons = true;
-        largeMode = 2;
+        userScale = 2;
     }
 
     if (pTracks) {
@@ -554,13 +549,6 @@ function initPage() {
         buttonActive('#P', noVanish);
         filterTracks = true;
         selectAllPlanes();
-    }
-
-    if (usp.has('largeMode')) {
-        let tmp = parseInt(usp.get('largeMode'));
-        console.log(tmp);
-        if (!isNaN(tmp))
-            largeMode = tmp;
     }
 
     if (usp.has('mobile'))
@@ -619,23 +607,65 @@ function initPage() {
             mapContrastPercentage = contrast;
     }
 
-    if (usp.has('iconScale')) {
-        let scale = parseFloat(usp.get('iconScale'));
-        if (!isNaN(scale))
-            iconScale = scale;
+    if (value = usp.getFloat('labelScale')) {
+        labelScale = value;
     }
 
-    if (usp.has('labelScale')) {
-        let scale = parseFloat(usp.get('labelScale'));
-        if (!isNaN(scale))
-            labelScale = scale;
+    if (value = usp.getFloat('largeMode')) {
+        userScale = Math.pow(1.2, value) / 1.2;
+        iconScale = 1;
     }
 
-    if (usp.has('scale')) {
-        let scale = parseFloat(usp.get('scale'));
-        if (!isNaN(scale))
-            userScale = scale;
+    if (value = usp.getFloat('iconScale')) {
+        iconScale = value;
+    } else if (localStorage['iconScale'] != null) {
+        iconScale = localStorage['iconScale'];
     }
+
+    if (value = usp.getFloat('scale')) {
+        userScale = value;
+    } else if (localStorage['userScale'] != null) {
+        userScale = localStorage['userScale'];
+    }
+
+    const slideBase = 0.6;
+    jQuery('#iconScaleSlider').slider({
+        value: Math.pow(iconScale, 1 / slideBase),
+        step: 0.02,
+        min: 0.1,
+        max: 3,
+        change: function(event, ui) {
+            iconScale = Math.pow(ui.value, slideBase);
+            checkScale();
+            mapRefresh();
+            localStorage['iconScale'] = iconScale;
+        },
+    });
+
+    jQuery('#userScaleSlider').slider({
+        value: Math.pow(userScale, 1 / slideBase),
+        step: 0.02,
+        min: 0.5,
+        max: 3,
+        change: function(event, ui) {
+            userScale = Math.pow(ui.value, slideBase);
+            checkScale();
+            mapRefresh();
+            localStorage['userScale'] = userScale;
+
+            globalScale = userScale;
+            document.documentElement.style.setProperty("--SCALE", globalScale);
+
+            labelFont = "bold " + (12 * globalScale * labelScale) + "px/" + (14 * globalScale * labelScale) + "px Tahoma, Verdana, Helvetica, sans-serif";
+
+            checkScale();
+            setLineWidth();
+            refreshFeatures();
+            refreshSelected();
+            refreshHighlighted();
+            remakeTrails();
+        },
+    });
 
     if (usp.has('hideButtons'))
         hideButtons = true;
@@ -646,20 +676,18 @@ function initPage() {
     if (usp.has('overlays'))
         enableOverlays = usp.get('overlays').split(',');
 
-    icaoFilter = usp.get('icaoFilter');
-    if (icaoFilter)
-        icaoFilter = icaoFilter.toLowerCase().split(',');
+    if (value = usp.get('icaoFilter')) {
+        icaoFilter = value.toLowerCase().split(',');
+    }
 
-    if (usp.has('filterMaxRange')) {
-        let tmp = parseFloat(usp.get('filterMaxRange'));
-        if (!isNaN(tmp))
-            filterMaxRange = tmp;
+    if (value = usp.getFloat('filterMaxRange')) {
+        filterMaxRange = value;
     }
     filterMaxRange *= 1852; // convert from nmi to meters
 
 
-    if (usp.has('mapOrientation')) {
-        mapOrientation = parseFloat(usp.get('mapOrientation'));
+    if (value = usp.getFloat('mapOrientation')) {
+        mapOrientation = value;
     }
     mapOrientation *= (Math.PI/180); // adjust to radians
 
@@ -776,8 +804,6 @@ function initPage() {
     jQuery("#expand_sidebar_button").click(expandSidebar);
     jQuery("#shrink_sidebar_button").click(showMap);
 
-    jQuery("#large_mode_button").click(toggleLargeMode);
-
     // Initialize other controls
     initializeUnitsSelector();
 
@@ -869,16 +895,6 @@ function initPage() {
                 SelectedPlane.processTrace();
         }
     });
-
-    if (onMobile) {
-        jQuery('#large_mode_button').css('width', 'calc( 45px * let(--SCALE))');
-        jQuery('#large_mode_button').css('height', 'calc( 45px * let(--SCALE))');
-        if (localStorage['largeMode'] == undefined && largeMode == 1)
-            largeMode = 2;
-    }
-
-    largeMode--;
-    toggleLargeMode();
 
     jQuery('#tStop').on('click', function() { traceOpts.replaySpeed = 0; gotoTime(traceOpts.showTime); });
     jQuery('#t1x').on('click', function() { replaySpeedChange(1); });
@@ -1294,7 +1310,6 @@ function startPage() {
     }
 
     if (hideButtons) {
-        jQuery('#large_mode_control').hide();
         jQuery('#header_top').hide();
         jQuery('#header_side').hide();
         jQuery('#splitter').hide();
@@ -1992,7 +2007,6 @@ function initMap() {
                 break;
             case "H":
                 if (!hideButtons) {
-                    jQuery('#large_mode_control').hide();
                     jQuery('#header_top').hide();
                     jQuery('#header_side').hide();
                     jQuery('#splitter').hide();
@@ -2001,7 +2015,6 @@ function initMap() {
                     jQuery('.ol-control').hide();
                     jQuery('.ol-attribution').show();
                 } else {
-                    jQuery('#large_mode_control').show();
                     jQuery('#header_top').show();
                     jQuery('#header_side').show();
                     jQuery('#splitter').show();
@@ -3446,7 +3459,6 @@ function adjustInfoBlock() {
     }
     jQuery('#selected_infoblock').css("width", infoBlockWidth * globalScale + 'px');
 
-    jQuery('#large_mode_control').css('left', (infoBlockWidth * globalScale + 10) + 'px');
     jQuery('.ol-scale-line').css('left', (infoBlockWidth * globalScale + 8) + 'px');
 
     if (SelectedPlane && toggles['selectedDetails'].state) {
@@ -3456,7 +3468,6 @@ function adjustInfoBlock() {
         //
         if (mapIsVisible && document.getElementById('map_canvas').clientWidth < parseFloat(jQuery('#selected_infoblock').css('width')) * 3) {
             jQuery('#selected_infoblock').css('height', '290px');
-            jQuery('#large_mode_control').css('left', (5 * globalScale) + 'px');
             jQuery('#selected_typedesc').parent().parent().hide();
             jQuery('#credits').css('bottom', '295px');
             jQuery('#credits').css('left', '5px');
@@ -3472,7 +3483,6 @@ function adjustInfoBlock() {
             jQuery("#sidebar_container").css('margin-left', '0');
         //jQuery('#sidebar_canvas').css('margin-bottom', 0);
 
-        jQuery('#large_mode_control').css('left', (5 * globalScale) + 'px');
         jQuery('.ol-scale-line').css('left', '8px');
         jQuery('#credits').css('bottom', '');
         jQuery('#credits').css('left', '');
@@ -4189,13 +4199,14 @@ function changeZoom(init) {
 
 function checkScale() {
     if (ZoomLvl > markerZoomDivide)
-        scaleFactor = markerBig;
+        iconSize = markerBig;
     else
-        scaleFactor = markerSmall;
+        iconSize = markerSmall;
 
     // scale markers according to global scaling
-    scaleFactor *= Math.pow(1.3, globalScale) * globalScale * iconScale;
-    scaleFactor *= 1 - 0.37 * Math.pow(TrackedAircraftPositions + 1, 0.8) / Math.pow(10000, 0.8);
+    iconSize *= Math.pow(1.3, globalScale) * globalScale * iconScale;
+    // disable, doesn't work well
+    // iconSize *= 1 - 0.37 * Math.pow(TrackedAircraftPositions + 1, 0.8) / Math.pow(10000, 0.8);
 }
 
 function checkPointermove() {
@@ -4870,28 +4881,6 @@ function refreshInt() {
         refresh *= 1.5;
 
     return refresh;
-}
-
-function toggleLargeMode() {
-    largeMode++;
-    if (!(largeMode >= 1 && largeMode <= 4))
-        largeMode = 1;
-
-    let root = document.documentElement;
-
-    const base = 1.2;
-    globalScale = Math.pow(base, largeMode) / base * userScale;
-    root.style.setProperty("--SCALE", globalScale);
-
-    labelFont = "bold " + (12 * globalScale * labelScale) + "px/" + (14 * globalScale * labelScale) + "px Tahoma, Verdana, Helvetica, sans-serif";
-
-    localStorage['largeMode'] = largeMode;
-
-    changeZoom("init");
-    setLineWidth();
-    refreshFeatures();
-    refreshSelected();
-    remakeTrails();
 }
 
 function toggleShowTrace() {

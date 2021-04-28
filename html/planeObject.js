@@ -1510,7 +1510,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
         if (!this.shape)
             console.log(baseMarkerKey);
     }
-    this.scale = scaleFactor * this.baseScale;
+    this.scale = iconSize * this.baseScale;
     this.strokeWidth = outlineWidth * ((this.selected && !SelectedAllPlanes && !onlySelected) ? 1.15 : 0.7) / this.baseScale;
 
     if (!this.marker && (!webgl || enableLabels)) {

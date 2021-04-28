@@ -129,28 +129,6 @@ select {
 }
 
 
-#large_mode_control {
-    display: block;
-    position: absolute;
-    top: calc( 5px * var(--SCALE));
-    left: calc( 5px * var(--SCALE));
-    background-color: transparent;
-    z-index: 99;
-}
-
-#large_mode_button {
-    cursor: pointer;
-    float: left;
-    width: calc( 30px * var(--SCALE));
-    height: calc( 30px * var(--SCALE));
-    background-size: calc( 30px * var(--SCALE)) calc( 30px * var(--SCALE));
-    background-repeat: no-repeat;
-    background-position: 0;
-    background-color: transparent;
-    border: none;
-    background-image: url("images/zoom-in.png");
-    z-index: 99;
-}
 #credits {
     display: flex;
     align-items: center;
@@ -458,16 +436,16 @@ select.error, textarea.error, input.error {
  color:#fff
 }
 
-.settingsContainer {
-    width: calc( 36px * var(--SCALE));
-    height: calc( 36px * var(--SCALE));
+.settingsCog {
+    width: calc( 48px * var(--SCALE));
+    height: calc( 48px * var(--SCALE));
     cursor: pointer;
     background-image: url('images/settings-icon01.png');
     background-size: cover;
     background-repeat: no-repeat;
-    background-position: center;
     margin-top: calc( 6px * var(--SCALE));
     margin-bottom: calc( 6px * var(--SCALE));
+    margin-left: calc( -12px * var(--SCALE));
 }
 
 #highlighted_infoblock {
@@ -579,9 +557,9 @@ table.infoSectionTable tr td {
 }
 
 #settings_infoblock {
-    position: absolute;
+    position: fixed;
     top: 1%;
-    right: calc( 45px * var(--SCALE));
+    left: 1%;
     overflow: auto;
     max-height: 90%;
     box-shadow: calc( 4px * var(--SCALE)) calc( 4px * var(--SCALE)) calc( 10px * var(--SCALE)) #444444;
@@ -748,7 +726,6 @@ table.infoSectionTable tr td {
     border-color: #cc6600;
 }
 
-
 .buttonFilter li {
     border-width: 2px;
     border-color: var(--BGCOLOR2);
@@ -808,6 +785,14 @@ table.infoSectionTable tr td {
 .ui-widget-content {
   color:var(--TXTCOLOR2);
 }
+
+.ui-slider {
+    background-color: var(--BGCOLOR2);
+}
+.ui-slider .ui-slider-handle {
+    background-color: rgb(0, 115, 222);
+}
+
 
 input{
   color:var(--TXTCOLOR1);
