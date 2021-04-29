@@ -737,20 +737,26 @@ PlaneObject.prototype.updateIcon = function() {
             || (this.selected && !SelectedAllPlanes)
         )
     ) {
+        // set labelText for default case
+        if (this.flight && this.flight.trim())
+            labelText =  NBSP + this.flight.trim() + NBSP;
+        else if (this.registration)
+            labelText =  NBSP + 'reg: ' + this.registration + NBSP;
+        else
+            labelText =  NBSP + 'hex: ' + this.icao + NBSP;
         const unknown = NBSP+NBSP+"?"+NBSP+NBSP;
+
+        // change it for extended labels:
         if (extendedLabels == 2) {
             labelText = NBSP + (this.icaoType ? this.icaoType : unknown) + NBSP + "\n" + NBSP + (this.registration ? this.registration : unknown)+ NBSP + "\n" + NBSP + this.name + NBSP;
-        } else if (extendedLabels == 1 ) {
+        }
+        if (extendedLabels == 1 ) {
             const altitude = (this.altitude == null) ? unknown : this.altitude;
             if ((!this.onGround || (this.speed && this.speed > 18) || (this.selected && !SelectedAllPlanes))) {
                 let speedString = (this.speed == null) ? (NBSP+'?'+NBSP) : Number(this.speed).toFixed(0).toString().padStart(4, NBSP);
                 labelText =  speedString + NBSP + NBSP
                     + altitude.toString().padStart(5, NBSP) + NBSP + "\n" + NBSP + this.name + NBSP;
-            } else {
-                labelText =  NBSP + this.name + NBSP;
             }
-        } else {
-            labelText = NBSP + this.name + NBSP;
         }
     }
     if (!webgl && (this.markerStyle == null || this.markerIcon == null || (this.markerSvgKey != svgKey))) {
