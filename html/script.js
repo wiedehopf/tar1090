@@ -2265,14 +2265,8 @@ function refreshSelected() {
 
     refreshPhoto(selected);
 
-    if (selected.flight != selCall) {
-        selCall = selected.flight;
-        if (selected.flight && selected.flight.trim()) {
-            jQuery('#selected_callsign').text(selected.flight);
-        } else {
-            jQuery('#selected_callsign').text('n/a');
-        }
-    }
+    jQuery('#selected_callsign').text(selected.name);
+
     if (flightawareLinks) {
         jQuery('#selected_flightaware_link').html(getFlightAwareModeSLink(selected.icao, selected.flight, "Visit Flight Page"));
     }
@@ -2728,7 +2722,11 @@ function refreshFeatures() {
     };
     cols.flight = {
         sort: function () { sortBy('flight', compareAlpha, function(x) { return x.flight }); },
-        value: function(plane) { return (flightawareLinks ? getFlightAwareModeSLink(plane.icao, plane.flight, plane.name) : plane.name); },
+        value: function(plane) {
+            if (flightawareLinks)
+                return getFlightAwareModeSLink(plane.icao, plane.flight, plane.name);
+            return plane.name;
+        },
         html: flightawareLinks,
         text: 'Callsign' };
     cols.registration = {

@@ -9,15 +9,53 @@ function PlaneObject(icao) {
     // Info about the plane
     this.icao      = icao;
     this.icaorange = findICAORange(icao);
-    this.flight    = null;
-    this.name = '_' + this.icao.toUpperCase();
-    this.squawk    = null;
-    this.selected  = false;
-    this.category  = null;
-    this.dataSource = "modeS";
 
     this.numHex = parseInt(icao.replace('~', '1'), 16);
     this.fakeHex = this.numHex > 16777215; // non-icao hex
+
+    // most properties are set via this function so they can be reset easily
+    this.setNull();
+
+    // Track history as a series of line segments
+    this.elastic_feature = null;
+    this.track_linesegs = [];
+    this.history_size = 0;
+    this.trace = []; // save last 30 seconds of positions
+
+    // Display info
+    this.visible = false;
+    this.marker = null;
+    this.markerStyle = null;
+    this.markerIcon = null;
+    this.markerStyleKey = null;
+    this.markerSvgKey = null;
+    this.baseScale = 1;
+
+    // start from a computed registration, let the DB override it
+    // if it has something else.
+    this.registration = registration_from_hexid(this.icao);
+    this.icaoType = null;
+    this.typeDescription = null;
+    this.typeLong = null;
+    this.wtc = null;
+
+
+    this.regLoaded = false;
+    // request metadata
+    this.checkForDB();
+
+    // military icao ranges
+    if (this.milRange()) {
+        this.military = true;
+    }
+}
+
+PlaneObject.prototype.setNull = function() {
+    this.flight = null;
+    this.name = 'n/a';
+    this.squawk    = null;
+    this.category  = null;
+    this.dataSource = "modeS";
 
     // Basic location information
     this.altitude       = null;
@@ -66,6 +104,12 @@ function PlaneObject(icao) {
 
     this.version        = null;
 
+    // Track (direction) at the time we last appended to the track history
+    this.tail_track = null;
+    this.tail_true = null;
+    // Timestamp of the most recent point appended to the track history
+    this.tail_update = null;
+
     this.prev_position = null;
     this.prev_time = null;
     this.prev_track = null;
@@ -73,63 +117,25 @@ function PlaneObject(icao) {
     this.sitedist  = null;
     this.too_fast = 0;
 
+    // When was this last updated (receiver timestamp)
+    this.seen = NaN;
+    this.last_message_time = NaN;
+    this.seen_pos = NaN;
+    this.position_time = NaN;
+
+    this.last = 0; // last json this plane was included in
+
     // Data packet numbers
-    this.messages  = 0;
+    this.messages  = NaN;
     this.rssi      = null;
     this.msgs1090  = 0;
     this.msgs978   = 0;
     this.messageRate = 0;
     this.messageRateOld = 0;
-
-    // Track history as a series of line segments
-    this.elastic_feature = null;
-    this.track_linesegs = [];
-    this.history_size = 0;
-    this.trace = []; // save last 30 seconds of positions
-
-    // Track (direction) at the time we last appended to the track history
-    this.tail_track = null;
-    this.tail_true = null;
-    // Timestamp of the most recent point appended to the track history
-    this.tail_update = null;
-
-    // When was this last updated (receiver timestamp)
-    this.last_message_time = 0;
-    this.position_time = 0;
-
-    this.last = 0; // last json this plane was included in
-
-    // When was this last updated (seconds before last update)
-    this.seen = NaN;
-    this.seen_pos = null;
-
-    // Display info
-    this.visible = false;
-    this.marker = null;
-    this.markerStyle = null;
-    this.markerIcon = null;
-    this.markerStyleKey = null;
-    this.markerSvgKey = null;
-    this.baseScale = 1;
-
-    // start from a computed registration, let the DB override it
-    // if it has something else.
-    this.registration = registration_from_hexid(this.icao);
-    this.icaoType = null;
-    this.typeDescription = null;
-    this.typeLong = null;
-    this.wtc = null;
+};
 
 
-    this.regLoaded = false;
-    // request metadata
-    this.checkForDB();
 
-    // military icao ranges
-    if (this.milRange()) {
-        this.military = true;
-    }
-}
 PlaneObject.prototype.checkLayers = function() {
     if (!this.trail_features)
         this.createFeatures();
@@ -1294,10 +1300,6 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     }
     if (this.flight && this.flight.trim()) {
         this.name = this.flight.trim();
-    } else if (this.registration) {
-        this.name = '_' + this.registration;
-    } else {
-        this.name = '_' + this.icao.toUpperCase();
     }
 
     if (mlat && noMLAT) {
@@ -2184,10 +2186,6 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
         }
         if (this.flight && this.flight.trim()) {
             this.name = this.flight.trim();
-        } else if (this.registration) {
-            this.name = '_' + this.registration;
-        } else {
-            this.name = '_' + this.icao.toUpperCase();
         }
 
         this.addrtype = (data.type == null) ? null : `${data.type}`;
@@ -2235,80 +2233,6 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
             this.nav_altitude = null;
         }
     }
-};
-
-PlaneObject.prototype.setNull = function() {
-    this.position = null;
-    this.callsign = null;
-    this.track = null;
-    this.rotation = null;
-    this.altitude = null;
-    this.messages = NaN;
-    this.seen = NaN;
-    this.last_message_time = NaN;
-    this.seen_pos = NaN;
-    this.position_time = NaN;
-
-    this.flight    = null;
-    this.name = '_' + this.icao.toUpperCase();
-    this.squawk    = null;
-    this.altitude       = null;
-    this.alt_baro       = null;
-    this.alt_geom       = null;
-    this.altitudeTime   = 0;
-    this.bad_alt        = null;
-    this.bad_altTime    = null;
-    this.alt_reliable   = 0;
-
-    this.speed          = null;
-    this.gs             = null;
-    this.ias            = null;
-    this.tas            = null;
-
-    this.track          = null;
-    this.track_rate     = null;
-    this.mag_heading    = null;
-    this.true_heading   = null;
-    this.mach           = null;
-    this.roll           = null;
-    this.nav_altitude   = null;
-    this.nav_heading    = null;
-    this.nav_modes      = null;
-    this.nav_qnh        = null;
-    this.rc				= null;
-
-    this.rotation       = 0;
-
-    this.nac_p			= null;
-    this.nac_v			= null;
-    this.nic_baro		= null;
-    this.sil_type		= null;
-    this.sil			= null;
-
-    this.baro_rate      = null;
-    this.geom_rate      = null;
-    this.vert_rate      = null;
-
-    this.wd = null;
-    this.ws = null;
-    this.oat = null;
-    this.tat = null;
-
-    this.version        = null;
-
-    this.prev_position = null;
-    this.prev_time = null;
-    this.prev_track = null;
-    this.position  = null;
-    this.sitedist  = null;
-    this.too_fast = 0;
-
-    this.messages  = 0;
-    this.rssi      = null;
-    this.msgs1090  = 0;
-    this.msgs978   = 0;
-    this.messageRate = 0;
-    this.messageRateOld = 0;
 };
 
 function makeCircle(points, greyskull) {
