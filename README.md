@@ -280,9 +280,8 @@ sudo wget -nv -O /usr/local/share/tar1090/html/upintheair.json "http://www.heywh
 
 ## 0800-DESTROY-SD-CARD
 
-History function as used for tar1090.adsbexchange.com
-
-No seriously this writes to disk quite often, it will fill up your sd-card by means of writing lots of little files.
+History function as used for globe.adsbexchange.com
+(destroy sd-card is a bit of a joke but obviously it will use disk space and create quite a few files, they will be kept indefinitely so if the folder grows to big you'll have to delete old files yourself)
 
 This is not in any way or form officially supported and you should consider it experimental.
 To accomplish this, you need to use the dev branch of my readsb repository.
@@ -292,7 +291,7 @@ The following options need to be added to for example the decoder options in `/e
 ```
 --write-json-globe-index --write-globe-history /var/globe_history --heatmap 30
 ```
-/var/globe_history needs to be a direcotry writeable by the user readsb.
+/var/globe_history needs to be a directory writeable by the user readsb.
 `sudo mkdir /var/globe_history` and `sudo chown readsb /var/globe_history` are useful for that.
 
 You will also need to point tar1090 to /run/readsb in case you are using another dump1090/readsb.
