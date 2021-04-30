@@ -316,6 +316,10 @@ if (uuid != null) {
         RefreshInterval = data.refresh;
         nHistoryItems = (data.history < 2) ? 0 : data.history;
         binCraft = data.binCraft ? true : false;
+        if (usp.has('noglobe') || usp.has('ptracks')) {
+            data.globeIndexGrid = null; // disable globe on user request
+            binCraft = false;
+        }
         dbServer = (data.dbServer && data.globeIndexGrid != null) ? true : false;
 
         if (data.globeIndexGrid != null || heatmap || replay) {
