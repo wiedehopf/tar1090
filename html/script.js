@@ -237,8 +237,11 @@ function processReceiverUpdate(data, init) {
         uat_last = uat_now;
         uat_now = data.now;
     } else {
-        if (data.now <= now && !globeIndex && !uuid)
+        if (data.now <= now && !globeIndex && !uuid) {
+            if (data.now < now)
+                console.log('timestep backwards, ignoring data:' + now + ' -> ' + data.now);
             return;
+        }
         if (data.now > now) {
             last = now;
             now = data.now;
@@ -263,7 +266,7 @@ function processReceiverUpdate(data, init) {
 
 function fetchData(options) {
     options = options || {};
-    if (heatmap || replay || showTrace || pTracks)
+    if (heatmap || replay || showTrace || pTracks || !loadFinished)
         return;
     let currentTime = new Date().getTime();
 
@@ -1302,9 +1305,6 @@ function startPage() {
     pathName = window.location.pathname;
     processURLParams();
 
-    // Kick off first refresh.
-    fetchData();
-
     if (!icaoFilter && globeIndex)
         toggleTableInView(true);
 
@@ -1318,6 +1318,9 @@ function startPage() {
     everySecondTimer = setInterval(everySecond, 850);
 
     loadFinished = true;
+
+    // Kick off first refresh.
+    fetchData();
 
     if (tempTrails)
         selectAllPlanes();
@@ -3390,7 +3393,6 @@ function expandSidebar(e) {
     jQuery("#shrink_sidebar_button").show();
     jQuery("#sidebar_container").width("100%");
     TAR.planeMan.redraw();
-    fetchData();
     updateMapSize();
     adjustInfoBlock();
 }
@@ -3403,7 +3405,6 @@ function showMap() {
     jQuery("#splitter").show();
     jQuery("#shrink_sidebar_button").hide();
     TAR.planeMan.redraw();
-    fetchData();
     updateMapSize();
 }
 
@@ -4763,13 +4764,13 @@ function updateAddressBar() {
         return;
     if (heatmap || pTracks)
         return;
-    let now = new Date().getTime();
-    if (now < lastAddressBarUpdate + 200) {
+    let time = new Date().getTime();
+    if (time < lastAddressBarUpdate + 200) {
         clearTimeout(updateAddressBarTimeout);
         updateAddressBarTimeout = setTimeout(updateAddressBar, 205);
         return;
     }
-    lastAddressBarUpdate = now;
+    lastAddressBarUpdate = time;
 
     let posString = 'lat=' + CenterLat.toFixed(3) + '&lon=' + CenterLon.toFixed(3) + '&zoom=' + ZoomLvl.toFixed(1);
     let string;
@@ -5373,14 +5374,14 @@ function getTrace(newPlane, hex, options) {
         hex = newPlane.icao;
     }
 
-    let now = new Date().getTime();
+    let time = new Date().getTime();
     let backoff = 200;
-    if (!showTrace && !solidT && traceRate > 140 && now < lastTraceGet + backoff) {
-        setTimeout(getTrace, lastTraceGet + backoff + 20 - now, newPlane, hex, options);
+    if (!showTrace && !solidT && traceRate > 140 && time < lastTraceGet + backoff) {
+        setTimeout(getTrace, lastTraceGet + backoff + 20 - time, newPlane, hex, options);
         return;
     }
 
-    lastTraceGet = now;
+    lastTraceGet = time;
 
     let URL1 = 'data/traces/'+ hex.slice(-2) + '/trace_recent_' + hex + '.json';
     let URL2 = 'data/traces/'+ hex.slice(-2) + '/trace_full_' + hex + '.json';
@@ -5986,8 +5987,7 @@ function getInactive() {
 }
 
 function active() {
-    let now = new Date().getTime();
-    lastActive = now;
+    lastActive = new Date().getTime();
 }
 
 function drawTileBorder(data) {
