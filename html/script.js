@@ -5,6 +5,7 @@
 "use strict";
 
 // Define our global variables
+let tabHidden = false;
 let webgl = false;
 let webglFeatures = new ol.source.Vector();
 let webglLayer;
@@ -36,6 +37,8 @@ let noPan = false;
 let loadFinished = false;
 let mapResizeTimeout;
 let pointerMoveTimeout;
+let checkMoveTimer;
+let everySecondTimer;
 let iconSize = 1;
 let debugTracks = false;
 let debugAll = false;
@@ -64,7 +67,6 @@ let globeIndexDist = {};
 let globeIndexSpecialLookup = {};
 let globeTilesViewCount = 0;
 let globeSimLoad = 6;
-let globeUseBigMil = false;
 let globeTableLimitBase = 80;
 let globeTableLimit = 80;
 let fetchCounter = 0;
@@ -259,24 +261,17 @@ function processReceiverUpdate(data, init) {
         processAircraft(data.aircraft[j], init, uat);
 }
 
-let nextFetch = 0;
-function fetchSoon() {
-    clearTimeout(refreshId);
-    refreshId = setTimeout(fetchData, refreshInt());
-    nextFetch = new Date().getTime() + refreshInt();
-}
-
 function fetchData(options) {
     options = options || {};
     if (heatmap || replay || showTrace || pTracks)
         return;
-    fetchSoon();
-    //console.log("fetch");
     let currentTime = new Date().getTime();
+
     if (!options.force && (currentTime - lastFetch < refreshInt() || pendingFetches > 0)) {
         return;
     }
     lastFetch = currentTime;
+    //console.log(currentTime/1000);
 
     FetchPending = [];
     if (FetchPendingUAT != null) {
@@ -327,11 +322,9 @@ function fetchData(options) {
             return (globeIndexNow[x] - globeIndexNow[y]);
         });
 
-        if (binCraft && onlyMilitary && indexes.length > 12) {
+        if (binCraft && onlyMilitary && ZoomLvl < 5.5) {
             ac_url.push('data/globeMil_42777.binCraft');
-            globeUseBigMil = true;
         } else {
-            globeUseBigMil = false;
 
             indexes = indexes.slice(0, globeSimLoad);
 
@@ -347,13 +340,6 @@ function fetchData(options) {
 
     pendingFetches = ac_url.length;
     fetchCounter += pendingFetches;
-
-    if (globeIndex) {
-        fetchSoon();
-    } else {
-        jQuery("#lastLeg_cb").parent().hide();
-    }
-
 
     for (let i in ac_url) {
         //console.log(ac_url[i]);
@@ -404,9 +390,6 @@ function fetchData(options) {
             }
 
             if (pendingFetches <= 1) {
-                if (globeIndex)
-                    clearTimeout(refreshId);
-
                 triggerRefresh++;
                 if (firstFetch) {
                     firstFetch = false;
@@ -429,9 +412,6 @@ function fetchData(options) {
                     checkRefresh();
                 }
                 checkMovement();
-
-                if (globeIndex)
-                    fetchSoon();
             }
             pendingFetches--;
 
@@ -461,8 +441,6 @@ function fetchData(options) {
                 StaleReceiverCount++;
             }
             pendingFetches--;
-            if (globeIndex)
-                fetchSoon();
         });
     }
 }
@@ -1293,6 +1271,7 @@ function startPage() {
     console.log("Completing init");
 
     if (!globeIndex) {
+        jQuery("#lastLeg_cb").parent().hide();
         jQuery('#show_trace').hide();
     }
     if (globeIndex) {
@@ -1320,8 +1299,6 @@ function startPage() {
         jQuery('#pf_info_contianer').removeClass('hidden');
         window.setInterval(fetchPfData, RefreshInterval*10.314);
     }
-    setInterval(everySecond, 850);
-
     pathName = window.location.pathname;
     processURLParams();
 
@@ -1334,8 +1311,11 @@ function startPage() {
     changeZoom("init");
     changeCenter("init");
 
-    setInterval(checkMovement, 50);
+    clearInterval(checkMoveTimer);
+    checkMoveTimer = setInterval(checkMovement, 50);
 
+    clearInterval(everySecondTimer);
+    everySecondTimer = setInterval(everySecond, 850);
 
     loadFinished = true;
 
@@ -1357,7 +1337,7 @@ function startPage() {
         drawHeatmap();
     }
 
-    handleVisibilityChange();
+    initVisibilityChange();
 
     if (pTracks)
         setTimeout(TAR.planeMan.refresh, 10000);
@@ -3410,7 +3390,6 @@ function expandSidebar(e) {
     jQuery("#shrink_sidebar_button").show();
     jQuery("#sidebar_container").width("100%");
     TAR.planeMan.redraw();
-    clearTimeout(refreshId);
     fetchData();
     updateMapSize();
     adjustInfoBlock();
@@ -3424,7 +3403,6 @@ function showMap() {
     jQuery("#splitter").show();
     jQuery("#shrink_sidebar_button").hide();
     TAR.planeMan.redraw();
-    clearTimeout(refreshId);
     fetchData();
     updateMapSize();
 }
@@ -3630,6 +3608,9 @@ function toggleMilitary() {
     buttonActive('#U', onlyMilitary);
 
     refreshFilter();
+    active();
+    if (onlyMilitary)
+        fetchData({force: true});
 }
 
 function togglePersistence() {
@@ -4286,6 +4267,8 @@ function checkMovement() {
     if (elapsed > 500 || (!onMobile && elapsed > 45)) {
         checkRefresh();
     }
+
+    fetchData();
 }
 
 let lastRefresh = 0;
@@ -4866,8 +4849,9 @@ function refreshInt() {
     if (tabHidden)
         return 24 * 3600 * 1000; // hidden tab, don't refresh to avoid freeze when the tab is switched to again.
 
-    if (globeUseBigMil)
-        refresh = 10000;
+    if (binCraft && onlyMilitary && OLMap.getView().getZoom() < 5.5) {
+        refresh = 8000;
+    }
 
     let inactive = getInactive();
 
@@ -5847,7 +5831,6 @@ function initReplay(data) {
     replay.pointsU = pointsU;
     replay.pointsU8 = pointsU8;
 
-    clearTimeout(refreshId);
     reaper(true);
     refreshFilter();
 
@@ -6004,10 +5987,6 @@ function getInactive() {
 
 function active() {
     let now = new Date().getTime();
-    // avoid long periods of not fetching data for active users or returning users
-    if (now - lastActive > 90 * 1000 || nextFetch - lastFetch > 1.5 * refreshInt()) {
-        fetchData({force: true});
-    }
     lastActive = now;
 }
 
@@ -6131,6 +6110,78 @@ function setCookie(cname, cvalue, exdays) {
 
 function isDarkModeEnabled() {
     return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+}
+
+function handleVisibilityChange() {
+    const prevHidden = tabHidden;
+    if (document[hideName])
+        tabHidden = true;
+    else
+        tabHidden = false;
+
+    if (tabHidden) {
+        clearInterval(checkMoveTimer);
+        clearInterval(everySecondTimer);
+    }
+
+    // tab is no longer hidden
+    if (!tabHidden && prevHidden) {
+        checkMoveTimer = setInterval(checkMovement, 50);
+        everySecondTimer = setInterval(everySecond, 850);
+        refreshHighlighted();
+        refreshSelected();
+        active();
+        checkMovement();
+        triggerRefresh = 1;
+        checkRefresh();
+
+        if (showTrace)
+            return;
+        if (!globeIndex)
+            return;
+        if (heatmap)
+            return;
+
+        reaper();
+
+        let count = 0;
+        if (multiSelect && !SelectedAllPlanes) {
+            for (let i = 0; i < PlanesOrdered.length; ++i) {
+                let plane = PlanesOrdered[i];
+                if (plane.selected) {
+                    getTrace(plane, plane.icao, {});
+                    if (count++ > 20)
+                        break;
+                }
+            }
+        } else if (SelectedPlane) {
+            getTrace(SelectedPlane, SelectedPlane.icao, {});
+        }
+    }
+}
+
+let hideName;
+function initVisibilityChange() {
+    // Set the name of the hidden property and the change event for visibility
+    let visibilityChange;
+    if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
+        hideName = "hidden";
+        visibilityChange = "visibilitychange";
+    } else if (typeof document.msHidden !== "undefined") {
+        hideName = "msHidden";
+        visibilityChange = "msvisibilitychange";
+    } else if (typeof document.webkitHidden !== "undefined") {
+        hideName = "webkitHidden";
+        visibilityChange = "webkitvisibilitychange";
+    }
+    // Warn if the browser doesn't support addEventListener or the Page Visibility API
+    if (typeof document.addEventListener === "undefined" || hideName === undefined) {
+        console.log("hidden tab handler requires a browser that supports the Page Visibility API.");
+    } else {
+        // Handle page visibility change
+        document.addEventListener(visibilityChange, handleVisibilityChange, false);
+    }
+    handleVisibilityChange();
 }
 
 initialize();
