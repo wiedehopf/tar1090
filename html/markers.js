@@ -919,7 +919,7 @@ let TypeDesignatorIcons = {
     'BE20': ['twin_large', 0.92],
     'IL62': ['il_62', 1],
 
-    'MRF1': ['miragef1', 1],
+    'MRF1': ['miragef1', 0.75],
     'M326': ['m326', 1],
     'M339': ['m326', 1],
     'FOUG': ['m326', 1],
@@ -957,7 +957,7 @@ let TypeDesignatorIcons = {
 
     'TIGR': ['tiger', 1.00],
     'MI24': ['mil24', 1.00],
-    'AS65': ['dauphin', 0.8],
+    'AS65': ['dauphin', 0.95],
     'GAZL': ['gazelle', 1.00],
     'AS50': ['gazelle', 1.00],
     'AS55': ['gazelle', 1.00],
