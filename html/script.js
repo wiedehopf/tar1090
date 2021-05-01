@@ -6137,12 +6137,13 @@ function handleVisibilityChange() {
 
         if (showTrace)
             return;
-        if (!globeIndex)
-            return;
         if (heatmap)
             return;
 
         reaper();
+
+        if (!globeIndex)
+            return;
 
         let count = 0;
         if (multiSelect && !SelectedAllPlanes) {
