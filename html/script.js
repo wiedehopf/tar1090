@@ -2159,7 +2159,6 @@ function displayPhoto() {
         return;
     }
     let photos = SelectedPlane.psAPIresponse["photos"];
-    console.log(photos)
     if (!photos || photos.length === 0 || photos.size === 0) {
         setPhotoHtml("<p>No picture found!</p>");
         displaySil();
