@@ -866,6 +866,7 @@ let TypeDesignatorIcons = {
     'EUFI': ['typhoon', 1],
     'SB39': ['sb39', 1],
     'MIR2': ['mirage', 1],
+    'KFIR': ['mirage', 1],
     'F1': ['hi_perf', 1],
     'F111': ['hi_perf', 1],
     'F117': ['hi_perf', 1],
