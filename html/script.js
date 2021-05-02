@@ -1403,7 +1403,7 @@ function webglAddLayer() {
         let glStyle = {
             symbol: {
                 symbolType: 'image',
-                src: 'images/sprites006.png',
+                src: 'images/sprites008.png',
                 size: [ 'get', 'size' ],
                 offset: [0, 0],
                 textureCoord: [ 'array',
