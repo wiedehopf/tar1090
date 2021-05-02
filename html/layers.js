@@ -87,20 +87,21 @@ function createBaseLayers() {
             source: new ol.source.VectorTile({
                 url: "http://test02.dev.adsbexchange.com/tiles/{z}/{x}/{y}.pbf",
                 format: new ol.format.MVT(),
-                maxZoom: 7,
+                maxZoom: 9,
             }),
             name: 'vtlayer',
-            title: 'test vtlayer',
+            title: 'TEST VECTOR',
             type: 'base',
             renderMode: 'image',
         });
 
-        fetch('osm-liberty/style.json').then(function(response) {
-            response.json().then(function(glStyle) {
-                console.log(vtlayer.styleFunction);
-                ol.mbstylefunction(vtlayer, glStyle, 'openmaptiles');
-                console.log(vtlayer.styleFunction);
-            });
+        $.ajax({
+            url: 'osm-liberty/style.json',
+            dataType: 'json',
+            layer: vtlayer,
+            cache: false,
+        }).done(function(glStyle) {
+            ol.mbApplyStyle(this.layer, glStyle, 'openmaptiles');
         });
 
         world.push(vtlayer);
