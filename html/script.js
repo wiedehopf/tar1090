@@ -392,7 +392,7 @@ function fetchData(options) {
                 uat_data = null;
             }
 
-            if (pendingFetches <= 1) {
+            if (pendingFetches <= 1 && !tabHidden) {
                 triggerRefresh++;
                 if (firstFetch) {
                     firstFetch = false;
@@ -2077,8 +2077,6 @@ function initMap() {
 
 // This looks for planes to reap out of the master Planes variable
 function reaper(all) {
-    if (tabHidden)
-        return;
     //console.log("Reaping started..");
     today = new Date().getDate();
     if (noVanish)
@@ -4234,8 +4232,6 @@ let checkMoveCenter = [0, 0];
 let checkMoveDone = 0;
 
 function checkMovement() {
-    if (tabHidden)
-        return;
     const zoom = OLMap.getView().getZoom();
     const center = ol.proj.toLonLat(OLMap.getView().getCenter());
     const ts = new Date().getTime();
@@ -4275,8 +4271,6 @@ function checkMovement() {
 let lastRefresh = 0;
 let refreshZoom, refreshLat, refreshLon;
 function checkRefresh() {
-    if (tabHidden)
-        return;
     const center = ol.proj.toLonLat(OLMap.getView().getCenter());
     const zoom = OLMap.getView().getZoom();
     if (showTrace)
@@ -4597,8 +4591,6 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
 }
 
 function trailReaper() {
-    if (tabHidden)
-        return;
     for (let i in PlanesOrdered) {
         PlanesOrdered[i].reapTrail();
     }
@@ -4839,16 +4831,10 @@ function refreshInt() {
 
     // handle non globe case
     if (!globeIndex) {
-        if (tabHidden)
-            return Math.min(4000, refresh);
-        else
-            return refresh;
+        return refresh;
     }
 
     // handle globe case
-
-    if (tabHidden)
-        return 24 * 3600 * 1000; // hidden tab, don't refresh to avoid freeze when the tab is switched to again.
 
     if (binCraft && onlyMilitary && OLMap.getView().getZoom() < 5.5) {
         refresh = 8000;
@@ -5353,8 +5339,6 @@ function checkFollow() {
 }
 
 function everySecond() {
-    if (tabHidden)
-        return;
     decrementTraceRate();
     updateIconCache();
 }
@@ -6122,10 +6106,14 @@ function handleVisibilityChange() {
     if (tabHidden) {
         clearInterval(checkMoveTimer);
         clearInterval(everySecondTimer);
+        if (!globeIndex)
+            checkMoveTimer = setInterval(fetchData, Math.max(RefreshInterval, 5000));
     }
 
     // tab is no longer hidden
     if (!tabHidden && prevHidden) {
+        clearInterval(checkMoveTimer);
+        clearInterval(everySecondTimer);
         checkMoveTimer = setInterval(checkMovement, 50);
         everySecondTimer = setInterval(everySecond, 850);
         refreshHighlighted();
@@ -6183,6 +6171,17 @@ function initVisibilityChange() {
         document.addEventListener(visibilityChange, handleVisibilityChange, false);
     }
     handleVisibilityChange();
+}
+// for debugging visibilitychange:
+function hidePage() {
+    Object.defineProperty(window.document,'hidden',{get:function(){return true;},configurable:true});
+    Object.defineProperty(window.document,'visibilityState',{get:function(){return 'hidden';},configurable:true});
+    window.document.dispatchEvent(new Event('visibilitychange'));
+}
+function unhidePage() {
+    Object.defineProperty(window.document,'hidden',{get:function(){return false;},configurable:true});
+    Object.defineProperty(window.document,'visibilityState',{get:function(){return 'visible';},configurable:true});
+    window.document.dispatchEvent(new Event('visibilitychange'));
 }
 
 initialize();
