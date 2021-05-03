@@ -262,6 +262,7 @@ function processReceiverUpdate(data, init) {
         processAircraft(data.aircraft[j], init, uat);
 }
 
+let debugFetch = false;
 function fetchData(options) {
     options = options || {};
     if (heatmap || replay || showTrace || pTracks || !loadFinished)
@@ -271,8 +272,9 @@ function fetchData(options) {
     if (!options.force && (currentTime - lastFetch < refreshInt() || pendingFetches > 0)) {
         return;
     }
+    if (debugFetch)
+        console.log((currentTime - lastFetch)/1000);
     lastFetch = currentTime;
-    //console.log(currentTime/1000);
 
     FetchPending = [];
     if (FetchPendingUAT != null) {
@@ -1273,7 +1275,7 @@ function setIntervalTimers() {
         window.setInterval(trailReaper, 10000);
         trailReaper(now);
     }
-    if (enable_pf_data && !ptracks && !globeIndex) {
+    if (enable_pf_data && !pTracks && !globeIndex) {
         jQuery('#pf_info_contianer').removeClass('hidden');
         window.setInterval(fetchPfData, RefreshInterval*10.314);
         fetchPfData();
@@ -2079,11 +2081,14 @@ function initMap() {
 }
 
 // This looks for planes to reap out of the master Planes variable
+let lastReap = 0;
 function reaper(all) {
     //console.log("Reaping started..");
     today = new Date().getDate();
     if (noVanish)
         return;
+
+    lastReap = now;
 
     // Look for planes where we have seen no messages for >300 seconds
     let plane;
@@ -6117,6 +6122,13 @@ function isDarkModeEnabled() {
     return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
 }
 
+function timeoutFetch() {
+    fetchData();
+    timers.checkMove = setTimeout(timeoutFetch, Math.max(RefreshInterval, 10000));
+    if (lastReap - now > 90000)
+        reaper();
+}
+
 function handleVisibilityChange() {
     const prevHidden = tabHidden;
     if (document[hideName])
@@ -6127,8 +6139,7 @@ function handleVisibilityChange() {
     if (tabHidden) {
         clearIntervalTimers();
         if (!globeIndex) {
-            timers.checkMove = setInterval(fetchData, Math.max(RefreshInterval, 5000));
-            timers.reaper = setInterval(reaper, 60000);
+            timeoutFetch();
         }
     }
 
@@ -6139,7 +6150,6 @@ function handleVisibilityChange() {
         setIntervalTimers();
 
         active();
-        reaper();
 
         refresh();
         fetchData();
