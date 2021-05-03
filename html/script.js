@@ -37,8 +37,6 @@ let noPan = false;
 let loadFinished = false;
 let mapResizeTimeout;
 let pointerMoveTimeout;
-let checkMoveTimer;
-let everySecondTimer;
 let iconSize = 1;
 let debugTracks = false;
 let debugAll = false;
@@ -693,11 +691,6 @@ function initPage() {
         }, 30000);
     }
 
-    if ((adsbexchange || dynGlobeRate) && !uuid) {
-        setInterval(globeRateUpdate, 180000);
-        globeRateUpdate();
-    }
-
     if (localStorage['enableLabels'] == 'true'){
         toggleLabels();
     }
@@ -834,18 +827,12 @@ function initPage() {
 
     jQuery('#groundvehicle_filter').on('click', function() {
         filterGroundVehicles(true);
-        refreshSelected();
-        refreshHighlighted();
-        TAR.planeMan.refresh();
-        mapRefresh();
+        refresh();
     });
 
     jQuery('#blockedmlat_filter').on('click', function() {
         filterBlockedMLAT(true);
-        refreshSelected();
-        refreshHighlighted();
-        TAR.planeMan.refresh();
-        mapRefresh();
+        refresh();
     });
 
     jQuery('#grouptype_checkbox').on('click', function() {
@@ -1270,6 +1257,35 @@ function parseHistory() {
     historyLoaded.resolve();
 }
 
+let timers = {};
+function clearIntervalTimers() {
+    const entries = Object.entries(timers);
+    for (let i in entries) {
+        clearInterval(entries[i][1]);
+    }
+}
+
+function setIntervalTimers() {
+    timers.checkMove = setInterval(checkMovement, 50);
+    timers.everySecond = setInterval(everySecond, 850);
+    timers.reaper = setInterval(reaper, 20000);
+    if (tempTrails) {
+        window.setInterval(trailReaper, 10000);
+        trailReaper(now);
+    }
+    if (enable_pf_data && !ptracks && !globeIndex) {
+        jQuery('#pf_info_contianer').removeClass('hidden');
+        window.setInterval(fetchPfData, RefreshInterval*10.314);
+        fetchPfData();
+    }
+    if ((adsbexchange || dynGlobeRate) && !uuid) {
+        timers.globeRateUpdate = setInterval(globeRateUpdate, 180000);
+        globeRateUpdate();
+    }
+
+}
+
+
 function startPage() {
     console.log("Completing init");
 
@@ -1292,16 +1308,6 @@ function startPage() {
         jQuery('.ol-attribution').show();
     }
 
-    // Setup our timer to poll from the server.
-    window.setInterval(reaper, 20000);
-    if (tempTrails) {
-        window.setInterval(trailReaper, 10000);
-        trailReaper(now);
-    }
-    if (enable_pf_data) {
-        jQuery('#pf_info_contianer').removeClass('hidden');
-        window.setInterval(fetchPfData, RefreshInterval*10.314);
-    }
     pathName = window.location.pathname;
     processURLParams();
 
@@ -1311,11 +1317,8 @@ function startPage() {
     changeZoom("init");
     changeCenter("init");
 
-    clearInterval(checkMoveTimer);
-    checkMoveTimer = setInterval(checkMovement, 50);
-
-    clearInterval(everySecondTimer);
-    everySecondTimer = setInterval(everySecond, 850);
+    clearIntervalTimers();
+    setIntervalTimers();
 
     loadFinished = true;
 
@@ -2233,7 +2236,6 @@ let selReg = null;
 
 // Refresh the detail window about the plane
 function refreshSelected() {
-
     buttonActive('#F', FollowSelected);
 
     if (!SelectedPlane) {
@@ -2242,6 +2244,7 @@ function refreshSelected() {
     }
     const selected = SelectedPlane;
 
+    selected.checkVisible();
     selected.checkForDB();
 
     refreshPhoto(selected);
@@ -2592,6 +2595,8 @@ function refreshHighlighted() {
         jQuery('#highlighted_infoblock').hide();
         return;
     }
+
+    highlighted.checkVisible();
 
     jQuery('#highlighted_infoblock').show();
 
@@ -4074,7 +4079,8 @@ function toggleLayer(element, layer) {
 }
 
 function fetchPfData() {
-    if (fetchingPf || pTracks || tabHidden)
+    console.trace();
+    if (fetchingPf)
         return;
     fetchingPf = true;
     for (let i in pf_data) {
@@ -4186,10 +4192,10 @@ function setGlobalScale(scale, init) {
     checkScale();
     setLineWidth();
     if (!init) {
-    refreshFeatures();
-    refreshSelected();
-    refreshHighlighted();
-    remakeTrails();
+        refreshFeatures();
+        refreshSelected();
+        refreshHighlighted();
+        remakeTrails();
     }
 }
 
@@ -4268,36 +4274,55 @@ function checkMovement() {
     fetchData();
 }
 
+function getZoom() {
+    return OLMap.getView().getZoom();
+}
+
+function getCenter() {
+    return ol.proj.toLonLat(OLMap.getView().getCenter());
+}
+
 let lastRefresh = 0;
-let refreshZoom, refreshLat, refreshLon;
+let refreshZoom, refreshCenter;
 function checkRefresh() {
-    const center = ol.proj.toLonLat(OLMap.getView().getCenter());
-    const zoom = OLMap.getView().getZoom();
     if (showTrace)
         return;
-
-    if (triggerRefresh || zoom != refreshZoom || center[0] != refreshLon || center[1] != refreshLat) {
-
+    if (triggerRefresh) {
+        refresh();
+        return;
+    }
+    const center = getCenter();
+    const zoom = getZoom();
+    if (zoom != refreshZoom || !refreshCenter || center[0] != refreshCenter[0] || center[1] != refreshCenter[1]) {
         const ts = new Date().getTime();
         const elapsed = Math.abs(ts - lastRefresh);
         let num = Math.min(1500, Math.max(250, TrackedAircraftPositions / 300 * 250));
-        if (elapsed < num) {
-            return;
+        if (elapsed > num) {
+            refresh();
         }
-        lastRefresh = ts;
-
-        refreshZoom = zoom;
-        refreshLat = center[1];
-        refreshLon = center[0];
-
-        //console.time("refreshTable");
-        TAR.planeMan.refresh();
-        //console.timeEnd("refreshTable");
-        mapRefresh();
-
-        triggerRefresh = 0;
     }
 }
+function refresh() {
+    lastRefresh = new Date().getTime();
+
+    refreshZoom = getZoom();
+    refreshCenter = getCenter();
+
+    //console.time("refreshTable");
+    TAR.planeMan.refresh();
+    //console.timeEnd("refreshTable");
+    mapRefresh();
+
+    triggerRefresh = 0;
+
+    if (SelectedPlane) {
+        refreshSelected();
+    }
+    if (HighlightedPlane) {
+        refreshHighlighted();
+    }
+}
+
 function mapRefresh(redraw) {
     if (!mapIsVisible || heatmap)
         return;
@@ -5339,13 +5364,9 @@ function checkFollow() {
 }
 
 function everySecond() {
-    decrementTraceRate();
-    updateIconCache();
-}
-
-function decrementTraceRate() {
     if (traceRate > 0)
         traceRate = traceRate  * 0.985 - 1;
+    updateIconCache();
 }
 
 function getTrace(newPlane, hex, options) {
@@ -6104,31 +6125,29 @@ function handleVisibilityChange() {
         tabHidden = false;
 
     if (tabHidden) {
-        clearInterval(checkMoveTimer);
-        clearInterval(everySecondTimer);
-        if (!globeIndex)
-            checkMoveTimer = setInterval(fetchData, Math.max(RefreshInterval, 5000));
+        clearIntervalTimers();
+        if (!globeIndex) {
+            timers.checkMove = setInterval(fetchData, Math.max(RefreshInterval, 5000));
+            timers.reaper = setInterval(reaper, 60000);
+        }
     }
 
     // tab is no longer hidden
     if (!tabHidden && prevHidden) {
-        clearInterval(checkMoveTimer);
-        clearInterval(everySecondTimer);
-        checkMoveTimer = setInterval(checkMovement, 50);
-        everySecondTimer = setInterval(everySecond, 850);
-        refreshHighlighted();
-        refreshSelected();
+
+        clearIntervalTimers();
+        setIntervalTimers();
+
         active();
-        checkMovement();
-        triggerRefresh = 1;
-        checkRefresh();
+        reaper();
+
+        refresh();
+        fetchData();
 
         if (showTrace)
             return;
         if (heatmap)
             return;
-
-        reaper();
 
         if (!globeIndex)
             return;
@@ -6173,12 +6192,12 @@ function initVisibilityChange() {
     handleVisibilityChange();
 }
 // for debugging visibilitychange:
-function hidePage() {
+function testHide() {
     Object.defineProperty(window.document,'hidden',{get:function(){return true;},configurable:true});
     Object.defineProperty(window.document,'visibilityState',{get:function(){return 'hidden';},configurable:true});
     window.document.dispatchEvent(new Event('visibilitychange'));
 }
-function unhidePage() {
+function testUnhide() {
     Object.defineProperty(window.document,'hidden',{get:function(){return false;},configurable:true});
     Object.defineProperty(window.document,'visibilityState',{get:function(){return 'visible';},configurable:true});
     window.document.dispatchEvent(new Event('visibilitychange'));
