@@ -1821,7 +1821,7 @@ function initMap() {
     tableColorsLight = tableColors;
     tableColorsDark = JSON.parse(JSON.stringify(tableColors));
     let darkVals = Object.values(tableColorsDark);
-    for (let i in darkVals) {
+    for (let i in ['selected', 'unselected']) {
         let obj = darkVals[i];
         let keys = Object.keys(obj)
         for (let j in keys) {
