@@ -1758,7 +1758,7 @@ function initMap() {
             }
         }
 
-        const double = (evt.type === 'dblclick');
+        const double = (evt.type === 'dblclick') && !showTrace;
 
         if (showTrace && trailTS) {
             gotoTime(trailTS);
