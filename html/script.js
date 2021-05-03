@@ -1268,6 +1268,11 @@ function clearIntervalTimers() {
 }
 
 function setIntervalTimers() {
+    if ((adsbexchange || dynGlobeRate) && !uuid) {
+        timers.globeRateUpdate = setInterval(globeRateUpdate, 180000);
+        globeRateUpdate();
+    }
+
     timers.checkMove = setInterval(checkMovement, 50);
     timers.everySecond = setInterval(everySecond, 850);
     timers.reaper = setInterval(reaper, 20000);
@@ -1280,11 +1285,6 @@ function setIntervalTimers() {
         window.setInterval(fetchPfData, RefreshInterval*10.314);
         fetchPfData();
     }
-    if ((adsbexchange || dynGlobeRate) && !uuid) {
-        timers.globeRateUpdate = setInterval(globeRateUpdate, 180000);
-        globeRateUpdate();
-    }
-
 }
 
 
@@ -1310,9 +1310,6 @@ function startPage() {
         jQuery('.ol-attribution').show();
     }
 
-    pathName = window.location.pathname;
-    processURLParams();
-
     if (!icaoFilter && globeIndex)
         toggleTableInView(true);
 
@@ -1321,6 +1318,9 @@ function startPage() {
 
     clearIntervalTimers();
     setIntervalTimers();
+
+    pathName = window.location.pathname;
+    processURLParams();
 
     loadFinished = true;
 
@@ -2239,15 +2239,21 @@ let selCall = null;
 let selIcao = null;
 let selReg = null;
 
+let somethingSelected = false;
 // Refresh the detail window about the plane
 function refreshSelected() {
-    buttonActive('#F', FollowSelected);
+    const selected = SelectedPlane;
 
-    if (!SelectedPlane) {
-        adjustInfoBlock();
+    if (!selected) {
+        if (somethingSelected) {
+            adjustInfoBlock();
+            buttonActive('#F', FollowSelected);
+        }
+        somethingSelected = false;
         return;
     }
-    const selected = SelectedPlane;
+    somethingSelected = true;
+    buttonActive('#F', FollowSelected);
 
     selected.checkVisible();
     selected.checkForDB();
@@ -2592,14 +2598,18 @@ function refreshSelected() {
     adjustInfoBlock();
 }
 
+let somethingHighlighted = false;
 function refreshHighlighted() {
     // this is following nearly identical logic, etc, as the refreshSelected function, but doing less junk for the highlighted pane
     let highlighted = HighlightedPlane;
 
     if (!highlighted) {
-        jQuery('#highlighted_infoblock').hide();
+        if (somethingHighlighted)
+            jQuery('#highlighted_infoblock').hide();
+        somethingHighlighted = false;
         return;
     }
+    somethingHighlighted = true;
 
     highlighted.checkVisible();
 
@@ -4320,12 +4330,8 @@ function refresh() {
 
     triggerRefresh = 0;
 
-    if (SelectedPlane) {
-        refreshSelected();
-    }
-    if (HighlightedPlane) {
-        refreshHighlighted();
-    }
+    refreshSelected();
+    refreshHighlighted();
 }
 
 function mapRefresh(redraw) {

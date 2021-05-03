@@ -1148,6 +1148,14 @@ PlaneObject.prototype.processTrace = function() {
 
     this.dataChanged();
 
+    refreshHighlighted();
+    refreshSelected();
+
+    if (showTrace) {
+        TAR.planeMan.refresh();
+        updateAddressBar();
+    }
+
     if (debugTracks) {
         console.log('3h: ' + pointsRecent.toString().padStart(4, ' ') + ' total: ' + points_in_trace);
     }
@@ -2354,13 +2362,6 @@ PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
 
 PlaneObject.prototype.dataChanged = function() {
     this.refreshTR = true;
-
-    if (showTrace) {
-        TAR.planeMan.refresh();
-        updateAddressBar();
-        refreshSelected();
-        refreshHighlighted();
-    }
 }
 
 PlaneObject.prototype.isNonIcao = function() {
