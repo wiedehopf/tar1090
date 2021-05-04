@@ -325,7 +325,12 @@ if (uuid != null) {
         }
         dbServer = (data.dbServer && data.globeIndexGrid != null) ? true : false;
 
-        if (data.globeIndexGrid != null || heatmap || replay) {
+        if (heatmap || replay) {
+            HistoryChunks = false;
+            nHistoryItems = 0;
+            get_history();
+            configureReceiver.resolve();
+        } else if (data.globeIndexGrid != null) {
             HistoryChunks = false;
             nHistoryItems = 0;
             globeIndex = 1;
@@ -366,7 +371,7 @@ if (uuid != null) {
 
 function get_history() {
 
-    if (!globeIndex) {
+    if (nHistoryItems > 0) {
         nHistoryItems++;
         let request = $.ajax({ url: 'data/aircraft.json',
             timeout: historyTimeout*800,
