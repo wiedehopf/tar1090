@@ -206,7 +206,7 @@ let get_receiver_defer;
 let test_chunk_defer;
 if (uuid) {
     // don't need receiver / chunks json
-} else if (!window.location.href.match(/globe.*adsbexchange.com.$/)) {
+} else if (window.location.pathname == '/' && !window.location.href.match(/.*adsbexchange.com.$/)) {
     // get configuration json files, will be used in initialize function
     get_receiver_defer = $.ajax({
         url: 'data/receiver.json',

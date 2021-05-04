@@ -1295,10 +1295,11 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     if (flight != null) {
         if (flight == "@@@@@@@@") {
             this.flight = null;
+            this.name ='n/a';
         } else {
             this.flight = `${flight}`;
+            this.name = this.flight.trim();
         }
-        this.name = this.flight.trim() || 'n/a';
     }
 
     if (mlat && noMLAT) {
@@ -2183,10 +2184,11 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
         if (data.flight != null) {
             if (data.flight == "@@@@@@@@") {
                 this.flight = null;
+                this.name ='n/a';
             } else {
                 this.flight = `${data.flight}`;
+                this.name = this.flight.trim();
             }
-            this.name = this.flight.trim() || 'n/a';
         }
 
         this.addrtype = (data.type == null) ? null : `${data.type}`;
