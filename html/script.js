@@ -391,8 +391,10 @@ function fetchData(options) {
                 uat_data = null;
             }
 
-            if (pendingFetches <= 1 && !tabHidden) {
+            pendingFetches--;
+            if (pendingFetches <= 0 && !tabHidden) {
                 triggerRefresh++;
+                checkMovement();
                 if (firstFetch) {
                     firstFetch = false;
                     if (uuid) {
@@ -413,9 +415,7 @@ function fetchData(options) {
                     }
                     checkRefresh();
                 }
-                checkMovement();
             }
-            pendingFetches--;
 
 
             // Check for stale receiver data
@@ -443,6 +443,10 @@ function fetchData(options) {
                 StaleReceiverCount++;
             }
             pendingFetches--;
+            if (pendingFetches <= 0 && !tabHidden) {
+                triggerRefresh++;
+                checkMovement();
+            }
         });
     }
 }
