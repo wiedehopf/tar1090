@@ -1268,22 +1268,6 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 
     this.updateAlt();
 
-    if (this.altitude == null) {
-        this.onGround = null;
-        this.zIndex = 10;
-    } else if (this.altitude == "ground") {
-        this.onGround = true;
-        this.zIndex = 5;
-    } else {
-        this.onGround = false;
-        this.zIndex = this.altitude + 10000;
-    }
-    if (this.category == 'C3' || this.icaoType == 'TWR') {
-        this.zIndex = 1;
-    }
-    if (this.fakeHex)
-        this.zIndex -= 100000;
-
     if (gs != null)
         this.gs = gs;
     else if (data.speed != null)
@@ -2451,12 +2435,23 @@ PlaneObject.prototype.checkForDB = function(t) {
 };
 PlaneObject.prototype.updateAlt = function(t) {
     this.alt_rounded = calcAltitudeRounded(this.altitude);
-    if (this.altitude == 'ground')
-        this.altSort = -100001;
-    else if (this.altitude)
-        this.altSort = this.altitude;
-    else
-        this.altSort = -100000;
+
+    if (this.altitude == null) {
+        this.onGround = null;
+        this.zIndex = 10;
+    } else if (this.altitude == "ground") {
+        this.onGround = true;
+        this.zIndex = 5;
+    } else {
+        this.onGround = false;
+        this.zIndex = this.altitude + 200000;
+    }
+    if (this.category == 'C3' || this.icaoType == 'TWR') {
+        this.zIndex = 1;
+    }
+    if (this.fakeHex)
+        this.zIndex -= 100000;
+
 }
 PlaneObject.prototype.setProjection = function(arg) {
     let pos = traceOpts.animate ? traceOpts.animatePos : this.position;

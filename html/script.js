@@ -4373,7 +4373,7 @@ function mapRefresh(redraw) {
     // delete all feature objects so they are recreated, this is important
     // draw order will be insertion / updateFeatures / updateTick order
 
-    addToMap.sort(function(x, y) { return x.altSort - y.altSort; });
+    addToMap.sort(function(x, y) { return x.zIndex - y.zIndex; });
     //console.log('maprefresh(): ' + addToMap.length);
     if (webgl) {
         webglFeatures.clear();
