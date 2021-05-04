@@ -3,6 +3,8 @@
 
 let Dump1090Version = "unknown version";
 let RefreshInterval = 1000;
+let globeSimLoad = 6;
+let adsbexchange = false;
 let enable_uat = false;
 let enable_pf_data = false;
 let HistoryChunks = false;
@@ -220,6 +222,7 @@ if (uuid) {
     });
 } else {
     console.log("Using adsbexchange fast-path load!");
+    adsbexchange = true;
     let data = JSON.parse('{"refresh":1600,"history":1,"dbServer":true,"binCraft":true,"globeIndexGrid":3,"globeIndexSpecialTiles":[{"south":60,"east":0,"north":90,"west":-126},{"south":60,"east":150,"north":90,"west":0},{"south":51,"east":-126,"north":90,"west":150},{"south":9,"east":-126,"north":51,"west":150},{"south":51,"east":-69,"north":60,"west":-126},{"south":45,"east":-114,"north":51,"west":-120},{"south":45,"east":-102,"north":51,"west":-114},{"south":45,"east":-90,"north":51,"west":-102},{"south":45,"east":-75,"north":51,"west":-90},{"south":45,"east":-69,"north":51,"west":-75},{"south":42,"east":18,"north":48,"west":12},{"south":42,"east":24,"north":48,"west":18},{"south":48,"east":24,"north":54,"west":18},{"south":54,"east":24,"north":60,"west":12},{"south":54,"east":12,"north":60,"west":3},{"south":54,"east":3,"north":60,"west":-9},{"south":42,"east":0,"north":48,"west":-9},{"south":42,"east":51,"north":51,"west":24},{"south":51,"east":51,"north":60,"west":24},{"south":30,"east":90,"north":60,"west":51},{"south":30,"east":120,"north":60,"west":90},{"south":30,"east":129,"north":39,"west":120},{"south":30,"east":138,"north":39,"west":129},{"south":30,"east":150,"north":39,"west":138},{"south":39,"east":150,"north":60,"west":120},{"south":9,"east":111,"north":21,"west":90},{"south":21,"east":111,"north":30,"west":90},{"south":9,"east":129,"north":24,"west":111},{"south":24,"east":120,"north":30,"west":111},{"south":24,"east":129,"north":30,"west":120},{"south":9,"east":150,"north":30,"west":129},{"south":9,"east":69,"north":30,"west":51},{"south":9,"east":90,"north":30,"west":69},{"south":-90,"east":51,"north":9,"west":-30},{"south":-90,"east":111,"north":9,"west":51},{"south":-90,"east":160,"north":-18,"west":111},{"south":-18,"east":160,"north":9,"west":111},{"south":-90,"east":-90,"north":-42,"west":160},{"south":-42,"east":-90,"north":9,"west":160},{"south":-9,"east":-42,"north":9,"west":-90},{"south":-90,"east":-63,"north":-9,"west":-90},{"south":-21,"east":-42,"north":-9,"west":-63},{"south":-90,"east":-42,"north":-21,"west":-63},{"south":-90,"east":-30,"north":9,"west":-42},{"south":9,"east":-117,"north":33,"west":-126},{"south":9,"east":-102,"north":30,"west":-117},{"south":9,"east":-90,"north":27,"west":-102},{"south":24,"east":-84,"north":30,"west":-90},{"south":9,"east":-69,"north":18,"west":-90},{"south":18,"east":-69,"north":24,"west":-90},{"south":36,"east":18,"north":42,"west":6},{"south":36,"east":30,"north":42,"west":18},{"south":9,"east":6,"north":39,"west":-9},{"south":9,"east":30,"north":36,"west":6},{"south":9,"east":51,"north":42,"west":30},{"south":24,"east":-69,"north":39,"west":-75},{"south":9,"east":-33,"north":30,"west":-69},{"south":30,"east":-33,"north":60,"west":-69},{"south":9,"east":-9,"north":30,"west":-33},{"south":30,"east":-9,"north":60,"west":-33}],"version":"adsbexchange backend"}');
     get_receiver_defer = $.Deferred().resolve(data);
     test_chunk_defer = $.Deferred().reject();
@@ -416,6 +419,46 @@ function get_history_item(i) {
     }
     deferHistory.push(request);
 }
+
+function getCookie(cname) {
+  var name = cname + "=";
+  var decodedCookie = decodeURIComponent(document.cookie);
+  var ca = decodedCookie.split(';');
+  for(var i = 0; i <ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+
+function globeRateUpdate() {
+    if (adsbexchange) {
+        const cookieExp = getCookie('adsbx_sid').split('_')[0];
+        const ts = new Date().getTime();
+        if (!cookieExp || cookieExp < ts + 3600*1000)
+            setCookie('adsbx_sid', ((ts + 2*86400*1000) + '_' + Math.random().toString(36).substring(2, 15)), 2);
+    }
+    $.ajax({url:'/globeRates.json', cache: false, dataType: 'json', }).done(function(data) {
+        if (data.simload != null)
+            globeSimLoad = data.simload;
+        if (data.refresh != null)
+            RefreshInterval = data.refresh;
+    });
+}
+globeRateUpdate();
 
 const toggles = {};
 

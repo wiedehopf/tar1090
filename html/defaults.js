@@ -288,7 +288,6 @@ let enableDWD = true;
 let lastLeg = true;
 
 let hideButtons = false;
-let adsbexchange = false;
 
 let askLocation = false; // requires https for geolocation
 

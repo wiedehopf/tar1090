@@ -64,7 +64,6 @@ let globeIndexNow = {};
 let globeIndexDist = {};
 let globeIndexSpecialLookup = {};
 let globeTilesViewCount = 0;
-let globeSimLoad = 6;
 let globeTableLimitBase = 80;
 let globeTableLimit = 80;
 let fetchCounter = 0;
@@ -1270,7 +1269,6 @@ function clearIntervalTimers() {
 function setIntervalTimers() {
     if ((adsbexchange || dynGlobeRate) && !uuid) {
         timers.globeRateUpdate = setInterval(globeRateUpdate, 180000);
-        globeRateUpdate();
     }
 
     timers.checkMove = setInterval(checkMovement, 50);
@@ -6084,44 +6082,6 @@ function updateMessageRate(data) {
     } else {
         MessageRate = null;
     }
-}
-
-function globeRateUpdate() {
-    if (adsbexchange) {
-        const cookieExp = getCookie('adsbx_sid').split('_')[0];
-        const ts = new Date().getTime();
-        if (!cookieExp || cookieExp < ts + 3600*1000)
-            setCookie('adsbx_sid', ((ts + 2*86400*1000) + '_' + Math.random().toString(36).substring(2, 15)), 2);
-    }
-    $.ajax({url:'/globeRates.json', cache:false, dataType: 'json', }).done(function(data) {
-        if (data.simload != null)
-            globeSimLoad = data.simload;
-        if (data.refresh != null)
-            RefreshInterval = data.refresh;
-    });
-}
-
-function getCookie(cname) {
-  var name = cname + "=";
-  var decodedCookie = decodeURIComponent(document.cookie);
-  var ca = decodedCookie.split(';');
-  for(var i = 0; i <ca.length; i++) {
-    var c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
-}
-
-function setCookie(cname, cvalue, exdays) {
-    var d = new Date();
-    d.setTime(d.getTime() + (exdays*24*60*60*1000));
-    var expires = "expires="+ d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
 
 function isDarkModeEnabled() {

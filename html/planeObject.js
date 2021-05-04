@@ -732,12 +732,13 @@ PlaneObject.prototype.updateIcon = function() {
     if ( enableLabels && (!multiSelect || (multiSelect && this.selected)) &&
         (
             (ZoomLvl >= labelZoom && this.altitude != "ground")
-            || (ZoomLvl >= labelZoomGround-2 && this.speed > 5 && !this.fakeHex)
-            || ZoomLvl >= labelZoomGround
+            || (ZoomLvl >= labelZoomGround - 2 && this.speed > 5 && !this.fakeHex)
+            || (ZoomLvl >= labelZoomGround + 0 && !this.fakeHex)
+            || (ZoomLvl >= labelZoomGround + 1)
             || (this.selected && !SelectedAllPlanes)
         )
     ) {
-        let callsign;
+        let callsign = "";
         if (this.flight && this.flight.trim())
             callsign =  NBSP + this.flight.trim() + NBSP;
         else if (this.registration)
@@ -1308,10 +1309,12 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     }
     // don't expire callsigns
     if (flight != null) {
-        this.flight = `${flight}`;
-    }
-    if (this.flight && this.flight.trim()) {
-        this.name = this.flight.trim();
+        if (flight == "@@@@@@@@") {
+            this.flight = null;
+        } else {
+            this.flight = `${flight}`;
+        }
+        this.name = this.flight.trim() || 'n/a';
     }
 
     if (mlat && noMLAT) {
@@ -2194,10 +2197,12 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
         }
 
         if (data.flight != null) {
-            this.flight = `${data.flight}`;
-        }
-        if (this.flight && this.flight.trim()) {
-            this.name = this.flight.trim();
+            if (data.flight == "@@@@@@@@") {
+                this.flight = null;
+            } else {
+                this.flight = `${data.flight}`;
+            }
+            this.name = this.flight.trim() || 'n/a';
         }
 
         this.addrtype = (data.type == null) ? null : `${data.type}`;
