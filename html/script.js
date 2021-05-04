@@ -6112,6 +6112,7 @@ function handleVisibilityChange() {
     // tab is no longer hidden
     if (!tabHidden && prevHidden) {
 
+        globeRateUpdate();
         clearIntervalTimers();
         setIntervalTimers();
 

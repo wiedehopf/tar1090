@@ -446,17 +446,20 @@ function setCookie(cname, cvalue, exdays) {
 
 function globeRateUpdate() {
     if (adsbexchange) {
+        dynGlobeRate = true;
         const cookieExp = getCookie('adsbx_sid').split('_')[0];
         const ts = new Date().getTime();
         if (!cookieExp || cookieExp < ts + 3600*1000)
             setCookie('adsbx_sid', ((ts + 2*86400*1000) + '_' + Math.random().toString(36).substring(2, 15)), 2);
     }
-    $.ajax({url:'/globeRates.json', cache: false, dataType: 'json', }).done(function(data) {
-        if (data.simload != null)
-            globeSimLoad = data.simload;
-        if (data.refresh != null)
-            RefreshInterval = data.refresh;
-    });
+    if (dynGlobeRate) {
+        $.ajax({url:'/globeRates.json', cache: false, dataType: 'json', }).done(function(data) {
+            if (data.simload != null)
+                globeSimLoad = data.simload;
+            if (data.refresh != null)
+                RefreshInterval = data.refresh;
+        });
+    }
 }
 globeRateUpdate();
 
