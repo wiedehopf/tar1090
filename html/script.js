@@ -192,10 +192,11 @@ function processAircraft(ac, init, uat) {
 
     // Call the function update
     if (globeIndex) {
-        if (!onlyMilitary || plane.military)
+        if (!onlyMilitary || plane.military || (ac.dbFlags && ac.dbFlags & 1)) {
             plane.updateData(now, last, ac, init);
-        else
+        } else {
             plane.last_message_time = now - ac.seen;
+        }
         return;
     }
     // don't use data if the position is more than 1 second older than the position we have
