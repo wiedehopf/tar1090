@@ -1298,7 +1298,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
             this.name ='n/a';
         } else {
             this.flight = `${flight}`;
-            this.name = this.flight.trim();
+            this.name = this.flight.trim() || 'n/a';
         }
     }
 
@@ -2187,7 +2187,7 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
                 this.name ='n/a';
             } else {
                 this.flight = `${data.flight}`;
-                this.name = this.flight.trim();
+                this.name = this.flight.trim() || 'n/a';
             }
         }
 
