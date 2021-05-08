@@ -2567,16 +2567,16 @@ function refreshSelected() {
 
         switch (selected.sil) {
             case 0:
-                silDesc = "&gt; 1×10<sup>-3</sup>";
+                silDesc = "&gt; 1e-3";
                 break;
             case 1:
-                silDesc = "≤ 1×10<sup>-3</sup>";
+                silDesc = "≤ 1e-3";
                 break;
             case 2:
-                silDesc = "≤ 1×10<sup>-5</sup>";
+                silDesc = "≤ 1e-5";
                 break;
             case 3:
-                silDesc = "≤ 1×10<sup>-7</sup>";
+                silDesc = "≤ 1e-7";
                 break;
             default:
                 silDesc = "n/a";

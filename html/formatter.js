@@ -277,23 +277,23 @@ function format_data_source(source) {
 function format_nac_p (value) {
 	switch (value) {
 		case 0:
-			return "EPU ≥ 18.52 km";
+			return "EPU ≥ 18.5 km";
 		case 1:
-			return "EPU < 18.52 km";
+			return "EPU < 18.5 km";
 		case 2:
-			return "EPU < 7.408 km";
+			return "EPU < 7.4 km";
 		case 3:
-			return "EPU < 3.704 km";
+			return "EPU < 3.7 km";
 		case 4:
-			return "EPU < 1852 m";
+			return "EPU < 1.8 km";
 		case 5:
 			return "EPU < 926 m";
 		case 6:
-			return "EPU < 555.6 m";
+			return "EPU < 555 m";
 		case 7:
-			return "EPU < 185.2 m";
+			return "EPU < 185 m";
 		case 8:
-			return "EPU < 92.6 m";
+			return "EPU < 92 m";
 		case 9:
 			return "EPU < 30 m";
 		case 10:
@@ -309,7 +309,7 @@ function format_nac_p (value) {
 function format_nac_v (value) {
 	switch (value) {
 		case 0:
-			return "Unknown or  10 m/s";
+			return "≥ 10 m/s";
 		case 1:
 			return "< 10 m/s";
 		case 2:
