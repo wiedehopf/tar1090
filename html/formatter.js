@@ -527,6 +527,14 @@ function wqi(data) {
             case 12: ac.type = 'mode_ac';          break;
             default: ac.type = 'unknown';
         }
+        const type4 = ac.type.slice(0, 4);
+        if (type4 == 'adsb') {
+            ac.version = ac.adsb_version;
+        } else if (type4 == 'adsr') {
+            ac.version = ac.adsr_version;
+        } else if (type4 == 'tisb') {
+            ac.version = ac.tisb_version;
+        }
 
         data.aircraft.push(ac);
     }
