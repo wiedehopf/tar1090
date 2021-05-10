@@ -4580,7 +4580,7 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
         let upper = query.toUpperCase();
         if (regCache) {
             if (regCache[upper]) {
-                selectPlaneByHex(regCache[upper].toLowerCase(), {follow: true});
+                selectPlaneByHex(regCache[upper].toLowerCase(), {noDeselect: true, follow: true});
                 return;
             }
         } else {
@@ -4593,7 +4593,7 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
             req.done(function(data) {
                 regCache = data;
                 if (regCache[this.upper]) {
-                    selectPlaneByHex(regCache[this.upper].toLowerCase(), {follow: true});
+                    selectPlaneByHex(regCache[this.upper].toLowerCase(), {noDeselect: true, follow: true});
                     return;
                 }
             });
@@ -4618,13 +4618,13 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
             results[i].updateTick(true);
         }
     } else if (results.length == 1) {
-        selectPlaneByHex(results[0].icao, {follow: true});
+        selectPlaneByHex(results[0].icao, {noDeselect: true, follow: true});
         console.log("query selected: " + query);
     } else {
         console.log("No match found for query: " + query);
         if (globeIndex && query.toLowerCase().match(/~?[a-f,0-9]{6}/)) {
             console.log("maybe it's an icao, let's try to fetch the history for it!");
-            selectPlaneByHex(query, {follow: true})
+            selectPlaneByHex(query, {noDeselect: true, follow: true})
         }
     }
 }
@@ -4919,7 +4919,7 @@ function toggleShowTrace() {
         const hex = SelectedPlane.icao;
         SelectedPlane = null;
         showTraceExit = true;
-        selectPlaneByHex(hex, {follow: true, zoom: ZoomLvl,});
+        selectPlaneByHex(hex, {noDeselect: true, follow: true, zoom: ZoomLvl,});
     }
 
     jQuery('#history_collapse').toggle();
