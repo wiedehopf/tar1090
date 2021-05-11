@@ -40,7 +40,7 @@ function PlaneObject(icao) {
     this.wtc = null;
 
 
-    this.regLoaded = false;
+    this.regLoaded = this.registration != null;
     // request metadata
     this.checkForDB();
 
