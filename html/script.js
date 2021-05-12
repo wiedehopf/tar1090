@@ -2190,7 +2190,7 @@ function refreshPhoto(selected) {
     }
     let urlTail;
     let param;
-    if (!selected.regLoaded) {
+    if (!selected.dbinfoLoaded) {
         displaySil();
         return;
     } else if (selected.registration != null && selected.registration.match(/^[0-9]{0,2}\+?[0-9]{0,2}$/)) {
@@ -2282,7 +2282,7 @@ function refreshSelected() {
         jQuery('#anon_mlat_info').addClass('hidden');
         jQuery('#reg_info').removeClass('hidden');
     }
-    let checkReg = selected.registration + ' ' + selected.regLoaded;
+    let checkReg = selected.registration + ' ' + selected.dbinfoLoaded;
     if (checkReg != selReg) {
         selReg = checkReg;
         if (selected.registration) {

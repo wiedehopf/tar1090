@@ -39,8 +39,7 @@ function PlaneObject(icao) {
     this.typeLong = null;
     this.wtc = null;
 
-
-    this.regLoaded = this.registration != null;
+    this.dbinfoLoaded = false;
     // request metadata
     this.checkForDB();
 
@@ -2032,11 +2031,8 @@ PlaneObject.prototype.getAircraftData = function() {
     let req = dbLoad(this.icao);
 
     req.done(function(data) {
-        if (this.regLoaded) {
-            return;
-        }
         //console.log('fromDB');
-        this.regLoaded = true;
+        this.dbinfoLoaded = true;
         if (data == null) {
             //console.log(this.icao + ': Not found in database!');
             return;
@@ -2078,10 +2074,12 @@ PlaneObject.prototype.getAircraftData = function() {
     }.bind(this));
 
     req.fail(function(jqXHR,textStatus,errorThrown) {
-        if (textStatus == 'timeout')
+        if (textStatus == 'timeout') {
             this.getAircraftData();
-        else
+        } else {
             console.log(this.icao + ': Database load error: ' + textStatus + ' at URL: ' + jqXHR.url);
+            this.dbinfoLoaded = true;
+        }
     }.bind(this));
 };
 
@@ -2403,35 +2401,34 @@ PlaneObject.prototype.setTypeData = function() {
 };
 
 PlaneObject.prototype.checkForDB = function(t) {
-    if (!(t && (t.r || t.t)) && !this.regLoaded && (!dbServer || showTrace || (!globeIndex && this.selected) || replay)) {
+    if (t) {
+
+        if (t.desc) this.typeLong = `${t.desc}`;
+        if (t.r) this.registration = `${t.r}`;
+
+        if (t.ownOp) this.ownOp = `${t.ownOp}`;
+        if (t.year) this.year = `${t.year}`;
+
+        if (t.t) {
+            this.icaoType = `${t.t}`;
+            this.setTypeData();
+        }
+        if (t.dbFlags) {
+            this.military = t.dbFlags & 1;
+            this.interesting = t.dbFlags & 2;
+            this.pia = t.dbFlags & 4;
+            this.ladd = t.dbFlags & 8;
+            if (this.pia)
+                this.registration = null;
+        }
+        if (t.r || t.t) {
+            //console.log('fromTrace');
+            this.dbinfoLoaded = true;
+        }
+    }
+    if (!this.dbinfoLoaded && (!dbServer || showTrace || (dbServer && !globeIndex && this.selected) || replay)) {
         this.getAircraftData();
         return;
-    }
-    if (!t) {
-        return;
-    }
-
-    if (t.desc) this.typeLong = `${t.desc}`;
-    if (t.r) this.registration = `${t.r}`;
-
-    if (t.ownOp) this.ownOp = `${t.ownOp}`;
-    if (t.year) this.year = `${t.year}`;
-
-    if (t.t) {
-        this.icaoType = `${t.t}`;
-        this.setTypeData();
-    }
-    if (t.dbFlags) {
-        this.military = t.dbFlags & 1;
-        this.interesting = t.dbFlags & 2;
-        this.pia = t.dbFlags & 4;
-        this.ladd = t.dbFlags & 8;
-        if (this.pia)
-            this.registration = null;
-    }
-    if (t.r || t.t) {
-        //console.log('fromTrace');
-        this.regLoaded = true;
     }
     this.dataChanged();
 };
