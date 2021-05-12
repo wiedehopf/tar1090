@@ -2046,10 +2046,6 @@ PlaneObject.prototype.getAircraftData = function() {
         //console.log(this.icao + ': loaded!');
         // format [r:0, t:1, f:2]
 
-        if (data[0]) {
-            this.registration = `${data[0]}`;
-        }
-
         if (data[1]) {
             this.icaoType = `${data[1]}`;
             this.setTypeData();
@@ -2066,6 +2062,10 @@ PlaneObject.prototype.getAircraftData = function() {
             this.ladd = (data[2][3] == '1');
             if (this.pia)
                 this.registration = null;
+        }
+
+        if (data[0]) {
+            this.registration = `${data[0]}`;
         }
 
         this.dataChanged();
@@ -2404,7 +2404,6 @@ PlaneObject.prototype.checkForDB = function(t) {
     if (t) {
 
         if (t.desc) this.typeLong = `${t.desc}`;
-        if (t.r) this.registration = `${t.r}`;
 
         if (t.ownOp) this.ownOp = `${t.ownOp}`;
         if (t.year) this.year = `${t.year}`;
@@ -2421,6 +2420,9 @@ PlaneObject.prototype.checkForDB = function(t) {
             if (this.pia)
                 this.registration = null;
         }
+
+        if (t.r) this.registration = `${t.r}`;
+
         if (t.r || t.t) {
             //console.log('fromTrace');
             this.dbinfoLoaded = true;
