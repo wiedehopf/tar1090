@@ -52,7 +52,7 @@ function createBaseLayers() {
              //'hosted by <a href="https://adsbexchange.com/">adsbexchange.com</a> '
             "attributions" : '© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>  contributors.',
             attributionsCollapsible: false,
-            maxZoom: 15,
+            maxZoom: 16,
         }),
         name: 'osm_adsbx',
         title: 'OpenStreetMap ADSBx',
@@ -226,7 +226,7 @@ function createBaseLayers() {
             "url" : "https://map.adsbexchange.com/mapproxy/tiles/1.0.0/openaip/ul_grid/{z}/{x}/{y}.png",
             "attributions" : "openAIP.net",
             attributionsCollapsible: false,
-            maxZoom: 11,
+            maxZoom: 14,
         }),
         name: 'openaip',
         title: 'openAIP TMS',
