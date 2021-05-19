@@ -226,7 +226,7 @@ function createBaseLayers() {
             "url" : "https://map.adsbexchange.com/mapproxy/tiles/1.0.0/openaip/ul_grid/{z}/{x}/{y}.png",
             "attributions" : "openAIP.net",
             attributionsCollapsible: false,
-            maxZoom: 14,
+            maxZoom: 12,
         }),
         name: 'openaip',
         title: 'openAIP TMS',
@@ -234,6 +234,7 @@ function createBaseLayers() {
         opacity: 0.7,
         visible: false,
         zIndex: 99,
+        maxZoom: 13,
     }));
 
     if (tfrs) {
