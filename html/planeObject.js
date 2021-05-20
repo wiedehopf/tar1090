@@ -2032,6 +2032,8 @@ PlaneObject.prototype.getAircraftData = function() {
 
     req.done(function(data) {
         //console.log('fromDB');
+        if (this.dbinfoLoaded)
+            return;
         this.dbinfoLoaded = true;
         if (data == null) {
             //console.log(this.icao + ': Not found in database!');
