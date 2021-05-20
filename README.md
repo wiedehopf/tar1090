@@ -386,6 +386,16 @@ for i in *; do if [ -f "../conf-available/$i" ]; then sudo ln -s -f "../conf-ava
 After that rerun the install script.
 If you still have history loading issues, get back to me via the github issues or the various forums i frequent.
 
+## readsb wiedehopf fork --heatmap feature:
+
+/var/globe_history needs to be a directory writeable by the user readsb.
+`sudo mkdir /var/globe_history` and `sudo chown readsb /var/globe_history` are useful for that.
+
+Add readsb options:
+```
+--heatmap-dir /var/readsb_history --heatmap 30
+```
+
 ## heatmap in conjunction with readsb wiedehopf fork --heatmap feature:
 
 First parameter after /tar1090 in the URL mandatory, rest are optional
