@@ -5459,7 +5459,7 @@ function getTrace(newPlane, hex, options) {
     let req2 = null;
 
     options.plane = newPlane;
-    options.defer = $.Deferred();
+    options.defer = jQuery.Deferred();
 
     let fake1 = false;
 
@@ -5469,21 +5469,21 @@ function getTrace(newPlane, hex, options) {
             options: options,
         });
     } else {
-        options.defer.resolve(newPlane);
+        options.defer.resolve(options);
         fake1 = true;
     }
 
     if (!fake1) {
         req1.done(function(data) {
-            let plane = data.plane || this.options.plane;
+            const options = this.options;
+            const plane = options.plane;
             plane.recentTrace = data;
             if (!showTrace) {
                 plane.processTrace();
                 if (options.follow)
                     toggleFollow(true);
             }
-            let defer = data.defer || this.options.defer;
-            defer.resolve(plane);
+            options.defer.resolve(options);
             if (options.onlyRecent && options.list) {
                 newPlane.updateLines();
                 getTrace(null, null, options);
@@ -5500,9 +5500,11 @@ function getTrace(newPlane, hex, options) {
         options.req2 = req2;
 
         req2.done(function(data) {
-            let plane = this.options.plane;
+            const options = this.options;
+            const plane = options.plane;
             plane.fullTrace = data;
-            this.options.defer.done(function(plane) {
+            options.defer.done(function(options) {
+                const plane = options.plane;
                 if (showTrace) {
                     legShift(0, plane);
                 } else {
@@ -5517,7 +5519,8 @@ function getTrace(newPlane, hex, options) {
             }
         });
         req2.fail(function() {
-            let plane = this.options.plane;
+            const options = this.options;
+            const plane = options.plane;
             if (showTrace)
                 legShift(0, plane);
             else
