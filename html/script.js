@@ -28,6 +28,7 @@ let Planes        = {};
 let PlanesOrdered = [];
 let PlaneFilter   = {};
 let SelectedPlane = null;
+let sp = null;
 let SelPlanes = [];
 let SelectedAllPlanes = false;
 let HighlightedPlane = null;
@@ -3219,7 +3220,7 @@ function deselect(plane) {
     if (index > -1)
         SelPlanes.splice(index, 1);
     if (plane == SelectedPlane) {
-        SelectedPlane = null;
+        sp = SelectedPlane = null;
         refreshSelected();
     }
 
@@ -3234,7 +3235,7 @@ function select(plane, options) {
     if (!SelPlanes.includes(plane))
         SelPlanes.push(plane);
 
-    SelectedPlane = plane;
+    sp = SelectedPlane = plane;
     refreshSelected();
     plane.updateTick('redraw');
 
@@ -4917,7 +4918,7 @@ function toggleShowTrace() {
         //shareLink = string;
         updateAddressBar();
         const hex = SelectedPlane.icao;
-        SelectedPlane = null;
+        sp = SelectedPlane = null;
         showTraceExit = true;
         selectPlaneByHex(hex, {noDeselect: true, follow: true, zoom: ZoomLvl,});
     }
@@ -4954,10 +4955,9 @@ function legShift(offset, plane) {
     let legStart = null;
     let legEnd = null;
     let count = 0;
-    let timeZero = plane.fullTrace.timestamp;
 
     for (let i = 1; i < trace.length; i++) {
-        let timestamp = timeZero + trace[i][0];
+        let timestamp = trace[i][0];
         if (traceOpts.startStamp != null && timestamp < traceOpts.startStamp) {
             continue;
         }
@@ -4989,7 +4989,7 @@ function legShift(offset, plane) {
 
     count = 0;
     for (let i = legStart + 1; i < trace.length; i++) {
-        let timestamp = timeZero + trace[i][0];
+        let timestamp = trace[i][0];
         if (traceOpts.endStamp != null && timestamp > traceOpts.endStamp)
             break;
         if (trace[i][6] & 2) {
@@ -5477,7 +5477,7 @@ function getTrace(newPlane, hex, options) {
         req1.done(function(data) {
             const options = this.options;
             const plane = options.plane;
-            plane.recentTrace = data;
+            plane.recentTrace = normalizeTraceStamps(data);
             if (!showTrace) {
                 plane.processTrace();
                 if (options.follow)
@@ -5502,7 +5502,7 @@ function getTrace(newPlane, hex, options) {
         req2.done(function(data) {
             const options = this.options;
             const plane = options.plane;
-            plane.fullTrace = data;
+            plane.fullTrace = normalizeTraceStamps(data);
             options.defer.done(function(options) {
                 const plane = options.plane;
                 if (showTrace) {

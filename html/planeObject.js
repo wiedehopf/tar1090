@@ -855,6 +855,13 @@ PlaneObject.prototype.updateIcon = function() {
 
 PlaneObject.prototype.processTrace = function() {
 
+    if (this.fullTrace && !this.fullTrace.trace) {
+        this.fullTrace = null;
+    }
+    if (this.recentTrace && !this.recentTrace.trace) {
+        this.recentTrace = null;
+    }
+
     if (!now)
         now = new Date().getTime()/1000;
 
@@ -865,7 +872,7 @@ PlaneObject.prototype.processTrace = function() {
     let legEnd = traceOpts.legEnd;
     this.checkLayers();
     let trace = null;
-    let timeZero, _now, _last = 0;
+    let _now, _last = 0;
     this.history_size = 0;
     let points_in_trace = 0;
     let pointsRecent = 0;
@@ -885,7 +892,16 @@ PlaneObject.prototype.processTrace = function() {
 
     let onlyRecent = 0;
 
-    if (lastLeg && !showTrace && this.recentTrace && this.recentTrace.trace) {
+    if (this.fullTrace && this.recentTrace) {
+        let t1 = this.fullTrace.trace;
+        let t2 = this.recentTrace.trace;
+        let end1 = t1[t1.length-1][0];
+        let start2 = t2[0][0];
+        if (end1 < start2)
+            console.log("Insufficient recent trace overlap!");
+    }
+
+    if (lastLeg && !showTrace && this.recentTrace) {
         trace = this.recentTrace.trace;
         for (let i = trace.length - 1; i >= 0; i--) {
             if (trace[i][6] & 2) {
@@ -895,58 +911,31 @@ PlaneObject.prototype.processTrace = function() {
         }
     }
 
-    if (this.fullTrace && this.fullTrace.trace
-        && this.recentTrace && this.recentTrace.trace) {
-        let t1 = this.fullTrace.trace;
-        let t2 = this.recentTrace.trace;
-        let end1 = this.fullTrace.timestamp + t1[t1.length-1][0];
-        let start2 = this.recentTrace.timestamp + t2[0][0];
-        if (end1 < start2)
-            console.log("Insufficient recent trace overlap!");
+    if (this.recentTrace && (onlyRecent || !this.fullTrace)) {
+        trace = this.recentTrace.trace;
+    } else if (this.fullTrace) {
+        trace = this.fullTrace.trace;
+        if (this.recentTrace) {
+            const recent = this.recentTrace.trace;
+            for (let i = 0; i < recent.length; i++) {
+                const entry = recent[i];
+                if (entry[0] > trace[trace.length - 1][0]) {
+                    trace.push(entry);
+                }
+            }
+        }
     }
 
-    let stop = 0;
-    for (let j = 0; j < 2 && !stop; j++) {
-        let start;
-        let end;
-        let nextTraceStart = null;
-        if (j == 0) {
-            if (!this.fullTrace || !this.fullTrace.trace)
-                continue;
-            if (onlyRecent)
-                continue;
-            timeZero = this.fullTrace.timestamp;
+    if (trace) {
+        let stop = 0;
+        let start = 0;
+        let end = trace.length
+        _last = trace[0][0] - 1;
 
-            // after fullTrace, recentTrace will be processed, set to null if no recentTrace
-            nextTraceStart = this.recentTrace ? this.recentTrace.timestamp + this.recentTrace.trace[0][0] : null;
-
-            _last = timeZero - 1;
-
-            trace = this.fullTrace.trace;
-
-            start = 0;
-            end = trace.length;
-            if (legStart != null)
-                start = legStart;
-            if (legEnd != null)
-                end = legEnd;
-        } else {
-            if (legEnd != null)
-                continue;
-            if (!this.recentTrace || !this.recentTrace.trace)
-                continue;
-            timeZero = this.recentTrace.timestamp;
-
-            // no next trace to process
-            nextTraceStart = null;
-
-            if (!trace) {
-                _last = timeZero - 1;
-            }
-            trace = this.recentTrace.trace;
-            start = 0;
-            end = trace.length;
-        }
+        if (legStart != null)
+            start = legStart;
+        if (legEnd != null)
+            end = legEnd;
 
         if (lastLeg && !showTrace) {
             for (let i = trace.length - 1; i >= 0; i--) {
@@ -959,14 +948,9 @@ PlaneObject.prototype.processTrace = function() {
 
         for (let i = start; i < end; i++) {
             const state = trace[i];
-            const timestamp = timeZero + state[0];
+            const timestamp = state[0];
             let stale = state[6] & 1;
             const leg_marker = state[6] & 2;
-
-            // data from recentTrace are preferred due to leg marking internals
-            // stop processing when we have the timestamp in recent
-            if (nextTraceStart && timestamp >= nextTraceStart)
-                break;
 
             _now = timestamp;
             if (_now <= _last)
@@ -2494,4 +2478,14 @@ PlaneObject.prototype.setProjection = function(arg) {
         this.olPoint.setCoordinates(proj);
     }
 }
-
+function normalizeTraceStamps(data) {
+    if (!data || !data.trace) {
+        console.log('normalizeTraceStamps: trace empty?')
+        return null;
+    }
+    let trace = data.trace;
+    for (let i = 0; i < trace.length; i++) {
+        trace[i][0] += data.timestamp;
+    }
+    return data;
+}
