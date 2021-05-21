@@ -4443,7 +4443,7 @@ function processURLParams(){
         }
     }
 
-    icaos = valid.reverse();
+    icaos = valid;
 
     if (usp.has('showTrace')) {
         let date = setTraceDate({string: usp.get('showTrace')});
@@ -4498,7 +4498,6 @@ function processURLParams(){
             icao = icaos[i];
             if (Planes[icao] || globeIndex) {
                 console.log('Selected ICAO id: '+ icao);
-                let selectOptions = {follow: follow, noDeselect: true};
                 if (traceDate != null) {
                     let newPlane = Planes[icao] || new PlaneObject(icao);
                     newPlane.last_message_time = NaN;
@@ -4510,7 +4509,7 @@ function processURLParams(){
                 } else {
                     if (!zoom)
                         zoom = 7;
-                    selectPlaneByHex(icao, selectOptions)
+                    selectPlaneByHex(icao, {follow: follow, noDeselect: true})
                 }
             } else {
                 console.log('ICAO id not found: ' + icao);
@@ -5057,9 +5056,8 @@ function shiftTrace(offset) {
     //jQuery('#trace_date').text('UTC day:\n' + traceDateString);
     jQuery("#histDatePicker").datepicker('setDate', traceDateString);
 
-    let selectOptions = {noDeselect: true, zoom: ZoomLvl};
     for (let i in SelPlanes) {
-        selectPlaneByHex(SelPlanes[i].icao, selectOptions);
+        selectPlaneByHex(SelPlanes[i].icao, {noDeselect: true, zoom: ZoomLvl});
     }
 
     updateAddressBar();
@@ -5490,50 +5488,50 @@ function getTrace(newPlane, hex, options) {
             }
         });
     }
-    if (!options.onlyRecent) {
+    if (options.onlyRecent)
+        return newPlane;
 
-        req2 = $.ajax({ url: `${URL2}`,
-            dataType: 'json',
-            options: options,
-        });
+    req2 = $.ajax({ url: `${URL2}`,
+        dataType: 'json',
+        options: options,
+    });
 
-        options.req2 = req2;
+    options.req2 = req2;
 
-        req2.done(function(data) {
-            const options = this.options;
+    req2.done(function(data) {
+        const options = this.options;
+        const plane = options.plane;
+        plane.fullTrace = normalizeTraceStamps(data);
+        options.defer.done(function(options) {
             const plane = options.plane;
-            plane.fullTrace = normalizeTraceStamps(data);
-            options.defer.done(function(options) {
-                const plane = options.plane;
-                if (showTrace) {
-                    legShift(0, plane);
-                } else {
-                    plane.processTrace();
-                    if (options.follow)
-                        toggleFollow(true);
-                }
-            });
-            if (options.list) {
-                newPlane.updateLines();
-                getTrace(null, null, options);
-            }
-        });
-        req2.fail(function() {
-            const options = this.options;
-            const plane = options.plane;
-            if (showTrace)
+            if (showTrace) {
                 legShift(0, plane);
-            else
-                plane.processTrace();
-
-            if (options.list) {
-                getTrace(null, null, options);
             } else {
-                plane.getAircraftData();
-                refreshSelected();
+                plane.processTrace();
+                if (options.follow)
+                    toggleFollow(true);
             }
         });
-    }
+        if (options.list) {
+            newPlane.updateLines();
+            getTrace(null, null, options);
+        }
+    });
+    req2.fail(function() {
+        const options = this.options;
+        const plane = options.plane;
+        if (showTrace)
+            legShift(0, plane);
+        else
+            plane.processTrace();
+
+        if (options.list) {
+            getTrace(null, null, options);
+        } else {
+            plane.getAircraftData();
+            refreshSelected();
+        }
+    });
 
     return newPlane;
 }
