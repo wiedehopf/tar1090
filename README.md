@@ -261,7 +261,7 @@ Don't forget to restart the nginx service.
 #### 2: integrate the outline into your local tar1090 display
 - For use on the tar1090 map the altitude will be set by changing the download URL
 - Near the top of the page, an URL for the panorama is mentioned.
-- Replace teh XXXXXX in the following command with the ID contained in your panorama URL
+- Replace teh XXXXXX in the following command with the ID contained in your panorama URL, then run the command on your pi:
 ```
 sudo wget -nv -O /usr/local/share/tar1090/html/upintheair.json "http://www.heywhatsthat.com/api/upintheair.json?id=XXXXXXXX&refraction=0.25&alts=12192"
 ```
