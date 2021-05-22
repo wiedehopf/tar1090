@@ -949,6 +949,7 @@ let TypeDesignatorIcons = {
     'A124': ['b707', 1.18],
 
     'SLCH': ['strato', 1],
+    'WHK2': ['strato', 0.9],
 
     'C130': ['c130', 1.07],
     'C30J': ['c130', 1.07],
