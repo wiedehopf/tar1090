@@ -683,7 +683,7 @@ function initPage() {
         replay = {
             ts: ts,
             ival: 60 * 1000,
-            speed: 40,
+            speed: 30,
         };
     }
 
@@ -4327,6 +4327,13 @@ function refresh() {
     refreshZoom = getZoom();
     refreshCenter = getCenter();
 
+    if (replay) {
+        for (let i in SelPlanes) {
+            const plane = SelPlanes[i];
+            plane.processTrace();
+        }
+    }
+
     //console.time("refreshTable");
     TAR.planeMan.refresh();
     //console.timeEnd("refreshTable");
@@ -5900,7 +5907,7 @@ function play(index) {
     last = now;
     now = replay.pointsU[i + 2] / 1000 + replay.pointsU[i + 1] * 4294967.296;
 
-    traceOpts.endStamp = now;
+    traceOpts.endStamp = now + replay.ival;
 
     replay.ival = (replay.pointsU[i + 3] & 65535) / 1000;
 

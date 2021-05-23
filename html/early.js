@@ -327,6 +327,8 @@ if (uuid != null) {
         dbServer = (data.dbServer && data.globeIndexGrid != null) ? true : false;
 
         if (heatmap || replay) {
+            if (replay && data.globeIndexGrid != null)
+                globeIndex = 1;
             HistoryChunks = false;
             nHistoryItems = 0;
             get_history();

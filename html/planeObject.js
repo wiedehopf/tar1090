@@ -865,7 +865,7 @@ PlaneObject.prototype.processTrace = function() {
     if (!now)
         now = new Date().getTime()/1000;
 
-    if (showTrace)
+    if (showTrace || replay)
         this.setNull();
 
     let legStart = traceOpts.legStart;
@@ -890,8 +890,6 @@ PlaneObject.prototype.processTrace = function() {
 
     this.position = null;
 
-    let onlyRecent = 0;
-
     if (this.fullTrace && this.recentTrace) {
         let t1 = this.fullTrace.trace;
         let t2 = this.recentTrace.trace;
@@ -901,17 +899,7 @@ PlaneObject.prototype.processTrace = function() {
             console.log("Insufficient recent trace overlap!");
     }
 
-    if (lastLeg && !showTrace && this.recentTrace) {
-        trace = this.recentTrace.trace;
-        for (let i = trace.length - 1; i >= 0; i--) {
-            if (trace[i][6] & 2) {
-                onlyRecent = 1;
-                break;
-            }
-        }
-    }
-
-    if (this.recentTrace && (onlyRecent || !this.fullTrace)) {
+    if (this.recentTrace && !this.fullTrace) {
         trace = this.recentTrace.trace;
     } else if (this.fullTrace) {
         trace = this.fullTrace.trace;
@@ -927,9 +915,8 @@ PlaneObject.prototype.processTrace = function() {
     }
 
     if (trace) {
-        let stop = 0;
         let start = 0;
-        let end = trace.length
+        let end = trace.length;
         _last = trace[0][0] - 1;
 
         if (legStart != null)
@@ -937,8 +924,23 @@ PlaneObject.prototype.processTrace = function() {
         if (legEnd != null)
             end = legEnd;
 
+        if (traceOpts.startStamp != null || traceOpts.endStamp != null) {
+            let startSet = false;
+            for (let i = start; i < end; i++) {
+                const timestamp = trace[i][0];
+
+                if (!startSet && traceOpts.startStamp != null && timestamp <= traceOpts.startStamp) {
+                    startSet = true;
+                    start = i;
+                }
+                if (traceOpts.endStamp != null && timestamp > traceOpts.endStamp) {
+                    end = i;
+                }
+            }
+        }
+
         if (lastLeg && !showTrace) {
-            for (let i = trace.length - 1; i >= 0; i--) {
+            for (let i = end - 1; i >= start; i--) {
                 if (trace[i][6] & 2) {
                     start = i;
                     break;
@@ -946,6 +948,7 @@ PlaneObject.prototype.processTrace = function() {
             }
         }
 
+        //console.log('trace points from/to: ' + trace[start][0] + ' ' + trace[end-1][0]);
         for (let i = start; i < end; i++) {
             const state = trace[i];
             const timestamp = state[0];
@@ -956,10 +959,6 @@ PlaneObject.prototype.processTrace = function() {
             if (_now <= _last)
                 continue;
 
-            if (i == start) {
-                //console.log(timestamp);
-                //console.log(traceOpts.startStamp);
-            }
             if (traceOpts.showTime && timestamp > traceOpts.showTime) {
                 traceOpts.showTimeEnd = timestamp;
                 if (traceOpts.replaySpeed > 0) {
@@ -994,14 +993,8 @@ PlaneObject.prototype.processTrace = function() {
                         traceOpts.showTimeout = setTimeout(gotoTime, traceOpts.animateStepTime);
                     }
                 }
-                stop = 1;
                 break;
             }
-
-            if (traceOpts.startStamp != null && timestamp < traceOpts.startStamp)
-                continue;
-            if (traceOpts.endStamp != null && timestamp > traceOpts.endStamp)
-                break;
 
             if (now - timestamp < 3 * 60 * 60) {
                 pointsRecent++;
@@ -1029,11 +1022,17 @@ PlaneObject.prototype.processTrace = function() {
                 this.updateTrack(_now, _last, true, stale);
             }
             _last = _now;
+
+            // go only 1 step beyond now for replay, end of replay.ival is obeyed via traceOpts.endStamp
+            if (replay && timestamp >= now) {
+                //console.log(timestamp - now);
+                break;
+            }
         }
     }
 
     for (let i = 0; i < this.trace.length; i++) {
-        if (showTrace)
+        if (showTrace || replay)
             break;
         const state = this.trace[i];
         if (_now >= state.now)
@@ -1060,7 +1059,7 @@ PlaneObject.prototype.processTrace = function() {
         tempPlane.prev_position = this.position;
     }
 
-    if (tempPlane.position_time >= this.position_time && !showTrace) {
+    if (tempPlane.position_time >= this.position_time && !showTrace && !replay) {
         //console.log('reusing current aircraft data after processing trace.');
         let newSegs = this.track_linesegs;
         let newSize = this.history_size;
