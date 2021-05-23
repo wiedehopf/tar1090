@@ -672,6 +672,7 @@ function initPage() {
         let numbers = (usp.get('r') || "").split('-');
         let ts = new Date();
         ts.setUTCHours(ts.getUTCHours() - 1);
+        ts.setUTCMinutes(Math.floor(ts.getUTCMinutes() / 30) * 30);
         if (numbers.length == 5) {
             ts.setUTCFullYear(numbers[0]);
             ts.setUTCMonth(numbers[1] - 1);

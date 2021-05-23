@@ -861,6 +861,8 @@ PlaneObject.prototype.processTrace = function() {
     if (this.recentTrace && !this.recentTrace.trace) {
         this.recentTrace = null;
     }
+    if (replay && !this.fullTrace)
+        return;
 
     if (!now)
         now = new Date().getTime()/1000;
@@ -1483,7 +1485,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
         icaoType = 'V22F';
     if (icaoType == null && this.squawk == 7777)
         icaoType = 'TWR';
-    let baseMarkerKey = (this.category ? this.category : "A0") + "_"
+    let baseMarkerKey = this.category + "_"
         + this.typeDescription + "_" + this.wtc  + "_" + icaoType + '_' + (this.altitude == "ground") + eastbound;
 
     if (!this.shape || this.baseMarkerKey != baseMarkerKey) {

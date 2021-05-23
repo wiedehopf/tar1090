@@ -776,6 +776,7 @@ let TypeDesignatorIcons = {
     'C68A': ['jet_swept', 0.92], // 14t
     'YK40': ['jet_swept', 0.94], // 16t
     'C750': ['jet_swept', 0.94], // 17t
+    'F2TH': ['jet_swept', 0.94], // 16t
     'FA50': ['jet_swept', 0.94], // 18t
     'CL30': ['jet_swept', 0.92], // 14t
     'CL35': ['jet_swept', 0.92],
@@ -855,6 +856,7 @@ let TypeDesignatorIcons = {
     'G150': ['jet_nonswept', 1.03], // 11t
     'H25A': ['jet_nonswept', 1.03], // 11t
     'H25B': ['jet_nonswept', 1.03], // 11t
+    'H25C': ['jet_nonswept', 1.03], // 11t
     'H25C': ['jet_nonswept', 1.03], // 11t
 
     'PRM1': ['jet_nonswept', 0.96],
