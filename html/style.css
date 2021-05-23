@@ -815,3 +815,66 @@ input{
 #histDatePicker{
   background: var(--BGCOLOR1);
 }
+
+#replayBar {
+  background: var(--BGCOLOR1);
+
+  position: absolute;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 20px 40px 20px;
+  width: 600px;
+  top:70%;
+  left:30%;
+  gap: 1px 1px;
+  padding: 3px;
+  justify-items: center;
+  align-items: center;
+  grid-template-areas:
+    ". datehint timehint timehint timezonehint speedhint ."
+    "play date hours minutes timezone speed findhistory"
+    ". . showingdate showingdate showingdate . ."
+    ". . . . . . .";
+}
+#replayPlay{
+  grid-area: play;
+}
+#replayDatepicker{
+  grid-area: date;
+}
+#hourSelect{
+  grid-area: hours;
+}
+#minuteSelect{
+  grid-area: minutes;
+}
+#speedSelect{
+  grid-area: speed;
+}
+#findHistory{
+   grid-area: findhistory;
+}
+#replayBar{
+  grid-area: showingdate;
+}
+#timeHint{
+   grid-area: timehint;
+}
+#dateHint{
+  grid-area: datehint;
+}
+#speedSelect{
+  grid-area: speed;
+}
+#speedHint{
+  grid-area: speedhint;
+}
+#replayShowing{
+    grid-area: showingdate;
+    justify-self:start;
+}
+#timeZone{
+  grid-area:timezone;
+}
+
+

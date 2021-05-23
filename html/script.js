@@ -110,6 +110,13 @@ let noRegOnly = false;
 let triggerRefresh = 0;
 let firstDraw = true;
 let darkerColors = false;
+let playingReplay = null;
+let playing = null;
+let showingDate=null;
+let hourAgo=null;
+let showingReplayBar=true;
+let replayDateLoad = null;
+let replayDate=null;
 
 let infoBlockWidth = baseInfoBlockWidth;
 
@@ -812,7 +819,51 @@ function initPage() {
             jQuery("#histDatePicker").attr("disabled", true);
         },
     });
+  
+      jQuery("#replayDatepicker").datepicker({
+       maxDate: '+1d',
+       dateFormat: "yy-mm-dd",
+       autoSize: true,
+       onClose: !onMobile ? null : function(dateText, inst){
+           $("replayDatepicker").attr("disabled", false);
+       },
+       beforeShow: !onMobile ? null : function(input, inst){
+           $("replayDatepicker").attr("disabled", true);
+       },
+   });
+     jQuery("#replayPlay").click(function(){
 
+       if (playing){
+         //if playing, pause.
+         playReplay(false);
+
+       } else {
+         //if paused, play. 
+
+         loadReplay(showingDate);
+         playReplay(true);
+
+       }
+     });
+     jQuery("#findHistory").click(function(){
+      console.log("replayDatepicker: "+replayDatepicker.value);
+      console.log("hourSelect: "+hourSelect.value);
+      console.log("minuteSelect: "+minuteSelect.value);
+      console.log("speedSelect: "+speedSelect.value);
+      replayDate= new Date(replayDatepicker.value);
+      replayDate.setUTCHours(Number(hourSelect.value));
+      replayDate.setUTCMinutes(Number(minuteSelect.value));
+      replay = {
+          ts: replayDate,
+          ival: 60 * 1000,
+          speed: Number(speedSelect.value),
+      };
+      playReplay(true);
+      loadReplay(replayDate);
+
+
+
+});
 
     jQuery("#leg_prev").click(function() {legShift(-1)});
     jQuery("#leg_next").click(function() {legShift(1)});
@@ -1539,6 +1590,7 @@ function webglInit() {
 
 // Initalizes the map and starts up our timers to call various functions
 function initMap() {
+    
     if (globeIndex) {
         jQuery('#dump1090_total_history_td').hide();
         jQuery('#dump1090_message_rate_td').hide();
@@ -1555,6 +1607,8 @@ function initMap() {
     else if (localStorage['MapType_tar1090']) {
         MapType_tar1090 = localStorage['MapType_tar1090'];
     }
+    
+    showReplayBar();
 
     // Initialize OpenLayers
 
@@ -5871,18 +5925,27 @@ function initReplay(data) {
 
 function updateReplayInterface(date) {
     console.log(date);
+    $("#replayShowing").html("Showing: " + date.toUTCString());
 }
 
 function play(index) {
     if (!replay)
         return;
+        
+      if(!playing){
+        return;
+      }
 
     clearTimeout(refreshId);
     refreshId = setTimeout(play, replay.ival / replay.speed * 1000);
 
     if (showTrace)
         return;
+  
+        
 
+        playReplay(true);
+    
     if (index == null) {
         index = replay.index + 1;
     }
@@ -5894,11 +5957,11 @@ function play(index) {
     replay.index = index;
 
     //console.log(replay.ts);
-    let date = new Date(replay.ts);
-    date.setUTCMinutes(replay.halfHour * 30 + replay.ival * replay.index / 60);
-    date.setUTCSeconds(0);
-
-    updateReplayInterface(date);
+    
+    showingDate = new Date(replay.ts);
+    showingDate.setUTCMinutes(replay.halfHour * 30 + replay.ival * replay.index / 60);
+    showingDate.setUTCSeconds(0);
+    updateReplayInterface(showingDate);
 
     let points = replay.points;
     let i = replay.slices[index];
@@ -6097,6 +6160,37 @@ function updateMessageRate(data) {
         MessageRate = null;
     }
 }
+function playReplay(state){
+  if(!replay){
+    return;
+  }
+  if (state){
+    playing=true;
+    $("#replayPlay").html("Pause");
+  } else {
+    playing=false;
+    $("#replayPlay").html("Play");
+  }
+};
+
+function showReplayBar(){
+  if (showingReplayBar){
+    // If you can see it, hide it
+    $("#replayBar").hide();
+    showingReplayBar=false;
+  } else {
+    // If it's hidden, show it and change the currently selected date to be an hour ago
+    $("#replayBar").show();
+    hourAgo=new Date();
+    hourAgo.setUTCHours(hourAgo.getUTCHours() - 1);
+    hourAgo.setUTCMinutes((parseInt((hourAgo.getUTCMinutes() + 7.5)/15) * 15) % 60);
+    $("#hourSelect").val(hourAgo.getUTCHours()).change();
+    $("#minuteSelect").val(hourAgo.getUTCMinutes()).change();
+    $("#replayDatepicker").datepicker('setDate', hourAgo);
+
+    showingReplayBar=true;
+  }
+};
 
 function isDarkModeEnabled() {
     return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
