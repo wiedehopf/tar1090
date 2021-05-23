@@ -682,12 +682,8 @@ function initPage() {
             ts.setUTCMinutes(numbers[4]);
         }
 
-        replay = {
-            playing: true,
-            ts: ts,
-            ival: 60 * 1000,
-            speed: 30,
-        };
+        replay = replayDefaults(ts);
+        replay.playing = true;
     }
 
     if (onMobile)
@@ -839,17 +835,17 @@ function initPage() {
     });
     jQuery("#findHistory").click(function(){
         console.log("replayDatepicker: "+replayDatepicker.value);
-        console.log("hourSelect: "+hourSelect.value);
-        console.log("minuteSelect: "+minuteSelect.value);
-        console.log("speedSelect: "+speedSelect.value);
+        console.log("hourSelect: "+ replay.hours);
+        console.log("minuteSelect: "+ replay.minutes);
+        console.log("speedSelect: "+ replay.speed);
         let date = new Date(replayDatepicker.value);
-        date.setUTCHours(Number(hourSelect.value));
-        date.setUTCMinutes(Number(minuteSelect.value));
+        date.setUTCHours(Number(replay.hours));
+        date.setUTCMinutes(Number(replay.minutes));
 
         replay.ival = 60 * 1000;
-        replay.speed = Number(speedSelect.value);
 
         playReplay(true);
+        replayClear();
         loadReplay(date);
     });
 
@@ -5848,12 +5844,27 @@ function currentExtent(factor) {
     return myExtent(OLMap.getView().calculateExtent(size));
 }
 
+function replayDefaults(ts) {
+    return {
+        playing: false,
+        ts: ts,
+        ival: 60 * 1000,
+        speed: 30,
+        hours: ts.getUTCHours(),
+        minutes: ts.getUTCMinutes(),
+    };
+}
+
+function replayClear() {
+    reaper(true);
+    refreshFilter();
+}
+
 function loadReplay(ts) {
     let epochms = new Date().getTime();
     if (epochms - ts.getTime() < 30 * 60 * 1000) {
-        reaper(true);
-        refreshFilter();
         ts = new Date(epochms - 60 * 60 * 1000);
+        replayClear();
     }
     replay.ts = ts;
     let xhrOverride = new XMLHttpRequest();
@@ -5953,8 +5964,7 @@ function play(index) {
             return;
         } else {
             index = 0;
-            reaper(true);
-            refreshFilter();
+            replayClear();
         }
     }
     replay.index = index;
@@ -6177,6 +6187,11 @@ function playReplay(state){
     }
 };
 
+function replaySetTimeHint() {
+    jQuery('#timeHint').text('Time: '
+        + replay.hours.toString().padStart(2, '0') + ':'
+        + replay.minutes.toString().padStart(2, '0'));
+}
 function showReplayBar(){
     console.log('showReplayBar()');
     if (showingReplayBar){
@@ -6194,20 +6209,46 @@ function showReplayBar(){
         let ts = new Date();
         ts.setUTCHours(ts.getUTCHours() - 1);
         if (!replay) {
-            replay = {
-                playing: false,
-                ts: ts,
-                ival: 60 * 1000,
-                speed: 30,
-            };
+            replay = replayDefaults(ts);
+            replay.playing = false;
         }
         ts = new Date(replay.ts);
         ts.setUTCMinutes((parseInt((ts.getUTCMinutes() + 7.5)/15) * 15) % 60);
-        jQuery("#hourSelect").val(ts.getUTCHours()).change();
-        jQuery("#minuteSelect").val(ts.getUTCMinutes()).change();
         jQuery("#replayDatepicker").datepicker('setDate', ts);
 
         showingReplayBar = true;
+        jQuery('#hourSelect').slider({
+            value: ts.getUTCHours(),
+            step: 1,
+            min: 0,
+            max: 23,
+            slide: function(event, ui) {
+                replay.hours = ui.value;
+                replaySetTimeHint();
+            },
+        });
+        jQuery('#minuteSelect').slider({
+            value: ts.getUTCMinutes(),
+            step: 1,
+            min: 0,
+            max: 59,
+            slide: function(event, ui) {
+                replay.minutes = ui.value;
+                replaySetTimeHint();
+            },
+        });
+        replaySetTimeHint();
+        jQuery('#speedSelect').slider({
+            value: replay.speed,
+            step: 1,
+            min: 1,
+            max: 60,
+            slide: function(event, ui) {
+                replay.speed = ui.value;
+                jQuery('#speedHint').text('Speed: ' + replay.speed + 'x');
+            },
+        });
+        jQuery('#speedHint').text('Speed: ' + replay.speed + 'x');
     }
 };
 

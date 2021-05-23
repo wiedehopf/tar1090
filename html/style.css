@@ -824,15 +824,15 @@ input{
   position: absolute;
   height: 10px;
   bottom: 0%;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 3fr 1fr 1fr 1fr;
   grid-template-rows: 20px 40px 20px;
   justify-items: center;
   align-items: center;
   grid-template-areas:
-    ". datehint timehint timehint timezonehint speedhint ."
-    "play date hours minutes timezone speed findhistory"
-    ". . showingdate showingdate showingdate . ."
-    ". . . . . . .";
+    ". datehint timehint hours speedhint ."
+    "play date . minutes speed findhistory"
+    ". . showingdate showingdate showingdate ."
+    ". . . . . .";
 }
 #replayPlay{
   grid-area: play;
@@ -841,13 +841,16 @@ input{
   grid-area: date;
 }
 #hourSelect{
+  width: 80%;
   grid-area: hours;
 }
 #minuteSelect{
+  width: 80%;
   grid-area: minutes;
 }
 #speedSelect{
   grid-area: speed;
+  width: 80%;
 }
 #findHistory{
    grid-area: findhistory;
@@ -861,18 +864,12 @@ input{
 #dateHint{
   grid-area: datehint;
 }
-#speedSelect{
-  grid-area: speed;
-}
 #speedHint{
   grid-area: speedhint;
 }
 #replayShowing{
     grid-area: showingdate;
     justify-self:start;
-}
-#timeZone{
-  grid-area:timezone;
 }
 
 
