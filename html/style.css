@@ -818,16 +818,14 @@ input{
 
 #replayBar {
   background: var(--BGCOLOR1);
-
+  display: none;
+  width: flex;
+  padding-right: 30px;
   position: absolute;
-  display: grid;
+  height: 10px;
+  bottom: 0%;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-template-rows: 20px 40px 20px;
-  width: 600px;
-  top:70%;
-  left:30%;
-  gap: 1px 1px;
-  padding: 3px;
   justify-items: center;
   align-items: center;
   grid-template-areas:

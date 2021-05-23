@@ -138,8 +138,8 @@
               </tr>
               <tr id=photo_container>
                 <td>
-                    <div title="Aircraft Photo"id="selected_photo"></div>
-                    <div id="copyrightInfo"></div>
+                  <div title="Aircraft Photo"id="selected_photo"></div>
+                  <div id="copyrightInfo"></div>
                 </td>
               </tr>
               <tr>
@@ -213,7 +213,7 @@
             <div class="rSpacer">
             </div>
             <div>
-                <input id=histDatePicker class="identSmall datepicker" value="Pick a date">
+              <input id=histDatePicker class="identSmall datepicker" value="Pick a date">
             </div>
             <div class="rSpacer">
             </div>
@@ -660,6 +660,7 @@
 
       <div id="map_container">
         <div id="map_canvas"></div>
+
         <div id="settings_infoblock">
           <div id="settings_close" class="settingsCloseBox"></div>
           <div class="settingsOptionContainer">
@@ -739,65 +740,64 @@
             </div>
             <div id="R" title="Follow a (R)andom plane!" class="button inActiveButton" onclick="followRandomPlane();"><span class="buttonText">R</span></div>
             <div id="F" title="(F)ollow" class="button inActiveButton" onclick="toggleFollow();"><span class="buttonText">F</span></div>
-            <div id="RP" title="Replay" class="button inActiveButton" onclick="showReplayBar();"><span class="buttonText">RP</span></div>
+          <!--< div id="RP" title="Replay" class="button inActiveButton" onclick="showReplayBar();"><span class="buttonText">RP</span></div>-->
           </div>
         </div>
         <div id="altitude_chart" class="ol-unselectable ol-control altitudeFeet">
           <button id="altitude_chart_button"></button>
         </div>
-      </div> <!-- map_container-->
-      
         <div id="replayBar">
 
-            <p id="replayShowing">Showing:</p>
-              <button id="replayPlay">Play</button>
-              <p id="dateHint" class="hintText">Date:</p>
-              <input type="text" class="datepicker" id="replayDatepicker">
-              <p id="timeHint" class="hintText">Time:</p>
-              <select id="hourSelect">
-                <option>0</option>
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-                <option>6</option>
-                <option>7</option>
-                <option>8</option>
-                <option>9</option>
-                <option>10</option>
-                <option>11</option>
-                <option>12</option>
-                <option>13</option>
-                <option>14</option>
-                <option>15</option>
-                <option>16</option>
-                <option>17</option>
-                <option>18</option>
-                <option>19</option>
-                <option>20</option>
-                <option>21</option>
-                <option>22</option>
-                <option>23</option>  
-              </select> 
-              <select id="minuteSelect">
-                <option>00</option>
-                <option>15</option>
-                <option>30</option>
-                <option>45</option>
-              </select>
-              <p id="timeZone">UTC</p>
-              <p id="speedHint" class="hintText">Speed:</p>
-                <select id="speedSelect">
-                  <option>10</option>
-                  <option>20</option>
-                  <option>30</option>
-                  <option>40</option>
-                </select>
-              <button id="findHistory">Find History</button>
-        </div> 
-        
-        
+          <p id="replayShowing">Showing:</p>
+          <button id="replayPlay">Play</button>
+          <p id="dateHint" class="hintText">Date:</p>
+          <input type="text" class="datepicker" id="replayDatepicker">
+          <p id="timeHint" class="hintText">Time:</p>
+          <select id="hourSelect">
+            <option>0</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+            <option>9</option>
+            <option>10</option>
+            <option>11</option>
+            <option>12</option>
+            <option>13</option>
+            <option>14</option>
+            <option>15</option>
+            <option>16</option>
+            <option>17</option>
+            <option>18</option>
+            <option>19</option>
+            <option>20</option>
+            <option>21</option>
+            <option>22</option>
+            <option>23</option>  
+          </select> 
+          <select id="minuteSelect">
+            <option>00</option>
+            <option>15</option>
+            <option>30</option>
+            <option>45</option>
+          </select>
+          <p id="timeZone">UTC</p>
+          <p id="speedHint" class="hintText">Speed:</p>
+          <select id="speedSelect">
+            <option>10</option>
+            <option>20</option>
+            <option>30</option>
+            <option>40</option>
+          </select>
+          <button id="findHistory">Find History</button>
+        </div> <!-- replayBar -->
+
+      </div> <!-- map_container-->
+
       <div id="sidebar_container" style="display: none">
         <div id="splitter" class="ui-resizable-handle ui-resizable-w"></div>
         <div id="sidebar_canvas">
@@ -820,7 +820,7 @@
                   <div class="rSpacer">
                   </div>
                   <div>
-                      <span class="largeText"><a class="largeText" target="_blank" href="https://adsbexchange.com/faq/">FAQ</a>&emsp;&emsp;<a class="largeText" target="_blank" href="https://adsbexchange.com/map-help/">Map Help</a></span>
+                    <span class="largeText"><a class="largeText" target="_blank" href="https://adsbexchange.com/faq/">FAQ</a>&emsp;&emsp;<a class="largeText" target="_blank" href="https://adsbexchange.com/map-help/">Map Help</a></span>
                   </div>
                   <div class="rSpacer">
                   </div>
@@ -877,88 +877,88 @@
                 </table>
               </div>
               <div id="tab-filters">
-                  <table cellpadding="0" cellspacing="0">
-                      <tr>
-                          <td>
-                              <form id="altitude_filter_form">
-                                  <div class="infoBlockTitleText">Filter by altitude:</div>
-                                  <input id="altitude_filter_min" name="minAltitude" type="text" class="altitudeFilterInput" maxlength="5">
-                                  <label for="minAltitude" class="altitudeUnit"></label>
-                                  <span> to </span>
-                                  <input id="altitude_filter_max" name="maxAltitude" type="text" class="altitudeFilterInput" maxlength="5">
-                                  <label for="maxAltitude" class="altitudeUnit"></label>
-                                  <button class="formButton" type="submit">Filter</button>
-                                  <button class="formButton" id="altitude_filter_reset_button">Reset</button>
-                              </form>
-                          </td>
-                      </tr>
+                <table cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td>
+                      <form id="altitude_filter_form">
+                        <div class="infoBlockTitleText">Filter by altitude:</div>
+                        <input id="altitude_filter_min" name="minAltitude" type="text" class="altitudeFilterInput" maxlength="5">
+                        <label for="minAltitude" class="altitudeUnit"></label>
+                        <span> to </span>
+                        <input id="altitude_filter_max" name="maxAltitude" type="text" class="altitudeFilterInput" maxlength="5">
+                        <label for="maxAltitude" class="altitudeUnit"></label>
+                        <button class="formButton" type="submit">Filter</button>
+                        <button class="formButton" id="altitude_filter_reset_button">Reset</button>
+                      </form>
+                    </td>
+                  </tr>
 
-                      <tr>
-                          <td>
-                              <form id="callsign_filter_form">
-                                  <div class="infoBlockTitleText">Filter by callsign or squawk:</div>
-                                  <input id="callsign_filter" name="callsign" type="text" class="searchInput" maxlength="1024">
-                                  <button class="formButton" type="submit">Filter</button>
-                                  <button class="formButton" id="callsign_filter_reset_button">Reset</button>
-                              </form>
-                          </td>
-                      </tr>
+                  <tr>
+                    <td>
+                      <form id="callsign_filter_form">
+                        <div class="infoBlockTitleText">Filter by callsign or squawk:</div>
+                        <input id="callsign_filter" name="callsign" type="text" class="searchInput" maxlength="1024">
+                        <button class="formButton" type="submit">Filter</button>
+                        <button class="formButton" id="callsign_filter_reset_button">Reset</button>
+                      </form>
+                    </td>
+                  </tr>
 
-                      <tr>
-                          <td>
-                              <form id="type_filter_form">
-                                  <div title="ICAO type code (A320, B738, etc.)" class="infoBlockTitleText">Filter by type code:</div>
-                                  <input id="type_filter" name="type" type="text" class="searchInput" maxlength="1024">
-                                  <button class="formButton" type="submit">Filter</button>
-                                  <button class="formButton" id="type_filter_reset_button">Reset</button>
-                              </form>
-                          </td>
-                      </tr>
+                  <tr>
+                    <td>
+                      <form id="type_filter_form">
+                        <div title="ICAO type code (A320, B738, etc.)" class="infoBlockTitleText">Filter by type code:</div>
+                        <input id="type_filter" name="type" type="text" class="searchInput" maxlength="1024">
+                        <button class="formButton" type="submit">Filter</button>
+                        <button class="formButton" id="type_filter_reset_button">Reset</button>
+                      </form>
+                    </td>
+                  </tr>
 
-                      <tr>
-                          <td>
-                              <form id="description_filter_form">
-                                  <div title="ICAO type description (L/S/H Landplane/Seaplane/Helicopter 1/2/3/4 Number of P/T/J Reciprocating/Turboprop/Jet Engines" class="infoBlockTitleText">Filter by type description:</div>
-                                  <input id="description_filter" name="description" type="text" class="searchInput" maxlength="1024">
-                                  <button class="formButton" type="submit">Filter</button>
-                                  <button class="formButton" id="description_filter_reset_button">Reset</button>
-                              </form>
-                          </td>
-                      </tr>
+                  <tr>
+                    <td>
+                      <form id="description_filter_form">
+                        <div title="ICAO type description (L/S/H Landplane/Seaplane/Helicopter 1/2/3/4 Number of P/T/J Reciprocating/Turboprop/Jet Engines" class="infoBlockTitleText">Filter by type description:</div>
+                        <input id="description_filter" name="description" type="text" class="searchInput" maxlength="1024">
+                        <button class="formButton" type="submit">Filter</button>
+                        <button class="formButton" id="description_filter_reset_button">Reset</button>
+                      </form>
+                    </td>
+                  </tr>
 
-                      <tr>
-                          <td>
-                              <form id="icao_filter_form">
-                                  <div class="infoBlockTitleText">Filter by ICAO hex id:</div>
-                                  <input id="icao_filter" name="description" type="text" class="searchInput" maxlength="1024">
-                                  <button class="formButton" type="submit">Filter</button>
-                                  <button class="formButton" id="icao_filter_reset_button">Reset</button>
-                              </form>
-                          </td>
-                      </tr>
+                  <tr>
+                    <td>
+                      <form id="icao_filter_form">
+                        <div class="infoBlockTitleText">Filter by ICAO hex id:</div>
+                        <input id="icao_filter" name="description" type="text" class="searchInput" maxlength="1024">
+                        <button class="formButton" type="submit">Filter</button>
+                        <button class="formButton" id="icao_filter_reset_button">Reset</button>
+                      </form>
+                    </td>
+                  </tr>
 
-                      <tr>
-                          <td>
-                              <form id="source_filter_form">
-                                  <div class="infoBlockTitleText">Filter by source:</div>
-                                  <ol id="sourceFilter" class="buttonFilter"></ol>
-                                  <button class="formButton" type="submit">Filter</button>
-                                  <button class="formButton" id="source_filter_reset_button">Reset</button>
-                              </form>
-                          </td>
-                      </tr>
+                  <tr>
+                    <td>
+                      <form id="source_filter_form">
+                        <div class="infoBlockTitleText">Filter by source:</div>
+                        <ol id="sourceFilter" class="buttonFilter"></ol>
+                        <button class="formButton" type="submit">Filter</button>
+                        <button class="formButton" id="source_filter_reset_button">Reset</button>
+                      </form>
+                    </td>
+                  </tr>
 
-                      <tr>
-                          <td>
-                              <form id="flag_filter_form">
-                                  <div class="infoBlockTitleText">Filter by DB flags:</div>
-                                  <ol id="flagFilter" class="buttonFilter"></ol>
-                                  <button class="formButton" type="submit">Filter</button>
-                                  <button class="formButton" id="flag_filter_reset_button">Reset</button>
-                              </form>
-                          </td>
-                      </tr>
-                  </table>
+                  <tr>
+                    <td>
+                      <form id="flag_filter_form">
+                        <div class="infoBlockTitleText">Filter by DB flags:</div>
+                        <ol id="flagFilter" class="buttonFilter"></ol>
+                        <button class="formButton" type="submit">Filter</button>
+                        <button class="formButton" id="flag_filter_reset_button">Reset</button>
+                      </form>
+                    </td>
+                  </tr>
+                </table>
               </div>
               <div id="tab-columns">
                 <ul id="sortableColumns"></ul>
