@@ -927,16 +927,15 @@ PlaneObject.prototype.processTrace = function() {
             end = legEnd;
 
         if (traceOpts.startStamp != null || traceOpts.endStamp != null) {
-            let startSet = false;
             for (let i = start; i < end; i++) {
                 const timestamp = trace[i][0];
 
-                if (!startSet && traceOpts.startStamp != null && timestamp <= traceOpts.startStamp) {
-                    startSet = true;
-                    start = i;
+                if (traceOpts.startStamp != null && timestamp < traceOpts.startStamp) {
+                    start = i + 1;
                 }
                 if (traceOpts.endStamp != null && timestamp > traceOpts.endStamp) {
                     end = i;
+                    break;
                 }
             }
         }
