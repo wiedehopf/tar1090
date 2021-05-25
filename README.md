@@ -276,7 +276,7 @@ sudo wget -nv -O /usr/local/share/tar1090/html/upintheair.json "http://www.heywh
 - Add /?pTracks to the usual /tar1090 URL, should look like this: http://192.168.x.yy/tar1090/?pTracks
 - Shows the last 8 hours of traces you have seen, gives a nice visual representation of your coverage / range
 - Can be filtered by altitude with the altitude filter
-- Configure a longer duration than 8 hours via the [configuration](#configuration-optional)
+- Configure a longer duration than 8 hours via the [configuration](#configuration-part-1-history-interval-and-number-of-snapshots--ptracks-duration-optional)
 
 ## 0800-DESTROY-SD-CARD
 
