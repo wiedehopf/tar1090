@@ -255,7 +255,11 @@ Don't forget to restart the nginx service.
 ## heywhatsthat.com range outline:
 
 #### 1: create panorama and look at your outline on the heywhatsthat page
-- Create a panorama on http://www.heywhatsthat.com/
+- Visit http://www.heywhatsthat.com/
+- Click "New Panorama"
+- Set the location for your antenna precisely
+- Enter a title / submit the request and wait for it to finish
+- Scroll down to the map, look at the buttons in the top right of the map
 - Use the "up in the air" button on the map, reduce map magnification and set altitudes to view the outlines for your location
 
 #### 2: integrate the outline into your local tar1090 display
