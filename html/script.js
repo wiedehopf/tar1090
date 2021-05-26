@@ -697,14 +697,17 @@ function initPage() {
         }, 30000);
     }
 
-    if (localStorage['enableLabels'] == 'true'){
+    if (localStorage['enableLabels'] == 'true' || usp.has('enableLabels')) {
         toggleLabels();
     }
-    if (localStorage['extendedLabels']){
+    if (usp.has('extendedLabels')) {
+        extendedLabels = parseInt(usp.getFloat('extendedLabels')) + 2;
+        toggleExtendedLabels();
+    } else if (localStorage['extendedLabels']) {
         extendedLabels = parseInt(localStorage['extendedLabels']) + 2;
         toggleExtendedLabels();
     }
-    if (localStorage['trackLabels'] == "true") {
+    if (localStorage['trackLabels'] == "true" || usp.has('trackLabels')) {
         toggleTrackLabels();
     }
     if (localStorage['tableInView'] == "true") {
