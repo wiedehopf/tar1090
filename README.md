@@ -80,6 +80,9 @@ sudo rm /usr/local/share/tar1090/html/config.js
 ```
 Then run the install script again.
 
+## Home / receiver location:
+
+This is set in the decoder, so readsb or dump1090-fa, if you used one of my scripts to install their readme will have further instructions on how to set the location.
 
 ## Change Log
 
