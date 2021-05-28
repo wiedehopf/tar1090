@@ -257,6 +257,8 @@ Don't forget to restart the nginx service.
 
 ## heywhatsthat.com range outline:
 
+To judge the actual range (/?pTracks, see next chapter), one needs to first know what kind of range is even possible for the receiver location. This depends on obstacles and the curvature of the earth. To get that theoretical range for a location, follow the guide in this chapter.
+
 #### 1: create panorama and look at your outline on the heywhatsthat page
 - Visit http://www.heywhatsthat.com/
 - Click "New Panorama"
