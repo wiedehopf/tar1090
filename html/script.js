@@ -156,7 +156,7 @@ let showingReplayBar = false;
 
 // TAR1090 application object
 let TAR;
-TAR = (function (global, $, TAR) {
+TAR = (function (global, jQuery, TAR) {
     return TAR;
 }(window, jQuery, TAR || {}));
 
@@ -291,7 +291,7 @@ function fetchData(options) {
     //console.time("Starting Fetch");
 
     if (enable_uat) {
-        FetchPendingUAT = $.ajax({ url: 'chunks/978.json',
+        FetchPendingUAT = jQuery.ajax({ url: 'chunks/978.json',
             dataType: 'json' });
 
         FetchPendingUAT.done(function(data) {
@@ -351,7 +351,7 @@ function fetchData(options) {
         //console.log(ac_url[i]);
         let req;
         if (binCraft) {
-            req = $.ajax({
+            req = jQuery.ajax({
                 url: `${ac_url[i]}`, method: 'GET',
                 xhr: function() {
                     let xhrOverride = new XMLHttpRequest();
@@ -361,7 +361,7 @@ function fetchData(options) {
                 urlIndex: i,
             });
         } else {
-            req = $.ajax({ url: `${ac_url[i]}`, dataType: 'json', urlIndex: i });
+            req = jQuery.ajax({ url: `${ac_url[i]}`, dataType: 'json', urlIndex: i });
         }
         FetchPending.push(req);
 
@@ -463,7 +463,7 @@ function initialize() {
         return;
     }
 
-    $.when(configureReceiver, heatmapDefer).done(function() {
+    jQuery.when(configureReceiver, heatmapDefer).done(function() {
 
         if (receiverJson) {
             if (receiverJson.lat != null) {
@@ -485,7 +485,7 @@ function initialize() {
         // Wait for history item downloads and append them to the buffer
         push_history();
 
-        $.when(historyLoaded).done(function() {
+        jQuery.when(historyLoaded).done(function() {
             startPage();
         });
     });
@@ -1194,7 +1194,7 @@ function push_history() {
 
 function push_history_item(i) {
 
-    $.when(deferHistory[i])
+    jQuery.when(deferHistory[i])
         .done(function(json) {
 
             if (HistoryChunks) {
@@ -1399,7 +1399,7 @@ function startPage() {
 //
 // Utils begin
 //
-(function (global, $, TAR) {
+(function (global, jQuery, TAR) {
     let utils = TAR.utils = TAR.utils || {};
 
     // Make a LineString with 'points'-number points
@@ -2267,7 +2267,7 @@ function refreshPhoto(selected) {
     jQuery('#copyrightInfo').html("<span></span>");
     //console.log(ts/1000 + 'sending psAPI request');
     selected.psAPIresponseTS = ts;
-    let req = $.ajax({
+    let req = jQuery.ajax({
         url: 'https://api.planespotters.net/pub/photos/' + urlTail,
         dataType: 'json',
         plane: selected,
@@ -2723,7 +2723,7 @@ function refreshFeatures() {
 //
 // Planes table begin
 //
-(function (global, $, TAR) {
+(function (global, jQuery, TAR) {
     let planeMan = TAR.planeMan = TAR.planeMan || {};
 
     function compareAlpha(xa,ya) {
@@ -3742,7 +3742,7 @@ function invertMap(evt){
 //
 // Altitude Chart begin
 //
-(function (global, $, TAR) {
+(function (global, jQuery, TAR) {
     let altitudeChart = TAR.altitudeChart = TAR.altitudeChart || {};
 
     function createLegendGradientStops() {
@@ -3768,7 +3768,7 @@ function invertMap(evt){
     function loadLegend() {
         let baseLegend = (DisplayUnits === 'metric') ? 'images/alt_legend_meters.svg' : 'images/alt_legend_feet.svg';
 
-        $.get(baseLegend, function (data) {
+        jQuery.get(baseLegend, function (data) {
             jQuery('#altitude_chart_button').css("background-image", createLegendUrl(data));
         });
     }
@@ -3891,7 +3891,7 @@ function onJump(e) {
         jQuery("#jump_input").blur();
     }
     if (!_airport_coords_cache) {
-        $.getJSON(databaseFolder + "/airport-coords.js")
+        jQuery.getJSON(databaseFolder + "/airport-coords.js")
             .done(function(data) {
                 _airport_coords_cache = data;
                 onJump();
@@ -4148,9 +4148,9 @@ function fetchPfData() {
         return;
     fetchingPf = true;
     for (let i in pf_data) {
-        const req = $.ajax({ url: pf_data[i],
+        const req = jQuery.ajax({ url: pf_data[i],
             dataType: 'json' });
-        $.when(req).done(function(data) {
+        jQuery.when(req).done(function(data) {
             for (let i in PlanesOrdered) {
                 const plane = PlanesOrdered[i];
                 const ac = data.aircraft[plane.icao.toUpperCase()];
@@ -4636,7 +4636,7 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
                 return;
             }
         } else {
-            let req = $.ajax({ url: databaseFolder + "/regIcao.js",
+            let req = jQuery.ajax({ url: databaseFolder + "/regIcao.js",
                 cache: true,
                 timeout: 10000,
                 dataType : 'json',
@@ -5322,7 +5322,7 @@ function drawUpintheair() {
 
     // kick off an ajax request that will add the rings when it's done
     if (!globeIndex && !uuid) {
-        let request = $.ajax({ url: 'upintheair.json',
+        let request = jQuery.ajax({ url: 'upintheair.json',
             cache: true,
             dataType: 'json' });
         request.done(function(data) {
@@ -5514,7 +5514,7 @@ function getTrace(newPlane, hex, options) {
     let fake1 = false;
 
     if (URL1 && !options.onlyFull) {
-        req1 = $.ajax({ url: `${URL1}`,
+        req1 = jQuery.ajax({ url: `${URL1}`,
             dataType: 'json',
             options: options,
         });
@@ -5543,7 +5543,7 @@ function getTrace(newPlane, hex, options) {
     if (options.onlyRecent)
         return newPlane;
 
-    req2 = $.ajax({ url: `${URL2}`,
+    req2 = jQuery.ajax({ url: `${URL2}`,
         dataType: 'json',
         options: options,
     });
@@ -5877,7 +5877,7 @@ function loadReplay(ts) {
     let sDate = sDateString(time);
     let index = 2 * time.getUTCHours() + Math.floor(time.getUTCMinutes() / 30);
 
-    let req = $.ajax({
+    let req = jQuery.ajax({
         url: "globe_history/" + sDate + "/heatmap/" + index.toString().padStart(2, '0') + ".bin.ttf",
         method: 'GET',
         xhr: function() {

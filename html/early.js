@@ -14,8 +14,8 @@ let chunkNames = [];
 let PositionHistoryBuffer = [];
 var	receiverJson;
 let deferHistory = [];
-let historyLoaded = $.Deferred();
-let configureReceiver = $.Deferred();
+let historyLoaded = jQuery.Deferred();
+let configureReceiver = jQuery.Deferred();
 let historyTimeout = 60;
 let globeIndex = 0;
 let globeIndexGrid = 0;
@@ -26,7 +26,7 @@ let dbServer = false;
 let l3harris = false;
 let heatmap = false;
 let heatLoaded = 0;
-let heatmapDefer = $.Deferred();
+let heatmapDefer = jQuery.Deferred();
 let heatChunks = [];
 let heatPoints = [];
 let replay = false;
@@ -211,17 +211,17 @@ if (uuid) {
 } else if (adsbexchange && window.location.pathname == '/') {
     console.log("Using adsbexchange fast-path load!");
     let data = JSON.parse('{"refresh":1600,"history":1,"dbServer":true,"binCraft":true,"globeIndexGrid":3,"globeIndexSpecialTiles":[{"south":60,"east":0,"north":90,"west":-126},{"south":60,"east":150,"north":90,"west":0},{"south":51,"east":-126,"north":90,"west":150},{"south":9,"east":-126,"north":51,"west":150},{"south":51,"east":-69,"north":60,"west":-126},{"south":45,"east":-114,"north":51,"west":-120},{"south":45,"east":-102,"north":51,"west":-114},{"south":45,"east":-90,"north":51,"west":-102},{"south":45,"east":-75,"north":51,"west":-90},{"south":45,"east":-69,"north":51,"west":-75},{"south":42,"east":18,"north":48,"west":12},{"south":42,"east":24,"north":48,"west":18},{"south":48,"east":24,"north":54,"west":18},{"south":54,"east":24,"north":60,"west":12},{"south":54,"east":12,"north":60,"west":3},{"south":54,"east":3,"north":60,"west":-9},{"south":42,"east":0,"north":48,"west":-9},{"south":42,"east":51,"north":51,"west":24},{"south":51,"east":51,"north":60,"west":24},{"south":30,"east":90,"north":60,"west":51},{"south":30,"east":120,"north":60,"west":90},{"south":30,"east":129,"north":39,"west":120},{"south":30,"east":138,"north":39,"west":129},{"south":30,"east":150,"north":39,"west":138},{"south":39,"east":150,"north":60,"west":120},{"south":9,"east":111,"north":21,"west":90},{"south":21,"east":111,"north":30,"west":90},{"south":9,"east":129,"north":24,"west":111},{"south":24,"east":120,"north":30,"west":111},{"south":24,"east":129,"north":30,"west":120},{"south":9,"east":150,"north":30,"west":129},{"south":9,"east":69,"north":30,"west":51},{"south":9,"east":90,"north":30,"west":69},{"south":-90,"east":51,"north":9,"west":-30},{"south":-90,"east":111,"north":9,"west":51},{"south":-90,"east":160,"north":-18,"west":111},{"south":-18,"east":160,"north":9,"west":111},{"south":-90,"east":-90,"north":-42,"west":160},{"south":-42,"east":-90,"north":9,"west":160},{"south":-9,"east":-42,"north":9,"west":-90},{"south":-90,"east":-63,"north":-9,"west":-90},{"south":-21,"east":-42,"north":-9,"west":-63},{"south":-90,"east":-42,"north":-21,"west":-63},{"south":-90,"east":-30,"north":9,"west":-42},{"south":9,"east":-117,"north":33,"west":-126},{"south":9,"east":-102,"north":30,"west":-117},{"south":9,"east":-90,"north":27,"west":-102},{"south":24,"east":-84,"north":30,"west":-90},{"south":9,"east":-69,"north":18,"west":-90},{"south":18,"east":-69,"north":24,"west":-90},{"south":36,"east":18,"north":42,"west":6},{"south":36,"east":30,"north":42,"west":18},{"south":9,"east":6,"north":39,"west":-9},{"south":9,"east":30,"north":36,"west":6},{"south":9,"east":51,"north":42,"west":30},{"south":24,"east":-69,"north":39,"west":-75},{"south":9,"east":-33,"north":30,"west":-69},{"south":30,"east":-33,"north":60,"west":-69},{"south":9,"east":-9,"north":30,"west":-33},{"south":30,"east":-9,"north":60,"west":-33}],"version":"adsbexchange backend"}');
-    get_receiver_defer = $.Deferred().resolve(data);
-    test_chunk_defer = $.Deferred().reject();
+    get_receiver_defer = jQuery.Deferred().resolve(data);
+    test_chunk_defer = jQuery.Deferred().reject();
 } else {
     // get configuration json files, will be used in initialize function
-    get_receiver_defer = $.ajax({
+    get_receiver_defer = jQuery.ajax({
         url: 'data/receiver.json',
         cache: false,
         dataType: 'json',
         timeout: 10000,
     });
-    test_chunk_defer = $.ajax({
+    test_chunk_defer = jQuery.ajax({
         url:'chunks/chunks.json',
         cache: false,
         dataType: 'json',
@@ -229,10 +229,10 @@ if (uuid) {
     });
 }
 
-$.getJSON(databaseFolder + "/icao_aircraft_types.js").done(function(typeLookupData) {
+jQuery.getJSON(databaseFolder + "/icao_aircraft_types.js").done(function(typeLookupData) {
     _aircraft_type_cache = typeLookupData;
 });
-$.getJSON(databaseFolder + "/ranges.js").done(function(ranges) {
+jQuery.getJSON(databaseFolder + "/ranges.js").done(function(ranges) {
     if (!ranges || !ranges.military) {
         console.error("couldn't load milRanges.");
         return;
@@ -270,7 +270,7 @@ if (!heatmap) {
 
         let URL = base + sDate + "/heatmap/" +
             index.toString().padStart(2, '0') + ".bin.ttf";
-        let req = $.ajax({
+        let req = jQuery.ajax({
             url: URL,
             method: 'GET',
             num: i,
@@ -376,14 +376,14 @@ function get_history() {
 
     if (nHistoryItems > 0) {
         nHistoryItems++;
-        let request = $.ajax({ url: 'data/aircraft.json',
+        let request = jQuery.ajax({ url: 'data/aircraft.json',
             timeout: historyTimeout*800,
             cache: false,
             dataType: 'json' });
         deferHistory.push(request);
         if (enable_uat) {
             nHistoryItems++;
-            request = $.ajax({ url: 'chunks/978.json',
+            request = jQuery.ajax({ url: 'chunks/978.json',
                 timeout: historyTimeout*800,
                 cache: false,
                 dataType: 'json' });
@@ -414,13 +414,13 @@ function get_history_item(i) {
     let request;
 
     if (HistoryChunks) {
-        request = $.ajax({ url: 'chunks/' + chunkNames[i],
+        request = jQuery.ajax({ url: 'chunks/' + chunkNames[i],
             timeout: historyTimeout * 1000,
             dataType: 'json'
         });
     } else {
 
-        request = $.ajax({ url: 'data/history_' + i + '.json',
+        request = jQuery.ajax({ url: 'data/history_' + i + '.json',
             timeout: nHistoryItems * 80, // Allow 40 ms load time per history entry
             cache: false,
             dataType: 'json' });
@@ -461,7 +461,7 @@ function globeRateUpdate() {
             setCookie('adsbx_sid', ((ts + 2*86400*1000) + '_' + Math.random().toString(36).substring(2, 15)), 2);
     }
     if (dynGlobeRate) {
-        $.ajax({url:'/globeRates.json', cache: false, dataType: 'json', }).done(function(data) {
+        jQuery.ajax({url:'/globeRates.json', cache: false, dataType: 'json', }).done(function(data) {
             if (data.simload != null)
                 globeSimLoad = data.simload;
             if (data.refresh != null)

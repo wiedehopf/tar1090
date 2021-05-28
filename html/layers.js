@@ -95,7 +95,7 @@ function createBaseLayers() {
             renderMode: 'image',
         });
 
-        $.ajax({
+        jQuery.ajax({
             url: 'osm-liberty/style.json',
             dataType: 'json',
             layer: vtlayer,

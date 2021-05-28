@@ -31,7 +31,7 @@ let _request_cache = {};
 let regCache = null;
 
 function dbLoad(icao) {
-	let defer = $.Deferred();
+	let defer = jQuery.Deferred();
 	if (icao.charAt(0) == '~') {
 		defer.resolve(null);
 		return defer;
@@ -78,7 +78,7 @@ function request_from_db(icao, level, defer) {
 
 function getIcaoAircraftTypeData(aircraftData, defer) {
 	if (_aircraft_type_cache === null) {
-		$.getJSON(databaseFolder + "/icao_aircraft_types.js")
+		jQuery.getJSON(databaseFolder + "/icao_aircraft_types.js")
 			.done(function(typeLookupData) {
 				_aircraft_type_cache = typeLookupData;
 			})
@@ -115,7 +115,7 @@ function db_ajax(bkey) {
 		return _request_cache[bkey];
 	}
 
-	req = _request_cache[bkey] = $.Deferred();
+	req = _request_cache[bkey] = jQuery.Deferred();
 	req.bkey = bkey;
 	// put it in the queue
 	_request_queue.push(req);
@@ -134,7 +134,7 @@ function db_ajax_request_complete() {
 		_request_count++;
 		req = _request_queue.shift();
 		const req_url = databaseFolder + '/' + req.bkey + '.js';
-		ajaxreq = $.ajax({ url: req_url,
+		ajaxreq = jQuery.ajax({ url: req_url,
 			cache: true,
 			timeout: 30000,
 			dataType : 'json' });
