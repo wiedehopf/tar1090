@@ -1330,7 +1330,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     }
     this.messages = data.messages;
 
-    this.rssi = data.rssi;
+    this.rssi = (data.rssi != null && data.rssi > -49.4) ? data.rssi : null;
 
     if (data.baro_rate != null)
         this.baro_rate = data.baro_rate;
