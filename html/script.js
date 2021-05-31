@@ -4895,6 +4895,9 @@ function updateAddressBar() {
                 string += ':' + traceOpts.endSeconds.toString().padStart(2, '0');
             }
         }
+        if (trackLabels) {
+            string += '&trackLabels';
+        }
     }
 
     shareLink = string;
