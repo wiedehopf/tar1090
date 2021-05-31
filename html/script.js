@@ -81,6 +81,7 @@ let flagFilterValues = ['military', 'pia', 'ladd'];
 let showTrace = false;
 let showTraceExit = false;
 let showTraceWasIsolation = false;
+let showTraceTimestamp = null;
 let traceDate = null;
 let traceDateString = null;
 let traceDay = null;
@@ -4511,6 +4512,9 @@ function processURLParams(){
             traceOpts.endMinutes = numbers[1] ? parseInt(numbers[1]) : 0;
             traceOpts.endSeconds = numbers[2] ? parseInt(numbers[2]) : 0;
         }
+        if (date && usp.getFloat('timestamp')) {
+            showTraceTimestamp = usp.getFloat('timestamp');
+        }
     }
 
     const callsign = usp.get('callsign');
@@ -4898,6 +4902,10 @@ function updateAddressBar() {
         if (trackLabels) {
             string += '&trackLabels';
         }
+        if (traceOpts.showTime) {
+            string += '&timestamp=';
+            string += traceOpts.showTime;
+        }
     }
 
     shareLink = string;
@@ -5098,8 +5106,8 @@ function shiftTrace(offset) {
     // reset some traceOpts stuff (important)
     traceOpts.startStamp = null;
     traceOpts.endStamp = null;
-    traceOpts.showTime = null;
     traceOpts.showTimeEnd = null;
+    traceOpts.showTime = null;
 
     jQuery('#leg_sel').text('Loading ...');
     if (!traceDate || offset == "today") {
@@ -5561,6 +5569,9 @@ function getTrace(newPlane, hex, options) {
             const plane = options.plane;
             if (showTrace) {
                 legShift(0, plane);
+                if (!multiSelect) {
+                    gotoTime(showTraceTimestamp);
+                }
             } else {
                 plane.processTrace();
                 if (options.follow)
