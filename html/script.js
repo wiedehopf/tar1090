@@ -1609,10 +1609,13 @@ function initMap() {
         type: 'overlay',
         title: 'Site position and range rings',
         source: StaticFeatures,
-        visible: !adsbexchange,
+        visible: (localStorage['sitePosLayer'] != 'false'),
         zIndex: 100,
         renderOrder: null,
         renderBuffer: renderBuffer,
+    });
+    sitePosLayer.on('change:visible', function() {
+        localStorage['sitePosLayer'] = sitePosLayer.getVisible();
     });
 
     layers.push(sitePosLayer);
@@ -5197,7 +5200,9 @@ function onLocationChange(position) {
     SiteLon = CenterLon = DefaultCenterLon = position.coords.longitude;
 
     SitePosition = [SiteLon, SiteLat];
-    createSiteCircleFeatures();
+    if (sitePosLayer.getVisible()) {
+        createSiteCircleFeatures();
+    }
 
     if (moveMap) {
         OLMap.getView().setCenter(ol.proj.fromLonLat([SiteLon, SiteLat]));
@@ -5216,11 +5221,11 @@ function geoFindMe() {
         if (localStorage['geoFindMeFirstVisit'] == undefined) {
             OLMap.getView().setCenter(ol.proj.fromLonLat([SiteLon, SiteLat]));
             localStorage['geoFindMeFirstVisit'] = 'no';
+            sitePosLayer.setVisible(true);
         }
         initSitePos();
         console.log('Location from browser: '+ SiteLat +', ' + SiteLon);
 
-        sitePosLayer.setVisible(true);
 
         const geoposOptions = {
             enableHighAccuracy: false,
