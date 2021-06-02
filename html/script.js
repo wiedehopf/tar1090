@@ -935,6 +935,18 @@ function initPage() {
     });
 
     new Toggle({
+        key: "SiteCircles",
+        display: "Distance Circles",
+        container: "#settingsRight",
+        init: SiteCircles,
+        setState: function(state) {
+            SiteCircles = state;
+            if (loadFinished)
+                initSitePos();
+        }
+    });
+
+    new Toggle({
         key: "ColoredPlanes",
         display: "Colored Planes",
         container: "#settingsRight",
