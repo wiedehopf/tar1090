@@ -3441,10 +3441,10 @@ function resetMap() {
     // Reset localStorage values and map settings
     localStorage['CenterLat'] = CenterLat
     localStorage['CenterLon'] = CenterLon
-    localStorage['ZoomLvl']   = ZoomLvl = DefaultZoomLvl;
+    //localStorage['ZoomLvl']   = ZoomLvl = DefaultZoomLvl;
 
     // Set and refresh
-    OLMap.getView().setZoom(ZoomLvl);
+    //OLMap.getView().setZoom(ZoomLvl);
     OLMap.getView().setCenter(ol.proj.fromLonLat([CenterLon, CenterLat]));
     OLMap.getView().setRotation(mapOrientation);
 
@@ -5191,33 +5191,56 @@ function setLineWidth() {
     labelStrokeNarrow = new ol.style.Stroke({color: 'rgba(0,0,0,0.7', width: 2.5 * globalScale});
     bgFill = new ol.style.Stroke({color: 'rgba(0,0,0,0.25'});
 }
+function onLocationChange(position) {
+    const moveMap = (Math.abs(SiteLat - CenterLat) < 0.00001 && Math.abs(SiteLon - CenterLon) < 0.00001);
+    SiteLat = CenterLat = DefaultCenterLat = position.coords.latitude;
+    SiteLon = CenterLon = DefaultCenterLon = position.coords.longitude;
+
+    SitePosition = [SiteLon, SiteLat];
+    createSiteCircleFeatures();
+
+    if (moveMap) {
+        OLMap.getView().setCenter(ol.proj.fromLonLat([SiteLon, SiteLat]));
+    }
+    console.log('Location from browser: '+ SiteLat +', ' + SiteLon);
+}
+function logArg(error) {
+    console.log(error);
+}
 
 function geoFindMe() {
 
     function success(position) {
-        SiteLat = CenterLat = DefaultCenterLat = position.coords.latitude;
-        SiteLon = CenterLon = DefaultCenterLon = position.coords.longitude;
+        SiteLat = DefaultCenterLat = position.coords.latitude;
+        SiteLon = DefaultCenterLon = position.coords.longitude;
         if (localStorage['geoFindMeFirstVisit'] == undefined) {
-            resetMap();
+            OLMap.getView().setCenter(ol.proj.fromLonLat([SiteLon, SiteLat]));
             localStorage['geoFindMeFirstVisit'] = 'no';
         }
         initSitePos();
         console.log('Location from browser: '+ SiteLat +', ' + SiteLon);
 
         sitePosLayer.setVisible(true);
-        navigator.geolocation.watchPosition(function(position) {
-            SiteLat = CenterLat = DefaultCenterLat = position.coords.latitude;
-            SiteLon = CenterLon = DefaultCenterLon = position.coords.longitude;
 
-            SitePosition = [SiteLon, SiteLat];
-            createSiteCircleFeatures();
-        },
-            {
-                enableHighAccuracy: true,
-                timeout: Infinity,
-                maximumAge: Infinity,
-            }
-        );
+        const geoposOptions = {
+            enableHighAccuracy: false,
+            timeout: Infinity,
+            maximumAge: 60,
+        };
+        navigator.geolocation.watchPosition(onLocationChange, logArg, geoposOptions);
+
+        if (0) {
+            window.setInterval(function() {
+                if (tabHidden)
+                    return;
+                const geoposOptions = {
+                    enableHighAccuracy: true,
+                    timeout: 15,
+                    maximumAge: 60,
+                };
+                navigator.geolocation.getCurrentPosition(onLocationChange, logArg, geoposOptions);
+            }, 60000);
+        }
     }
 
     function error() {
@@ -5232,7 +5255,12 @@ function geoFindMe() {
     } else {
         // change SitePos on location change
         console.log('Locating…');
-        navigator.geolocation.getCurrentPosition(success, error);
+        const geoposOptions = {
+            enableHighAccuracy: false,
+            timeout: Infinity,
+            maximumAge: 300,
+        };
+        navigator.geolocation.getCurrentPosition(success, error, geoposOptions);
     }
 }
 
