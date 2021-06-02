@@ -269,6 +269,9 @@ let showPictures = true;
 // get pictures from planespotter API
 let planespottersAPI = true;
 
+// show a link to jetphotos, only works if planespottersAPI is disabled
+let jetphotoLinks = false;
+
 let showSil = false;
 // this shows small pictures in the details but they need to be provided by the user in the folder /usr/local/share/tar1090/aircraft_sil
 // showPictures needs to be enabled as well
