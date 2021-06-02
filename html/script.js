@@ -5202,15 +5202,22 @@ function geoFindMe() {
             localStorage['geoFindMeFirstVisit'] = 'no';
         }
         initSitePos();
+        console.log('Location from browser: '+ SiteLat +', ' + SiteLon);
 
         sitePosLayer.setVisible(true);
-        navigator.geolocation.watchPosition(function() {
+        navigator.geolocation.watchPosition(function(position) {
             SiteLat = CenterLat = DefaultCenterLat = position.coords.latitude;
             SiteLon = CenterLon = DefaultCenterLon = position.coords.longitude;
 
             SitePosition = [SiteLon, SiteLat];
             createSiteCircleFeatures();
-        });
+        },
+            {
+                enableHighAccuracy: true,
+                timeout: Infinity,
+                maximumAge: Infinity,
+            }
+        );
     }
 
     function error() {
