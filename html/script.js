@@ -2125,11 +2125,7 @@ function initMap() {
         }
     }, true);
 
-    if (globeIndex || uuid || askLocation)
-        geoFindMe();
-    else {
-        initSitePos();
-    }
+    geoFindMe();
 }
 
 // This looks for planes to reap out of the master Planes variable
@@ -5214,6 +5210,10 @@ function logArg(error) {
 }
 
 function geoFindMe() {
+    if (SiteOverride || (!globeIndex && !uuid && !askLocation)) {
+        initSitePos();
+        return;
+    }
 
     function success(position) {
         SiteLat = DefaultCenterLat = position.coords.latitude;
@@ -5253,9 +5253,7 @@ function geoFindMe() {
         initSitePos();
     }
 
-    if (SiteOverride) {
-        // do nothing
-    } else if (!navigator.geolocation) {
+    if (!navigator.geolocation) {
         console.log('Geolocation is not supported by your browser');
     } else {
         // change SitePos on location change
