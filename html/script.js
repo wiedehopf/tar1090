@@ -9,6 +9,7 @@ let tabHidden = false;
 let webgl = false;
 let webglFeatures = new ol.source.Vector();
 let webglLayer;
+let sitePosLayer;
 let OLMap = null;
 let OLProj = null;
 let StaticFeatures = new ol.source.Vector();
@@ -1603,17 +1604,18 @@ function initMap() {
     layers_group = createBaseLayers();
     layers = layers_group.getLayers();
 
-    layers.push(
-        new ol.layer.Vector({
-            name: 'site_pos',
-            type: 'overlay',
-            title: 'Site position and range rings',
-            source: StaticFeatures,
-            visible: !adsbexchange,
-            zIndex: 100,
-            renderOrder: null,
-            renderBuffer: renderBuffer,
-        }));
+    sitePosLayer = new ol.layer.Vector({
+        name: 'site_pos',
+        type: 'overlay',
+        title: 'Site position and range rings',
+        source: StaticFeatures,
+        visible: !adsbexchange,
+        zIndex: 100,
+        renderOrder: null,
+        renderBuffer: renderBuffer,
+    });
+
+    layers.push(sitePosLayer);
 
 
     const dummyLayer = new ol.layer.Vector({
@@ -3429,10 +3431,16 @@ function toggleFollow(override) {
 }
 
 function resetMap() {
-
+    if (SitePosition) {
+        CenterLon = SiteLon;
+        CenterLat = SiteLat;
+    } else {
+        CenterLon = DefaultCenterLon;
+        CenterLat = DefaultCenterLat;
+    }
     // Reset localStorage values and map settings
-    localStorage['CenterLat'] = CenterLat = DefaultCenterLat;
-    localStorage['CenterLon'] = CenterLon = DefaultCenterLon;
+    localStorage['CenterLat'] = CenterLat
+    localStorage['CenterLon'] = CenterLon
     localStorage['ZoomLvl']   = ZoomLvl = DefaultZoomLvl;
 
     // Set and refresh
@@ -5183,15 +5191,22 @@ function setLineWidth() {
 function geoFindMe() {
 
     function success(position) {
-        if (!SiteOverride) {
-            SiteLat = CenterLat = DefaultCenterLat = position.coords.latitude;
-            SiteLon = CenterLon = DefaultCenterLon = position.coords.longitude;
-        }
+        SiteLat = CenterLat = DefaultCenterLat = position.coords.latitude;
+        SiteLon = CenterLon = DefaultCenterLon = position.coords.longitude;
         if (localStorage['geoFindMeFirstVisit'] == undefined) {
-            OLMap.getView().setCenter(ol.proj.fromLonLat([CenterLon, CenterLat]));
+            resetMap();
             localStorage['geoFindMeFirstVisit'] = 'no';
         }
         initSitePos();
+
+        sitePosLayer.setVisible(true);
+        navigator.geolocation.watchPosition(function() {
+            SiteLat = CenterLat = DefaultCenterLat = position.coords.latitude;
+            SiteLon = CenterLon = DefaultCenterLon = position.coords.longitude;
+
+            SitePosition = [SiteLon, SiteLat];
+            createSiteCircleFeatures();
+        });
     }
 
     function error() {
@@ -5199,9 +5214,12 @@ function geoFindMe() {
         initSitePos();
     }
 
-    if (!navigator.geolocation) {
+    if (SiteOverride) {
+        // do nothing
+    } else if (!navigator.geolocation) {
         console.log('Geolocation is not supported by your browser');
     } else {
+        // change SitePos on location change
         console.log('Locating…');
         navigator.geolocation.getCurrentPosition(success, error);
     }
@@ -5223,7 +5241,7 @@ function initSitePos() {
         TAR.planeMan.setColumnVis('distance', false);
     }
 
-    if (SitePosition && !onMobile) {
+    if (SitePosition) {
         TAR.planeMan.cols.distance.sort();
     } else {
         TAR.planeMan.cols.altitude.sort();
