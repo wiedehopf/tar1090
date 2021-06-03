@@ -3461,6 +3461,9 @@ function resetMap() {
 
     //selectPlaneByHex(null,false);
     jQuery("#update_error").css('display','none');
+
+    // enable position watch on this user interaction, maybe improve reliability
+    watchPosition();
 }
 
 function updateMapSize() {
@@ -4301,7 +4304,7 @@ function changeCenter(init) {
     const rawCenter = OLMap.getView().getCenter();
     const center = ol.proj.toLonLat(rawCenter);
 
-    const centerChanged = (CenterLon != center[0] || CenterLat != center[1]);
+    const centerChanged = (Math.abs(center[1] - CenterLat) < 0.000001 && Math.abs(center[0] - CenterLon) < 0.000001);
 
     localStorage['CenterLon'] = CenterLon = center[0];
     localStorage['CenterLat'] = CenterLat = center[1];
@@ -5203,7 +5206,8 @@ function setLineWidth() {
     bgFill = new ol.style.Stroke({color: 'rgba(0,0,0,0.25'});
 }
 function onLocationChange(position) {
-    const moveMap = (Math.abs(SiteLat - CenterLat) < 0.00001 && Math.abs(SiteLon - CenterLon) < 0.00001);
+    changeCenter();
+    const moveMap = (Math.abs(SiteLat - CenterLat) < 0.000001 && Math.abs(SiteLon - CenterLon) < 0.000001);
     SiteLat = CenterLat = DefaultCenterLat = position.coords.latitude;
     SiteLon = CenterLon = DefaultCenterLon = position.coords.longitude;
 
@@ -5219,6 +5223,18 @@ function onLocationChange(position) {
 }
 function logArg(error) {
     console.log(error);
+}
+
+let watchPositionId;
+function watchPosition() {
+    const geoposOptions = {
+        enableHighAccuracy: false,
+        timeout: Infinity,
+        maximumAge: 5 * 1000,
+    };
+    if (watchPositionId != null)
+        navigator.geolocation.clearWatch(watchPositionId);
+    watchPositionId = navigator.geolocation.watchPosition(onLocationChange, logArg, geoposOptions);
 }
 
 function geoFindMe() {
@@ -5254,30 +5270,25 @@ function geoFindMe() {
         const geoposOptions = {
             enableHighAccuracy: false,
             timeout: Infinity,
-            maximumAge: 300,
+            maximumAge: 300 * 1000,
         };
         navigator.geolocation.getCurrentPosition(success, error, geoposOptions);
 
-        if (1) {
-            const geoposOptions = {
-                enableHighAccuracy: false,
-                timeout: Infinity,
-                maximumAge: 60,
-            };
-            navigator.geolocation.watchPosition(onLocationChange, logArg, geoposOptions);
-        }
+        watchPosition();
 
-        if (0) {
+        // interval position polling every half minute for browsers that are shit
+        if (1) {
+            const pollSeconds = 30;
             window.setInterval(function() {
                 if (tabHidden)
                     return;
                 const geoposOptions = {
-                    enableHighAccuracy: true,
-                    timeout: 15,
-                    maximumAge: 60,
+                    enableHighAccuracy: false,
+                    timeout: pollSeconds * 1000,
+                    maximumAge: 180 * 1000 ,
                 };
                 navigator.geolocation.getCurrentPosition(onLocationChange, logArg, geoposOptions);
-            }, 60000);
+            }, pollSeconds * 1000);
         }
     }
 }
