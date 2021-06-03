@@ -5244,7 +5244,7 @@ function watchPosition() {
         return;
     const geoposOptions = {
         enableHighAccuracy: false,
-        timeout: Infinity,
+        timeout: 32 * 86400 * 1000, // 32 days
         maximumAge: 25 * 1000,
     };
     if (watchPositionId != null)
