@@ -9,12 +9,14 @@ let tabHidden = false;
 let webgl = false;
 let webglFeatures = new ol.source.Vector();
 let webglLayer;
-let sitePosLayer;
 let OLMap = null;
 let OLProj = null;
-let StaticFeatures = new ol.source.Vector();
 let PlaneIconFeatures = new ol.source.Vector();
 let trailGroup = new ol.Collection();
+let siteCircleLayer;
+let siteCircleFeatures = new ol.source.Vector();
+let locationDotLayer;
+let locationDotFeatures = new ol.source.Vector();
 let iconLayer;
 let trailLayers;
 let heatFeatures = [];
@@ -935,6 +937,7 @@ function initPage() {
         }
     });
 
+    /*
     new Toggle({
         key: "SiteCircles",
         display: "Distance Circles",
@@ -946,6 +949,7 @@ function initPage() {
                 initSitePos();
         }
     });
+    */
 
     new Toggle({
         key: "updateLocation",
@@ -1628,21 +1632,39 @@ function initMap() {
     layers_group = createBaseLayers();
     layers = layers_group.getLayers();
 
-    sitePosLayer = new ol.layer.Vector({
+    siteCircleLayer = new ol.layer.Vector({
         name: 'site_pos',
         type: 'overlay',
-        title: 'Site position and range rings',
-        source: StaticFeatures,
-        visible: (localStorage['sitePosLayer'] != 'false'),
+        title: 'Range rings',
+        source: siteCircleFeatures,
+        visible: (localStorage['siteCircleLayer'] == undefined ? SiteCircles : localStorage['siteCircleLayer'] == 'true'),
         zIndex: 100,
         renderOrder: null,
         renderBuffer: renderBuffer,
     });
-    sitePosLayer.on('change:visible', function() {
-        localStorage['sitePosLayer'] = sitePosLayer.getVisible();
+    siteCircleLayer.on('change:visible', function() {
+        localStorage['siteCircleLayer'] = siteCircleLayer.getVisible();
+        drawSiteCircle();
     });
 
-    layers.push(sitePosLayer);
+    layers.push(siteCircleLayer);
+
+    locationDotLayer = new ol.layer.Vector({
+        name: 'locationDot',
+        type: 'overlay',
+        title: (receiverJson && receiverJson.lat != null) ? 'Site position' : 'Your position',
+        source: locationDotFeatures,
+        visible: (localStorage['locationDotLayer'] == undefined ? SiteShow : localStorage['locationDotLayer'] == 'true'),
+        zIndex: 100,
+        renderOrder: null,
+        renderBuffer: renderBuffer,
+    });
+    locationDotLayer.on('change:visible', function() {
+        localStorage['locationDotLayer'] = locationDotLayer.getVisible();
+        createLocationDot();
+    });
+
+    layers.push(locationDotLayer);
 
 
     const dummyLayer = new ol.layer.Vector({
@@ -3606,9 +3628,9 @@ function onDisplayUnitsChanged(e) {
     // Refresh data
     refreshFilter();
 
-    // Redraw range rings
-    if (SitePosition != null && SiteCircles) {
-        createSiteCircleFeatures();
+    // Draw range rings
+    if (siteCircleLayer.getVisible()) {
+        drawSiteCircle();
     }
 
     // Reset map scale line units
@@ -5223,10 +5245,8 @@ function onLocationChange(position) {
     SiteLat = CenterLat = DefaultCenterLat = position.coords.latitude;
     SiteLon = CenterLon = DefaultCenterLon = position.coords.longitude;
 
-    SitePosition = [SiteLon, SiteLat];
-    if (sitePosLayer.getVisible()) {
-        createSiteCircleFeatures();
-    }
+    drawSiteCircle();
+    createLocationDot();
 
     if (moveMap) {
         OLMap.getView().setCenter(ol.proj.fromLonLat([SiteLon, SiteLat]));
@@ -5278,7 +5298,7 @@ function geoFindMe() {
         if (localStorage['geoFindMeFirstVisit'] == undefined) {
             OLMap.getView().setCenter(ol.proj.fromLonLat([SiteLon, SiteLat]));
             localStorage['geoFindMeFirstVisit'] = 'no';
-            sitePosLayer.setVisible(true);
+            siteCircleLayer.setVisible(true);
         }
         initSitePos();
         console.log('Location from browser: '+ SiteLat +', ' + SiteLon);
@@ -5330,7 +5350,8 @@ function initSitePos() {
     if (SiteLat != null && SiteLon != null) {
         SitePosition = [SiteLon, SiteLat];
         // Add home marker if requested
-        createSiteCircleFeatures();
+        drawSiteCircle();
+        createLocationDot();
     } else {
         TAR.planeMan.setColumnVis('distance', false);
     }
@@ -5364,31 +5385,32 @@ function remakeTrails() {
     }
 }
 
-function createSiteCircleFeatures() {
-    StaticFeatures.clear();
+function createLocationDot() {
+    if (!locationDotLayer.getVisible() || !SiteShow)
+        return;
+    let markerStyle = new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: 7,
+            snapToPixel: false,
+            fill: new ol.style.Fill({color: 'black'}),
+            stroke: new ol.style.Stroke({
+                color: 'white', width: 2
+            })
+        })
+    });
+
+    let feature = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(SitePosition)));
+    feature.setStyle(markerStyle);
+    locationDotFeatures.addFeature(feature);
+}
+function drawSiteCircle() {
+    siteCircleFeatures.clear();
 
     // Clear existing circles first
-    if (!SitePosition)
+    if (!siteCircleLayer.getVisible()) {
         return;
-
-    if (SiteShow) {
-        let markerStyle = new ol.style.Style({
-            image: new ol.style.Circle({
-                radius: 7,
-                snapToPixel: false,
-                fill: new ol.style.Fill({color: 'black'}),
-                stroke: new ol.style.Stroke({
-                    color: 'white', width: 2
-                })
-            })
-        });
-
-        let feature = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(SitePosition)));
-        feature.setStyle(markerStyle);
-        StaticFeatures.addFeature(feature);
     }
-
-    if (!SiteCircles)
+    if (!SitePosition)
         return;
 
     let circleColor = '#000000';
@@ -5424,7 +5446,7 @@ function createSiteCircleFeatures() {
         });
 
         feature.setStyle(circleStyle);
-        StaticFeatures.addFeature(feature);
+        siteCircleFeatures.addFeature(feature);
     }
 }
 
@@ -6243,7 +6265,7 @@ function drawTileBorder(data) {
         let tile = new ol.geom.LineString([southWest, southEast, northEast, northWest, southWest]);
         let tileFeature = new ol.Feature(tile);
         tileFeature.setStyle(estimateStyle);
-        StaticFeatures.addFeature(tileFeature);
+        siteCircleFeatures.addFeature(tileFeature);
     } else {
         let west = new ol.geom.LineString([south180p, southWest, northWest, north180p]);
         let east = new ol.geom.LineString([south180m, southEast, northEast, north180m]);
@@ -6251,8 +6273,8 @@ function drawTileBorder(data) {
         let eastF = new ol.Feature(east);
         westF.setStyle(estimateStyle);
         eastF.setStyle(estimateStyle);
-        StaticFeatures.addFeature(westF);
-        StaticFeatures.addFeature(eastF);
+        siteCircleFeatures.addFeature(westF);
+        siteCircleFeatures.addFeature(eastF);
     }
 }
 
