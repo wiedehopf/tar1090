@@ -436,7 +436,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
 
     if (pTracks) {
         stale = false;
-        stale_timeout = 60;
+        stale_timeout = 120;
         if (this.dataSource == "adsc")
             stale_timeout = jaeroTimeout;
     }
@@ -462,6 +462,10 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     let alt_change = Math.abs(this.alt_rounded - lastseg.altitude);
     let since_update = this.prev_time - this.tail_update;
     let distance_traveled = ol.sphere.getDistance(this.tail_position, this.prev_position);
+
+    if (pTracks && since_update < pTracksInterval) {
+        return this.updateTrackPrev();
+    }
 
     if (
         this.prev_alt_rounded !== lastseg.altitude

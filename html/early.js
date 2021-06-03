@@ -33,6 +33,7 @@ let replay = false;
 let rData = [];
 let StaleReceiverCount = 0;
 let pTracks = false;
+let pTracksInterval = 30;
 let lastTraceGet = 0;
 let traceRate = 0;
 let _aircraft_type_cache = null;
@@ -172,7 +173,12 @@ if (usp.has('heatmap')) {
     if (usp.has('heatManualRedraw'))
         heatmap.manualRedraw = true;
 }
-
+{
+    let value;
+    if (value = usp.getFloat('pTracksInterval')) {
+        pTracksInterval = value;
+    }
+}
 if (usp.has('pTracks')) {
     let tmp = parseFloat(usp.get('pTracks'))
     if (tmp > 0 && tmp < 9999)
