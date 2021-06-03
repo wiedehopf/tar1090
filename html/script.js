@@ -112,6 +112,7 @@ let noRegOnly = false;
 let triggerRefresh = 0;
 let firstDraw = true;
 let darkerColors = false;
+let updateLocation = false;
 
 let infoBlockWidth = baseInfoBlockWidth;
 
@@ -943,6 +944,17 @@ function initPage() {
             SiteCircles = state;
             if (loadFinished)
                 initSitePos();
+        }
+    });
+
+    new Toggle({
+        key: "updateLocation",
+        display: "update GPS location",
+        container: "#settingsRight",
+        init: updateLocation,
+        setState: function(state) {
+            updateLocation = state;
+            watchPosition();
         }
     });
 
@@ -5226,15 +5238,32 @@ function logArg(error) {
 }
 
 let watchPositionId;
+let pollPositionId;
 function watchPosition() {
+    if (!updateLocation)
+        return;
     const geoposOptions = {
         enableHighAccuracy: false,
         timeout: Infinity,
-        maximumAge: 5 * 1000,
+        maximumAge: 25 * 1000,
     };
     if (watchPositionId != null)
         navigator.geolocation.clearWatch(watchPositionId);
     watchPositionId = navigator.geolocation.watchPosition(onLocationChange, logArg, geoposOptions);
+
+    // interval position polling every half minute for browsers that are shit
+    const pollSeconds = 30;
+    clearInterval(pollPositionId);
+    pollPositionId = window.setInterval(function() {
+        if (tabHidden)
+            return;
+        const geoposOptions = {
+            enableHighAccuracy: false,
+            timeout: pollSeconds * 1000,
+            maximumAge: 180 * 1000 ,
+        };
+        navigator.geolocation.getCurrentPosition(onLocationChange, logArg, geoposOptions);
+    }, pollSeconds * 1000);
 }
 
 function geoFindMe() {
@@ -5255,6 +5284,18 @@ function geoFindMe() {
         console.log('Location from browser: '+ SiteLat +', ' + SiteLon);
 
 
+        // always update user location every 15 minutes
+        const pollSeconds = 15 * 60;
+        pollPositionId = window.setInterval(function() {
+            if (tabHidden)
+                return;
+            const geoposOptions = {
+                enableHighAccuracy: false,
+                timeout: pollSeconds * 1000,
+                maximumAge: 5 * 60 * 1000 ,
+            };
+            navigator.geolocation.getCurrentPosition(onLocationChange, logArg, geoposOptions);
+        }, pollSeconds * 1000);
     }
 
     function error() {
@@ -5275,21 +5316,6 @@ function geoFindMe() {
         navigator.geolocation.getCurrentPosition(success, error, geoposOptions);
 
         watchPosition();
-
-        // interval position polling every half minute for browsers that are shit
-        if (1) {
-            const pollSeconds = 30;
-            window.setInterval(function() {
-                if (tabHidden)
-                    return;
-                const geoposOptions = {
-                    enableHighAccuracy: false,
-                    timeout: pollSeconds * 1000,
-                    maximumAge: 180 * 1000 ,
-                };
-                navigator.geolocation.getCurrentPosition(onLocationChange, logArg, geoposOptions);
-            }, pollSeconds * 1000);
-        }
     }
 }
 
