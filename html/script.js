@@ -5239,25 +5239,6 @@ function geoFindMe() {
         console.log('Location from browser: '+ SiteLat +', ' + SiteLon);
 
 
-        const geoposOptions = {
-            enableHighAccuracy: false,
-            timeout: Infinity,
-            maximumAge: 60,
-        };
-        navigator.geolocation.watchPosition(onLocationChange, logArg, geoposOptions);
-
-        if (0) {
-            window.setInterval(function() {
-                if (tabHidden)
-                    return;
-                const geoposOptions = {
-                    enableHighAccuracy: true,
-                    timeout: 15,
-                    maximumAge: 60,
-                };
-                navigator.geolocation.getCurrentPosition(onLocationChange, logArg, geoposOptions);
-            }, 60000);
-        }
     }
 
     function error() {
@@ -5276,6 +5257,28 @@ function geoFindMe() {
             maximumAge: 300,
         };
         navigator.geolocation.getCurrentPosition(success, error, geoposOptions);
+
+        if (1) {
+            const geoposOptions = {
+                enableHighAccuracy: false,
+                timeout: Infinity,
+                maximumAge: 60,
+            };
+            navigator.geolocation.watchPosition(onLocationChange, logArg, geoposOptions);
+        }
+
+        if (0) {
+            window.setInterval(function() {
+                if (tabHidden)
+                    return;
+                const geoposOptions = {
+                    enableHighAccuracy: true,
+                    timeout: 15,
+                    maximumAge: 60,
+                };
+                navigator.geolocation.getCurrentPosition(onLocationChange, logArg, geoposOptions);
+            }, 60000);
+        }
     }
 }
 
