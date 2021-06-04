@@ -78,7 +78,7 @@ let debugCounter = 0;
 let pathName = null;
 let icaoFilter = null;
 let sourcesFilter = null;
-let sources = ['adsb', ['uat', 'adsr'], 'mlat', 'tisb', ['modeS', 'other'], 'adsc'];
+let sources = ['adsb', ['uat', 'adsr'], 'mlat', 'tisb', 'modeS', 'other', 'adsc'];
 let flagFilter = null;
 let flagFilterValues = ['military', 'pia', 'ladd'];
 let showTrace = false;
@@ -1150,8 +1150,8 @@ function initSourceFilter(colors) {
     html += createFilter(colors['mlat'], 'MLAT');
     html += createFilter(colors['tisb'], 'TIS-B');
 
-    if (!globeIndex)
-        html += createFilter(colors['modeS'], 'Mode-S');
+    //if (!globeIndex)
+    html += createFilter(colors['modeS'], 'Mode-S');
     if (globeIndex)
         html += createFilter(colors['other'], 'Other');
 
