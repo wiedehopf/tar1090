@@ -5252,6 +5252,8 @@ function onLocationChange(position) {
         OLMap.getView().setCenter(ol.proj.fromLonLat([SiteLon, SiteLat]));
     }
     console.log('Location from browser: '+ SiteLat +', ' + SiteLon);
+    //followRandomPlane();
+    //togglePersistence();
 }
 function logArg(error) {
     console.log(error);
@@ -5259,20 +5261,9 @@ function logArg(error) {
 
 let watchPositionId;
 let pollPositionId;
-function watchPosition() {
-    if (!updateLocation)
-        return;
-    const geoposOptions = {
-        enableHighAccuracy: false,
-        timeout: 32 * 86400 * 1000, // 32 days
-        maximumAge: 25 * 1000,
-    };
-    if (watchPositionId != null)
-        navigator.geolocation.clearWatch(watchPositionId);
-    watchPositionId = navigator.geolocation.watchPosition(onLocationChange, logArg, geoposOptions);
-
+function pollPositionInterval(pollSeconds) {
     // interval position polling every half minute for browsers that are shit
-    const pollSeconds = 30;
+    //console.trace();
     clearInterval(pollPositionId);
     pollPositionId = window.setInterval(function() {
         if (tabHidden)
@@ -5280,10 +5271,30 @@ function watchPosition() {
         const geoposOptions = {
             enableHighAccuracy: false,
             timeout: pollSeconds * 1000,
-            maximumAge: 180 * 1000 ,
+            maximumAge: 30 * 1000 ,
         };
-        navigator.geolocation.getCurrentPosition(onLocationChange, logArg, geoposOptions);
+        navigator.geolocation.getCurrentPosition(function(position) {
+            onLocationChange(position);
+        }, logArg, geoposOptions);
     }, pollSeconds * 1000);
+}
+
+function watchPosition() {
+    if (!updateLocation) {
+        return;
+    }
+    const geoposOptions = {
+        enableHighAccuracy: false,
+        timeout: Infinity,
+        maximumAge: 25 * 1000,
+    };
+    if (watchPositionId != null)
+        navigator.geolocation.clearWatch(watchPositionId);
+    watchPositionId = navigator.geolocation.watchPosition(function(position) {
+        onLocationChange(position);
+        clearInterval(pollPositionId);
+    }, logArg, geoposOptions);
+    pollPositionInterval(30);
 }
 
 function geoFindMe() {
@@ -5335,6 +5346,7 @@ function geoFindMe() {
         };
         navigator.geolocation.getCurrentPosition(success, error, geoposOptions);
 
+        toggles['updateLocation'].restore();
         watchPosition();
     }
 }
@@ -5386,6 +5398,7 @@ function remakeTrails() {
 }
 
 function createLocationDot() {
+    locationDotFeatures.clear();
     if (!locationDotLayer.getVisible() || !SiteShow)
         return;
     let markerStyle = new ol.style.Style({
