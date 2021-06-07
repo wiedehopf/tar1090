@@ -37,8 +37,8 @@ let SelectedAllPlanes = false;
 let HighlightedPlane = null;
 let FollowSelected = false;
 let followPos = [];
-let noPan = false;
 let loadFinished = false;
+let loadStart = new Date().getTime();
 let mapResizeTimeout;
 let pointerMoveTimeout;
 let iconSize = 1;
@@ -4596,7 +4596,6 @@ function processURLParams(){
             const lon = parseFloat(usp.get("lon"));
             OLMap.getView().setCenter(ol.proj.fromLonLat([lon, lat]));
             follow = false;
-            noPan = true;
         }
         catch (error) {
             console.log("Error parsing lat/lon:", error);
