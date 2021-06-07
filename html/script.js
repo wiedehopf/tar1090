@@ -4963,7 +4963,7 @@ function updateAddressBar() {
         }
         if (traceOpts.showTime) {
             string += '&timestamp=';
-            string += traceOpts.showTime;
+            string += Math.ceil(traceOpts.showTime);
         }
     }
 
