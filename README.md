@@ -24,7 +24,7 @@ dump1090-mutability installations should work as well, aircraft details will be 
 ## Installation
 
 ```
-sudo bash -c "$(wget -nv -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"
+sudo bash -c "$(wget -nv -O - https://github.com/wiedehopf/tar1090/raw/master/install.sh)"
 ```
 
 ## View the added webinterface
@@ -42,7 +42,7 @@ Check further down for keyboard shortcuts.
 ## Update (same command as installation)
 
 ```
-sudo bash -c "$(wget -nv -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"
+sudo bash -c "$(wget -nv -O - https://github.com/wiedehopf/tar1090/raw/master/install.sh)"
 ```
 
 Configuration should be preserved.
@@ -145,14 +145,14 @@ UAT traffic will be displayed as ADS-B, this can't be avoided.
 
 
 ```
-wget -nv -O /tmp/install.sh https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh
+wget -nv -O /tmp/install.sh https://github.com/wiedehopf/tar1090/raw/master/install.sh
 sudo bash /tmp/install.sh /run/combine1090
 ```
 
 ## Remove / Uninstall
 
 ```
-sudo bash -c "$(wget -nv -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/uninstall.sh)"
+sudo bash -c "$(wget -nv -O - https://github.com/wiedehopf/tar1090/raw/master/uninstall.sh)"
 ```
 
 ## Keyboard Shortcuts
@@ -353,7 +353,7 @@ put in these two lines if you're using dump1090-fa
 
 if you then run the tar1090 install script afterwards you'll have an extra instance you can configure the history retention for.
 ```
-sudo bash -c "$(wget -nv -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"
+sudo bash -c "$(wget -nv -O - https://github.com/wiedehopf/tar1090/raw/master/install.sh)"
 sudo nano /etc/default/tar1090-persist
 ```
 
