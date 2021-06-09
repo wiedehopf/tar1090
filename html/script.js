@@ -3326,6 +3326,7 @@ function select(plane, options) {
         SelPlanes.push(plane);
 
     sp = SelectedPlane = plane;
+    updateAddressBar();
     refreshSelected();
     plane.updateTick('redraw');
 
@@ -3395,7 +3396,6 @@ function selectPlaneByHex(hex, options) {
         OLMap.getView().setZoom(options.zoom);
     }
 
-    updateAddressBar();
     pTracks || TAR.planeMan.refresh();
 }
 
