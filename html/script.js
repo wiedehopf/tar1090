@@ -741,6 +741,7 @@ function initPage() {
     // Set page basics
     document.title = PageName;
 
+    initializeUnitsSelector();
     TAR.planeMan.init();
 
     if (ExtendedData || window.location.hash == '#extended') {
@@ -783,9 +784,6 @@ function initPage() {
     jQuery("#expand_sidebar_button").click(expandSidebar);
     jQuery("#shrink_sidebar_button").click(showMap);
 
-    // Initialize other controls
-    initializeUnitsSelector();
-
     // Set up altitude filter button event handlers and validation options
     jQuery("#altitude_filter_form").submit(onFilterByAltitude);
     jQuery("#callsign_filter_form").submit(updateCallsignFilter);
@@ -795,6 +793,7 @@ function initPage() {
     jQuery("#source_filter_form").submit(updateSourceFilter);
     jQuery("#flag_filter_form").submit(updateFlagFilter);
 
+    // Initialize other controls
     jQuery("#search_form").submit(onSearch);
     jQuery("#jump_form").submit(onJump);
 
