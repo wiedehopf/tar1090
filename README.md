@@ -289,7 +289,7 @@ sudo wget -nv -O /usr/local/share/tar1090/html/upintheair.json "http://www.heywh
 - Can be filtered by altitude with the altitude filter
 - Configure a longer duration than 8 hours via the [configuration](#configuration-part-1-history-interval-and-number-of-snapshots--ptracks-duration-optional)
 - Restrict the duration shown to 2 hours: /tar1090/?pTracks=2
-- Draw less points which reduces display time (higher interval, lower compute time, default 30): /tar1090/?pTracks=8&pTracksInterval=60
+- Draw less points which reduces display time (higher interval, lower compute time, default 15): /tar1090/?pTracks=8&pTracksInterval=60
 
 ## 0800-DESTROY-SD-CARD
 
