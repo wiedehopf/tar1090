@@ -2379,7 +2379,7 @@ function refreshSelected() {
             if (flightawareLinks) {
                 jQuery('#selected_registration').html(getFlightAwareIdentLink(selected.registration, selected.registration));
             } else if (selected.icaorange.country === 'Brazil') {
-                jQuery('#selected_registration').html(`<a target="_blank" href="https://sistemas.anac.gov.br/aeronaves/cons_rab_resposta.asp?textMarca=${selected.registration}">${selected.registration}</a>`);
+                jQuery('#selected_registration').html(`<a target="_blank" href="https://sistemas.anac.gov.br/aeronaves/cons_rab_resposta_en.asp?textMarca=${selected.registration}">${selected.registration}</a>`);
             } else {
                 jQuery('#selected_registration').text(selected.registration);
             }
