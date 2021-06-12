@@ -3355,8 +3355,10 @@ function selectPlaneByHex(hex, options) {
     if (!options.noFetch && globeIndex && hex)
         newPlane = getTrace(newPlane, hex, options);
 
+    console.log(newPlane.icao)
+
     // If we are clicking the same plane, we are deselecting it unless noDeselect is specified
-    if (options.noDeselect || showTrace) {
+    if (oldPlane == newPlane && (options.noDeselect || showTrace)) {
         oldPlane = null;
     } else {
         if (multiSelect) {
@@ -5599,11 +5601,18 @@ function getTrace(newPlane, hex, options) {
         hex = newPlane.icao;
     }
 
+    if (!newPlane) {
+        newPlane = Planes[hex] || new PlaneObject(hex);
+        newPlane.last_message_time = NaN;
+        newPlane.position_time = NaN;
+        select(newPlane, options);
+    }
+
     let time = new Date().getTime();
     let backoff = 200;
     if (!showTrace && !solidT && traceRate > 140 && time < lastTraceGet + backoff) {
         setTimeout(getTrace, lastTraceGet + backoff + 20 - time, newPlane, hex, options);
-        return;
+        return newPlane;
     }
 
     lastTraceGet = time;
@@ -5611,13 +5620,6 @@ function getTrace(newPlane, hex, options) {
     let URL1 = 'data/traces/'+ hex.slice(-2) + '/trace_recent_' + hex + '.json';
     let URL2 = 'data/traces/'+ hex.slice(-2) + '/trace_full_' + hex + '.json';
     //console.log('Requesting trace: ' + hex);
-
-    if (!newPlane) {
-        newPlane = Planes[hex] || new PlaneObject(hex);
-        newPlane.last_message_time = NaN;
-        newPlane.position_time = NaN;
-        select(newPlane, options);
-    }
 
     traceOpts.follow = (options.follow == true);
 
