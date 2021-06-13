@@ -123,6 +123,11 @@ if (usp.has('l3harris') || usp.has('ift')) {
 if (usp.has('r')) {
     replay = true;
 }
+function arraybufferRequest() {
+    let xhrOverride = new XMLHttpRequest();
+    xhrOverride.responseType = 'arraybuffer';
+    return xhrOverride;
+}
 
 if (usp.has('heatmap')) {
 
@@ -254,50 +259,54 @@ jQuery.getJSON(databaseFolder + "/ranges.js").done(function(ranges) {
 });
 
 
+let heatmapLoadingState = {};
+function loadHeatChunk() {
+    if (heatmapLoadingState.index > heatChunks.length) {
+        heatmapDefer.resolve();
+        return; // done, stop recursing
+    }
+
+
+    let time = new Date(heatmapLoadingState.start + heatmapLoadingState.index * heatmapLoadingState.interval);
+    let sDate = sDateString(time);
+    let index = 2 * time.getUTCHours() + Math.floor(time.getUTCMinutes() / 30);
+
+    let base = "globe_history/";
+
+    let URL = base + sDate + "/heatmap/" +
+        index.toString().padStart(2, '0') + ".bin.ttf";
+    let req = jQuery.ajax({
+        url: URL,
+        method: 'GET',
+        num: heatmapLoadingState.index,
+        xhr: arraybufferRequest,
+    });
+    req.done(function (responseData) {
+        heatChunks[this.num] = responseData;
+        loadHeatChunk();
+    });
+    req.fail(function(jqxhr, status, error) {
+        loadHeatChunk();
+    });
+    heatmapLoadingState.index++;
+}
+
 if (!heatmap) {
     heatmapDefer.resolve();
 } else {
     let end = heatmap.end;
-    let start = end - heatmap.duration * 3600 * 1000;
+    let start = end - heatmap.duration * 3600 * 1000; // timestamp in ms
     let interval = 1800 * 1000;
     let numChunks = Math.round((end - start) / interval);
     console.log('numChunks: ' + numChunks + ' heatDuration: ' + heatmap.duration + ' heatEnd: ' + new Date(heatmap.end));
     heatChunks = Array(numChunks).fill(null);
     heatPoints = Array(numChunks).fill(null);
-    for (let i = 0; i < numChunks; i++) {
-        let xhrOverride = new XMLHttpRequest();
-        xhrOverride.responseType = 'arraybuffer';
-
-        let time = new Date(start + i * interval);
-        let sDate = sDateString(time);
-        let index = 2 * time.getUTCHours() + Math.floor(time.getUTCMinutes() / 30);
-
-        let base = "globe_history/";
-
-        let URL = base + sDate + "/heatmap/" +
-            index.toString().padStart(2, '0') + ".bin.ttf";
-        let req = jQuery.ajax({
-            url: URL,
-            method: 'GET',
-            num: i,
-            xhr: function() {
-                return xhrOverride;
-            }
-        });
-        req.done(function (responseData) {
-            heatChunks[this.num] = responseData;
-            heatLoaded++;
-            if (heatLoaded == heatChunks.length) {
-                heatmapDefer.resolve();
-            }
-        });
-        req.fail(function(jqxhr, status, error) {
-            heatLoaded++;
-            if (heatLoaded == heatChunks.length) {
-                heatmapDefer.resolve();
-            }
-        });
-    }
+    // load chunks sequentially via recursion:
+    heatmapLoadingState.index = 0;
+    heatmapLoadingState.interval = interval;
+    heatmapLoadingState.start = start;
+    loadHeatChunk();
+    loadHeatChunk();
 }
 
 if (uuid != null) {

@@ -358,10 +358,7 @@ function fetchData(options) {
         if (binCraft) {
             req = jQuery.ajax({
                 url: `${ac_url[i]}`, method: 'GET',
-                xhr: function() {
-                    let xhrOverride = new XMLHttpRequest();
-                    xhrOverride.responseType = 'arraybuffer';
-                    return xhrOverride; },
+                xhr: arraybufferRequest,
                 timeout: 5000,
                 urlIndex: i,
             });
@@ -6031,8 +6028,6 @@ function loadReplay(ts) {
         replayClear();
     }
     replay.ts = ts;
-    let xhrOverride = new XMLHttpRequest();
-    xhrOverride.responseType = 'arraybuffer';
 
     let time = new Date(ts);
     let sDate = sDateString(time);
@@ -6041,9 +6036,7 @@ function loadReplay(ts) {
     let req = jQuery.ajax({
         url: "globe_history/" + sDate + "/heatmap/" + index.toString().padStart(2, '0') + ".bin.ttf",
         method: 'GET',
-        xhr: function() {
-            return xhrOverride;
-        }
+        xhr: arraybufferRequest,
     });
 
     setTraceDate({ts: ts});
