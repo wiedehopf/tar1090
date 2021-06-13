@@ -3352,8 +3352,6 @@ function selectPlaneByHex(hex, options) {
     if (!options.noFetch && globeIndex && hex)
         newPlane = getTrace(newPlane, hex, options);
 
-    console.log(newPlane.icao)
-
     // If we are clicking the same plane, we are deselecting it unless noDeselect is specified
     if (oldPlane == newPlane && (options.noDeselect || showTrace)) {
         oldPlane = null;
