@@ -3070,10 +3070,11 @@ function refreshFeatures() {
                 if (plane.dataSource && plane.dataSource in colors)
                     bgColor = colors[plane.dataSource];
 
-                if (plane.squawk in tableColors.special)
+                if (plane.squawk in tableColors.special) {
                     bgColor = tableColors.special[plane.squawk];
-
-                if (plane.bgColorCache != bgColor) {
+                    plane.bgColorCache = bgColor;
+                    plane.tr.style = "background-color: " + bgColor + "; color: black;";
+                } else if (plane.bgColorCache != bgColor) {
                     plane.bgColorCache = bgColor;
                     plane.tr.style = "background-color: " + bgColor + ";";
                 }
