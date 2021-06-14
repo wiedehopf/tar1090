@@ -5260,7 +5260,7 @@ function logArg(error) {
 
 let watchPositionId;
 let pollPositionId;
-let pollPositionSeconds = 30;
+let pollPositionSeconds = 10;
 function pollPositionInterval() {
     // interval position polling every half minute for browsers that are shit
     //console.trace();
@@ -5268,7 +5268,7 @@ function pollPositionInterval() {
     pollPositionId = window.setInterval(function() {
 
         // if we recently got a new location via watchPosition(), don't query
-        if (new Date().getTime() - lastCallLocationChange < pollPositionSeconds * 1000)
+        if (new Date().getTime() - lastCallLocationChange < pollPositionSeconds * 0.85 * 1000)
             return;
 
         if (tabHidden)
@@ -5300,6 +5300,7 @@ function watchPosition() {
     }
     watchPositionId = navigator.geolocation.watchPosition(function(position) {
         onLocationChange(position);
+        pollPositionSeconds = 60;
     }, logArg, geoposOptions);
     pollPositionInterval();
 }
