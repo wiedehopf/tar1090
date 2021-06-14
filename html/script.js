@@ -75,7 +75,7 @@ let lastGlobeExtent;
 let pendingFetches = 0;
 let firstFetch = true;
 let debugCounter = 0;
-let pathName = null;
+let pathName = window.location.pathname;
 let icaoFilter = null;
 let sourcesFilter = null;
 let sources = ['adsb', ['uat', 'adsr'], 'mlat', 'tisb', 'modeS', 'other', 'adsc'];
@@ -115,6 +115,7 @@ let triggerRefresh = 0;
 let firstDraw = true;
 let darkerColors = false;
 let updateLocation = false;
+let autoselect = false;
 
 let infoBlockWidth = baseInfoBlockWidth;
 
@@ -959,6 +960,21 @@ function initPage() {
     });
 
     new Toggle({
+        key: "autoselect",
+        display: "auto-select closest",
+        container: "#settingsRight",
+        init: autoselect,
+        setState: function(state) {
+            autoselect = state;
+            setAutoselect();
+        }
+    });
+    if (usp.has('autoselect')) {
+        autoselect = true;
+        setAutoselect();
+    }
+
+    new Toggle({
         key: "ColoredPlanes",
         display: "Colored Planes",
         container: "#settingsRight",
@@ -1341,6 +1357,8 @@ function setIntervalTimers() {
     if ((adsbexchange || dynGlobeRate) && !uuid) {
         timers.globeRateUpdate = setInterval(globeRateUpdate, 180000);
     }
+    pollPositionInterval();
+    setAutoselect();
 
     timers.checkMove = setInterval(checkMovement, 50);
     timers.everySecond = setInterval(everySecond, 850);
@@ -1388,7 +1406,6 @@ function startPage() {
     clearIntervalTimers();
     setIntervalTimers();
 
-    pathName = window.location.pathname;
     processURLParams();
 
     loadFinished = true;
@@ -1852,14 +1869,14 @@ function initMap() {
             }
         }
 
-        const double = (evt.type === 'dblclick') && !showTrace;
+        const dblclick = (evt.type === 'dblclick') && !showTrace;
 
         if (showTrace && trailTS) {
             gotoTime(trailTS);
         }
         let hex = planeHex || trailHex;
         if (hex) {
-            selectPlaneByHex(hex, {noDeselect: double, follow: double});
+            selectPlaneByHex(hex, {noDeselect: dblclick, follow: dblclick});
         }
 
         if (!hex && !multiSelect && !showTrace) {
@@ -5259,13 +5276,14 @@ function logArg(error) {
 }
 
 let watchPositionId;
-let pollPositionId;
 let pollPositionSeconds = 10;
 function pollPositionInterval() {
+    if (!updateLocation)
+        return;
     // interval position polling every half minute for browsers that are shit
     //console.trace();
-    clearInterval(pollPositionId);
-    pollPositionId = window.setInterval(function() {
+    clearInterval(timers.pollPosition);
+    timers.pollPosition = window.setInterval(function() {
 
         // if we recently got a new location via watchPosition(), don't query
         if (new Date().getTime() - lastCallLocationChange < pollPositionSeconds * 0.85 * 1000)
@@ -5354,9 +5372,6 @@ function geoFindMe() {
             maximumAge: 300 * 1000,
         };
         navigator.geolocation.getCurrentPosition(success, error, geoposOptions);
-
-        toggles['updateLocation'].restore();
-        watchPosition();
     }
 }
 
@@ -6515,6 +6530,28 @@ function testUnhide() {
     Object.defineProperty(window.document,'hidden',{get:function(){return false;},configurable:true});
     Object.defineProperty(window.document,'visibilityState',{get:function(){return 'visible';},configurable:true});
     window.document.dispatchEvent(new Event('visibilitychange'));
+}
+
+function selectClosest() {
+    if (!SitePosition)
+        return;
+    let closest = null;
+    for (let key in PlanesOrdered) {
+        const plane = PlanesOrdered[key];
+        if (!closest || closest.sitedist == null || (plane.sitedist != null && plane.sitedist < closest.sitedist)) {
+            closest = PlanesOrdered[key];
+        }
+    }
+    if (!closest)
+        return;
+    selectPlaneByHex(closest.icao, {noDeselect: true});
+}
+function setAutoselect() {
+    clearInterval(timers.autoselect);
+    if (!autoselect)
+        return;
+    timers.autoselect = window.setInterval(selectClosest, 10000);
+    selectClosest();
 }
 
 initialize();
