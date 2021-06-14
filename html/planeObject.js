@@ -1302,6 +1302,8 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.dataSource = "adsb";
     } else if (type == 'adsc') {
         this.dataSource = "adsc";
+    } else if (type == 'mode_s') {
+        this.dataSource = "modeS";
     } else if (type == 'other') {
         this.dataSource = "other";
     } else if (type == 'unknown') {
@@ -2157,6 +2159,8 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
         } else if (data.type == "mlat") {
             this.dataSource = "mlat";
         } else if (data.type == "adsb_icao_nt") {
+            this.dataSource = "modeS";
+        } else if (data.type == 'mode_s') {
             this.dataSource = "modeS";
         } else if (data.type.substring(0,4) == "tisb") {
             this.dataSource = "tisb";
