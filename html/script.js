@@ -5235,7 +5235,9 @@ function setLineWidth() {
     labelStrokeNarrow = new ol.style.Stroke({color: 'rgba(0,0,0,0.7', width: 2.5 * globalScale});
     bgFill = new ol.style.Stroke({color: 'rgba(0,0,0,0.25'});
 }
+let lastCallLocationChange = 0;
 function onLocationChange(position) {
+    lastCallLocationChange = new Date().getTime();
     changeCenter();
     const moveMap = (Math.abs(SiteLat - CenterLat) < 0.000001 && Math.abs(SiteLon - CenterLon) < 0.000001);
     SiteLat = CenterLat = DefaultCenterLat = position.coords.latitude;
@@ -5257,22 +5259,30 @@ function logArg(error) {
 
 let watchPositionId;
 let pollPositionId;
-function pollPositionInterval(pollSeconds) {
+let pollPositionSeconds = 30;
+function pollPositionInterval() {
     // interval position polling every half minute for browsers that are shit
     //console.trace();
     clearInterval(pollPositionId);
     pollPositionId = window.setInterval(function() {
+
+        // if we recently got a new location via watchPosition(), don't query
+        if (new Date().getTime() - lastCallLocationChange < pollPositionSeconds * 1000)
+            return;
+
         if (tabHidden)
             return;
+
+        console.log('pollPositionInterval: querying position');
         const geoposOptions = {
             enableHighAccuracy: false,
-            timeout: pollSeconds * 1000,
-            maximumAge: 30 * 1000 ,
+            timeout: pollPositionSeconds * 1000,
+            maximumAge: pollPositionSeconds * 1000 ,
         };
         navigator.geolocation.getCurrentPosition(function(position) {
             onLocationChange(position);
         }, logArg, geoposOptions);
-    }, pollSeconds * 1000);
+    }, pollPositionSeconds * 1000);
 }
 
 function watchPosition() {
@@ -5284,13 +5294,13 @@ function watchPosition() {
         timeout: Infinity,
         maximumAge: 25 * 1000,
     };
-    if (watchPositionId != null)
+    if (watchPositionId != null) {
         navigator.geolocation.clearWatch(watchPositionId);
+    }
     watchPositionId = navigator.geolocation.watchPosition(function(position) {
         onLocationChange(position);
-        clearInterval(pollPositionId);
     }, logArg, geoposOptions);
-    pollPositionInterval(30);
+    pollPositionInterval();
 }
 
 function geoFindMe() {
@@ -5311,18 +5321,19 @@ function geoFindMe() {
         console.log('Location from browser: '+ SiteLat +', ' + SiteLon);
 
 
-        // always update user location every 15 minutes
-        const pollSeconds = 15 * 60;
-        pollPositionId = window.setInterval(function() {
-            if (tabHidden)
-                return;
-            const geoposOptions = {
-                enableHighAccuracy: false,
-                timeout: pollSeconds * 1000,
-                maximumAge: 5 * 60 * 1000 ,
-            };
-            navigator.geolocation.getCurrentPosition(onLocationChange, logArg, geoposOptions);
-        }, pollSeconds * 1000);
+        {
+            // always update user location every 15 minutes
+            window.setInterval(function() {
+                if (tabHidden)
+                    return;
+                const geoposOptions = {
+                    enableHighAccuracy: false,
+                    timeout: 15 * 60 * 1000,
+                    maximumAge: 5 * 60 * 1000 ,
+                };
+                navigator.geolocation.getCurrentPosition(onLocationChange, logArg, geoposOptions);
+            }, 15 * 60 * 1000);
+        }
     }
 
     function error() {
