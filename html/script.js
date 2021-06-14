@@ -5242,6 +5242,7 @@ function onLocationChange(position) {
     const moveMap = (Math.abs(SiteLat - CenterLat) < 0.000001 && Math.abs(SiteLon - CenterLon) < 0.000001);
     SiteLat = CenterLat = DefaultCenterLat = position.coords.latitude;
     SiteLon = CenterLon = DefaultCenterLon = position.coords.longitude;
+    SitePosition = [SiteLon, SiteLat];
 
     drawSiteCircle();
     createLocationDot();
