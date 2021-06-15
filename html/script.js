@@ -4696,6 +4696,7 @@ function processURLParams(){
     }
 }
 
+let regIcaoDownloadRunning = false;
 function findPlanes(query, byIcao, byCallsign, byReg, byType) {
     if (query == null)
         return;
@@ -4708,10 +4709,11 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
                 selectPlaneByHex(regCache[upper].toLowerCase(), {noDeselect: true, follow: true});
                 return;
             }
-        } else {
+        } else if (!regIcaoDownloadRunning) {
+            regIcaoDownloadRunning = true;
             let req = jQuery.ajax({ url: databaseFolder + "/regIcao.js",
                 cache: true,
-                timeout: 10000,
+                timeout: 60000,
                 dataType : 'json',
                 upper: `${upper}`,
             });
@@ -4721,6 +4723,9 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
                     selectPlaneByHex(regCache[this.upper].toLowerCase(), {noDeselect: true, follow: true});
                     return;
                 }
+            });
+            req.always(function() {
+                regIcaoDownloadRunning = false;
             });
         }
     }
