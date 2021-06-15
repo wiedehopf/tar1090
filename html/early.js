@@ -40,6 +40,7 @@ let _aircraft_type_cache = null;
 let tfrs = false;
 let initialURL = window.location.href;
 let milRanges = [];
+let guessModeS = window.location.href.match(/devg/) ? true : false;
 
 let uuid = null;
 let uuidCache = [];

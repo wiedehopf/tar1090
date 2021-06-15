@@ -2357,7 +2357,7 @@ PlaneObject.prototype.checkVisible = function() {
     const zoomedOut = 2 * refreshInt() / globeSimLoad * globeTilesViewCount / 1000;
     const jaeroTime = (this.dataSource == "adsc") ? jaeroTimeout : 0;
     const mlatTime = (this.dataSource == "mlat") ? 25 : 0;
-    const modeSTime = (this.dataSource == "modeS") ? 300 : 0;
+    const modeSTime = (guessModeS && this.dataSource == "modeS") ? 300 : 0;
     const tisbReduction = (this.icao[0] == '~') ? 15 : 0;
     // If no packet in over 58 seconds, clear the plane.
     // Only clear the plane if it's not selected individually
