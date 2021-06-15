@@ -55,7 +55,6 @@ let tableInView = false;
 let onlyMilitary = false;
 let onlySelected = false;
 let onlyDataSource = null;
-let fetchingPf = false;
 let debug = false;
 let debugJump = false;
 let jumpTo = null;
@@ -741,10 +740,6 @@ function initPage() {
 
     initializeUnitsSelector();
     TAR.planeMan.init();
-
-    if (ExtendedData || window.location.hash == '#extended') {
-        jQuery("#extendedData").removeClass("hidden");
-    }
 
     // Set up map/sidebar splitter
     jQuery("#sidebar_container").resizable({
@@ -4217,6 +4212,7 @@ function toggleLayer(element, layer) {
     });
 }
 
+let fetchingPf = false;
 function fetchPfData() {
     console.trace();
     if (fetchingPf)

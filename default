@@ -23,6 +23,7 @@ PTRACKS=8
 # no need to change the lines below
 CHUNK_SIZE=20
 INT_978=1
-PF_ENABLE=1
+# disable getting planefinder local client data by default
+PF_ENABLE=0
 PF_URL="http://127.0.0.1:30053/ajax/aircraft"
 COMPRESS_978=""

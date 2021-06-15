@@ -197,10 +197,6 @@ let ChartBundleLayers = true;
 //
 let BingMapsAPIKey = null;
 
-// Turn on display of extra Mode S EHS / ADS-B v1/v2 data
-// This is not polished yet (and so is disabled by default),
-// currently it's just a data dump of the new fields with no UX work.
-let ExtendedData = false;
 let pf_data = ["chunks/pf.json"]
 
 let mapOrientation = 0; // This determines what is up, normally north (0 degrees)
