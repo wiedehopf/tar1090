@@ -244,6 +244,20 @@ select {
     text-align: center;
 }
 
+#js_error {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    border: calc( 2px * var(--SCALE)) solid red;
+    background-color: #FFFFA3; opacity: 0.75; filter:alpha(opacity=75); padding: calc( 5px * var(--SCALE));
+    color: black;
+    font-size: var(--FS2);
+    line-height: 150%;
+    text-align: center;
+    z-index: 999;
+    white-space: pre-line;
+}
+
 div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right: 0; background: #000; opacity: 0.8; filter: alpha(opacity=80); }
 #loader_progress { width:  calc(250px * var(--SCALE)); height: calc( 20px * var(--SCALE)); position: absolute; top: 50%; left: 50%; margin:  calc(128px * var(--SCALE)) 0 0 - calc(125px * var(--SCALE)); }
 

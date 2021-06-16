@@ -72,6 +72,21 @@ try {
         get: function() {return null;},
     }
 }
+if (usp.has('showerrors') || usp.has('jse')) {
+    window.onerror = function (msg, url, lineNo, columnNo, error) {
+        let splat = '';
+        splat += 'Uncaught JS Error:' + url + ' line ' + lineNo + '\n';
+        splat += msg + '\n';
+        try {
+            splat += '\n' + error.stack;
+        } catch (error) {
+        }
+        jQuery("#js_error").text(splat);
+        jQuery("#js_error").css('display','block');
+        return false;
+    }
+}
+
 function resetSettings() {
     localStorage.clear();
     if (window.history && window.history.replaceState) {
