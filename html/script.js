@@ -5056,6 +5056,10 @@ function toggleShowTrace() {
         const hex = SelectedPlane.icao;
         sp = SelectedPlane = null;
         showTraceExit = true;
+        for (let i in SelPlanes) {
+            const plane = SelPlanes[i];
+            plane.setNull();
+        }
         selectPlaneByHex(hex, {noDeselect: true, follow: true, zoom: ZoomLvl,});
     }
 
