@@ -1752,8 +1752,9 @@ function initMap() {
                 }
             });
         } else if (lyr.get('type') === 'overlay') {
-            if (localStorage['layer_' + lyr.get('name')] == 'true' || enableOverlays.indexOf(lyr.get('name')) >= 0)
+            if (localStorage['layer_' + lyr.get('name')] == 'true' || enableOverlays.indexOf(lyr.get('name')) >= 0) {
                 lyr.setVisible(true);
+            }
 
             lyr.on('change:visible', function(evt) {
                 localStorage['layer_' + evt.target.get('name')] = evt.target.getVisible();

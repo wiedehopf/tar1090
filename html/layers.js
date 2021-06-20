@@ -286,6 +286,7 @@ function createBaseLayers() {
 
     let noaaRadar = new ol.layer.Image({
         title: 'NOAA Radar',
+        name: 'noaa_radar',
         zIndex: 99,
         type: 'overlay',
         visible: false,
