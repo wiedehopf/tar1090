@@ -103,7 +103,6 @@ let labelStrokeNarrow = null;
 let bgFill = null;
 let legSel = -1;
 let geoMag = null;
-let globalCompositeTested = false;
 let solidT = false;
 let lastActive = new Date().getTime();
 let overrideMapType = null;
@@ -3764,37 +3763,32 @@ function togglePersistence() {
 }
 
 function dim(evt) {
-    if (!globalCompositeTested) {
-            globalCompositeTested = true;
-        evt.context.globalCompositeOperation = 'multiply';
-        if (evt.context.globalCompositeOperation != 'multiply')
-            globalCompositeTested = false;
-        evt.context.globalCompositeOperation = 'overlay';
-        if (evt.context.globalCompositeOperation != 'overlay')
-            globalCompositeTested = false;
+    try {
+        const dim = mapDimPercentage * (1 + 0.25 * toggles['darkerColors'].state);
+        const contrast = mapContrastPercentage * (1 + 0.1 * toggles['darkerColors'].state);
+        if (dim > 0.0001) {
+            evt.context.globalCompositeOperation = 'multiply';
+            evt.context.fillStyle = 'rgba(0,0,0,'+dim+')';
+            evt.context.fillRect(0, 0, evt.context.canvas.width, evt.context.canvas.height);
+        } else if (dim < -0.0001) {
+            evt.context.globalCompositeOperation = 'screen';
+            console.log(evt.context.globalCompositeOperation);
+            evt.context.fillStyle = 'rgba(255, 255, 255,'+(-dim)+')';
+            evt.context.fillRect(0, 0, evt.context.canvas.width, evt.context.canvas.height);
+        }
+        if (contrast > 0.0001) {
+            evt.context.globalCompositeOperation = 'overlay';
+            evt.context.fillStyle = 'rgba(0,0,0,'+contrast+')';
+            evt.context.fillRect(0, 0, evt.context.canvas.width, evt.context.canvas.height);
+        } else if (contrast < -0.0001) {
+            evt.context.globalCompositeOperation = 'overlay';
+            evt.context.fillStyle = 'rgba(255, 255, 255,'+ (-contrast)+')';
+            evt.context.fillRect(0, 0, evt.context.canvas.width, evt.context.canvas.height);
+        }
+        evt.context.globalCompositeOperation = 'source-over';
+    } catch (error) {
+        console.error(error);
     }
-    const dim = mapDimPercentage * (1 + 0.25 * toggles['darkerColors'].state);
-    const contrast = mapContrastPercentage * (1 + 0.1 * toggles['darkerColors'].state);
-    if (dim > 0.0001) {
-        evt.context.globalCompositeOperation = 'multiply';
-        evt.context.fillStyle = 'rgba(0,0,0,'+dim+')';
-        evt.context.fillRect(0, 0, evt.context.canvas.width, evt.context.canvas.height);
-    } else if (dim < -0.0001) {
-        evt.context.globalCompositeOperation = 'screen';
-        console.log(evt.context.globalCompositeOperation);
-        evt.context.fillStyle = 'rgba(255, 255, 255,'+(-dim)+')';
-        evt.context.fillRect(0, 0, evt.context.canvas.width, evt.context.canvas.height);
-    }
-    if (contrast > 0.0001) {
-        evt.context.globalCompositeOperation = 'overlay';
-        evt.context.fillStyle = 'rgba(0,0,0,'+contrast+')';
-        evt.context.fillRect(0, 0, evt.context.canvas.width, evt.context.canvas.height);
-    } else if (contrast < -0.0001) {
-        evt.context.globalCompositeOperation = 'overlay';
-        evt.context.fillStyle = 'rgba(255, 255, 255,'+ (-contrast)+')';
-        evt.context.fillRect(0, 0, evt.context.canvas.width, evt.context.canvas.height);
-    }
-    evt.context.globalCompositeOperation = 'source-over';
 }
 function invertMap(evt){
   const ctx=evt.context;
