@@ -2386,8 +2386,8 @@ function refreshSelected() {
         if (selected.registration) {
             if (flightawareLinks) {
                 jQuery('#selected_registration').html(getFlightAwareIdentLink(selected.registration, selected.registration));
-            } else if (selected.icaorange.country === 'Brazil') {
-                jQuery('#selected_registration').html(`<a target="_blank" href="https://sistemas.anac.gov.br/aeronaves/cons_rab_resposta_en.asp?textMarca=${selected.registration}">${selected.registration}</a>`);
+            } else if (registrationLinks && registrationLink(selected)) {
+                jQuery('#selected_registration').html(`<a class="link" target="_blank" href="${registrationLink(selected)}">${selected.registration}</a>`);
             } else {
                 jQuery('#selected_registration').text(selected.registration);
             }
@@ -6553,6 +6553,13 @@ function setAutoselect() {
         return;
     timers.autoselect = window.setInterval(selectClosest, 10000);
     selectClosest();
+}
+function registrationLink(plane) {
+    if (plane.icaorange.country === 'Brazil') {
+        return `https://sistemas.anac.gov.br/aeronaves/cons_rab_resposta_en.asp?textMarca=${plane.registration}`;
+    } else {
+        return '';
+    }
 }
 
 initialize();

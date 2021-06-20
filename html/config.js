@@ -197,6 +197,9 @@ BingMapsAPIKey = null;
 
 //flightawareLinks = false;
 
+// show links to various registration websites (not all countries)
+// registrationLinks = true;
+
 // Filter implausible positions (required speed > Mach 3.5)
 // valid values: true, false, "onlyMLAT" ("" required)
 // positionFilter = true;

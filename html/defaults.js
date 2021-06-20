@@ -215,6 +215,9 @@ let filterTISB = false;
 
 let flightawareLinks = false;
 
+// show links to various registration websites (not all countries)
+let registrationLinks = true;
+
 // Filter implausible positions (required speed > Mach 2.5)
 // valid values: true, false, "onlyMLAT" ("" required)
 let positionFilter = true;
