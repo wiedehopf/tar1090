@@ -74,7 +74,7 @@ let lastGlobeExtent;
 let pendingFetches = 0;
 let firstFetch = true;
 let debugCounter = 0;
-let pathName = window.location.pathname;
+let pathName = window.location.pathname.replace(/\/+/, '/') || "/";
 let icaoFilter = null;
 let sourcesFilter = null;
 let sources = ['adsb', ['uat', 'adsr'], 'mlat', 'tisb', 'modeS', 'other', 'adsc'];
@@ -4546,24 +4546,26 @@ function highlight(evt) {
     //pointerMoveTimeout = setTimeout(refreshHighlighted(), 300);
     refreshHighlighted();
 }
-
-function processURLParams(){
-
-    let icaos = [];
-    let valid = [];
-    let icao = null;
+let urlIcaos = [];
+function parseURLIcaos() {
     if (usp.has('icao')) {
-        icaos = usp.get('icao').toLowerCase().split(',');
-        for (let i = 0; i < icaos.length; i++) {
-            icao = icaos[i].toLowerCase();
+        let inArray = usp.get('icao').toLowerCase().split(',');
+        for (let i = 0; i < inArray.length; i++) {
+            const icao = inArray[i].toLowerCase();
             if (icao && (icao.length == 7 || icao.length == 6) && icao.toLowerCase().match(/[a-f,0-9]{6}/)) {
-                valid.push(icao);
+                urlIcaos.push(icao);
+                let newPlane = Planes[icao] || new PlaneObject(icao);
+                newPlane.last_message_time = NaN;
+                newPlane.position_time = NaN;
+                newPlane.selected = true;
+                SelPlanes.push(newPlane);
+                //console.log(newPlane);
+                // preliminary adding of URL specified icaos
             }
         }
     }
-
-    icaos = valid;
-
+}
+function processURLParams(){
     if (usp.has('showTrace')) {
         let date = setTraceDate({string: usp.get('showTrace')});
         if (date && usp.has('startTime')) {
@@ -4608,7 +4610,8 @@ function processURLParams(){
         }
     }
 
-    if (icaos.length > 0) {
+    if (urlIcaos.length > 0) {
+        const icaos = urlIcaos;
         if (!usp.has('noIsolation'))
             toggleIsolation("on", false);
         if (icaos.length > 1) {
@@ -4616,24 +4619,21 @@ function processURLParams(){
             //follow = false;
         }
         for (let i = 0; i < icaos.length; i++) {
-            icao = icaos[i];
-            if (Planes[icao] || globeIndex) {
-                console.log('Selected ICAO id: '+ icao);
-                if (traceDate != null) {
-                    let newPlane = Planes[icao] || new PlaneObject(icao);
-                    newPlane.last_message_time = NaN;
-                    newPlane.position_time = NaN;
-                    newPlane.selected = true;
-                    select(newPlane);
-                    if (!zoom)
-                        zoom = 5;
-                } else {
-                    if (!zoom)
-                        zoom = 7;
-                    selectPlaneByHex(icao, {follow: follow, noDeselect: true})
-                }
+            const icao = icaos[i];
+            console.log('Selected ICAO id: '+ icao);
+            if (traceDate != null) {
+                let newPlane = Planes[icao] || new PlaneObject(icao);
+                newPlane.last_message_time = NaN;
+                newPlane.position_time = NaN;
+                newPlane.selected = true;
+                select(newPlane);
+
+                if (!zoom)
+                    zoom = 5;
             } else {
-                console.log('ICAO id not found: ' + icao);
+                if (!zoom)
+                    zoom = 7;
+                selectPlaneByHex(icao, {follow: follow, noDeselect: true})
             }
         }
         if (traceDate != null)
@@ -6562,4 +6562,5 @@ function registrationLink(plane) {
     }
 }
 
+parseURLIcaos();
 initialize();
