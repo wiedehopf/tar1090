@@ -72,6 +72,16 @@ try {
         get: function() {return null;},
     }
 }
+try {
+    localStorage['testLocalStorage'] = 'test';
+    const test = localStorage['testLocalStorage'];
+} catch (error) {
+    const splat = "Your browser isn't supporting localStorage.\nSafari / Apple: turn off \"Block Cookies\"!";
+    jQuery("#js_error").text(splat);
+    jQuery("#js_error").css('display','block');
+    throw 'FATAL, your browser does not support localStorage!';
+}
+
 if (usp.has('showerrors') || usp.has('jse')) {
     window.onerror = function (msg, url, lineNo, columnNo, error) {
         if (msg == "Script error.")
