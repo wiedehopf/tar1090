@@ -1401,6 +1401,20 @@ function startPage() {
     setIntervalTimers();
 
     processURLParams();
+    if (usp.has('reg')) {
+        let req = regIcaoDownload();
+        req.done(function() {
+            const queries = usp.get('reg').split(',');
+            for (let i in queries) {
+                let icao = regCache[queries[i].toUpperCase()];
+                if (icao) {
+                    icao = icao.toLowerCase();
+                    urlIcaos.push(icao);
+                }
+            }
+            processURLParams();
+        });
+    }
 
     loadFinished = true;
 
@@ -4691,54 +4705,61 @@ function processURLParams(){
     if (usp.has('centerReceiver')) {
         OLMap.getView().setCenter(ol.proj.fromLonLat([SiteLon, SiteLat]));
     }
-    if (usp.has('reg')) {
-        findPlanes(usp.get('reg'), false, false, "byReg", false);
-    }
 }
 
 let regIcaoDownloadRunning = false;
-function findPlanes(query, byIcao, byCallsign, byReg, byType) {
-    if (query == null)
+function regIcaoDownload(opts) {
+    regIcaoDownloadRunning = true;
+    let req = jQuery.ajax({ url: databaseFolder + "/regIcao.js",
+        cache: true,
+        timeout: 60000,
+        dataType : 'json',
+        opts: opts,
+    });
+    req.done(function(data) {
+        regCache = data;
+    });
+    req.always(function() {
+        regIcaoDownloadRunning = false;
+    });
+    return req;
+}
+function findPlanes(queries, byIcao, byCallsign, byReg, byType) {
+    if (queries == null)
         return;
-    query = query.toLowerCase();
+    queries = queries.toLowerCase();
+    queries = queries.split(',');
+    if (queries.length > 1)
+        toggleMultiSelect("on");
     let results = [];
-    if (byReg) {
-        let upper = query.toUpperCase();
-        if (regCache) {
-            if (regCache[upper]) {
-                selectPlaneByHex(regCache[upper].toLowerCase(), {noDeselect: true, follow: true});
-                return;
-            }
-        } else if (!regIcaoDownloadRunning) {
-            regIcaoDownloadRunning = true;
-            let req = jQuery.ajax({ url: databaseFolder + "/regIcao.js",
-                cache: true,
-                timeout: 60000,
-                dataType : 'json',
-                upper: `${upper}`,
-            });
-            req.done(function(data) {
-                regCache = data;
-                if (regCache[this.upper]) {
-                    selectPlaneByHex(regCache[this.upper].toLowerCase(), {noDeselect: true, follow: true});
-                    return;
+    for (let i in queries) {
+        const query = queries[i];
+        if (byReg) {
+            let upper = query.toUpperCase();
+            if (regCache) {
+                if (regCache[upper]) {
+                    selectPlaneByHex(regCache[upper].toLowerCase(), {noDeselect: true, follow: true});
                 }
-            });
-            req.always(function() {
-                regIcaoDownloadRunning = false;
-            });
+            } else if (!regIcaoDownloadRunning) {
+                let req = regIcaoDownload({ upper: `${upper}` });
+                req.done(function() {
+                    if (regCache[this.opts.upper]) {
+                        selectPlaneByHex(regCache[this.opts.upper].toLowerCase(), {noDeselect: true, follow: true});
+                    }
+                });
+            }
         }
-    }
-    for (let i in PlanesOrdered) {
-        const plane = PlanesOrdered[i];
-        if (
-            (byCallsign && plane.flight != null && plane.flight.toLowerCase().match(query))
-            || (byIcao && plane.icao.toLowerCase().match(query))
-            || (byReg && plane.registration != null && plane.registration.toLowerCase().match(query))
-            || (byType && plane.icaoType != null && plane.icaoType.toLowerCase().match(query))
-        ) {
-            if (plane.checkVisible())
-                results.push(plane);
+        for (let i in PlanesOrdered) {
+            const plane = PlanesOrdered[i];
+            if (
+                (byCallsign && plane.flight != null && plane.flight.toLowerCase().match(query))
+                || (byIcao && plane.icao.toLowerCase().match(query))
+                || (byReg && plane.registration != null && plane.registration.toLowerCase().match(query))
+                || (byType && plane.icaoType != null && plane.icaoType.toLowerCase().match(query))
+            ) {
+                if (plane.checkVisible())
+                    results.push(plane);
+            }
         }
     }
     if (results.length > 1) {
@@ -4749,12 +4770,17 @@ function findPlanes(query, byIcao, byCallsign, byReg, byType) {
         }
     } else if (results.length == 1) {
         selectPlaneByHex(results[0].icao, {noDeselect: true, follow: true});
-        console.log("query selected: " + query);
+        console.log("query selected: " + queries);
     } else {
-        console.log("No match found for query: " + query);
-        if (globeIndex && query.toLowerCase().match(/~?[a-f,0-9]{6}/)) {
-            console.log("maybe it's an icao, let's try to fetch the history for it!");
-            selectPlaneByHex(query, {noDeselect: true, follow: true})
+        console.log("No match found for query: " + queries);
+        if (globeIndex) {
+            for (let i in queries) {
+                const query = queries[i];
+                if (query.toLowerCase().match(/~?[a-f,0-9]{6}/)) {
+                    console.log("maybe it's an icao, let's try to fetch the history for it!");
+                    selectPlaneByHex(query, {noDeselect: true, follow: true})
+                }
+            }
         }
     }
 }
