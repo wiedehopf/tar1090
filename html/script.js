@@ -4691,6 +4691,9 @@ function processURLParams(){
     if (usp.has('centerReceiver')) {
         OLMap.getView().setCenter(ol.proj.fromLonLat([SiteLon, SiteLat]));
     }
+    if (usp.has('reg')) {
+        findPlanes(usp.get('reg'), false, false, "byReg", false);
+    }
 }
 
 let regIcaoDownloadRunning = false;
