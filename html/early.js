@@ -82,25 +82,23 @@ try {
     throw 'FATAL, your browser does not support localStorage!';
 }
 
+let firstError = true;
 if (usp.has('showerrors') || usp.has('jse')) {
     window.onerror = function (msg, url, lineNo, columnNo, error) {
-        if (msg == "Script error.")
-            return true;
-        let splat = '';
-        splat += 'Uncaught JS Error:' + url + ' line ' + lineNo + '\n';
-        splat += msg + '\n';
-        try {
-            splat += '\n' + error.stack;
-        } catch (error) {
+        if (firstError) {
+            firstError = false;
+            let splat = '';
+            splat += 'Uncaught JS Error:' + url + ' line ' + lineNo + '\n';
+            splat += msg + '\n';
+            if (error && error.stack)
+                splat += '\n' + error.stack;
+            jQuery("#js_error").text(splat);
+            jQuery("#js_error").css('display','block');
         }
-        jQuery("#js_error").text(splat);
-        jQuery("#js_error").css('display','block');
         return false;
     }
 } else {
     window.onerror = function (msg, url, lineNo, columnNo, error) {
-        if (msg == "Script error.")
-            return true;
         return false;
     }
 }
