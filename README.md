@@ -456,10 +456,10 @@ http://192.168.x.yy/tar1090/?icao=456789&enableLabels&extendedLabels=2&trackLabe
 - filterMaxRange=value - maximum distance of rendered tracks
 - baseMap=maptype - change the map type (as defined in config.js)
 - mapOrientation=value - (in degrees)
-- monochromeMarkers=<xxxxxx> - set constant html color for markers (parameter is an hexadecimal color)
-- monochromeTracks=<xxxxxx> - set constant html color for tracks (parameter is an hexadecimal color)
-- outlineColor=<xxxxxx> - set outline color (parameter is an hexadecimal color)
-- sidebarWidth=### – size of sidebar in pixels
+- monochromeMarkers=xxxxxx - set constant html color for markers (parameter is an hexadecimal color)
+- monochromeTracks=xxxxxx - set constant html color for tracks (parameter is an hexadecimal color)
+- outlineColor=xxxxxx - set outline color (parameter is an hexadecimal color)
+- sidebarWidth=xxx – size of sidebar in pixels
 
 ### Rendering (no associated value / active if present)
 
