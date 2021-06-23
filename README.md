@@ -423,9 +423,9 @@ alternative display style: &realHeat
 - blurryness: &heatBlur=2
 - weight of each dot for the heatmap: &heatWeight=4
 
-## other usefull URL parameters
+## Other useful URL parameters
 
-You can use MANY extra parameters in the URL to pass parameters to TAR1090 on the fly
+You can use extra parameters in the URL to pass parameters to TAR1090
 
 Multiple parameters are separated by "&", like this:
 http://192.168.x.yy/tar1090/?icao=456789&enableLabels&extendedLabels=2&trackLabels&zoom=11&mapDim=0.4
