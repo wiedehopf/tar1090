@@ -451,7 +451,6 @@ iconScale=value - scale the aircraft icon (value between 0 and x, by increments 
 labelScale=value - scale the aircraft labels (value between 0 and x, by increments of 0.1)
 tempTrails=value – Shows temporary trails for ## seconds of history
 largeMode=<1-4> – Cycles Icons size
-
 mapDim=value - dim the map (value between 0 and 1, by increments of 0.01)
 mapContrast=value - set the map contrast
 filterMaxRange=value - maximum distance of rendered tracks
@@ -460,15 +459,12 @@ mapOrientation=value - (in degrees)
 monochromeMarkers=#ff0000 - set constant html color for markers (parameter is an hexadecimal color)
 monochromeTracks=#ff0000 - set constant html color for tracks (parameter is an hexadecimal color)
 outlineColor=#505050 - set outline color (parameter is an hexadecimal color)
-
 sidebarWidth=### – Size of Sidebar in pixels
-
 
 ### Rendering (no associated value / active if present)
 
 noIsolation - enable multiselect when multiple ICAO are used
 mil – Military/Interesting
-
 hideSideBar – hides sidebar
 hideButtons – hides all buttons
 centerReceiver - conter the view on receiver position
