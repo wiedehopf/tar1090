@@ -445,21 +445,21 @@ http://192.168.x.yy/tar1090/?icao=456789&enableLabels&extendedLabels=2&trackLabe
 - enableLabels=true - enable labels on aircraft ("L" button)
 - extendedLabels=value - select the labels type ("O" button) / Valid values are 0,1,2
 - trackLabels=true - enable track labels ("K" button)
-- noVanish=true - Persistence mode ("P" button)
+- noVanish=true - persistence mode ("P" button)
 - outlineWidth=value - set width for the for aircraft icons
 - iconScale=value - scale the aircraft icon (value between 0 and x, by increments of 0.1)
 - labelScale=value - scale the aircraft labels (value between 0 and x, by increments of 0.1)
-- tempTrails=value – Shows temporary trails for ## seconds of history
-- largeMode=<1-4> – Cycles Icons size
+- tempTrails=value – shows temporary trails for ## seconds of history
+- largeMode=<1-4> – cycles Icons size
 - mapDim=value - dim the map (value between 0 and 1, by increments of 0.01)
 - mapContrast=value - set the map contrast
 - filterMaxRange=value - maximum distance of rendered tracks
 - baseMap=maptype - change the map type (as defined in config.js)
 - mapOrientation=value - (in degrees)
-- monochromeMarkers=#ff0000 - set constant html color for markers (parameter is an hexadecimal color)
-- monochromeTracks=#ff0000 - set constant html color for tracks (parameter is an hexadecimal color)
-- outlineColor=#505050 - set outline color (parameter is an hexadecimal color)
-- sidebarWidth=### – Size of Sidebar in pixels
+- monochromeMarkers=<xxxxxx> - set constant html color for markers (parameter is an hexadecimal color)
+- monochromeTracks=<xxxxxx> - set constant html color for tracks (parameter is an hexadecimal color)
+- outlineColor=<xxxxxx> - set outline color (parameter is an hexadecimal color)
+- sidebarWidth=### – size of sidebar in pixels
 
 ### Rendering (no associated value / active if present)
 
