@@ -5031,6 +5031,9 @@ function updateAddressBar() {
 function refreshInt() {
     let refresh = RefreshInterval;
 
+    if (uuid)
+        return 5000;
+
     // handle non globe case
     if (!globeIndex) {
         return refresh;
