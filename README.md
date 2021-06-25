@@ -166,6 +166,10 @@ sudo bash -c "$(wget -nv -O - https://github.com/wiedehopf/tar1090/raw/master/un
 - T selects all aircraft
 - B toggle map brightness
 
+## URL query parameters (/tar1090/?icao=123456&zoom=5 and similar)
+
+See [README-query.md](README-query.md)
+
 ## Multiple instances
 
 The script can install multiple instances, this is accomplished by first editing `/etc/default/tar1090_instances`:
@@ -422,10 +426,6 @@ First parameter after /tar1090 in the URL mandatory, rest are optional
 alternative display style: &realHeat
 - blurryness: &heatBlur=2
 - weight of each dot for the heatmap: &heatWeight=4
-
-## Query parameters
-
-See [README-query.md](README-query.md)
 
 ## NO WARRANTY - Excerpt from the License:
 
