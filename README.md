@@ -269,7 +269,8 @@ To judge the actual range (/?pTracks, see next chapter), one needs to first know
 - Set the location for your antenna precisely
 - Enter a title / submit the request and wait for it to finish
 - Scroll down to the map, look at the buttons in the top right of the map
-- Use the "up in the air" button on the map, reduce map magnification and set altitudes to view the outlines for your location
+- Use the "up in the air" button on the map, reduce map magnification
+- You can change the altitudes (ft) below the map to view different outlines for your location
 - Those outlines tell you how far you can receive aircraft at the associated altitudes
 - The panorama does not take into account obstacles closer to the antenna than approximately 100 ft, trees are also not considered but can block reception
 
