@@ -1358,13 +1358,17 @@ function setIntervalTimers() {
     timers.everySecond = setInterval(everySecond, 850);
     timers.reaper = setInterval(reaper, 20000);
     if (tempTrails) {
-        window.setInterval(trailReaper, 10000);
+        timers.trailReaper = window.setInterval(trailReaper, 10000);
         trailReaper(now);
     }
     if (enable_pf_data && !pTracks && !globeIndex) {
         jQuery('#pf_info_contianer').removeClass('hidden');
-        window.setInterval(fetchPfData, RefreshInterval*10.314);
+        timers.pf_data = window.setInterval(fetchPfData, RefreshInterval*10.314);
         fetchPfData();
+    }
+    if (receiverJson && receiverJson.outlineJson) {
+        timers.drawOutline = window.setInterval(drawOutlineJson, 30000);
+        drawOutlineJson();
     }
 }
 
@@ -4225,7 +4229,6 @@ function toggleLayer(element, layer) {
 
 let fetchingPf = false;
 function fetchPfData() {
-    console.trace();
     if (fetchingPf)
         return;
     fetchingPf = true;
@@ -5590,6 +5593,53 @@ function drawUpintheair() {
             // no rings available, do nothing
         });
     }
+}
+let actualOutlineFeatures = null;
+let actualOutlineStyle = new ol.style.Style({
+    fill: null,
+    stroke: new ol.style.Stroke({
+        color: '#00596b',
+        width: range_outline_width,
+        lineDash: range_outline_dash,
+    })
+});
+function drawOutlineJson() {
+    let request = jQuery.ajax({ url: 'data/outline.json',
+        cache: false,
+        dataType: 'json' });
+    request.done(function(data) {
+        if (!actualOutlineFeatures) {
+            actualOutlineFeatures = new ol.source.Vector();
+            layers.insertAt(3,
+            new ol.layer.Vector({
+                name: 'actualRangeOutline',
+                type: 'overlay',
+                title: 'actual range outline',
+                source: actualOutlineFeatures,
+                zIndex: 101,
+                renderBuffer: renderBuffer,
+                style: actualOutlineStyle,
+            }));
+        } else {
+            actualOutlineFeatures.clear();
+        }
+        let points = data.points;
+        if (!points)
+            return;
+        let geom = new ol.geom.LineString([[ points[0][1], points[0][0] ]]);
+        for (let j = 0; j < points.length; ++j) {
+            geom.appendCoordinate([ points[j][1], points[j][0] ]);
+        }
+        geom.appendCoordinate([ points[0][1], points[0][0] ]);
+        geom.transform('EPSG:4326', 'EPSG:3857');
+
+        let feature = new ol.Feature(geom);
+        actualOutlineFeatures.addFeature(feature);
+    });
+
+    request.fail(function() {
+        // no rings available, do nothing
+    });
 }
 
 function gotoTime(timestamp) {
