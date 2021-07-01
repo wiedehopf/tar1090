@@ -5638,7 +5638,7 @@ function drawOutlineJson() {
     request.done(function(data) {
         actualOutlineFeatures.clear();
         let points = data.points;
-        if (!points)
+        if (!points || !points.length)
             return;
         let geom = new ol.geom.LineString([[ points[0][1], points[0][0] ]]);
         for (let j = 0; j < points.length; ++j) {
