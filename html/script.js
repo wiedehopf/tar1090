@@ -3475,6 +3475,13 @@ function selectAllPlanes() {
     toggleIsolation(false, "off");
 
     SelectedAllPlanes = true;
+
+    if (globeIndex) {
+        for (let i in PlanesOrdered) {
+            let plane = PlanesOrdered[i];
+            plane.processTrace();
+        }
+    }
     refreshFeatures();
 
     jQuery('#selectall_checkbox').addClass('settingsCheckboxChecked');
