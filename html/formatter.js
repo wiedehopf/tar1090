@@ -346,7 +346,7 @@ function iOSVersion() {
 
 function wqi(data) {
     const buffer = data.buffer;
-    let vals = new Uint32Array(data.buffer, 0, 5);
+    let vals = new Uint32Array(data.buffer, 0, 8);
     data.now = vals[0] / 1000 + vals[1] * 4294967.296;
     let stride = vals[2];
     data.global_ac_count_withpos = vals[3];
@@ -357,6 +357,8 @@ function wqi(data) {
     data.west =  limits[1];
     data.north =  limits[2];
     data.east =  limits[3];
+
+    data.messages = vals[7];
 
     data.aircraft = [];
     for (let off = stride; off < buffer.byteLength; off += stride) {

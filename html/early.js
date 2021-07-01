@@ -366,10 +366,10 @@ if (uuid != null) {
         Dump1090Version = data.version;
         RefreshInterval = data.refresh;
         nHistoryItems = (data.history < 2) ? 0 : data.history;
-        binCraft = data.binCraft ? true : false;
+        binCraft = data.binCraft ? true : false || data.aircraft_binCraft ? true : false;
         if (usp.has('noglobe') || usp.has('ptracks')) {
             data.globeIndexGrid = null; // disable globe on user request
-            binCraft = false;
+            binCraft = data.aircraft_binCraft ? true : false;
         }
         dbServer = (data.dbServer && data.globeIndexGrid != null) ? true : false;
 

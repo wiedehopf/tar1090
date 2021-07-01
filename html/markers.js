@@ -988,6 +988,8 @@ let TypeDesignatorIcons = {
     'GAZL': ['gazelle', 1.00],
     'AS50': ['gazelle', 1.00],
     'AS55': ['gazelle', 1.00],
+    'ALO2': ['gazelle', 1.00],
+    'ALO3': ['gazelle', 1.00],
 
     'R22': ['helicopter', 0.92],
     'R44': ['helicopter', 0.94],

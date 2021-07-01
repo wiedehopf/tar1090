@@ -261,7 +261,7 @@ function processReceiverUpdate(data, init) {
         globeIndexNow[data.globeIndex] = data.now;
     }
 
-    if (!uat && !init && !globeIndex && !binCraft)
+    if (!uat && !init && !globeIndex)
         updateMessageRate(data);
 
     // Loop through all the planes in the data packet
@@ -344,8 +344,10 @@ function fetchData(options) {
                 ac_url.push('data/globe' + mid + indexes[i].toString().padStart(4, '0') + suffix);
             }
         }
+    } else if (binCraft) {
+        ac_url.push = 'data/aircraft.binCraft';
     } else {
-        ac_url[0] = 'data/aircraft.json';
+        ac_url.push = 'data/aircraft.json';
     }
 
     pendingFetches = ac_url.length;
@@ -5073,7 +5075,7 @@ function refreshInt() {
 
     // handle globe case
 
-    if (binCraft && onlyMilitary && OLMap.getView().getZoom() < 5.5) {
+    if (binCraft && globeIndex && onlyMilitary && OLMap.getView().getZoom() < 5.5) {
         refresh = 8000;
     }
 
