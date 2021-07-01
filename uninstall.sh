@@ -3,6 +3,7 @@
 instance=tar1090
 if [[ -n $1 ]]; then
 	instance="tar1090-$1"
+    rm -rf "/usr/local/share/tar1090/html-$1"
 else
 	rm -rf /usr/local/share/tar1090
     rm -f /etc/lighttpd/conf-available/*tar1090*
