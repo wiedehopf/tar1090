@@ -40,6 +40,12 @@
 //range_outline_width = 1.7;
 //range_outline_colored_by_altitude = false;
 //range_outline_dash = [5, 5]; // null - solid line, [5, 5] - dashed line with 5 pixel lines and spaces in between
+//
+//
+// Style controls for the actal range outline:
+// actual_range_outline_color = '#00596b';
+// actual_range_outline_width = 1.7;
+// actual_range_outline_dash = null; // null - solid line, [5, 5] - dashed line with 5 pixel lines and spaces in between
 
 
 // which map is displayed to new visitors

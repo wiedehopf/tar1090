@@ -1689,6 +1689,35 @@ function initMap() {
         createLocationDot();
     });
 
+
+    if (receiverJson && receiverJson.outlineJson) {
+        actualOutlineFeatures = new ol.source.Vector();
+        actualOutlineStyle = new ol.style.Style({
+            fill: null,
+            stroke: new ol.style.Stroke({
+                color: actual_range_outline_color,
+                width: actual_range_outline_width,
+                lineDash: actual_range_outline_dash,
+            }),
+        });
+        actualOutlineLayer = new ol.layer.Vector({
+            name: 'actualRangeOutline',
+            type: 'overlay',
+            title: 'actual range outline',
+            source: actualOutlineFeatures,
+            visible: (localStorage['actualOutlineLayer'] != 'false'),
+            zIndex: 101,
+            renderBuffer: renderBuffer,
+            style: actualOutlineStyle,
+        });
+        layers.push(actualOutlineLayer);
+        actualOutlineLayer.on('change:visible', function() {
+            localStorage['actualOutlineLayer'] = actualOutlineLayer.getVisible();
+            drawOutlineJson();
+        });
+    }
+
+
     layers.push(locationDotLayer);
 
 
@@ -5594,35 +5623,20 @@ function drawUpintheair() {
         });
     }
 }
-let actualOutlineFeatures = null;
-let actualOutlineStyle = new ol.style.Style({
-    fill: null,
-    stroke: new ol.style.Stroke({
-        color: '#00596b',
-        width: range_outline_width,
-        lineDash: range_outline_dash,
-    })
-});
+let actualOutlineLayer;
+let actualOutlineFeatures;
+let actualOutlineStyle;
+
 function drawOutlineJson() {
+    if (localStorage['actualOutlineLayer'] == 'false')
+        return;
+    if (!receiverJson || !receiverJson.outlineJson)
+        return;
     let request = jQuery.ajax({ url: 'data/outline.json',
         cache: false,
         dataType: 'json' });
     request.done(function(data) {
-        if (!actualOutlineFeatures) {
-            actualOutlineFeatures = new ol.source.Vector();
-            layers.insertAt(3,
-            new ol.layer.Vector({
-                name: 'actualRangeOutline',
-                type: 'overlay',
-                title: 'actual range outline',
-                source: actualOutlineFeatures,
-                zIndex: 101,
-                renderBuffer: renderBuffer,
-                style: actualOutlineStyle,
-            }));
-        } else {
-            actualOutlineFeatures.clear();
-        }
+        actualOutlineFeatures.clear();
         let points = data.points;
         if (!points)
             return;

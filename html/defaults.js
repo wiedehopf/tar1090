@@ -48,7 +48,12 @@ let SiteName    = "My Radar Site"; // tooltip of the marker
 let range_outline_color = '#0000DD';
 let range_outline_width = 1.7;
 let range_outline_colored_by_altitude = false;
-let range_outline_dash = null;
+let range_outline_dash = null; // null - solid line, [5, 5] - dashed line with 5 pixel lines and spaces in between
+
+// Style controls for the actal range outline:
+let actual_range_outline_color = '#00596b';
+let actual_range_outline_width = 1.7;
+let actual_range_outline_dash = null; // null - solid line, [5, 5] - dashed line with 5 pixel lines and spaces in between
 
 // which map is displayed to new visitors
 let MapType_tar1090 = "osm_adsbx";
