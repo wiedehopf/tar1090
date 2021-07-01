@@ -5639,7 +5639,12 @@ function drawOutlineJson() {
         dataType: 'json' });
     request.done(function(data) {
         actualOutlineFeatures.clear();
-        let points = data.points;
+        let points;
+        if (data.actualRange && data.actualRange.last24h) {
+            points = data.actualRange.last24h.points;
+        } else {
+            points = data.points;
+        }
         if (!points || !points.length)
             return;
         let geom = new ol.geom.LineString([[ points[0][1], points[0][0] ]]);
