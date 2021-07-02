@@ -1440,7 +1440,6 @@ function startPage() {
 
     geoMag = geoMagFactory(cof2Obj());
 
-    drawUpintheair();
     mapRefresh();
 
     if (heatmap) {
@@ -1660,20 +1659,15 @@ function initMap() {
     layers = layers_group.getLayers();
 
     siteCircleLayer = new ol.layer.Vector({
-        name: 'site_pos',
+        name: 'siteCircles',
         type: 'overlay',
         title: 'Range rings',
         source: siteCircleFeatures,
-        visible: (localStorage['siteCircleLayer'] == undefined ? SiteCircles : localStorage['siteCircleLayer'] == 'true'),
+        visible: SiteCircles,
         zIndex: 100,
         renderOrder: null,
         renderBuffer: renderBuffer,
     });
-    siteCircleLayer.on('change:visible', function() {
-        localStorage['siteCircleLayer'] = siteCircleLayer.getVisible();
-        drawSiteCircle();
-    });
-
     layers.push(siteCircleLayer);
 
     locationDotLayer = new ol.layer.Vector({
@@ -1681,15 +1675,12 @@ function initMap() {
         type: 'overlay',
         title: (receiverJson && receiverJson.lat != null) ? 'Site position' : 'Your position',
         source: locationDotFeatures,
-        visible: (localStorage['locationDotLayer'] == undefined ? SiteShow : localStorage['locationDotLayer'] == 'true'),
+        visible: SiteShow,
         zIndex: 100,
         renderOrder: null,
         renderBuffer: renderBuffer,
     });
-    locationDotLayer.on('change:visible', function() {
-        localStorage['locationDotLayer'] = locationDotLayer.getVisible();
-        createLocationDot();
-    });
+    layers.push(locationDotLayer);
 
 
     if (receiverJson && receiverJson.outlineJson) {
@@ -1707,20 +1698,25 @@ function initMap() {
             type: 'overlay',
             title: 'actual range outline',
             source: actualOutlineFeatures,
-            visible: (localStorage['actualOutlineLayer'] != 'false'),
             zIndex: 101,
             renderBuffer: renderBuffer,
             style: actualOutlineStyle,
         });
         layers.push(actualOutlineLayer);
-        actualOutlineLayer.on('change:visible', function() {
-            localStorage['actualOutlineLayer'] = actualOutlineLayer.getVisible();
-            drawOutlineJson();
-        });
     }
-
-
-    layers.push(locationDotLayer);
+    if (calcOutlineData) {
+        calcOutlineLayer = new ol.layer.Vector({
+            name: 'calcOutline',
+            type: 'overlay',
+            title: 'terrain-based range outline',
+            source: calcOutlineFeatures,
+            zIndex: 100,
+            renderOrder: null,
+            renderBuffer: renderBuffer,
+        });
+        layers.push(calcOutlineLayer);
+        drawUpintheair();
+    }
 
 
     const dummyLayer = new ol.layer.Vector({
@@ -1803,6 +1799,9 @@ function initMap() {
         } else if (lyr.get('type') === 'overlay') {
             if (localStorage['layer_' + lyr.get('name')] == 'true' || enableOverlays.indexOf(lyr.get('name')) >= 0) {
                 lyr.setVisible(true);
+            }
+            if (localStorage['layer_' + lyr.get('name')] == 'false') {
+                lyr.setVisible(false);
             }
 
             lyr.on('change:visible', function(evt) {
@@ -5498,8 +5497,6 @@ function remakeTrails() {
 
 function createLocationDot() {
     locationDotFeatures.clear();
-    if (!locationDotLayer.getVisible() || !SiteShow)
-        return;
     let markerStyle = new ol.style.Style({
         image: new ol.style.Circle({
             radius: 7,
@@ -5518,10 +5515,6 @@ function createLocationDot() {
 function drawSiteCircle() {
     siteCircleFeatures.clear();
 
-    // Clear existing circles first
-    if (!siteCircleLayer.getVisible()) {
-        return;
-    }
     if (!SitePosition)
         return;
 
@@ -5562,6 +5555,8 @@ function drawSiteCircle() {
     }
 }
 
+let calcOutlineFeatures = new ol.source.Vector();
+let calcOutlineLayer;
 function drawUpintheair() {
     // Add terrain-limit rings. To enable this:
     //
@@ -5576,60 +5571,40 @@ function drawUpintheair() {
     //    'http://www.heywhatsthat.com/api/upintheair.json?id=XXXX&refraction=0.25&alts=3048,9144'
     //
     // NB: altitudes are in _meters_, you can specify a list of altitudes
+    //
+    if (!calcOutlineData)
+        return;
 
-    // kick off an ajax request that will add the rings when it's done
-    if (!globeIndex && !uuid) {
-        let request = jQuery.ajax({ url: 'upintheair.json',
-            cache: true,
-            dataType: 'json' });
-        request.done(function(data) {
-            let outlineFeatures = new ol.source.Vector();
-            layers.insertAt(3,
-                new ol.layer.Vector({
-                    name: 'upintheair',
-                    type: 'overlay',
-                    title: 'terrain-based range outline',
-                    source: outlineFeatures,
-                    visible: !adsbexchange,
-                    zIndex: 100,
-                    renderOrder: null,
-                    renderBuffer: renderBuffer,
-                }));
-            for (let i = 0; i < data.rings.length; ++i) {
-                let geom = null;
-                let points = data.rings[i].points;
-                let altitude = (3.28084 * data.rings[i].alt).toFixed(0);
-                let color = range_outline_color;
-                if (range_outline_colored_by_altitude) {
-                    let colorArr = altitudeColor(altitude);
-                    color = 'hsl(' + colorArr[0].toFixed(0) + ',' + colorArr[1].toFixed(0) + '%,' + colorArr[2].toFixed(0) + '%)';
-                }
-                let outlineStyle = new ol.style.Style({
-                    fill: null,
-                    stroke: new ol.style.Stroke({
-                        color: color,
-                        width: range_outline_width,
-                        lineDash: range_outline_dash,
-                    })
-                });
-                if (points.length > 0) {
-                    geom = new ol.geom.LineString([[ points[0][1], points[0][0] ]]);
-                    for (let j = 0; j < points.length; ++j) {
-                        geom.appendCoordinate([ points[j][1], points[j][0] ]);
-                    }
-                    geom.appendCoordinate([ points[0][1], points[0][0] ]);
-                    geom.transform('EPSG:4326', 'EPSG:3857');
-
-                    let feature = new ol.Feature(geom);
-                    feature.setStyle(outlineStyle);
-                    outlineFeatures.addFeature(feature);
-                }
+    let data = calcOutlineData;
+    for (let i = 0; i < data.rings.length; ++i) {
+        let geom = null;
+        let points = data.rings[i].points;
+        let altitude = (3.28084 * data.rings[i].alt).toFixed(0);
+        let color = range_outline_color;
+        if (range_outline_colored_by_altitude) {
+            let colorArr = altitudeColor(altitude);
+            color = 'hsl(' + colorArr[0].toFixed(0) + ',' + colorArr[1].toFixed(0) + '%,' + colorArr[2].toFixed(0) + '%)';
+        }
+        let outlineStyle = new ol.style.Style({
+            fill: null,
+            stroke: new ol.style.Stroke({
+                color: color,
+                width: range_outline_width,
+                lineDash: range_outline_dash,
+            })
+        });
+        if (points.length > 0) {
+            geom = new ol.geom.LineString([[ points[0][1], points[0][0] ]]);
+            for (let j = 0; j < points.length; ++j) {
+                geom.appendCoordinate([ points[j][1], points[j][0] ]);
             }
-        });
+            geom.appendCoordinate([ points[0][1], points[0][0] ]);
+            geom.transform('EPSG:4326', 'EPSG:3857');
 
-        request.fail(function() {
-            // no rings available, do nothing
-        });
+            let feature = new ol.Feature(geom);
+            feature.setStyle(outlineStyle);
+            calcOutlineFeatures.addFeature(feature);
+        }
     }
 }
 let actualOutlineLayer;

@@ -41,6 +41,7 @@ let tfrs = false;
 let initialURL = window.location.href;
 let milRanges = [];
 let guessModeS = window.location.href.match(/devg/) ? true : false;
+let calcOutlineData = null;
 
 let uuid = null;
 let uuidCache = [];
@@ -341,6 +342,22 @@ if (!heatmap) {
     loadHeatChunk();
 }
 
+function historyQueued() {
+    if (!globeIndex && !uuid) {
+        let request = jQuery.ajax({ url: 'upintheair.json',
+            cache: true,
+            dataType: 'json' });
+        request.done(function(data) {
+            calcOutlineData = data;
+        });
+        request.always(function() {
+            configureReceiver.resolve();
+        });
+    } else {
+        configureReceiver.resolve();
+    }
+}
+
 if (uuid != null) {
     receiverJson = null;
     Dump1090Version = 'unknown';
@@ -349,7 +366,6 @@ if (uuid != null) {
     //console.time("Downloaded History");
 } else {
     get_receiver_defer.fail(function(data){
-        StaleReceiverCount++;
 
         setTimeout(function() {
             jQuery("#loader").addClass("hidden");
@@ -379,7 +395,7 @@ if (uuid != null) {
             HistoryChunks = false;
             nHistoryItems = 0;
             get_history();
-            configureReceiver.resolve();
+            historyQueued();
         } else if (data.globeIndexGrid != null) {
             HistoryChunks = false;
             nHistoryItems = 0;
@@ -397,7 +413,7 @@ if (uuid != null) {
             }
 
             get_history();
-            configureReceiver.resolve();
+            historyQueued();
         } else {
             test_chunk_defer.done(function(data) {
                 HistoryChunks = true;
@@ -409,11 +425,11 @@ if (uuid != null) {
                 if (enable_uat)
                     console.log("UAT/978 enabled!");
                 get_history();
-                configureReceiver.resolve();
+                historyQueued();
             }).fail(function() {
                 HistoryChunks = false;
                 get_history();
-                configureReceiver.resolve();
+                historyQueued();
             });
         }
     });
