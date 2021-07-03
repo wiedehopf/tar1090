@@ -313,13 +313,6 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
         return false;
     }
 
-    if (this.position && SitePosition) {
-        if (pTracks && this.sitedist)
-            this.sitedist = Math.max(ol.sphere.getDistance(SitePosition, this.position), this.sitedist);
-        else
-            this.sitedist = ol.sphere.getDistance(SitePosition, this.position);
-    }
-
     let projHere = ol.proj.fromLonLat(this.position);
     let on_ground = (this.altitude === "ground");
 
@@ -1149,6 +1142,13 @@ PlaneObject.prototype.processTrace = function() {
 };
 
 PlaneObject.prototype.updatePositionData = function(now, last, data, init) {
+    if (this.position && SitePosition) {
+        if (pTracks && this.sitedist)
+            this.sitedist = Math.max(ol.sphere.getDistance(SitePosition, this.position), this.sitedist);
+        else
+            this.sitedist = ol.sphere.getDistance(SitePosition, this.position);
+    }
+
     if (!globeIndex || this.selected || SelectedAllPlanes || replay) {
         let newPos = this.updateTrack(now, last);
         this.drawLine |= newPos;
