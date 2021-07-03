@@ -1710,7 +1710,7 @@ PlaneObject.prototype.updateLines = function() {
             seg.label = new ol.Feature(new ol.geom.Point(seg.fixed.getFirstCoordinate()));
             let timestamp;
             const date = new Date(seg.ts * 1000);
-            if (showTrace) {
+            if (showTrace || replay) {
                 timestamp =
                     date.getUTCHours().toString().padStart(2,'0')
                     + ":" + date.getUTCMinutes().toString().padStart(2,'0')

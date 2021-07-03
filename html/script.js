@@ -832,6 +832,7 @@ function initPage() {
         } else {
             //if paused, play.
             playReplay(true);
+            play();
         }
     });
     jQuery("#findHistory").click(function(){
@@ -845,7 +846,6 @@ function initPage() {
 
         replay.ival = 60 * 1000;
 
-        playReplay(true);
         replayClear();
         loadReplay(date);
     });
@@ -6198,6 +6198,7 @@ function initReplay(data) {
     replay.ival = (replay.pointsU[replay.slices[0] + 3] & 65535) / 1000;
     replay.halfHour = (replay.ts.getUTCMinutes() >= 30) ? 1 : 0;
     let startIndex = Math.round (((replay.ts.getUTCMinutes() % 30) * 60 + replay.ts.getUTCSeconds()) / replay.ival);
+    playReplay(true);
     play(startIndex); // kick off first play
 }
 
@@ -6207,20 +6208,12 @@ function updateReplayInterface(date) {
 }
 
 function play(index) {
-    if (!replay)
-        return;
-    if(!replay.playing){
+    clearTimeout(refreshId);
+    if (!replay || !replay.playing || showTrace) {
         return;
     }
 
-    clearTimeout(refreshId);
     refreshId = setTimeout(play, replay.ival / replay.speed * 1000);
-
-    if (showTrace)
-        return;
-
-
-
     playReplay(true);
 
     if (index == null) {
@@ -6509,13 +6502,14 @@ function showReplayBar(){
             },
         });
         replaySetTimeHint();
+        const slideBase = 3.0;
         jQuery('#speedSelect').slider({
-            value: replay.speed,
-            step: 1,
-            min: 1,
-            max: 60,
+            value: Math.pow(replay.speed, 1 / slideBase),
+            step: 0.07,
+            min: Math.pow(1, 1 / slideBase),
+            max: Math.pow(100, 1 / slideBase),
             slide: function(event, ui) {
-                replay.speed = ui.value;
+                replay.speed = Math.pow(ui.value, slideBase).toFixed(1);
                 jQuery('#speedHint').text('Speed: ' + replay.speed + 'x');
             },
         });
