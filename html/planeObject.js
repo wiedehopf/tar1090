@@ -1149,7 +1149,7 @@ PlaneObject.prototype.processTrace = function() {
 };
 
 PlaneObject.prototype.updatePositionData = function(now, last, data, init) {
-    if (!globeIndex || this.selected || SelectedAllPlanes) {
+    if (!globeIndex || this.selected || SelectedAllPlanes || replay) {
         let newPos = this.updateTrack(now, last);
         this.drawLine |= newPos;
     }
