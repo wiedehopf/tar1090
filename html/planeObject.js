@@ -103,6 +103,10 @@ PlaneObject.prototype.setNull = function() {
 
     this.version        = null;
 
+    this.position  = null;
+    this.sitedist  = null;
+    this.too_fast = 0;
+
     // Track (direction) at the time we last appended to the track history
     this.tail_track = null;
     this.tail_true = null;
@@ -112,9 +116,6 @@ PlaneObject.prototype.setNull = function() {
     this.prev_position = null;
     this.prev_time = null;
     this.prev_track = null;
-    this.position  = null;
-    this.sitedist  = null;
-    this.too_fast = 0;
 
     // When was this last updated (receiver timestamp)
     this.seen = NaN;
@@ -131,6 +132,71 @@ PlaneObject.prototype.setNull = function() {
     this.msgs978   = 0;
     this.messageRate = 0;
     this.messageRateOld = 0;
+};
+
+PlaneObject.prototype.setData = function(other) {
+this.flight = other.flight;
+this.name = other.name;
+this.squawk = other.squawk;
+this.category = other.category;
+this.dataSource = other.dataSource;
+this.altitude = other.altitude;
+this.alt_baro = other.alt_baro;
+this.alt_geom = other.alt_geom;
+this.altitudeTime = other.altitudeTime;
+this.bad_alt = other.bad_alt;
+this.bad_altTime = other.bad_altTime;
+this.alt_reliable = other.alt_reliable;
+this.speed = other.speed;
+this.gs = other.gs;
+this.ias = other.ias;
+this.tas = other.tas;
+this.track = other.track;
+this.track_rate = other.track_rate;
+this.mag_heading = other.mag_heading;
+this.true_heading = other.true_heading;
+this.mach = other.mach;
+this.roll = other.roll;
+this.nav_altitude = other.nav_altitude;
+this.nav_heading = other.nav_heading;
+this.nav_modes = other.nav_modes;
+this.nav_qnh = other.nav_qnh;
+this.rc = other.rc;
+this.rotation = other.rotation;
+this.rotationCache = other.rotationCache;
+this.nac_p = other.nac_p;
+this.nac_v = other.nac_v;
+this.nic_baro = other.nic_baro;
+this.sil_type = other.sil_type;
+this.sil = other.sil;
+this.baro_rate = other.baro_rate;
+this.geom_rate = other.geom_rate;
+this.vert_rate = other.vert_rate;
+this.wd = other.wd;
+this.ws = other.ws;
+this.oat = other.oat;
+this.tat = other.tat;
+this.version = other.version;
+this.position = other.position;
+this.sitedist = other.sitedist;
+this.too_fast = other.too_fast;
+this.tail_track = other.tail_track;
+this.tail_true = other.tail_true;
+this.tail_update = other.tail_update;
+this.prev_position = other.prev_position;
+this.prev_time = other.prev_time;
+this.prev_track = other.prev_track;
+this.seen = other.seen;
+this.last_message_time = other.last_message_time;
+this.seen_pos = other.seen_pos;
+this.position_time = other.position_time;
+this.last = other.last;
+this.messages = other.messages;
+this.rssi = other.rssi;
+this.msgs1090 = other.msgs1090;
+this.msgs978 = other.msgs978;
+this.messageRate = other.messageRate;
+this.messageRateOld = other.messageRateOld;
 };
 
 
@@ -311,6 +377,9 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     if (this.position[0] > 180 || this.position[0] < -180 || this.position[1] > 90 || this.position[1] < -90) {
         console.log("Ignoring Impossible Position for " + this.icao + ": " + this.position);
         return false;
+    }
+    if (now < 1e9 || isNaN(now)) {
+        console.trace();
     }
 
     let projHere = ol.proj.fromLonLat(this.position);
@@ -509,6 +578,9 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
             points = makeCircle([this.prev_position, this.position], greyskull);
             for (let i in points)
                 points[i] = ol.proj.fromLonLat(points[i]);
+        }
+        if (this.prev_time < 1e9) {
+            console.trace();
         }
 
         this.track_linesegs.push({ fixed: new ol.geom.LineString(points),
@@ -954,6 +1026,7 @@ PlaneObject.prototype.processTrace = function() {
             const leg_marker = state[6] & 2;
 
             _now = timestamp;
+
             if (_now <= _last)
                 continue;
 
@@ -1053,17 +1126,10 @@ PlaneObject.prototype.processTrace = function() {
         _last = _now;
     }
 
-    if (!tempPlane.prev_position) {
-        tempPlane.prev_position = this.position;
-    }
 
-    if (tempPlane.position_time >= this.position_time && !showTrace && !replay) {
+    if (tempPlane.position_time == this.position_time && !showTrace && !replay) {
         //console.log('reusing current aircraft data after processing trace.');
-        let newSegs = this.track_linesegs;
-        let newSize = this.history_size;
-        Object.assign(this, tempPlane);
-        this.track_linesegs = newSegs;
-        this.history_size = newSize;
+        this.setData(tempPlane);
     }
 
     if (showTrace && !traceOpts.showTime) {
@@ -1154,7 +1220,7 @@ PlaneObject.prototype.updatePositionData = function(now, last, data, init) {
         this.drawLine |= newPos;
     }
 
-    if (globeIndex) {
+    if (globeIndex && this.position && this.position_time) {
         this.trace.push({
             now: this.position_time,
             position: this.position,
