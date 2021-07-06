@@ -180,12 +180,7 @@ function planeCloneState(target, source) {
     target.position = source.position;
     target.sitedist = source.sitedist;
     target.too_fast = source.too_fast;
-    target.tail_track = source.tail_track;
-    target.tail_true = source.tail_true;
-    target.tail_update = source.tail_update;
-    target.prev_position = source.prev_position;
-    target.prev_time = source.prev_time;
-    target.prev_track = source.prev_track;
+
     target.seen = source.seen;
     target.last_message_time = source.last_message_time;
     target.seen_pos = source.seen_pos;
@@ -1124,6 +1119,7 @@ PlaneObject.prototype.processTrace = function() {
 
     if (tempPlane.position_time >= this.position_time && !showTrace && !replay) {
         planeCloneState(this, tempPlane);
+        this.updateTrack(this.position_time, _last);
     }
 
     if (showTrace && !traceOpts.showTime) {
