@@ -2483,10 +2483,6 @@ PlaneObject.prototype.checkForDB = function(t) {
         this.getAircraftData();
         return;
     }
-    if (this.icao == 'a3dc2a') {
-        this.icaoType = 'WHK2';
-        this.setTypeData();
-    }
     this.dataChanged();
 };
 PlaneObject.prototype.updateAlt = function(t) {
