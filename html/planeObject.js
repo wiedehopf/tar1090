@@ -1018,10 +1018,11 @@ PlaneObject.prototype.processTrace = function() {
             let stale = state[6] & 1;
             const leg_marker = state[6] & 2;
 
-            _now = timestamp;
-
-            if (_now <= _last)
+            // no going backwards in time
+            if (timestamp <= _now)
                 continue;
+
+            _now = timestamp;
 
             if (traceOpts.showTime && timestamp > traceOpts.showTime) {
                 traceOpts.showTimeEnd = timestamp;
@@ -1099,7 +1100,8 @@ PlaneObject.prototype.processTrace = function() {
         if (showTrace || replay)
             break;
         const state = this.trace[i];
-        if (_now >= state.now)
+        // no going backwards in time
+        if (state.now <= _now)
             continue;
 
         _now = state.now;
