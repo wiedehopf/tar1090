@@ -1457,11 +1457,10 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     }
 
     // Pick vertical rate from either baro or geom rate
-    // geometric rate is generally more reliable (smoothed etc)
-    if (data.geom_rate != null ) {
-        this.vert_rate = data.geom_rate;
-    } else if (data.baro_rate != null) {
+    if (data.baro_rate != null) {
         this.vert_rate = data.baro_rate;
+    } else if (data.geom_rate != null ) {
+        this.vert_rate = data.geom_rate;
     } else if (data.vert_rate != null) {
         // legacy from mut v 1.15
         this.vert_rate = data.vert_rate;

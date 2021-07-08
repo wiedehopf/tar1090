@@ -2575,11 +2575,7 @@ function refreshSelected() {
     jQuery('#selected_speed2').text(format_speed_long(selected.gs, DisplayUnits));
     jQuery('#selected_ias').text(format_speed_long(selected.ias, DisplayUnits));
     jQuery('#selected_tas').text(format_speed_long(selected.tas, DisplayUnits));
-    if (selected.geom_rate != null) {
-        jQuery('#selected_vert_rate').text(format_vert_rate_long(selected.geom_rate, DisplayUnits));
-    } else {
-        jQuery('#selected_vert_rate').text(format_vert_rate_long(selected.baro_rate, DisplayUnits));
-    }
+    jQuery('#selected_vert_rate').text(format_vert_rate_long(selected.vert_rate, DisplayUnits));
     jQuery('#selected_baro_rate').text(format_vert_rate_long(selected.baro_rate, DisplayUnits));
     jQuery('#selected_geom_rate').text(format_vert_rate_long(selected.geom_rate, DisplayUnits));
     if (selected.icao != selIcao) {
