@@ -155,6 +155,25 @@ sudo bash /tmp/install.sh /run/combine1090
 sudo bash -c "$(wget -nv -O - https://github.com/wiedehopf/tar1090/raw/master/uninstall.sh)"
 ```
 
+## Using the filters
+
+js regex can be used, some examples:
+
+- Filter by type code:
+```
+Only A320 and B737 models: A32|B73
+Exclude: ^(?!A320)
+Exclude multiple: ^(?!(A32|B73))
+```
+- Filter by type description:
+```
+Only helicopters: H
+Only planes (land): L
+Jets or turboprops: J|T
+Only piston engined: P
+Number of engines: 2
+```
+
 ## Keyboard Shortcuts
 
 
