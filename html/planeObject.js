@@ -2439,15 +2439,20 @@ PlaneObject.prototype.setTypeData = function() {
     this.updateMarker();
     this.icaoTypeCache = this.icaoType;
 
-    let typeDesignator = this.icaoType.toUpperCase();
-    if (!(typeDesignator in _aircraft_type_cache))
+    let typeCode = this.icaoType.toUpperCase();
+    if (!(typeCode in _aircraft_type_cache))
         return;
 
-    let typeData = _aircraft_type_cache[typeDesignator];
-    if (typeData.desc != null && typeData.desc.length == 3)
-        this.typeDescription = `${typeData.desc}`;
-    if (typeData.wtc != null)
-        this.wtc = `${typeData.wtc}`;
+    let typeData = _aircraft_type_cache[typeCode];
+    const typeLong = typeData[0];
+    const desc = typeData[1];
+    const wtc = typeData[2];
+    if (desc != null)
+        this.typeDescription = `${desc}`;
+    if (wtc != null)
+        this.wtc = `${wtc}`;
+    if (this.typeLong == null && typeLong != null)
+        this.typeLong = `${typeLong}`;
 };
 
 PlaneObject.prototype.checkForDB = function(t) {

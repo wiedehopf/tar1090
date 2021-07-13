@@ -273,7 +273,7 @@ if (uuid) {
     });
 }
 
-jQuery.getJSON(databaseFolder + "/icao_aircraft_types.js").done(function(typeLookupData) {
+jQuery.getJSON(databaseFolder + "/icao_aircraft_types2.js").done(function(typeLookupData) {
     _aircraft_type_cache = typeLookupData;
 });
 jQuery.getJSON(databaseFolder + "/ranges.js").done(function(ranges) {

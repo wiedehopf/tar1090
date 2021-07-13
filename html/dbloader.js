@@ -93,15 +93,15 @@ function getIcaoAircraftTypeData(aircraftData, defer) {
 
 function lookupIcaoAircraftType(aircraftData, defer) {
 	if (_aircraft_type_cache !== null && aircraftData[1]) {
-		let typeDesignator = aircraftData[1].toUpperCase();
-		if (typeDesignator in _aircraft_type_cache) {
-			let typeData = _aircraft_type_cache[typeDesignator];
-			if (typeData.desc != null && typeData.desc.length == 3) {
-				aircraftData[5] = typeData.desc;
-			}
-			if (typeData.wtc != undefined && aircraftData.wtc === undefined) {
-				aircraftData[6] = typeData.wtc;
-			}
+		let typeCode = aircraftData[1].toUpperCase();
+		if (typeCode in _aircraft_type_cache) {
+			let typeData = _aircraft_type_cache[typeCode];
+            const typeLong = typeData[0];
+            const desc = typeData[1];
+            const wtc = typeData[2];
+            aircraftData[5] = desc;
+            aircraftData[6] = wtc;
+            aircraftData[7] = typeLong;
 		}
 	}
 
