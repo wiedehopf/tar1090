@@ -15,6 +15,11 @@
 - icaoFilter=hex1,hex2,hex3 - Only show the mentioned hex ids, no other aircraft will ever be displayed
 - reg=registration - Direct link to specific aircraft registration(s). Separate multiple with commas. ?icao is preferred as this option takes longer to load.
 
+## Troubleshooting
+
+- reset - reset page settings
+- showerrors - show errors on screen
+
 ## Rendering parameters
 
 - zoom=1-20 - set zoom level.
