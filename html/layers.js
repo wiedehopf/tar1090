@@ -252,51 +252,65 @@ function createBaseLayers() {
         }));
     }
 
-    let nexrad = new ol.layer.Tile({
-        name: 'nexrad',
-        title: 'NEXRAD',
-        type: 'overlay',
-        opacity: 0.35,
-        visible: false,
-        zIndex: 99,
-    });
+    if (true) {
+        // nexrad and noaa stuff
+        const bottomLeft = ol.proj.fromLonLat([-171.0,9.0]);
+        const topRight = ol.proj.fromLonLat([-51.0,69.0]);
+        const extent = [bottomLeft[0], bottomLeft[1], topRight[0], topRight[1]];
 
-    let refreshNexrad = function() {
-        // re-build the source to force a refresh of the nexrad tiles
-        let now = new Date().getTime();
-        nexrad.setSource(new ol.source.XYZ({
-            url : 'https://mesonet{1-3}.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0q-900913/{z}/{x}/{y}.png?_=' + now,
-            attributions: 'NEXRAD courtesy of <a href="https://mesonet.agron.iastate.edu/">IEM</a>',
+        let nexrad = new ol.layer.Tile({
+            name: 'nexrad',
+            title: 'NEXRAD',
+            type: 'overlay',
+            opacity: 0.35,
+            visible: false,
+            zIndex: 99,
+            extent: extent,
+        });
+
+        let refreshNexrad = function() {
+            // re-build the source to force a refresh of the nexrad tiles
+            let now = new Date().getTime();
+            nexrad.setSource(new ol.source.XYZ({
+                url : 'https://mesonet{1-3}.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0q-900913/{z}/{x}/{y}.png?_=' + now,
+                attributions: 'NEXRAD courtesy of <a href="https://mesonet.agron.iastate.edu/">IEM</a>',
+                attributionsCollapsible: false,
+                maxZoom: 8,
+            }));
+        };
+
+        refreshNexrad();
+        window.setInterval(refreshNexrad, 2 * 60 * 1000);
+
+        let noaaRadarSource = new ol.source.ImageWMS({
+            attributions: ['NOAA'],
             attributionsCollapsible: false,
-            maxZoom: 8,
-        }));
-    };
+            url: 'https://nowcoast.noaa.gov/arcgis/services/nowcoast/radar_meteo_imagery_nexrad_time/MapServer/WMSServer',
+            params: {'LAYERS': '1'},
+            projection: 'EPSG:3857',
+            maxZoom: 10,
+        });
 
-    refreshNexrad();
-    window.setInterval(refreshNexrad, 2 * 60 * 1000);
+        let noaaRadar = new ol.layer.Image({
+            title: 'NOAA Radar',
+            name: 'noaa_radar',
+            zIndex: 99,
+            type: 'overlay',
+            visible: false,
+            source: noaaRadarSource,
+            opacity: 0.35,
+            extent: extent,
+        });
 
-    let noaaRadarSource = new ol.source.ImageWMS({
-        attributions: ['NOAA'],
-        attributionsCollapsible: false,
-        url: 'https://nowcoast.noaa.gov/arcgis/services/nowcoast/radar_meteo_imagery_nexrad_time/MapServer/WMSServer',
-        params: {'LAYERS': '1'},
-        projection: 'EPSG:3857',
-        maxZoom: 10,
-    });
+        us.push(nexrad);
+        us.push(noaaRadar);
+    }
 
-    let noaaRadar = new ol.layer.Image({
-        title: 'NOAA Radar',
-        name: 'noaa_radar',
-        zIndex: 99,
-        type: 'overlay',
-        visible: false,
-        source: noaaRadarSource,
-        opacity: 0.35,
-    });
-
-    let dwd;
     if (enableDWD) {
-        dwd = new ol.layer.Tile({
+        const bottomLeft = ol.proj.fromLonLat([1.9,46.2]);
+        const topRight = ol.proj.fromLonLat([16.0,55.0]);
+        const extent = [bottomLeft[0], bottomLeft[1], topRight[0], topRight[1]];
+        let dwd = new ol.layer.Tile({
             source: new ol.source.TileWMS({
                 url: 'https://maps.dwd.de/geoserver/wms',
                 params: {LAYERS: 'dwd:RX-Produkt', validtime: (new Date()).getTime()},
@@ -311,6 +325,7 @@ function createBaseLayers() {
             opacity: 0.3,
             visible: false,
             zIndex: 99,
+            extent: extent,
         });
 
 
@@ -323,8 +338,6 @@ function createBaseLayers() {
         europe.push(dwd);
     }
 
-    us.push(nexrad);
-    us.push(noaaRadar);
 
     let createGeoJsonLayer = function (title, name, url, fill, stroke, showLabel = true) {
         return new ol.layer.Vector({
