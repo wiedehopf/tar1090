@@ -5608,8 +5608,6 @@ let actualOutlineFeatures;
 let actualOutlineStyle;
 
 function drawOutlineJson() {
-    if (localStorage['actualOutlineLayer'] == 'false')
-        return;
     if (!receiverJson || !receiverJson.outlineJson)
         return;
     let request = jQuery.ajax({ url: 'data/outline.json',
