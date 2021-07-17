@@ -1217,6 +1217,18 @@ function initFlagFilter(colors) {
     });
 }
 
+function initFilters() {
+    new Filter({
+        key: 'callsign',
+        name: 'Callsign',
+        container: "#filterTable",
+    });
+
+    initSourceFilter(tableColors.unselected);
+    initFlagFilter(tableColors.unselected);
+}
+
+
 function push_history() {
     jQuery("#loader_progress").attr('max',nHistoryItems*2);
     for (let i = 0; i < nHistoryItems; i++) {
@@ -2023,14 +2035,16 @@ function initMap() {
             if (loadFinished) {
                 TAR.planeMan.redraw();
                 refreshFilter();
+                initLegend(tableColors.unselected);
+                initSourceFilter(tableColors.unselected);
+                initFlagFilter(tableColors.unselected);
             }
-
-            initLegend(tableColors.unselected);
-            initSourceFilter(tableColors.unselected);
-            initFlagFilter(tableColors.unselected);
         }
     });
 
+    initLegend(tableColors.unselected);
+
+    initFilters();
 
     new Toggle({
         key: "MapDim",
@@ -3113,11 +3127,11 @@ function refreshFeatures() {
             if (plane.tr == null) {
                 plane.makeTR(planeRowTemplate.cloneNode(true));
                 plane.tr.id = plane.icao;
-                plane.refreshTR = true;
+                plane.refreshTR = 0;
             }
 
-            if (plane.refreshTR || plane.selected != plane.selectCache) {
-                plane.refreshTR = false;
+            if (now - plane.refreshTR > 5 || plane.selected != plane.selectCache) {
+                plane.refreshTR = now;
                 let colors = tableColors.unselected;
                 let bgColor = "#F8F8F8"
 

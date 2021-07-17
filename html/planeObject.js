@@ -2399,7 +2399,7 @@ PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
 };
 
 PlaneObject.prototype.dataChanged = function() {
-    this.refreshTR = true;
+    this.refreshTR = 0;
 }
 
 PlaneObject.prototype.isNonIcao = function() {

@@ -660,3 +660,35 @@ if (!Object.entries) {
     return resArray;
   };
 }
+
+const filters = {};
+
+function Filter(arg) {
+    this.key = arg.key;
+    this.name = arg.name || arg.key;
+
+    this.id = 'filters_' + this.key;
+
+    filters[this.key] = this;
+
+    this.init();
+}
+
+Filter.prototype.reset = function() {
+    jQuery('#' + this.id).val("");
+    jQuery('#' + this.id).blur();
+    this.update();
+}
+
+Filter.prototype.init = function() {
+    jQuery(this.container).append((
+        '<tr><td><form id="'+ this.id +'">'
+        + '<div class="infoBlockTitleText">Filter by '+ this.name +':</div>'
+        + '<input id="'+ this.id+ '_input" name="textInput" type="text" class="searchInput" maxlength="4096">'
+        + '<button class="formButton" type="submit">Filter</button>'
+        + '<button class="formButton" type="reset">Reset</button>'
+        + '</form></td></tr>'
+    ));
+    jQuery('#' + this.id).on('submit', this.update);
+    jQuery('#' + this.id).on('reset', this.reset);
+}
