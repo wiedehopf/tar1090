@@ -1219,7 +1219,7 @@ function initFlagFilter(colors) {
 
 function initFilters() {
     new Filter({
-        key: 'callsign',
+        key: 'flight',
         name: 'Callsign',
         container: "#filterTable",
     });
