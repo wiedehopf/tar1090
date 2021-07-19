@@ -5416,7 +5416,7 @@ function geoFindMe() {
     function success(position) {
         SiteLat = DefaultCenterLat = position.coords.latitude;
         SiteLon = DefaultCenterLon = position.coords.longitude;
-        if (localStorage['geoFindMeFirstVisit'] == undefined) {
+        if (localStorage['geoFindMeFirstVisit'] == undefined && !(usp.has("lat") && usp.has("lon"))) {
             OLMap.getView().setCenter(ol.proj.fromLonLat([SiteLon, SiteLat]));
             localStorage['geoFindMeFirstVisit'] = 'no';
             siteCircleLayer.setVisible(true);
