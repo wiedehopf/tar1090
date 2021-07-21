@@ -189,6 +189,9 @@ BingMapsAPIKey = null;
 // This determines what is up, default is north (0 degrees)
 //mapOrientation = 0;
 
+// Use UTC for all timestamps etc.
+// utcTimes = false;
+
 // Only display labels when zoomed in this far:
 //labelZoom = 8;
 //labelZoomGround = 12.5;

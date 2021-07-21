@@ -86,7 +86,6 @@ let showTraceWasIsolation = false;
 let showTraceTimestamp = null;
 let traceDate = null;
 let traceDateString = null;
-let traceDay = null;
 let traceOpts = {};
 let icaoParam = null;
 let globalScale = 1;
@@ -137,7 +136,6 @@ let now = 0;
 let last = 0;
 let uat_now = 0;
 let uat_last = 0;
-let today = 0;
 let FetchPending = [];
 let FetchPendingUAT = null;
 
@@ -512,8 +510,6 @@ function replaySpeedChange(arg) {
 function initPage() {
     let value;
     onMobile = window.mobilecheck();
-
-    today = new Date().getDate();
 
     if (usp.has('nowebgl')) {
         localStorage['webgl'] = "false";
@@ -900,8 +896,23 @@ function initPage() {
         init: true,
         setState: function(state) {
             lastLeg = state;
-            if (SelectedPlane && !showTrace)
-                SelectedPlane.processTrace();
+            if (loadFinished && !showTrace) {
+                for (let i in SelPlanes) {
+                    SelPlanes[i].processTrace();
+                }
+            }
+        }
+    });
+
+    new Toggle({
+        key: "utcTimes",
+        display: "UTC times",
+        container: "#settingsLeft",
+        init: utcTimes,
+        setState: function(state) {
+            utcTimes = state;
+            remakeTrails();
+            refreshSelected();
         }
     });
 
@@ -2254,7 +2265,6 @@ function initMap() {
 let lastReap = 0;
 function reaper(all) {
     //console.log("Reaping started..");
-    today = new Date().getDate();
     if (noVanish)
         return;
 
@@ -2431,6 +2441,16 @@ function refreshSelected() {
     refreshPhoto(selected);
 
     jQuery('#selected_callsign').text(selected.name);
+
+    if (showTrace) {
+        if (selected.position_time) {
+            const date = new Date(selected.position_time * 1000);
+            let timestamp = utcTimes ? zuluTime(date) : localTime(date);
+            jQuery('#trace_time').text('Time:\n' + timestamp);
+        } else {
+            jQuery('#trace_time').text('Time:\n');
+        }
+    }
 
     if (flightawareLinks) {
         jQuery('#selected_flightaware_link').html(getFlightAwareModeSLink(selected.icao, selected.flight, "Visit Flight Page"));
@@ -5255,7 +5275,6 @@ function setTraceDate(options) {
     }
 
     traceDateString = zDateString(traceDate);
-    traceDay = traceDate.getUTCDate();
 
     return traceDate;
 }

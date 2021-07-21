@@ -1140,19 +1140,7 @@ PlaneObject.prototype.processTrace = function() {
         }
         now = new Date().getTime()/1000;
     }
-
     if (showTrace) {
-        if (this.position_time) {
-            const date = new Date(this.position_time * 1000);
-            let timestamp =
-                date.getUTCHours().toString().padStart(2,'0')
-                + ":" + date.getUTCMinutes().toString().padStart(2,'0')
-                + ":" + date.getUTCSeconds().toString().padStart(2,'0')
-                + NBSP + "Z";
-            jQuery('#trace_time').text('UTC:\n' + timestamp);
-        } else {
-            jQuery('#trace_time').text('UTC:\n');
-        }
         this.seen = 0;
         this.seen_pos = 0;
     }
@@ -1765,21 +1753,20 @@ PlaneObject.prototype.updateLines = function() {
             seg.label = new ol.Feature(new ol.geom.Point(seg.fixed.getFirstCoordinate()));
             let timestamp;
             const date = new Date(seg.ts * 1000);
-            if (showTrace || replay) {
-                timestamp =
-                    date.getUTCHours().toString().padStart(2,'0')
-                    + ":" + date.getUTCMinutes().toString().padStart(2,'0')
-                    + ":" + date.getUTCSeconds().toString().padStart(2,'0');
-                timestamp = "".padStart(0, NBSP) + timestamp + NBSP + "Z";
-                if (traceDay != date.getUTCDate())
-                    timestamp = "".padStart(0, NBSP) + zDateString(date) + '\n' + timestamp;
+            const refDate = (showTrace || replay) ? traceDate : new Date();
+            if (getDay(refDate) == getDay(date)) {
+                timestamp = "";
             } else {
-                timestamp = date.getHours().toString().padStart(2,'0')
-                    + ":" + date.getMinutes().toString().padStart(2,'0')
-                    + ":" + date.getSeconds().toString().padStart(2,'0');
-                timestamp = "".padStart(2, NBSP) + timestamp;
-                if (today != date.getDate())
-                    timestamp = "".padStart(0, NBSP) + lDateString(date) + '\n' + timestamp;
+                if (utcTimes) {
+                    timestamp = zDateString(date) + '\n';
+                } else {
+                    timestamp = lDateString(date) + '\n';
+                }
+            }
+            if (utcTimes) {
+                timestamp += zuluTime(date)
+            } else {
+                timestamp += localTime(date)
             }
             let text =
                 speed.padStart(3, NBSP) + "  "

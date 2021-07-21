@@ -225,6 +225,24 @@ if (usp.has('pTracks')) {
         pTracks = 9999;
 }
 
+function getDay(date) {
+    if (utcTimes)
+        return date.getUTCDate();
+    else
+        return date.getDate();
+}
+function zuluTime(date) {
+    return date.getUTCHours().toString().padStart(2,'0')
+        + ":" + date.getUTCMinutes().toString().padStart(2,'0')
+        + ":" + date.getUTCSeconds().toString().padStart(2,'0')
+        + NBSP + "Z";
+}
+function localTime(date) {
+    return date.getHours().toString().padStart(2,'0')
+        + ":" + date.getMinutes().toString().padStart(2,'0')
+        + ":" + date.getSeconds().toString().padStart(2,'0')
+        + NBSP + "L";
+}
 function zDateString(date) {
     let string = date.getUTCFullYear() + '-'
         + (date.getUTCMonth() + 1).toString().padStart(2, '0') + '-'

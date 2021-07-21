@@ -206,6 +206,9 @@ let pf_data = ["chunks/pf.json"]
 
 let mapOrientation = 0; // This determines what is up, normally north (0 degrees)
 
+// Use UTC for all timestamps etc.
+let utcTimes = false;
+
 // Only display labels when zoomed in this far:
 let labelZoom = 0;
 let labelZoomGround = 14.8;
