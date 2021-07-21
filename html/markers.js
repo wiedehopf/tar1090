@@ -1051,6 +1051,7 @@ let TypeDesignatorIcons = {
 
 let TypeDescriptionIcons = {
     'H': ['helicopter', 1],
+    'G': ['gyrocopter', 1],
 
     'L1P': ['cessna', 1],
     'A1P': ['cessna', 1],

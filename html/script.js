@@ -270,6 +270,7 @@ function processReceiverUpdate(data, init) {
 }
 
 let debugFetch = false;
+let C429 = 0;
 function fetchData(options) {
     options = options || {};
     if (heatmap || replay || showTrace || pTracks || !loadFinished)
@@ -448,6 +449,11 @@ function fetchData(options) {
                 jQuery("#update_error_detail").text(errText);
                 jQuery("#update_error").css('display','block');
                 StaleReceiverCount++;
+            } else {
+                if (C429++ > 16) {
+                    globeRateUpdate();
+                    C429 = 0;
+                }
             }
             pendingFetches--;
             if (pendingFetches <= 0 && !tabHidden) {
