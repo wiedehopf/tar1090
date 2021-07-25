@@ -833,57 +833,49 @@ input{
 #replayBar {
   background: var(--BGCOLOR1);
   display: none;
-  width: flex;
-  padding-right: 30px;
+  width: calc(100% - 80px);
+  padding-right: 80px;
   position: absolute;
   height: 10px;
   bottom: 0%;
-  grid-template-columns: 1fr 1fr 1fr 3fr 1fr 1fr 1fr;
-  grid-template-rows: 20px 40px 20px;
+  grid-template-columns: 1fr 1.5fr 5fr 2fr;
+  grid-template-rows: 20px 40px 20px 20px;
   justify-items: center;
   align-items: center;
   grid-template-areas:
-    ". datehint timehint hours speedhint ."
-    "play date . minutes speed findhistory"
-    ". . showingdate showingdate showingdate ."
-    ". . . . . .";
+    "timezone dateHint timeHint speedHint"
+    "play datepicker hours speedSelect"
+    ". . minutes ."
+    ". . . .";
+}
+
+#replayTimeZone{
+  grid-area: timezone;
 }
 #replayPlay{
   grid-area: play;
 }
 #replayDatepicker{
-  grid-area: date;
+  grid-area: datepicker;
 }
 #hourSelect{
-  width: 80%;
+  width: 90%;
   grid-area: hours;
 }
 #minuteSelect{
-  width: 80%;
+  width: 90%;
   grid-area: minutes;
 }
-#speedSelect{
-  grid-area: speed;
-  width: 80%;
+#replaySpeedSelect{
+  grid-area: speedSelect;
+  width: 90%;
 }
-#findHistory{
-   grid-area: findhistory;
+#replayTimeHint{
+   grid-area: timeHint;
 }
-#replayBar{
-  grid-area: showingdate;
+#replayDateHint{
+  grid-area: dateHint;
 }
-#timeHint{
-   grid-area: timehint;
+#replaySpeedHint{
+  grid-area: speedHint;
 }
-#dateHint{
-  grid-area: datehint;
-}
-#speedHint{
-  grid-area: speedhint;
-}
-#replayShowing{
-    grid-area: showingdate;
-    justify-self:start;
-}
-
-
