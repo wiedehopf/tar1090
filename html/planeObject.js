@@ -241,8 +241,16 @@ PlaneObject.prototype.isFiltered = function() {
     if (this.selected)
         return false;
 
-    if (noRegOnly && (this.registration || this.icao.startsWith('~')))
+    if (noRegOnly && (
+        (this.registration || this.icao.startsWith('~'))
+        || (this.category && this.category.startsWith('C'))
+        || (this.squawk == '7777')
+        || (this.icaoType == 'TWR')
+        || (this.icaoType == 'GND')
+        || (this.altitude == 'ground' && (this.addrtype == 'adsb_icao_nt' || this.addrtype == 'tisb_other'))
+    )) {
         return true;
+    }
 
     if (onlySelected && !this.selected) {
         return true;
