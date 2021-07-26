@@ -1059,10 +1059,13 @@ let TypeDescriptionIcons = {
     'L1J': ['hi_perf', 0.92],
 
     'L2P': ['twin_small', 1],
+    'A2P': ['twin_large', 0.96],
+    'A2P-M': ['twin_large', 1.12],
     'L2T': ['twin_large', 0.96],
     'L2T-M': ['twin_large', 1.12],
     'A2T': ['twin_large', 0.96],
     'A2T-M': ['twin_large', 1.06],
+
 
     'L1J-L': ['jet_nonswept', 1], // < 7t
     'L2J-L': ['jet_nonswept', 1], // < 7t
