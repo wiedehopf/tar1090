@@ -469,6 +469,7 @@ function wqi(data) {
         ac.tas           = (u8[74] & 2)    ? ac.tas          : undefined;
         ac.mach          = (u8[74] & 4)    ? ac.mach         : undefined;
         ac.track         = (u8[74] & 8)    ? ac.track        : undefined;
+        ac.calc_track    = !(u8[74] & 8)   ? ac.track        : undefined;
         ac.track_rate    = (u8[74] & 16)   ? ac.track_rate   : undefined;
         ac.roll          = (u8[74] & 32)   ? ac.roll         : undefined;
         ac.mag_heading   = (u8[74] & 64)   ? ac.mag_heading  : undefined;
