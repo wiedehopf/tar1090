@@ -1690,6 +1690,12 @@ function initMap() {
     });
     layers.push(siteCircleLayer);
 
+    siteCircleLayer.on('change:visible', function(evt) {
+        if (evt.target.getVisible()) {
+            geoFindMe();
+        }
+    });
+
     locationDotLayer = new ol.layer.Vector({
         name: 'locationDot',
         type: 'overlay',
@@ -1701,6 +1707,12 @@ function initMap() {
         renderBuffer: renderBuffer,
     });
     layers.push(locationDotLayer);
+
+    locationDotLayer.on('change:visible', function(evt) {
+        if (evt.target.getVisible()) {
+            geoFindMe();
+        }
+    });
 
 
     if (receiverJson && receiverJson.outlineJson) {
@@ -3588,9 +3600,7 @@ function resetMap() {
 
     //selectPlaneByHex(null,false);
     jQuery("#update_error").css('display','none');
-
-    // enable position watch on this user interaction, maybe improve reliability
-    watchPosition();
+    geoFindMe();
 }
 
 function updateMapSize() {
@@ -5428,6 +5438,7 @@ function watchPosition() {
     pollPositionInterval();
 }
 
+let geoFindInterval = null;
 function geoFindMe() {
     if (SiteOverride || (!globeIndex && !uuid && !askLocation)) {
         initSitePos();
@@ -5448,7 +5459,8 @@ function geoFindMe() {
 
         {
             // always update user location every 15 minutes
-            window.setInterval(function() {
+            clearInterval(geoFindInterval);
+            geoFindInterval = window.setInterval(function() {
                 if (tabHidden)
                     return;
                 const geoposOptions = {
