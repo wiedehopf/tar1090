@@ -2261,7 +2261,27 @@ function initMap() {
         }
     }, true);
 
-    geoFindMe();
+    if (window && window.location && window.location.protocol == 'https:'
+        && !SiteOverride && (globeIndex || uuid || askLocation)
+        && localStorage['geoFindMeFirstVisit'] == undefined) {
+        jQuery("#geoFindMeDialog").dialog({
+            resizable: false,
+            height: "auto",
+            width: "auto",
+            buttons: {
+                "Yes": function() {
+                    geoFindMe();
+                    jQuery(this).dialog( "close" );
+                },
+                "No": function() {
+                    localStorage['geoFindMeFirstVisit'] = 'no'
+                    jQuery(this).dialog( "close" );
+                }
+            }
+        });
+    } else {
+        geoFindMe();
+    }
 }
 
 // This looks for planes to reap out of the master Planes variable
