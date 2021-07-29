@@ -2263,6 +2263,7 @@ function initMap() {
 
     if (window && window.location && window.location.protocol == 'https:'
         && !SiteOverride && (globeIndex || uuid || askLocation)
+        && !usp.has('icao') && !usp.has("lat") && !usp.has("lon")
         && localStorage['geoFindMeFirstVisit'] == undefined) {
         jQuery("#geoFindMeDialog").dialog({
             resizable: false,
