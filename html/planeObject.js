@@ -1125,7 +1125,7 @@ PlaneObject.prototype.processTrace = function() {
     }
 
 
-    if (tempPlane.position_time >= this.position_time && !showTrace && !replay) {
+    if (tempPlane.last_message_time >= this.last_message_time && !showTrace && !replay) {
         planeCloneState(this, tempPlane);
         this.updateTrack(this.position_time, _last);
     }
