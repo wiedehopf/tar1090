@@ -5419,6 +5419,9 @@ function pollPositionInterval() {
 }
 
 function watchPosition() {
+    if (watchPositionId != null) {
+        navigator.geolocation.clearWatch(watchPositionId);
+    }
     if (!updateLocation) {
         return;
     }
@@ -5427,9 +5430,6 @@ function watchPosition() {
         timeout: Infinity,
         maximumAge: 25 * 1000,
     };
-    if (watchPositionId != null) {
-        navigator.geolocation.clearWatch(watchPositionId);
-    }
     watchPositionId = navigator.geolocation.watchPosition(function(position) {
         onLocationChange(position);
         pollPositionSeconds = 60;
