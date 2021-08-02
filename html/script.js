@@ -6707,7 +6707,7 @@ function selectClosest() {
         const plane = PlanesOrdered[key];
         if (!closest)
             closest = plane;
-        if (plane.position == null)
+        if (plane.position == null || !plane.visible)
             continue;
         const dist = ol.sphere.getDistance([CenterLon, CenterLat], plane.position);
         if (dist == null || isNaN(dist))
