@@ -964,7 +964,7 @@ function initPage() {
 
     new Toggle({
         key: "autoselect",
-        display: "auto-select closest",
+        display: "auto-select plane",
         container: "#settingsRight",
         init: autoselect,
         setState: function(state) {
@@ -1865,30 +1865,6 @@ function initMap() {
     OLMap.on('moveend', function(event) {
         checkMovement();
     });
-    /*
-    // Listeners for newly created Map
-    OLMap.getView().on('change:center', function(event) {
-        const center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
-        CenterLat = center[1];
-        CenterLon = center[0];
-        if (FollowSelected) {
-            // On manual navigation, disable follow
-            if (!SelectedPlane || !SelectedPlane.position ||
-                (Math.abs(center[0] - SelectedPlane.position[0]) > 0.0001 &&
-                    Math.abs(center[1] - SelectedPlane.position[1]) > 0.0001)){
-                FollowSelected = false;
-                refreshSelected();
-                refreshHighlighted();
-            }
-        }
-    });
-    */
-
-    /*
-    OLMap.getView().on('change:resolution', function(event) {
-        ZoomLvl = OLMap.getView().getZoom();
-    });
-    */
 
     OLMap.on(['click', 'dblclick'], function(evt) {
         let trailHex = null;
@@ -4482,6 +4458,8 @@ let checkMoveCenter = [0, 0];
 let checkMoveDone = 0;
 
 function checkMovement() {
+    if (!OLMap)
+        return;
     const zoom = OLMap.getView().getZoom();
     const center = ol.proj.toLonLat(OLMap.getView().getCenter());
     const ts = new Date().getTime();
@@ -6720,24 +6698,34 @@ function testUnhide() {
 }
 
 function selectClosest() {
-    if (!SitePosition)
+    if (!loadFinished)
         return;
     let closest = null;
+    let closestDistance = null;
+    checkMovement();
     for (let key in PlanesOrdered) {
         const plane = PlanesOrdered[key];
-        if (!closest || closest.sitedist == null || (plane.sitedist != null && plane.sitedist < closest.sitedist)) {
-            closest = PlanesOrdered[key];
+        if (!closest)
+            closest = plane;
+        if (plane.position == null)
+            continue;
+        const dist = ol.sphere.getDistance([CenterLon, CenterLat], plane.position);
+        if (dist == null || isNaN(dist))
+            continue;
+        if (closestDistance == null || dist < closestDistance) {
+            closestDistance = dist;
+            closest = plane;
         }
     }
     if (!closest)
         return;
-    selectPlaneByHex(closest.icao, {noDeselect: true});
+    selectPlaneByHex(closest.icao, {noDeselect: true, follow: FollowSelected,});
 }
 function setAutoselect() {
     clearInterval(timers.autoselect);
     if (!autoselect)
         return;
-    timers.autoselect = window.setInterval(selectClosest, 10000);
+    timers.autoselect = window.setInterval(selectClosest, 5000);
     selectClosest();
 }
 function registrationLink(plane) {
