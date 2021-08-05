@@ -5498,6 +5498,7 @@ window.mobilecheck = function() {
 };
 
 function initSitePos() {
+    let lastSitePosition = SitePosition;
     // Set SitePosition
     if (SiteLat != null && SiteLon != null) {
         SitePosition = [SiteLon, SiteLat];
@@ -5508,11 +5509,13 @@ function initSitePos() {
         TAR.planeMan.setColumnVis('distance', false);
     }
 
-    if (SitePosition) {
-        TAR.planeMan.cols.distance.sort();
-    } else {
-        TAR.planeMan.cols.altitude.sort();
-        TAR.planeMan.cols.altitude.sort();
+    if (!lastSitePosition) {
+        if (SitePosition) {
+            TAR.planeMan.cols.distance.sort();
+        } else {
+            TAR.planeMan.cols.altitude.sort();
+            TAR.planeMan.cols.altitude.sort();
+        }
     }
 }
 
