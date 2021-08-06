@@ -298,11 +298,19 @@ To judge the actual range (/?pTracks, see next chapter), one needs to first know
 - Near the top of the page, an URL for the panorama is mentioned.
 - Replace the XXXXXX in the following command with the ID contained in your panorama URL, then run the command on your pi:
 ```
-sudo wget -nv -O /usr/local/share/tar1090/html/upintheair.json "http://www.heywhatsthat.com/api/upintheair.json?id=XXXXXXXX&refraction=0.25&alts=12192"
+sudo /usr/local/share/tar1090/getupintheair.sh XXXXX
 ```
 - You should now have a range outline for the theoretical range for aircraft at 40000 ft on your tar1090 map
 
 - It might be interesting to compare to http://192.168.x.yy/tar1090/?pTracks which will by default will display the last 8 hours of traces.
+
+- More options for loading multiple outlines and for a different instance
+```
+# load two outlines, 10000 ft and 40000 ft
+sudo /usr/local/share/tar1090/getupintheair.sh XXXXX 3048,12192
+# load a 10000 ft outline for the tar1090 instance located at /978
+sudo /usr/local/share/tar1090/getupintheair.sh XXXXX 3048 978
+```
 
 ## /tar1090/?pTracks
 

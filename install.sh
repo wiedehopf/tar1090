@@ -187,7 +187,7 @@ fi
 
 
 # copy over base files
-cp install.sh uninstall.sh LICENSE README.md $ipath
+cp install.sh uninstall.sh getupintheair.sh LICENSE README.md $ipath
 cp default $ipath/example_config_dont_edit
 rm -f $ipath/default
 
