@@ -238,6 +238,9 @@ PlaneObject.prototype.logSel = function(loggable) {
 };
 
 PlaneObject.prototype.isFiltered = function() {
+    if (this.selected)
+        return false;
+
     if (noRegOnly && (
         (this.registration || this.icao.startsWith('~'))
         || (this.category && this.category.startsWith('C'))
