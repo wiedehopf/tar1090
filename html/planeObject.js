@@ -257,6 +257,10 @@ PlaneObject.prototype.isFiltered = function() {
         return true;
     }
 
+    if (nogpsOnly && !this.nogps) {
+        return true;
+    }
+
     if (onlyDataSource && this.dataSource != onlyDataSource) {
         return true;
     }
@@ -1122,7 +1126,7 @@ PlaneObject.prototype.processTrace = function() {
     }
 
 
-    if (tempPlane.last_message_time >= this.last_message_time && !showTrace && !replay) {
+    if ((this.position == null || tempPlane.position != null) && tempPlane.last_message_time >= this.last_message_time && !showTrace && !replay) {
         planeCloneState(this, tempPlane);
         this.updateTrack(this.position_time, _last);
     }
@@ -1479,6 +1483,9 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.rotation = data.calc_track;
     } else {
         this.request_rotation_from_track = true;
+    }
+    if (data.nogps != null) {
+        this.nogps = data.nogps;
     }
 
     this.checkForDB(data);
@@ -2422,6 +2429,7 @@ PlaneObject.prototype.checkVisible = function() {
         || (globeIndex && this.seen_pos < (40 + zoomedOut + jaeroTime + mlatTime + modeSTime - tisbReduction))
         || this.selected
         || noVanish
+        || (nogpsOnly && this.nogps && this.seen < 15 * 60)
     );
 };
 

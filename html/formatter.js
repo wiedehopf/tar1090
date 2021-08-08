@@ -448,9 +448,16 @@ function wqi(data) {
         for (let i = 92; u8[i] && i < 104; i++) {
             ac.r += String.fromCharCode(u8[i]);
         }
+        ac.receiverCount = u8[104];
+
         ac.rssi = 10 * Math.log(u8[105]*u8[105]/65025 + 1.125e-5)/Math.log(10);
 
-        ac.receiverCount = u8[104];
+        ac.extraFlags = u8[106];
+        ac.nogps = ac.extraFlags & 1;
+        if (ac.nogps && nogpsOnly) {
+            u8[73] |= 64;
+            u8[73] |= 16;
+        }
 
         // must come after the stuff above (validity bits)
 
@@ -460,9 +467,11 @@ function wqi(data) {
         ac.flight        = (u8[73] & 8)    ? ac.flight       : undefined;
         ac.alt_baro      = (u8[73] & 16)   ? ac.alt_baro     : undefined;
         ac.alt_geom      = (u8[73] & 32)   ? ac.alt_geom     : undefined;
+
         ac.lat           = (u8[73] & 64)   ? ac.lat          : undefined;
         ac.lon           = (u8[73] & 64)   ? ac.lon          : undefined;
         ac.seen_pos      = (u8[73] & 64)   ? ac.seen_pos     : undefined;
+
         ac.gs            = (u8[73] & 128)  ? ac.gs           : undefined;
 
         ac.ias           = (u8[74] & 1)    ? ac.ias          : undefined;

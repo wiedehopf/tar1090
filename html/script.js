@@ -113,6 +113,7 @@ let firstDraw = true;
 let darkerColors = false;
 let updateLocation = false;
 let autoselect = false;
+let nogpsOnly = false;
 
 let infoBlockWidth = baseInfoBlockWidth;
 
@@ -593,6 +594,9 @@ function initPage() {
 
     if (usp.has('noRegOnly'))
         noRegOnly = true;
+
+    if (usp.has('nogpsOnly'))
+        nogpsOnly = true;
 
     if (usp.has('mapContrast')) {
         let contrast = parseFloat(usp.get('mapContrast'));
