@@ -595,7 +595,7 @@ function initPage() {
     if (usp.has('noRegOnly'))
         noRegOnly = true;
 
-    if (usp.has('nogpsOnly'))
+    if (usp.has('nogpsOnly') || usp.has('badgps'))
         nogpsOnly = true;
 
     if (usp.has('mapContrast')) {
