@@ -6167,6 +6167,7 @@ function currentExtent(factor) {
 }
 
 function replayDefaults(ts) {
+    jQuery("#replayPlay").html("Pause");
     return {
         playing: true,
         ts: ts,
@@ -6179,17 +6180,23 @@ function replayDefaults(ts) {
 }
 
 function replayClear() {
+    clearTimeout(refreshId);
     reaper(true);
     refreshFilter();
 }
 
-let replayDontJump = false;
 function replayJump() {
-    if (replayDontJump)
-        return;
     let date = new Date(replay.dateText);
     date.setUTCHours(Number(replay.hours));
     date.setUTCMinutes(Number(replay.minutes));
+    date.setUTCSeconds(0);
+
+    let ts = new Date(replay.ts.getTime());
+    ts.setUTCSeconds(0);
+
+    if (date.getTime() == ts.getTime()) {
+        return;
+    }
 
     console.log('jump: ' + date.toUTCString());
 
@@ -6268,15 +6275,13 @@ function initReplay(data) {
     replay.ival = (replay.pointsU[replay.slices[0] + 3] & 65535) / 1000;
     replay.halfHour = (replay.ts.getUTCMinutes() >= 30) ? 1 : 0;
     replay.index = Math.round (((replay.ts.getUTCMinutes() % 30) * 60 + replay.ts.getUTCSeconds()) / replay.ival);
-    if (replay.playing) {
-        if (replay.index > 0)
-            replayStep(replay.index - 1)
-        playReplay(true);
-    }
+    //console.log("init with index" + replay.index);
+    if (replay.index > 0)
+        replayStep(replay.index - 1);
+    replayStep();
 }
 
-function replaySetTimeHint() {
-    replayDontJump = true;
+function replaySetTimeHint(arg) {
     if (true || utcTimes) {
         jQuery("#replayDateHint").html("Date: " + zDateString(replay.ts));
         jQuery("#replayTimeHint").html("Time: " + zuluTime(replay.ts));
@@ -6285,24 +6290,24 @@ function replaySetTimeHint() {
         jQuery("#replayTimeHint").html("Time: " + localTime(replay.ts));
     }
 
-    let hours = replay.ts.getUTCHours();
-    if (jQuery('#hourSelect').slider("option", "value") != hours)
+    if (arg != "nosliders") {
+        let hours = replay.ts.getUTCHours();
         jQuery('#hourSelect').slider("option", "value", hours);
 
-    let minutes = replay.ts.getUTCMinutes();
-    if (jQuery('#minuteSelect').slider("option", "value") != minutes) {
+        let minutes = replay.ts.getUTCMinutes();
         jQuery('#minuteSelect').slider("option", "value", minutes);
     }
-    replayDontJump = false;
 }
 
 function replayStep(index) {
-    clearTimeout(refreshId);
-    if (!replay || !replay.playing || showTrace) {
+    if (!replay || showTrace) {
         return;
     }
 
-    refreshId = setTimeout(replayStep, replay.ival / replay.speed * 1000);
+    if (replay.playing) {
+        clearTimeout(refreshId);
+        refreshId = setTimeout(replayStep, replay.ival / replay.speed * 1000);
+    }
 
     if (index == null) {
         index = replay.index;
@@ -6316,6 +6321,7 @@ function replayStep(index) {
         let date = new Date(replay.ts.getTime() + 30 * 60 * 1000);
         date.setUTCMinutes(Math.floor(date.getUTCMinutes() / 30) * 30);
         date.setUTCSeconds(0);
+        clearTimeout(refreshId);
         loadReplay(date);
         return;
     }
@@ -6325,7 +6331,9 @@ function replayStep(index) {
     replay.ts.setUTCMinutes(minutes)
     replay.ts.setUTCSeconds(seconds)
 
-    console.log(replay.ts.toUTCString());
+    replay.hours = replay.ts.getUTCHours();
+    replay.minutes = replay.ts.getUTCMinutes();
+
     replaySetTimeHint();
     updateAddressBar();
 
@@ -6336,6 +6344,11 @@ function replayStep(index) {
 
     last = now;
     now = replay.pointsU[i + 2] / 1000 + replay.pointsU[i + 1] * 4294967.296;
+
+    if (index % 5 == 0) {
+        console.log(replay.ts.toUTCString());
+        reaper();
+    }
 
     traceOpts.endStamp = now + replay.ival;
 
@@ -6538,6 +6551,7 @@ function playReplay(state){
     } else {
         replay.playing = false;
         jQuery("#replayPlay").html("Play");
+        clearTimeout(refreshId);
     }
 };
 
@@ -6570,7 +6584,7 @@ function showReplayBar(){
             max: 23,
             slide: function(event, ui) {
                 replay.hours = ui.value;
-                replaySetTimeHint();
+                replaySetTimeHint("nosliders");
             },
             change: function() {
                 replayJump();
@@ -6583,7 +6597,7 @@ function showReplayBar(){
             max: 59,
             slide: function(event, ui) {
                 replay.minutes = ui.value;
-                replaySetTimeHint();
+                replaySetTimeHint("nosliders");
             },
             change: function() {
                 replayJump();

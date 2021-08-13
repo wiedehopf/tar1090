@@ -963,6 +963,7 @@ let TypeDesignatorIcons = {
     'Q4': ['uav', 1],
     'Q9': ['uav', 1],
     'Q25': ['uav', 1],
+    'HRON': ['uav', 1],
 
     'A400': ['a400', 1],
 
