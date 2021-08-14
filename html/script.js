@@ -2002,7 +2002,7 @@ function initMap() {
         key: "darkMode",
         display: "Dark Mode",
         container: "#settingsLeft",
-        init: isDarkModeEnabled(),
+        init: darkModeDefault,
         setState: function(state) {
             let root = document.documentElement;
             jQuery(".layer-switcher .panel").css("background", "var(--BGCOLOR1)");
@@ -6621,10 +6621,6 @@ function showReplayBar(){
         jQuery('#replaySpeedHint').text('Speed: ' + replay.speed + 'x');
     }
 };
-
-function isDarkModeEnabled() {
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-}
 
 function timeoutFetch() {
     fetchData();

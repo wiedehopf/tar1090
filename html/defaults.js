@@ -305,6 +305,7 @@ let filterMaxRange = 1e8; // 100 000 km should include all planes on earth ;)
 
 let jaeroTimeout = 35 * 60; // in seconds
 
+let darkModeDefault = true; // turn on dark mode by default (change in browser possible)
 
 // legacy variables
 let OutlineMlatColor = null;

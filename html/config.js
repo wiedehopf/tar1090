@@ -278,9 +278,10 @@ HideCols = [
 //
 //askLocation = false;  // requires https for geolocation (browsers require it)
 //
-//let filterMaxRange = 50; // don't show aircraft further than 50 nmi from the receiver
+//filterMaxRange = 50; // don't show aircraft further than 50 nmi from the receiver
 //
 //
+//darkModeDefault = true; // turn on dark mode by default (change in browser possible)
 
 /*
 tableColors = {
