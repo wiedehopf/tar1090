@@ -2149,6 +2149,10 @@ function initMap() {
             case "t":
                 selectAllPlanes();
                 break;
+            case "g":
+                nogpsOnly = !nogpsOnly;
+                refreshFilter();
+                break;
             case "h":
                 resetMap();
                 break;
@@ -3518,7 +3522,8 @@ function selectAllPlanes() {
     if (globeIndex) {
         for (let i in PlanesOrdered) {
             let plane = PlanesOrdered[i];
-            plane.processTrace();
+            if (plane.visible && plane.inView)
+                plane.processTrace();
         }
     }
     refreshFeatures();

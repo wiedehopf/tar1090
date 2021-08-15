@@ -86,7 +86,7 @@ function createBaseLayers() {
             attributions: 'Powered by <a href="https://www.esri.com">Esri.com</a>' +
             '— Sources: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
             attributionsCollapsible: false,
-            maxZoom: 17,
+            maxZoom: 16,
         }),
         name: 'esri_gray',
         title: 'ESRI.com Gray',
