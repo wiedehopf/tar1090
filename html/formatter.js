@@ -59,21 +59,21 @@ function format_altitude_brief(alt, vr, displayUnits) {
 	let alt_text;
 
 	if (alt == null){
-		return "";
+		return NBSP + '?' + NBSP;
 	} else if (alt === "ground"){
 		return "ground";
 	}
 
-	alt_text = Math.round(convert_altitude(alt, displayUnits)).toLocaleString() + NBSP;
+	alt_text = Math.round(convert_altitude(alt, displayUnits)).toString();
 
 	// Vertical Rate Triangle
 	let verticalRateTriangle = "";
-	if (vr > 192){
+	if (vr > 245){
 		verticalRateTriangle = UP_TRIANGLE;
-	} else if (vr < -192){
+	} else if (vr < -245){
 		verticalRateTriangle = DOWN_TRIANGLE;
 	} else {
-		verticalRateTriangle = NBSP + NBSP + NBSP;
+		verticalRateTriangle = NBSP;
 	}
 
 	return alt_text + verticalRateTriangle;
