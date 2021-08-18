@@ -1458,7 +1458,6 @@ function startPage() {
 
     if (replay) {
         showReplayBar();
-        replayClear();
         loadReplay(replay.ts);
     }
 
@@ -6191,15 +6190,16 @@ function replayClear() {
 }
 
 function replayJump() {
+    if (!showingReplayBar)
+        return;
     let date = new Date(replay.dateText);
     date.setUTCHours(Number(replay.hours));
     date.setUTCMinutes(Number(replay.minutes));
-    date.setUTCSeconds(0);
 
     let ts = new Date(replay.ts.getTime());
-    ts.setUTCSeconds(0);
 
-    if (date.getTime() == ts.getTime()) {
+    // diff less 10 seconds
+    if (Math.abs(date.getTime() - ts.getTime()) < 10000) {
         return;
     }
 
@@ -6208,6 +6208,8 @@ function replayJump() {
     replayClear();
     loadReplay(date);
 }
+let replayData;
+let replayDataKey;
 function loadReplay(ts) {
     if (isNaN(ts.getTime())) {
         ts = new Date();
@@ -6229,26 +6231,36 @@ function loadReplay(ts) {
     let sDate = sDateString(time);
     let index = 2 * time.getUTCHours() + Math.floor(time.getUTCMinutes() / 30);
 
-    let req = jQuery.ajax({
-        url: "globe_history/" + sDate + "/heatmap/" + index.toString().padStart(2, '0') + ".bin.ttf",
-        method: 'GET',
-        xhr: arraybufferRequest,
-    });
+    let rKey = sDate + index;
+    if (rKey == replayDataKey) {
+        initReplay(replayData);
+    } else {
+        let req = jQuery.ajax({
+            url: "globe_history/" + sDate + "/heatmap/" + index.toString().padStart(2, '0') + ".bin.ttf",
+            method: 'GET',
+            xhr: arraybufferRequest,
+            rKey: rKey,
+        });
 
-    setTraceDate({ts: ts});
+        setTraceDate({ts: ts});
 
-    req.done(initReplay);
-    req.fail(function(jqxhr, status, error) {
-        jQuery("#update_error_detail").text(jqxhr.status + ' --> No data for this timestamp!');
-        jQuery("#update_error").css('display','block');
-        setTimeout(function() {jQuery("#update_error").css('display','none');}, 5000);
-    });
+        req.done(function(data) {
+            if (!data) {
+                console.log("initReplay: no data!");
+                return;
+            }
+            replayData = data;
+            replayDataKey = this.rKey;
+            initReplay(data);
+        });
+        req.fail(function(jqxhr, status, error) {
+            jQuery("#update_error_detail").text(jqxhr.status + ' --> No data for this timestamp!');
+            jQuery("#update_error").css('display','block');
+            setTimeout(function() {jQuery("#update_error").css('display','none');}, 5000);
+        });
+    }
 }
 function initReplay(data) {
-    if (!data) {
-        console.log("initReplay: no data!");
-        return;
-    }
     if (data.byteLength % 16 != 0) {
         console.log("Invalid heatmap file (byteLength)");
         return;
@@ -6279,13 +6291,35 @@ function initReplay(data) {
 
     replay.ival = (replay.pointsU[replay.slices[0] + 3] & 65535) / 1000;
     replay.halfHour = (replay.ts.getUTCMinutes() >= 30) ? 1 : 0;
-    replay.index = Math.round (((replay.ts.getUTCMinutes() % 30) * 60 + replay.ts.getUTCSeconds()) / replay.ival);
+    let index = Math.round (((replay.ts.getUTCMinutes() % 30) * 60 + replay.ts.getUTCSeconds()) / replay.ival);
     //console.log("init with index" + replay.index);
-    if (replay.index > 0)
-        replayStep(replay.index - 1);
+    if (index > 0) {
+        if (false && index > 1) {
+            replay.index = 0
+            replayStep("fast");
+        }
+        replay.index = index - 1;
+        replayStep("fast");
+    }
+    replay.index = index;
     replayStep();
 }
 
+function replayOnSliderMove() {
+    clearTimeout(refreshId);
+
+    let date = new Date(replay.dateText);
+    date.setUTCHours(Number(replay.hours));
+    date.setUTCMinutes(Number(replay.minutes));
+    date.setUTCSeconds(0);
+    if (true || utcTimes) {
+        jQuery("#replayDateHint").html("Date: " + zDateString(date));
+        jQuery("#replayTimeHint").html("Time: " + zuluTime(date));
+    } else {
+        jQuery("#replayDateHint").html("Date: " + lDateString(date));
+        jQuery("#replayTimeHint").html("Time: " + localTime(date));
+    }
+}
 function replaySetTimeHint(arg) {
     if (true || utcTimes) {
         jQuery("#replayDateHint").html("Date: " + zDateString(replay.ts));
@@ -6295,16 +6329,14 @@ function replaySetTimeHint(arg) {
         jQuery("#replayTimeHint").html("Time: " + localTime(replay.ts));
     }
 
-    if (arg != "nosliders") {
-        let hours = replay.ts.getUTCHours();
-        jQuery('#hourSelect').slider("option", "value", hours);
+    let hours = replay.ts.getUTCHours();
+    jQuery('#hourSelect').slider("option", "value", hours);
 
-        let minutes = replay.ts.getUTCMinutes();
-        jQuery('#minuteSelect').slider("option", "value", minutes);
-    }
+    let minutes = replay.ts.getUTCMinutes();
+    jQuery('#minuteSelect').slider("option", "value", minutes);
 }
 
-function replayStep(index) {
+function replayStep(arg) {
     if (!replay || showTrace) {
         return;
     }
@@ -6314,13 +6346,11 @@ function replayStep(index) {
         refreshId = setTimeout(replayStep, replay.ival / replay.speed * 1000);
     }
 
-    if (index == null) {
-        index = replay.index;
-    }
     if (isNaN(replay.ts.getTime())) {
         loadReplay(new Date());
         return;
     }
+    let index = replay.index;
     if (index >= replay.slices.length) {
         console.log('next half hour');
         let date = new Date(replay.ts.getTime() + 30 * 60 * 1000);
@@ -6339,9 +6369,6 @@ function replayStep(index) {
     replay.hours = replay.ts.getUTCHours();
     replay.minutes = replay.ts.getUTCMinutes();
 
-    replaySetTimeHint();
-    updateAddressBar();
-
     let points = replay.points;
     let i = replay.slices[index];
 
@@ -6350,14 +6377,18 @@ function replayStep(index) {
     last = now;
     now = replay.pointsU[i + 2] / 1000 + replay.pointsU[i + 1] * 4294967.296;
 
-    if (index % 5 == 0) {
-        console.log(replay.ts.toUTCString());
-        reaper();
-    }
-
     traceOpts.endStamp = now + replay.ival;
 
     replay.ival = (replay.pointsU[i + 3] & 65535) / 1000;
+
+    if (arg != 'fast') {
+        replaySetTimeHint();
+        updateAddressBar();
+        if (index % 5 == 0) {
+            console.log(replay.ts.toUTCString());
+            reaper();
+        }
+    }
 
     i += 4;
 
@@ -6395,6 +6426,8 @@ function replayStep(index) {
         let hex = (points[i] & ((1<<24) - 1)).toString(16).padStart(6, '0');
         hex = (points[i] & (1<<24)) ? ('~' + hex) : hex;
 
+        if (icaoFilter && !icaoFilter.includes(hex))
+            continue;
 
         let alt = points[i + 3] & 65535;
         if (alt & 32768)
@@ -6410,9 +6443,6 @@ function replayStep(index) {
         else
             gs /= 10;
 
-        if (icaoFilter && !icaoFilter.includes(hex))
-            continue;
-
         let ac = {
             seen: 0,
             seen_pos: 0,
@@ -6425,9 +6455,11 @@ function replayStep(index) {
         processAircraft(ac, false, false);
     }
 
-    triggerRefresh = 1;
-    checkMovement();
-    checkRefresh();
+    if (arg != "fast") {
+        triggerRefresh = 1;
+        checkMovement();
+        checkRefresh();
+    }
     replay.index = index + 1;
 }
 
@@ -6568,12 +6600,14 @@ function showReplayBar(){
         showingReplayBar = false;
         replay = null;
         jQuery('#map_canvas').height('100%');
+        jQuery('#sidebar_canvas').height('100%');
     } else {
         // If it's hidden, show it and change the currently selected date to be an hour ago
         jQuery("#replayBar").show();
         jQuery("#replayBar").css('display', 'grid');
         jQuery('#replayBar').height('100px');
         jQuery('#map_canvas').height('calc(100% - 100px)');
+        jQuery('#sidebar_canvas').height('calc(100% - 110px)');
         if (!replay) {
             replay = replayDefaults(new Date());
             replay.playing = false;
@@ -6581,7 +6615,6 @@ function showReplayBar(){
         //ts.setUTCMinutes((parseInt((ts.getUTCMinutes() + 7.5)/15) * 15) % 60);
         jQuery("#replayDatepicker").datepicker('setDate', replay.ts);
 
-        showingReplayBar = true;
         jQuery('#hourSelect').slider({
             value: replay.ts.getUTCHours(),
             step: 1,
@@ -6589,7 +6622,7 @@ function showReplayBar(){
             max: 23,
             slide: function(event, ui) {
                 replay.hours = ui.value;
-                replaySetTimeHint("nosliders");
+                replayOnSliderMove();
             },
             change: function() {
                 replayJump();
@@ -6602,13 +6635,12 @@ function showReplayBar(){
             max: 59,
             slide: function(event, ui) {
                 replay.minutes = ui.value;
-                replaySetTimeHint("nosliders");
+                replayOnSliderMove();
             },
             change: function() {
                 replayJump();
             }
         });
-        replaySetTimeHint();
         const slideBase = 3.0;
         jQuery('#replaySpeedSelect').slider({
             value: Math.pow(replay.speed, 1 / slideBase),
@@ -6624,6 +6656,7 @@ function showReplayBar(){
             },
         });
         jQuery('#replaySpeedHint').text('Speed: ' + replay.speed + 'x');
+        showingReplayBar = true;
     }
 };
 
