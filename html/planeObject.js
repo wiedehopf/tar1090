@@ -366,6 +366,7 @@ PlaneObject.prototype.updateTrackPrev = function() {
     this.prev_alt = this.altitude;
     this.prev_alt_rounded = this.alt_rounded;
     this.prev_speed = this.speed;
+    this.prev_rId = this.rId;
 
     return true;
 };
@@ -410,6 +411,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
             ts: now,
             track: this.rotation,
             leg: is_leg,
+            rId: this.rId,
         };
         this.track_linesegs.push(newseg);
         this.history_size ++;
@@ -594,6 +596,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
             ts: this.prev_time,
             track: this.prev_rot,
             leg: is_leg,
+            rId: this.prev_rId,
         });
 
         this.history_size += 2;
@@ -1146,6 +1149,7 @@ PlaneObject.prototype.processTrace = function() {
                 ground: (this.altitude == "ground"),
                 ts: this.position_time,
                 track: this.rotation,
+                rId: this.rId,
             });
         }
         now = new Date().getTime()/1000;
@@ -1787,6 +1791,9 @@ PlaneObject.prototype.updateLines = function() {
                 + "\n"
                 //+ NBSP + format_track_arrow(seg.track)
                 + timestamp;
+            if (true && seg.rId) {
+                text += "\n" + seg.rId.substring(0,9); //+ "\n" + seg.rId.substring(9,18);
+            }
 
             if (showTrace && !trackLabels)
                 text = timestamp;
@@ -2207,6 +2214,9 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
         this.geom_rate = null;
     }
 
+    if (state[9])
+        this.rId = state[9];
+
     if (data != null) {
         if (data.type.substring(0,4) == "adsb") {
             this.dataSource = "adsb";
@@ -2371,6 +2381,7 @@ PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
         ts: this.prev_time,
         track: this.prev_rot,
         leg: is_leg,
+        rId: this.prev_rId,
     });
 
     this.track_linesegs.push({ fixed: new ol.geom.LineString(seg1),
@@ -2383,6 +2394,7 @@ PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
         track: this.prev_rot,
         ts: NaN,
         noLabel: true,
+        rId: this.prev_rId,
     });
 
     this.track_linesegs.push({ fixed: new ol.geom.LineString(seg2),
@@ -2395,6 +2407,7 @@ PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
         track: this.prev_rot,
         ts: NaN,
         noLabel: true,
+        rId: this.prev_rId,
     });
 };
 

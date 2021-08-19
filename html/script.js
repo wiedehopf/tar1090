@@ -2476,6 +2476,7 @@ function refreshSelected() {
         jQuery('#anon_mlat_info').addClass('hidden');
         jQuery('#reg_info').removeClass('hidden');
     }
+
     let checkReg = selected.registration + ' ' + selected.dbinfoLoaded;
     if (checkReg != selReg) {
         selReg = checkReg;
@@ -2529,6 +2530,12 @@ function refreshSelected() {
     else
         jQuery('#selected_ownop').text("");
 
+    if (selected.rId) {
+        jQuery('#receiver_id').text(selected.rId);
+        jQuery('#receiver_id_div').removeClass('hidden');
+    } else {
+        jQuery('#receiver_id_div').addClass('hidden');
+    }
 
 
     jQuery("#selected_altitude1").text(format_altitude_long(selected.altitude, selected.vert_rate, DisplayUnits));
