@@ -467,6 +467,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
 
     if (this.request_rotation_from_track && this.prev_position) {
         this.rotation = bearingFromLonLat(this.prev_position, this.position);
+        this.request_rotation_from_track = false;
     }
 
 
@@ -1020,6 +1021,7 @@ PlaneObject.prototype.processTrace = function() {
         }
 
         //console.log('trace points from/to: ' + trace[start][0] + ' ' + trace[end-1][0]);
+        let lastPosition;
         for (let i = start; i < end; i++) {
             const state = trace[i];
             const timestamp = state[0];
@@ -1093,8 +1095,12 @@ PlaneObject.prototype.processTrace = function() {
 
             if (!traceOpts.showTime) {
                 this.updateTrack(_now, _last, true, stale);
+            } else if (this.track == null && lastPosition) {
+                this.rotation = bearingFromLonLat(lastPosition, this.position);
             }
+
             _last = _now;
+            lastPosition = this.position;
 
             // go only 1 step beyond now for replay, end of replay.ival is obeyed via traceOpts.endStamp
             if (replay && timestamp >= now) {
@@ -1330,7 +1336,6 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     this.track = track;
     if (track != null) {
         this.rotation = track;
-        this.request_rotation_from_track = false;
     } else if (data.calc_track) {
         this.rotation = data.calc_track;
     } else {
@@ -1470,7 +1475,6 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.vert_rate = null;
     }
 
-    this.request_rotation_from_track = false;
     if (this.altitude == "ground") {
         if (this.true_heading != null)
             this.rotation = this.true_heading;
@@ -2204,6 +2208,8 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
 
     if (track)
         this.rotation = track;
+    else
+        this.request_rotation_from_track = true;
 
     this.vert_rate = rate;
     if (rate_geom) {
