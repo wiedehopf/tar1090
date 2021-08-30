@@ -2652,7 +2652,11 @@ function refreshSelected() {
     } else {
         jQuery('#selected_seen').text('n/a');
     }
-
+    if (selected.position_time != null) {
+        jQuery('#selected_pos_epoch').text(Math.round(selected.position_time));
+    } else {
+        jQuery('#selected_pos_epoch').text('n/a');
+    }
     if (selected.seen_pos != null && selected.seen_pos < 1000000) {
         jQuery('#selected_seen_pos').text(format_duration(selected.seen_pos));
     } else {
