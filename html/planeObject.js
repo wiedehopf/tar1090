@@ -1399,7 +1399,16 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     }
     this.messages = data.messages;
 
-    this.rssi = (data.rssi != null && data.rssi > -49.4) ? data.rssi : null;
+    if (data.rssi != null && data.rssi > -49.4) {
+        if (!globeIndex && this.rssi != null && RefreshInterval < 1500) {
+            let factor = Math.min(1, Math.log(2 - RefreshInterval / 1500));
+            this.rssi = this.rssi * (1 - factor) + data.rssi * factor;
+        } else {
+            this.rssi = data.rssi;
+        }
+    } else {
+        this.rssi = null;
+    }
 
     if (data.baro_rate != null)
         this.baro_rate = data.baro_rate;
