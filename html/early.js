@@ -73,14 +73,70 @@ try {
         get: function() {return null;},
     }
 }
-try {
-    localStorage['testLocalStorage'] = 'test';
-    const test = localStorage['testLocalStorage'];
-} catch (error) {
+
+var loStore;
+
+// Fake localStorage implementation.
+// Mimics localStorage, including events.
+// It will work just like localStorage, except for the persistant storage part.
+
+var fakeLocalStorage = function() {
+  var fakeLocalStorage = {};
+  var storage;
+  // If Storage exists we modify it to write to our fakeLocalStorage object instead.
+  // If Storage does not exist we create an empty object.
+  loStore = {};
+  storage = loStore;
+  // For older IE
+  if (!window.location.origin) {
+    window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
+  }
+  var dispatchStorageEvent = function(key, newValue) {
+    var oldValue = (key == null) ? null : storage.getItem(key); // `==` to match both null and undefined
+    var url = location.href.substr(location.origin.length);
+    var storageEvent = document.createEvent('StorageEvent'); // For IE, http://stackoverflow.com/a/25514935/1214183
+    storageEvent.initStorageEvent('storage', false, false, key, oldValue, newValue, url, null);
+    window.dispatchEvent(storageEvent);
+  };
+  storage.key = function(i) {
+    var key = Object.keys(fakeLocalStorage)[i];
+    return typeof key === 'string' ? key : null;
+  };
+  storage.getItem = function(key) {
+    return typeof fakeLocalStorage[key] === 'string' ? fakeLocalStorage[key] : null;
+  };
+  storage.setItem = function(key, value) {
+    dispatchStorageEvent(key, value);
+    fakeLocalStorage[key] = String(value);
+  };
+  storage.removeItem = function(key) {
+    dispatchStorageEvent(key, null);
+    delete fakeLocalStorage[key];
+  };
+  storage.clear = function() {
+    dispatchStorageEvent(null, null);
+    fakeLocalStorage = {};
+  };
+};
+
+
+if (window.self != window.top) {
+    fakeLocalStorage();
+} else {
+    try {
+        loStore = window.localStorage;
+        loStore.setItem('localStorageTest', 1);
+        loStore.removeItem('localStorageTest');
+    } catch (error) {
+
+        fakeLocalStorage();
+        /*
     const splat = "Your browser isn't supporting localStorage.\nSafari / Apple: turn off \"Block Cookies\"!";
     jQuery("#js_error").text(splat);
     jQuery("#js_error").css('display','block');
     throw 'FATAL, your browser does not support localStorage!';
+    */
+    }
 }
 
 let firstError = true;
@@ -105,7 +161,7 @@ if (usp.has('showerrors') || usp.has('jse')) {
 }
 
 function resetSettings() {
-    localStorage.clear();
+    loStore.clear();
     if (window.history && window.history.replaceState) {
         window.history.replaceState("object or string", "Title", window.location.pathname);
         location.reload();
@@ -140,15 +196,15 @@ if (usp.has('tfrs')) {
 
 const customTiles = usp.get('customTiles');
 if (customTiles)
-    localStorage['customTiles'] = customTiles;
+    loStore['customTiles'] = customTiles;
 if (customTiles == 'remove')
-    localStorage.removeItem('customTiles');
+    loStore.removeItem('customTiles');
 
 const bingKey = usp.get('BingMapsAPIKey');
 if (bingKey)
-    localStorage['bingKey'] = bingKey;
+    loStore['bingKey'] = bingKey;
 if (bingKey == 'remove')
-    localStorage.removeItem('bingKey');
+    loStore.removeItem('bingKey');
 
 if (usp.has('l3harris') || usp.has('ift')) {
     l3harris = true;
@@ -580,9 +636,9 @@ Toggle.prototype.init = function() {
     if (this.button)
         jQuery(this.button).on('click', this.toggle.bind(this));
 
-    if (localStorage[this.key] == 'true')
+    if (loStore[this.key] == 'true')
         this.state = true;
-    if (localStorage[this.key] == 'false')
+    if (loStore[this.key] == 'false')
         this.state = false
 
     this.toggle(this.state, true);
@@ -612,7 +668,7 @@ Toggle.prototype.toggle = function(override, init) {
     }
 
     if (!init)
-        localStorage[this.key] = this.state;
+        loStore[this.key] = this.state;
 }
 
 Toggle.prototype.restore = function () {

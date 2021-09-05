@@ -253,7 +253,7 @@ function processReceiverUpdate(data, init) {
     }
 
     if (globeIndex) {
-        if ((showGrid || localStorage['globeGrid'] == 'true')
+        if ((showGrid || loStore['globeGrid'] == 'true')
             && globeIndexNow[data.globeIndex] == null)
             drawTileBorder(data);
         globeTrackedAircraft = data.global_ac_count_withpos;
@@ -513,11 +513,11 @@ function initPage() {
     onMobile = window.mobilecheck();
 
     if (usp.has('nowebgl')) {
-        localStorage['webgl'] = "false";
+        loStore['webgl'] = "false";
     }
     if (usp.has('showGrid')) {
         showGrid = true;
-        localStorage['layer_site_pos'] = 'true';
+        loStore['layer_site_pos'] = 'true';
     }
 
     if (usp.has('halloween'))
@@ -551,25 +551,25 @@ function initPage() {
         onMobile = false;
 
     if (usp.has('hideSidebar'))
-        localStorage['sidebar_visible'] = "false";
+        loStore['sidebar_visible'] = "false";
     if (usp.has('sidebarWidth')) {
-        localStorage['sidebar_width'] = usp.get('sidebarWidth');
-        localStorage['sidebar_visible'] = "true";
+        loStore['sidebar_width'] = usp.get('sidebarWidth');
+        loStore['sidebar_visible'] = "true";
     }
 
     if (usp.has('SiteLat') && usp.has('SiteLon')) {
-        localStorage['SiteLat'] = usp.get('SiteLat');
-        localStorage['SiteLon'] = usp.get('SiteLon');
+        loStore['SiteLat'] = usp.get('SiteLat');
+        loStore['SiteLon'] = usp.get('SiteLon');
     }
-    if (localStorage['SiteLat'] != null && localStorage['SiteLon'] != null) {
+    if (loStore['SiteLat'] != null && loStore['SiteLon'] != null) {
         if (usp.has('SiteClear')
-            || isNaN(parseFloat(localStorage['SiteLat']))
-            || isNaN(parseFloat(localStorage['SiteLat']))) {
-            localStorage.removeItem('SiteLat');
-            localStorage.removeItem('SiteLon');
+            || isNaN(parseFloat(loStore['SiteLat']))
+            || isNaN(parseFloat(loStore['SiteLat']))) {
+            loStore.removeItem('SiteLat');
+            loStore.removeItem('SiteLon');
         } else {
-            SiteLat = CenterLat = DefaultCenterLat = parseFloat(localStorage['SiteLat']);
-            SiteLon = CenterLon = DefaultCenterLon = parseFloat(localStorage['SiteLon']);
+            SiteLat = CenterLat = DefaultCenterLat = parseFloat(loStore['SiteLat']);
+            SiteLon = CenterLon = DefaultCenterLon = parseFloat(loStore['SiteLon']);
             SiteOverride = true;
         }
     }
@@ -615,14 +615,14 @@ function initPage() {
 
     if (value = usp.getFloat('iconScale')) {
         iconScale = value;
-    } else if (localStorage['iconScale'] != null) {
-        iconScale = localStorage['iconScale'];
+    } else if (loStore['iconScale'] != null) {
+        iconScale = loStore['iconScale'];
     }
 
     if (value = usp.getFloat('scale')) {
         userScale = value;
-    } else if (localStorage['userScale'] != null) {
-        userScale = localStorage['userScale'];
+    } else if (loStore['userScale'] != null) {
+        userScale = loStore['userScale'];
     }
 
     const slideBase = 0.6;
@@ -635,7 +635,7 @@ function initPage() {
             iconScale = Math.pow(ui.value, slideBase);
             checkScale();
             mapRefresh();
-            localStorage['iconScale'] = iconScale;
+            loStore['iconScale'] = iconScale;
         },
     });
 
@@ -648,7 +648,7 @@ function initPage() {
             userScale = Math.pow(ui.value, slideBase);
             checkScale();
             mapRefresh();
-            localStorage['userScale'] = userScale;
+            loStore['userScale'] = userScale;
 
             setGlobalScale(userScale);
         },
@@ -707,38 +707,38 @@ function initPage() {
         }, 30000);
     }
 
-    if (localStorage['enableLabels'] == 'true' || usp.has('enableLabels')) {
+    if (loStore['enableLabels'] == 'true' || usp.has('enableLabels')) {
         toggleLabels();
     }
     if (usp.has('extendedLabels')) {
         extendedLabels = parseInt(usp.getFloat('extendedLabels')) + 2;
         toggleExtendedLabels();
-    } else if (localStorage['extendedLabels']) {
-        extendedLabels = parseInt(localStorage['extendedLabels']) + 2;
+    } else if (loStore['extendedLabels']) {
+        extendedLabels = parseInt(loStore['extendedLabels']) + 2;
         toggleExtendedLabels();
     }
-    if (localStorage['trackLabels'] == "true" || usp.has('trackLabels')) {
+    if (loStore['trackLabels'] == "true" || usp.has('trackLabels')) {
         toggleTrackLabels();
     }
-    if (localStorage['tableInView'] == "true") {
+    if (loStore['tableInView'] == "true") {
         toggleTableInView(true);
     }
-    if (localStorage['debug'] == "true")
+    if (loStore['debug'] == "true")
         debug = true;
-    if (localStorage['debugPosFilter'] == "true")
+    if (loStore['debugPosFilter'] == "true")
         debugPosFilter = true;
 
-    if (localStorage['noVanish'] == "true") {
+    if (loStore['noVanish'] == "true") {
         noVanish = true;
         //filterTracks = noVanish;
-        //localStorage['noVanish'] = "false";
+        //loStore['noVanish'] = "false";
         buttonActive('#P', noVanish);
     }
 
     jQuery('#tabs').tabs({
-        active: localStorage['active_tab'],
+        active: loStore['active_tab'],
         activate: function (event, ui) {
-            localStorage['active_tab'] = jQuery("#tabs").tabs("option", "active");
+            loStore['active_tab'] = jQuery("#tabs").tabs("option", "active");
         },
         collapsible: true
     });
@@ -762,23 +762,23 @@ function initPage() {
         jQuery('#legend').hide();
         jQuery('#sidebar_container').width('auto');
         updateMapSize();
-        localStorage['sidebar_width'] = jQuery('#sidebar_container').width();
-        jQuery('#sidebar_container').width(localStorage['sidebar_width']);
+        loStore['sidebar_width'] = jQuery('#sidebar_container').width();
+        jQuery('#sidebar_container').width(loStore['sidebar_width']);
         jQuery('#legend').show();
     });
 
-    if (localStorage['sidebar_width'] != null)
-        jQuery('#sidebar_container').width(localStorage['sidebar_width']);
+    if (loStore['sidebar_width'] != null)
+        jQuery('#sidebar_container').width(loStore['sidebar_width']);
     else
         jQuery('#sidebar_container').width('25%');
 
     if (jQuery('#sidebar_container').width() > jQuery(window).innerWidth() *0.8)
         jQuery('#sidebar_container').width('30%');
 
-    localStorage['sidebar_width'] = jQuery('#sidebar_container').width();
+    loStore['sidebar_width'] = jQuery('#sidebar_container').width();
 
     jQuery('#sidebar_container').on('resize', function() {
-        localStorage['sidebar_width'] = jQuery('#sidebar_container').width();
+        loStore['sidebar_width'] = jQuery('#sidebar_container').width();
     });
 
     // Set up event handlers for buttons
@@ -1132,7 +1132,7 @@ function initPage() {
         jQuery('#adsbexchange_header').show();
         jQuery('#credits').show();
         jQuery('#selected_infoblock').addClass('adsbx-selected-bg');
-        if (window.self != window.top &&
+        if (false && window.self != window.top &&
             (window.top.location.host.startsWith("thebaldgeek.net:") || window.top.location.host == "thebaldgeek.net")
         ) {
             window.top.location.href = "https://www.adsbexchange.com/";
@@ -1600,10 +1600,10 @@ function webglAddLayer() {
             console.error(error);
         }
         console.error(error);
-        localStorage['webglFailStamp'] = new Date().getTime();
+        loStore['webglFailStamp'] = new Date().getTime();
         success = false;
-        if (localStorage['webgl'] == 'true')
-            localStorage.removeItem('webgl');
+        if (loStore['webgl'] == 'true')
+            loStore.removeItem('webgl');
     }
     delete Planes[plane.icao];
     PlanesOrdered.splice(PlanesOrdered.indexOf(plane), 1);
@@ -1615,9 +1615,9 @@ function webglAddLayer() {
 function webglInit() {
     let init = true;
     // if webGL failed in the last 7 days, don't even try unless people click the toggle.
-    if (localStorage['webglFailStamp'] && Number(localStorage['webglFailStamp']) +  7 * 24 * 3600 * 1000 > new Date().getTime()) {
+    if (loStore['webglFailStamp'] && Number(loStore['webglFailStamp']) +  7 * 24 * 3600 * 1000 > new Date().getTime()) {
         init = false;
-        if (localStorage['webgl'] == undefined)
+        if (loStore['webgl'] == undefined)
             console.log('webGL failed in the past 7 days, not even trying to initialize it');
     }
     new Toggle({
@@ -1667,15 +1667,15 @@ function initMap() {
     }
 
     // Load stored map settings if present
-    CenterLon = Number(localStorage['CenterLon']) || DefaultCenterLon;
-    CenterLat = Number(localStorage['CenterLat']) || DefaultCenterLat;
-    ZoomLvl = Number(localStorage['ZoomLvl']) || DefaultZoomLvl;
+    CenterLon = Number(loStore['CenterLon']) || DefaultCenterLon;
+    CenterLat = Number(loStore['CenterLat']) || DefaultCenterLat;
+    ZoomLvl = Number(loStore['ZoomLvl']) || DefaultZoomLvl;
     ZoomLvlCache = ZoomLvl;
 
     if (overrideMapType)
         MapType_tar1090 = overrideMapType;
-    else if (localStorage['MapType_tar1090']) {
-        MapType_tar1090 = localStorage['MapType_tar1090'];
+    else if (loStore['MapType_tar1090']) {
+        MapType_tar1090 = loStore['MapType_tar1090'];
     }
 
     // Initialize OpenLayers
@@ -1830,19 +1830,19 @@ function initMap() {
 
             lyr.on('change:visible', function(evt) {
                 if (evt.target.getVisible()) {
-                    MapType_tar1090 = localStorage['MapType_tar1090'] = evt.target.get('name');
+                    MapType_tar1090 = loStore['MapType_tar1090'] = evt.target.get('name');
                 }
             });
         } else if (lyr.get('type') === 'overlay') {
-            if (localStorage['layer_' + lyr.get('name')] == 'true' || enableOverlays.indexOf(lyr.get('name')) >= 0) {
+            if (loStore['layer_' + lyr.get('name')] == 'true' || enableOverlays.indexOf(lyr.get('name')) >= 0) {
                 lyr.setVisible(true);
             }
-            if (localStorage['layer_' + lyr.get('name')] == 'false') {
+            if (loStore['layer_' + lyr.get('name')] == 'false') {
                 lyr.setVisible(false);
             }
 
             lyr.on('change:visible', function(evt) {
-                localStorage['layer_' + evt.target.get('name')] = evt.target.getVisible();
+                loStore['layer_' + evt.target.get('name')] = evt.target.getVisible();
             });
         }
     })
@@ -2213,12 +2213,12 @@ function initMap() {
                 break;
             case "D":
                 debug = !debug;
-                localStorage['debug'] = debug;
+                loStore['debug'] = debug;
                 console.log('debug = ' + debug);
                 break;
             case "P":
                 debugPosFilter = !debugPosFilter;
-                localStorage['debugPosFilter'] = debugPosFilter;
+                loStore['debugPosFilter'] = debugPosFilter;
                 console.log('debugPosFilter = ' + debugPosFilter);
                 break;
             case "?":
@@ -2235,12 +2235,12 @@ function initMap() {
                 break;
             case "J":
                 debugJump = !debugJump;
-                localStorage['debugJump'] = debugJump;
+                loStore['debugJump'] = debugJump;
                 console.log('debugJump = ' + debugJump);
                 break;
             case "N":
                 noMLAT = !noMLAT;
-                localStorage['noMLAT'] = noMLAT;
+                loStore['noMLAT'] = noMLAT;
                 console.log('noMLAT = ' + noMLAT);
                 break;
         }
@@ -2249,7 +2249,7 @@ function initMap() {
     if (window && window.location && window.location.protocol == 'https:'
         && !SiteOverride && (globeIndex || uuid || askLocation)
         && !usp.has('icao') && !usp.has("lat") && !usp.has("lon")
-        && localStorage['geoFindMeFirstVisit'] == undefined) {
+        && loStore['geoFindMeFirstVisit'] == undefined) {
         jQuery("#geoFindMeDialog").dialog({
             resizable: false,
             height: "auto",
@@ -2260,7 +2260,7 @@ function initMap() {
                     jQuery(this).dialog( "close" );
                 },
                 "No": function() {
-                    localStorage['geoFindMeFirstVisit'] = 'no'
+                    loStore['geoFindMeFirstVisit'] = 'no'
                     jQuery(this).dialog( "close" );
                 }
             }
@@ -3372,7 +3372,7 @@ function refreshFeatures() {
                     order.push(jQuery(this).attr('id').replace(prefix, ''));
                 });
 
-                localStorage['columnOrder'] = JSON.stringify(order);
+                loStore['columnOrder'] = JSON.stringify(order);
                 columns = createOrderedColumns();
 
                 planeMan.redraw();
@@ -3395,7 +3395,7 @@ function refreshFeatures() {
     }
 
     function createOrderedColumns() {
-        const order = localStorage['columnOrder'];
+        const order = loStore['columnOrder'];
         if (order !== undefined) {
             const columns = [];
             for (let col of JSON.parse(order)) {
@@ -3606,10 +3606,10 @@ function resetMap() {
         CenterLon = DefaultCenterLon;
         CenterLat = DefaultCenterLat;
     }
-    // Reset localStorage values and map settings
-    localStorage['CenterLat'] = CenterLat
-    localStorage['CenterLon'] = CenterLon
-    //localStorage['ZoomLvl']   = ZoomLvl = DefaultZoomLvl;
+    // Reset loStore values and map settings
+    loStore['CenterLat'] = CenterLat
+    loStore['CenterLon'] = CenterLon
+    //loStore['ZoomLvl']   = ZoomLvl = DefaultZoomLvl;
 
     // Set and refresh
     //OLMap.getView().setZoom(ZoomLvl);
@@ -3640,7 +3640,7 @@ function expandSidebar(e) {
 }
 
 function showMap() {
-    jQuery('#sidebar_container').width(localStorage['sidebar_width']).css('margin-left', '0');
+    jQuery('#sidebar_container').width(loStore['sidebar_width']).css('margin-left', '0');
     jQuery("#map_container").show()
     mapIsVisible = true;
     jQuery("#toggle_sidebar_control").show();
@@ -3721,11 +3721,11 @@ function adjustInfoBlock() {
 
 function initializeUnitsSelector() {
     // Get display unit preferences from local storage
-    if (!localStorage.getItem('displayUnits')) {
-        localStorage['displayUnits'] = 'nautical';
+    if (!loStore.getItem('displayUnits')) {
+        loStore['displayUnits'] = 'nautical';
     }
 
-    DisplayUnits = localStorage['displayUnits'];
+    DisplayUnits = loStore['displayUnits'];
 
     // Initialize drop-down
     jQuery('#units_selector')
@@ -3739,7 +3739,7 @@ function initializeUnitsSelector() {
 }
 
 function onDisplayUnitsChanged(e) {
-    localStorage['displayUnits'] = DisplayUnits = e.target.value;
+    loStore['displayUnits'] = DisplayUnits = e.target.value;
 
     TAR.altitudeChart.render();
 
@@ -3790,10 +3790,10 @@ function refreshFilter() {
 }
 
 function filterGroundVehicles(switchFilter) {
-    if (typeof localStorage['groundVehicleFilter'] === 'undefined') {
-        localStorage['groundVehicleFilter'] = 'not_filtered';
+    if (typeof loStore['groundVehicleFilter'] === 'undefined') {
+        loStore['groundVehicleFilter'] = 'not_filtered';
     }
-    let groundFilter = localStorage['groundVehicleFilter'];
+    let groundFilter = loStore['groundVehicleFilter'];
     if (switchFilter === true) {
         groundFilter = (groundFilter === 'not_filtered') ? 'filtered' : 'not_filtered';
     }
@@ -3802,15 +3802,15 @@ function filterGroundVehicles(switchFilter) {
     } else {
         jQuery('#groundvehicle_filter').removeClass('settingsCheckboxChecked');
     }
-    localStorage['groundVehicleFilter'] = groundFilter;
+    loStore['groundVehicleFilter'] = groundFilter;
     PlaneFilter.groundVehicles = groundFilter;
 }
 
 function filterBlockedMLAT(switchFilter) {
-    if (typeof localStorage['blockedMLATFilter'] === 'undefined') {
-        localStorage['blockedMLATFilter'] = 'not_filtered';
+    if (typeof loStore['blockedMLATFilter'] === 'undefined') {
+        loStore['blockedMLATFilter'] = 'not_filtered';
     }
-    let blockedMLATFilter = localStorage['blockedMLATFilter'];
+    let blockedMLATFilter = loStore['blockedMLATFilter'];
     if (switchFilter === true) {
         blockedMLATFilter = (blockedMLATFilter === 'not_filtered') ? 'filtered' : 'not_filtered';
     }
@@ -3819,7 +3819,7 @@ function filterBlockedMLAT(switchFilter) {
     } else {
         jQuery('#blockedmlat_filter').removeClass('settingsCheckboxChecked');
     }
-    localStorage['blockedMLATFilter'] = blockedMLATFilter;
+    loStore['blockedMLATFilter'] = blockedMLATFilter;
     PlaneFilter.blockedMLAT = blockedMLATFilter;
 }
 
@@ -3869,7 +3869,7 @@ function togglePersistence() {
 
     if (!noVanish)
         reaper();
-    localStorage['noVanish'] = noVanish;
+    loStore['noVanish'] = noVanish;
     console.log('noVanish = ' + noVanish);
 
     refreshFilter();
@@ -3993,7 +3993,7 @@ function toggleTableInView(switchOn) {
         tableInView = !tableInView;
         TAR.planeMan.refresh();
     }
-    localStorage['tableInView'] = tableInView;
+    loStore['tableInView'] = tableInView;
 
     jQuery('#with_positions').text(tableInView ? "On Screen:" : "With Position:");
 
@@ -4002,7 +4002,7 @@ function toggleTableInView(switchOn) {
 
 function toggleLabels() {
     enableLabels = !enableLabels;
-    localStorage['enableLabels'] = enableLabels;
+    loStore['enableLabels'] = enableLabels;
     for (let key in PlanesOrdered) {
         PlanesOrdered[key].updateMarker();
     }
@@ -4020,7 +4020,7 @@ function toggleExtendedLabels() {
     extendedLabels++;
     extendedLabels %= 3;
     //console.log(extendedLabels);
-    localStorage['extendedLabels'] = extendedLabels;
+    loStore['extendedLabels'] = extendedLabels;
     for (let key in PlanesOrdered) {
         PlanesOrdered[key].updateMarker();
     }
@@ -4029,7 +4029,7 @@ function toggleExtendedLabels() {
 
 function toggleTrackLabels() {
     trackLabels = !trackLabels;
-    localStorage['trackLabels'] = trackLabels;
+    loStore['trackLabels'] = trackLabels;
 
     remakeTrails();
 
@@ -4404,7 +4404,7 @@ function changeZoom(init) {
     if (!init && Math.abs(ZoomLvl-ZoomLvlCache) < 0.4)
         return;
 
-    localStorage['ZoomLvl'] = ZoomLvl;
+    loStore['ZoomLvl'] = ZoomLvl;
     ZoomLvlCache = ZoomLvl;
 
     if (!init && showTrace)
@@ -4456,8 +4456,8 @@ function changeCenter(init) {
 
     const centerChanged = (Math.abs(center[1] - CenterLat) < 0.000001 && Math.abs(center[0] - CenterLon) < 0.000001);
 
-    localStorage['CenterLon'] = CenterLon = center[0];
-    localStorage['CenterLat'] = CenterLat = center[1];
+    loStore['CenterLon'] = CenterLon = center[0];
+    loStore['CenterLat'] = CenterLat = center[1];
 
     if (!init && showTrace && centerChanged) {
         updateAddressBar();
@@ -5159,8 +5159,12 @@ function refreshInt() {
     if (!mapIsVisible)
         refresh *= 2;
 
-    if (onMobile && TrackedAircraftPositions > 800)
+    if (adsbexchange && window.self != window.top) {
         refresh *= 1.5;
+    } else if (onMobile && TrackedAircraftPositions > 800) {
+        refresh *= 1.5;
+    }
+
 
     return refresh;
 }
@@ -5468,9 +5472,9 @@ function geoFindMe() {
     function success(position) {
         SiteLat = DefaultCenterLat = position.coords.latitude;
         SiteLon = DefaultCenterLon = position.coords.longitude;
-        if (localStorage['geoFindMeFirstVisit'] == undefined && !(usp.has("lat") && usp.has("lon"))) {
+        if (loStore['geoFindMeFirstVisit'] == undefined && !(usp.has("lat") && usp.has("lon"))) {
             OLMap.getView().setCenter(ol.proj.fromLonLat([SiteLon, SiteLat]));
-            localStorage['geoFindMeFirstVisit'] = 'no';
+            loStore['geoFindMeFirstVisit'] = 'no';
             siteCircleLayer.setVisible(true);
         }
         initSitePos();

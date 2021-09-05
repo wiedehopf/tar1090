@@ -23,10 +23,10 @@ function createBaseLayers() {
     let europe = new ol.Collection();
     let custom = new ol.Collection();
 
-    if (localStorage['customTiles'] != undefined) {
+    if (loStore['customTiles'] != undefined) {
         custom.push(new ol.layer.Tile({
             source: new ol.source.OSM({
-                "url" : localStorage['customTiles'],
+                "url" : loStore['customTiles'],
                 maxZoom: 15,
             }),
             name: 'custom_tiles',
@@ -173,8 +173,8 @@ function createBaseLayers() {
         }
     }
 
-    if (localStorage['bingKey'] != undefined)
-        BingMapsAPIKey = localStorage['bingKey'];
+    if (loStore['bingKey'] != undefined)
+        BingMapsAPIKey = loStore['bingKey'];
 
     if (BingMapsAPIKey) {
         world.push(new ol.layer.Tile({
