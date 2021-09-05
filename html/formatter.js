@@ -363,6 +363,7 @@ function wqi(data) {
     data.aircraft = [];
     for (let off = stride; off < buffer.byteLength; off += stride) {
         let ac = {}
+        let u32 = new Uint32Array(buffer, off, stride / 4);
         let s32 = new Int32Array(buffer, off, stride / 4);
         let u16 = new Uint16Array(buffer, off, stride / 2);
         let s16 = new Int16Array(buffer, off, stride / 2);
@@ -546,6 +547,10 @@ function wqi(data) {
             ac.version = ac.adsr_version;
         } else if (type4 == 'tisb') {
             ac.version = ac.tisb_version;
+        }
+        if (stride == 116) {
+            let part2 = u32[27].toString(16).padStart(8, '0');
+            ac.rId = u32[28].toString(16).padStart(8, '0') + '-' + part2.slice(0, 4) + '-' + part2.slice(4);
         }
 
         data.aircraft.push(ac);

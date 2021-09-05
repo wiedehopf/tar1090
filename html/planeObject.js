@@ -1506,6 +1506,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     if (data.nogps != null) {
         this.nogps = data.nogps;
     }
+    this.rId = data.rId;
 
     this.checkForDB(data);
     this.last = now;
