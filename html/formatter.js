@@ -5,6 +5,7 @@ let NBSP='\u00a0';
 let DEGREES='\u00b0'
 let UP_TRIANGLE='\u25b2'; // U+25B2 BLACK UP-POINTING TRIANGLE
 let DOWN_TRIANGLE='\u25bc'; // U+25BC BLACK DOWN-POINTING TRIANGLE
+let EM_QUAD = '\u2001';
 
 let TrackDirections = ["North","NE","East","SE","South","SW","West","NW"];
 let TrackDirectionArrows = ["\u21e7","\u2b00","\u21e8","\u2b02","\u21e9","\u2b03","\u21e6","\u2b01"];
@@ -73,7 +74,7 @@ function format_altitude_brief(alt, vr, displayUnits) {
 	} else if (vr < -245){
 		verticalRateTriangle = DOWN_TRIANGLE;
 	} else {
-		verticalRateTriangle = NBSP;
+		verticalRateTriangle = EM_QUAD;
 	}
 
 	return alt_text + verticalRateTriangle;
