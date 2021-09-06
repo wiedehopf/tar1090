@@ -1883,7 +1883,7 @@ function initMap() {
             let fPixel = evt.map.getPixelFromCoordinate(feature.getGeometry().getCoordinates());
             let a = fPixel[0] - evt.pixel[0];
             let b = fPixel[1] - evt.pixel[1];
-            let c = globalScale * 25;
+            let c = globalScale * (onMobile ? 30 : 20);
             if (a**2 + b**2 < c**2)
                 planeHex = feature.hex;
         }
@@ -1893,7 +1893,7 @@ function initMap() {
                 evt.pixel,
                 {
                     layerFilter: function(layer) { return (layer.get('isTrail') == true); },
-                    hitTolerance: globalScale * 20,
+                    hitTolerance: globalScale * (onMobile ? 30 : 20),
                 }
             );
             if (features.length > 0) {
