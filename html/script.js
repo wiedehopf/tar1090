@@ -679,8 +679,8 @@ function initPage() {
     }
     mapOrientation *= (Math.PI/180); // adjust to radians
 
-    if (usp.has('r')) {
-        let numbers = (usp.get('r') || "").split(/(?:-|:)/);
+    if (usp.has('r') || usp.has('replay')) {
+        let numbers = (usp.get('r') || usp.get('replay') || "").split(/(?:-|:)/);
         let ts = new Date();
         if (numbers.length == 5) {
             ts.setUTCFullYear(numbers[0]);
@@ -5073,7 +5073,7 @@ function updateAddressBar() {
                 string += ',';
         }
     } else if (replay) {
-        string += '?r=';
+        string += '?replay=';
         string += zDateString(replay.ts);
         string += '-' + replay.ts.getUTCHours().toString().padStart(2,'0');
         string += ':' + replay.ts.getUTCMinutes().toString().padStart(2,'0');

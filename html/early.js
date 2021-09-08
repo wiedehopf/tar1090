@@ -209,7 +209,7 @@ if (bingKey == 'remove')
 if (usp.has('l3harris') || usp.has('ift')) {
     l3harris = true;
 }
-if (usp.has('r')) {
+if (usp.has('r') || usp.has('replay')) {
     replay = true;
 }
 function arraybufferRequest() {
