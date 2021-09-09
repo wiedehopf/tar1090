@@ -120,7 +120,9 @@ var fakeLocalStorage = function() {
 };
 
 
-if (window.self != window.top) {
+if (window.location.href.match(/adsbexchange.com/))
+    adsbexchange = true;
+if (adsbexchange && window.self != window.top) {
     fakeLocalStorage();
 } else {
     try {
@@ -322,8 +324,6 @@ function lDateString(date) {
 
 let get_receiver_defer;
 let test_chunk_defer;
-if (window.location.href.match(/adsbexchange.com/))
-    adsbexchange = true;
 if (uuid) {
     // don't need receiver / chunks json
 } else if (adsbexchange && window.location.pathname == '/') {
