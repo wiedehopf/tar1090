@@ -324,6 +324,8 @@ do
     cp nginx.conf "$ipath/nginx-$service.conf"
 
     if [[ $lighttpd == yes ]]; then
+        # clean up broken symlinks in conf-enabled ...
+        for link in /etc/lighttpd/conf-enabled/*; do file "$link" | grep -qs "broken symbolic link" && rm -f "$link"; done
         if [[ "$otherport" != "done" ]]; then
             cp 95-tar1090-otherport.conf /etc/lighttpd/conf-available/
             ln -f -s /etc/lighttpd/conf-available/95-tar1090-otherport.conf /etc/lighttpd/conf-enabled/95-tar1090-otherport.conf
