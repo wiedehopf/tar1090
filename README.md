@@ -116,6 +116,16 @@ sudo sed -i -e 's?.*flightawareLinks.*?flightawareLinks = false;?' /usr/local/sh
 
 Then Ctrl-F5 to refresh the web interface in the browser.
 
+## Enable Share links to ADSB-X
+```
+# ENABLE:
+sudo sed -i -e 's?.*shareBaseUrl.*?shareBaseUrl  = "https://globe.adsbexchange.com/";?' /usr/local/share/tar1090/html/config.js
+# ENABLE if the above doesn't work (updated from previous version)
+echo 'shareBaseUrl  = "https://globe.adsbexchange.com/";' | sudo tee -a /usr/local/share/tar1090/html/config.js
+# DISABLE:
+sudo sed -i -e 's?.*shareBaseUrl.*?shareBaseUrl = false;?' /usr/local/share/tar1090/html/config.js
+```
+
 ## UAT receiver running dump978-fa and skyaware978:
 
 See the instructions for "Configuration part 1".

@@ -2637,7 +2637,7 @@ function refreshSelected() {
     if (selected.icao != selIcao) {
         selIcao = selected.icao;
         let hex_html = "<span style='font-family: monospace;' class=identSmall>Hex:" + NBSP + selected.icao.toUpperCase() + "</span>";
-        if (globeIndex) {
+        if (globeIndex || shareBaseUrl) {
             let icao_link = "<span  class=identSmall><a class='link identSmall' target=\"_blank\" href=\"" + shareLink + "\">Share</a></span>";
             hex_html = hex_html + NBSP + NBSP + NBSP + icao_link;
         }
@@ -5057,21 +5057,15 @@ function updateAddressBar() {
     lastAddressBarUpdate = time;
 
     let posString = 'lat=' + CenterLat.toFixed(3) + '&lon=' + CenterLon.toFixed(3) + '&zoom=' + ZoomLvl.toFixed(1);
-    let string;
+    let string = '';
     if (((showTrace) && SelectedPlane) || replay) {
         posString = "&" + posString;
     } else {
         posString = ""
     }
 
-    string = pathName;
     if (SelPlanes.length > 0) {
-        string += '?icao=';
-        for (let i in SelPlanes) {
-            string += SelPlanes[i].icao;
-            if (i < SelPlanes.length - 1)
-                string += ',';
-        }
+        string += '?icao=' + SelPlanes.map((s) => encodeURIComponent(s.icao)).join(',')
     } else if (replay) {
         string += '?replay=';
         string += zDateString(replay.ts);
@@ -5110,15 +5104,19 @@ function updateAddressBar() {
         }
     }
 
-    shareLink = string;
+    shareLink = (shareBaseUrl ? shareBaseUrl : pathName) + string;
+    
 
     if (uuid)
         return;
     if (icaoFilter)
         return;
 
-    if (SelPlanes.length == 0 && initialURL && initialURL.indexOf("icao") < 0 && !replay)
+    if (SelPlanes.length == 0 && initialURL && initialURL.indexOf("icao") < 0 && !replay) {
         string = initialURL;
+    } else {
+        string = pathName + string;
+    }
 
     if (!updateAddressBarPushed) {
         // make sure we keep the thing we clicked on first in the browser history
