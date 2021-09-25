@@ -6210,6 +6210,7 @@ function replayJump() {
     let date = new Date(replay.dateText);
     date.setUTCHours(Number(replay.hours));
     date.setUTCMinutes(Number(replay.minutes));
+    date.setUTCSeconds(Number(replay.seconds));
 
     let ts = new Date(replay.ts.getTime());
 
@@ -6217,6 +6218,7 @@ function replayJump() {
     if (Math.abs(date.getTime() - ts.getTime()) < 10000) {
         return;
     }
+    //console.log(replay.minutes.toString() + ' ' + ts.toString() + ' ' + (date.getTime() - ts.getTime()).toString());
 
     console.log('jump: ' + date.toUTCString());
 
@@ -6326,7 +6328,8 @@ function replayOnSliderMove() {
     let date = new Date(replay.dateText);
     date.setUTCHours(Number(replay.hours));
     date.setUTCMinutes(Number(replay.minutes));
-    date.setUTCSeconds(0);
+    replay.seconds = 0;
+    date.setUTCSeconds(Number(replay.seconds));
     if (true || utcTimes) {
         jQuery("#replayDateHint").html("Date: " + zDateString(date));
         jQuery("#replayTimeHint").html("Time: " + zuluTime(date));
@@ -6376,13 +6379,15 @@ function replayStep(arg) {
         return;
     }
 
-    let minutes = replay.halfHour * 30 + replay.ival * index / 60;
+    let minutes = replay.halfHour * 30 + Math.floor(replay.ival * index / 60);
     let seconds = (replay.ival * index) % 60;
+    //console.log(minutes.toString() + ' ' + seconds.toString());
     replay.ts.setUTCMinutes(minutes)
     replay.ts.setUTCSeconds(seconds)
 
     replay.hours = replay.ts.getUTCHours();
-    replay.minutes = replay.ts.getUTCMinutes();
+    replay.minutes = minutes;
+    replay.seconds = seconds;
 
     let points = replay.points;
     let i = replay.slices[index];
