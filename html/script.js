@@ -4117,7 +4117,9 @@ function onSearch(e) {
         results = findPlanes(searchTerm, "byIcao", "byCallsign", "byReg", "byType", true);
     if (results.length > 0 && globeIndex) {
         toggleIsolation("on");
-        getTrace(null, null, {onlyRecent: true, list: results});
+        if (results.length < 20) {
+            getTrace(null, null, {onlyRecent: true, list: results});
+        }
     }
     return false;
 }
