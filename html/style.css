@@ -233,6 +233,13 @@ select {
     font-size: var(--FS1);
 }
 
+.warning {
+    margin-top: 1em;
+    border: calc( 2px * var(--SCALE)) solid yellow;
+    background-color: #FFFFA3;
+    padding: calc( 5px * var(--SCALE));
+    color: black;
+}
 
 .error_box {
     position: absolute; bottom: calc( 25px * var(--SCALE)); left: calc( 25px * var(--SCALE)); border: calc( 2px * var(--SCALE)) solid red;

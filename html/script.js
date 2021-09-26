@@ -3512,6 +3512,8 @@ function selectPlaneByHex(hex, options) {
     }
 
     pTracks || TAR.planeMan.refresh();
+
+    return newPlane !== undefined;
 }
 
 // loop through the planes and mark them as selected to show the paths for all planes
@@ -4079,8 +4081,29 @@ function onJump(e) {
             }
 
             refreshFilter();
+            hideSearchWarning();
+        } else {
+            showSearchWarning('Failed to find airport ' + airport);
         }
     }
+}
+
+function hideSearchWarning() {
+    const searchWarning = jQuery('#search_warning');
+    if (searchWarning.css('display') !== 'none') {
+        searchWarning.hide('slow');
+    }
+}
+
+function showSearchWarning(message) {
+    const searchWarning = jQuery('#search_warning');
+    searchWarning.text(message)
+    if (searchWarning.css('display') === 'none') {
+        searchWarning.show();
+    }
+
+    //auto hide after 15 seconds
+    setTimeout(() => hideSearchWarning(), 15000);
 }
 
 function onSearch(e) {
@@ -4089,21 +4112,9 @@ function onSearch(e) {
     jQuery("#search_input").val("");
     jQuery("#search_input").blur();
     if (searchTerm)
-        findPlanes(searchTerm, "byIcao", "byCallsign", "byReg", "byType");
+        findPlanes(searchTerm, "byIcao", "byCallsign", "byReg", "byType", true);
     return false;
 }
-
-/*
-function onSearchReg(e) {
-    e.preventDefault();
-    const searchTerm = jQuery("#search_reg_input").val().trim();
-    jQuery("#search_reg_input").val("");
-    jQuery("#search_reg_input").blur();
-    if (searchTerm)
-        findPlanes(searchTerm, false, false, "byReg", false);
-    return false;
-}
-*/
 
 function onResetCallsignFilter(e) {
     jQuery("#callsign_filter").val("");
@@ -4752,7 +4763,7 @@ function processURLParams(){
             toggleShowTrace();
         updateAddressBar();
     } else if (callsign != null) {
-        findPlanes(callsign, false, true, false, false);
+        findPlanes(callsign, false, true, false, false, false);
     }
 
     if (zoom) {
@@ -4821,7 +4832,7 @@ function regIcaoDownload(opts) {
     });
     return req;
 }
-function findPlanes(queries, byIcao, byCallsign, byReg, byType) {
+function findPlanes(queries, byIcao, byCallsign, byReg, byType, showWarnings) {
     if (queries == null)
         return;
     queries = queries.toLowerCase();
@@ -4862,22 +4873,28 @@ function findPlanes(queries, byIcao, byCallsign, byReg, byType) {
     if (results.length > 1) {
         toggleMultiSelect("on");
         for (let i in results) {
-            results[i].selected = true;
+            select(results[i], {});
             results[i].updateTick(true);
         }
+        showWarnings && hideSearchWarning();
     } else if (results.length == 1) {
         selectPlaneByHex(results[0].icao, {noDeselect: true, follow: true});
         console.log("query selected: " + queries);
+        showWarnings && hideSearchWarning();
     } else {
         console.log("No match found for query: " + queries);
+        let foundByHex = 0;
         if (globeIndex) {
             for (let i in queries) {
                 const query = queries[i];
                 if (query.toLowerCase().match(/~?[a-f,0-9]{6}/)) {
                     console.log("maybe it's an icao, let's try to fetch the history for it!");
-                    selectPlaneByHex(query, {noDeselect: true, follow: true})
+                    selectPlaneByHex(query, {noDeselect: true, follow: true}) && foundByHex++
                 }
             }
+        }
+        if (foundByHex === 0 && showWarnings) {
+            showSearchWarning("No match found for query: " + queries);
         }
     }
 }

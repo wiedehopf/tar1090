@@ -845,18 +845,20 @@
                     <td>
                       <form id="search_form">
                         <div class="infoBlockTitleText">Search:</div>
-                        <input id="search_input" name="searchBox" type="text" class="searchInput" maxlength="128">
+                        <input id="search_input" name="searchBox" type="text" class="searchInput" maxlength="128" title="Searches on the hex id, callsign, registration, and type.">
                       </form>
                     </td>
                     <td>&nbsp;</td>
                     <td>
                       <form id="jump_form">
                         <div class="infoBlockTitleText">Jump to Airport:</div>
-                        <input id="jump_input" name="jumpBox" type="text" class="searchInput" maxlength="4">
+                        <input id="jump_input" name="jumpBox" type="text" class="searchInput" maxlength="4" title="Search by airport code like KATL, ZBAA, or LAX">
                       </form>
                     </td>
                   </tr>
                 </table>
+                <div class="warning" id="search_warning" style="display:none">
+                </div>
               </div>
               <div id="tab-filters">
                 <table cellpadding="0" cellspacing="0" id="filterTable">
