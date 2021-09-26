@@ -796,6 +796,7 @@ function initPage() {
 
     // Initialize other controls
     jQuery("#search_form").submit(onSearch);
+    jQuery("#search_clear_button").click(onSearchClear);
     jQuery("#jump_form").submit(onJump);
 
     jQuery("#show_trace").click(toggleShowTrace);
@@ -3529,7 +3530,7 @@ function selectAllPlanes() {
     if (SelectedPlane)
         deselect(SelectedPlane);
 
-    toggleIsolation(false, "off");
+    toggleIsolation("off");
 
     SelectedAllPlanes = true;
 
@@ -3554,7 +3555,7 @@ function deselectAllPlanes(keepMain) {
     if (showTrace && !keepMain)
         return;
     if (!multiSelect && SelectedPlane)
-        toggleIsolation(false, "off");
+        toggleIsolation("off");
 
     if (SelectedAllPlanes) {
         buttonActive('#T', false);
@@ -3835,14 +3836,14 @@ function buttonActive(id, state) {
     }
 }
 
-function toggleIsolation(on, off) {
+function toggleIsolation(state) {
     let prevState = onlySelected;
-    if (showTrace && !on)
+    if (showTrace && state !== "on")
         return;
     onlySelected = !onlySelected;
-    if (on)
+    if (state === "on")
         onlySelected = true;
-    if (off)
+    if (state === "off")
         onlySelected = false;
 
     buttonActive('#I', onlySelected);
@@ -4049,7 +4050,7 @@ function toggleMultiSelect(newState) {
 
     if (!multiSelect) {
         if (!SelectedPlane)
-            toggleIsolation(false, "off");
+            toggleIsolation("off");
         if (prevState != multiSelect)
             deselectAllPlanes("keepMain");
     }
@@ -4111,9 +4112,19 @@ function onSearch(e) {
     const searchTerm = jQuery("#search_input").val().trim();
     jQuery("#search_input").val("");
     jQuery("#search_input").blur();
+    let results = [];
     if (searchTerm)
-        findPlanes(searchTerm, "byIcao", "byCallsign", "byReg", "byType", true);
+        results = findPlanes(searchTerm, "byIcao", "byCallsign", "byReg", "byType", true);
+    if (results.length > 0 && globeIndex) {
+        toggleIsolation("on");
+        getTrace(null, null, {onlyRecent: true, list: results});
+    }
     return false;
+}
+function onSearchClear(e) {
+    deselectAllPlanes();
+    toggleIsolation("off");
+    toggleMultiSelect("off");
 }
 
 function onResetCallsignFilter(e) {
@@ -4736,7 +4747,7 @@ function processURLParams(){
     if (urlIcaos.length > 0) {
         const icaos = urlIcaos;
         if (!usp.has('noIsolation'))
-            toggleIsolation("on", false);
+            toggleIsolation("on");
         if (icaos.length > 1) {
             toggleMultiSelect("on");
             //follow = false;
@@ -4897,6 +4908,7 @@ function findPlanes(queries, byIcao, byCallsign, byReg, byType, showWarnings) {
             showSearchWarning("No match found for query: " + queries);
         }
     }
+    return results;
 }
 
 function trailReaper() {
@@ -5189,7 +5201,7 @@ function toggleShowTrace() {
         showTrace = true;
         toggleFollow(false);
         showTraceWasIsolation = onlySelected;
-        toggleIsolation("on", null);
+        toggleIsolation("on");
         shiftTrace();
     } else {
         showTrace = false;
@@ -5198,7 +5210,7 @@ function toggleShowTrace() {
         legSel = -1;
         jQuery('#leg_sel').text('Legs: All');
         if (!showTraceWasIsolation)
-            toggleIsolation(null, "off");
+            toggleIsolation("off");
         //let string = pathName + '?icao=' + SelectedPlane.icao;
         //window.history.replaceState("object or string", "Title", string);
         //shareLink = string;
@@ -5785,6 +5797,7 @@ function everySecond() {
     updateIconCache();
 }
 
+let getTraceTimeout = null;
 function getTrace(newPlane, hex, options) {
 
     if (options.list) {
@@ -5805,7 +5818,8 @@ function getTrace(newPlane, hex, options) {
     let time = new Date().getTime();
     let backoff = 200;
     if (!showTrace && !solidT && traceRate > 140 && time < lastTraceGet + backoff) {
-        setTimeout(getTrace, lastTraceGet + backoff + 20 - time, newPlane, hex, options);
+        clearTimeout(getTraceTimeout);
+        getTraceTimeout = setTimeout(getTrace, lastTraceGet + backoff + 20 - time, newPlane, hex, options);
         return newPlane;
     }
 
