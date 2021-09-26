@@ -3132,14 +3132,14 @@ function refreshFeatures() {
             const plane = PlanesOrdered[i];
 
             plane.visible = plane.checkVisible() && !plane.isFiltered()
-            plane.inView = plane.visible && inView(plane.position, planeMan.lastRenderExtent);
+            plane.inView = inView(plane.position, planeMan.lastRenderExtent);
 
             TrackedHistorySize += plane.history_size;
 
             if (tableInView) {
                 if (plane.visible)
                     TrackedAircraft++;
-                if (plane.inView || plane.selected) {
+                if ((plane.inView && plane.visible) || plane.selected) {
                     pList.push(plane);
                     TrackedAircraftPositions++;
                 }
@@ -4878,8 +4878,13 @@ function findPlanes(queries, byIcao, byCallsign, byReg, byType, showWarnings) {
                 || (byReg && plane.registration != null && plane.registration.toLowerCase().match(query))
                 || (byType && plane.icaoType != null && plane.icaoType.toLowerCase().match(query))
             ) {
-                if (plane.checkVisible())
-                    results.push(plane);
+                if (globeIndex) {
+                    if (plane.inView)
+                        results.push(plane);
+                } else {
+                    if (plane.checkVisible())
+                        results.push(plane);
+                }
             }
         }
     }
@@ -4907,7 +4912,11 @@ function findPlanes(queries, byIcao, byCallsign, byReg, byType, showWarnings) {
             }
         }
         if (foundByHex === 0 && showWarnings) {
-            showSearchWarning("No match found for query: " + queries);
+            if (globeIndex) {
+                showSearchWarning("No match found in current view: " + queries);
+            } else {
+                showSearchWarning("No match found for query: " + queries);
+            }
         }
     }
     return results;
