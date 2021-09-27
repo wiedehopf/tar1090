@@ -3557,6 +3557,8 @@ function deselectAllPlanes(keepMain) {
     if (!multiSelect && SelectedPlane)
         toggleIsolation("off");
 
+    clearTimeout(getTraceTimeout);
+
     if (SelectedAllPlanes) {
         buttonActive('#T', false);
         jQuery('#selectall_checkbox').removeClass('settingsCheckboxChecked');
@@ -4117,8 +4119,8 @@ function onSearch(e) {
         results = findPlanes(searchTerm, "byIcao", "byCallsign", "byReg", "byType", true);
     if (results.length > 0 && globeIndex) {
         toggleIsolation("on");
-        if (results.length < 20) {
-            getTrace(null, null, {onlyRecent: true, list: results});
+        if (results.length < 100) {
+            getTrace(null, null, {list: results});
         }
     }
     return false;
