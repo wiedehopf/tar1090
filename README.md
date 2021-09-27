@@ -114,7 +114,9 @@ echo 'flightawareLinks = true;' | sudo tee -a /usr/local/share/tar1090/html/conf
 sudo sed -i -e 's?.*flightawareLinks.*?flightawareLinks = false;?' /usr/local/share/tar1090/html/config.js
 ```
 
-Then Ctrl-F5 to refresh the web interface in the browser.
+Then F5 to refresh the web interface in the browser.
+
+If your instance is not at /tar1090 you'll need to edit the config.js in the approppriate html folder, see "Multiple instances".
 
 ## Enable Share links to ADSB-X
 ```
@@ -125,6 +127,8 @@ echo 'shareBaseUrl  = "https://globe.adsbexchange.com/";' | sudo tee -a /usr/loc
 # DISABLE:
 sudo sed -i -e 's?.*shareBaseUrl.*?shareBaseUrl = false;?' /usr/local/share/tar1090/html/config.js
 ```
+
+If your instance is not at /tar1090 you'll need to edit the config.js in the approppriate html folder, see "Multiple instances".
 
 ## UAT receiver running dump978-fa and skyaware978:
 
@@ -229,6 +233,14 @@ Configuration for each instance will be separate, in the example the config file
 /etc/default/tar1090-combo
 /etc/default/tar1090-978
 /etc/default/tar1090-webroot
+```
+
+The config.js will also have another path, to edit each config:
+```
+sudo nano /usr/local/share/tar1090/html/config.js
+sudo nano /usr/local/share/tar1090/html-combo/config.js
+sudo nano /usr/local/share/tar1090/html-978/config.js
+sudo nano /usr/local/share/tar1090/html-webroot/config.js
 ```
 
 HTML folders will be:
