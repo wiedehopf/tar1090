@@ -696,6 +696,47 @@ function initPage() {
         replay = replayDefaults(ts);
     }
 
+    //Pulling filters from params
+    if (usp.has('filterAltMin')) {
+        const minAlt = usp.getInt('filterAltMin');
+        if (minAlt !== null)  {
+            PlaneFilter.minAltitude = minAlt;
+            PlaneFilter.enabled = true;
+            PlaneFilter.maxAltitude = 1000000;
+        }
+    }
+    if (usp.has('filterAltMax')) {
+        const maxAlt = usp.getInt('filterAltMax');
+        if (maxAlt !== null)  {
+            PlaneFilter.maxAltitude = maxAlt;
+            PlaneFilter.enabled = true;
+            if (PlaneFilter.minAltitude === undefined) {
+                PlaneFilter.minAltitude = -1000000;
+            }
+        }
+    }
+
+    if (usp.has('filterCallSign')) {
+        PlaneFilter.callsign = usp.get('filterCallSign');
+    }
+    if (usp.has('filterType')) {
+        PlaneFilter.type = usp.get('filterType');
+    }
+    if (usp.has('filterDescription')) {
+        PlaneFilter.description = usp.get('filterDescription');
+    }
+    if (usp.has('filterIcao')) {
+        PlaneFilter.icao = usp.get('filterIcao');
+    }
+
+    if (usp.has('filterSources')) {
+        PlaneFilter.sources = usp.get('filterSources').split(',');
+    }
+    if (usp.has('filterDbFlag')) {
+        PlaneFilter.flagFilter = usp.get('filterDbFlag').split(',');
+    }
+
+
     if (onMobile)
         enableMouseover = false;
 
@@ -917,6 +958,16 @@ function initPage() {
     jQuery('#t10x').on('click', function() { replaySpeedChange(10); });
     jQuery('#t20x').on('click', function() { replaySpeedChange(20); });
     jQuery('#t40x').on('click', function() { replaySpeedChange(40); });
+
+    new Toggle({
+        key: "shareFilters",
+        display: "Include Filters In Share Link",
+        container: "#settingsLeft",
+        init: false,
+        setState: function(state) {
+            updateAddressBar();
+        }
+    });
 
     new Toggle({
         key: "debugTracks",
@@ -1161,24 +1212,24 @@ function initLegend(colors) {
 }
 
 function initSourceFilter(colors) {
-    const createFilter = function (color, text) {
-        return '<li class="ui-widget-content" style="background-color:' + color + ';">' + text + '</li>';
+    const createFilter = function (color, text, key) {
+        return '<li class="ui-widget-content" style="background-color:' + color + ';" id="source-filter-' + key + '">' + text + '</li>';
     };
 
     let html = '';
-    html += createFilter(colors['adsb'], 'ADS-B');
+    html += createFilter(colors['adsb'], 'ADS-B', sources[0]);
 
-    html += createFilter(colors['uat'], 'UAT / ADS-R');
-    html += createFilter(colors['mlat'], 'MLAT');
-    html += createFilter(colors['tisb'], 'TIS-B');
+    html += createFilter(colors['uat'], 'UAT / ADS-R', sources[1][0]);
+    html += createFilter(colors['mlat'], 'MLAT', sources[2]);
+    html += createFilter(colors['tisb'], 'TIS-B', sources[3]);
 
     //if (!globeIndex)
-    html += createFilter(colors['modeS'], 'Mode-S');
+    html += createFilter(colors['modeS'], 'Mode-S', sources[4]);
     if (globeIndex)
-        html += createFilter(colors['other'], 'Other');
+        html += createFilter(colors['other'], 'Other', sources[5]);
 
     if (globeIndex)
-        html += createFilter(colors['uat'], 'ADS-C');
+        html += createFilter(colors['uat'], 'ADS-C', sources[6]);
 
     document.getElementById('sourceFilter').innerHTML = html;
 
@@ -1201,15 +1252,15 @@ function initSourceFilter(colors) {
 }
 
 function initFlagFilter(colors) {
-    const createFilter = function (color, text) {
-        return '<li class="ui-widget-content" style="background-color:' + color + ';">' + text + '</li>';
+    const createFilter = function (color, text, key) {
+        return '<li class="ui-widget-content" style="background-color:' + color + ';" id="flag-filter-' + key + '">' + text + '</li>';
     };
 
     let html = '';
-    html += createFilter(colors['tisb'], 'Military');
+    html += createFilter(colors['tisb'], 'Military', flagFilterValues[0]);
     //html += createFilter(colors['mlat'], 'Interesting');
-    html += createFilter(colors['uat'], 'PIA');
-    html += createFilter(colors['adsb'], 'LADD');
+    html += createFilter(colors['uat'], 'PIA', flagFilterValues[1]);
+    html += createFilter(colors['adsb'], 'LADD', flagFilterValues[2]);
 
     document.getElementById('flagFilter').innerHTML = html;
 
@@ -1240,6 +1291,38 @@ function initFilters() {
 
     initSourceFilter(tableColors.unselected);
     initFlagFilter(tableColors.unselected);
+
+    if (PlaneFilter) {
+        if (PlaneFilter.minAltitude && PlaneFilter.minAltitude > -1000000) {
+            jQuery('#altitude_filter_min').val(PlaneFilter.minAltitude);
+        }
+        if (PlaneFilter.maxAltitude && PlaneFilter.maxAltitude < 1000000) {
+            jQuery('#altitude_filter_max').val(PlaneFilter.maxAltitude);
+        }
+
+        if (PlaneFilter.callsign) {
+            jQuery('#callsign_filter').val(PlaneFilter.callsign);
+        }
+        if (PlaneFilter.type) {
+            jQuery('#type_filter').val(PlaneFilter.type);
+        }
+        if (PlaneFilter.description) {
+            jQuery('#description_filter').val(PlaneFilter.description);
+        }
+        if (PlaneFilter.icao) {
+            jQuery('#icao_filter').val(PlaneFilter.icao);
+        }
+
+        if (PlaneFilter.sources) {
+            sourcesFilter = PlaneFilter.sources
+            sourcesFilter.map((f) => jQuery('#source-filter-' + f).addClass('ui-selected'))
+        }
+
+        if (PlaneFilter.flagFilter) {
+            flagFilter = PlaneFilter.flagFilter
+            flagFilter.map((f) => jQuery('#flag-filter-' + f).addClass('ui-selected'))
+        }
+    }
 }
 
 
@@ -2644,6 +2727,12 @@ function refreshSelected() {
         }
         jQuery('#selected_icao').html(hex_html);
     }
+    if (globeIndex || shareBaseUrl) {
+        const shareElement = jQuery('a.identSmall');
+        if (shareElement.prop('href') !== shareLink) {
+            shareElement.prop('href',shareLink);
+        }
+    }
     jQuery('#selected_pf_info').updateText((selected.pfRoute ? selected.pfRoute : "") );
     //+" "+ (selected.pfFlightno ? selected.pfFlightno : "")
     jQuery('#airframes_post_icao').attr('value',selected.icao);
@@ -3792,6 +3881,9 @@ function refreshFilter() {
     mapRefresh(true);
 
     drawHeatmap();
+    if (toggles.shareFilters && toggles.shareFilters.state) {
+        updateAddressBar()
+    }
 }
 
 function filterGroundVehicles(switchFilter) {
@@ -4229,6 +4321,12 @@ function updateAltFilter() {
         maxAltitude = 1e6;
     else
         enabled = true;
+
+    if (!enabled) {
+        PlaneFilter.enabled = false;
+        PlaneFilter.minAltitude = undefined;
+        PlaneFilter.maxAltitude = undefined;
+    }
 
     PlaneFilter.enabled = enabled;
 
@@ -5089,7 +5187,7 @@ let updateAddressBarPushed = false;
 function updateAddressBar() {
     if (!window.history || !window.history.replaceState)
         return;
-    if (heatmap || pTracks)
+    if (heatmap || pTracks || !CenterLat)
         return;
     let time = new Date().getTime();
     if (time < lastAddressBarUpdate + 200) {
@@ -5147,7 +5245,50 @@ function updateAddressBar() {
         }
     }
 
-    shareLink = (shareBaseUrl ? shareBaseUrl : pathName) + string;
+    let shareFilter = '';
+    if (toggles.shareFilters  && toggles.shareFilters.state) {
+        let filterStrings = [];
+        if (string === '') {
+            shareFilter = '?';
+        } else {
+            shareFilter = '&'
+        }
+
+        if (PlaneFilter.minAltitude > -1000000) {
+            filterStrings.push('filterAltMin=' + PlaneFilter.minAltitude);
+        }
+        if (PlaneFilter.maxAltitude < 1000000) {
+            filterStrings.push('filterAltMax=' + PlaneFilter.maxAltitude);
+        }
+        if (PlaneFilter.callsign) {
+            filterStrings.push('filterCallSign=' + encodeURIComponent(PlaneFilter.callsign));
+        }
+        if (PlaneFilter.type) {
+            filterStrings.push('filterType=' + encodeURIComponent(PlaneFilter.type));
+        }
+        if (PlaneFilter.description) {
+            filterStrings.push('filterDescription=' + encodeURIComponent(PlaneFilter.description));
+        }
+        if (PlaneFilter.icao) {
+            filterStrings.push('filterIcao=' + encodeURIComponent(PlaneFilter.icao));
+        }
+
+        if (PlaneFilter.sources) {
+            filterStrings.push('filterSources=' + PlaneFilter.sources.map(f => encodeURIComponent(f)).join(','));
+        }
+        if (PlaneFilter.flagFilter) {
+            filterStrings.push('filterDbFlag=' + PlaneFilter.flagFilter.map(f => encodeURIComponent(f)).join(','));
+        }
+
+        if (filterStrings.length > 0) {
+            shareFilter = shareFilter + filterStrings.join('&');
+        } else {
+            shareFilter = '';
+        }
+    }
+
+    shareLink = (shareBaseUrl ? shareBaseUrl : pathName) + string + shareFilter;
+    
     
 
     if (uuid)
