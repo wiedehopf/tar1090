@@ -460,7 +460,7 @@ If you still have history loading issues, get back to me via the github issues o
 
 Add readsb options:
 ```
---heatmap-dir /var/readsb_history --heatmap 30
+--heatmap-dir /var/globe_history --heatmap 30
 ```
 
 ## heatmap in conjunction with readsb wiedehopf fork --heatmap feature:
