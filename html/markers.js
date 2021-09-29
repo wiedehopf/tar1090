@@ -1026,7 +1026,48 @@ let TypeDesignatorIcons = {
     'E3CF': ['e3awacs', 0.88],
     //
     'GLID': ['glider', 1],
+    //Stemme
+    'S6': ['glider', 1],
+    'S10S': ['glider', 1],
     'S12': ['glider', 1],
+    'S12S': ['glider', 1],
+    //Schempp-Hirth
+    'ARCE': ['glider', 1],
+    'ARCP': ['glider', 1],
+    'DISC': ['glider', 1],
+    'DUOD': ['glider', 1],
+    'JANU': ['glider', 1],
+    'NIMB': ['glider', 1],
+    'QINT': ['glider', 1],
+    'VENT': ['glider', 1],
+    'VNTE': ['glider', 1],
+    //Schleicher
+    'A20J': ['glider', 1],
+    'A32E': ['glider', 1],
+    'A32P': ['glider', 1],
+    'A33E': ['glider', 1],
+    'A33P': ['glider', 1],
+    'A34E': ['glider', 1],
+    'AS14': ['glider', 1],
+    'AS16': ['glider', 1],
+    'AS20': ['glider', 1],
+    'AS21': ['glider', 1],
+    'AS22': ['glider', 1],
+    'AS24': ['glider', 1],
+    'AS25': ['glider', 1],
+    'AS26': ['glider', 1],
+    'AS28': ['glider', 1],
+    'AS29': ['glider', 1],
+    'AS30': ['glider', 1],
+    'AS31': ['glider', 1],
+    //DG
+    'DG80': ['glider', 1],
+    'DG1T': ['glider', 1],
+    'LS10': ['glider', 1],
+    'LS8': ['glider', 1],
+    //Jonker
+    'TS1J': ['glider', 1],
+
     'ULAC': ['cessna', 0.9],
 
     'SR20': ['cirrus_sr22', 1],
