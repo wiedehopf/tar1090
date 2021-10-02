@@ -961,7 +961,7 @@ function initPage() {
 
     new Toggle({
         key: "shareFilters",
-        display: "Include Filters In Share Link",
+        display: "Include Filters In URLs",
         container: "#settingsLeft",
         init: false,
         setState: function(state) {
@@ -5287,16 +5287,15 @@ function updateAddressBar() {
         }
     }
 
-    shareLink = (shareBaseUrl ? shareBaseUrl : pathName) + string + shareFilter;
-    
-    
+    string += shareFilter;
+    shareLink = (shareBaseUrl ? shareBaseUrl : pathName) + string;
 
     if (uuid)
         return;
     if (icaoFilter)
         return;
 
-    if (SelPlanes.length == 0 && initialURL && initialURL.indexOf("icao") < 0 && !replay) {
+    if (SelPlanes.length == 0 && initialURL && initialURL.indexOf("icao") < 0 && !replay && shareFilter == '') {
         string = initialURL;
     } else {
         string = pathName + string;
