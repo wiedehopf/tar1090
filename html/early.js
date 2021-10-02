@@ -61,6 +61,14 @@ try {
             if (isNaN(val)) return null;
             return val;
         },
+        getInt: function(s)  {
+            if (!this.params.has(s.toLowerCase())) return null;
+            const param =  this.params.get(s.toLowerCase());
+            if (!param) return null;
+            const val = parseInt(param, 10);
+            if (isNaN(val)) return null;
+            return val;
+        }
     };
     const inputParams = new URLSearchParams(window.location.search);
     for (const [k, v] of inputParams) {
