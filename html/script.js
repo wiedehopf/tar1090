@@ -123,7 +123,10 @@ let shareLink = '';
 
 let onMobile = false;
 
-let CenterLat, CenterLon, ZoomLvl, ZoomLvlCache;
+let CenterLat = 0;
+let CenterLon = 0;
+let ZoomLvl = 5;
+let ZoomLvlCache;
 
 let TrackedAircraft = 0;
 let globeTrackedAircraft = 0;
@@ -1744,7 +1747,7 @@ function webglInit() {
 
 // Initalizes the map and starts up our timers to call various functions
 function initMap() {
-    
+
     if (globeIndex) {
         jQuery('#dump1090_total_history_td').hide();
         jQuery('#dump1090_message_rate_td').hide();
