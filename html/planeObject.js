@@ -44,9 +44,7 @@ function PlaneObject(icao) {
     this.checkForDB();
 
     // military icao ranges
-    if (this.milRange()) {
-        this.military = true;
-    }
+    this.military = this.milRange();
 }
 
 PlaneObject.prototype.setNull = function() {

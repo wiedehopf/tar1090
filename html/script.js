@@ -3105,8 +3105,13 @@ function refreshFeatures() {
         align: 'right' };
     cols.data_source = {
         text: 'Source',
-        sort: function () { sortBy('data_source', compareNumeric, function(x) { return x.getDataSourceNumber() } ); },
+        sort: function () { sortBy('data_source', compareNumeric, function(x) { return x.getDataSourceNumber(); } ); },
         value: function(plane) { return format_data_source(plane.getDataSource()); },
+        align: 'right' };
+    cols.military = {
+        text: 'Mil.',
+        sort: function () { sortBy('military', compareAlpha, function(x) { return (x.military ? 'yes' : 'no'); } ); },
+        value: function(plane) { return (plane.military ? 'yes' : 'no'); },
         align: 'right' };
 
     const colsEntries = Object.entries(cols);
