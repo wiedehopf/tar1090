@@ -782,20 +782,22 @@ let TypeDesignatorIcons = {
     'CL35': ['jet_swept', 0.92],
     'F900': ['jet_swept', 0.96], // 21t
     'CL60': ['jet_swept', 0.96], // 22t
-    'GLEX': ['jet_swept', 1],
     'G200': ['jet_swept', 0.92], // 16t
     'G280': ['jet_swept', 0.92], // 18t
     'HA4T': ['jet_swept', 0.92], // 18t
-    'GL5T': ['jet_swept', 1],
     'FA7X': ['jet_swept', 0.96], // 29t
     'FA8X': ['jet_swept', 0.96], // 33t
     'GLF2': ['jet_swept', 0.96], // 29t
     'GLF3': ['jet_swept', 0.96], // 31t
     'GLF4': ['jet_swept', 0.96], // 34t
     'GA5C': ['jet_swept', 0.96], // 34t
+    'GL5T': ['jet_swept', 0.98], // 40t
     'GLF5': ['jet_swept', 0.98], // 41t
     'GA6C': ['jet_swept', 0.98], // 41t
+    'GLEX': ['jet_swept', 1], // 45t
+    'GL6T': ['jet_swept', 1], // 45t
     'GLF6': ['jet_swept', 1], // 48t
+    'GL7T': ['jet_swept', 1], // 52t
     'E135': ['jet_swept', 0.92], // 20t
     'E35L': ['jet_swept', 0.92], // 24t
     'E145': ['jet_swept', 0.92], // 22t
