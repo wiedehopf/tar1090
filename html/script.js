@@ -2471,8 +2471,9 @@ function refreshPhoto(selected) {
         return;
     } else if (selected.registration != null) {
         urlTail = '/hex/' + selected.icao.toUpperCase() + '?reg=' + selected.registration;
-        if (selected.icaoType) {
-            urlTail += '&icaoType=' + selected.icaoType;
+        const type = selected.icaoType;
+        if (type && type != 'E170' && !type.startsWith('E75')) {
+            urlTail += '&icaoType=' + type;
         }
         param = 'DB';
     } else {
