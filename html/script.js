@@ -3535,6 +3535,7 @@ function select(plane, options) {
     if (!plane)
         return;
     options = options || {};
+    //console.log("select()", plane.icao, options);
     plane.selected = true;
     if (!SelPlanes.includes(plane))
         SelPlanes.push(plane);
@@ -3555,7 +3556,7 @@ function select(plane, options) {
 
 function selectPlaneByHex(hex, options) {
     active();
-    //console.log("SELECTING", hex, options);
+    console.log("SELECTING", hex, options);
     options = options || {};
     //console.log("select: " + hex);
     // If SelectedPlane has something in it, clear out the selected
@@ -4865,24 +4866,28 @@ function processURLParams(){
         }
         for (let i = 0; i < icaos.length; i++) {
             const icao = icaos[i];
-            console.log('Selected ICAO id: '+ icao);
+            console.log('Selected ICAO id: '+ icao + ' traceDate: ' + traceDateString);
+            let options = {follow: follow, noDeselect: true};
             if (traceDate != null) {
                 let newPlane = Planes[icao] || new PlaneObject(icao);
                 newPlane.last_message_time = NaN;
                 newPlane.position_time = NaN;
                 newPlane.selected = true;
-                select(newPlane);
+                select(newPlane, options);
 
                 if (!zoom)
                     zoom = 5;
             } else {
                 if (!zoom)
                     zoom = 7;
-                selectPlaneByHex(icao, {follow: follow, noDeselect: true})
+                selectPlaneByHex(icao, options)
             }
         }
         if (traceDate != null)
+        {
             toggleShowTrace();
+            toggleFollow(follow);
+        }
         updateAddressBar();
     } else if (callsign != null) {
         findPlanes(callsign, false, true, false, false, false);
