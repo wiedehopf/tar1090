@@ -465,8 +465,11 @@ Add readsb options:
 
 ## heatmap in conjunction with readsb wiedehopf fork --heatmap feature:
 
-First parameter after /tar1090 in the URL mandatory, rest are optional
-- maximum number of dots to draw: /?heatmap=200000
+```
+/tar1090/?heatmap=200000
+```
+Maximum number of dots to draw is the number after heatmap.
+Optional arguments that can be added to the URL:
 - duration in hours that shall be displayed: &heatDuration=48 (default: 24)
 - set the end of the duration 48 hours into the past: &heatEnd=48 (default:0)
 - radius of the dots: &heatRadius=2
