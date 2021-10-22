@@ -7070,7 +7070,8 @@ function coordsForExport(plane) {
             const alt = plane.track_linesegs[i].alt_real;
             const ts = new Date(plane.track_linesegs[i].ts * 1000.0);
             if (!alt) {
-                throw new Error(`No altitude: ${i} ${pos} ${ts}`);
+                console.log(`Skipping, no altitude: ${i} ${pos} ${ts}`);
+                continue;
             }
             // Attempt to correct altitude. This could be better?
             //
