@@ -432,7 +432,7 @@ function createBaseLayers() {
             name: 'europe',
             title: 'Europe',
             layers: new ol.Collection(europe.getArray().reverse()),
-            //fold: 'close',
+            fold: 'open',
         }));
     }
 
@@ -441,7 +441,7 @@ function createBaseLayers() {
             name: 'us',
             title: 'US',
             layers: new ol.Collection(us.getArray().reverse()),
-            //fold: 'close',
+            fold: 'open',
         }));
     }
 
