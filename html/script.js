@@ -864,21 +864,6 @@ function initPage() {
         },
     });
 
-    jQuery("#replayDatepicker").datepicker({
-        maxDate: '+1d',
-        dateFormat: "yy-mm-dd",
-        autoSize: true,
-        onClose: !onMobile ? null : function(dateText, inst){
-            jQuery("replayDatepicker").attr("disabled", false);
-        },
-        beforeShow: !onMobile ? null : function(input, inst){
-            jQuery("replayDatepicker").attr("disabled", true);
-        },
-        onSelect: function(dateText) {
-            replay.dateText = dateText;
-            replayJump();
-        }
-    });
     jQuery("#replayPlay").click(function(){
 
         if (replay.playing){
@@ -6404,27 +6389,6 @@ function replayClear() {
     refreshFilter();
 }
 
-function replayJump() {
-    if (!showingReplayBar)
-        return;
-    let date = new Date(replay.dateText);
-    date.setUTCHours(Number(replay.hours));
-    date.setUTCMinutes(Number(replay.minutes));
-    date.setUTCSeconds(Number(replay.seconds));
-
-    let ts = new Date(replay.ts.getTime());
-
-    // diff less 10 seconds
-    if (Math.abs(date.getTime() - ts.getTime()) < 10000) {
-        return;
-    }
-    //console.log(replay.minutes.toString() + ' ' + ts.toString() + ' ' + (date.getTime() - ts.getTime()).toString());
-
-    console.log('jump: ' + date.toUTCString());
-
-    replayClear();
-    loadReplay(date);
-}
 let replayData;
 let replayDataKey;
 function loadReplay(ts) {
@@ -6443,6 +6407,7 @@ function loadReplay(ts) {
         replayClear();
     }
     replay.ts = ts;
+    replaySetTimeHint();
 
     let time = new Date(ts);
     let sDate = sDateString(time);
@@ -6538,20 +6503,53 @@ function replayOnSliderMove() {
         jQuery("#replayTimeHint").html("Time: " + localTime(date));
     }
 }
-function replaySetTimeHint(arg) {
-    if (true || utcTimes) {
-        jQuery("#replayDateHint").html("Date: " + zDateString(replay.ts));
-        jQuery("#replayTimeHint").html("Time: " + zuluTime(replay.ts));
-    } else {
-        jQuery("#replayDateHint").html("Date: " + lDateString(replay.ts));
-        jQuery("#replayTimeHint").html("Time: " + localTime(replay.ts));
+let replayJumpEnabled = true;
+function replayJump() {
+    if (!showingReplayBar)
+        return;
+    if (!replayJumpEnabled)
+        return;
+    let date = new Date(replay.dateText);
+    date.setUTCHours(Number(replay.hours));
+    date.setUTCMinutes(Number(replay.minutes));
+    date.setUTCSeconds(Number(replay.seconds));
+
+    let ts = new Date(replay.ts.getTime());
+
+    // diff less 10 seconds
+    if (Math.abs(date.getTime() - ts.getTime()) < 10000) {
+        return;
     }
+    //console.log(replay.minutes.toString() + ' ' + ts.toString() + ' ' + (date.getTime() - ts.getTime()).toString());
+
+    //console.trace();
+    console.log('jump: ' + date.toUTCString());
+
+    replayClear();
+    loadReplay(date);
+}
+function replaySetTimeHint(arg) {
+    replayJumpEnabled = false;
+    let dateString;
+    let timeString;
+    if (true || utcTimes) {
+        dateString = zDateString(replay.ts);
+        timeString = zuluTime(replay.ts);
+    } else {
+        dateString = lDateString(replay.ts);
+        timeString = localTime(replay.ts);
+    }
+    jQuery("#replayDateHint").html("Date: " + dateString);
+    jQuery("#replayTimeHint").html("Time: " + timeString);
+    jQuery("#replayDatepicker").datepicker('setDate', dateString);
+
 
     let hours = replay.ts.getUTCHours();
     jQuery('#hourSelect').slider("option", "value", hours);
 
     let minutes = replay.ts.getUTCMinutes();
     jQuery('#minuteSelect').slider("option", "value", minutes);
+    replayJumpEnabled = true;
 }
 
 function replayStep(arg) {
@@ -6833,10 +6831,23 @@ function showReplayBar(){
             replay.playing = false;
         }
         //ts.setUTCMinutes((parseInt((ts.getUTCMinutes() + 7.5)/15) * 15) % 60);
-        jQuery("#replayDatepicker").datepicker('setDate', replay.ts);
+        jQuery("#replayDatepicker").datepicker({
+            maxDate: '+1d',
+            dateFormat: "yy-mm-dd",
+            autoSize: true,
+            onClose: !onMobile ? null : function(dateText, inst){
+                jQuery("replayDatepicker").attr("disabled", false);
+            },
+            beforeShow: !onMobile ? null : function(input, inst){
+                jQuery("replayDatepicker").attr("disabled", true);
+            },
+            onSelect: function(dateText) {
+                replay.dateText = dateText;
+                replayJump();
+            }
+        });
 
         jQuery('#hourSelect').slider({
-            value: replay.ts.getUTCHours(),
             step: 1,
             min: 0,
             max: 23,
@@ -6849,7 +6860,6 @@ function showReplayBar(){
             }
         });
         jQuery('#minuteSelect').slider({
-            value: replay.ts.getUTCMinutes(),
             step: 1,
             min: 0,
             max: 59,
