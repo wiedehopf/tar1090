@@ -1176,7 +1176,7 @@ PlaneObject.prototype.processTrace = function() {
     let mapSize = OLMap.getSize();
     let size = [Math.max(5, mapSize[0] - 280), mapSize[1]];
     if (!traceOpts.showTime && (showTrace || showTraceExit)
-        && (new Date().getTime() - loadStart) > 15 * 1000
+        && !multiSelect
         && this.position
         && !inView(this.position, myExtent(OLMap.getView().calculateExtent(size)))
         && !inView(firstPos, myExtent(OLMap.getView().calculateExtent(size))))
