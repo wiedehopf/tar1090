@@ -27,7 +27,8 @@ const registration_from_hexid = (function () {
     //   last: the last valid suffix in the range (default: ZZZ)
 
     let stride_mappings = [
-        { start: 0x008011, s1: 26*26, s2: 26, prefix: "ZS-" },
+        // South African stride mapping apparently no longer in use
+        //{ start: 0x008011, s1: 26*26, s2: 26, prefix: "ZS-" },
 
         { start: 0x390000, s1: 1024, s2:  32, prefix: "F-G" },
         { start: 0x398000, s1: 1024, s2:  32, prefix: "F-H" },
