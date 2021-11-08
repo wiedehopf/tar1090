@@ -275,8 +275,10 @@ let HideCols = [
 
 // show aircraft pictures
 let showPictures = true;
-// get pictures from planespotter API
+// get pictures from planespotters.net
 let planespottersAPI = true;
+// get pictures from planespotting.be
+let planespottingAPI = false;
 
 // show a link to jetphotos, only works if planespottersAPI is disabled
 let jetphotoLinks = false;

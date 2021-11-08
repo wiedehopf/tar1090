@@ -258,8 +258,10 @@ HideCols = [
 
 // show aircraft pictures
 // showPictures = true;
-// get pictures from planespotter API
+// get pictures from planespotters.net
 // planespottersAPI = true;
+// get pictures from planespotting.be
+// planespottingAPI = true;
 
 // show a link to jetphotos, only works if planespottersAPI is disabled
 // jetphotoLinks = false;
