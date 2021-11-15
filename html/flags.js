@@ -102,7 +102,7 @@ let ICAO_Ranges = [
 	{ start: 0x43BE00, end: 0x43BEFF, country: "Bermuda", flag_image: "Bermuda.png" },
 	{ start: 0x43E700, end: 0x43EAFD, country: "Isle of Man", flag_image: "Isle_of_Man.png" },
 	{ start: 0x43EAFE, end: 0x43EEFF, country: "Guernsey", flag_image: "Guernsey.png" },
-    // catch all United Kingdome for the even more obscure stuff
+    // catch all United Kingdom for the even more obscure stuff
 	{ start: 0x400000, end: 0x43FFFF, country: "United Kingdom", flag_image: "United_Kingdom.png" },
 	{ start: 0x440000, end: 0x447FFF, country: "Austria", flag_image: "Austria.png" },
 	{ start: 0x448000, end: 0x44FFFF, country: "Belgium", flag_image: "Belgium.png" },
@@ -175,6 +175,7 @@ let ICAO_Ranges = [
 	{ start: 0x768000, end: 0x76FFFF, country: "Singapore", flag_image: "Singapore.png" },
 	{ start: 0x770000, end: 0x777FFF, country: "Sri Lanka", flag_image: "Sri_Lanka.png" },
 	{ start: 0x778000, end: 0x77FFFF, country: "Syria", flag_image: "Syria.png" },
+	{ start: 0x789000, end: 0x789FFF, country: "Hong Kong", flag_image: "Hong_Kong.png" },
 	{ start: 0x780000, end: 0x7BFFFF, country: "China", flag_image: "China.png" },
 	{ start: 0x7C0000, end: 0x7FFFFF, country: "Australia", flag_image: "Australia.png" },
 	{ start: 0x800000, end: 0x83FFFF, country: "India", flag_image: "India.png" },
