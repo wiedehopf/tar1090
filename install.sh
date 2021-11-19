@@ -150,6 +150,9 @@ else
     echo FATAL: could not find aircraft.json in any of the usual places!
     echo "checked these: /run/readsb /run/dump1090-fa /run/dump1090 /run/dump1090-mutability /run/adsbexchange-feed /run/skyaware978"
     echo --------------
+    echo "You need to have a decoder installed first, readsb is recommended:"
+    echo "https://github.com/wiedehopf/adsb-scripts/wiki/Automatic-installation-for-readsb"
+    echo --------------
     exit 1
 fi
 
