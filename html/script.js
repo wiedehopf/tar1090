@@ -292,8 +292,6 @@ function fetchData(options) {
         return;
     }
 
-    pendingFetches = 1;
-
     //console.timeEnd("Starting Fetch");
     //console.time("Starting Fetch");
 
@@ -348,13 +346,13 @@ function fetchData(options) {
             }
         }
     } else if (binCraft) {
-        ac_url.push = 'data/aircraft.binCraft';
+        ac_url.push('data/aircraft.binCraft');
     } else {
-        ac_url.push = 'data/aircraft.json';
+        ac_url.push('data/aircraft.json');
     }
 
-    pendingFetches = ac_url.length;
-    fetchCounter += pendingFetches;
+    pendingFetches += ac_url.length;
+    fetchCounter += ac_url.length;
 
     for (let i in ac_url) {
         //console.log(ac_url[i]);
@@ -372,6 +370,7 @@ function fetchData(options) {
         FetchPending.push(req);
 
         req.done(function(data) {
+            pendingFetches--;
             if (data == null) {
                 return;
             }
@@ -401,7 +400,6 @@ function fetchData(options) {
                 uat_data = null;
             }
 
-            pendingFetches--;
             if (pendingFetches <= 0 && !tabHidden) {
                 triggerRefresh++;
                 checkMovement();
@@ -442,6 +440,11 @@ function fetchData(options) {
         });
 
         req.fail(function(jqxhr, status, error) {
+            pendingFetches--;
+            if (pendingFetches <= 0 && !tabHidden) {
+                triggerRefresh++;
+                checkMovement();
+            }
             status = jqxhr.status;
             if (jqxhr.readyState == 0) error = "Can't connect to server, check your network!";
             let errText = status + (error ? (": " + error) : "");
@@ -456,11 +459,6 @@ function fetchData(options) {
                     globeRateUpdate();
                     C429 = 0;
                 }
-            }
-            pendingFetches--;
-            if (pendingFetches <= 0 && !tabHidden) {
-                triggerRefresh++;
-                checkMovement();
             }
         });
     }
