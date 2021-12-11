@@ -114,6 +114,7 @@ let darkerColors = false;
 let updateLocation = false;
 let autoselect = false;
 let nogpsOnly = false;
+let trace_hist_only = false;
 
 let infoBlockWidth = baseInfoBlockWidth;
 
@@ -475,6 +476,8 @@ function initialize() {
     jQuery.when(configureReceiver, heatmapDefer).done(function() {
 
         if (receiverJson) {
+            if (receiverJson.trace_hist_only)
+                trace_hist_only = true;
             if (receiverJson.lat != null) {
                 SiteLat = receiverJson.lat;
                 SiteLon = receiverJson.lon;
@@ -6022,22 +6025,32 @@ function getTrace(newPlane, hex, options) {
 
     lastTraceGet = time;
 
-    let URL1 = 'data/traces/'+ hex.slice(-2) + '/trace_recent_' + hex + '.json';
-    let URL2 = 'data/traces/'+ hex.slice(-2) + '/trace_full_' + hex + '.json';
+    let URL1;
+    let URL2;
     //console.log('Requesting trace: ' + hex);
+
+    // use non historic traces until 60 min after midnight
+    let today = new Date();
+    if (trace_hist_only ||
+        (
+            (showTrace || replay)
+            && !(today.getTime() > traceDate.getTime() && today.getTime() < traceDate.getTime() + (24 * 3600 + 60 * 60) * 1000)
+        )
+    ) {
+        let dateString = traceDateString || zDateString(today);
+        URL1 = null;
+        URL2 = 'globe_history/' + dateString.replace(/-/g, '/') + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json';
+        traceRate += 3;
+    } else {
+        URL1 = 'data/traces/'+ hex.slice(-2) + '/trace_recent_' + hex + '.json';
+        URL2 = 'data/traces/'+ hex.slice(-2) + '/trace_full_' + hex + '.json';
+        traceRate += 2;
+    }
 
     traceOpts.follow = (options.follow == true);
 
     if (showTrace) {
-        traceRate += 3;
-        let today = new Date();
         //console.log(today.toUTCString() + ' ' + traceDate.toUTCString());
-        // use non historic traces for showTrace until 60 min after midnight
-        if (today.getTime() > traceDate.getTime() && today.getTime() < traceDate.getTime() + (24 * 3600 + 60 * 60) * 1000) {
-        } else {
-            URL1 = null;
-            URL2 = 'globe_history/' + traceDateString.replace(/-/g, '/') + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json';
-        }
 
         if (traceOpts.startHours == null || traceOpts.startHours < 0)
             traceOpts.startStamp = traceDate.getTime() / 1000;
@@ -6048,18 +6061,8 @@ function getTrace(newPlane, hex, options) {
             traceOpts.endStamp = traceDate.getTime() / 1000 + 24 * 3600;
         else
             traceOpts.endStamp = traceDate.getTime() / 1000 + traceOpts.endHours * 3600 + traceOpts.endMinutes * 60 + traceOpts.endSeconds;
-
-    } else if (replay) {
-        traceRate += 3;
-        let today = new Date();
-        if (today.getTime() > traceDate.getTime() && today.getTime() < traceDate.getTime() + (24 * 3600 + 30 * 60) * 1000) {
-        } else {
-            URL1 = null;
-            URL2 = 'globe_history/' + traceDateString.replace(/-/g, '/') + '/traces/' + hex.slice(-2) + '/trace_full_' + hex + '.json';
-        }
-    } else {
-        traceRate += 2;
     }
+
     if (newPlane && (showTrace || showTraceExit)) {
         newPlane.trace = [];
         newPlane.recentTrace = null;
