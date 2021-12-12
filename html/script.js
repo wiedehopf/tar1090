@@ -1195,9 +1195,7 @@ function initPage() {
         jQuery('#adsbexchange_header').show();
         jQuery('#credits').show();
         jQuery('#selected_infoblock').addClass('adsbx-selected-bg');
-        if (false && window.self != window.top &&
-            (window.top.location.host.startsWith("thebaldgeek.net:") || window.top.location.host == "thebaldgeek.net")
-        ) {
+        if (false && window.self != window.top) {
             window.top.location.href = "https://www.adsbexchange.com/";
             return;
         }
