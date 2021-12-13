@@ -1788,15 +1788,20 @@ PlaneObject.prototype.updateLines = function() {
                 timestamp = "";
             } else {
                 if (utcTimes) {
-                    timestamp = zDateString(date) + '\n';
+                    timestamp = zDateString(date);
                 } else {
-                    timestamp = lDateString(date) + '\n';
+                    timestamp = lDateString(date);
                 }
+                timestamp += '\n';
             }
             if (utcTimes) {
-                timestamp += zuluTime(date)
+                timestamp += zuluTime(date);
             } else {
-                timestamp += localTime(date)
+                timestamp += localTime(date);
+            }
+            if (trace_hist_only) {
+                let zz = timestamp.slice(-2);
+                timestamp = timestamp.slice(0, -2) + '.' + (Math.round((seg.ts*10)) % 10) + zz;
             }
             let text =
                 speed.padStart(3, NBSP) + "  "

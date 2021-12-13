@@ -6044,6 +6044,9 @@ function getTrace(newPlane, hex, options) {
         URL2 = 'data/traces/'+ hex.slice(-2) + '/trace_full_' + hex + '.json';
         traceRate += 2;
     }
+    if (trace_hist_only && !showTrace) {
+        URL1 = 'data/traces/'+ hex.slice(-2) + '/trace_recent_' + hex + '.json';
+    }
 
     traceOpts.follow = (options.follow == true);
 
