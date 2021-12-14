@@ -1799,7 +1799,7 @@ PlaneObject.prototype.updateLines = function() {
             } else {
                 timestamp += localTime(date);
             }
-            if (trace_hist_only) {
+            if (traces_high_res) {
                 let zz = timestamp.slice(-2);
                 timestamp = timestamp.slice(0, -2) + '.' + (Math.round((seg.ts*10)) % 10) + zz;
             }

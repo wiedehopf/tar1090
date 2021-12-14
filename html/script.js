@@ -115,6 +115,7 @@ let updateLocation = false;
 let autoselect = false;
 let nogpsOnly = false;
 let trace_hist_only = false;
+let traces_high_res = false;
 
 let infoBlockWidth = baseInfoBlockWidth;
 
@@ -478,6 +479,8 @@ function initialize() {
         if (receiverJson) {
             if (receiverJson.trace_hist_only)
                 trace_hist_only = true;
+            if (receiverJson.json_trace_interval < 2)
+                traces_high_res = true;
             if (receiverJson.lat != null) {
                 SiteLat = receiverJson.lat;
                 SiteLon = receiverJson.lon;
