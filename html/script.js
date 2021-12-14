@@ -60,7 +60,7 @@ let debugJump = false;
 let jumpTo = null;
 let noMLAT = false;
 let noVanish = false;
-let filterTracks = false;
+let filterTracks = false; // altitude filter: don't filter planes but rather their tracks by altitude
 let refreshId = 0;
 let lastFetch = 0;
 let globeIndexNow = {};
@@ -489,6 +489,12 @@ function initialize() {
             }
             if (receiverJson.jaeroTimeout) {
                 jaeroTimeout = receiverJson.jaeroTimeout * 60;
+            }
+
+
+            if (receiverJson.readsb) {
+                positionFilter = false;
+                altitudeFilter = false;
             }
         }
         configureReceiver = null;
