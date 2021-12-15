@@ -6184,6 +6184,9 @@ function getTrace(newPlane, hex, options) {
         }
     });
 
+    req1 = null;
+    req2 = null;
+
     return newPlane;
 }
 
