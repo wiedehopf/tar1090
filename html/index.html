@@ -862,8 +862,10 @@
                   <tr>
                     <td>
                       <form id="jump_form">
-                        <div class="infoBlockTitleText">Jump to Airport:</div>
-                        <input id="jump_input" name="jumpBox" type="text" class="searchInput" maxlength="4" title="Search by airport code like KATL, ZBAA, or LAX">
+                        <div class="infoBlockTitleText">Jump to Airport or Latitude, Longitude:</div>
+                        <input id="jump_input" name="jumpBox" type="text" class="searchInput" maxlength="128" title="Search by airport code like KATL, ZBAA, or LAX">
+                        <button class="formButton" type="submit">Jump</button>
+                        <button class="formButton" type="button" id="jump_clear_button">Clear</button>
                       </form>
                     </td>
                   </tr>

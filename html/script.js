@@ -94,7 +94,7 @@ let iconScale = 1;
 let labelScale = 1;
 let newWidth = lineWidth;
 let SiteOverride = false;
-let airport = null;
+let onJumpInput = null;
 let labelFill = null;
 let blackFill = null;
 let labelStroke = null;
@@ -851,6 +851,10 @@ function initPage() {
     // Initialize other controls
     jQuery("#search_form").submit(onSearch);
     jQuery("#search_clear_button").click(onSearchClear);
+    jQuery("#jump_clear_button").click(function() {
+        jQuery("#jump_input").val("");
+        jQuery("#jump_input").blur();
+    });
     jQuery("#jump_form").submit(onJump);
 
     jQuery("#show_trace").click(toggleShowTrace);
@@ -4205,30 +4209,44 @@ function onJump(e) {
     toggleFollow(false);
     if (e) {
         e.preventDefault();
-        airport = jQuery("#jump_input").val().trim().toUpperCase();
+        onJumpInput = jQuery("#jump_input").val();
         jQuery("#jump_input").val("");
         jQuery("#jump_input").blur();
     }
-    if (!_airport_coords_cache) {
-        jQuery.getJSON(databaseFolder + "/airport-coords.js")
-            .done(function(data) {
-                _airport_coords_cache = data;
-                onJump();
-            });
-    } else {
-        const coords = _airport_coords_cache[airport];
-        if (coords) {
-            OLMap.getView().setCenter(ol.proj.fromLonLat([coords[1], coords[0]]));
-
-            if (ZoomLvl >= 7) {
-                fetchData({force: true});
-            }
-
-            refreshFilter();
-            hideSearchWarning();
-        } else {
-            showSearchWarning('Failed to find airport ' + airport);
+    let coords = null;
+    let airport = null;
+    if (onJumpInput.indexOf(",") >= 0) {
+        let values = onJumpInput.split(',');
+        if (!values || values.length != 2) {
+            showSearchWarning('Input format decimal coordinates: LATI.TUDE, LONGI.TUDE');
         }
+        coords = [parseFloat(values[0]), parseFloat(values[1])];
+    } else {
+        airport = onJumpInput.trim().toUpperCase();
+    }
+    if (airport) {
+        if (!_airport_coords_cache) {
+            jQuery.getJSON(databaseFolder + "/airport-coords.js")
+                .done(function(data) {
+                    _airport_coords_cache = data;
+                    onJump();
+                });
+            return;
+        }
+        coords = _airport_coords_cache[airport];
+    }
+    if (coords) {
+        console.log("jumping to: " + coords[0] + " " + coords[1]);
+        OLMap.getView().setCenter(ol.proj.fromLonLat([coords[1], coords[0]]));
+
+        if (ZoomLvl >= 7) {
+            fetchData({force: true});
+        }
+
+        refreshFilter();
+        hideSearchWarning();
+    } else {
+        showSearchWarning('Failed to find airport ' + airport);
     }
 }
 
@@ -4270,6 +4288,8 @@ function onSearchClear(e) {
     deselectAllPlanes();
     toggleIsolation("off");
     toggleMultiSelect("off");
+    jQuery("#search_input").val("");
+    jQuery("#search_input").blur();
 }
 
 function onResetCallsignFilter(e) {
