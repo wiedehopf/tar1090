@@ -1474,6 +1474,7 @@ function parseHistory() {
 
 let timers = {};
 function clearIntervalTimers() {
+    console.log("clear timers");
     const entries = Object.entries(timers);
     for (let i in entries) {
         clearInterval(entries[i][1]);
@@ -1481,6 +1482,7 @@ function clearIntervalTimers() {
 }
 
 function setIntervalTimers() {
+    console.log("set timers");
     if ((adsbexchange || dynGlobeRate) && !uuid) {
         timers.globeRateUpdate = setInterval(globeRateUpdate, 180000);
     }
@@ -1490,6 +1492,7 @@ function setIntervalTimers() {
     timers.checkMove = setInterval(checkMovement, 50);
     timers.everySecond = setInterval(everySecond, 850);
     timers.reaper = setInterval(reaper, 20000);
+    reaper();
     if (tempTrails) {
         timers.trailReaper = window.setInterval(trailReaper, 10000);
         trailReaper(now);
@@ -2380,17 +2383,22 @@ function initMap() {
 // This looks for planes to reap out of the master Planes variable
 let lastReap = 0;
 function reaper(all) {
-    //console.log("Reaping started..");
-    if (noVanish)
+    console.log("Reaping started..");
+    if (noVanish && !all)
         return;
 
-    lastReap = now;
+    if (lastReap == "in_progress") {
+        return;
+    }
+
+    lastReap = "in_progress";
 
     // Look for planes where we have seen no messages for >300 seconds
     let plane;
     let length = PlanesOrdered.length;
+    let temp = []
     for (let i = 0; i < length; i++) {
-        plane = PlanesOrdered.shift()
+        plane = PlanesOrdered[i];
         if (plane == null)
             continue;
         plane.seen = now - plane.last_message_time;
@@ -2402,12 +2410,24 @@ function reaper(all) {
             //console.log("Removed " + plane.icao);
             delete Planes[plane.icao];
             plane.destroy();
-        } else {
-            // Keep it.
-            PlanesOrdered.push(plane);
+            continue;
         }
-    };
 
+        // Keep it.
+        temp.push(plane);
+        if (plane.clearTraceAfter) {
+            //console.log(now - plane.clearTraceAfter);
+            if (now > plane.clearTraceAfter) {
+                plane.clearTrace();
+                console.log("clearTrace: " + plane.icao);
+            }
+        } else if (!plane.linesDrawn) {
+            plane.clearTraceAfter = now + 60;
+        }
+    }
+    PlanesOrdered = temp;
+
+    lastReap = now;
     //console.log(length - PlanesOrdered.length);
     return (length - PlanesOrdered.length);
 }
@@ -6101,55 +6121,48 @@ function getTrace(newPlane, hex, options) {
 
     //console.log(URL2);
 
-    let req1 = null;
-    let req2 = null;
-
-    options.plane = newPlane;
+    //options = JSON.parse(JSON.stringify(options));
+    options.plane = `${newPlane.icao}`;
     options.defer = jQuery.Deferred();
 
-    let fake1 = false;
-
     if (URL1 && !options.onlyFull) {
-        req1 = jQuery.ajax({ url: `${URL1}`,
+        jQuery.ajax({ url: `${URL1}`,
             dataType: 'json',
             options: options,
-        });
+        })
+            .done(function(data) {
+                const options = this.options;
+                const plane = Planes[options.plane];
+                plane.recentTrace = normalizeTraceStamps(data);
+                if (!showTrace) {
+                    plane.processTrace();
+                    if (options.follow)
+                        toggleFollow(true);
+                }
+                options.defer.resolve(options);
+                if (options.onlyRecent && options.list) {
+                    newPlane.updateLines();
+                    getTrace(null, null, options);
+                }
+                this.options = null;
+            });
     } else {
         options.defer.resolve(options);
-        fake1 = true;
     }
 
-    if (!fake1) {
-        req1.done(function(data) {
-            const options = this.options;
-            const plane = options.plane;
-            plane.recentTrace = normalizeTraceStamps(data);
-            if (!showTrace) {
-                plane.processTrace();
-                if (options.follow)
-                    toggleFollow(true);
-            }
-            options.defer.resolve(options);
-            if (options.onlyRecent && options.list) {
-                newPlane.updateLines();
-                getTrace(null, null, options);
-            }
-        });
-    }
     if (options.onlyRecent)
         return newPlane;
 
-    req2 = jQuery.ajax({ url: `${URL2}`,
+    jQuery.ajax({ url: `${URL2}`,
         dataType: 'json',
         options: options,
-    });
-
-    req2.done(function(data) {
+    })
+        .done(function(data) {
         const options = this.options;
-        const plane = options.plane;
+        const plane = Planes[options.plane];
         plane.fullTrace = normalizeTraceStamps(data);
         options.defer.done(function(options) {
-            const plane = options.plane;
+            const plane = Planes[options.plane];
             if (showTrace) {
                 legShift(0, plane);
                 if (!multiSelect) {
@@ -6165,10 +6178,12 @@ function getTrace(newPlane, hex, options) {
             newPlane.updateLines();
             getTrace(null, null, options);
         }
-    });
-    req2.fail(function() {
+        options.defer = null;
+        this.options = null;
+    })
+        .fail(function() {
         const options = this.options;
-        const plane = options.plane;
+        const plane = Planes[options.plane];
         if (showTrace)
             legShift(0, plane);
         else
@@ -6180,6 +6195,7 @@ function getTrace(newPlane, hex, options) {
             plane.getAircraftData();
             refreshSelected();
         }
+        this.options = null;
     });
 
     return newPlane;
@@ -7266,6 +7282,14 @@ function exportKML() {
         filename + '-track.kml',
         'application/vnd.google-earth.kml+xml',
         xml);
+}
+
+function deleteTraces() {
+    for (let i in PlanesOrdered) {
+        let plane = PlanesOrdered[i];
+        delete plane.recentTrace;
+        delete plane.fullTrace;
+    }
 }
 
 

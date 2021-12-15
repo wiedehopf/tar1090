@@ -630,6 +630,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
 
 // This is to remove the line from the screen if we deselect the plane
 PlaneObject.prototype.clearLines = function() {
+    this.clearTraceAfter = now + 60;
     this.linesDrawn = false;
     if (this.layer && this.layer.getVisible()) {
         this.layer.setVisible(false);
@@ -1728,6 +1729,7 @@ PlaneObject.prototype.updateLines = function() {
     }
 
     this.linesDrawn = true;
+    this.clearTraceAfter = null;
 
     if (this.track_linesegs.length == 0)
         return;
@@ -1956,6 +1958,35 @@ PlaneObject.prototype.destroyTR = function (trTemplate) {
 
     this.tr = null;
 };
+PlaneObject.prototype.clearTrace = function() {
+    this.clearTraceAfter = null;
+    this.linesDrawn = false;
+    if (this.trail_features) {
+        this.trail_features.clear();
+    }
+    if (this.trail_labels) {
+        this.trail_labels.clear();
+    }
+    this.elastic_feature = null;
+
+    this.recentTrace = null;
+    this.fullTrace = null;
+    this.track_linesegs = [];
+}
+
+PlaneObject.prototype.destroyTrace = function() {
+    this.clearTrace();
+    if (this.layer) {
+        trailGroup.remove(this.layer);
+        this.trail_features = null;
+        this.layer = null;
+    }
+    if (this.layer_labels) {
+        trailGroup.remove(this.layer_labels);
+        this.trail_labels = null;
+        this.layer_labels = null;
+    }
+}
 
 PlaneObject.prototype.destroy = function() {
     this.clearLines();
@@ -1963,16 +1994,7 @@ PlaneObject.prototype.destroy = function() {
     this.visible = false;
     deselect(this);
     this.destroyTR();
-    if (this.layer) {
-        trailGroup.remove(this.layer);
-        this.trail_features.clear();
-        this.layer = null;
-    }
-    if (this.layer_labels) {
-        trailGroup.remove(this.layer_labels);
-        this.trail_labels.clear();
-        this.layer_labels = null;
-    }
+    this.destroyTrace();
     for (let key in Object.keys(this)) {
         delete this[key];
     }
