@@ -4960,7 +4960,7 @@ function processURLParams(){
         toggleMilitary();
 
     if (usp.has('airport')) {
-        airport = usp.get('airport').trim().toUpperCase();
+        onJumpInput = usp.get('airport').trim().toUpperCase();
         onJump();
     }
 
