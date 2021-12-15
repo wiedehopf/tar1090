@@ -6144,8 +6144,6 @@ function getTrace(newPlane, hex, options) {
         options: options,
     });
 
-    options.req2 = req2;
-
     req2.done(function(data) {
         const options = this.options;
         const plane = options.plane;
@@ -6183,9 +6181,6 @@ function getTrace(newPlane, hex, options) {
             refreshSelected();
         }
     });
-
-    req1 = null;
-    req2 = null;
 
     return newPlane;
 }
