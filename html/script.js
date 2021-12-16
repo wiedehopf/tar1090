@@ -363,7 +363,7 @@ function fetchData(options) {
             req = jQuery.ajax({
                 url: `${ac_url[i]}`, method: 'GET',
                 xhr: arraybufferRequest,
-                timeout: 5000,
+                timeout: 15000,
                 urlIndex: i,
             });
         } else {
@@ -371,98 +371,98 @@ function fetchData(options) {
         }
         FetchPending.push(req);
 
-        req.done(function(data) {
-            pendingFetches--;
-            if (data == null) {
-                return;
-            }
-            if (binCraft) {
-                data = { buffer: data, };
-                wqi(data);
-            }
-            data.urlIndex = this.urlIndex;
-
-            if (!data.aircraft || !data.now) {
-                let error = data.error;
-                if (error) {
-                    jQuery("#update_error_detail").text(error);
-                    jQuery("#update_error").css('display','block');
-                    StaleReceiverCount++;
+        req
+            .done(function(data) {
+                pendingFetches--;
+                if (data == null) {
+                    return;
                 }
-                return;
-            }
+                if (binCraft) {
+                    data = { buffer: data, };
+                    wqi(data);
+                }
+                data.urlIndex = this.urlIndex;
 
-            //console.time("Process " + data.globeIndex);
-            processReceiverUpdate(data);
-            //console.timeEnd("Process " + data.globeIndex);
-            data = null;
+                if (!data.aircraft || !data.now) {
+                    let error = data.error;
+                    if (error) {
+                        jQuery("#update_error_detail").text(error);
+                        jQuery("#update_error").css('display','block');
+                        StaleReceiverCount++;
+                    }
+                    return;
+                }
 
-            if (uat_data) {
-                processReceiverUpdate(uat_data);
-                uat_data = null;
-            }
+                //console.time("Process " + data.globeIndex);
+                processReceiverUpdate(data);
+                //console.timeEnd("Process " + data.globeIndex);
+                data = null;
 
-            if (pendingFetches <= 0 && !tabHidden) {
-                triggerRefresh++;
-                checkMovement();
-                if (firstFetch) {
-                    firstFetch = false;
-                    if (uuid) {
-                        const ext = myExtent(OLMap.getView().calculateExtent(OLMap.getSize()));
-                        let jump = true;
-                        for (let i = 0; i < PlanesOrdered.length; ++i) {
-                            const plane = PlanesOrdered[i];
-                            if (plane.visible && inView(plane.position, ext)) {
-                                jump = false;
-                                break;
+                if (uat_data) {
+                    processReceiverUpdate(uat_data);
+                    uat_data = null;
+                }
+
+                if (pendingFetches <= 0 && !tabHidden) {
+                    triggerRefresh++;
+                    checkMovement();
+                    if (firstFetch) {
+                        firstFetch = false;
+                        if (uuid) {
+                            const ext = myExtent(OLMap.getView().calculateExtent(OLMap.getSize()));
+                            let jump = true;
+                            for (let i = 0; i < PlanesOrdered.length; ++i) {
+                                const plane = PlanesOrdered[i];
+                                if (plane.visible && inView(plane.position, ext)) {
+                                    jump = false;
+                                    break;
+                                }
+                            }
+                            if (jump) {
+                                followRandomPlane();
+                                deselectAllPlanes();
+                                OLMap.getView().setZoom(6);
                             }
                         }
-                        if (jump) {
-                            followRandomPlane();
-                            deselectAllPlanes();
-                            OLMap.getView().setZoom(6);
-                        }
+                        checkRefresh();
                     }
-                    checkRefresh();
                 }
-            }
 
 
-            // Check for stale receiver data
-            if (last == now && !globeIndex) {
-                StaleReceiverCount++;
-                if (StaleReceiverCount > 5) {
-                    jQuery("#update_error_detail").text("The data from the server hasn't been updated in a while.");
+                // Check for stale receiver data
+                if (last == now && !globeIndex) {
+                    StaleReceiverCount++;
+                    if (StaleReceiverCount > 5) {
+                        jQuery("#update_error_detail").text("The data from the server hasn't been updated in a while.");
+                        jQuery("#update_error").css('display','block');
+                    }
+                } else if (StaleReceiverCount > 0){
+                    StaleReceiverCount = 0;
+                    jQuery("#update_error").css('display','none');
+                }
+            })
+            .fail(function(jqxhr, status, error) {
+                pendingFetches--;
+                if (pendingFetches <= 0 && !tabHidden) {
+                    triggerRefresh++;
+                    checkMovement();
+                }
+                status = jqxhr.status;
+                if (jqxhr.readyState == 0) error = "Can't connect to server, check your network!";
+                let errText = status + (error ? (": " + error) : "");
+                console.log(jqxhr);
+                console.log(error);
+                if (status != 429 && status != '429') {
+                    jQuery("#update_error_detail").text(errText);
                     jQuery("#update_error").css('display','block');
+                    StaleReceiverCount++;
+                } else {
+                    if (C429++ > 16) {
+                        globeRateUpdate();
+                        C429 = 0;
+                    }
                 }
-            } else if (StaleReceiverCount > 0){
-                StaleReceiverCount = 0;
-                jQuery("#update_error").css('display','none');
-            }
-        });
-
-        req.fail(function(jqxhr, status, error) {
-            pendingFetches--;
-            if (pendingFetches <= 0 && !tabHidden) {
-                triggerRefresh++;
-                checkMovement();
-            }
-            status = jqxhr.status;
-            if (jqxhr.readyState == 0) error = "Can't connect to server, check your network!";
-            let errText = status + (error ? (": " + error) : "");
-            console.log(jqxhr);
-            console.log(error);
-            if (status != 429 && status != '429') {
-                jQuery("#update_error_detail").text(errText);
-                jQuery("#update_error").css('display','block');
-                StaleReceiverCount++;
-            } else {
-                if (C429++ > 16) {
-                    globeRateUpdate();
-                    C429 = 0;
-                }
-            }
-        });
+            });
     }
 }
 
