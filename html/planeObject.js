@@ -1094,8 +1094,9 @@ PlaneObject.prototype.processTrace = function() {
 
             if (!traceOpts.showTime) {
                 this.updateTrack(_now, _last, true, stale);
-            } else if (this.track == null && lastPosition) {
+            } else if (this.track == null && lastPosition && this.request_rotation_from_track) {
                 this.rotation = bearingFromLonLat(lastPosition, this.position);
+                this.request_rotation_from_track = false;
             }
 
             _last = _now;
