@@ -2415,14 +2415,17 @@ function reaper(all) {
 
         // Keep it.
         temp.push(plane);
-        if (plane.clearTraceAfter) {
-            //console.log(now - plane.clearTraceAfter);
-            if (now > plane.clearTraceAfter) {
-                plane.clearTrace();
-                console.log("clearTrace: " + plane.icao);
+
+        if (globeIndex) {
+            if (plane.clearTraceAfter) {
+                //console.log(now - plane.clearTraceAfter);
+                if (now > plane.clearTraceAfter) {
+                    plane.clearTrace();
+                    //console.log("clearTrace: " + plane.icao);
+                }
+            } else if (!plane.linesDrawn) {
+                plane.clearTraceAfter = now + 300;
             }
-        } else if (!plane.linesDrawn) {
-            plane.clearTraceAfter = now + 60;
         }
     }
     PlanesOrdered = temp;

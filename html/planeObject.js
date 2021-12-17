@@ -630,7 +630,6 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
 
 // This is to remove the line from the screen if we deselect the plane
 PlaneObject.prototype.clearLines = function() {
-    this.clearTraceAfter = now + 60;
     this.linesDrawn = false;
     if (this.layer && this.layer.getVisible()) {
         this.layer.setVisible(false);
