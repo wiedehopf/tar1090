@@ -1803,7 +1803,7 @@ PlaneObject.prototype.updateLines = function() {
             }
             if (traces_high_res) {
                 let zz = timestamp.slice(-2);
-                timestamp = timestamp.slice(0, -2) + '.' + (Math.round((seg.ts*10)) % 10) + zz;
+                timestamp = timestamp.slice(0, -2) + '.' + (Math.floor((seg.ts*10)) % 10) + zz;
             }
             let text =
                 speed.padStart(3, NBSP) + "  "
