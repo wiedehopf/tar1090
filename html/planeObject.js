@@ -210,6 +210,7 @@ PlaneObject.prototype.createFeatures = function() {
         source: this.trail_features,
         declutter: false,
         zIndex: 150,
+        renderOrder: null,
     });
 
     trailGroup.push(this.layer);
