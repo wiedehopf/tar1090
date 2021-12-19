@@ -823,7 +823,7 @@ PlaneObject.prototype.updateIcon = function() {
         if (extendedLabels == 2) {
             if (windLabels) {
                 if (this.wd != null) {
-                    labelText += NBSP + this.wd + '°' + NBSP + this.ws + 'kts\n';
+                    labelText += NBSP + this.wd + '°' + NBSP + format_speed_long(this.ws, DisplayUnits) + '\n';
                 }
             } else {
                 labelText += (this.registration ? this.registration : unknown) + NBSP + (this.icaoType ? this.icaoType : unknown) + '\n';
@@ -832,7 +832,7 @@ PlaneObject.prototype.updateIcon = function() {
         if (extendedLabels >= 1 ) {
             const altitude = (this.altitude == null) ? unknown : format_altitude_brief(this.altitude, this.vert_rate, DisplayUnits);
             if ((!this.onGround || (this.speed && this.speed > 18) || (this.selected && !SelectedAllPlanes))) {
-                let speedString = (this.speed == null) ? (NBSP+'?'+NBSP) : Number(this.speed).toFixed(0).toString().padStart(4, NBSP);
+                let speedString = (this.speed == null) ? (NBSP+'?'+NBSP) : format_speed_long(this.speed, DisplayUnits).padStart(4, NBSP);
                 labelText += speedString + NBSP + NBSP + altitude.padStart(6, NBSP);
             }
         }
