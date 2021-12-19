@@ -3199,6 +3199,18 @@ function refreshFeatures() {
         sort: function () { sortBy('military', compareAlpha, function(x) { return (x.military ? 'yes' : 'no'); } ); },
         value: function(plane) { return (plane.military ? 'yes' : 'no'); },
         align: 'right' };
+    cols.wd = {
+        text: 'Wind D',
+        sort: function () { sortBy('wd', compareNumeric, function(x) { return plane.wd; }); },
+        value: function(plane) { return plane.wd != null ? (plane.wd + '°') : ''; },
+        align: 'right' };
+    cols.ws = {
+        text: 'Wind speed',
+        sort: function () { sortBy('ws', compareNumeric, function(x) { return x.ws; }); },
+        value: function(plane) { return format_speed_brief(plane.ws, DisplayUnits); },
+        align: 'right',
+        header: function () { return 'Wind(' + get_unit_label("speed", DisplayUnits) + ')';},
+    };
 
     const colsEntries = Object.entries(cols);
     for (let i in colsEntries) {
