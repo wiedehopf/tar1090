@@ -819,18 +819,31 @@ PlaneObject.prototype.updateIcon = function() {
             callsign =  NBSP + 'hex: ' + this.icao + NBSP;
         const unknown = NBSP+NBSP+"?"+NBSP+NBSP;
 
-        labelText = ""
+        labelText = "";
         if (extendedLabels == 2) {
-            labelText += (this.registration ? this.registration : unknown) + NBSP + (this.icaoType ? this.icaoType : unknown) + '\n';
+            if (windLabels) {
+                if (this.wd != null) {
+                    labelText += NBSP + this.wd + '°' + NBSP + this.ws + 'kts\n';
+                }
+            } else {
+                labelText += (this.registration ? this.registration : unknown) + NBSP + (this.icaoType ? this.icaoType : unknown) + '\n';
+            }
         }
         if (extendedLabels >= 1 ) {
             const altitude = (this.altitude == null) ? unknown : format_altitude_brief(this.altitude, this.vert_rate, DisplayUnits);
             if ((!this.onGround || (this.speed && this.speed > 18) || (this.selected && !SelectedAllPlanes))) {
                 let speedString = (this.speed == null) ? (NBSP+'?'+NBSP) : Number(this.speed).toFixed(0).toString().padStart(4, NBSP);
-                labelText += speedString + NBSP + NBSP + altitude.padStart(6, NBSP) + "\n";
+                labelText += speedString + NBSP + NBSP + altitude.padStart(6, NBSP);
             }
         }
-        labelText += callsign;
+        if (windLabels && extendedLabels == 2) {
+            if (this.wd == null) {
+                labelText = '';
+            }
+        } else {
+            if (labelText) labelText += '\n';
+            labelText += callsign;
+        }
     }
     if (!webgl && (this.markerStyle == null || this.markerIcon == null || (this.markerSvgKey != svgKey))) {
         //console.log(this.icao + " new icon and style " + this.markerSvgKey + " -> " + svgKey);

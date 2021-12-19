@@ -49,6 +49,7 @@ let grouptype_checkbox;
 let multiSelect = false;
 let uat_data = null;
 let enableLabels = false;
+let windLabels = false;
 let extendedLabels = 0;
 let mapIsVisible = true;
 let tableInView = false;
@@ -2181,6 +2182,21 @@ function initMap() {
         }
     });
 
+    new Toggle({
+        key: "windLabels",
+        display: "Wind Labels (via O toggle)",
+        container: "#settingsLeft",
+        init: windLabels,
+        setState: function(state) {
+            windLabels = state;
+            if (!loadFinished)
+                return;
+            for (let key in PlanesOrdered) {
+                PlanesOrdered[key].updateMarker();
+            }
+        }
+    });
+
     window.addEventListener('keydown', function(e) {
         active();
         if (e.defaultPrevented ) {
@@ -2209,6 +2225,9 @@ function initMap() {
                 break;
             case "e":
                 zoomIn();
+                break;
+            case "W":
+                toggles['windLabels'].toggle();
                 break;
             case "w":
                 oldCenter = OLMap.getView().getCenter();
