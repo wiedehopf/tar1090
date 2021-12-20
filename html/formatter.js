@@ -90,7 +90,7 @@ function format_altitude_long(alt, vr, displayUnits) {
 		return "on ground";
 	}
 
-	alt_text = Math.round(convert_altitude(alt, displayUnits)).toLocaleString() + NBSP + get_unit_label("altitude", displayUnits);
+	alt_text = Math.round(convert_altitude(alt, displayUnits)).toString() + NBSP + get_unit_label("altitude", displayUnits);
 
 	if (vr > 192) {
 		return UP_TRIANGLE + NBSP + alt_text;
@@ -100,6 +100,22 @@ function format_altitude_long(alt, vr, displayUnits) {
 		return alt_text;
 	}
 }
+
+// alt in feet
+function format_altitude(alt, displayUnits) {
+	let alt_text = "";
+
+	if (alt == null) {
+		return "n/a";
+	} else if (alt === "ground") {
+		return "on ground";
+	}
+
+	alt_text = Math.round(convert_altitude(alt, displayUnits)).toString() + NBSP + get_unit_label("altitude", displayUnits);
+
+    return alt_text;
+}
+
 
 // alt ground/airborne
 function format_onground (alt) {

@@ -819,29 +819,40 @@ PlaneObject.prototype.updateIcon = function() {
             callsign =  NBSP + 'hex: ' + this.icao + NBSP;
         const unknown = NBSP+NBSP+"?"+NBSP+NBSP;
 
+        let altString = (this.altitude == null) ? unknown : format_altitude_long(this.altitude, this.vert_rate, DisplayUnits);
+        let speedString = (this.speed == null) ? (NBSP+'?'+NBSP) : format_speed_long(this.speed, DisplayUnits).padStart(4, NBSP);
+
         labelText = "";
-        if (extendedLabels == 2) {
-            if (windLabels) {
-                if (this.wd != null) {
-                    labelText += NBSP + this.wd + '°' + NBSP + format_speed_long(this.ws, DisplayUnits) + '\n';
-                }
+        if (extendedLabels == 3) {
+            if (!windLabelsSlim) {
+                labelText += 'Wind' + NBSP;
+            }
+            if (this.wd != null) {
+                labelText += format_track_arrow((this.wd + 180 % 360)) + NBSP + this.wd + '°' + NBSP + format_speed_long(this.ws, DisplayUnits);
             } else {
-                labelText += (this.registration ? this.registration : unknown) + NBSP + (this.icaoType ? this.icaoType : unknown) + '\n';
+                labelText += 'n/a';
             }
-        }
-        if (extendedLabels >= 1 ) {
-            const altitude = (this.altitude == null) ? unknown : format_altitude_brief(this.altitude, this.vert_rate, DisplayUnits);
-            if ((!this.onGround || (this.speed && this.speed > 18) || (this.selected && !SelectedAllPlanes))) {
-                let speedString = (this.speed == null) ? (NBSP+'?'+NBSP) : format_speed_long(this.speed, DisplayUnits).padStart(4, NBSP);
-                labelText += speedString + NBSP + NBSP + altitude.padStart(6, NBSP);
+            if (windLabelsSlim) {
+                labelText += '\n' + format_altitude(this.altitude, DisplayUnits);
+            } else {
+                if ((!this.onGround || (this.speed && this.speed > 18) || (this.selected && !SelectedAllPlanes))) {
+                    labelText += '\n' + speedString + NBSP + NBSP + altString.padStart(6, NBSP);
+                }
+                labelText += '\n' + callsign;
             }
-        }
-        if (windLabels && extendedLabels == 2) {
-            if (this.wd == null) {
+
+            if (windLabelsSlim && this.wd == null) {
                 labelText = '';
             }
-        } else {
-            if (labelText) labelText += '\n';
+        } else if (extendedLabels == 2) {
+            labelText += (this.registration ? this.registration : unknown) + NBSP + (this.icaoType ? this.icaoType : unknown) + '\n';
+        }
+        if (extendedLabels == 1 || extendedLabels == 2) {
+            if ((!this.onGround || (this.speed && this.speed > 18) || (this.selected && !SelectedAllPlanes))) {
+                labelText += speedString + NBSP + NBSP + altString.padStart(6, NBSP) + '\n';
+            }
+        }
+        if (extendedLabels < 3) {
             labelText += callsign;
         }
     }

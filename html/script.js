@@ -49,8 +49,8 @@ let grouptype_checkbox;
 let multiSelect = false;
 let uat_data = null;
 let enableLabels = false;
-let windLabels = false;
 let extendedLabels = 0;
+let windLabelsSlim = false;
 let mapIsVisible = true;
 let tableInView = false;
 let onlyMilitary = false;
@@ -766,11 +766,11 @@ function initPage() {
         toggleLabels();
     }
     if (usp.has('extendedLabels')) {
-        extendedLabels = parseInt(usp.getFloat('extendedLabels')) + 2;
-        toggleExtendedLabels();
+        extendedLabels = parseInt(usp.getFloat('extendedLabels'));
+        toggleExtendedLabels({ noIncrement: true });
     } else if (loStore['extendedLabels']) {
-        extendedLabels = parseInt(loStore['extendedLabels']) + 2;
-        toggleExtendedLabels();
+        extendedLabels = parseInt(loStore['extendedLabels']);
+        toggleExtendedLabels({ noIncrement: true });
     }
     if (loStore['trackLabels'] == "true" || usp.has('trackLabels')) {
         toggleTrackLabels();
@@ -2183,12 +2183,12 @@ function initMap() {
     });
 
     new Toggle({
-        key: "windLabels",
-        display: "Wind Labels (via O toggle)",
+        key: "windLabelsSlim",
+        display: "Smaller wind labels",
         container: "#settingsLeft",
-        init: windLabels,
+        init: windLabelsSlim,
         setState: function(state) {
-            windLabels = state;
+            windLabelsSlim = state;
             if (!loadFinished)
                 return;
             for (let key in PlanesOrdered) {
@@ -2196,6 +2196,7 @@ function initMap() {
             }
         }
     });
+
 
     window.addEventListener('keydown', function(e) {
         active();
@@ -2225,9 +2226,6 @@ function initMap() {
                 break;
             case "e":
                 zoomIn();
-                break;
-            case "W":
-                toggles['windLabels'].toggle();
                 break;
             case "w":
                 oldCenter = OLMap.getView().getCenter();
@@ -2279,7 +2277,7 @@ function initMap() {
             case "t":
                 selectAllPlanes();
                 break;
-            case "g":
+            case "G":
                 nogpsOnly = !nogpsOnly;
                 refreshFilter();
                 break;
@@ -4217,12 +4215,15 @@ function toggleLabels() {
         remakeTrails();
 }
 
-function toggleExtendedLabels() {
+function toggleExtendedLabels(options) {
     if (isNaN(extendedLabels))
         extendedLabels = 0;
 
-    extendedLabels++;
-    extendedLabels %= 3;
+    options = options || {};
+    if (!options.noIncrement) {
+        extendedLabels++;
+    }
+    extendedLabels %= 4;
     //console.log(extendedLabels);
     loStore['extendedLabels'] = extendedLabels;
     for (let key in PlanesOrdered) {
