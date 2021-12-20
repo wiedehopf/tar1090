@@ -143,7 +143,7 @@ function format_speed_brief(speed, displayUnits) {
 		return "";
 	}
 
-	return Math.round(convert_speed(speed, displayUnits));
+	return Math.round(convert_speed(speed, displayUnits)).toString();
 }
 
 // speed in knots

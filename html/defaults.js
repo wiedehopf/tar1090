@@ -293,6 +293,9 @@ let showSil = false;
 
 
 
+let windLabelsSlim = false;
+let showLabelUnits = true;
+
 let wideInfoBlock = false;
 let baseInfoBlockWidth = 200;
 

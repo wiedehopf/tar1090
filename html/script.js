@@ -50,7 +50,6 @@ let multiSelect = false;
 let uat_data = null;
 let enableLabels = false;
 let extendedLabels = 0;
-let windLabelsSlim = false;
 let mapIsVisible = true;
 let tableInView = false;
 let onlyMilitary = false;
@@ -2189,6 +2188,21 @@ function initMap() {
         init: windLabelsSlim,
         setState: function(state) {
             windLabelsSlim = state;
+            if (!loadFinished)
+                return;
+            for (let key in PlanesOrdered) {
+                PlanesOrdered[key].updateMarker();
+            }
+        }
+    });
+
+    new Toggle({
+        key: "showLabelUnits",
+        display: "Label units",
+        container: "#settingsLeft",
+        init: showLabelUnits,
+        setState: function(state) {
+            showLabelUnits = state;
             if (!loadFinished)
                 return;
             for (let key in PlanesOrdered) {

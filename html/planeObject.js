@@ -819,8 +819,15 @@ PlaneObject.prototype.updateIcon = function() {
             callsign =  NBSP + 'hex: ' + this.icao + NBSP;
         const unknown = NBSP+NBSP+"?"+NBSP+NBSP;
 
-        let altString = (this.altitude == null) ? unknown : format_altitude_long(this.altitude, this.vert_rate, DisplayUnits);
-        let speedString = (this.speed == null) ? (NBSP+'?'+NBSP) : format_speed_long(this.speed, DisplayUnits).padStart(4, NBSP);
+        let altString;
+        let speedString;
+        if (showLabelUnits) {
+            altString = (this.altitude == null) ? unknown : format_altitude_long(this.altitude, this.vert_rate, DisplayUnits);
+            speedString = (this.speed == null) ? (NBSP+'?'+NBSP) : format_speed_long(this.speed, DisplayUnits).padStart(4, NBSP);
+        } else {
+            altString = (this.altitude == null) ? unknown : format_altitude_brief(this.altitude, this.vert_rate, DisplayUnits);
+            speedString = (this.speed == null) ? (NBSP+'?'+NBSP) : format_speed_brief(this.speed, DisplayUnits).padStart(4, NBSP);
+        }
 
         labelText = "";
         if (extendedLabels == 3) {
@@ -828,12 +835,18 @@ PlaneObject.prototype.updateIcon = function() {
                 labelText += 'Wind' + NBSP;
             }
             if (this.wd != null) {
-                labelText += format_track_arrow((this.wd + 180 % 360)) + NBSP + this.wd + '°' + NBSP + format_speed_long(this.ws, DisplayUnits);
+                if (showLabelUnits) {
+                    labelText += format_track_arrow((this.wd + 180 % 360)) + NBSP + this.wd + '°' + NBSP;
+                    labelText += format_speed_long(this.ws, DisplayUnits);
+                } else {
+                    labelText += format_track_arrow((this.wd + 180 % 360)) + NBSP + this.wd + NBSP;
+                    labelText += format_speed_brief(this.ws, DisplayUnits);
+                }
             } else {
                 labelText += 'n/a';
             }
             if (windLabelsSlim) {
-                labelText += '\n' + format_altitude(this.altitude, DisplayUnits);
+                labelText += '\n' + altString;
             } else {
                 if ((!this.onGround || (this.speed && this.speed > 18) || (this.selected && !SelectedAllPlanes))) {
                     labelText += '\n' + speedString + NBSP + NBSP + altString.padStart(6, NBSP);

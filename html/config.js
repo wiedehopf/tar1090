@@ -274,6 +274,12 @@ HideCols = [
 // provide ZZZZ.png to be shown when the type is not known.
 // this feature is provided as is please don't expect tar1090's support for getting the pictures right.
 
+// windLabelsSlim = false;
+// showLabelUnits = true;
+//
+// wideInfoBlock = false;
+// baseInfoBlockWidth = 200;
+
 //enableDWD = true;
 
 // Display only the last leg of a flight in globeIndex mode.
