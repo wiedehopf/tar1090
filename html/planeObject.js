@@ -2564,7 +2564,7 @@ PlaneObject.prototype.checkForDB = function(t) {
             this.dbinfoLoaded = true;
         }
     }
-    if (!this.dbinfoLoaded && (!dbServer || showTrace || (dbServer && !globeIndex && this.selected) || replay)) {
+    if (!this.dbinfoLoaded && (!dbServer || (dbServer && !globeIndex && this.selected) || replay)) {
         this.getAircraftData();
         return;
     }
