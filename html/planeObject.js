@@ -819,15 +819,8 @@ PlaneObject.prototype.updateIcon = function() {
             callsign =  NBSP + 'hex: ' + this.icao + NBSP;
         const unknown = NBSP+NBSP+"?"+NBSP+NBSP;
 
-        let altString;
-        let speedString;
-        if (showLabelUnits) {
-            altString = (this.altitude == null) ? unknown : format_altitude_long(this.altitude, this.vert_rate, DisplayUnits);
-            speedString = (this.speed == null) ? (NBSP+'?'+NBSP) : format_speed_long(this.speed, DisplayUnits).padStart(4, NBSP);
-        } else {
-            altString = (this.altitude == null) ? unknown : format_altitude_brief(this.altitude, this.vert_rate, DisplayUnits);
-            speedString = (this.speed == null) ? (NBSP+'?'+NBSP) : format_speed_brief(this.speed, DisplayUnits).padStart(4, NBSP);
-        }
+        let altString = (this.altitude == null) ? unknown : format_altitude_brief(this.altitude, this.vert_rate, DisplayUnits, showLabelUnits);
+        let speedString = (this.speed == null) ? (NBSP+'?'+NBSP) : format_speed_brief(this.speed, DisplayUnits, showLabelUnits).padStart(4, NBSP);
 
         labelText = "";
         if (extendedLabels == 3) {
@@ -849,7 +842,7 @@ PlaneObject.prototype.updateIcon = function() {
                 labelText += '\n' + altString;
             } else {
                 if ((!this.onGround || (this.speed && this.speed > 18) || (this.selected && !SelectedAllPlanes))) {
-                    labelText += '\n' + speedString + NBSP + NBSP + altString.padStart(6, NBSP);
+                    labelText += '\n' + speedString + NBSP + NNBSP + altString.padStart(6, NBSP);
                 }
                 labelText += '\n' + callsign;
             }
@@ -862,7 +855,7 @@ PlaneObject.prototype.updateIcon = function() {
         }
         if (extendedLabels == 1 || extendedLabels == 2) {
             if ((!this.onGround || (this.speed && this.speed > 18) || (this.selected && !SelectedAllPlanes))) {
-                labelText += speedString + NBSP + NBSP + altString.padStart(6, NBSP) + '\n';
+                labelText += speedString + NBSP + NNBSP + altString.padStart(6, NBSP) + '\n';
             }
         }
         if (extendedLabels < 3) {

@@ -2,6 +2,7 @@
 "use strict";
 
 let NBSP='\u00a0';
+let NNBSP='\u202f';
 let DEGREES='\u00b0'
 let UP_TRIANGLE='\u25b2'; // U+25B2 BLACK UP-POINTING TRIANGLE
 let DOWN_TRIANGLE='\u25bc'; // U+25BC BLACK DOWN-POINTING TRIANGLE
@@ -44,7 +45,7 @@ function format_track_long(track, rounded) {
 	}
 
 	let trackDir = Math.floor((360 + track % 360 + 22.5) / 45) % 8;
-	return  TrackDirections[trackDir] + ":" + NBSP + track.toFixed(rounded ? 0 : 1) + DEGREES;
+	return  TrackDirections[trackDir] + ":" + NNBSP + track.toFixed(rounded ? 0 : 1) + DEGREES;
 }
 function format_track_arrow(track) {
 	if (track == null){
@@ -56,7 +57,7 @@ function format_track_arrow(track) {
 }
 
 // alt in feet
-function format_altitude_brief(alt, vr, displayUnits) {
+function format_altitude_brief(alt, vr, displayUnits, withUnits) {
 	let alt_text;
 
 	if (alt == null){
@@ -66,6 +67,8 @@ function format_altitude_brief(alt, vr, displayUnits) {
 	}
 
 	alt_text = Math.round(convert_altitude(alt, displayUnits)).toString();
+    if (withUnits)
+        alt_text += NNBSP + get_unit_label("altitude", displayUnits);
 
 	// Vertical Rate Triangle
 	let verticalRateTriangle = "";
@@ -74,7 +77,7 @@ function format_altitude_brief(alt, vr, displayUnits) {
 	} else if (vr < -245){
 		verticalRateTriangle = DOWN_TRIANGLE;
 	} else {
-		verticalRateTriangle = EM_QUAD;
+		verticalRateTriangle = NNBSP;
 	}
 
 	return alt_text + verticalRateTriangle;
@@ -90,12 +93,12 @@ function format_altitude_long(alt, vr, displayUnits) {
 		return "on ground";
 	}
 
-	alt_text = Math.round(convert_altitude(alt, displayUnits)).toString() + NBSP + get_unit_label("altitude", displayUnits);
+	alt_text = Math.round(convert_altitude(alt, displayUnits)).toString() + NNBSP + get_unit_label("altitude", displayUnits);
 
 	if (vr > 192) {
-		return UP_TRIANGLE + NBSP + alt_text;
+		return UP_TRIANGLE + NNBSP + alt_text;
 	} else if (vr < -192) {
-		return DOWN_TRIANGLE + NBSP + alt_text;
+		return DOWN_TRIANGLE + NNBSP + alt_text;
 	} else {
 		return alt_text;
 	}
@@ -111,7 +114,7 @@ function format_altitude(alt, displayUnits) {
 		return "on ground";
 	}
 
-	alt_text = Math.round(convert_altitude(alt, displayUnits)).toString() + NBSP + get_unit_label("altitude", displayUnits);
+	alt_text = Math.round(convert_altitude(alt, displayUnits)).toString() + NNBSP + get_unit_label("altitude", displayUnits);
 
     return alt_text;
 }
@@ -138,12 +141,15 @@ function convert_altitude(alt, displayUnits) {
 }
 
 // speed in knots
-function format_speed_brief(speed, displayUnits) {
+function format_speed_brief(speed, displayUnits, withUnits) {
 	if (speed == null || isNaN(speed)) {
 		return "";
 	}
+    let speed_text = Math.round(convert_speed(speed, displayUnits)).toString();
+    if (withUnits)
+        speed_text += NNBSP + get_unit_label("speed", displayUnits);
 
-	return Math.round(convert_speed(speed, displayUnits)).toString();
+	return speed_text;
 }
 
 // speed in knots
@@ -152,7 +158,7 @@ function format_speed_long(speed, displayUnits) {
 		return "n/a";
 	}
 
-	let speed_text = Math.round(convert_speed(speed, displayUnits)) + NBSP + get_unit_label("speed", displayUnits);
+	let speed_text = Math.round(convert_speed(speed, displayUnits)) + NNBSP + get_unit_label("speed", displayUnits);
 
 	return speed_text;
 }
@@ -188,7 +194,7 @@ function format_distance_long(dist, displayUnits, fixed) {
 		fixed = 1;
 	}
 
-	let dist_text = convert_distance(dist, displayUnits).toFixed(fixed) + NBSP + get_unit_label("distance", displayUnits);
+	let dist_text = convert_distance(dist, displayUnits).toFixed(fixed) + NNBSP + get_unit_label("distance", displayUnits);
 
 	return dist_text;
 }
@@ -198,7 +204,7 @@ function format_distance_short (dist, displayUnits) {
 		return "n/a";
 	}
 
-	let dist_text = Math.round(convert_distance_short(dist, displayUnits)) + NBSP + get_unit_label("distanceShort", displayUnits);
+	let dist_text = Math.round(convert_distance_short(dist, displayUnits)) + NNBSP + get_unit_label("distanceShort", displayUnits);
 
 	return dist_text;
 }
@@ -238,7 +244,7 @@ function format_vert_rate_long(rate, displayUnits) {
 		return "n/a";
 	}
 
-	let rate_text = convert_vert_rate(rate, displayUnits).toFixed(displayUnits === "metric" ? 1 : 0) + NBSP + get_unit_label("verticalRate", displayUnits);
+	let rate_text = convert_vert_rate(rate, displayUnits).toFixed(displayUnits === "metric" ? 1 : 0) + NNBSP + get_unit_label("verticalRate", displayUnits);
 
 	return rate_text;
 }
@@ -254,7 +260,7 @@ function convert_vert_rate(rate, displayUnits) {
 
 // p is a [lon, lat] coordinate
 function format_latlng(p) {
-	return p[1].toFixed(3) + DEGREES + "," + NBSP + p[0].toFixed(3) + DEGREES;
+	return p[1].toFixed(3) + DEGREES + "," + NNBSP + p[0].toFixed(3) + DEGREES;
 }
 
 function format_data_source(source) {
