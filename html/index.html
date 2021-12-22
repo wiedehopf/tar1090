@@ -260,61 +260,81 @@
               SPATIAL
             </div>
           </div>
-          <div id=receiver_id_div class="infoBlockSection hidden">
-            <div>
-              <span class="infoHeading" title="receiver id that supplied the position data">rId:</span>
-              <span class="infoData" id="receiver_id">n/a</span>
-            </div>
+          <div id=spatial_block class="infoBlockSection">
+            <table class="infoSectionTable">
+              <tr id=receiver_id_div class="infoBlockSection hidden">
+                <td>
+                  <span class="infoHeading" title="receiver id that supplied the position data">rId:</span>
+                  <span class="infoData" id="receiver_id">n/a</span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="infoHeading" title="The speed of the aircraft over the ground.">Groundspeed:</span>
+                  <span class="infoData" id="selected_speed1">n/a</span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="infoHeading" title="The uncorrected pressure-derived height of the aircraft above mean sea level (based on barometric pressure)">Baro. Altitude</span>:
+                  <span class="infoData" id="selected_altitude1"></span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="infoHeading" title="The height of the aircraft (usually height above the WGS84 ellipsoid and derived from avionics which may be inertial or GNSS/satellite-based)">Geom. Altitude</span>:
+                  <span class="infoData" id="selected_altitude_geom1"></span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="infoHeading">
+                    <span title="Rate of climb or descent">Vert. Rate</span>:
+                  </div>
+                  <div class="infoData">
+                    <span id="selected_vert_rate">n/a</span>
+                  </div>
+                </td>
+              </tr>
+
+              <div class="rSpacer">
+              </div>
+
+              <tr>
+                <td>
+                  <div class="infoHeading">
+                    <span title="Direction the aircraft is traveling over the ground">Track</span>:
+                  </div>
+                  <div class="infoData">
+                    <span id="selected_track1">n/a</span>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="infoHeading">
+                    <span title="Latitude and longitude coordinates of the aircraft's last known position">Pos.:</span>
+                  </div>
+                  <div class="infoData">
+                    <span id="selected_position">n/a</span>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="infoHeading">
+                    <span title="Distance of the aircraft from your ADS-B site at its last known position">Distance</span>:
+                  </div>
+                  <div class="infoData">
+                    <span id="selected_sitedist2">n/a</span>
+                  </div>
+                </td>
+              </tr>
+
+
+            </table>
           </div>
-          <div class="infoBlockSection">
-
-            <div>
-              <span class="infoHeading" title="The speed of the aircraft over the ground.">Speed:</span>
-              <span class="infoData" id="selected_speed1">n/a</span>
-            </div>
-            <div>
-              <span class="infoHeading" title="The uncorrected pressure-derived height of the aircraft above mean sea level (based on barometric pressure)">Altitude</span>:
-              <span class="infoData" id="selected_altitude1"></span>
-            </div>
-            <div>
-              <div class="infoHeading">
-                <span title="Rate of climb or descent">Vert. Rate</span>:
-              </div>
-              <div class="infoData">
-                <span id="selected_vert_rate">n/a</span>
-              </div>
-            </div>
-
-            <div class="rSpacer">
-            </div>
-
-            <div>
-              <div class="infoHeading">
-                <span title="Direction the aircraft is traveling over the ground">Track</span>:
-              </div>
-              <div class="infoData">
-                <span id="selected_track1">n/a</span>
-              </div>
-            </div>
-            <div>
-              <div class="infoHeading">
-                <span title="Latitude and longitude coordinates of the aircraft's last known position">Pos.:</span>
-              </div>
-              <div class="infoData">
-                <span id="selected_position">n/a</span>
-              </div>
-            </div>
-            <div>
-              <div class="infoHeading">
-                <span title="Distance of the aircraft from your ADS-B site at its last known position">Distance</span>:
-              </div>
-              <div class="infoData">
-                <span id="selected_sitedist2">n/a</span>
-              </div>
-            </div>
-
-
-          </div> <!-- SPATIAL -->
+              <!-- SPATIAL -->
 
           <div class="sectionTitle">
             <div class="section-title-content">
@@ -498,7 +518,7 @@
                 <span title="The height of the aircraft (usually height above the WGS84 ellipsoid and derived from avionics which may be inertial or GNSS/satellite-based)">Geometric</span>:
               </div>
               <div class="infoData">
-                <span id="selected_altitude_geom">n/a</span>
+                <span id="selected_altitude_geom2">n/a</span>
               </div>
             </div>
             <div>

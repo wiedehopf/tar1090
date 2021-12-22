@@ -2899,7 +2899,8 @@ function refreshSelected() {
     jQuery('#selected_message_rate').updateText((selected.messageRate != null) ? (selected.messageRate.toFixed(1)) : "n/a");
     jQuery('#selected_photo_link').html(getPhotoLink(selected));
 
-    jQuery('#selected_altitude_geom').updateText(format_altitude_long(selected.alt_geom, selected.geom_rate, DisplayUnits));
+    jQuery('#selected_altitude_geom1').updateText(format_altitude_long(selected.alt_geom, selected.geom_rate, DisplayUnits));
+    jQuery('#selected_altitude_geom2').updateText(format_altitude_long(selected.alt_geom, selected.geom_rate, DisplayUnits));
     jQuery('#selected_ias').updateText(format_speed_long(selected.ias, DisplayUnits));
     jQuery('#selected_tas').updateText(format_speed_long(selected.tas, DisplayUnits));
     if (selected.mach == null) {
@@ -7338,6 +7339,15 @@ function deleteTraces() {
         delete plane.fullTrace;
     }
 }
+
+// just an idea, unused
+let infoBits = {
+    type: {
+        head: 'Type:',
+        title: '4 character ICAO type code (i.e.: A320,B738,G550)',
+        value: function(plane) { return plane.icaoType || 'n/a'; },
+    },
+};
 
 
 parseURLIcaos();
