@@ -6021,15 +6021,21 @@ function drawOutlineJson() {
         }
         if (!points || !points.length)
             return;
-        let geom = new ol.geom.LineString([[ points[0][1], points[0][0] ]]);
-        for (let j = 0; j < points.length; ++j) {
-            geom.appendCoordinate([ points[j][1], points[j][0] ]);
+        let geom = null;
+        let lastLon = null;
+        for (let j = 0; j < points.length + 1; ++j) {
+            const k = j % points.length;
+            const lat = points[k][0];
+            const lon = points[k][1];
+            const proj = ol.proj.fromLonLat([lon, lat]);
+            if (!geom || (lastLon && Math.abs(lon - lastLon) > 270)) {
+                geom = new ol.geom.LineString([proj]);
+                actualOutlineFeatures.addFeature(new ol.Feature(geom));
+            } else {
+                geom.appendCoordinate(proj);
+            }
+            lastLon = lon;
         }
-        geom.appendCoordinate([ points[0][1], points[0][0] ]);
-        geom.transform('EPSG:4326', 'EPSG:3857');
-
-        let feature = new ol.Feature(geom);
-        actualOutlineFeatures.addFeature(feature);
     });
 
     request.fail(function() {

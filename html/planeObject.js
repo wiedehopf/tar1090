@@ -2247,7 +2247,6 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
     const rate = state[7];
     const data = state[8];
 
-
     this.position = [lon, lat];
     this.position_time = _now;
     this.last_message_time = Math.max(_now, this.last_message_time);
