@@ -116,6 +116,7 @@ let autoselect = false;
 let nogpsOnly = false;
 let trace_hist_only = false;
 let traces_high_res = false;
+let show_rId = true;
 
 let infoBlockWidth = baseInfoBlockWidth;
 
@@ -2717,7 +2718,7 @@ function refreshSelected() {
     else
         jQuery('#selected_ownop').updateText("");
 
-    if (selected.rId) {
+    if (selected.rId && show_rId) {
         jQuery('#receiver_id').updateText(selected.rId);
         jQuery('#receiver_id_div').removeClass('hidden');
     } else {

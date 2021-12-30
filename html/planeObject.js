@@ -1842,7 +1842,7 @@ PlaneObject.prototype.updateLines = function() {
                 + "\n"
                 //+ NBSP + format_track_arrow(seg.track)
                 + timestamp;
-            if (true && seg.rId) {
+            if (seg.rId && show_rId) {
                 text += "\n" + seg.rId.substring(0,9); //+ "\n" + seg.rId.substring(9,18);
             }
 
