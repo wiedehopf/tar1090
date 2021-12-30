@@ -687,6 +687,8 @@ let shapes = {
     }
 }
 
+const _ulac = ["cessna", 0.92];
+
 let TypeDesignatorIcons = {
     'SHIP': ['balloon', 1], // Blimp
     'BALL': ['balloon', 1], // Balloon
@@ -1070,7 +1072,16 @@ let TypeDesignatorIcons = {
     //Jonker
     'TS1J': ['glider', 1],
 
-    'ULAC': ['cessna', 0.9],
+    'ULAC': _ulac,
+    'EV97': _ulac,
+    'FDCT': _ulac,
+    'WT9': _ulac,
+    'PIVI': _ulac,
+    'FK9': _ulac,
+    'AVID': _ulac,
+    'NG5': _ulac,
+    'PNR3': _ulac,
+    'TL20': _ulac,
 
     'SR20': ['cirrus_sr22', 1],
     'SR22': ['cirrus_sr22', 1],
@@ -1147,7 +1158,7 @@ let CategoryIcons = {
 
     "B2" : ['balloon', 1],
 
-    'B4': ['cirrus_sr22', 0.8],
+    'B4': _ulac,
 
     'B6': ['uav', 1],
 
@@ -1181,6 +1192,9 @@ function getBaseMarker(category, typeDesignator, typeDescription, wtc, addrtype,
     }
 
     if (typeDescription != null && typeDescription.length === 3) {
+        if (typeDescription === "L1P" && category === "B4") {
+            return _ulac;
+        }
         if (wtc !== null && wtc.length === 1) {
             let typeDescriptionWithWtc = typeDescription + "-" + wtc;
             if (typeDescriptionWithWtc === "L2J-M" && category === "A2") {
