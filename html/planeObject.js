@@ -2246,6 +2246,12 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
     const alt_geom = state[6] & 8;
     const rate = state[7];
     const data = state[8];
+    const type = state[9];
+    const geom_alt = state[10];
+    const geom_rate = state[11];
+    const ias = state[12];
+    const roll = state[13];
+    const rId = state[14];
 
     this.position = [lon, lat];
     this.position_time = _now;
@@ -2286,8 +2292,22 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
         this.geom_rate = null;
     }
 
-    if (state[9])
-        this.rId = state[9];
+    if (geom_alt !== undefined) {
+        this.alt_geom = geom_alt;
+    }
+    if (geom_rate !== undefined) {
+        this.geom_rate = geom_rate;
+    }
+
+    if (roll !== undefined)
+        this.roll = roll;
+    if (ias !== undefined)
+        this.ias = ias;
+    if (type !== undefined)
+        this.addrtype = (type == null) ? null : `${type}`;
+
+    if (rId !== undefined)
+        this.rId = rId;
 
     if (data != null) {
         if (data.type.substring(0,4) == "adsb") {
