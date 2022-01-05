@@ -509,7 +509,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
             stale_timeout = jaeroTimeout;
     }
     if (replay)
-        stale_timeout = replay.ival / 1000 + 5;
+        stale_timeout = 2 * replay.ival + 1;
 
     // Also check if the position was already stale when it was exported by dump1090
     // Makes stale check more accurate for example for 30s spaced history points
