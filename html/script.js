@@ -7220,21 +7220,31 @@ function coordsForExport(plane) {
     var coords = [];
     var numSegs = plane.track_linesegs.length;
     for (let i = 0; i < numSegs; i++) {
-        const proj = plane.track_linesegs[i].fixed.getCoordinates()[1];
+        const proj = plane.track_linesegs[i].fixed.getCoordinates()[0];
         if (proj) {
             const pos = ol.proj.toLonLat(proj);
-            const alt = plane.track_linesegs[i].alt_real;
+            let alt = plane.track_linesegs[i].alt_geom;
+            if (alt == null) {
+                alt = plane.track_linesegs[i].alt_real;
+                // Attempt to correct altitude. This could be better?
+                //
+                // 950 feet is the correction factor for an altimeter of 30.15.
+                // 25 feet is the quantum of transponder reporting. 0 altitude
+                // could be reported as -25, so just add 25.
+                alt = (alt + 950 + 25) * 0.3048;
+            } else {
+                alt = alt * 0.3048;
+            }
+            if (plane.track_linesegs[i].ground) {
+                alt = NaN;
+            }
+
             const ts = new Date(plane.track_linesegs[i].ts * 1000.0);
             if (!alt) {
                 console.log(`Skipping, no altitude: ${i} ${pos} ${ts}`);
                 continue;
             }
-            // Attempt to correct altitude. This could be better?
-            //
-            // 950 feet is the correction factor for an altimeter of 30.15.
-            // 25 feet is the quantum of transponder reporting. 0 altitude
-            // could be reported as -25, so just add 25.
-            coords.push({ pos, alt: (alt + 950 + 25) * 0.3048, ts });
+            coords.push({ pos, alt: alt, ts });
         } else {
             console.log(`Skipping ${i}`);
         }

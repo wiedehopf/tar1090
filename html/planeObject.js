@@ -364,6 +364,7 @@ PlaneObject.prototype.updateTrackPrev = function() {
     this.prev_true = this.true_head;
     this.prev_alt = this.altitude;
     this.prev_alt_rounded = this.alt_rounded;
+    this.prev_alt_geom = this.alt_geom;
     this.prev_speed = this.speed;
     this.prev_rId = this.rId;
 
@@ -406,6 +407,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
             ground: on_ground,
             altitude: this.alt_rounded,
             alt_real: this.altitude,
+            alt_geom: this.alt_geom,
             speed: this.speed,
             ts: now,
             track: this.rotation,
@@ -591,6 +593,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
             estimated: estimated,
             altitude: this.prev_alt_rounded,
             alt_real: this.prev_alt,
+            alt_geom: this.prev_alt_geom,
             speed: this.prev_speed,
             ground: on_ground,
             ts: this.prev_time,
@@ -1181,6 +1184,7 @@ PlaneObject.prototype.processTrace = function() {
                 estimated: false,
                 altitude: this.alt_rounded,
                 alt_real: this.altitude,
+                alt_geom: this.alt_geom,
                 speed: this.speed,
                 ground: (this.altitude == "ground"),
                 ts: this.position_time,
@@ -2468,6 +2472,7 @@ PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
         estimated: true,
         altitude: this.prev_alt_rounded,
         alt_real: this.prev_alt,
+        alt_geom: this.prev_alt_geom,
         speed: this.prev_speed,
         ground: on_ground,
         ts: this.prev_time,
@@ -2481,6 +2486,7 @@ PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
         estimated: true,
         altitude: this.prev_alt_rounded,
         alt_real: this.prev_alt,
+        alt_geom: this.prev_alt_geom,
         speed: this.prev_speed,
         ground: on_ground,
         track: this.prev_rot,
@@ -2494,6 +2500,7 @@ PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
         estimated: true,
         altitude: this.prev_alt_rounded,
         alt_real: this.prev_alt,
+        alt_geom: this.prev_alt_geom,
         speed: this.prev_speed,
         ground: on_ground,
         track: this.prev_rot,
