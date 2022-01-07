@@ -2262,6 +2262,10 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
     this.last_message_time = Math.max(_now, this.last_message_time);
     this.altitude = altitude;
 
+    if (altitude && altitude != "ground" && this.geom_diff_ts && _now - this.geom_diff_ts < 60) {
+        this.alt_geom = altitude + this.geom_diff;
+    }
+
     this.updateAlt();
 
     if (alt_geom) {
@@ -2342,6 +2346,12 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
                 this.flight = `${data.flight}`;
                 this.name = this.flight.trim() || 'n/a';
             }
+        }
+
+        if (data.alt_geom != null && !alt_geom && altitude != null && altitude != "ground") {
+            //this.alt_geom = altitude + this.geom_diff;
+            this.geom_diff = data.alt_geom - altitude;
+            this.geom_diff_ts = _now;
         }
 
         this.addrtype = (data.type == null) ? null : `${data.type}`;
