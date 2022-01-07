@@ -118,6 +118,9 @@ let trace_hist_only = false;
 let traces_high_res = false;
 let show_rId = true;
 
+let trackLabelsGeom = false;
+// track labels: uses geometric altitude MSL / EGM96
+
 let infoBlockWidth = baseInfoBlockWidth;
 
 const renderBuffer = 45;
@@ -942,14 +945,37 @@ function initPage() {
             }
         }
     });
+    new Toggle({
+        key: "trackLabelsGeom",
+        display: "Track labels: geom. alt.",
+        container: "#settingsLeft",
+        init: trackLabelsGeom,
+        setState: function(state) {
+            trackLabelsGeom = state;
+            remakeTrails();
+            refreshSelected();
+        }
+    });
 
     new Toggle({
-        key: "utcTimes",
-        display: "UTC times",
+        key: "utcTimesLive",
+        display: "Live track labels: UTC",
         container: "#settingsLeft",
-        init: utcTimes,
+        init: utcTimesLive,
         setState: function(state) {
-            utcTimes = state;
+            utcTimesLive = state;
+            remakeTrails();
+            refreshSelected();
+        }
+    });
+
+    new Toggle({
+        key: "utcTimesHistoric",
+        display: "Historic track labels: UTC",
+        container: "#settingsLeft",
+        init: utcTimesHistoric,
+        setState: function(state) {
+            utcTimesHistoric = state;
             remakeTrails();
             refreshSelected();
         }
@@ -2209,6 +2235,8 @@ function initMap() {
             for (let key in PlanesOrdered) {
                 PlanesOrdered[key].updateMarker();
             }
+            remakeTrails();
+            refreshSelected();
         }
     });
 
@@ -2640,7 +2668,7 @@ function refreshSelected() {
     if (showTrace) {
         if (selected.position_time) {
             const date = new Date(selected.position_time * 1000);
-            let timestamp = utcTimes ? zuluTime(date) : localTime(date);
+            let timestamp = utcTimesHistoric ? zuluTime(date) : localTime(date);
             jQuery('#trace_time').updateText('Time:\n' + timestamp);
         } else {
             jQuery('#trace_time').updateText('Time:\n');
@@ -2900,8 +2928,12 @@ function refreshSelected() {
     jQuery('#selected_message_rate').updateText((selected.messageRate != null) ? (selected.messageRate.toFixed(1)) : "n/a");
     jQuery('#selected_photo_link').html(getPhotoLink(selected));
 
-    jQuery('#selected_altitude_geom1').updateText(format_altitude_long(selected.alt_geom, selected.geom_rate, DisplayUnits));
-    jQuery('#selected_altitude_geom2').updateText(format_altitude_long(selected.alt_geom, selected.geom_rate, DisplayUnits));
+    let egm96 = selected.alt_geom;
+    if (selected.position && selected.alt_geom != null) {
+        egm96 = ol.egm96_universal.ellipsoidToEgm96(selected.position[1], selected.position[0], selected.alt_geom);
+    }
+    jQuery('#selected_altitude_geom1').updateText(format_altitude_long(egm96, selected.geom_rate, DisplayUnits));
+    jQuery('#selected_altitude_geom2').updateText(format_altitude_long(egm96, selected.geom_rate, DisplayUnits));
     jQuery('#selected_ias').updateText(format_speed_long(selected.ias, DisplayUnits));
     jQuery('#selected_tas').updateText(format_speed_long(selected.tas, DisplayUnits));
     if (selected.mach == null) {
@@ -3981,6 +4013,9 @@ function onDisplayUnitsChanged(e) {
     jQuery(".distanceUnit").text(get_unit_label("distance", DisplayUnits));
     jQuery(".verticalRateUnit").text(get_unit_label("verticalRate", DisplayUnits));
     TAR.planeMan.redraw();
+
+    remakeTrails();
+    refreshSelected();
 }
 
 function onFilterByAltitude(e) {
@@ -6640,7 +6675,7 @@ function replayOnSliderMove() {
     date.setUTCMinutes(Number(replay.minutes));
     replay.seconds = 0;
     date.setUTCSeconds(Number(replay.seconds));
-    if (true || utcTimes) {
+    if (true || utcTimesHistoric) {
         jQuery("#replayDateHint").html("Date: " + zDateString(date));
         jQuery("#replayTimeHint").html("Time: " + zuluTime(date));
     } else {
@@ -6677,7 +6712,7 @@ function replaySetTimeHint(arg) {
     replayJumpEnabled = false;
     let dateString;
     let timeString;
-    if (true || utcTimes) {
+    if (true || utcTimesHistoric) {
         dateString = zDateString(replay.ts);
         timeString = zuluTime(replay.ts);
     } else {

@@ -292,7 +292,7 @@ if (usp.has('pTracks')) {
 }
 
 function getDay(date) {
-    if (utcTimes)
+    if ((utcTimesLive && !showTrace) || (utcTimesHistoric && showTrace))
         return date.getUTCDate();
     else
         return date.getDate();
@@ -303,11 +303,12 @@ function zuluTime(date) {
         + ":" + date.getUTCSeconds().toString().padStart(2,'0')
         + NBSP + "Z";
 }
+const TIMEZONE = new Date().toLocaleTimeString(undefined,{timeZoneName:'short'}).split(' ')[2];
 function localTime(date) {
     return date.getHours().toString().padStart(2,'0')
         + ":" + date.getMinutes().toString().padStart(2,'0')
         + ":" + date.getSeconds().toString().padStart(2,'0')
-        + NBSP + "L";
+    + NBSP + TIMEZONE;
 }
 function zDateString(date) {
     let string = date.getUTCFullYear() + '-'

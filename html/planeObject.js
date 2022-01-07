@@ -408,6 +408,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
             altitude: this.alt_rounded,
             alt_real: this.altitude,
             alt_geom: this.alt_geom,
+            position: this.position,
             speed: this.speed,
             ts: now,
             track: this.rotation,
@@ -594,6 +595,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
             altitude: this.prev_alt_rounded,
             alt_real: this.prev_alt,
             alt_geom: this.prev_alt_geom,
+            position: this.prev_position,
             speed: this.prev_speed,
             ground: on_ground,
             ts: this.prev_time,
@@ -1185,6 +1187,7 @@ PlaneObject.prototype.processTrace = function() {
                 altitude: this.alt_rounded,
                 alt_real: this.altitude,
                 alt_geom: this.alt_geom,
+                position: this.position,
                 speed: this.speed,
                 ground: (this.altitude == "ground"),
                 ts: this.position_time,
@@ -1815,43 +1818,64 @@ PlaneObject.prototype.updateLines = function() {
             trackLabels ||
             ((i == 0 || i == this.track_linesegs.length-1 ||seg.leg) && showTrace && enableLabels)
         ) {
-            const alt_real = (seg.alt_real != null) ? seg.alt_real : 'n/a';
-            const speed = (seg.speed != null) ? seg.speed.toFixed(0).toString() : 'n/a';
+            // 0 vertical rate to avoid arrow
+            let altString;
+            if(seg.alt_real == "ground") {
+                altString = "Ground";
+            } else if (trackLabelsGeom) {
+                if (seg.alt_geom == null) {
+                    altString = (NBSP+'?'+NBSP);
+                } else {
+                    altString = format_altitude_brief(
+                        ol.egm96_universal.ellipsoidToEgm96(seg.position[1], seg.position[0], seg.alt_real),
+                        0, DisplayUnits, showLabelUnits
+                    );
+                }
+            } else {
+                if (seg.alt_real == null) {
+                    altString = (NBSP+'?'+NBSP);
+                } else {
+                    altString = format_altitude_brief(seg.alt_real, 0, DisplayUnits, showLabelUnits);
+                }
+            }
+            const speedString = (seg.speed == null) ? (NBSP+'?'+NBSP) : format_speed_brief(seg.speed, DisplayUnits, showLabelUnits).padStart(4, NBSP);
+
             seg.label = new ol.Feature(new ol.geom.Point(seg.fixed.getFirstCoordinate()));
-            let timestamp;
+            let timestamp1;
+            let timestamp2 = "";
             const date = new Date(seg.ts * 1000);
             const refDate = (showTrace || replay) ? traceDate : new Date();
             if (getDay(refDate) == getDay(date)) {
-                timestamp = "";
+                timestamp1 = "";
             } else {
-                if (utcTimes) {
-                    timestamp = zDateString(date);
+                if ((utcTimesLive && !showTrace) || (utcTimesHistoric && showTrace)) {
+                    timestamp1 = zDateString(date);
                 } else {
-                    timestamp = lDateString(date);
+                    timestamp1 = lDateString(date);
                 }
-                timestamp += '\n';
+                timestamp1 += '\n';
             }
-            if (utcTimes) {
-                timestamp += zuluTime(date);
+            if ((utcTimesLive && !showTrace) || (utcTimesHistoric && showTrace)) {
+                timestamp2 += zuluTime(date);
             } else {
-                timestamp += localTime(date);
+                timestamp2 += localTime(date);
             }
             if (traces_high_res) {
-                let zz = timestamp.slice(-2);
-                timestamp = timestamp.slice(0, -2) + '.' + (Math.floor((seg.ts*10)) % 10) + zz;
+                timestamp2 = timestamp2.split(NBSP);
+                timestamp2 = timestamp2[0] + '.' + (Math.floor((seg.ts*10)) % 10) + NBSP + timestamp2[1];
             }
             let text =
-                speed.padStart(3, NBSP) + "  "
-                + (alt_real == "ground" ? ("Ground") : (alt_real.toString().padStart(6, NBSP)))
+                speedString.padStart(3, NBSP) + "  "
+                + altString.padStart(6, NBSP)
                 + "\n"
                 //+ NBSP + format_track_arrow(seg.track)
-                + timestamp;
+                + timestamp1 + timestamp2;
             if (seg.rId && show_rId) {
                 text += "\n" + seg.rId.substring(0,9); //+ "\n" + seg.rId.substring(9,18);
             }
 
             if (showTrace && !trackLabels)
-                text = timestamp;
+                text = timestamp1 + timestamp2;
 
             let fill = labelFill;
             let zIndex = -i - 50 * (seg.alt_real == null);
@@ -2483,6 +2507,7 @@ PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
         altitude: this.prev_alt_rounded,
         alt_real: this.prev_alt,
         alt_geom: this.prev_alt_geom,
+        position: this.prev_position,
         speed: this.prev_speed,
         ground: on_ground,
         ts: this.prev_time,
@@ -2497,6 +2522,7 @@ PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
         altitude: this.prev_alt_rounded,
         alt_real: this.prev_alt,
         alt_geom: this.prev_alt_geom,
+        position: this.prev_position,
         speed: this.prev_speed,
         ground: on_ground,
         track: this.prev_rot,
@@ -2511,6 +2537,7 @@ PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
         altitude: this.prev_alt_rounded,
         alt_real: this.prev_alt,
         alt_geom: this.prev_alt_geom,
+        position: this.prev_position,
         speed: this.prev_speed,
         ground: on_ground,
         track: this.prev_rot,
