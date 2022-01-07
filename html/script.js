@@ -7237,6 +7237,8 @@ function coordsForExport(plane) {
             }
             if (plane.track_linesegs[i].ground) {
                 alt = NaN;
+            } else if (alt != null) {
+                alt = ol.egm96_universal.ellipsoidToEgm96(pos[1], pos[0], alt);
             }
 
             const ts = new Date(plane.track_linesegs[i].ts * 1000.0);
