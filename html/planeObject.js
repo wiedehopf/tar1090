@@ -824,7 +824,13 @@ PlaneObject.prototype.updateIcon = function() {
             callsign =  NBSP + 'hex: ' + this.icao + NBSP;
         const unknown = NBSP+NBSP+"?"+NBSP+NBSP;
 
-        let altString = (this.altitude == null) ? unknown : format_altitude_brief(this.altitude, this.vert_rate, DisplayUnits, showLabelUnits);
+        let alt;
+        if (labelsGeom) {
+            alt = adjust_geom_alt(this.alt_geom, this.position);
+        } else {
+            alt = this.altitude;
+        }
+        let altString = (alt == null) ? unknown : format_altitude_brief(alt, this.vert_rate, DisplayUnits, showLabelUnits);
         let speedString = (this.speed == null) ? (NBSP+'?'+NBSP) : format_speed_brief(this.speed, DisplayUnits, showLabelUnits).padStart(4, NBSP);
 
         labelText = "";
@@ -1822,20 +1828,18 @@ PlaneObject.prototype.updateLines = function() {
             let altString;
             if(seg.alt_real == "ground") {
                 altString = "Ground";
-            } else if (trackLabelsGeom) {
-                if (seg.alt_geom == null) {
-                    altString = (NBSP+'?'+NBSP);
-                } else {
-                    altString = format_altitude_brief(
-                        ol.egm96_universal.ellipsoidToEgm96(seg.position[1], seg.position[0], seg.alt_real),
-                        0, DisplayUnits, showLabelUnits
-                    );
-                }
             } else {
-                if (seg.alt_real == null) {
+                let alt;
+                if (labelsGeom) {
+                    alt = adjust_geom_alt(seg.alt_geom, seg.position);
+                } else {
+                    alt = seg.alt_real;
+                }
+
+                if (alt == null) {
                     altString = (NBSP+'?'+NBSP);
                 } else {
-                    altString = format_altitude_brief(seg.alt_real, 0, DisplayUnits, showLabelUnits);
+                    altString = format_altitude_brief(alt, 0, DisplayUnits, showLabelUnits);
                 }
             }
             const speedString = (seg.speed == null) ? (NBSP+'?'+NBSP) : format_speed_brief(seg.speed, DisplayUnits, showLabelUnits).padStart(4, NBSP);

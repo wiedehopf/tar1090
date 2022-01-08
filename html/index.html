@@ -11,7 +11,7 @@
 
     <!-- CSS_ANCHOR -->
     <link rel="stylesheet" href="libs/jquery-ui-1.12.1.min.css" type="text/css">
-    <link rel="stylesheet" href="libs/ol-643.css" type="text/css" />
+    <link rel="stylesheet" href="libs/ol-6.10.0.css" type="text/css" />
     <link rel="stylesheet" href="libs/ol-layerswitcher-370.css" type="text/css"/>
     <link rel="stylesheet" href="style.css" type="text/css" />
 
@@ -282,7 +282,7 @@
               </tr>
               <tr>
                 <td>
-                  <span class="infoHeading" title="The geometric GPS derived altitude (MSL), converted to datum EGM96 (KML, typical online maps)">Geom. Altitude</span>:
+                  <span class="infoHeading" title="The geometric GPS derived altitude referenced to WGS84 ellipsoid (or reference EGM96 when enabled in the settings)">Geom. Altitude</span>:
                   <span class="infoData" id="selected_altitude_geom1"></span>
                 </td>
               </tr>
@@ -515,7 +515,7 @@
             </div>
             <div>
               <div class="infoHeading">
-                <span title="The geometric GPS derived altitude (MSL), converted to datum EGM96 (KML, typical online maps)(was WGS84 before the change)">Geometric</span>:
+                <span title="The geometric GPS derived altitude referenced to WGS84 ellipsoid (or reference EGM96 when enabled in the settings)">Geometric</span>:
               </div>
               <div class="infoData">
                 <span id="selected_altitude_geom2">n/a</span>
@@ -1015,7 +1015,7 @@
     <script src="libs/elm-pep-01.js"></script>
     <script src="libs/jquery-ui-1.12.1.min.js"></script>
     <script src="libs/jquery.ui.touch-punch-1.12.1.js"></script>
-    <script src="libs/ol-custom014.js"></script>
+    <script src="libs/ol-custom016.js"></script>
 
     <script src="early.js"></script>
 
@@ -1031,6 +1031,7 @@
 
     <script src="planeObject.js"></script>
     <script src="script.js"></script>
+
 
     <link rel="preload" as="image" href="images/sprites010.png">
 

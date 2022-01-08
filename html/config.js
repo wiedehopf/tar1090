@@ -277,6 +277,9 @@ HideCols = [
 // provide ZZZZ.png to be shown when the type is not known.
 // this feature is provided as is please don't expect tar1090's support for getting the pictures right.
 
+// labelsGeom = false; // labels: uses geometric altitude (WGS84 ellipsoid unless geomUseEGM is enabled
+// geomUseEGM = false; // use EGM96 for displaying geometric altitudes (extra load time!)
+
 // windLabelsSlim = false;
 // showLabelUnits = true;
 //

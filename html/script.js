@@ -118,9 +118,6 @@ let trace_hist_only = false;
 let traces_high_res = false;
 let show_rId = true;
 
-let trackLabelsGeom = false;
-// track labels: uses geometric altitude MSL / EGM96
-
 let infoBlockWidth = baseInfoBlockWidth;
 
 const renderBuffer = 45;
@@ -946,14 +943,39 @@ function initPage() {
         }
     });
     new Toggle({
-        key: "trackLabelsGeom",
-        display: "Track labels: geom. alt.",
+        key: "labelsGeom",
+        display: "Labels: geom. alt. (WGS84)",
         container: "#settingsLeft",
-        init: trackLabelsGeom,
+        init: labelsGeom,
         setState: function(state) {
-            trackLabelsGeom = state;
-            remakeTrails();
-            refreshSelected();
+            labelsGeom = state;
+            if (loadFinished) {
+                remakeTrails();
+                refreshSelected();
+            }
+        }
+    });
+    new Toggle({
+        key: "geomUseEGM",
+        display: "Geom. alt.: WGS84 -> EGM conversion (long load)",
+        container: "#settingsLeft",
+        init: geomUseEGM,
+        setState: function(state) {
+            geomUseEGM = state;
+            if (geomUseEGM) {
+                let egm = loadEGM();
+                if (egm) {
+                    egm.addEventListener('load', function() {
+                        remakeTrails();
+                        refreshSelected();
+                    });
+                    return;
+                }
+            }
+            if (loadFinished) {
+                remakeTrails();
+                refreshSelected();
+            }
         }
     });
 
@@ -981,6 +1003,39 @@ function initPage() {
         }
     });
 
+    new Toggle({
+        key: "windLabelsSlim",
+        display: "Smaller wind labels",
+        container: "#settingsLeft",
+        init: windLabelsSlim,
+        setState: function(state) {
+            windLabelsSlim = state;
+            if (!loadFinished)
+                return;
+            for (let key in PlanesOrdered) {
+                PlanesOrdered[key].updateMarker();
+            }
+        }
+    });
+
+    new Toggle({
+        key: "showLabelUnits",
+        display: "Label units",
+        container: "#settingsLeft",
+        init: showLabelUnits,
+        setState: function(state) {
+            showLabelUnits = state;
+            if (!loadFinished)
+                return;
+            for (let key in PlanesOrdered) {
+                PlanesOrdered[key].updateMarker();
+            }
+            remakeTrails();
+            refreshSelected();
+        }
+    });
+
+
     jQuery('#tStop').on('click', function() { traceOpts.replaySpeed = 0; gotoTime(traceOpts.showTime); });
     jQuery('#t1x').on('click', function() { replaySpeedChange(1); });
     jQuery('#t5x').on('click', function() { replaySpeedChange(5); });
@@ -991,7 +1046,7 @@ function initPage() {
     new Toggle({
         key: "shareFilters",
         display: "Include Filters In URLs",
-        container: "#settingsLeft",
+        container: "#settingsRight",
         init: false,
         setState: function(state) {
             updateAddressBar();
@@ -1001,7 +1056,7 @@ function initPage() {
     new Toggle({
         key: "debugTracks",
         display: "Debug Tracks",
-        container: "#settingsLeft",
+        container: "#settingsRight",
         init: false,
         setState: function(state) {
             debugTracks = state;
@@ -1012,7 +1067,7 @@ function initPage() {
     new Toggle({
         key: "debugAll",
         display: "Debug show all",
-        container: "#settingsLeft",
+        container: "#settingsRight",
         init: false,
         setState: function(state) {
             if (state)
@@ -2208,39 +2263,6 @@ function initMap() {
         }
     });
 
-    new Toggle({
-        key: "windLabelsSlim",
-        display: "Smaller wind labels",
-        container: "#settingsLeft",
-        init: windLabelsSlim,
-        setState: function(state) {
-            windLabelsSlim = state;
-            if (!loadFinished)
-                return;
-            for (let key in PlanesOrdered) {
-                PlanesOrdered[key].updateMarker();
-            }
-        }
-    });
-
-    new Toggle({
-        key: "showLabelUnits",
-        display: "Label units",
-        container: "#settingsLeft",
-        init: showLabelUnits,
-        setState: function(state) {
-            showLabelUnits = state;
-            if (!loadFinished)
-                return;
-            for (let key in PlanesOrdered) {
-                PlanesOrdered[key].updateMarker();
-            }
-            remakeTrails();
-            refreshSelected();
-        }
-    });
-
-
     window.addEventListener('keydown', function(e) {
         active();
         if (e.defaultPrevented ) {
@@ -2928,12 +2950,8 @@ function refreshSelected() {
     jQuery('#selected_message_rate').updateText((selected.messageRate != null) ? (selected.messageRate.toFixed(1)) : "n/a");
     jQuery('#selected_photo_link').html(getPhotoLink(selected));
 
-    let egm96 = selected.alt_geom;
-    if (selected.position && selected.alt_geom != null) {
-        egm96 = ol.egm96_universal.ellipsoidToEgm96(selected.position[1], selected.position[0], selected.alt_geom);
-    }
-    jQuery('#selected_altitude_geom1').updateText(format_altitude_long(egm96, selected.geom_rate, DisplayUnits));
-    jQuery('#selected_altitude_geom2').updateText(format_altitude_long(egm96, selected.geom_rate, DisplayUnits));
+    jQuery('#selected_altitude_geom1').updateText(format_altitude_long(selected.alt_geom, selected.geom_rate, DisplayUnits));
+    jQuery('#selected_altitude_geom2').updateText(format_altitude_long(selected.alt_geom, selected.geom_rate, DisplayUnits));
     jQuery('#selected_ias').updateText(format_speed_long(selected.ias, DisplayUnits));
     jQuery('#selected_tas').updateText(format_speed_long(selected.tas, DisplayUnits));
     if (selected.mach == null) {
@@ -7272,8 +7290,8 @@ function coordsForExport(plane) {
             }
             if (plane.track_linesegs[i].ground) {
                 alt = NaN;
-            } else if (alt != null) {
-                alt = ol.egm96_universal.ellipsoidToEgm96(pos[1], pos[0], alt);
+            } else if (alt != null && egmLoaded) {
+                alt = egm96.ellipsoidToEgm96(pos[1], pos[0], alt);
             }
 
             const ts = new Date(plane.track_linesegs[i].ts * 1000.0);
@@ -7331,7 +7349,39 @@ function selectedPlanes() {
 }
 
 // Exports currently selected aircraft as KML.
+
+let egmScript = null;
+let egmLoaded = false;
+function loadEGM() {
+    if (egmScript) {
+        return null;
+    }
+    egmScript = document.createElement('script');
+    egmScript.src = "libs/egm96-universal-1.1.0.min.js";
+    egmScript.addEventListener('load', function() {
+        egmLoaded = true;
+    });
+    document.body.appendChild(egmScript);
+    return egmScript;
+}
+function adjust_geom_alt(alt, pos) {
+    if (geomUseEGM && egmLoaded) {
+        return egm96.ellipsoidToEgm96(pos[1], pos[0], alt);
+    } else {
+        return alt;
+    }
+}
 function exportKML() {
+    if (!egmLoaded) {
+        let egm = loadEGM()
+        if (egm) {
+            egm.addEventListener('load', function() {
+                exportKML();
+            });
+        }
+        return;
+    }
+
     const planes = selectedPlanes();
     const folders = [];
     for (let i = 0; i < planes.length; i++) {
