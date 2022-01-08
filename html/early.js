@@ -307,8 +307,7 @@ const TIMEZONE = new Date().toLocaleTimeString(undefined,{timeZoneName:'short'})
 function localTime(date) {
     return date.getHours().toString().padStart(2,'0')
         + ":" + date.getMinutes().toString().padStart(2,'0')
-        + ":" + date.getSeconds().toString().padStart(2,'0')
-    + NBSP + TIMEZONE;
+        + ":" + date.getSeconds().toString().padStart(2,'0');
 }
 function zDateString(date) {
     let string = date.getUTCFullYear() + '-'

@@ -1859,11 +1859,14 @@ PlaneObject.prototype.updateLines = function() {
                 }
                 timestamp1 += '\n';
             }
-            if ((utcTimesLive && !showTrace) || (utcTimesHistoric && showTrace)) {
-                timestamp2 += zuluTime(date);
-            } else {
+            if ((showTrace && !utcTimesLive) {
+                timestamp2 += (localTime(date) + '\n' + TIMEZONE);
+            } else if (!showTrace && !utcTimesLive) {
                 timestamp2 += localTime(date);
+            } else {
+                timestamp2 += zuluTime(date);
             }
+
             if (traces_high_res) {
                 timestamp2 = timestamp2.split(NBSP);
                 timestamp2 = timestamp2[0] + '.' + (Math.floor((seg.ts*10)) % 10) + NBSP + timestamp2[1];

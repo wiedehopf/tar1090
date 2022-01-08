@@ -2690,7 +2690,7 @@ function refreshSelected() {
     if (showTrace) {
         if (selected.position_time) {
             const date = new Date(selected.position_time * 1000);
-            let timestamp = utcTimesHistoric ? zuluTime(date) : localTime(date);
+            let timestamp = utcTimesHistoric ? zuluTime(date) : (lDateString(date) + ' ' + localTime(date) + NBSP + TIMEZONE);
             jQuery('#trace_time').updateText('Time:\n' + timestamp);
         } else {
             jQuery('#trace_time').updateText('Time:\n');
@@ -6698,7 +6698,7 @@ function replayOnSliderMove() {
         jQuery("#replayTimeHint").html("Time: " + zuluTime(date));
     } else {
         jQuery("#replayDateHint").html("Date: " + lDateString(date));
-        jQuery("#replayTimeHint").html("Time: " + localTime(date));
+        jQuery("#replayTimeHint").html("Time: " + localTime(date) + NBSP + TIMEZONE);
     }
 }
 let replayJumpEnabled = true;
@@ -6735,7 +6735,7 @@ function replaySetTimeHint(arg) {
         timeString = zuluTime(replay.ts);
     } else {
         dateString = lDateString(replay.ts);
-        timeString = localTime(replay.ts);
+        timeString = localTime(replay.ts) + NBSP + TIMEZONE;
     }
     jQuery("#replayDateHint").html("Date: " + dateString);
     jQuery("#replayTimeHint").html("Time: " + timeString);
