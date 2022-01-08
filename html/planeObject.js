@@ -817,11 +817,11 @@ PlaneObject.prototype.updateIcon = function() {
     ) {
         let callsign = "";
         if (this.flight && this.flight.trim())
-            callsign =  NBSP + this.flight.trim() + NBSP;
+            callsign =  this.flight.trim();
         else if (this.registration)
-            callsign =  NBSP + 'reg: ' + this.registration + NBSP;
+            callsign =  'reg: ' + this.registration;
         else
-            callsign =  NBSP + 'hex: ' + this.icao + NBSP;
+            callsign =   'hex: ' + this.icao;
         const unknown = NBSP+NBSP+"?"+NBSP+NBSP;
 
         let alt;
@@ -831,7 +831,7 @@ PlaneObject.prototype.updateIcon = function() {
             alt = this.altitude;
         }
         let altString = (alt == null) ? unknown : format_altitude_brief(alt, this.vert_rate, DisplayUnits, showLabelUnits);
-        let speedString = (this.speed == null) ? (NBSP+'?'+NBSP) : format_speed_brief(this.speed, DisplayUnits, showLabelUnits).padStart(4, NBSP);
+        let speedString = (this.speed == null) ? (NBSP+'?'+NBSP) : format_speed_brief(this.speed, DisplayUnits, showLabelUnits).padStart(3, NBSP);
 
         labelText = "";
         if (extendedLabels == 3) {
@@ -924,10 +924,11 @@ PlaneObject.prototype.updateIcon = function() {
                     backgroundFill: bgFill,
                     stroke: labelStrokeNarrow,
                     textAlign: 'left',
-                    textBaseline: "top",
+                    textBaseline: 'top',
                     font: labelFont,
                     offsetX: (this.shape.w *0.5*0.74*this.scale),
                     offsetY: (this.shape.w *0.5*0.74*this.scale),
+                    padding: [1, 0, -1, 2],
                 }),
                 zIndex: this.zIndex,
             };
@@ -1842,7 +1843,7 @@ PlaneObject.prototype.updateLines = function() {
                     altString = format_altitude_brief(alt, 0, DisplayUnits, showLabelUnits);
                 }
             }
-            const speedString = (seg.speed == null) ? (NBSP+'?'+NBSP) : format_speed_brief(seg.speed, DisplayUnits, showLabelUnits).padStart(4, NBSP);
+            const speedString = (seg.speed == null) ? (NBSP+'?'+NBSP) : format_speed_brief(seg.speed, DisplayUnits, showLabelUnits).padStart(3, NBSP);
 
             seg.label = new ol.Feature(new ol.geom.Point(seg.fixed.getFirstCoordinate()));
             let timestamp1;
@@ -1859,7 +1860,7 @@ PlaneObject.prototype.updateLines = function() {
                 }
                 timestamp1 += '\n';
             }
-            if ((showTrace && !utcTimesLive) {
+            if (showTrace && !utcTimesLive) {
                 timestamp2 += (localTime(date) + '\n' + TIMEZONE);
             } else if (!showTrace && !utcTimesLive) {
                 timestamp2 += localTime(date);
