@@ -871,6 +871,7 @@ let TypeDesignatorIcons = {
     'SF50': ['jet_nonswept', 0.94],
 
     'C97': ['super_guppy', 1],
+    'SGUP': ['super_guppy', 1],
     'A3ST': ['beluga', 1],
     'A337': ['beluga', 1.06],
     'WB57': ['wb57', 1],
