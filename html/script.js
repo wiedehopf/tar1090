@@ -7432,6 +7432,18 @@ function exportKML() {
             const coordObjs = coords.map((c) => {
                 return ["gx:coord", {}, `${c.pos[0]} ${c.pos[1]} ${c.alt}`];
             });
+            // splice together the xml track with / without altitude mode
+            // clamptoground is google earth default while other programs error on having that option set specifically
+            // so let google earth default to clamp to ground for ground track
+            let xmlTrack = ["gx:Track", {}];
+            if (!ground) {
+                xmlTrack.push(["altitudeMode", {}, "absolute"]);
+            }
+            xmlTrack = xmlTrack.concat([
+                ["extrude", {}, ground ? "0" : "1"],
+                ...whenObjs,
+                ...coordObjs
+            ]);
             folder.push(
                 ["Placemark", {},
                     ["name", {}, (plane.registration || plane.icao).toUpperCase()],
@@ -7446,12 +7458,7 @@ function exportKML() {
                             ]
                         ]
                     ],
-                    ["gx:Track", {},
-                        ["altitudeMode", {}, ground ? "clampToGround" : "absolute"],
-                        ["extrude", {}, ground ? "0" : "1"],
-                        ...whenObjs,
-                        ...coordObjs
-                    ]
+                    xmlTrack
                 ]
             );
         }
