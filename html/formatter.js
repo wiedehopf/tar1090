@@ -134,7 +134,7 @@ function format_onground (alt) {
 // alt in feet
 function convert_altitude(alt, displayUnits) {
 	if (displayUnits === "metric") {
-		return alt / 3.2808;  // feet to meters
+		return alt * 0.3048;  // feet to meters
 	}
 
 	return alt;

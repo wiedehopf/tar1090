@@ -7270,14 +7270,16 @@ function baseExportFilenameForAircrafts(aircrafts) {
 
 // Returns an array of {pos, alt, ts} for an aircraft.
 function coordsForExport(plane) {
-    var coords = [];
-    var numSegs = plane.track_linesegs.length;
+    let coords = [];
+    let numSegs = plane.track_linesegs.length;
     for (let i = 0; i < numSegs; i++) {
-        const proj = plane.track_linesegs[i].fixed.getCoordinates()[0];
-        if (proj) {
-            const pos = ol.proj.toLonLat(proj);
-            let alt = plane.track_linesegs[i].alt_geom;
-            if (alt == null) {
+        const pos = plane.track_linesegs[i].position;
+        if (pos) {
+            let alt = null;
+            if (plane.track_linesegs[i].alt_geom != null) {
+                alt = plane.track_linesegs[i].alt_geom;
+                alt = Math.round(alt * 0.3048); // convert ft to m
+            } else if (plane.track_linesegs[i].alt_real != null) {
                 alt = plane.track_linesegs[i].alt_real;
                 // Attempt to correct altitude. This could be better?
                 //
@@ -7285,21 +7287,21 @@ function coordsForExport(plane) {
                 // 25 feet is the quantum of transponder reporting. 0 altitude
                 // could be reported as -25, so just add 25.
                 alt = (alt + 950 + 25) * 0.3048;
-            } else {
-                alt = alt * 0.3048;
             }
             if (plane.track_linesegs[i].ground) {
-                alt = NaN;
+                alt = "ground";
             } else if (alt != null && egmLoaded) {
-                alt = egm96.ellipsoidToEgm96(pos[1], pos[0], alt);
+                // alt is in meters at this point
+                alt = Math.round(egm96.ellipsoidToEgm96(pos[1], pos[0], alt));
             }
 
             const ts = new Date(plane.track_linesegs[i].ts * 1000.0);
-            if (!alt) {
+            if (alt == null) {
                 console.log(`Skipping, no altitude: ${i} ${pos} ${ts}`);
                 continue;
             }
-            coords.push({ pos, alt: alt, ts });
+            //console.log(`exporting coord: ${i} ${pos} ${alt} ${ts}`);
+            coords.push({ pos: pos, alt: alt, ts: ts});
         } else {
             console.log(`Skipping ${i}`);
         }
@@ -7366,7 +7368,7 @@ function loadEGM() {
 }
 function adjust_geom_alt(alt, pos) {
     if (geomUseEGM && egmLoaded) {
-        return egm96.ellipsoidToEgm96(pos[1], pos[0], alt);
+        return egm96.ellipsoidToEgm96(pos[1], pos[0], alt * 0.3048) / 0.3048;
     } else {
         return alt;
     }
@@ -7384,39 +7386,75 @@ function exportKML() {
 
     const planes = selectedPlanes();
     const folders = [];
-    for (let i = 0; i < planes.length; i++) {
-        const plane = planes[i];
-        const coords = coordsForExport(plane);
-        const whenObjs = coords.map((c) => {
-            const date = `${c.ts.getUTCFullYear()}-${zeroPad(c.ts.getUTCMonth() + 1, 2)}-${zeroPad(c.ts.getUTCDate(), 2)}`;
-            const time = `T${zeroPad(c.ts.getUTCHours(), 2)}:${zeroPad(c.ts.getUTCMinutes(), 2)}:${zeroPad(c.ts.getUTCSeconds(), 2)}.${zeroPad(c.ts.getUTCMilliseconds(), 3)}Z`;
-            return ["when", {}, date + time];
-        });
-        const coordObjs = coords.map((c) => ["gx:coord", {}, `${c.pos[0]} ${c.pos[1]} ${c.alt}`]);
-        var folder = ["Folder", {},
-            ["name", {}, `${(plane.registration || plane.icao).toUpperCase()} track`],
-            ["Placemark", {},
-                ["name", {}, (plane.registration || plane.icao).toUpperCase()],
-                ["Style", {},
-                    ["LineStyle", {},
-                        ["color", {}, RGBColorToKMLColor(EXPORT_RGB_COLORS[i % EXPORT_RGB_COLORS.length])],
-                        ["width", {}, 4]
-                    ],
-                    ["IconStyle", {},
-                        ["Icon", {},
-                            ["href", {}, "http://maps.google.com/mapfiles/kml/shapes/airports.png"]
-                        ]
-                    ]
-                ],
-                ["gx:Track", {},
-                    ["altitudeMode", {}, "absolute"],
-                    ["extrude", {}, "1"],
-                    ["tessellate", {}, "1"],
-                    ...whenObjs,
-                    ...coordObjs
-                ]
-            ]
+    for (let planeIndex = 0; planeIndex < planes.length; planeIndex++) {
+        const plane = planes[planeIndex];
+        let folder = ["Folder", {},
+            ["name", {}, `${(plane.registration || plane.icao).toUpperCase()} track`]
         ];
+        const coords = coordsForExport(plane);
+        let sections = [];
+        let currentSection = null;
+        let lastGround = null;
+        let lastC = null;
+        for (let i in coords) {
+            const c = coords[i];
+            const ground = (c.alt == "ground");
+            if (ground !== lastGround) {
+                // when changing between airborne and ground, create new section
+                if (lastC && currentSection) {
+                    // double up last coordinate to work around strange google earth transparency
+                    currentSection.coords.push(lastC);
+                }
+                currentSection = { ground: ground, coords: [] };
+                sections.push(currentSection);
+            }
+            lastGround = ground;
+            if (ground) {
+                c.alt = 0; // set KML altitude to zero
+            }
+            currentSection.coords.push(c);
+            lastC = c;
+        }
+        if (lastC && currentSection) {
+            // double up last coordinate to work around strange google earth transparency
+            currentSection.coords.push(lastC);
+        }
+        for (let i in sections) {
+            console.log("section " + i);
+            const s = sections[i];
+            const coords = s.coords;
+            const ground = s.ground;
+            const whenObjs = coords.map((c) => {
+                const date = `${c.ts.getUTCFullYear()}-${zeroPad(c.ts.getUTCMonth() + 1, 2)}-${zeroPad(c.ts.getUTCDate(), 2)}`;
+                const time = `T${zeroPad(c.ts.getUTCHours(), 2)}:${zeroPad(c.ts.getUTCMinutes(), 2)}:${zeroPad(c.ts.getUTCSeconds(), 2)}.${zeroPad(c.ts.getUTCMilliseconds(), 3)}Z`;
+                return ["when", {}, date + time];
+            });
+            const coordObjs = coords.map((c) => {
+                return ["gx:coord", {}, `${c.pos[0]} ${c.pos[1]} ${c.alt}`];
+            });
+            folder.push(
+                ["Placemark", {},
+                    ["name", {}, (plane.registration || plane.icao).toUpperCase()],
+                    ["Style", {},
+                        ["LineStyle", {},
+                            ["color", {}, RGBColorToKMLColor(EXPORT_RGB_COLORS[planeIndex % EXPORT_RGB_COLORS.length])],
+                            ["width", {}, 4]
+                        ],
+                        ["IconStyle", {},
+                            ["Icon", {},
+                                ["href", {}, "http://maps.google.com/mapfiles/kml/shapes/airports.png"]
+                            ]
+                        ]
+                    ],
+                    ["gx:Track", {},
+                        ["altitudeMode", {}, ground ? "clampToGround" : "absolute"],
+                        ["extrude", {}, ground ? "0" : "1"],
+                        ...whenObjs,
+                        ...coordObjs
+                    ]
+                ]
+            );
+        }
         folders.push(folder);
     }
     const filename = baseExportFilenameForAircrafts(planes);
