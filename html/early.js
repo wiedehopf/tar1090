@@ -300,8 +300,7 @@ function getDay(date) {
 function zuluTime(date) {
     return date.getUTCHours().toString().padStart(2,'0')
         + ":" + date.getUTCMinutes().toString().padStart(2,'0')
-        + ":" + date.getUTCSeconds().toString().padStart(2,'0')
-        + NBSP + "Z";
+        + ":" + date.getUTCSeconds().toString().padStart(2,'0');
 }
 const TIMEZONE = new Date().toLocaleTimeString(undefined,{timeZoneName:'short'}).split(' ')[2];
 function localTime(date) {

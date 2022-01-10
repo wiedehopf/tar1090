@@ -1860,18 +1860,24 @@ PlaneObject.prototype.updateLines = function() {
                 }
                 timestamp1 += '\n';
             }
-            if (showTrace && !utcTimesLive) {
-                timestamp2 += (localTime(date) + '\n' + TIMEZONE);
-            } else if (!showTrace && !utcTimesLive) {
+            const useLocal = ((showTrace && !utcTimesHistoric) || (!showTrace && !utcTimesLive));
+
+            if (useLocal) {
                 timestamp2 += localTime(date);
             } else {
                 timestamp2 += zuluTime(date);
             }
 
             if (traces_high_res) {
-                timestamp2 = timestamp2.split(NBSP);
-                timestamp2 = timestamp2[0] + '.' + (Math.floor((seg.ts*10)) % 10) + NBSP + timestamp2[1];
+                timestamp2 += '.' + (Math.floor((seg.ts*10)) % 10);
             }
+
+            if (showTrace && !utcTimesHistoric) {
+                timestamp2 += '\n' + TIMEZONE;
+            } else if (!useLocal) {
+                timestamp2 += NBSP + 'Z';
+            }
+
             let text =
                 speedString.padStart(3, NBSP) + "  "
                 + altString.padStart(6, NBSP)
