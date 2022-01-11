@@ -1848,19 +1848,20 @@ PlaneObject.prototype.updateLines = function() {
             seg.label = new ol.Feature(new ol.geom.Point(seg.fixed.getFirstCoordinate()));
             let timestamp1;
             let timestamp2 = "";
+            const historic = (showTrace || replay);
+            const useLocal = ((historic && !utcTimesHistoric) || (!historic && !utcTimesLive));
             const date = new Date(seg.ts * 1000);
             const refDate = (showTrace || replay) ? traceDate : new Date();
             if (getDay(refDate) == getDay(date)) {
                 timestamp1 = "";
             } else {
-                if ((utcTimesLive && !showTrace) || (utcTimesHistoric && showTrace)) {
-                    timestamp1 = zDateString(date);
-                } else {
+                if (useLocal) {
                     timestamp1 = lDateString(date);
+                } else {
+                    timestamp1 = zDateString(date);
                 }
                 timestamp1 += '\n';
             }
-            const useLocal = ((showTrace && !utcTimesHistoric) || (!showTrace && !utcTimesLive));
 
             if (useLocal) {
                 timestamp2 += localTime(date);
