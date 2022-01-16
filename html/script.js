@@ -5033,6 +5033,7 @@ function processURLParams(){
             const lon = parseFloat(usp.get("lon"));
             OLMap.getView().setCenter(ol.proj.fromLonLat([lon, lat]));
             follow = false;
+            traceOpts.noFollow = new Date().getTime() / 1000;
         }
         catch (error) {
             console.log("Error parsing lat/lon:", error);
