@@ -1289,6 +1289,9 @@ function initPage() {
     if (adsbexchange) {
         jQuery('#adsbexchange_header').show();
         jQuery('#credits').show();
+        if (!onMobile) {
+            jQuery('#creditsSelected').show();
+        }
         jQuery('#selected_infoblock').addClass('adsbx-selected-bg');
         if (false && window.self != window.top) {
             window.top.location.href = "https://www.adsbexchange.com/";
