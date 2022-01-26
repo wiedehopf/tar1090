@@ -129,16 +129,6 @@ select {
 }
 
 
-#watermark_center {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.10;
-    position: absolute;
-    bottom: 50%;
-    left: 50%;
-    pointer-events: none;
-}
 #credits {
     display: flex;
     align-items: center;

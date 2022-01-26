@@ -1291,7 +1291,6 @@ function initPage() {
         jQuery('#credits').show();
         if (!onMobile) {
             jQuery('#creditsSelected').show();
-            jQuery('#watermark_center').show();
         }
         jQuery('#selected_infoblock').addClass('adsbx-selected-bg');
         if (false && window.self != window.top) {
