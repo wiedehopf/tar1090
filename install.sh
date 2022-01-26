@@ -358,7 +358,7 @@ do
         if systemctl enable $service
         then
             echo "Restarting $service ..."
-            systemctl restart $service
+            systemctl restart $service || ! pgrep systemd
         else
             echo "$service.service is masked, could not start it!"
         fi
@@ -443,7 +443,7 @@ fi
 
 if systemctl show lighttpd 2>/dev/null | grep -qs -F -e 'UnitFileState=enabled' -e 'ActiveState=active'; then
     echo "Restarting lighttpd ..."
-    systemctl restart lighttpd
+    systemctl restart lighttpd || ! pgrep systemd
 fi
 
 echo --------------
