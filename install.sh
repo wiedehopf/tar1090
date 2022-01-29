@@ -46,8 +46,10 @@ if [[ -n "${packages[*]}" ]]; then
         exit 1
     fi
     echo "Installing required packages: ${packages[*]}"
-    apt-get update || true
-    apt-get install -y --no-install-suggests --no-install-recommends "${packages[@]}" || true
+    if ! apt-get install -y --no-install-suggests --no-install-recommends "${packages[@]}"; then
+        apt-get update || true
+        apt-get install -y --no-install-suggests --no-install-recommends "${packages[@]}" || true
+    fi
     hash -r || true
     while read -r -d '/' CMD PKG
     do
