@@ -229,6 +229,7 @@ let filterTISB = false;
 
 let flightawareLinks = false;
 let shareBaseUrl = false;
+let planespottersLinks = false;
 
 // show links to various registration websites (not all countries)
 let registrationLinks = true;

@@ -1202,24 +1202,21 @@ function initPage() {
         },
     });
 
+    if (!showPictures) {
+        planespottingAPI = false;
+        planespottersAPI = false;
+    }
     new Toggle({
         key: "planespottingAPI",
         display: "Pictures planespotting.be",
         container: "#settingsRight",
-        init: planespottingAPI && showPictures,
+        init: planespottingAPI,
         setState: function(state) {
             planespottingAPI = state;
             if (state) {
                 toggles['planespottersAPI'] && toggles['planespottersAPI'].toggle(false);
             }
-            showPictures = planespottersAPI || planespottingAPI;
-            if (showPictures) {
-                jQuery('#photo_container').removeClass('hidden');
-                jQuery('#photoLinkRow').addClass('hidden');
-            } else {
-                jQuery('#photo_container').addClass('hidden');
-                jQuery('#photoLinkRow').removeClass('hidden');
-            }
+            setPictureVisibility();
             refreshSelected();
         }
     });
@@ -1227,20 +1224,13 @@ function initPage() {
         key: "planespottersAPI",
         display: "Pictures planespotters.net",
         container: "#settingsRight",
-        init: planespottersAPI && showPictures,
+        init: planespottersAPI,
         setState: function(state) {
             planespottersAPI = state;
             if (state) {
                 toggles['planespottingAPI'] && toggles['planespottingAPI'].toggle(false);
             }
-            showPictures = planespottersAPI || planespottingAPI;
-            if (showPictures) {
-                jQuery('#photo_container').removeClass('hidden');
-                jQuery('#photoLinkRow').addClass('hidden');
-            } else {
-                jQuery('#photo_container').addClass('hidden');
-                jQuery('#photoLinkRow').removeClass('hidden');
-            }
+            setPictureVisibility();
             refreshSelected();
         }
     });
@@ -3980,10 +3970,11 @@ function adjustInfoBlock() {
     jQuery('#selected_photo').css("width", photoWidth + 'px');
 
     if (showPictures) {
-        if (planespottersAPI || planespottingAPI)
+        if (planespottersAPI || planespottingAPI) {
             jQuery('#photo_container').css('height', photoWidth * 0.883 + 'px');
-        else
+        } else {
             jQuery('#photo_container').css('height', '40px');
+        }
     }
 }
 
@@ -4607,7 +4598,7 @@ function getPhotoLink(ac) {
         if (ac.registration == null || ac.registration == "")
             return "";
         return "<a class=\"link\" target=\"_blank\" href=\"https://flightaware.com/photos/aircraft/" + ac.registration.replace(/[^0-9a-z]/ig,'') + "\" rel=\"noreferrer\">FA Photos</a>";
-    } else {
+    } else if (showPictures) {
         return "<a class=\"link\" target=\"_blank\" href=\"https://www.planespotters.net/hex/" + ac.icao.toUpperCase() + "\" rel=\"noreferrer\">View on Planespotters</a>";
     }
 }
@@ -7490,6 +7481,20 @@ function deleteTraces() {
         let plane = PlanesOrdered[i];
         delete plane.recentTrace;
         delete plane.fullTrace;
+    }
+}
+
+function setPictureVisibility() {
+    showPictures = planespottersAPI || planespottingAPI;
+    if (showPictures) {
+        jQuery('#photo_container').removeClass('hidden');
+    } else {
+        jQuery('#photo_container').addClass('hidden');
+    }
+    if (planespottersLinks && !showPictures) {
+        jQuery('#photoLinkRow').removeClass('hidden');
+    } else {
+        jQuery('#photoLinkRow').addClass('hidden');
     }
 }
 

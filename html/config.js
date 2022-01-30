@@ -209,6 +209,7 @@ BingMapsAPIKey = null;
 
 //flightawareLinks = false;
 //shareBaseUrl = 'https://globe.adsbexchange.com/';
+// planespottersLinks = false;
 
 // show links to various registration websites (not all countries)
 // registrationLinks = true;
