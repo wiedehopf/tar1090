@@ -1206,7 +1206,7 @@ function initPage() {
         key: "planespottingAPI",
         display: "Pictures planespotting.be",
         container: "#settingsRight",
-        init: planespottingAPI,
+        init: planespottingAPI && showPictures,
         setState: function(state) {
             planespottingAPI = state;
             if (state) {
@@ -1227,7 +1227,7 @@ function initPage() {
         key: "planespottersAPI",
         display: "Pictures planespotters.net",
         container: "#settingsRight",
-        init: planespottersAPI,
+        init: planespottersAPI && showPictures,
         setState: function(state) {
             planespottersAPI = state;
             if (state) {
