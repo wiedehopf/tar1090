@@ -1069,9 +1069,16 @@ let TypeDesignatorIcons = {
     'DG80': ['glider', 1],
     'DG1T': ['glider', 1],
     'LS10': ['glider', 1],
+    'LS9': ['glider', 1],
     'LS8': ['glider', 1],
     //Jonker
     'TS1J': ['glider', 1],
+    //PIK
+    'PK20': ['glider', 1],
+    //LAK
+    'LK17': ['glider', 1],
+    'LK19': ['glider', 1],
+    'LK20': ['glider', 1],
 
     'ULAC': _ulac,
     'EV97': _ulac,
