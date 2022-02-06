@@ -1,16 +1,17 @@
 #!/bin/bash
 
 instance=tar1090
+echo --------------
 if [[ -n $1 ]]; then
 	instance="tar1090-$1"
     rm -rf "/usr/local/share/tar1090/html-$1"
+    echo "Removing tar1090, instance name $instance!"
 else
+    echo "Removing tar1090, all instances!"
 	rm -rf /usr/local/share/tar1090
     rm -f /etc/lighttpd/conf-available/*tar1090*
     rm -f /etc/lighttpd/conf-enabled/*tar1090*
 fi
-echo --------------
-echo "Removing tar1090, instance name $instance!"
 echo --------------
 
 systemctl stop "$instance"
