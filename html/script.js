@@ -7363,6 +7363,9 @@ function loadEGM() {
 }
 function adjust_geom_alt(alt, pos) {
     if (geomUseEGM && egmLoaded) {
+        if (alt == null) {
+            return alt;
+        }
         return egm96.ellipsoidToEgm96(pos[1], pos[0], alt * 0.3048) / 0.3048;
     } else {
         return alt;
