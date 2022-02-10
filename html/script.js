@@ -214,7 +214,15 @@ function processAircraft(ac, init, uat) {
     // don't use data if the position is more than 1 second older than the position we have
     if (ac.seen_pos != null && plane.position_time > now - ac.seen_pos + 1)
         return;
-    if (uat) {
+    if (!uat) {
+        if (!plane.uat
+            || (ac.seen_pos < 2 && plane.seen_pos > 4)
+            || (plane.seen > 10 && ac.seen < 0.8 * plane.seen) || isNaN(plane.seen)
+            || init) {
+            plane.uat = false;
+            plane.updateData(now, last, ac, init);
+        }
+    } else {
         if (plane.uat
             || (ac.seen_pos < 2 && (plane.seen_pos > 4 || plane.dataSource == "mlat"))
             || (plane.seen > 10 && ac.seen < 0.8 * plane.seen) || isNaN(plane.seen)
@@ -226,14 +234,6 @@ function processAircraft(ac, init, uat) {
                 plane.uat = true;
                 plane.updateData(uat_now, uat_last, ac, init);
             }
-        }
-    } else {
-        if (!plane.uat
-            || (ac.seen_pos < 2 && plane.seen_pos > 4)
-            || (plane.seen > 10 && ac.seen < 0.8 * plane.seen) || isNaN(plane.seen)
-            || init) {
-            plane.uat = false;
-            plane.updateData(now, last, ac, init);
         }
     }
 }
@@ -6781,6 +6781,7 @@ function replayStep(arg) {
     replay.seconds = seconds;
 
     let points = replay.points;
+    let pointsU = replay.pointsU;
     let i = replay.slices[index];
 
     //console.log('index: ' + index + ', i: ' + i);
@@ -6822,7 +6823,7 @@ function replayStep(arg) {
                     ac.flight += String.fromCharCode(replay.pointsU8[4 * (i + 2) + j]);
                 }
             }
-            ac.squawk = (lat ^ (1<<30)).toString(10).padStart(4, '0');
+            ac.squawk = (lat & 0xFFFF).toString(10).padStart(4, '0');
             processAircraft(ac, false, false);
             continue;
         }
@@ -6834,8 +6835,25 @@ function replayStep(arg) {
         lon /= 1e6;
         pos = [lon, lat];
 
-        let hex = (points[i] & ((1<<24) - 1)).toString(16).padStart(6, '0');
-        hex = (points[i] & (1<<24)) ? ('~' + hex) : hex;
+        let addrtype = (pointsU[i] >> 27) & 0x1F;
+        switch (addrtype) {
+            case  0: ac.type = 'adsb_icao';        break;
+            case  1: ac.type = 'adsb_icao_nt';     break;
+            case  2: ac.type = 'adsr_icao';        break;
+            case  3: ac.type = 'tisb_icao';        break;
+            case  4: ac.type = 'adsc';             break;
+            case  5: ac.type = 'mlat';             break;
+            case  6: ac.type = 'other';            break;
+            case  7: ac.type = 'mode_s';           break;
+            case  8: ac.type = 'adsb_other';       break;
+            case  9: ac.type = 'adsr_other';       break;
+            case 10: ac.type = 'tisb_trackfile';   break;
+            case 11: ac.type = 'tisb_other';       break;
+            case 12: ac.type = 'mode_ac';          break;
+            default: ac.type = 'unknown';
+        }
+        let hex = (pointsU[i] & 0xFFFFFF).toString(16).padStart(6, '0');
+        hex = (pointsU[i] & 0x1000000) ? ('~' + hex) : hex;
 
         if (icaoFilter && !icaoFilter.includes(hex))
             continue;
