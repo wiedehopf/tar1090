@@ -6835,22 +6835,22 @@ function replayStep(arg) {
         lon /= 1e6;
         pos = [lon, lat];
 
-        let addrtype = (pointsU[i] >> 27) & 0x1F;
-        switch (addrtype) {
-            case  0: ac.type = 'adsb_icao';        break;
-            case  1: ac.type = 'adsb_icao_nt';     break;
-            case  2: ac.type = 'adsr_icao';        break;
-            case  3: ac.type = 'tisb_icao';        break;
-            case  4: ac.type = 'adsc';             break;
-            case  5: ac.type = 'mlat';             break;
-            case  6: ac.type = 'other';            break;
-            case  7: ac.type = 'mode_s';           break;
-            case  8: ac.type = 'adsb_other';       break;
-            case  9: ac.type = 'adsr_other';       break;
-            case 10: ac.type = 'tisb_trackfile';   break;
-            case 11: ac.type = 'tisb_other';       break;
-            case 12: ac.type = 'mode_ac';          break;
-            default: ac.type = 'unknown';
+        let type = (pointsU[i] >> 27) & 0x1F;
+        switch (type) {
+            case  0: type = 'adsb_icao';        break;
+            case  1: type = 'adsb_icao_nt';     break;
+            case  2: type = 'adsr_icao';        break;
+            case  3: type = 'tisb_icao';        break;
+            case  4: type = 'adsc';             break;
+            case  5: type = 'mlat';             break;
+            case  6: type = 'other';            break;
+            case  7: type = 'mode_s';           break;
+            case  8: type = 'adsb_other';       break;
+            case  9: type = 'adsr_other';       break;
+            case 10: type = 'tisb_trackfile';   break;
+            case 11: type = 'tisb_other';       break;
+            case 12: type = 'mode_ac';          break;
+            default: type = 'unknown';
         }
         let hex = (pointsU[i] & 0xFFFFFF).toString(16).padStart(6, '0');
         hex = (pointsU[i] & 0x1000000) ? ('~' + hex) : hex;
@@ -6880,6 +6880,7 @@ function replayStep(arg) {
             lon: lon,
             alt_baro: alt,
             gs: gs,
+            type: type,
         };
         processAircraft(ac, false, false);
     }
