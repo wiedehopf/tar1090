@@ -783,7 +783,7 @@ function initPage() {
     if (loStore['debugPosFilter'] == "true")
         debugPosFilter = true;
 
-    if (loStore['noVanish'] == "true") {
+    if (loStore['noVanish'] == "true" || usp.has('noVanish')) {
         noVanish = true;
         //filterTracks = noVanish;
         //loStore['noVanish'] = "false";
