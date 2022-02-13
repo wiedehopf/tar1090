@@ -1534,7 +1534,9 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     }
 
     this.request_rotation_from_track = false;
-    if (this.altitude == "ground") {
+    if (replay) {
+        this.request_rotation_from_track = true;
+    } else if (this.altitude == "ground") {
         if (this.true_heading != null)
             this.rotation = this.true_heading;
         else if (this.mag_heading != null)
