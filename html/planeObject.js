@@ -1123,8 +1123,12 @@ PlaneObject.prototype.processTrace = function() {
             if (firstPos == null)
                 firstPos = this.position;
 
-            if (leg_marker)
+            if (leg_marker) {
                 this.leg_ts = _now;
+                if (debugTracks) {
+                    console.log('leg zulu: ' + zuluTime(new Date(this.leg_ts * 1000)) + ' epoch: ' + this.leg_ts);
+                }
+            }
             if (legStart != null && legStart > 0 && legStart == i)
                 this.leg_ts = _now;
             if (legEnd != null && legEnd < trace.length && legEnd == i + 1)
