@@ -12,14 +12,46 @@ let TrackDirections = ["North","NE","East","SE","South","SW","West","NW"];
 let TrackDirectionArrows = ["\u21e7","\u2b00","\u21e8","\u2b02","\u21e9","\u2b03","\u21e6","\u2b01"];
 
 let UnitLabels = {
-	'altitude': { metric: "m", imperial: "ft", nautical: "ft"},
-	'speed': { metric: "km/h", imperial: "mph", nautical: "kt" },
-	'distance': { metric: "km", imperial: "mi", nautical: "NM" },
-	'verticalRate': { metric: "m/s", imperial: "ft/min", nautical: "ft/min" },
-	'distanceShort': {metric: "m", imperial: "ft", nautical: "m"}
+    'altitude': { metric: "m", imperial: "ft", nautical: "ft"},
+    'speed': { metric: "km/h", imperial: "mph", nautical: "kt" },
+    'distance': { metric: "km", imperial: "mi", nautical: "NM" },
+    'verticalRate': { metric: "m/s", imperial: "ft/min", nautical: "ft/min" },
+    'distanceShort': {metric: "m", imperial: "ft", nautical: "m"}
+};
+
+let aircraftCategories = {
+    'A0': 'Unspecified powered aircraft',
+    'A1': 'Light (< 15 500 lbs.)',
+    'A2': 'Small (15 500 to 75 000 lbs.)',
+    'A3': 'Large (75 000 to 300 000 lbs.)',
+    'A4': 'High Vortex Large(aircraft such as B-757)',
+    'A5': 'Heavy (> 300 000 lbs.)',
+    'A6': 'High Performance ( > 5 g acceleration and > 400kts)',
+    'A7': 'Rotorcraft',
+    'B0': 'Unspecified unpowered aircraft or UAV or spacecraft',
+    'B1': 'Glider/sailplane',
+    'B2': 'Lighter-than-Air',
+    'B3': 'Parachutist/Skydiver',
+    'B4': 'Ultralight/hang-glider/paraglider',
+    'B5': 'Reserved',
+    'B6': 'Unmanned Aerial Vehicle',
+    'B7': 'Space/Trans-atmospheric vehicle',
+    'C0': 'Unspecified ground installation or vehicle',
+    'C1': 'Surface Vehicle - Emergency Vehicle',
+    'C2': 'Surface Vehicle - Service Vehicle',
+    'C3': 'Fixed Ground or Tethered Obstruction'
 };
 
 // formatting helpers
+
+function get_category_label(category) {
+    if (!category)
+        return '';
+    let label = aircraftCategories[category];
+    if (!label)
+        return '';
+    return label;
+}
 
 function get_unit_label(quantity, systemOfMeasurement) {
 	let labels = UnitLabels[quantity];

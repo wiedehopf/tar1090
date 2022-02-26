@@ -2924,6 +2924,7 @@ function refreshSelected() {
     }
     jQuery('#selected_source').updateText(format_data_source(selected.dataSource));
     jQuery('#selected_category').updateText(selected.category ? selected.category : "n/a");
+    jQuery('#selected_category_label').updateText(get_category_label(selected.category));
     jQuery('#selected_sitedist1').updateText(format_distance_long(selected.sitedist, DisplayUnits));
     jQuery('#selected_sitedist2').updateText(format_distance_long(selected.sitedist, DisplayUnits));
     jQuery('#selected_rssi1').updateText(selected.rssi != null ? selected.rssi.toFixed(1) : "n/a");
