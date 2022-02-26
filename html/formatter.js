@@ -604,8 +604,8 @@ function wqi(data) {
             ac.version = ac.tisb_version;
         }
         if (stride == 112) {
-            let part2 = u32[27].toString(16).padStart(8, '0');
-            ac.rId = part2.slice(0, 4) + '-' + part2.slice(4);
+            ac.rId = u32[27].toString(16).padStart(8, '0');
+            //ac.rId = ac.rId.slice(0, 4) + '-' + ac.rId.slice(4);
         }
 
         data.aircraft.push(ac);
