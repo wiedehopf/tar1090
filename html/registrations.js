@@ -30,8 +30,12 @@ const registration_from_hexid = (function () {
         // South African stride mapping apparently no longer in use
         //{ start: 0x008011, s1: 26*26, s2: 26, prefix: "ZS-" },
 
-        { start: 0x390000, s1: 1024, s2:  32, prefix: "F-G" },
-        { start: 0x398000, s1: 1024, s2:  32, prefix: "F-H" },
+        { start: 0x380000, s1: 1024, s2: 32, prefix: "F-B" },
+        { start: 0x388000, s1: 1024, s2: 32, prefix: "F-I" },
+        { start: 0x390000, s1: 1024, s2: 32, prefix: "F-G" },
+        { start: 0x398000, s1: 1024, s2: 32, prefix: "F-H" },
+        { start: 0x3A0000, s1: 1024, s2: 32, prefix: "F-O" },
+
 
         { start: 0x3C4421, s1: 1024,  s2: 32, prefix: "D-A", first: 'AAA', last: 'OZZ' },
         { start: 0x3C0001, s1: 26*26, s2: 26, prefix: "D-A", first: 'PAA', last: 'ZZZ' },
