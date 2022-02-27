@@ -2048,7 +2048,7 @@ function initMap() {
 
     OLMap.addControl(new ol.control.LayerSwitcher({
         groupSelectStyle: 'none',
-        activationMode: 'mouseover', // click sucks in the current implementation
+        activationMode: 'click', // click sucks in the current implementation
         target: 'map_canvas',
     }));
 
