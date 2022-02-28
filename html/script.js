@@ -1558,6 +1558,10 @@ function parseHistory() {
 
 let timers = {};
 function clearIntervalTimers() {
+    if (loadFinished) {
+        jQuery("#update_error_detail").text('Timers paused (tab hidden).');
+        jQuery("#update_error").css('display','block');
+    }
     console.log("clear timers");
     const entries = Object.entries(timers);
     for (let i in entries) {
@@ -1566,6 +1570,9 @@ function clearIntervalTimers() {
 }
 
 function setIntervalTimers() {
+    if (loadFinished) {
+        jQuery("#update_error").css('display','none');
+    }
     console.log("set timers");
     if ((adsbexchange || dynGlobeRate) && !uuid) {
         timers.globeRateUpdate = setInterval(globeRateUpdate, 180000);
@@ -1576,7 +1583,7 @@ function setIntervalTimers() {
     timers.checkMove = setInterval(checkMovement, 50);
     timers.everySecond = setInterval(everySecond, 850);
     timers.reaper = setInterval(reaper, 20000);
-    reaper();
+    //reaper();
     if (tempTrails) {
         timers.trailReaper = window.setInterval(trailReaper, 10000);
         trailReaper(now);
