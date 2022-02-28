@@ -238,6 +238,7 @@ function processAircraft(ac, init, uat) {
     }
 }
 
+let backwardsCounter = 0;
 function processReceiverUpdate(data, init) {
     // update now and last
     let uat = data.uat_978;
@@ -248,11 +249,19 @@ function processReceiverUpdate(data, init) {
         uat_now = data.now;
     } else {
         if (data.now <= now && !globeIndex && !uuid) {
-            if (data.now < now)
+            if (data.now < now) {
                 console.log('timestep backwards, ignoring data:' + now + ' -> ' + data.now);
+                if (backwardsCounter++ > 5) {
+                    backwardsCounter = 0;
+                    console.log('resetting now:' + now + ' -> ' + data.now);
+                    now = data.now;
+                    last = now - 1;
+                }
+            }
             return;
         }
         if (data.now > now) {
+            backwardsCounter = 0;
             last = now;
             now = data.now;
         }
