@@ -12,11 +12,11 @@ if [[ -n $2 ]]; then
 	ALTS="$2"
 fi
 
-instance=tar1090
+instance=""
 if [[ -n $3 ]]; then
-	instance="tar1090-$3"
+	instance="-$3"
 fi
 
 
-wget -nv -O "/usr/local/share/${instance}/html/upintheair.json" "http://www.heywhatsthat.com/api/upintheair.json?id=${ID}&refraction=0.25&alts=${ALTS}"
+wget -nv -O "/usr/local/share/tar1090/html${instance}/upintheair.json" "http://www.heywhatsthat.com/api/upintheair.json?id=${ID}&refraction=0.25&alts=${ALTS}"
 
