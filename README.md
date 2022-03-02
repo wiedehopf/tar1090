@@ -332,6 +332,9 @@ sudo /usr/local/share/tar1090/getupintheair.sh XXXXX
 sudo /usr/local/share/tar1090/getupintheair.sh XXXXX 3048,12192
 # load a 10000 ft outline for the tar1090 instance located at /978
 sudo /usr/local/share/tar1090/getupintheair.sh XXXXX 3048 978
+
+# load a 40000 ft outline for the tar1090 instance located at /adsbx
+sudo /usr/local/share/tar1090/getupintheair.sh XXXXX 12192 adsbx
 ```
 
 ## /tar1090/?pTracks
