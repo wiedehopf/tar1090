@@ -49,8 +49,6 @@ function createBaseLayers() {
     world.push(new ol.layer.Tile({
         source: new ol.source.OSM({
             "url" : "https://map.adsbexchange.com/mapproxy/tiles/1.0.0/osm/osm_grid/{z}/{x}/{y}.png",
-             //'hosted by <a href="https://adsbexchange.com/">adsbexchange.com</a> '
-            "attributions" : '© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>  contributors.',
             attributionsCollapsible: false,
             maxZoom: 16,
         }),
@@ -62,11 +60,25 @@ function createBaseLayers() {
     world.push(new ol.layer.Tile({
         source: new ol.source.OSM({
             maxZoom: 17,
+            attributionsCollapsible: false,
         }),
         name: 'osm',
         title: 'OpenStreetMap',
         type: 'base',
     }));
+
+    if (!adsbexchange) {
+        world.push(new ol.layer.Tile({
+            source: new ol.source.OSM({
+                "url" : "https://{a-d}.tile.openstreetmap.de/{z}/{x}/{y}.png",
+                attributionsCollapsible: false,
+                maxZoom: 17,
+            }),
+            name: 'osm_adsbx',
+            title: 'OpenStreetMap DE',
+            type: 'base',
+        }));
+    }
 
     world.push(new ol.layer.Tile({
         source: new ol.source.XYZ({
