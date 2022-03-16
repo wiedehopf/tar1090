@@ -414,6 +414,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
             track: this.rotation,
             leg: is_leg,
             rId: this.rId,
+            rssi: this.rssi,
         };
         this.track_linesegs.push(newseg);
         this.history_size ++;
@@ -602,6 +603,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
             track: this.prev_rot,
             leg: is_leg,
             rId: this.prev_rId,
+            rssi: this.rssi,
         });
 
         this.history_size += 2;
@@ -1204,6 +1206,7 @@ PlaneObject.prototype.processTrace = function() {
                 ts: this.position_time,
                 track: this.rotation,
                 rId: this.rId,
+                rssi: this.rssi,
             });
         }
         now = new Date().getTime()/1000;
@@ -1863,6 +1866,7 @@ PlaneObject.prototype.updateLines = function() {
             const useLocal = ((historic && !utcTimesHistoric) || (!historic && !utcTimesLive));
             const date = new Date(seg.ts * 1000);
             const refDate = (showTrace || replay) ? traceDate : new Date();
+            const rssi = (seg.rssi != null) ? seg.rssi.toFixed(2).toString() : 'n/a';
             if (getDay(refDate) == getDay(date)) {
                 timestamp1 = "";
             } else {
@@ -1898,6 +1902,9 @@ PlaneObject.prototype.updateLines = function() {
                 + timestamp1 + timestamp2;
             if (seg.rId && show_rId) {
                 text += "\n" + seg.rId.substring(0,9); //+ "\n" + seg.rId.substring(9,18);
+            }
+            if (debugTracks) {
+                text += "\n" + rssi;
             }
 
             if (showTrace && !trackLabels)
