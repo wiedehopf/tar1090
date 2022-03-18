@@ -58,6 +58,7 @@ let actual_range_outline_dash = null; // null - solid line, [5, 5] - dashed line
 // which map is displayed to new visitors
 let MapType_tar1090 = "osm_adsbx";
 let defaultOverlays = [];
+let dwdLayers = 'dwd:RX-Produkt';
 
 // Default map dim state
 let MapDim = true;

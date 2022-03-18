@@ -75,6 +75,9 @@
 // default these overlays to on for visitors which haven't disabled them in the browser in a previous session
 // defaultOverlays = ['radolan', 'nexrad'];
 
+// change which product from DWD to use
+// dwdLayers = 'dwd:RX-Produkt';
+
 // Default map dim state, true or false.
 // MapDim = true;
 // mapDimPercentage = 0.45;

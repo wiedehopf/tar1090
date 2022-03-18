@@ -348,7 +348,7 @@ function createBaseLayers() {
         let dwd = new ol.layer.Tile({
             source: new ol.source.TileWMS({
                 url: 'https://maps.dwd.de/geoserver/wms',
-                params: {LAYERS: 'dwd:RX-Produkt', validtime: (new Date()).getTime()},
+                params: {LAYERS: dwdLayers, validtime: (new Date()).getTime()},
                 projection: 'EPSG:3857',
                 attributions: 'Deutscher Wetterdienst (DWD)',
                 attributionsCollapsible: false,
