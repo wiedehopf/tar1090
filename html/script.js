@@ -2034,7 +2034,11 @@ function initMap() {
                 }
             });
         } else if (lyr.get('type') === 'overlay') {
-            if (loStore['layer_' + lyr.get('name')] == 'true' || enableOverlays.indexOf(lyr.get('name')) >= 0) {
+            if (
+                loStore['layer_' + lyr.get('name')] == 'true'
+                || enableOverlays.indexOf(lyr.get('name')) >= 0
+                || (loStore['layer_' + lyr.get('name')] != 'false' && defaultOverlays.indexOf(lyr.get('name')) >= 0)
+            ) {
                 lyr.setVisible(true);
             }
             if (loStore['layer_' + lyr.get('name')] == 'false') {

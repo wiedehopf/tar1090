@@ -71,6 +71,10 @@
 // bing_aerial
 // bing_roads
 
+
+// default these overlays to on for visitors which haven't disabled them in the browser in a previous session
+// defaultOverlays = ['radolan', 'nexrad'];
+
 // Default map dim state, true or false.
 // MapDim = true;
 // mapDimPercentage = 0.45;
