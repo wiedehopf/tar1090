@@ -74,7 +74,7 @@ function createBaseLayers() {
                 attributionsCollapsible: false,
                 maxZoom: 17,
             }),
-            name: 'osm_adsbx',
+            name: 'osm_de',
             title: 'OpenStreetMap DE',
             type: 'base',
         }));
