@@ -2605,13 +2605,13 @@ function refreshPhoto(selected) {
     if (!selected.dbinfoLoaded) {
         displaySil();
         return;
-    } else if (selected.registration != null && selected.registration.match(/^[0-9]{0,2}\+?[0-9]{0,2}$/)) {
-        displaySil();
-        return;
+    } else if (false && selected.registration != null && selected.registration.match(/^[0-9]{0,2}\+?[0-9]{0,2}$/)) {
+        urlTail = '/hex/' + selected.icao.toUpperCase();
     } else if (selected.registration != null) {
         urlTail = '/hex/' + selected.icao.toUpperCase() + '?reg=' + selected.registration;
         const type = selected.icaoType;
-        if (type && type != 'E170' && !type.startsWith('E75')) {
+        // && type != 'E170' && !type.startsWith('E75')
+        if (type) {
             urlTail += '&icaoType=' + type;
         }
         param = 'DB';

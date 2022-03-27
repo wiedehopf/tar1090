@@ -858,10 +858,9 @@ let TypeDesignatorIcons = {
     'C650': ['jet_nonswept', 1.03], // 11t
     'ASTR': ['jet_nonswept', 1.03], // 11t
     'G150': ['jet_nonswept', 1.03], // 11t
-    'H25A': ['jet_nonswept', 1.03], // 11t
-    'H25B': ['jet_nonswept', 1.03], // 11t
-    'H25C': ['jet_nonswept', 1.03], // 11t
-    'H25C': ['jet_nonswept', 1.03], // 11t
+    'H25A': ['jet_nonswept', 1.03], // 12t
+    'H25B': ['jet_nonswept', 1.03], // 12t
+    'H25C': ['jet_nonswept', 1.03], // 12t
 
     'PRM1': ['jet_nonswept', 0.96],
     'E55P': ['jet_nonswept', 0.96],
