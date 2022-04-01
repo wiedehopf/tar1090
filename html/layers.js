@@ -213,18 +213,22 @@ function createBaseLayers() {
 
         let chartbundleTypes = {
             sec: "Sectional Charts",
-            enrh: "IFR Enroute High Charts"
+            enrh: "IFR Enroute High Charts",
+
+            tac: "Terminal Area Charts",
+            hel: "Helicopter Charts",
+            enrl: "IFR Enroute Low Charts",
+            enra: "IFR Area Charts",
         };
 
         for (let type in chartbundleTypes) {
             us.push(new ol.layer.Tile({
-                source: new ol.source.TileWMS({
-                    url: 'https://map.adsbexchange.com/mapproxy/wms',
-                    params: {LAYERS: type},
+                source: new ol.source.OSM({
+                    url: 'https://map.adsbexchange.com/mapproxy/tiles/1.0.0/'+ type + '/osm_grid/{z}/{x}/{y}.png',
                     projection: 'EPSG:3857',
                     attributions: 'Tiles courtesy of <a href="http://www.chartbundle.com/">ChartBundle</a>',
                     attributionsCollapsible: false,
-                    maxZoom: 12, // doesn't work for WMS
+                    maxZoom: 11,
                 }),
                 name: 'chartbundle_' + type,
                 title: chartbundleTypes[type],
@@ -232,10 +236,6 @@ function createBaseLayers() {
                 group: 'chartbundle'}));
         }
         chartbundleTypes = {
-            tac: "Terminal Area Charts",
-            hel: "Helicopter Charts",
-            enrl: "IFR Enroute Low Charts",
-            enra: "IFR Area Charts",
             secgrids: "Sect. w/ SAR grid",
         };
 
