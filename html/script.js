@@ -7307,30 +7307,65 @@ function baseExportFilenameForAircrafts(aircrafts) {
 function coordsForExport(plane) {
     let coords = [];
     let numSegs = plane.track_linesegs.length;
+    let segs = plane.track_linesegs;
+    let runningAverage = 0;
+    let lastTimestamp = 0;
+    const avgWindow = 15;
     for (let i = 0; i < numSegs; i++) {
-        const pos = plane.track_linesegs[i].position;
+        const seg = segs[i];
+        const geom = seg.alt_geom;
+        const baro = seg.alt_real;
+        let geomOffset = null;
+        if (!seg.ground && baro != null && geom != null) {
+            seg.geomOffset = geom - baro;
+            runningAverage += (seg.geomOffset - runningAverage) * Math.min(1, (seg.ts - lastTimestamp) / avgWindow);
+            seg.geomOffAverage = runningAverage;
+            lastTimestamp = seg.ts;
+        }
+    }
+    lastTimestamp = 1e12;
+    for (let i = numSegs - 1; i >= 0; i--) {
+        const seg = segs[i];
+        const geom = seg.alt_geom;
+        const baro = seg.alt_real;
+        let geomOffset = null;
+        if (seg.geomOffset != null) {
+            runningAverage += (seg.geomOffset - runningAverage) * Math.min(1, (lastTimestamp - seg.ts) / avgWindow);
+            //console.log(seg.geomOffAverage + ' ' + runningAverage);
+            seg.geomOffAverage = (seg.geomOffAverage + runningAverage) / 2;
+            lastTimestamp = seg.ts;
+        }
+    }
+    for (let i = 0; i < numSegs; i++) {
+        const seg = segs[i];
+        const pos = seg.position;
         if (pos) {
             let alt = null;
-            if (plane.track_linesegs[i].alt_geom != null) {
-                alt = plane.track_linesegs[i].alt_geom;
-                alt = Math.round(alt * 0.3048); // convert ft to m
-            } else if (plane.track_linesegs[i].alt_real != null) {
-                alt = plane.track_linesegs[i].alt_real;
+            const baro = seg.alt_real;
+            const geom = seg.alt_geom;
+            const geomOffAverage = seg.geomOffAverage;
+            if (geomOffAverage != null) {
+                const betterGeom = baro + geomOffAverage;
+                //console.log(betterGeom);
+                alt = Math.round(betterGeom * 0.3048); // convert ft to m
+            } else if (geom != null) {
+                alt = Math.round(geom * 0.3048); // convert ft to m
+            } else if (baro != null) {
                 // Attempt to correct altitude. This could be better?
                 //
                 // 950 feet is the correction factor for an altimeter of 30.15.
                 // 25 feet is the quantum of transponder reporting. 0 altitude
                 // could be reported as -25, so just add 25.
-                alt = (alt + 950 + 25) * 0.3048;
+                alt = (baro + 950 + 25) * 0.3048;
             }
-            if (plane.track_linesegs[i].ground) {
+            if (seg.ground) {
                 alt = "ground";
             } else if (alt != null && egmLoaded) {
                 // alt is in meters at this point
                 alt = Math.round(egm96.ellipsoidToEgm96(pos[1], pos[0], alt));
             }
 
-            const ts = new Date(plane.track_linesegs[i].ts * 1000.0);
+            const ts = new Date(seg.ts * 1000.0);
             if (alt == null) {
                 console.log(`Skipping, no altitude: ${i} ${pos} ${ts}`);
                 continue;
