@@ -1897,7 +1897,7 @@ function initMap() {
 
     siteCircleLayer.on('change:visible', function(evt) {
         if (evt.target.getVisible()) {
-            geoFindMe();
+            //geoFindMe();
         }
     });
 
@@ -1915,7 +1915,7 @@ function initMap() {
 
     locationDotLayer.on('change:visible', function(evt) {
         if (evt.target.getVisible()) {
-            geoFindMe();
+            //geoFindMe();
         }
     });
 
@@ -2451,29 +2451,37 @@ function initMap() {
         }
     }, true);
 
-    if (window && window.location && window.location.protocol == 'https:'
-        && !SiteOverride && (globeIndex || uuid || askLocation)
-        && !usp.has('icao') && !usp.has("lat") && !usp.has("lon")
-        && loStore['geoFindMeFirstVisit'] == undefined) {
-        jQuery("#geoFindMeDialog").dialog({
-            resizable: false,
-            height: "auto",
-            width: "auto",
-            buttons: {
-                "Yes": function() {
-                    geoFindMe();
-                    jQuery(this).dialog( "close" );
-                },
-                "No": function() {
-                    loStore['geoFindMeFirstVisit'] = 'no'
-                    jQuery(this).dialog( "close" );
-                }
-            }
-        });
-    } else {
+    if (
+        window && window.location && window.location.protocol == 'https:'
+        && loStore['geoFindMeFirstVisit'] != 'no'
+        && !SiteOverride
+        && (globeIndex || uuid || askLocation)
+        && !usp.has('icao')
+        && !usp.has("lat") && !usp.has("lon")
+        && !usp.has('airport')
+    ) {
         geoFindMe();
+    } else {
+        initSitePos();
     }
 }
+/*
+    jQuery("#geoFindMeDialog").dialog({
+        resizable: false,
+        height: "auto",
+        width: "auto",
+        buttons: {
+            "Yes": function() {
+                geoFindMe();
+                jQuery(this).dialog( "close" );
+            },
+            "No": function() {
+                loStore['geoFindMeFirstVisit'] = 'no'
+                jQuery(this).dialog( "close" );
+            }
+        }
+    });
+*/
 
 // This looks for planes to reap out of the master Planes variable
 let lastReap = 0;
@@ -5866,11 +5874,12 @@ function geoFindMe() {
     function success(position) {
         SiteLat = DefaultCenterLat = position.coords.latitude;
         SiteLon = DefaultCenterLon = position.coords.longitude;
-        if (loStore['geoFindMeFirstVisit'] == undefined && !(usp.has("lat") && usp.has("lon"))) {
+        if (loStore['geoFindMeFirstVisit'] != 'no' && !(usp.has("lat") && usp.has("lon"))) {
             OLMap.getView().setCenter(ol.proj.fromLonLat([SiteLon, SiteLat]));
             loStore['geoFindMeFirstVisit'] = 'no';
             siteCircleLayer.setVisible(true);
         }
+
         initSitePos();
         console.log('Location from browser: '+ SiteLat +', ' + SiteLon);
 
