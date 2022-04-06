@@ -535,9 +535,25 @@ function initPage() {
     let value;
     onMobile = window.mobilecheck();
 
+    if (uk_advisory) {
+        tempTrails = true;
+        tempTrailsTimeout = 45;
+        SiteCirclesDistances = new Array(5, 10, 20);
+        SiteCirclesLineDash = [5, 5];
+        SiteCirclesColors = ['#2b3436', '#2b3436', '#2b3436'];
+        defaultOverlays.push('uka_airports');
+        defaultOverlays.push('uka_airspaces');
+        defaultOverlays.push('uka_runways');
+        defaultOverlays.push('uka_shoreham');
+        MapType_tar1090 = 'carto_light_all';
+        lineWidth=4;
+        enableLabels=true;
+    }
+
     if (usp.has('nowebgl')) {
         loStore['webgl'] = "false";
     }
+
     if (usp.has('showGrid')) {
         showGrid = true;
         loStore['layer_site_pos'] = 'true';
@@ -606,6 +622,11 @@ function initPage() {
     if (usp.has('squareMania')) {
         squareMania = true;
     }
+
+    if (usp.has('darkerColors')) {
+        darkerColors = true;
+    }
+
     if (usp.has('mapDim')) {
         let dim = parseFloat(usp.get('mapDim'));
         if (!isNaN(dim))
@@ -1734,7 +1755,7 @@ function webglAddLayer() {
         let glStyle = {
             symbol: {
                 symbolType: 'image',
-                src: 'images/sprites011.png',
+                src: 'images/sprites012.png',
                 size: [ 'get', 'size' ],
                 offset: [0, 0],
                 textureCoord: [ 'array',

@@ -675,6 +675,15 @@ let shapes = {
         strokeScale: 0.8,
         path: 'M19.5 16.71l.21 6.3-1.83.28s-.2.01-.2.2l-.01.8 2.1.15.02.62s.11.35.25 0l.02-.62 2.1-.15-.02-.81s.03-.18-.17-.2c-.2 0-1.85-.27-1.85-.27l.22-6.3h4.49l5.4-.61-.04-.74s-.02-.3-.34-.3-4.66-.55-4.66-.55h-1.1s.12-.66-.01-1.02h-.6s-.12.44-.02 1.02h-.72s.1-.68 0-1.02h-.6s-.12.52 0 1.04h-.73s.13-.62 0-1.04h-.6s-.15.47 0 1.02l-.47-.23V9.95s-.4-2.32-.85 0v4.33l-.49.24h-5.93l-.5-.24V9.95c-.44-2.32-.84 0-.84 0v4.33l-.47.23c.14-.55 0-1.02 0-1.02h-.6c-.13.42 0 1.04 0 1.04h-.73c.12-.52 0-1.04 0-1.04h-.6c-.1.34 0 1.02 0 1.02H8.6c.1-.58-.02-1.02-.02-1.02H8c-.14.36-.02 1.03-.02 1.03l-1.1-.01s-4.34.56-4.65.56c-.32 0-.35.3-.35.3l-.04.73 5.41.6h4.49l.22 6.31s-1.65.26-1.85.28c-.2.01-.18.19-.18.19l-.02.8 2.1.16.02.62c.14.35.26 0 .26 0l.01-.62 2.1-.16v-.79c0-.19-.2-.2-.2-.2L12.35 23l.2-6.29h3.47z',
     },
+    'asterisk': {
+        id: 78,
+        w: 11,
+        h: 11,
+        noRotate: true,
+        strokeScale: 1.4,
+        viewBox: "0 0 16 16",
+        path: 'M 7 1 L 7 6 L 5 4 L 4 5 L 6 7 L 2 7 L 2 9 L 6 9 L 4 11 L 5 12 L 7 10 L 7 14 L 9 14 L 9 10 L 11 12 L 12 11 L 10 9 L 14 9 L 14 7 L 10 7 L 12 5 L 11 4 L 9 6 L 9 2 L 7 2',
+    },
 
 }
 
@@ -1192,8 +1201,12 @@ function getBaseMarker(category, typeDesignator, typeDescription, wtc, addrtype,
                 return ['witchl', 1];
         }
     }
-    if (squareMania)
+    if (uk_advisory) {
+        return ['asterisk', 1.2];
+    }
+    if (squareMania) {
         return ['ground_square', 1.2];
+    }
     if (typeDesignator in TypeDesignatorIcons) {
         let shape = TypeDesignatorIcons[typeDesignator][0];
         let scaling = TypeDesignatorIcons[typeDesignator][1];

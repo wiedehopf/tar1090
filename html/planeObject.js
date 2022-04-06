@@ -822,6 +822,7 @@ PlaneObject.prototype.updateIcon = function() {
             callsign =  'reg: ' + this.registration;
         else
             callsign =   'hex: ' + this.icao;
+
         const unknown = NBSP+NBSP+"?"+NBSP+NBSP;
 
         let alt;
@@ -834,7 +835,11 @@ PlaneObject.prototype.updateIcon = function() {
         let speedString = (this.speed == null) ? (NBSP+'?'+NBSP) : format_speed_brief(this.speed, DisplayUnits, showLabelUnits).padStart(3, NBSP);
 
         labelText = "";
-        if (extendedLabels == 3) {
+        if (uk_advisory) {
+            labelText += callsign + '\n';
+            labelText += altString + '\n';
+            labelText += 'x' + this.squawk;
+        } else if (extendedLabels == 3) {
             if (!windLabelsSlim) {
                 labelText += 'Wind' + NBSP;
             }
@@ -869,7 +874,7 @@ PlaneObject.prototype.updateIcon = function() {
                 labelText += speedString + NBSP + NNBSP + altString.padStart(6, NBSP) + '\n';
             }
         }
-        if (extendedLabels < 3) {
+        if (extendedLabels < 3 && !uk_advisory) {
             labelText += callsign;
         }
     }

@@ -204,6 +204,11 @@ if (usp.has('tfrs')) {
     tfrs = true;
 }
 
+let uk_advisory = false;
+if (usp.has('uk_advisory')) {
+    uk_advisory = true;
+}
+
 const customTiles = usp.get('customTiles');
 if (customTiles)
     loStore['customTiles'] = customTiles;
