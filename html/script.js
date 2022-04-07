@@ -117,6 +117,7 @@ let nogpsOnly = false;
 let trace_hist_only = false;
 let traces_high_res = false;
 let show_rId = true;
+let labels_top = false;
 
 let infoBlockWidth = baseInfoBlockWidth;
 
@@ -536,6 +537,8 @@ function initPage() {
     onMobile = window.mobilecheck();
 
     if (uk_advisory) {
+
+        labels_top = true;
         tempTrails = true;
         tempTrailsTimeout = 45;
         SiteCirclesDistances = new Array(5, 10, 20);
