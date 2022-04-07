@@ -58,7 +58,8 @@
 ## Toggles
 
 - mil - Military/Interesting.
-- tempTrails - enable temporary aircraft trails.
+- tempTrails - enable temporary aircraft trails / tracks.
 - mobile - Force mobile view.
 - desktop - force desktop view.
 - kiosk - force kiosk mode (tempTrails=true / hideButtons=true / userScale=2).
+- allTracks - enable tracks as if pressing T

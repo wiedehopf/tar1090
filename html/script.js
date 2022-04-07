@@ -613,6 +613,10 @@ function initPage() {
         }
     }
 
+    if (usp.has('allTracks')) {
+        SelectedAllPlanes = true;
+        buttonActive('#T', SelectedAllPlanes);
+    }
     if (usp.has('tempTrails')) {
         tempTrails = true;
         let tmp = parseInt(usp.get('tempTrails'));
@@ -3845,8 +3849,6 @@ function selectAllPlanes() {
         }
     }
     refreshFeatures();
-
-    jQuery('#selectall_checkbox').addClass('settingsCheckboxChecked');
 
     refreshSelected();
     refreshHighlighted();
