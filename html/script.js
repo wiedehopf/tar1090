@@ -2734,7 +2734,11 @@ function refreshSelected() {
 
     refreshPhoto(selected);
 
-    jQuery('#selected_callsign').updateText(selected.name);
+    if (selected.name == 'no cs') {
+        jQuery('#selected_callsign').updateText('no callsign');
+    } else {
+        jQuery('#selected_callsign').updateText(selected.name);
+    }
 
     if (showTrace) {
         if (selected.position_time) {

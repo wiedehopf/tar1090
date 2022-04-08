@@ -49,7 +49,7 @@ function PlaneObject(icao) {
 
 PlaneObject.prototype.setNull = function() {
     this.flight = null;
-    this.name = 'n/a';
+    this.name = 'no cs';
     this.squawk    = null;
     this.category  = null;
     this.dataSource = "modeS";
@@ -1396,15 +1396,13 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     } else {
         this.request_rotation_from_track = true;
     }
-    // don't expire callsigns
-    if (flight != null) {
-        if (flight == "@@@@@@@@") {
-            this.flight = null;
-            this.name ='n/a';
-        } else {
-            this.flight = `${flight}`;
-            this.name = this.flight.trim() || 'n/a';
-        }
+
+    if (flight == null || flight == "@@@@@@@@") {
+        this.flight = null;
+        this.name ='no cs';
+    } else {
+        this.flight = `${flight}`;
+        this.name = this.flight.trim() || 'no cs';
     }
 
     if (mlat && noMLAT) {
@@ -2393,14 +2391,12 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
             this.dataSource = "unknown";
         }
 
-        if (data.flight != null) {
-            if (data.flight == "@@@@@@@@") {
-                this.flight = null;
-                this.name ='n/a';
-            } else {
-                this.flight = `${data.flight}`;
-                this.name = this.flight.trim() || 'n/a';
-            }
+        if (data.flight == null || data.flight == "@@@@@@@@") {
+            this.flight = null;
+            this.name ='no cs';
+        } else {
+            this.flight = `${data.flight}`;
+            this.name = this.flight.trim() || 'no cs';
         }
 
         if (data.alt_geom != null && !alt_geom && altitude != null && altitude != "ground") {
