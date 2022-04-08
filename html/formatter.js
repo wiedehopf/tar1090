@@ -166,7 +166,7 @@ function format_onground (alt) {
 // alt in feet
 function convert_altitude(alt, displayUnits) {
 	if (displayUnits === "metric") {
-		return alt * 0.3048;  // feet to meters
+		return alt * 0.3048;  // feet to metres
 	}
 
 	return alt;
@@ -198,7 +198,7 @@ function format_speed_long(speed, displayUnits) {
 // speed in knots
 function convert_speed(speed, displayUnits) {
 	if (displayUnits === "metric") {
-		return speed * 1.852;  // knots to kilometers per hour
+		return speed * 1.852;  // knots to kilometres per hour
 	}
 	else if (displayUnits === "imperial") {
 		return speed * 1.151;  // knots to miles per hour
@@ -207,7 +207,7 @@ function convert_speed(speed, displayUnits) {
 	return speed;
 }
 
-// dist in meters
+// dist in metres
 function format_distance_brief(dist, displayUnits) {
 	if (dist == null) {
 		return "";
@@ -216,7 +216,7 @@ function format_distance_brief(dist, displayUnits) {
 	return convert_distance(dist, displayUnits).toFixed(1);
 }
 
-// dist in meters
+// dist in metres
 function format_distance_long(dist, displayUnits, fixed) {
 	if (dist == null) {
 		return "n/a";
@@ -241,24 +241,24 @@ function format_distance_short (dist, displayUnits) {
 	return dist_text;
 }
 
-// dist in meters
+// dist in metres
 function convert_distance(dist, displayUnits) {
 	if (displayUnits === "metric") {
-		return (dist / 1000); // meters to kilometers
+		return (dist / 1000); // metres to kilometres
 	}
 	else if (displayUnits === "imperial") {
-		return (dist / 1609); // meters to miles
+		return (dist / 1609); // metres to miles
 	}
-	return (dist / 1852); // meters to nautical miles
+	return (dist / 1852); // metres to nautical miles
 }
 
-// dist in meters
-// converts meters to feet or just returns meters
+// dist in metres
+// converts metres to feet or just returns metres
 function convert_distance_short(dist, displayUnits) {
 	if (displayUnits === "imperial") {
-		return (dist / 0.3048); // meters to feet
+		return (dist / 0.3048); // metres to feet
 	}
-	return dist; // just meters
+	return dist; // just metres
 }
 
 // rate in ft/min
