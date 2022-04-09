@@ -3213,7 +3213,7 @@ function refreshFeatures() {
     const cols = planeMan.cols = {};
 
     cols.icao = {
-        text: 'Hex id',
+        text: 'Hex ID',
         sort: function () { sortBy('icao', compareAlpha, function(x) { return x.icao; }); },
         value: function(plane) { return plane.icao; },
         td: '<td class="icaoCodeColumn">',
@@ -3318,12 +3318,12 @@ function refreshFeatures() {
         value: function(plane) { return (plane.military ? 'yes' : 'no'); },
         align: 'right' };
     cols.wd = {
-        text: 'Wind D',
+        text: 'Wind D.',
         sort: function () { sortBy('wd', compareNumeric, function(x) { return plane.wd; }); },
         value: function(plane) { return plane.wd != null ? (plane.wd + '°') : ''; },
         align: 'right' };
     cols.ws = {
-        text: 'Wind speed',
+        text: 'Wind S.',
         sort: function () { sortBy('ws', compareNumeric, function(x) { return x.ws; }); },
         value: function(plane) { return format_speed_brief(plane.ws, DisplayUnits); },
         align: 'right',

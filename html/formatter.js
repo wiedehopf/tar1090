@@ -4,6 +4,7 @@
 let NBSP='\u00a0';
 let NNBSP='\u202f';
 let DEGREES='\u00b0'
+let ENDASH='\u2013';
 let UP_TRIANGLE='\u25b2'; // U+25B2 BLACK UP-POINTING TRIANGLE
 let DOWN_TRIANGLE='\u25bc'; // U+25BC BLACK DOWN-POINTING TRIANGLE
 let EM_QUAD = '\u2001';
@@ -13,32 +14,28 @@ let TrackDirectionArrows = ["\u21e7","\u2b00","\u21e8","\u2b02","\u21e9","\u2b03
 
 let UnitLabels = {
     'altitude': { metric: "m", imperial: "ft", nautical: "ft"},
-    'speed': { metric: "km/h", imperial: "mph", nautical: "kt" },
-    'distance': { metric: "km", imperial: "mi", nautical: "NM" },
+    'speed': { metric: "km/h", imperial: "mph", nautical: "kts" },
+    'distance': { metric: "km", imperial: "mi", nautical: "nmi" },
     'verticalRate': { metric: "m/s", imperial: "ft/min", nautical: "ft/min" },
-    'distanceShort': {metric: "m", imperial: "ft", nautical: "m"}
+    'distanceShort': { metric: "m", imperial: "ft", nautical: "m" }
 };
 
 let aircraftCategories = {
     'A0': 'Unspecified powered aircraft',
-    'A1': 'Light (< 15 500 lbs.)',
-    'A2': 'Small (15 500 to 75 000 lbs.)',
-    'A3': 'Large (75 000 to 300 000 lbs.)',
+    'A1': `Light (< 15${NNBSP}500${NBSP}lbs)`,
+    'A2': `Small (15${NNBSP}500 to 75${NNBSP}000${NBSP}lbs)`,
+    'A3': `Large (75${NNBSP}000 to 300${NNBSP}000${NBSP}lbs)`,
     'A4': 'High Vortex Large(aircraft such as B-757)',
-    'A5': 'Heavy (> 300 000 lbs.)',
-    'A6': 'High Performance ( > 5 g acceleration and > 400kts)',
+    'A5': `Heavy (> 300${NNBSP}000${NBSP}lbs)`,
+    'A6': `High Performance (> 5${NBSP}g acceleration and > 400${NBSP}kts)`,
     'A7': 'Rotorcraft',
     'B0': 'Unspecified unpowered aircraft or UAV or spacecraft',
     'B1': 'Glider/sailplane',
-    'B2': 'Lighter-than-Air',
-    'B3': 'Parachutist/Skydiver',
-    'B4': 'Ultralight/hang-glider/paraglider',
-    'B5': 'Reserved',
     'B6': 'Unmanned Aerial Vehicle',
     'B7': 'Space/Trans-atmospheric vehicle',
     'C0': 'Unspecified ground installation or vehicle',
-    'C1': 'Surface Vehicle - Emergency Vehicle',
-    'C2': 'Surface Vehicle - Service Vehicle',
+    'C1': `Surface Vehicle ${ENDASH} Emergency Vehicle`,
+    'C2': `Surface Vehicle ${ENDASH} Service Vehicle`,
     'C3': 'Fixed Ground or Tethered Obstruction'
 };
 
