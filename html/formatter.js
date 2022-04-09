@@ -3,6 +3,7 @@
 
 let NBSP='\u00a0';
 let NNBSP='\u202f';
+let ENDASH='\u2013';
 let DEGREES='\u00b0'
 let UP_TRIANGLE='\u25b2'; // U+25B2 BLACK UP-POINTING TRIANGLE
 let DOWN_TRIANGLE='\u25bc'; // U+25BC BLACK DOWN-POINTING TRIANGLE
@@ -12,21 +13,21 @@ let TrackDirections = ["North","NE","East","SE","South","SW","West","NW"];
 let TrackDirectionArrows = ["\u21e7","\u2b00","\u21e8","\u2b02","\u21e9","\u2b03","\u21e6","\u2b01"];
 
 let UnitLabels = {
-    'altitude': { metric: "m", imperial: "ft", nautical: "ft"},
-    'speed': { metric: "km/h", imperial: "mph", nautical: "kt" },
-    'distance': { metric: "km", imperial: "mi", nautical: "NM" },
+    'altitude': { metric: "m", imperial: "ft", nautical: "ft" },
+    'speed': { metric: "km/h", imperial: "mph", nautical: "kn" },
+    'distance': { metric: "km", imperial: "mi", nautical: "nmi" },
     'verticalRate': { metric: "m/s", imperial: "ft/min", nautical: "ft/min" },
-    'distanceShort': {metric: "m", imperial: "ft", nautical: "m"}
+    'distanceShort': { metric: "m", imperial: "ft", nautical: "m" }
 };
 
 let aircraftCategories = {
     'A0': 'Unspecified powered aircraft',
-    'A1': 'Light (< 15 500 lbs.)',
-    'A2': 'Small (15 500 to 75 000 lbs.)',
-    'A3': 'Large (75 000 to 300 000 lbs.)',
+    'A1': `Light (< 15${NNBSP}500${NBSP}lb)`,
+    'A2': `Small (15${NNBSP}500 to 75${NNBSP}000${NBSP}lb)`,
+    'A3': `Large (75${NNBSP}000 to 300${NNBSP}000${NBSP}lb)`,
     'A4': 'High Vortex Large(aircraft such as B-757)',
-    'A5': 'Heavy (> 300 000 lbs.)',
-    'A6': 'High Performance ( > 5 g acceleration and > 400kts)',
+    'A5': `Heavy (> 300${NNBSP}000${NBSP}lb)`,
+    'A6': `High Performance (> 5${NBSP}g acceleration and > 400${NBSP}kn)`,
     'A7': 'Rotorcraft',
     'B0': 'Unspecified unpowered aircraft or UAV or spacecraft',
     'B1': 'Glider/sailplane',
@@ -37,8 +38,8 @@ let aircraftCategories = {
     'B6': 'Unmanned Aerial Vehicle',
     'B7': 'Space/Trans-atmospheric vehicle',
     'C0': 'Unspecified ground installation or vehicle',
-    'C1': 'Surface Vehicle - Emergency Vehicle',
-    'C2': 'Surface Vehicle - Service Vehicle',
+    'C1': `Surface Vehicle ${ENDASH} Emergency Vehicle`,
+    'C2': `Surface Vehicle ${ENDASH} Service Vehicle`,
     'C3': 'Fixed Ground or Tethered Obstruction'
 };
 
@@ -77,7 +78,7 @@ function format_track_long(track, rounded) {
 	}
 
 	let trackDir = Math.floor((360 + track % 360 + 22.5) / 45) % 8;
-	return  TrackDirections[trackDir] + ":" + NNBSP + track.toFixed(rounded ? 0 : 1) + DEGREES;
+	return  TrackDirections[trackDir] + ":" + NBSP + track.toFixed(rounded ? 0 : 1) + DEGREES;
 }
 function format_track_arrow(track) {
 	if (track == null){
@@ -100,7 +101,7 @@ function format_altitude_brief(alt, vr, displayUnits, withUnits) {
 
 	alt_text = Math.round(convert_altitude(alt, displayUnits)).toString();
     if (withUnits)
-        alt_text += NNBSP + get_unit_label("altitude", displayUnits);
+        alt_text += NBSP + get_unit_label("altitude", displayUnits);
 
 	// Vertical Rate Triangle
 	let verticalRateTriangle = "";
@@ -109,7 +110,7 @@ function format_altitude_brief(alt, vr, displayUnits, withUnits) {
 	} else if (vr < -245){
 		verticalRateTriangle = DOWN_TRIANGLE;
 	} else {
-		verticalRateTriangle = NNBSP;
+		verticalRateTriangle = NBSP;
 	}
 
 	return alt_text + verticalRateTriangle;
@@ -125,12 +126,12 @@ function format_altitude_long(alt, vr, displayUnits) {
 		return "on ground";
 	}
 
-	alt_text = Math.round(convert_altitude(alt, displayUnits)).toString() + NNBSP + get_unit_label("altitude", displayUnits);
+	alt_text = Math.round(convert_altitude(alt, displayUnits)).toString() + NBSP + get_unit_label("altitude", displayUnits);
 
 	if (vr > 192) {
-		return UP_TRIANGLE + NNBSP + alt_text;
+		return UP_TRIANGLE + NBSP + alt_text;
 	} else if (vr < -192) {
-		return DOWN_TRIANGLE + NNBSP + alt_text;
+		return DOWN_TRIANGLE + NBSP + alt_text;
 	} else {
 		return alt_text;
 	}
@@ -146,7 +147,7 @@ function format_altitude(alt, displayUnits) {
 		return "on ground";
 	}
 
-	alt_text = Math.round(convert_altitude(alt, displayUnits)).toString() + NNBSP + get_unit_label("altitude", displayUnits);
+	alt_text = Math.round(convert_altitude(alt, displayUnits)).toString() + NBSP + get_unit_label("altitude", displayUnits);
 
     return alt_text;
 }
@@ -179,7 +180,7 @@ function format_speed_brief(speed, displayUnits, withUnits) {
 	}
     let speed_text = Math.round(convert_speed(speed, displayUnits)).toString();
     if (withUnits)
-        speed_text += NNBSP + get_unit_label("speed", displayUnits);
+        speed_text += NBSP + get_unit_label("speed", displayUnits);
 
 	return speed_text;
 }
@@ -190,7 +191,7 @@ function format_speed_long(speed, displayUnits) {
 		return "n/a";
 	}
 
-	let speed_text = Math.round(convert_speed(speed, displayUnits)) + NNBSP + get_unit_label("speed", displayUnits);
+	let speed_text = Math.round(convert_speed(speed, displayUnits)) + NBSP + get_unit_label("speed", displayUnits);
 
 	return speed_text;
 }
@@ -226,7 +227,7 @@ function format_distance_long(dist, displayUnits, fixed) {
 		fixed = 1;
 	}
 
-	let dist_text = convert_distance(dist, displayUnits).toFixed(fixed) + NNBSP + get_unit_label("distance", displayUnits);
+	let dist_text = convert_distance(dist, displayUnits).toFixed(fixed) + NBSP + get_unit_label("distance", displayUnits);
 
 	return dist_text;
 }
@@ -236,7 +237,7 @@ function format_distance_short (dist, displayUnits) {
 		return "n/a";
 	}
 
-	let dist_text = Math.round(convert_distance_short(dist, displayUnits)) + NNBSP + get_unit_label("distanceShort", displayUnits);
+	let dist_text = Math.round(convert_distance_short(dist, displayUnits)) + NBSP + get_unit_label("distanceShort", displayUnits);
 
 	return dist_text;
 }
@@ -276,7 +277,7 @@ function format_vert_rate_long(rate, displayUnits) {
 		return "n/a";
 	}
 
-	let rate_text = convert_vert_rate(rate, displayUnits).toFixed(displayUnits === "metric" ? 1 : 0) + NNBSP + get_unit_label("verticalRate", displayUnits);
+	let rate_text = convert_vert_rate(rate, displayUnits).toFixed(displayUnits === "metric" ? 1 : 0) + NBSP + get_unit_label("verticalRate", displayUnits);
 
 	return rate_text;
 }
@@ -292,7 +293,7 @@ function convert_vert_rate(rate, displayUnits) {
 
 // p is a [lon, lat] coordinate
 function format_latlng(p) {
-	return p[1].toFixed(3) + DEGREES + "," + NNBSP + p[0].toFixed(3) + DEGREES;
+	return p[1].toFixed(3) + DEGREES + "," + NBSP + p[0].toFixed(3) + DEGREES;
 }
 
 function format_data_source(source) {

@@ -1130,7 +1130,7 @@ function initPage() {
 
     new Toggle({
         key: "updateLocation",
-        display: "update GPS location",
+        display: "Update GPS location",
         container: "#settingsRight",
         init: updateLocation,
         setState: function(state) {
@@ -1141,7 +1141,7 @@ function initPage() {
 
     new Toggle({
         key: "autoselect",
-        display: "auto-select plane",
+        display: "Auto-select plane",
         container: "#settingsRight",
         init: autoselect,
         setState: function(state) {
@@ -3213,7 +3213,7 @@ function refreshFeatures() {
     const cols = planeMan.cols = {};
 
     cols.icao = {
-        text: 'Hex id',
+        text: 'Hex ID',
         sort: function () { sortBy('icao', compareAlpha, function(x) { return x.icao; }); },
         value: function(plane) { return plane.icao; },
         td: '<td class="icaoCodeColumn">',
@@ -3254,28 +3254,28 @@ function refreshFeatures() {
         sort: function () { sortBy('altitude',compareNumeric, function(x) { return (x.altitude == "ground" ? -100000 : x.altitude); }); },
         value: function(plane) { return format_altitude_brief(plane.altitude, plane.vert_rate, DisplayUnits); },
         align: 'right',
-        header: function () { return 'Altitude(' + get_unit_label("altitude", DisplayUnits) + ')';},
+        header: function () { return 'Altitude (' + get_unit_label("altitude", DisplayUnits) + ')';},
     };
     cols.speed = {
         text: pTracks ? 'Max. Speed' : 'Speed',
         sort: function () { sortBy('speed', compareNumeric, function(x) { return x.speed; }); },
         value: function(plane) { return format_speed_brief(plane.speed, DisplayUnits); },
         align: 'right',
-        header: function () { return (pTracks ? 'Max. ' : '') + 'Spd(' + get_unit_label("speed", DisplayUnits) + ')';},
+        header: function () { return (pTracks ? 'Max. ' : '') + 'Spd (' + get_unit_label("speed", DisplayUnits) + ')';},
     };
     cols.vert_rate = {
         text: 'Vertical Rate',
         sort: function () { sortBy('vert_rate', compareNumeric, function(x) { return x.vert_rate; }); },
         value: function(plane) { return format_vert_rate_brief(plane.vert_rate, DisplayUnits); },
         align: 'right',
-        header: function () { return 'V. Rate(' + get_unit_label("verticalRate", DisplayUnits) + ')';},
+        header: function () { return 'V. Rate (' + get_unit_label("verticalRate", DisplayUnits) + ')';},
     };
     cols.distance = {
         text: pTracks ? 'Max. Distance' : 'Distance',
         sort: function () { sortBy('sitedist',compareNumeric, function(x) { return x.sitedist; }); },
         value: function(plane) { return format_distance_brief(plane.sitedist, DisplayUnits); },
         align: 'right',
-        header: function () { return (pTracks ? 'Max. ' : '') + 'Dist.(' + get_unit_label("distance", DisplayUnits) + ')';},
+        header: function () { return (pTracks ? 'Max. ' : '') + 'Dist. (' + get_unit_label("distance", DisplayUnits) + ')';},
     };
     cols.track = {
         text: 'Track',
@@ -3318,7 +3318,7 @@ function refreshFeatures() {
         value: function(plane) { return (plane.military ? 'yes' : 'no'); },
         align: 'right' };
     cols.wd = {
-        text: 'Wind D',
+        text: 'Wind D.',
         sort: function () { sortBy('wd', compareNumeric, function(x) { return plane.wd; }); },
         value: function(plane) { return plane.wd != null ? (plane.wd + '°') : ''; },
         align: 'right' };
@@ -3327,7 +3327,7 @@ function refreshFeatures() {
         sort: function () { sortBy('ws', compareNumeric, function(x) { return x.ws; }); },
         value: function(plane) { return format_speed_brief(plane.ws, DisplayUnits); },
         align: 'right',
-        header: function () { return 'Wind(' + get_unit_label("speed", DisplayUnits) + ')';},
+        header: function () { return 'Wind (' + get_unit_label("speed", DisplayUnits) + ')';},
     };
 
     const colsEntries = Object.entries(cols);
