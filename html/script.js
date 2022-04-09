@@ -1130,7 +1130,7 @@ function initPage() {
 
     new Toggle({
         key: "updateLocation",
-        display: "update GPS location",
+        display: "Update GPS location",
         container: "#settingsRight",
         init: updateLocation,
         setState: function(state) {
@@ -1141,7 +1141,7 @@ function initPage() {
 
     new Toggle({
         key: "autoselect",
-        display: "auto-select plane",
+        display: "Auto-select plane",
         container: "#settingsRight",
         init: autoselect,
         setState: function(state) {
