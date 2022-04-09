@@ -3254,14 +3254,14 @@ function refreshFeatures() {
         sort: function () { sortBy('altitude',compareNumeric, function(x) { return (x.altitude == "ground" ? -100000 : x.altitude); }); },
         value: function(plane) { return format_altitude_brief(plane.altitude, plane.vert_rate, DisplayUnits); },
         align: 'right',
-        header: function () { return 'Altitude(' + get_unit_label("altitude", DisplayUnits) + ')';},
+        header: function () { return 'Alt.' + NBSP + '(' + get_unit_label("altitude", DisplayUnits) + ')';},
     };
     cols.speed = {
         text: pTracks ? 'Max. Speed' : 'Speed',
         sort: function () { sortBy('speed', compareNumeric, function(x) { return x.speed; }); },
         value: function(plane) { return format_speed_brief(plane.speed, DisplayUnits); },
         align: 'right',
-        header: function () { return (pTracks ? 'Max. ' : '') + 'Spd(' + get_unit_label("speed", DisplayUnits) + ')';},
+        header: function () { return (pTracks ? 'Max. ' : '') + 'Spd.' + NBSP + '(' + get_unit_label("speed", DisplayUnits) + ')';},
     };
     cols.vert_rate = {
         text: 'Vertical Rate',
@@ -3275,7 +3275,7 @@ function refreshFeatures() {
         sort: function () { sortBy('sitedist',compareNumeric, function(x) { return x.sitedist; }); },
         value: function(plane) { return format_distance_brief(plane.sitedist, DisplayUnits); },
         align: 'right',
-        header: function () { return (pTracks ? 'Max. ' : '') + 'Dist.(' + get_unit_label("distance", DisplayUnits) + ')';},
+        header: function () { return (pTracks ? 'Max. ' : '') + 'Dist.' + NBSP + '(' + get_unit_label("distance", DisplayUnits) + ')';},
     };
     cols.track = {
         text: 'Track',
@@ -3327,7 +3327,7 @@ function refreshFeatures() {
         sort: function () { sortBy('ws', compareNumeric, function(x) { return x.ws; }); },
         value: function(plane) { return format_speed_brief(plane.ws, DisplayUnits); },
         align: 'right',
-        header: function () { return 'Wind(' + get_unit_label("speed", DisplayUnits) + ')';},
+        header: function () { return 'Wind' + NBSP + '(' + get_unit_label("speed", DisplayUnits) + ')'; },
     };
 
     const colsEntries = Object.entries(cols);
