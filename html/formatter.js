@@ -22,11 +22,11 @@ let UnitLabels = {
 
 let aircraftCategories = {
     'A0': 'Unspecified powered aircraft',
-    'A1': `Light (< 15${NNBSP}500${NBSP}lbs)`,
-    'A2': `Small (15${NNBSP}500 to 75${NNBSP}000${NBSP}lbs)`,
-    'A3': `Large (75${NNBSP}000 to 300${NNBSP}000${NBSP}lbs)`,
+    'A1': `Light (< 15${NNBSP}500${NBSP}lb)`,
+    'A2': `Small (15${NNBSP}500 to 75${NNBSP}000${NBSP}lb)`,
+    'A3': `Large (75${NNBSP}000 to 300${NNBSP}000${NBSP}lb)`,
     'A4': 'High Vortex Large(aircraft such as B-757)',
-    'A5': `Heavy (> 300${NNBSP}000${NBSP}lbs)`,
+    'A5': `Heavy (> 300${NNBSP}000${NBSP}lb)`,
     'A6': `High Performance (> 5${NBSP}g acceleration and > 400${NBSP}kts)`,
     'A7': 'Rotorcraft',
     'B0': 'Unspecified unpowered aircraft or UAV or spacecraft',
