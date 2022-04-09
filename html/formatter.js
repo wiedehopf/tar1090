@@ -14,7 +14,7 @@ let TrackDirectionArrows = ["\u21e7","\u2b00","\u21e8","\u2b02","\u21e9","\u2b03
 
 let UnitLabels = {
     'altitude': { metric: "m", imperial: "ft", nautical: "ft"},
-    'speed': { metric: "km/h", imperial: "mph", nautical: "kts" },
+    'speed': { metric: "km/h", imperial: "mph", nautical: "kt" },
     'distance': { metric: "km", imperial: "mi", nautical: "nmi" },
     'verticalRate': { metric: "m/s", imperial: "ft/min", nautical: "ft/min" },
     'distanceShort': { metric: "m", imperial: "ft", nautical: "m" }
@@ -27,7 +27,7 @@ let aircraftCategories = {
     'A3': `Large (75${NNBSP}000 to 300${NNBSP}000${NBSP}lb)`,
     'A4': 'High Vortex Large(aircraft such as B-757)',
     'A5': `Heavy (> 300${NNBSP}000${NBSP}lb)`,
-    'A6': `High Performance (> 5${NBSP}g acceleration and > 400${NBSP}kts)`,
+    'A6': `High Performance (> 5${NBSP}g acceleration and > 400${NBSP}kt)`,
     'A7': 'Rotorcraft',
     'B0': 'Unspecified unpowered aircraft or UAV or spacecraft',
     'B1': 'Glider/sailplane',
