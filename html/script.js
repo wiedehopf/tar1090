@@ -2734,11 +2734,7 @@ function refreshSelected() {
 
     refreshPhoto(selected);
 
-    if (selected.name == 'no cs') {
-        jQuery('#selected_callsign').updateText('no callsign');
-    } else {
-        jQuery('#selected_callsign').updateText(selected.name);
-    }
+    jQuery('#selected_callsign').updateText(selected.name);
 
     if (showTrace) {
         if (selected.position_time) {
@@ -3231,7 +3227,7 @@ function refreshFeatures() {
         value: function(plane) {
             if (flightawareLinks)
                 return getFlightAwareModeSLink(plane.icao, plane.flight, plane.name);
-            return plane.name;
+            return (plane.flight || '');
         },
         html: flightawareLinks,
         text: 'Callsign' };

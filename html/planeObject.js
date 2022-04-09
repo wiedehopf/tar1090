@@ -49,7 +49,7 @@ function PlaneObject(icao) {
 
 PlaneObject.prototype.setNull = function() {
     this.flight = null;
-    this.name = 'no cs';
+    this.name = 'no callsign';
     this.squawk    = null;
     this.category  = null;
     this.dataSource = "modeS";
@@ -1399,10 +1399,10 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 
     if (flight == null || flight == "@@@@@@@@") {
         this.flight = null;
-        this.name ='no cs';
+        this.name ='no callsign';
     } else {
         this.flight = `${flight}`;
-        this.name = this.flight.trim() || 'no cs';
+        this.name = this.flight.trim() || 'empty callsign';
     }
 
     if (mlat && noMLAT) {
@@ -2393,10 +2393,10 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
 
         if (data.flight == null || data.flight == "@@@@@@@@") {
             this.flight = null;
-            this.name ='no cs';
+            this.name ='no callsign';
         } else {
             this.flight = `${data.flight}`;
-            this.name = this.flight.trim() || 'no cs';
+            this.name = this.flight.trim() || 'empty callsign';
         }
 
         if (data.alt_geom != null && !alt_geom && altitude != null && altitude != "ground") {
