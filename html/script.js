@@ -722,7 +722,7 @@ function initPage() {
     if (value = usp.getFloat('filterMaxRange')) {
         filterMaxRange = value;
     }
-    filterMaxRange *= 1852; // convert from nmi to metres
+    filterMaxRange *= 1852; // convert from nmi to meters
 
 
     if (value = usp.getFloat('mapOrientation')) {
@@ -1714,7 +1714,7 @@ function startPage() {
     // Make a LineString with 'points'-number points
     // that is a closed circle on the sphere such that the
     // great circle distance from 'center' to each point is
-    // 'radius' metres
+    // 'radius' meters
     utils.make_geodesic_circle = function (center, radius, points) {
         const angularDistance = radius / 6378137.0;
         const lon1 = center[0] * Math.PI / 180.0;
@@ -6073,7 +6073,7 @@ function drawUpintheair() {
     //  wget -O /usr/local/share/tar1090/html/upintheair.json \
     //    'http://www.heywhatsthat.com/api/upintheair.json?id=XXXX&refraction=0.25&alts=3048,9144'
     //
-    // NB: altitudes are in _metres_, you can specify a list of altitudes
+    // NB: altitudes are in _meters_, you can specify a list of altitudes
     //
     if (!calcOutlineData)
         return;
@@ -7400,7 +7400,7 @@ function coordsForExport(plane) {
             if (seg.ground) {
                 alt = "ground";
             } else if (alt != null && egmLoaded) {
-                // alt is in metres at this point
+                // alt is in meters at this point
                 alt = Math.round(egm96.ellipsoidToEgm96(pos[1], pos[0], alt));
             }
 

@@ -159,7 +159,7 @@ function geoMagFactory(wmm) {
 			return date.getUTCFullYear() + (date.valueOf() - Date.UTC(year, 0)) / msInYear;
 		}
 
-		let alt = (h / 3280.8399) || 0, // convert h (in feet) to kilometres or set default of 0
+		let alt = (h / 3280.8399) || 0, // convert h (in feet) to kilometers or set default of 0
 			time = decimalDate(date),
 			dt = time - epoch,
 			rlat = deg2rad(glat),
