@@ -51,7 +51,6 @@ let uat_data = null;
 let enableLabels = false;
 let extendedLabels = 0;
 let mapIsVisible = true;
-let tableInView = false;
 let onlyMilitary = false;
 let onlySelected = false;
 let onlyDataSource = null;
@@ -812,7 +811,7 @@ function initPage() {
     if (loStore['trackLabels'] == "true" || usp.has('trackLabels')) {
         toggleTrackLabels();
     }
-    if (loStore['tableInView'] == "true") {
+    if (loStore['tableInView'] == "true" || usp.has('tableInView')) {
         toggleTableInView(true);
     }
     if (loStore['debug'] == "true")

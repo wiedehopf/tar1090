@@ -54,6 +54,7 @@
 - hideButtons - hides all buttons.
 - centerReceiver - conter the view on receiver position.
 - nowebgl - force rendering without WebGL.
+- tableInView - button V / only show aircraft in view in the table
 
 ## Toggles
 

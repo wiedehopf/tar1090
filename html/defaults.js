@@ -324,6 +324,8 @@ let jaeroTimeout = 35 * 60; // in seconds
 
 let darkModeDefault = true; // turn on dark mode by default (change in browser possible)
 
+let tableInView = false; // only show aircraft in current view (V button)
+
 // legacy variables
 let OutlineMlatColor = null;
 
