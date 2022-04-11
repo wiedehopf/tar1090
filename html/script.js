@@ -2480,7 +2480,6 @@ function initMap() {
 
     if (
         window && window.location && window.location.protocol == 'https:'
-        && loStore['geoFindMeFirstVisit'] != 'no'
         && !SiteOverride
         && (globeIndex || uuid || askLocation)
         && !usp.has('icao')
