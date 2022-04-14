@@ -117,6 +117,7 @@ let trace_hist_only = false;
 let traces_high_res = false;
 let show_rId = true;
 let labels_top = false;
+let lockDotCentered = false;
 
 let infoBlockWidth = baseInfoBlockWidth;
 
@@ -5171,6 +5172,10 @@ function processURLParams(){
     if (usp.has('centerReceiver')) {
         OLMap.getView().setCenter(ol.proj.fromLonLat([SiteLon, SiteLat]));
     }
+    if (usp.has('lockDotCentered')) {
+        lockDotCentered = true;
+        OLMap.getView().setCenter(ol.proj.fromLonLat([SiteLon, SiteLat]));
+    }
 }
 
 let regIcaoDownloadRunning = false;
@@ -5822,17 +5827,17 @@ function onLocationChange(position) {
     lastCallLocationChange = new Date().getTime();
     changeCenter();
     const moveMap = (Math.abs(SiteLat - CenterLat) < 0.000001 && Math.abs(SiteLon - CenterLon) < 0.000001);
-    SiteLat = CenterLat = DefaultCenterLat = position.coords.latitude;
-    SiteLon = CenterLon = DefaultCenterLon = position.coords.longitude;
+    SiteLat = DefaultCenterLat = position.coords.latitude;
+    SiteLon = DefaultCenterLon = position.coords.longitude;
     SitePosition = [SiteLon, SiteLat];
 
     drawSiteCircle();
     createLocationDot();
 
-    if (moveMap) {
+    if (moveMap || lockDotCentered) {
         OLMap.getView().setCenter(ol.proj.fromLonLat([SiteLon, SiteLat]));
     }
-    console.log('Location from browser: '+ SiteLat +', ' + SiteLon);
+    console.log('Changed Site Location to: '+ SiteLat +', ' + SiteLon);
     //followRandomPlane();
     //togglePersistence();
 }

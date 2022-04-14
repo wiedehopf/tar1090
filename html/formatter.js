@@ -412,6 +412,23 @@ function wqi(data) {
 
     data.messages = vals[7];
 
+    let s32 = new Int32Array(data.buffer, 0, stride / 4);
+    let receiver_lat = s32[8] / 1e6;
+    let receiver_lon = s32[9] / 1e6;
+
+    if (receiver_lat != 0 && receiver_lon != 0) {
+        //console.log("receiver_lat: " + receiver_lat + " receiver_lon: " + receiver_lon);
+        let position = {
+            coords: {
+                latitude: receiver_lat,
+                longitude: receiver_lon,
+            },
+        };
+        if (receiver_lat != SiteLat || receiver_lon != SiteLon) {
+            onLocationChange(position);
+        }
+    }
+
     data.aircraft = [];
     for (let off = stride; off < buffer.byteLength; off += stride) {
         let ac = {}
