@@ -1925,7 +1925,7 @@ function initMap() {
 
     siteCircleLayer.on('change:visible', function(evt) {
         if (evt.target.getVisible()) {
-            //geoFindMe();
+            geoFindMe();
         }
     });
 
@@ -1943,7 +1943,7 @@ function initMap() {
 
     locationDotLayer.on('change:visible', function(evt) {
         if (evt.target.getVisible()) {
-            //geoFindMe();
+            geoFindMe();
         }
     });
 
@@ -2479,11 +2479,7 @@ function initMap() {
         }
     }, true);
 
-    if (
-        window && window.location && window.location.protocol == 'https:'
-        && !SiteOverride
-        && (globeIndex || uuid || askLocation)
-        && !usp.has('icao')
+    if (!usp.has('icao')
         && !usp.has("lat") && !usp.has("lon")
         && !usp.has('airport')
     ) {
@@ -5848,8 +5844,9 @@ function logArg(error) {
 let watchPositionId;
 let pollPositionSeconds = 10;
 function pollPositionInterval() {
-    if (!updateLocation)
+    if (!updateLocation || !geoFindEnabled()) {
         return;
+    }
     // interval position polling every half minute for browsers that are shit
     //console.trace();
     clearInterval(timers.pollPosition);
@@ -5878,7 +5875,7 @@ function watchPosition() {
     if (watchPositionId != null) {
         navigator.geolocation.clearWatch(watchPositionId);
     }
-    if (!updateLocation) {
+    if (!updateLocation || !geoFindEnabled()) {
         return;
     }
     const geoposOptions = {
@@ -5895,7 +5892,7 @@ function watchPosition() {
 
 let geoFindInterval = null;
 function geoFindMe() {
-    if (SiteOverride || (!globeIndex && !uuid && !askLocation)) {
+    if (!geoFindEnabled()) {
         initSitePos();
         return;
     }
@@ -7622,6 +7619,10 @@ let infoBits = {
         value: function(plane) { return plane.icaoType || 'n/a'; },
     },
 };
+
+function geoFindEnabled() {
+    return (!SiteOverride && (globeIndex || uuid || askLocation) && (window && window.location && window.location.protocol == 'https:'));
+}
 
 
 parseURLIcaos();
