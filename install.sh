@@ -263,6 +263,21 @@ do
     mv "$html_path/config.js" "$TMP/config.js" 2>/dev/null || true
     mv "$html_path/upintheair.json" "$TMP/upintheair.json" 2>/dev/null || true
 
+    # in case we have offlinemaps installed, modify config.js
+    MAX_OFFLINE=""
+    for i in {0..15}; do
+        if [[ -d /usr/local/share/osm_tiles_offline/$i ]]; then
+            MAX_OFFLINE=$i
+        fi
+    done
+    if [[ -n "$MAX_OFFLINE" ]]; then
+        if ! grep "$TMP/config.js" -e '^offlineMapDetail.*' -qs &>/dev/null; then
+            echo "offlineMapDetail=$MAX_OFFLINE;" >> "$TMP/config.js"
+        else
+            sed -i -e "s/^offlineMapDetail.*/offlineMapDetail=$MAX_OFFLINE;/" "$TMP/config.js"
+        fi
+    fi
+
     cp "$ipath/customIcon.png" "$TMP/images/tar1090-favicon.png" &>/dev/null || true
 
     # bust cache for all css and js files

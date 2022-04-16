@@ -103,7 +103,6 @@ let legSel = -1;
 let geoMag = null;
 let solidT = false;
 let lastActive = new Date().getTime();
-let overrideMapType = null;
 let enableOverlays = [];
 let halloween = false;
 let noRegOnly = false;
@@ -118,6 +117,8 @@ let traces_high_res = false;
 let show_rId = true;
 let labels_top = false;
 let lockDotCentered = false;
+let overrideMapType = null;
+
 
 let infoBlockWidth = baseInfoBlockWidth;
 
@@ -709,8 +710,13 @@ function initPage() {
     if (usp.has('hideButtons'))
         hideButtons = true;
 
-    if (usp.has('baseMap'))
+    if (usp.has('baseMap')) {
         overrideMapType = usp.get('baseMap');
+    }
+
+    if (usp.has('offlineMap')) {
+        overrideMapType = 'osm_tiles_offline';
+    }
 
     if (usp.has('overlays'))
         enableOverlays = usp.get('overlays').split(',');

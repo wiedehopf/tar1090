@@ -180,6 +180,7 @@ function resetSettings() {
 if (usp.has('reset')) {
     resetSettings();
 }
+
 const feed = usp.get('feed');
 if (feed != null) {
     console.log('feed: ' + feed);

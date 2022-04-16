@@ -65,6 +65,8 @@ let MapDim = true;
 let mapDimPercentage = 0.45;
 let mapContrastPercentage = 0;
 
+let offlineMapDetail = -1;
+
 // -- Marker settings -------------------------------------
 
 // different marker size depending on zoom lvl
