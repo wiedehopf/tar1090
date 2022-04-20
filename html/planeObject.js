@@ -492,7 +492,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     // greater than the difference between data inputs
     let time_difference = (this.position_time - this.prev_time) - 2;
     if (!loadFinished || serverTrack)
-        time_difference = (this.position_time - this.prev_time) - (now - last);
+        time_difference = (this.position_time - this.prev_time) - Math.min(60, now - last);
 
     //let stale_timeout = lastseg.estimated ? 5 : 10;
     let stale_timeout = 15;
