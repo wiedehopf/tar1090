@@ -7630,6 +7630,23 @@ function geoFindEnabled() {
     return (!SiteOverride && (globeIndex || uuid || askLocation) && (window && window.location && window.location.protocol == 'https:'));
 }
 
+function _printTrace(trace) {
+    for (let i = 0; i < trace.length; i++) {
+        const state = trace[i];
+        const timestamp = state[0];
+        let stale = state[6] & 1;
+        const leg_marker = state[6] & 2;
+        console.log(zuluTime(new Date(timestamp * 1000)) + ' ' + (state[1] + ',' + state[2]).padStart(26, ' ')  + ' ' + String(state[3]).padStart(6, ' ') + ' ' + state[6]);
+    }
+}
+
+function printTrace() {
+    console.log('full trace');
+    _printTrace(SelectedPlane.fullTrace.trace);
+    console.log('recent trace');
+    _printTrace(SelectedPlane.recentTrace.trace);
+}
+
 
 parseURLIcaos();
 initialize();
