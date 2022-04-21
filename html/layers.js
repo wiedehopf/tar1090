@@ -92,42 +92,44 @@ function createBaseLayers() {
         }));
     }
 
-    world.push(new ol.layer.Tile({
-        source: new ol.source.XYZ({
-            url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-            attributions: 'Powered by <a href="https://www.esri.com">Esri.com</a>' +
-            '— Sources: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
-            attributionsCollapsible: false,
-            maxZoom: 17,
-        }),
-        name: 'esri',
-        title: 'ESRI.com Sat.',
-        type: 'base',
-    }));
-    world.push(new ol.layer.Tile({
-        source: new ol.source.XYZ({
-            url: "https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
-            attributions: 'Powered by <a href="https://www.esri.com">Esri.com</a>' +
-            '— Sources: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
-            attributionsCollapsible: false,
-            maxZoom: 16,
-        }),
-        name: 'esri_gray',
-        title: 'ESRI.com Gray',
-        type: 'base',
-    }));
-    world.push(new ol.layer.Tile({
-        source: new ol.source.XYZ({
-            url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
-            attributions: 'Powered by <a href="https://www.esri.com">Esri.com</a>' +
-            '— Sources: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
-            attributionsCollapsible: false,
-            maxZoom: 17,
-        }),
-        name: 'esri_streets',
-        title: 'ESRI.com Streets',
-        type: 'base',
-    }));
+    if (!adsbexchange) {
+        world.push(new ol.layer.Tile({
+            source: new ol.source.XYZ({
+                url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+                attributions: 'Powered by <a href="https://www.esri.com">Esri.com</a>' +
+                '— Sources: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+                attributionsCollapsible: false,
+                maxZoom: 17,
+            }),
+            name: 'esri',
+            title: 'ESRI.com Sat.',
+            type: 'base',
+        }));
+        world.push(new ol.layer.Tile({
+            source: new ol.source.XYZ({
+                url: "https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+                attributions: 'Powered by <a href="https://www.esri.com">Esri.com</a>' +
+                '— Sources: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+                attributionsCollapsible: false,
+                maxZoom: 16,
+            }),
+            name: 'esri_gray',
+            title: 'ESRI.com Gray',
+            type: 'base',
+        }));
+        world.push(new ol.layer.Tile({
+            source: new ol.source.XYZ({
+                url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+                attributions: 'Powered by <a href="https://www.esri.com">Esri.com</a>' +
+                '— Sources: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+                attributionsCollapsible: false,
+                maxZoom: 17,
+            }),
+            name: 'esri_streets',
+            title: 'ESRI.com Streets',
+            type: 'base',
+        }));
+    }
 
     if (0) {
         let vtlayer = new ol.layer.VectorTile({
