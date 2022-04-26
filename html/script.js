@@ -2920,19 +2920,16 @@ function refreshSelected() {
     jQuery('#selected_vert_rate').updateText(format_vert_rate_long(selected.vert_rate, DisplayUnits));
     jQuery('#selected_baro_rate').updateText(format_vert_rate_long(selected.baro_rate, DisplayUnits));
     jQuery('#selected_geom_rate').updateText(format_vert_rate_long(selected.geom_rate, DisplayUnits));
-    if (selected.icao != selIcao) {
-        selIcao = selected.icao;
-        let hex_html = "<span style='font-family: monospace;' class=identSmall>Hex:" + NBSP + selected.icao.toUpperCase() + "</span>";
-        if (globeIndex || shareBaseUrl) {
-            let icao_link = "<span  class=identSmall><a class='link identSmall' target=\"_blank\" href=\"" + shareLink + "\">Share</a></span>";
-            hex_html = hex_html + NBSP + NBSP + NBSP + icao_link;
-        }
-        jQuery('#selected_icao').html(hex_html);
-    }
+
+    setSelectedIcao();
+
     if (globeIndex || shareBaseUrl) {
         const shareElement = jQuery('a.identSmall');
         if (shareElement.prop('href') !== shareLink) {
             shareElement.prop('href',shareLink);
+
+            // Assign shareLinkInput the value we want to copy on click
+            shareLinkInput.setAttribute("value", window.location.origin + shareLink);
         }
     }
     jQuery('#selected_pf_info').updateText((selected.pfRoute ? selected.pfRoute : "") );
@@ -7645,6 +7642,48 @@ function printTrace() {
     _printTrace(SelectedPlane.fullTrace.trace);
     console.log('recent trace');
     _printTrace(SelectedPlane.recentTrace.trace);
+}
+
+
+// Create a "hidden" input
+let shareLinkInput = document.createElement("input");
+// Append it to the body
+document.body.appendChild(shareLinkInput);
+
+function copyShareLink() {
+
+    // Highlight its content
+    shareLinkInput.select();
+    // Copy the highlighted text
+    document.execCommand("copy");
+    // deselect input field
+    shareLinkInput.blur();
+
+    copyLinkTime = new Date().getTime();
+    copiedIcao = SelectedPlane.icao;
+    setSelectedIcao();
+}
+
+let copyLinkTime = 0;
+let copiedIcao = null;
+
+function setSelectedIcao() {
+    const selected = SelectedPlane;
+    if (selected.icao == selIcao && copiedIcao == null) {
+        return;
+    }
+    selIcao = selected.icao;
+    let hex_html = "<span style='font-family: monospace;' class=identSmall>Hex:" + NBSP + selected.icao.toUpperCase() + "</span>";
+    if (globeIndex || shareBaseUrl) {
+        if (copiedIcao && (copiedIcao != selected.icao || new Date().getTime() - copyLinkTime > 2000)) {
+            copiedIcao = null;
+        }
+        let copy_link_text = (copiedIcao != null) ? "Copied" : ("Copy" + NBSP + "Link");
+        let icao_link = "<span  class=identSmall><a class='link identSmall' target=\"_blank\" href=\"" + shareLink +
+            "\" onclick=\"copyShareLink(); return false;\">" + copy_link_text + "</a></span>";
+        hex_html = hex_html + NBSP + NBSP + NBSP + icao_link;
+    }
+    jQuery('#selected_icao').html(hex_html);
 }
 
 
