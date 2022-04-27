@@ -104,6 +104,17 @@ function createBaseLayers() {
             title: 'Satellite MapTiler (testing)',
             type: 'base',
         }));
+        world.push(new ol.layer.Tile({
+            source: new ol.source.XYZ({
+                url: "https://api.maptiler.com/maps/hybrid/256/{z}/{x}/{y}.jpg?key=HyIQ6A88uTDdX4n4MNVY",
+                attributions: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+                attributionsCollapsible: false,
+                maxZoom: 15,
+            }),
+            name: 'maptiler_hybrid',
+            title: 'Hybrid MapTiler (testing)',
+            type: 'base',
+        }));
     }
 
     if (!adsbexchange) {
