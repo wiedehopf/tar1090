@@ -224,7 +224,7 @@ function createBaseLayers() {
     // http://basemaps.cartocdn.com
     // https://github.com/CartoDB/cartodb/wiki/BaseMaps-available
 
-    let basemaps = [ "dark_all", "dark_nolabels",
+    let basemaps = [ "rastertiles/voyager", "dark_all", "dark_nolabels",
         "light_all", "light_nolabels"
     ]
 
@@ -241,7 +241,7 @@ function createBaseLayers() {
                     maxZoom: 15,
                 }),
                 name: "carto_" + basemap_id,
-                title: 'CARTO.com ' +basemap_id,
+                title: 'CARTO.com ' + basemap_id,
                 type: 'base',
             }));
         }
