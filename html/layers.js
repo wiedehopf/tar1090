@@ -79,6 +79,20 @@ function createBaseLayers() {
         type: 'base',
     }));
 
+    let basemap_id = "rastertiles/voyager";
+    world.push(new ol.layer.Tile({
+        source: new ol.source.OSM({
+            "url" : "https://{a-d}.basemaps.cartocdn.com/"+ basemap_id + "/{z}/{x}/{y}.png",
+            "attributions" : 'Powered by <a href="https://carto.com">CARTO.com</a>'
+            + ' using data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
+            attributionsCollapsible: false,
+            maxZoom: 15,
+        }),
+        name: "carto_" + basemap_id,
+        title: 'CARTO.com English',
+        type: 'base',
+    }));
+
     if (!adsbexchange) {
         world.push(new ol.layer.Tile({
             source: new ol.source.OSM({
@@ -224,7 +238,7 @@ function createBaseLayers() {
     // http://basemaps.cartocdn.com
     // https://github.com/CartoDB/cartodb/wiki/BaseMaps-available
 
-    let basemaps = [ "rastertiles/voyager", "dark_all", "dark_nolabels",
+    let basemaps = [ "dark_all", "dark_nolabels",
         "light_all", "light_nolabels"
     ]
 

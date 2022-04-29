@@ -118,6 +118,9 @@ let show_rId = true;
 let labels_top = false;
 let lockDotCentered = false;
 let overrideMapType = null;
+let layerMoreContrast = false;
+let layerExtraDim = 0;
+let layerExtraContrast = 0;
 
 
 let infoBlockWidth = baseInfoBlockWidth;
@@ -1912,6 +1915,8 @@ function initMap() {
         MapType_tar1090 = loStore['MapType_tar1090'];
     }
 
+    mapTypeSettings();
+
     // Initialize OpenLayers
 
     layers_group = createBaseLayers();
@@ -2065,6 +2070,7 @@ function initMap() {
             lyr.on('change:visible', function(evt) {
                 if (evt.target.getVisible()) {
                     MapType_tar1090 = loStore['MapType_tar1090'] = evt.target.get('name');
+                    mapTypeSettings();
                 }
             });
         } else if (lyr.get('type') === 'overlay') {
@@ -4195,8 +4201,8 @@ function togglePersistence() {
 
 function dim(evt) {
     try {
-        const dim = mapDimPercentage * (1 + 0.25 * toggles['darkerColors'].state);
-        const contrast = mapContrastPercentage * (1 + 0.1 * toggles['darkerColors'].state);
+        const dim = mapDimPercentage * (1 + 0.25 * toggles['darkerColors'].state) + layerExtraDim;
+        const contrast = mapContrastPercentage * (1 + 0.1 * toggles['darkerColors'].state) + layerExtraContrast;
         if (dim > 0.0001) {
             evt.context.globalCompositeOperation = 'multiply';
             evt.context.fillStyle = 'rgba(0,0,0,'+dim+')';
@@ -7684,6 +7690,19 @@ function setSelectedIcao() {
         hex_html = hex_html + NBSP + NBSP + NBSP + icao_link;
     }
     jQuery('#selected_icao').html(hex_html);
+}
+
+function mapTypeSettings() {
+    if (MapType_tar1090.startsWith('carto_raster')) {
+        layerExtraDim = -0.15;
+        layerExtraContrast = 0.6;
+    } else if (MapType_tar1090.startsWith('carto_light')) {
+        layerExtraDim = -0.05;
+        layerExtraContrast = 0.2;
+    } else {
+        layerExtraDim = 0;
+        layerExtraContrast = 0;
+    }
 }
 
 
