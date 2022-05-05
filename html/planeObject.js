@@ -1619,8 +1619,12 @@ PlaneObject.prototype.updateMarker = function(moved) {
 
     let eastbound = this.rotation < 180;
     let icaoType = this.icaoType;
-    if (icaoType == 'V22' && this.speed > 120)
-        icaoType = 'V22F';
+    if (this.speed > 120) {
+        if (icaoType == 'V22')
+            icaoType = 'V22F';
+        if (icaoType == 'B609')
+            icaoType = 'B609F';
+    }
     if (icaoType == null && this.squawk == 7777)
         icaoType = 'TWR';
     let baseMarkerKey = this.category + "_"

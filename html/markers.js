@@ -984,6 +984,8 @@ let TypeDesignatorIcons = {
 
     'V22F': ['v22_fast', 1],
     'V22': ['v22_slow', 1],
+    'B609F': ['v22_fast', 0.86],
+    'B609': ['v22_slow', 0.86],
     'H64': ['apache', 1],
 
 
