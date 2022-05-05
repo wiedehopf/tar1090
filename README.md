@@ -372,12 +372,22 @@ This is not in any way or form officially supported and you should consider it e
 To accomplish this, you need to use the dev branch of my readsb repository.
 (https://github.com/wiedehopf/adsb-wiki/wiki/Building-readsb-from-source#wiedehopfs-dev-branch)
 
-The following options need to be added to for example the decoder options in `/etc/default/readsb`
+The following command line options need to be added to for example the decoder options in `/etc/default/readsb`
 ```
 --write-json-globe-index --write-globe-history /var/globe_history --heatmap 30
 ```
 /var/globe_history needs to be a directory writeable by the user readsb.
 `sudo mkdir /var/globe_history` and `sudo chown readsb /var/globe_history` are useful for that.
+
+You should also download
+```
+wget -O /usr/local/share/tar1090/aircraft.csv.gz https://github.com/wiedehopf/tar1090-db/raw/csv/aircraft.csv.gz
+```
+
+and add this command line option (for exaple via /etc/default/readsb):
+```
+--db-file /usr/local/share/tar1090/aircraft.csv.gz
+```
 
 You will also need to point tar1090 to /run/readsb in case you are using another dump1090/readsb.
 See the "multiple instances" readme section.
