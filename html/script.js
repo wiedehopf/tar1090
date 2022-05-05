@@ -5211,7 +5211,7 @@ function findPlanes(queries, byIcao, byCallsign, byReg, byType, showWarnings) {
     for (let i in queries) {
         const query = queries[i];
         if (byReg) {
-            let upper = query.toUpperCase();
+            let upper = query.toUpperCase().replace("-", "");
             if (regCache) {
                 if (regCache[upper]) {
                     selectPlaneByHex(regCache[upper].toLowerCase(), {noDeselect: true, follow: true});
