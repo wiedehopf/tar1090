@@ -565,7 +565,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
 
         this.logSel("sec_elapsed: " + since_update.toFixed(1) + " alt_change: "+ alt_change.toFixed(0) + " derived_speed(kt/Mach): " + (distance_traveled/since_update*1.94384).toFixed(0) + " / " + (distance_traveled/since_update/343).toFixed(1) + " dist:" + distance_traveled.toFixed(0));
 
-        let points = [projPrev];
+        let segments = [[projPrev]];
 
         if (since_update > 3600 && distance_traveled / since_update * 3.6 < 100) {
             // don't draw a line if a long time has elapsed but no great distance was traveled
@@ -584,25 +584,42 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
             let nPoints = distance / 19000;
             let greyskull = Math.ceil(Math.log(nPoints) / Math.log(2));
             //console.log(Math.round(nPoints) + ' ' + greyskull);
-            points = makeCircle([this.prev_position, this.position], greyskull);
-            for (let i in points)
-                points[i] = ol.proj.fromLonLat(points[i]);
+            let points = makeCircle([this.prev_position, this.position], greyskull);
+            segments = [[]];
+            let seg_index = 0;
+            let last_lon = this.prev_position[0];
+            for (let i in points) {
+                let point = points[i];
+                let lon = point[0];
+                if (Math.abs(last_lon - lon) > 270) {
+                    //console.log(i + ' ' + point);
+                    segments.push([]);
+                    seg_index++;
+                }
+                let segment = segments[seg_index];
+                segment.push(ol.proj.fromLonLat(point));
+                last_lon = lon;
+            }
         }
 
-        this.track_linesegs.push({ fixed: new ol.geom.LineString(points),
-            feature: null,
-            estimated: estimated,
-            ground: (this.prev_alt == "ground"),
-            altitude: this.prev_alt_rounded,
-            alt_real: this.prev_alt,
-            alt_geom: this.prev_alt_geom,
-            position: this.prev_position,
-            speed: this.prev_speed,
-            ts: this.prev_time,
-            track: this.prev_rot,
-            leg: is_leg,
-            rId: this.prev_rId,
-        });
+        for (let i in segments) {
+            let points = segments[i];
+            this.track_linesegs.push({ fixed: new ol.geom.LineString(points),
+                feature: null,
+                estimated: estimated,
+                ground: (this.prev_alt == "ground"),
+                altitude: this.prev_alt_rounded,
+                alt_real: this.prev_alt,
+                alt_geom: this.prev_alt_geom,
+                position: this.prev_position,
+                speed: this.prev_speed,
+                ts: this.prev_time,
+                track: this.prev_rot,
+                leg: is_leg,
+                rId: this.prev_rId,
+                noLabel: (i > 0),
+            });
+        }
 
         this.history_size += 2;
 
