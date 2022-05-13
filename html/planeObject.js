@@ -856,6 +856,15 @@ PlaneObject.prototype.updateIcon = function() {
             labelText += callsign + '\n';
             labelText += altString + '\n';
             labelText += 'x' + this.squawk;
+            if (this.squawk == '7700' || this.squawk == '7600' || this.squawk == '7500') {
+                if (this.squawk == '7700') {
+                    labelText += '\nEMERGENCY';
+                } else if (this.squawk == '7600') {
+                    labelText += '\nNORDO';
+                } else if (this.squawk == '7500') {
+                    labelText += '\nHIJACK';
+                }
+            }
         } else if (extendedLabels == 3) {
             if (!windLabelsSlim) {
                 labelText += 'Wind' + NBSP;
