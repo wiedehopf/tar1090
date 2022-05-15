@@ -7354,7 +7354,8 @@ function coordsForExport(plane) {
     let segs = plane.track_linesegs;
     let runningAverage = 0;
     let lastTimestamp = 0;
-    const avgWindow = 15;
+    let delta;
+    const avgWindow = 8;
     for (let i = 0; i < numSegs; i++) {
         const seg = segs[i];
         const geom = seg.alt_geom;
@@ -7362,7 +7363,12 @@ function coordsForExport(plane) {
         let geomOffset = null;
         if (!seg.ground && baro != null && geom != null) {
             seg.geomOffset = geom - baro;
-            runningAverage += (seg.geomOffset - runningAverage) * Math.min(1, (seg.ts - lastTimestamp) / avgWindow);
+            delta = (seg.geomOffset - runningAverage);
+            if (delta <= 50) {
+                runningAverage += delta * Math.min(1, (seg.ts - lastTimestamp) / avgWindow);
+            } else {
+                runningAverage = seg.geomOffset;
+            }
             seg.geomOffAverage = runningAverage;
             lastTimestamp = seg.ts;
         }
@@ -7374,7 +7380,12 @@ function coordsForExport(plane) {
         const baro = seg.alt_real;
         let geomOffset = null;
         if (seg.geomOffset != null) {
-            runningAverage += (seg.geomOffset - runningAverage) * Math.min(1, (lastTimestamp - seg.ts) / avgWindow);
+            delta = (seg.geomOffset - runningAverage);
+            if (delta <= 50) {
+                runningAverage += delta * Math.min(1, (lastTimestamp - seg.ts) / avgWindow);
+            } else {
+                runningAverage = seg.geomOffset;
+            }
             //console.log(seg.geomOffAverage + ' ' + runningAverage);
             seg.geomOffAverage = (seg.geomOffAverage + runningAverage) / 2;
             lastTimestamp = seg.ts;
