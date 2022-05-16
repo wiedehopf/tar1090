@@ -2522,9 +2522,6 @@ function initMap() {
 let lastReap = 0;
 function reaper(all) {
     console.log("Reaping started..");
-    if (noVanish && !all)
-        return;
-
     if (lastReap == "in_progress") {
         return;
     }
@@ -2540,9 +2537,21 @@ function reaper(all) {
         if (plane == null)
             continue;
         plane.seen = now - plane.last_message_time;
-        if ( all || ((!plane.selected)
-            && plane.seen > 300
-            && (plane.dataSource != 'adsc' || plane.seen > jaeroTimeout))
+        if (
+            all
+            || (
+                !noVanish
+                && !plane.selected
+                && plane.seen > 300
+                && (plane.dataSource != 'adsc' || plane.seen > jaeroTimeout)
+            )
+            || (
+                noVanish
+                && globeIndex
+                && !replay
+                && !plane.inView
+                && plane.seen > 300
+            )
         ) {
             // Reap it.
             //console.log("Removed " + plane.icao);
