@@ -17,12 +17,13 @@
 - filterAltMin=500 - filter minimum altitute to 500 ft
 - filterAltMax=5000 - filter maximum altitute to 5000 ft
 - filterCallSign=^(UAL|DAL) - filter callsign to United or Deleta
-- filterType=B738 - filter to aircraft type B738 aka 737-800
-- filterDescription=L2J - filter aircraft by description
+- filterType=B738 - filter to aircraft type code B738 aka 737-800
+- filterDescription=L2J - filter aircraft by type description
 - filterIcao=^a - filter icao that start with a
 - filterSources=adsb,uat,adsr,mlat,tisb,modeS - filter palnes by source type.
 - filterDbFlag=military,pia,ladd - filter planes by the db flags.
 
+See the main readme for more exapmles on how to use the filters
 
 ## Troubleshooting
 
