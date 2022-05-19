@@ -295,11 +295,11 @@ PlaneObject.prototype.isFiltered = function() {
         return true;
     }
 
-    if (PlaneFilter.type && (!this.icaoType || !this.icaoType.match(PlaneFilter.type)) ) {
+    if (PlaneFilter.type && !( (this.icaoType || 'UNKNOWN').match(PlaneFilter.type) )) {
         return true;
     }
 
-    if (PlaneFilter.description && (!this.typeDescription || !this.typeDescription.match(PlaneFilter.description)) ) {
+    if (PlaneFilter.description && !( (this.typeDescription || 'UNKNOWN' ).match(PlaneFilter.description) )) {
         return true;
     }
 
