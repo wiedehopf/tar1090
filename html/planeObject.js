@@ -367,6 +367,7 @@ PlaneObject.prototype.updateTrackPrev = function() {
     this.prev_alt_geom = this.alt_geom;
     this.prev_speed = this.speed;
     this.prev_rId = this.rId;
+    this.prev_dataSource = this.dataSource;
 
     return true;
 };
@@ -414,6 +415,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
             track: this.rotation,
             leg: is_leg,
             rId: this.rId,
+            dataSource: this.dataSource,
         };
         this.track_linesegs.push(newseg);
         this.history_size ++;
@@ -511,6 +513,9 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
         if (this.dataSource == "adsc")
             stale_timeout = jaeroTimeout;
     }
+
+    const modeS = (this.dataSource == 'modeS' || this.prev_dataSource == 'modeS');
+
     if (replay)
         stale_timeout = 2 * replay.ival + 1;
 
@@ -540,6 +545,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
 
     if (
         this.prev_alt_rounded !== lastseg.altitude
+        || modeS
         || this.prev_time > lastseg.ts + 300
         || (!pTracks && this.prev_time > lastseg.ts + 15)
         || estimated != lastseg.estimated
@@ -567,7 +573,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
 
         let segments = [[projPrev]];
 
-        if (since_update > 3600 && distance_traveled / since_update * 3.6 < 100) {
+        if ((since_update > 3600 && distance_traveled / since_update * 3.6 < 100) || modeS) {
             // don't draw a line if a long time has elapsed but no great distance was traveled
         } else {
             lastseg.fixed.appendCoordinate(projPrev);
@@ -575,7 +581,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
 
         // draw great circle path for long distances
         if (distance > 30000
-            && !(elapsed > 3600 && distance / elapsed * 3.6 < 100)
+            && !(elapsed > 3600 && distance / elapsed * 3.6 < 100) && !modeS
             // don't draw a line if a long time has elapsed but no great distance was traveled
         ) {
             if (!pTracks) {
@@ -617,6 +623,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
                 track: this.prev_rot,
                 leg: is_leg,
                 rId: this.prev_rId,
+                dataSource: this.prev_dataSource,
                 noLabel: (i > 0),
             });
         }
@@ -626,6 +633,9 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
         return this.updateTail();
     }
 
+    if (modeS) {
+        return this.updateTrackPrev();
+    }
 
     // Add current position to the existing track.
     // We only retain some points depending on time elapsed and track change
@@ -1235,6 +1245,7 @@ PlaneObject.prototype.processTrace = function() {
                 ts: this.position_time,
                 track: this.rotation,
                 rId: this.rId,
+                dataSource: this.dataSource,
             });
         }
         now = new Date().getTime()/1000;
@@ -1724,7 +1735,8 @@ function altitudeLines (segment) {
     if (monochromeTracks)
         color = monochromeTracks;
 
-    const lineKey = color + '_' + debugTracks + '_' + noVanish + '_' + segment.estimated + '_' + newWidth;
+    const modeS = (segment.dataSource == 'modeS');
+    const lineKey = color + '_' + debugTracks + '_' + noVanish + '_' + segment.estimated + '_' + newWidth + '_' + modeS;
 
     if (lineStyleCache[lineKey])
         return lineStyleCache[lineKey];
@@ -1737,7 +1749,22 @@ function altitudeLines (segment) {
     let join = 'round';
     let cap = 'square';
     if (!debugTracks) {
-        if (segment.estimated && !noVanish) {
+        if (modeS) {
+            lineStyleCache[lineKey]	= [
+                new ol.style.Style({}),
+                new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: 3 * newWidth,
+                        fill: new ol.style.Fill({
+                            color: color
+                        })
+                    }),
+                    geometry: function(feature) {
+                        return new ol.geom.MultiPoint(feature.getGeometry().getCoordinates());
+                    }
+                })
+            ];
+        } else if (segment.estimated && !noVanish) {
             lineStyleCache[lineKey]	= [
                 new ol.style.Style({
                     stroke: new ol.style.Stroke({

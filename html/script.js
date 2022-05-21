@@ -7716,6 +7716,9 @@ function mapTypeSettings() {
     }
 }
 
+if (adsbexchange && window.location.hostname.startsWith('inaccurate')) {
+    jQuery('#inaccurate_warning').removeClass('hidden');
+}
 
 parseURLIcaos();
 initialize();
