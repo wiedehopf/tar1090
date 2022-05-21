@@ -740,6 +740,12 @@ PlaneObject.prototype.getMarkerColor = function(options) {
         l += ColorByAlt.mlat.l;
     }
 
+    if (uk_advisory && (this.squawk == '7700' || this.squawk == '7600' || this.squawk == '7500')) {
+        h = 0;
+        s = 100;
+        l = 40;
+    }
+
     if (h < 0) {
         h = (h % 360) + 360;
     } else if (h >= 360) {
