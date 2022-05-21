@@ -514,7 +514,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
             stale_timeout = jaeroTimeout;
     }
 
-    const modeS = (this.dataSource == 'modeS' || this.prev_dataSource == 'modeS');
+    const modeS = (this.prev_dataSource == 'modeS');
 
     if (replay)
         stale_timeout = 2 * replay.ival + 1;
@@ -2428,26 +2428,6 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
         this.rId = rId;
 
     if (data != null) {
-        if (data.type.substring(0,4) == "adsb") {
-            this.dataSource = "adsb";
-        } else if (data.type.substring(0,4) == "adsr") {
-            this.dataSource = "adsr";
-        } else if (data.type == "mlat") {
-            this.dataSource = "mlat";
-        } else if (data.type == "adsb_icao_nt") {
-            this.dataSource = "modeS";
-        } else if (data.type == 'mode_s') {
-            this.dataSource = "modeS";
-        } else if (data.type.substring(0,4) == "tisb") {
-            this.dataSource = "tisb";
-        } else if (data.type == 'adsc') {
-            this.dataSource = "adsc";
-        } else if (data.type == 'other') {
-            this.dataSource = "other";
-        } else if (data.type == 'unknown') {
-            this.dataSource = "unknown";
-        }
-
         if (data.flight == null || data.flight == "@@@@@@@@") {
             this.flight = null;
             this.name ='no callsign';
@@ -2507,6 +2487,26 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
             this.nav_altitude = null;
         }
     }
+    if (this.addrtype.substring(0,4) == "adsb") {
+        this.dataSource = "adsb";
+    } else if (this.addrtype.substring(0,4) == "adsr") {
+        this.dataSource = "adsr";
+    } else if (this.addrtype == "mlat") {
+        this.dataSource = "mlat";
+    } else if (this.addrtype == "adsb_icao_nt") {
+        this.dataSource = "modeS";
+    } else if (this.addrtype == 'mode_s') {
+        this.dataSource = "modeS";
+    } else if (this.addrtype.substring(0,4) == "tisb") {
+        this.dataSource = "tisb";
+    } else if (this.addrtype == 'adsc') {
+        this.dataSource = "adsc";
+    } else if (this.addrtype == 'other') {
+        this.dataSource = "other";
+    } else if (this.addrtype == 'unknown') {
+        this.dataSource = "unknown";
+    }
+
 };
 
 function makeCircle(points, greyskull) {
