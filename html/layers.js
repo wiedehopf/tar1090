@@ -21,10 +21,10 @@ function createBaseLayers() {
     let world = new ol.Collection();
     let us = new ol.Collection();
     let europe = new ol.Collection();
-    let custom = new ol.Collection();
+    custom_layers = new ol.Collection();
 
     if (loStore['customTiles'] != undefined) {
-        custom.push(new ol.layer.Tile({
+        custom_layers.push(new ol.layer.Tile({
             source: new ol.source.OSM({
                 "url" : loStore['customTiles'],
                 maxZoom: 15,
@@ -516,13 +516,11 @@ function createBaseLayers() {
         }
     }
 
-    if (custom.getLength() > 0) {
-        layers.push(new ol.layer.Group({
-            name: 'custom',
-            title: 'Custom',
-            layers: new ol.Collection(custom.getArray().reverse()),
-        }));
-    }
+    layers.push(new ol.layer.Group({
+        name: 'custom',
+        title: 'Custom',
+        layers: custom_layers,
+    }));
 
     if (europe.getLength() > 0) {
         layers.push(new ol.layer.Group({
