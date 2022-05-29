@@ -1923,6 +1923,8 @@ function initMap() {
     layers_group = createBaseLayers();
     layers = layers_group.getLayers();
 
+    //add_kml_overlay('https://developers.google.com/kml/documentation/KML_Samples.kml', 'samples', 0.8);
+
     siteCircleLayer = new ol.layer.Vector({
         name: 'siteCircles',
         type: 'overlay',

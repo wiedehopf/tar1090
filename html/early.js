@@ -234,7 +234,7 @@ function arraybufferRequest() {
     return xhrOverride;
 }
 
-if (usp.has('heatmap')) {
+if (usp.has('heatmap') || usp.has('realHeat')) {
 
     heatmap = {};
 

@@ -65,3 +65,17 @@ See the main readme for more exapmles on how to use the filters
 - desktop - force desktop view.
 - kiosk - force kiosk mode (tempTrails=true / hideButtons=true / userScale=2).
 - allTracks - enable tracks as if pressing T
+
+## heatmap / reaplay (only available with readsb --heatmap parameter)
+
+- replay - replay history of all planes
+- heatmap - show a heatmap for the last 24h by default (optional: supply the maximum number of dots drawn, default 32000)
+- heatDuration - how many hours to show in the heatmap
+- heatEnd - how many hours to shift the heatmap time window into the past
+- heatAlpha - 0.1 to 1.0 - how transparent the dots will be
+- heatRadius - dot size for heatmap
+- heatManualRedraw - only redraw dots when pressing r
+
+- realHeat - real heatmap instead of dots
+- heatBlur - parameter for realHeat
+- heatWeight - parameter for realHeat
