@@ -156,7 +156,6 @@ let MessageRate = 0;
 
 let layers;
 let layers_group;
-let custom_layers;
 
 const nullStyle = new ol.style.Style({});
 
@@ -7721,21 +7720,6 @@ function mapTypeSettings() {
 
 if (adsbexchange && window.location.hostname.startsWith('inaccurate')) {
     jQuery('#inaccurate_warning').removeClass('hidden');
-}
-
-function add_kml_overlay(url, name, opacity) {
-    custom_layers.push(new ol.layer.Vector({
-        source: new ol.source.Vector({
-            url: url,
-            format: new ol.format.KML(),
-        }),
-        name: name,
-        title: 'custom_' + name,
-        type: 'overlay',
-        opacity: opacity,
-        visible: true,
-        zIndex: 99,
-    }));
 }
 
 parseURLIcaos();

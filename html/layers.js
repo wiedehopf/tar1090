@@ -21,7 +21,6 @@ function createBaseLayers() {
     let world = new ol.Collection();
     let us = new ol.Collection();
     let europe = new ol.Collection();
-    custom_layers = new ol.Collection();
 
     if (loStore['customTiles'] != undefined) {
         custom_layers.push(new ol.layer.Tile({
