@@ -1036,6 +1036,7 @@ let TypeDesignatorIcons = {
     'GYRO': ['gyrocopter', 1],
     'DLTA': ['verhees', 1],
 
+    'B1': ['unknown', 1.2],
     'B52': ['b52', 1],
     'C17': ['c17', 1.25],
     'C5M': ['c5', 1.18],
