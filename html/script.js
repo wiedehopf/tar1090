@@ -6884,8 +6884,8 @@ function replayStep(arg) {
             let ac = {seen:0, seen_pos:0,};
             ac.hex = (points[i] & ((1<<24) - 1)).toString(16).padStart(6, '0');
             ac.hex = (points[i] & (1<<24)) ? ('~' + ac.hex) : ac.hex;
-            ac.flight = "";
             if (replay.pointsU8[4 * (i + 2)] != 0) {
+                ac.flight = "";
                 for (let j = 0; j < 8; j++) {
                     ac.flight += String.fromCharCode(replay.pointsU8[4 * (i + 2) + j]);
                 }

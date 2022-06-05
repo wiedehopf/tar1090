@@ -1441,8 +1441,10 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     }
 
     if (flight == null || flight == "@@@@@@@@") {
-        this.flight = null;
-        this.name ='no callsign';
+        if (!replay) {
+            this.flight = null;
+            this.name ='no callsign';
+        }
     } else {
         this.flight = `${flight}`;
         this.name = this.flight.trim() || 'empty callsign';
