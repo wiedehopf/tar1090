@@ -105,6 +105,41 @@ function createBaseLayers() {
         }));
     }
 
+    if (false && adsbexchange) {
+        world.push(new ol.layer.Tile({
+            source: new ol.source.XYZ({
+                url: "https://api.maptiler.com/tiles/satellite-v2/{z}/{x}/{y}.jpg?key=HyIQ6A88uTDdX4n4MNVY",
+                attributions: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+                attributionsCollapsible: false,
+                maxZoom: 19,
+            }),
+            name: 'maptiler_sat',
+            title: 'Satellite (Premium)',
+            type: 'base',
+        }));
+        world.push(new ol.layer.Tile({
+            source: new ol.source.XYZ({
+                url: "https://api.maptiler.com/maps/hybrid/256/{z}/{x}/{y}.jpg?key=HyIQ6A88uTDdX4n4MNVY",
+                attributions: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+                attributionsCollapsible: false,
+                maxZoom: 19,
+            }),
+            name: 'maptiler_hybrid',
+            title: 'Hybrid Sat. (Premium)',
+            type: 'base',
+        }));
+        world.push(new ol.layer.Tile({
+            source: new ol.source.XYZ({
+                url: "https://api.maptiler.com/maps/777ad15e-3e64-4edf-8e86-84ba16e50961/256/{z}/{x}/{y}.png?key=geutV4UHZB7QFdlzE3w4",
+                attributions: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+                attributionsCollapsible: false,
+                maxZoom: 19,
+            }),
+            name: 'maptiler_custom',
+            title: 'ADSBx Custom (Premium)',
+            type: 'base',
+        }));
+    }
     if (0 && adsbexchange) {
         world.push(new ol.layer.Tile({
             source: new ol.source.XYZ({
@@ -115,28 +150,6 @@ function createBaseLayers() {
             }),
             name: 'maptiler_english',
             title: 'English MapTiler (testing)',
-            type: 'base',
-        }));
-        world.push(new ol.layer.Tile({
-            source: new ol.source.XYZ({
-                url: "https://api.maptiler.com/tiles/satellite-v2/{z}/{x}/{y}.jpg?key=HyIQ6A88uTDdX4n4MNVY",
-                attributions: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
-                attributionsCollapsible: false,
-                maxZoom: 16,
-            }),
-            name: 'maptiler_sat',
-            title: 'Satellite MapTiler (testing)',
-            type: 'base',
-        }));
-        world.push(new ol.layer.Tile({
-            source: new ol.source.XYZ({
-                url: "https://api.maptiler.com/maps/hybrid/256/{z}/{x}/{y}.jpg?key=HyIQ6A88uTDdX4n4MNVY",
-                attributions: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
-                attributionsCollapsible: false,
-                maxZoom: 16,
-            }),
-            name: 'maptiler_hybrid',
-            title: 'Hybrid MapTiler (testing)',
             type: 'base',
         }));
     }

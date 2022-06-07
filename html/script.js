@@ -7706,7 +7706,9 @@ function setSelectedIcao() {
 }
 
 function mapTypeSettings() {
-    if (MapType_tar1090.startsWith('carto_raster')) {
+    if (MapType_tar1090.startsWith('maptiler_sat') || MapType_tar1090.startsWith('maptiler_hybrid')) {
+        layerExtraDim = -0.25;
+    } else if (MapType_tar1090.startsWith('carto_raster')) {
         layerExtraDim = -0.15;
         layerExtraContrast = 0.6;
     } else if (MapType_tar1090.startsWith('carto_light')) {
