@@ -254,7 +254,7 @@ function processReceiverUpdate(data, init) {
         uat_last = uat_now;
         uat_now = data.now;
     } else {
-        if (data.now <= now && !globeIndex && !uuid) {
+        if (data.now <= now && !globeIndex) {
             if (data.now < now) {
                 console.log('timestep backwards, ignoring data:' + now + ' -> ' + data.now);
                 if (backwardsCounter++ > 5) {
@@ -5586,7 +5586,7 @@ function refreshInt() {
     let refresh = RefreshInterval;
 
     if (uuid)
-        return 5000;
+        return 5050;
 
     // handle non globe case
     if (!globeIndex) {
@@ -7061,7 +7061,7 @@ function updateMessageRate(data) {
         // .. and clean up any old values
         if ((now - MessageCountHistory[0].time) > 10)
             MessageCountHistory.shift();
-    } else if (uuid != null) {
+    } else if (uuid != null && data.messages == 1) {
         const cache = uuidCache[data.urlIndex] || { now: 0 };
         let time_delta = now - cache.now;
         if (time_delta > 0.5) {
