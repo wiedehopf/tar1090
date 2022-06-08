@@ -1760,9 +1760,11 @@ function webglAddLayer() {
     let success = false;
 
     const icao = '~c0ffee';
-    if (icaoFilter) {
+
+    if (icaoFilter != null) {
         icaoFilter.push(icao);
     }
+
     processAircraft({hex: icao, lat: CenterLat, lon: CenterLon, type: 'tisb_other', seen: 0, seen_pos: 0,
         alt_baro: 25000, });
     let plane = Planes['~c0ffee'];
@@ -1845,6 +1847,10 @@ function webglAddLayer() {
     delete Planes[plane.icao];
     PlanesOrdered.splice(PlanesOrdered.indexOf(plane), 1);
     plane.destroy();
+
+    if (icaoFilter != null) {
+        icaoFilter.pop(icao);
+    }
 
     return success;
 }
@@ -2931,15 +2937,6 @@ function refreshSelected() {
 
     setSelectedIcao();
 
-    if (globeIndex || shareBaseUrl) {
-        const shareElement = jQuery('a.identSmall');
-        if (shareElement.prop('href') !== shareLink) {
-            shareElement.prop('href',shareLink);
-
-            // Assign shareLinkInput the value we want to copy on click
-            shareLinkInput.setAttribute("value", window.location.origin + shareLink);
-        }
-    }
     jQuery('#selected_pf_info').updateText((selected.pfRoute ? selected.pfRoute : "") );
     //+" "+ (selected.pfFlightno ? selected.pfFlightno : "")
     jQuery('#airframes_post_icao').attr('value',selected.icao);
@@ -4826,12 +4823,16 @@ function changeCenter(init) {
     const rawCenter = OLMap.getView().getCenter();
     const center = ol.proj.toLonLat(rawCenter);
 
-    const centerChanged = (Math.abs(center[1] - CenterLat) < 0.000001 && Math.abs(center[0] - CenterLon) < 0.000001);
+    const centerChanged = (Math.abs(center[1] - CenterLat) > 0.000001 && Math.abs(center[0] - CenterLon) > 0.000001);
+
+    if (!init && !centerChanged) {
+        return;
+    }
 
     loStore['CenterLon'] = CenterLon = center[0];
     loStore['CenterLat'] = CenterLat = center[1];
 
-    if (!init && showTrace && centerChanged) {
+    if (!init) {
         updateAddressBar();
     }
 
@@ -4839,9 +4840,9 @@ function changeCenter(init) {
         OLMap.getView().setCenter(ol.proj.fromLonLat(center));
         mapRefresh();
     }
-    if (center[1] < -85)
+    if (CenterLat < -85)
         OLMap.getView().setCenter(ol.proj.fromLonLat([center[0], -85]));
-    if (center[1] > 85)
+    if (CenterLat > 85)
         OLMap.getView().setCenter(ol.proj.fromLonLat([center[0], 85]));
 }
 
@@ -4863,7 +4864,9 @@ function checkMovement() {
         checkMoveCenter[1] != center[1]
     ) {
         checkMoveDone = 0;
-        checkFollow();
+        if (FollowSelected) {
+            checkFollow();
+        }
         active();
         lastMovement = ts;
     }
@@ -5444,23 +5447,10 @@ let updateAddressBarPushed = false;
 function updateAddressBar() {
     if (!window.history || !window.history.replaceState)
         return;
-    if (heatmap || pTracks || !CenterLat)
+    if (heatmap || pTracks || !CenterLat || uuid)
         return;
-    let time = new Date().getTime();
-    if (time < lastAddressBarUpdate + 200) {
-        clearTimeout(updateAddressBarTimeout);
-        updateAddressBarTimeout = setTimeout(updateAddressBar, 205);
-        return;
-    }
-    lastAddressBarUpdate = time;
 
-    let posString = 'lat=' + CenterLat.toFixed(3) + '&lon=' + CenterLon.toFixed(3) + '&zoom=' + ZoomLvl.toFixed(1);
     let string = '';
-    if (((showTrace) && SelectedPlane) || replay) {
-        posString = "&" + posString;
-    } else {
-        posString = ""
-    }
 
     if (SelPlanes.length > 0) {
         string += '?icao=' + SelPlanes.map((s) => encodeURIComponent(s.icao)).join(',')
@@ -5471,9 +5461,12 @@ function updateAddressBar() {
         string += ':' + replay.ts.getUTCMinutes().toString().padStart(2,'0');
     }
 
-    string += posString;
+    if (showTrace || replay) {
+        string += (string === '' ? '?' : '&');
+        string += 'lat=' + CenterLat.toFixed(3) + '&lon=' + CenterLon.toFixed(3) + '&zoom=' + ZoomLvl.toFixed(1);
+    }
 
-    if (SelectedPlane && (showTrace || replay)) {
+    if (SelPlanes.length > 0 && (showTrace || replay)) {
         string += '&showTrace=' + traceDateString;
         if (legSel != -1)
             string += '&leg=' + (legSel + 1);
@@ -5504,12 +5497,9 @@ function updateAddressBar() {
 
     let shareFilter = '';
     if (toggles.shareFilters  && toggles.shareFilters.state) {
+        string += (string === '' ? '?' : '&');
+
         let filterStrings = [];
-        if (string === '') {
-            shareFilter = '?';
-        } else {
-            shareFilter = '&'
-        }
 
         if (PlaneFilter.minAltitude > -1000000) {
             filterStrings.push('filterAltMin=' + PlaneFilter.minAltitude);
@@ -5542,21 +5532,32 @@ function updateAddressBar() {
         } else {
             shareFilter = '';
         }
+        string += shareFilter;
     }
 
-    string += shareFilter;
-    shareLink = (shareBaseUrl ? shareBaseUrl : pathName) + string;
+    if (icaoFilter && !showTrace) {
+        string += (string === '' ? '?' : '&');
+        string += 'icaoFilter=' + icaoFilter.join(',')
+    }
 
-    if (uuid)
-        return;
-    if (icaoFilter)
-        return;
+    shareLink = (shareBaseUrl ? shareBaseUrl : pathName) + string;
+    //console.log(shareLink);
 
     if (SelPlanes.length == 0 && initialURL && initialURL.indexOf("icao") < 0 && !replay && shareFilter == '') {
         string = initialURL;
     } else {
         string = pathName + string;
     }
+
+    // Update URL bar
+    let time = new Date().getTime();
+    if (time < lastAddressBarUpdate + 200) {
+        clearTimeout(updateAddressBarTimeout);
+        updateAddressBarTimeout = setTimeout(updateAddressBar, 205);
+        return;
+    }
+
+    lastAddressBarUpdate = time;
 
     if (!updateAddressBarPushed) {
         // make sure we keep the thing we clicked on first in the browser history
@@ -7670,6 +7671,8 @@ let shareLinkInput = document.createElement("input");
 document.body.appendChild(shareLinkInput);
 
 function copyShareLink() {
+    // Assign shareLinkInput the value we want to copy
+    shareLinkInput.setAttribute("value", window.location.origin + shareLink);
 
     // Highlight its content
     shareLinkInput.select();
@@ -7703,6 +7706,8 @@ function setSelectedIcao() {
         hex_html = hex_html + NBSP + NBSP + NBSP + icao_link;
     }
     jQuery('#selected_icao').html(hex_html);
+
+    jQuery('a.identSmall').prop('href',shareLink);
 }
 
 function mapTypeSettings() {
