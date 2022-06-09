@@ -240,14 +240,14 @@ let registrationLinks = true;
 
 // Filter implausible positions (required speed > Mach 2.5)
 // valid values: true, false, "onlyMLAT" ("" required)
-let positionFilter = true;
+let positionFilter = false;
 let positionFilterSpeed = 2.5; // in Mach
 // filter speed is based on transmitted ground speed if available
 // this factor is used to give the actual filter speed
 let positionFilterGsFactor = 2.2;
 let debugPosFilter = false;
 
-let altitudeFilter = true;
+let altitudeFilter = false;
 
 // time in seconds before an MLAT position is accepted after receiving a
 // more reliable position
