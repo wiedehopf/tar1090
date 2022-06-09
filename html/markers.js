@@ -1219,7 +1219,7 @@ function getBaseMarker(category, typeDesignator, typeDescription, wtc, addrtype,
     }
 
     // if type description (from type DB) and broadcasted category disagree, use icon for category
-    if (typeDescription != null && typeDescription.length === 3 && category != null) {
+    if (typeDescription != null && typeDescription.length === 3 && category in CategoryIcons) {
         if (typeDescription[0] == 'L' && (category[0] != 'A' || category[1] == '7'))
             return CategoryIcons[category];
         if (typeDescription[0] == 'H' && category != 'A7')
