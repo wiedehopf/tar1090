@@ -5551,8 +5551,12 @@ function updateAddressBar() {
         string += 'icaoFilter=' + icaoFilter.join(',')
     }
 
-    shareLink = (shareBaseUrl ? shareBaseUrl : pathName) + string;
-    console.log(shareLink);
+    if (shareBaseUrl) {
+        shareLink = shareBaseUrl + string;
+    } else {
+        shareLink = window.location.origin + pathName + string;
+    }
+    //console.log(shareLink);
 
     if (!string) {
         string = initialURL;
@@ -7685,7 +7689,7 @@ document.body.appendChild(shareLinkInput);
 
 function copyShareLink() {
     // Assign shareLinkInput the value we want to copy
-    shareLinkInput.setAttribute("value", window.location.origin + shareLink);
+    shareLinkInput.setAttribute("value", shareLink);
 
     // Highlight its content
     shareLinkInput.select();
