@@ -1217,6 +1217,19 @@ function getBaseMarker(category, typeDesignator, typeDescription, wtc, addrtype,
     if (squareMania) {
         return ['ground_square', 1.2];
     }
+
+    // if type description (from type DB) and broadcasted category disagree, use icon for category
+    if (typeDescription != null && typeDescription.length === 3 && category != null) {
+        if (typeDescription[0] == 'L' && (category[0] != 'A' || category[1] == '7'))
+            return CategoryIcons[category];
+        if (typeDescription[0] == 'H' && category != 'A7')
+            return CategoryIcons[category];
+        if (category == 'B6')
+            return CategoryIcons[category];
+        if (category[0] == 'C')
+            return CategoryIcons[category];
+    }
+
     if (typeDesignator in TypeDesignatorIcons) {
         let shape = TypeDesignatorIcons[typeDesignator][0];
         let scaling = TypeDesignatorIcons[typeDesignator][1];
