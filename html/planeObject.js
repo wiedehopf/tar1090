@@ -1677,11 +1677,18 @@ PlaneObject.prototype.updateMarker = function(moved) {
 
     if (!this.shape || this.baseMarkerKey != baseMarkerKey) {
         this.baseMarkerKey = baseMarkerKey;
-        let baseMarker = getBaseMarker(this.category, icaoType, this.typeDescription, this.wtc, this.addrtype, this.altitude, eastbound);
-        this.shape = shapes[baseMarker[0]]
-        this.baseScale = baseMarker[1] * 0.96;
-        if (!this.shape)
+        let baseMarker = null;
+        try {
+            baseMarker = getBaseMarker(this.category, icaoType, this.typeDescription, this.wtc, this.addrtype, this.altitude, eastbound);
+        } catch (error) {
+            console.error(error);
             console.log(baseMarkerKey);
+        }
+        if (!baseMarker) {
+            basemarker = ['pumpkin', 1];
+        }
+        this.shape = shapes[baseMarker[0]];
+        this.baseScale = baseMarker[1] * 0.96;
     }
     this.scale = iconSize * this.baseScale;
     this.strokeWidth = outlineWidth * ((this.selected && !SelectedAllPlanes && !onlySelected) ? 1.15 : 0.7) / this.baseScale;
