@@ -2801,9 +2801,9 @@ function refreshSelected() {
     }
     let dbFlags = "";
     if (selected.ladd)
-        dbFlags += ' <a class="link" target="_blank" href="https://ladd.faa.gov/" rel="noreferrer">LADD</a> / ';
+        dbFlags += ' <a class="link" target="_blank" href="https://www.faa.gov/pilots/ladd/" rel="noreferrer">LADD</a> / ';
     if (selected.pia)
-        dbFlags += '<a class="link" target="_blank" href="https://www.faa.gov/nextgen/equipadsb/privacy/" rel="noreferrer">PIA</a> / ';
+        dbFlags += '<a class="link" target="_blank" href="https://www.faa.gov/air_traffic/technology/equipadsb/privacy/" rel="noreferrer">PIA</a> / ';
     if (selected.military)
         dbFlags += 'military / ';
     if (dbFlags.length == 0) {
