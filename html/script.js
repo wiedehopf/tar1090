@@ -11,6 +11,7 @@ let webglFeatures = new ol.source.Vector();
 let webglLayer;
 let OLMap = null;
 let OLProj = null;
+let OLProjExtent = null;
 let PlaneIconFeatures = new ol.source.Vector();
 let trailGroup = new ol.Collection();
 let siteCircleLayer;
@@ -2118,6 +2119,7 @@ function initMap() {
     }
 
     OLProj = OLMap.getView().getProjection();
+    OLProjExtent = OLProj.getExtent();
 
     OLMap.getView().setRotation(mapOrientation); // adjust orientation
 
@@ -4842,7 +4844,7 @@ function changeCenter(init) {
         updateAddressBar();
     }
 
-    if (rawCenter[0] < OLProj.extent_[0] || rawCenter[0] > OLProj.extent_[2]) {
+    if (rawCenter[0] < OLProjExtent[0] || rawCenter[0] > OLProjExtent[2]) {
         OLMap.getView().setCenter(ol.proj.fromLonLat(center));
         mapRefresh();
     }

@@ -193,6 +193,19 @@ function createBaseLayers() {
         }));
     }
 
+    // testing ...
+    if (0) {
+        let english_map = new ol.layer.VectorTile({
+            declutter: true,
+            type: 'base',
+            name: 'english_map',
+            title: 'English Map',
+        });
+        // ol-mapbox-style plugin packed in with ol ... (kinda ugly)
+        //ol.applyStyle(english_map, "https://tiles.adsb.co/api/maps/basic/style.json");
+        world.push(english_map);
+    }
+
     if (0) {
         let vtlayer = new ol.layer.VectorTile({
             source: new ol.source.VectorTile({
