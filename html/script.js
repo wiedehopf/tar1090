@@ -124,6 +124,7 @@ let layerExtraDim = 0;
 let layerExtraContrast = 0;
 let shareFiltersParam = false;
 
+let limitUpdates = false;
 
 let infoBlockWidth = baseInfoBlockWidth;
 
@@ -292,6 +293,7 @@ function processReceiverUpdate(data, init) {
 
 let debugFetch = false;
 let C429 = 0;
+let fetchCalls = 0;
 function fetchData(options) {
     options = options || {};
     if (heatmap || replay || showTrace || pTracks || !loadFinished)
@@ -313,6 +315,11 @@ function fetchData(options) {
 
     //console.timeEnd("Starting Fetch");
     //console.time("Starting Fetch");
+
+    if (limitUpdates != false && fetchCalls > limitUpdates) {
+        return;
+    }
+    fetchCalls++;
 
     if (enable_uat) {
         FetchPendingUAT = jQuery.ajax({ url: 'chunks/978.json',
@@ -520,6 +527,8 @@ function initialize() {
         initPage();
         initMap();
 
+        processQueryToggles();
+
         // Wait for history item downloads and append them to the buffer
         push_history();
 
@@ -527,6 +536,33 @@ function initialize() {
             startPage();
         });
     });
+}
+
+function processQueryToggles() {
+    if (!usp.has('toggles')) {
+        return;
+    }
+    let todo;
+    try {
+        todo = usp.get('toggles').split(',');;
+    } catch (e) {
+        console.error(e);
+        return;
+    }
+    while (todo.length >= 2) {
+        let key = todo.shift();
+        let value = todo.shift();
+        let state = true;
+        if (value == 'false' || value == '0') {
+            state = false;
+        }
+        try {
+            toggles[key].toggle(state, "init");
+            console.log((state ? "Enabled" : "Disabled") + " setting: " + key);
+        } catch (e) {
+            console.error(e);
+        }
+    }
 }
 
 function replaySpeedChange(arg) {
@@ -557,6 +593,12 @@ function initPage() {
         MapType_tar1090 = 'carto_light_all';
         lineWidth=4;
         enableLabels=true;
+    }
+
+    if (usp.has('limitUpdates')) {
+        let tmp = parseInt(usp.get('limitUpdates'));
+        if (!isNaN(tmp))
+            limitUpdates = tmp;
     }
 
     if (usp.has('nowebgl')) {
@@ -1290,7 +1332,7 @@ function initPage() {
     });
 
     new Toggle({
-        key: "selectedDetails",
+        key: "enableInfoblock",
         display: "Enable Infoblock",
         container: "#settingsRight",
         init: true,
@@ -3996,7 +4038,7 @@ function adjustInfoBlock() {
     jQuery('.ol-scale-line').css('left', (infoBlockWidth * globalScale + 8) + 'px');
     jQuery('#replayBar').css('left', (infoBlockWidth * globalScale + 8) + 'px');
 
-    if (SelectedPlane && toggles['selectedDetails'].state) {
+    if (SelectedPlane && toggles['enableInfoblock'].state) {
 
         if (!mapIsVisible)
             jQuery("#sidebar_container").css('margin-left', '140pt');
