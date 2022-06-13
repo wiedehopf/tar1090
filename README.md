@@ -508,6 +508,10 @@ alternative display style: &realHeat
 - blurryness: &heatBlur=2
 - weight of each dot for the heatmap: &heatWeight=4
 
+## offline map
+
+<https://github.com/adsbxchange/wiki/wiki/tar1090-offline-map>
+
 ## NO WARRANTY - Excerpt from the License:
 
   11. BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
