@@ -5602,7 +5602,7 @@ function updateAddressBar() {
     }
     //console.log(shareLink);
 
-    if (!string) {
+    if (!string && !usp.has('showTrace') && !usp.has('icao')) {
         string = initialURL;
     } else {
         string = pathName + string;
