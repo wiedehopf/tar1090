@@ -54,6 +54,8 @@ let range_outline_dash = null; // null - solid line, [5, 5] - dashed line with 5
 let actual_range_outline_color = '#00596b';
 let actual_range_outline_width = 1.7;
 let actual_range_outline_dash = null; // null - solid line, [5, 5] - dashed line with 5 pixel lines and spaces in between
+//
+let actual_range_show = true;
 
 // which map is displayed to new visitors
 let MapType_tar1090 = "osm_adsbx";

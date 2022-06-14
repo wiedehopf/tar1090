@@ -2035,6 +2035,7 @@ function initMap() {
             zIndex: 101,
             renderBuffer: renderBuffer,
             style: actualOutlineStyle,
+            visible: actual_range_show,
         });
         layers.push(actualOutlineLayer);
     }
