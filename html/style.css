@@ -251,6 +251,13 @@ select {
     text-align: center;
 }
 
+.inaccurate_warning {
+    position: absolute; top: calc( 25px * var(--SCALE)); left: calc( 280px * var(--SCALE));
+    width: 50%;
+    background-color: var(--BGCOLOR1);
+    padding: calc( 5px * var(--SCALE));
+}
+
 #js_error {
     position: absolute;
     bottom: 5px;
