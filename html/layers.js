@@ -106,6 +106,7 @@ function createBaseLayers() {
     }
 
     if (false && adsbexchange) {
+        jQuery('#premium_text').updateText('Premium active!');
         world.push(new ol.layer.Tile({
             source: new ol.source.XYZ({
                 url: "https://api.maptiler.com/tiles/satellite-v2/{z}/{x}/{y}.jpg?key=HyIQ6A88uTDdX4n4MNVY",
