@@ -2689,6 +2689,9 @@ PlaneObject.prototype.setTypeData = function() {
     this.icaoTypeCache = this.icaoType;
 
     let typeCode = this.icaoType.toUpperCase();
+    if (typeCode == 'P8 ?') {
+        typeCode = 'P8';
+    }
     if (!(typeCode in _aircraft_type_cache))
         return;
 
@@ -2705,6 +2708,10 @@ PlaneObject.prototype.setTypeData = function() {
 };
 
 PlaneObject.prototype.checkForDB = function(t) {
+    if (this.icao >= 'ae6400' && this.icao <= 'ae6899') {
+        this.icaoType = 'P8 ?';
+        this.setTypeData();
+    }
     if (t) {
 
         if (t.desc) this.typeLong = `${t.desc}`;

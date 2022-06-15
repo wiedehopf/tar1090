@@ -755,6 +755,9 @@ let TypeDesignatorIcons = {
     'B738': ['airliner', 0.96],
     'B739': ['airliner', 0.98],
 
+    'P8': ['airliner', 0.98],
+    'P8 ?': ['airliner', 0.98],
+
     'J328': ['airliner', 0.78], // 15t
     'E170': ['airliner', 0.82], // 38t
     'E75S/L': ['airliner', 0.82],
