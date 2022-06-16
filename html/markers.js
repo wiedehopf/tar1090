@@ -1129,6 +1129,8 @@ let TypeDesignatorIcons = {
     'VEZE': ['rutan_veze', 1],
     'VELO': ['rutan_veze', 1.04],
 
+    'PRTS': ['rutan_veze', 1.3], // approximation for canard configuration
+
     'PA24': ['pa24', 1],
 
     'GND': ['ground_unknown', 1],
