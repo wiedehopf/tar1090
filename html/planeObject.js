@@ -2708,7 +2708,7 @@ PlaneObject.prototype.setTypeData = function() {
 };
 
 PlaneObject.prototype.checkForDB = function(t) {
-    if (this.icao >= 'ae6400' && this.icao <= 'ae6899') {
+    if (!this.dbinfoLoaded && this.icao >= 'ae6620' && this.icao <= 'ae6899') {
         this.icaoType = 'P8 ?';
         this.setTypeData();
     }
