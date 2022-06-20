@@ -2714,15 +2714,8 @@ function refreshPhoto(selected) {
     if (!selected.dbinfoLoaded) {
         displaySil();
         return;
-    } else if (false && selected.registration != null && selected.registration.match(/^[0-9]{0,2}\+?[0-9]{0,2}$/)) {
-        urlTail = '/hex/' + selected.icao.toUpperCase();
     } else if (selected.registration != null) {
-        urlTail = '/hex/' + selected.icao.toUpperCase() + '?reg=' + selected.registration;
-        const type = selected.icaoType;
-        // && type != 'E170' && !type.startsWith('E75')
-        if (type) {
-            urlTail += '&icaoType=' + type;
-        }
+        urlTail = '/reg/' + selected.registration;
         param = 'DB';
     } else {
         urlTail = 'hex/' + selected.icao.toUpperCase();
