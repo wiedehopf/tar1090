@@ -124,7 +124,7 @@ let layerExtraDim = 0;
 let layerExtraContrast = 0;
 let shareFiltersParam = false;
 
-let limitUpdates = false;
+let limitUpdates = -1;
 
 let infoBlockWidth = baseInfoBlockWidth;
 
@@ -316,7 +316,7 @@ function fetchData(options) {
     //console.timeEnd("Starting Fetch");
     //console.time("Starting Fetch");
 
-    if (limitUpdates != false && fetchCalls > limitUpdates) {
+    if (limitUpdates != -1 && fetchCalls > limitUpdates) {
         return;
     }
     fetchCalls++;
