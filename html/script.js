@@ -648,16 +648,24 @@ function initPage() {
     }
 
     if (usp.has('SiteLat') && usp.has('SiteLon')) {
-        loStore['SiteLat'] = usp.get('SiteLat');
-        loStore['SiteLon'] = usp.get('SiteLon');
+        let lat = parseFloat(usp.get('SiteLat'));
+        let lon = parseFloat(usp.get('SiteLon'));
+        if (!isNaN(lat) && !isNaN(lon)) {
+            if (usp.has('SiteNosave')) {
+                SiteLat = CenterLat = DefaultCenterLat = lat;
+                SiteLon = CenterLon = DefaultCenterLon = lon;
+                SiteOverride = true;
+            } else {
+                loStore['SiteLat'] = lat;
+                loStore['SiteLon'] = lon;
+            }
+        }
     }
     if (loStore['SiteLat'] != null && loStore['SiteLon'] != null) {
-        if (usp.has('SiteClear')
-            || isNaN(parseFloat(loStore['SiteLat']))
-            || isNaN(parseFloat(loStore['SiteLat']))) {
+        if (usp.has('SiteClear')) {
             loStore.removeItem('SiteLat');
             loStore.removeItem('SiteLon');
-        } else {
+        } else if (!usp.has('SiteNosave')) {
             SiteLat = CenterLat = DefaultCenterLat = parseFloat(loStore['SiteLat']);
             SiteLon = CenterLon = DefaultCenterLon = parseFloat(loStore['SiteLon']);
             SiteOverride = true;
