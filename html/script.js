@@ -4167,7 +4167,7 @@ function refreshFilter() {
 
     drawHeatmap();
     if (toggles.shareFilters && toggles.shareFilters.state) {
-        updateAddressBar()
+        updateAddressBar();
     }
 }
 
@@ -5591,7 +5591,7 @@ function updateAddressBar() {
             shareFilter = '';
         }
 
-        console.log(shareFilter);
+        //console.log(shareFilter);
 
         if (shareFilter) {
             string += (string ? '&' : '?');
