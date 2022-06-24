@@ -609,7 +609,7 @@ function globeRateUpdate() {
         jQuery.ajax({url:'/globeRates.json', cache: false, dataType: 'json', }).done(function(data) {
             if (data.simload != null)
                 globeSimLoad = data.simload;
-            if (data.refresh != null)
+            if (data.refresh != null && globeIndex)
                 RefreshInterval = data.refresh;
         });
     }

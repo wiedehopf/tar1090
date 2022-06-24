@@ -5653,7 +5653,7 @@ function refreshInt() {
     // handle globe case
 
     if (binCraft && globeIndex && onlyMilitary && OLMap.getView().getZoom() < 5.5) {
-        refresh = 8000;
+        refresh = 5000;
     }
 
     let inactive = getInactive();
@@ -5663,7 +5663,9 @@ function refreshInt() {
     if (inactive > 240)
         inactive = 240;
 
-    refresh *= inactive / 70;
+    if (globeIndex) {
+        refresh *= inactive / 70;
+    }
 
     if (!mapIsVisible)
         refresh *= 2;
