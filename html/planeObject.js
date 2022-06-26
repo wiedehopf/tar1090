@@ -1517,9 +1517,6 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 
     // simple fields
     this.alt_geom = data.alt_geom;
-    if (debugTracks && this.selected) {
-        console.log('updateData() updating alt_geom: ' + this.alt_geom);
-    }
     this.ias = data.ias;
     this.tas = data.tas;
     this.track_rate = data.track_rate;
