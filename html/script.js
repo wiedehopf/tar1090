@@ -4882,7 +4882,7 @@ function changeCenter(init) {
     const rawCenter = OLMap.getView().getCenter();
     const center = ol.proj.toLonLat(rawCenter);
 
-    const centerChanged = (Math.abs(center[1] - CenterLat) > 0.000001 && Math.abs(center[0] - CenterLon) > 0.000001);
+    const centerChanged = (Math.abs(center[1] - CenterLat) > 0.000001 || Math.abs(center[0] - CenterLon) > 0.000001);
 
     if (!init && !centerChanged) {
         return;
