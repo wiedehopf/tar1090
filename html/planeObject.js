@@ -1051,7 +1051,7 @@ PlaneObject.prototype.processTrace = function() {
 
     this.position = null;
 
-    if (this.fullTrace && this.recentTrace) {
+    if (this.fullTrace && this.recentTrace && this.fullTrace.length > 0 && this.recentTrace.length > 0) {
         let t1 = this.fullTrace.trace;
         let t2 = this.recentTrace.trace;
         let end1 = t1[t1.length-1][0];
@@ -1068,14 +1068,14 @@ PlaneObject.prototype.processTrace = function() {
             const recent = this.recentTrace.trace;
             for (let i = 0; i < recent.length; i++) {
                 const entry = recent[i];
-                if (entry[0] > trace[trace.length - 1][0]) {
+                if (trace.length == 0 || entry[0] > trace[trace.length - 1][0]) {
                     trace.push(entry);
                 }
             }
         }
     }
 
-    if (trace) {
+    if (trace && trace.length > 0) {
         let start = 0;
         let end = trace.length;
         _last = trace[0][0] - 1;
