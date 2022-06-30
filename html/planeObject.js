@@ -1117,7 +1117,7 @@ PlaneObject.prototype.processTrace = function() {
             const leg_marker = state[6] & 2;
 
             // no going backwards in time
-            if (timestamp <= _now)
+            if (timestamp < _now)
                 continue;
 
             _now = timestamp;
