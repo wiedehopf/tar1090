@@ -827,6 +827,8 @@ let TypeDesignatorIcons = {
     'GLEX': ['jet_swept', 1], // 45t
     'GL6T': ['jet_swept', 1], // 45t
     'GLF6': ['jet_swept', 1], // 48t
+    'GA7C': ['jet_swept', 1], // 48t
+    'GA8C': ['jet_swept', 1], // 48t (fantasy type but in the database)
     'GL7T': ['jet_swept', 1], // 52t
     'E135': ['jet_swept', 0.92], // 20t
     'E35L': ['jet_swept', 0.92], // 24t
@@ -1214,6 +1216,7 @@ let CategoryIcons = {
 };
 
 function getBaseMarker(category, typeDesignator, typeDescription, wtc, addrtype, altitude, eastbound) {
+
     //return ['f5_tiger', 1];
     if (halloween) {
         if ((typeDescription && typeDescription[0] == 'H') || typeDesignator == 'C172')
