@@ -1689,7 +1689,7 @@ function setIntervalTimers() {
         fetchPfData();
     }
     if (receiverJson && receiverJson.outlineJson) {
-        timers.drawOutline = window.setInterval(drawOutlineJson, 30000);
+        timers.drawOutline = window.setInterval(drawOutlineJson, 15000);
         drawOutlineJson();
     }
 }
