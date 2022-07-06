@@ -22,6 +22,7 @@ let globeIndexGrid = 0;
 let globeIndexSpecialTiles;
 let dynGlobeRate = false;
 let binCraft = false;
+let zstd = false;
 let dbServer = false;
 let l3harris = false;
 let heatmap = false;
@@ -470,9 +471,9 @@ if (uuid != null) {
         RefreshInterval = data.refresh;
         nHistoryItems = (data.history < 2) ? 0 : data.history;
         binCraft = data.binCraft ? true : false || data.aircraft_binCraft ? true : false;
+        zstd = data.zstd ? true : false;
         if (usp.has('noglobe') || usp.has('ptracks')) {
             data.globeIndexGrid = null; // disable globe on user request
-            binCraft = data.aircraft_binCraft ? true : false;
         }
         dbServer = (data.dbServer && data.globeIndexGrid != null) ? true : false;
 
@@ -790,3 +791,7 @@ function add_kml_overlay(url, name, opacity) {
         zIndex: 99,
     }));
 }
+
+zstddec.decoder = new zstddec.ZSTDDecoder();
+zstddec.promise = zstddec.decoder.init();
+let zstdDecode = zstddec.decoder.decode;

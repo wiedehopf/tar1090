@@ -401,8 +401,10 @@ function iOSVersion() {
 
 function wqi(data) {
     const buffer = data.buffer;
+    //console.log(buffer);
     let vals = new Uint32Array(data.buffer, 0, 8);
     data.now = vals[0] / 1000 + vals[1] * 4294967.296;
+    //console.log(data.now);
     let stride = vals[2];
     data.global_ac_count_withpos = vals[3];
     data.globeIndex = vals[4];

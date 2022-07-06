@@ -360,17 +360,23 @@ function fetchData(options) {
         });
 
         if (binCraft && onlyMilitary && ZoomLvl < 5.5) {
-            ac_url.push('data/globeMil_42777.binCraft');
+            if (zstd) {
+                ac_url.push('data/globeMil_42777.binCraft.zst');
+            } else {
+                ac_url.push('data/globeMil_42777.binCraft');
+            }
         } else {
 
             indexes = indexes.slice(0, globeSimLoad);
 
-            let suffix = binCraft ? '.binCraft' : '.json'
+            let suffix = zstd ? '.binCraft.zst' : (binCraft ? '.binCraft' : '.json');
             let mid = (binCraft && onlyMilitary) ? 'Mil_' : '_';
             for (let i in indexes) {
                 ac_url.push('data/globe' + mid + indexes[i].toString().padStart(4, '0') + suffix);
             }
         }
+    } else if (zstd) {
+        ac_url.push('data/aircraft.binCraft.zst');
     } else if (binCraft) {
         ac_url.push('data/aircraft.binCraft');
     } else {
@@ -383,7 +389,7 @@ function fetchData(options) {
     for (let i in ac_url) {
         //console.log(ac_url[i]);
         let req;
-        if (binCraft) {
+        if (binCraft || zstd) {
             req = jQuery.ajax({
                 url: `${ac_url[i]}`, method: 'GET',
                 xhr: arraybufferRequest,
@@ -401,7 +407,14 @@ function fetchData(options) {
                 if (data == null) {
                     return;
                 }
-                if (binCraft) {
+                if (zstd) {
+                    let arr = new Uint8Array(data);
+                    let res = zstdDecode( arr, 0 );
+                    let arrayBuffer = res.buffer
+                    // return type is Uint8Array, wqi requires the ArrayBuffer
+                    data = { buffer: arrayBuffer, };
+                    wqi(data);
+                } else if (binCraft) {
                     data = { buffer: data, };
                     wqi(data);
                 }
@@ -533,7 +546,9 @@ function initialize() {
         push_history();
 
         jQuery.when(historyLoaded).done(function() {
-            startPage();
+            zstddec.promise.then(function() {
+                startPage();
+            });
         });
     });
 }
@@ -1694,8 +1709,35 @@ function setIntervalTimers() {
     }
 }
 
+let djson;
+let dstring;
+let dresult;
 
 function startPage() {
+
+
+    if (0) {
+            console.log('bla');
+        jQuery.ajax({
+            url: 'data/aircraft.json.zst' , method: 'GET',
+            xhr: arraybufferRequest,
+            timeout: 15000,
+        }).done(function(data) {
+            console.log('asdf');
+            let arr = new Uint8Array(data);
+            let uncompressedSize = 83843;
+            console.time("zstd");
+            dresult = zstdDecode( arr, 0 );
+            console.timeEnd("zstd");
+            console.time("stringify");
+            dstring = String.fromCharCode.apply(null, dresult);
+            console.timeEnd("stringify");
+            console.time("JSON.parse");
+            djson = JSON.parse(dstring);
+            console.timeEnd("JSON.parse");
+        });
+    }
+
     console.log("Completing init");
 
     if (!globeIndex) {
