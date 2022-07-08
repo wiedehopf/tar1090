@@ -22,6 +22,7 @@ let globeIndexGrid = 0;
 let globeIndexSpecialTiles;
 let dynGlobeRate = false;
 let binCraft = false;
+let reApi = false;
 let zstd = false;
 let dbServer = false;
 let l3harris = false;
@@ -472,6 +473,7 @@ if (uuid != null) {
         nHistoryItems = (data.history < 2) ? 0 : data.history;
         binCraft = data.binCraft ? true : false || data.aircraft_binCraft ? true : false;
         zstd = data.zstd ? true : false;
+        reApi = data.reapi ? true : false;
         if (usp.has('noglobe') || usp.has('ptracks')) {
             data.globeIndexGrid = null; // disable globe on user request
         }

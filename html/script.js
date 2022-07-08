@@ -339,6 +339,14 @@ function fetchData(options) {
         for (let i in uuid) {
             ac_url.push('uuid/?feed=' + uuid[i]);
         }
+    } else if (reApi) {
+        let url = 're-api/?' + (binCraft ? 'binCraft' : 'json');
+        url += zstd ? '&zstd' : '';
+        url += onlyMilitary ? '&filter_mil' : '';
+        let extent = getViewOversize(1.03);
+        url += `&box=${extent.minLat.toFixed(6)},${extent.maxLat.toFixed(6)},${extent.minLon.toFixed(6)},${extent.maxLon.toFixed(6)}`;
+        //console.log(url);
+        ac_url.push(url);
     } else if (globeIndex) {
         let indexes = globeIndexes();
         const ancient = (currentTime - 2 * refreshInt() / globeSimLoad * globeTilesViewCount) / 1000;
@@ -5403,12 +5411,17 @@ function setIndexDistance(index, center, coords) {
     globeIndexDist[index] = min;
 }
 
+function getViewOversize(factor) {
+    factor || (factor = 1);
+    let mapSize = OLMap.getSize();
+    let size = [mapSize[0] * factor, mapSize[1] * factor];
+    return myExtent(OLMap.getView().calculateExtent(size));
+}
+
 function globeIndexes() {
     const center = ol.proj.toLonLat(OLMap.getView().getCenter());
     if (mapIsVisible || lastGlobeExtent == null) {
-        let mapSize = OLMap.getSize();
-        let size = [mapSize[0] * 1.02, mapSize[1] * 1.02];
-        lastGlobeExtent = myExtent(OLMap.getView().calculateExtent(size));
+        lastGlobeExtent = getViewOversize(1.02);
     }
     let extent = lastGlobeExtent.extent;
     const bottomLeft = ol.proj.toLonLat([extent[0], extent[1]]);
@@ -5694,7 +5707,7 @@ function refreshInt() {
 
     // handle globe case
 
-    if (binCraft && globeIndex && onlyMilitary && OLMap.getView().getZoom() < 5.5) {
+    if (!reApi && binCraft && globeIndex && onlyMilitary && OLMap.getView().getZoom() < 5.5) {
         refresh = 5000;
     }
 
