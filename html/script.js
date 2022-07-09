@@ -124,7 +124,7 @@ let layerExtraDim = 0;
 let layerExtraContrast = 0;
 let shareFiltersParam = false;
 let lastRequestSize = 0;
-let lastRequestZoom = 0;
+let lastRequestBox = '';
 
 let limitUpdates = -1;
 
@@ -345,13 +345,8 @@ function fetchData(options) {
         let url = 're-api/?' + (binCraft ? 'binCraft' : 'json');
         url += zstd ? '&zstd' : '';
         url += onlyMilitary ? '&filter_mil' : '';
-        let extent = getViewOversize(1.03);
-        let minLon = extent.minLon.toFixed(6);
-        let maxLon = extent.maxLon.toFixed(6);
-        if (Math.abs(extent[2] - extent[0]) > 40075016) { // all longtitudes in view
-            minLon = -180, maxLon = 180;
-        }
-        url += `&box=${extent.minLat.toFixed(6)},${extent.maxLat.toFixed(6)},${minLon},${maxLon}`;
+        lastRequestBox = requestBoxString();
+        url += '&box=' + lastRequestBox;
         //console.log(url);
         ac_url.push(url);
     } else if (globeIndex) {
@@ -425,7 +420,6 @@ function fetchData(options) {
                 if (zstd) {
                     let arr = new Uint8Array(data);
                     lastRequestSize = arr.byteLength;
-                    lastRequestZoom = ZoomLvl;
                     let res = zstdDecode( arr, 0 );
                     let arrayBuffer = res.buffer
                     // return type is Uint8Array, wqi requires the ArrayBuffer
@@ -5716,20 +5710,19 @@ function refreshInt() {
 
     // handle globe case
 
-    if (reApi) {
-        let requestSize = lastRequestSize;
-        let zoomed_in = ZoomLvl - lastRequestZoom;
-        if (zoomed_in > 0) {
-            requestSize *= Math.pow(0.5, zoomed_in);
-        }
-        refresh = RefreshInterval * requestSize / 35000;
+    if (reApi && zstd) {
+        refresh = RefreshInterval * lastRequestSize / 35000;
+        let extent = getViewOversize(1.03);
         let min = 0.7;
-        let max = 4;
+        let max = 6;
         if (refresh < RefreshInterval * min) {
             refresh = RefreshInterval * min;
         }
         if (refresh > RefreshInterval * max) {
             refresh = RefreshInterval * max;
+        }
+        if (lastRequestBox != requestBoxString()) {
+            refresh = Math.min(RefreshInterval, refresh / 4);
         }
     }
 
@@ -7874,6 +7867,16 @@ function mapTypeSettings() {
         layerExtraDim = 0;
         layerExtraContrast = 0;
     }
+}
+
+function requestBoxString() {
+    let extent = getViewOversize(1.03);
+    let minLon = extent.minLon.toFixed(6);
+    let maxLon = extent.maxLon.toFixed(6);
+    if (Math.abs(extent[2] - extent[0]) > 40075016) { // all longtitudes in view
+        minLon = -180, maxLon = 180;
+    }
+    return `${extent.minLat.toFixed(6)},${extent.maxLat.toFixed(6)},${minLon},${maxLon}`;
 }
 
 if (adsbexchange && window.location.hostname.startsWith('inaccurate')) {
