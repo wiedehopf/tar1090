@@ -806,12 +806,6 @@ function webAssemblyFail(e) {
     }
 }
 
-window.addEventListener('unhandledrejection', (promiseRejectionEvent) => {
-    if (promiseRejectionEvent.reason.stack.includes('WebAssembly')) {
-        webAssemblyFail(promiseRejectionEvent.reason);
-    }
-});
-
 try {
     zstddec.decoder = new zstddec.ZSTDDecoder();
     zstddec.promise = zstddec.decoder.init();
