@@ -557,9 +557,18 @@ function initialize() {
         push_history();
 
         jQuery.when(historyLoaded).done(function() {
-            zstddec.promise.then(function() {
+            if (!zstdDecode) {
                 startPage();
-            });
+            } else {
+                try {
+                    zstddec.promise.then(function() {
+                        startPage();
+                    });
+                } catch (e) {
+                    webAssemblyFail(e);
+                    startPage();
+                }
+            }
         });
     });
 }

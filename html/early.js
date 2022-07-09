@@ -793,7 +793,29 @@ function add_kml_overlay(url, name, opacity) {
         zIndex: 99,
     }));
 }
+let zstdDecode = null;
+function webAssemblyFail(e) {
+    zstdDecode = null;
+    console.log(e);
+    console.error("Error loading zstddec, probable cause: webassembly not present or not working");
+    zstd = false;
+    if (adsbexchange) {
+        reApi = false;
+        jQuery("#update_error_detail").text("Your browser is not supporting webassembly, this website might stop working in the future without webassembly.");
+        jQuery("#update_error").css('display','block');
+    }
+}
 
-zstddec.decoder = new zstddec.ZSTDDecoder();
-zstddec.promise = zstddec.decoder.init();
-let zstdDecode = zstddec.decoder.decode;
+window.addEventListener('unhandledrejection', (promiseRejectionEvent) => {
+    if (promiseRejectionEvent.reason.stack.includes('WebAssembly')) {
+        webAssemblyFail(promiseRejectionEvent.reason);
+    }
+});
+
+try {
+    zstddec.decoder = new zstddec.ZSTDDecoder();
+    zstddec.promise = zstddec.decoder.init();
+    zstdDecode = zstddec.decoder.decode;
+} catch (e) {
+    webAssemblyFail(e);
+}
