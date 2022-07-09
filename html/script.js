@@ -123,6 +123,8 @@ let layerMoreContrast = false;
 let layerExtraDim = 0;
 let layerExtraContrast = 0;
 let shareFiltersParam = false;
+let lastRequestSize = 0;
+let lastRequestZoom = 0;
 
 let limitUpdates = -1;
 
@@ -344,7 +346,12 @@ function fetchData(options) {
         url += zstd ? '&zstd' : '';
         url += onlyMilitary ? '&filter_mil' : '';
         let extent = getViewOversize(1.03);
-        url += `&box=${extent.minLat.toFixed(6)},${extent.maxLat.toFixed(6)},${extent.minLon.toFixed(6)},${extent.maxLon.toFixed(6)}`;
+        let minLon = extent.minLon.toFixed(6);
+        let maxLon = extent.maxLon.toFixed(6);
+        if (Math.abs(extent[2] - extent[0]) > 40075016) { // all longtitudes in view
+            minLon = -180, maxLon = 180;
+        }
+        url += `&box=${extent.minLat.toFixed(6)},${extent.maxLat.toFixed(6)},${minLon},${maxLon}`;
         //console.log(url);
         ac_url.push(url);
     } else if (globeIndex) {
@@ -417,6 +424,8 @@ function fetchData(options) {
                 }
                 if (zstd) {
                     let arr = new Uint8Array(data);
+                    lastRequestSize = arr.byteLength;
+                    lastRequestZoom = ZoomLvl;
                     let res = zstdDecode( arr, 0 );
                     let arrayBuffer = res.buffer
                     // return type is Uint8Array, wqi requires the ArrayBuffer
@@ -5706,6 +5715,23 @@ function refreshInt() {
     }
 
     // handle globe case
+
+    if (reApi) {
+        let requestSize = lastRequestSize;
+        let zoomed_in = ZoomLvl - lastRequestZoom;
+        if (zoomed_in > 0) {
+            requestSize *= Math.pow(0.5, zoomed_in);
+        }
+        refresh = RefreshInterval * requestSize / 35000;
+        let min = 0.7;
+        let max = 4;
+        if (refresh < RefreshInterval * min) {
+            refresh = RefreshInterval * min;
+        }
+        if (refresh > RefreshInterval * max) {
+            refresh = RefreshInterval * max;
+        }
+    }
 
     if (!reApi && binCraft && globeIndex && onlyMilitary && OLMap.getView().getZoom() < 5.5) {
         refresh = 5000;
