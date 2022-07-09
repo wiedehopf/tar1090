@@ -316,6 +316,8 @@ PlaneObject.prototype.isFiltered = function() {
             return true;
         if (this.altitude == 'ground' && (this.addrtype == 'adsb_icao_nt' || this.addrtype == 'tisb_other'))
             return true;
+        if (this.squawk == 7777)
+            return true;
     }
 
     // filter out blocked MLAT flights
