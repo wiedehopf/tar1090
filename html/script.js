@@ -7882,7 +7882,7 @@ function requestBoxString() {
     let extent = getViewOversize(1.03);
     let minLon = extent.minLon.toFixed(6);
     let maxLon = extent.maxLon.toFixed(6);
-    if (Math.abs(extent[2] - extent[0]) > 40075016) { // all longtitudes in view
+    if (Math.abs(extent.extent[2] - extent.extent[0]) > 40075016) { // all longtitudes in view
         minLon = -180, maxLon = 180;
     }
     return `${extent.minLat.toFixed(6)},${extent.maxLat.toFixed(6)},${minLon},${maxLon}`;
