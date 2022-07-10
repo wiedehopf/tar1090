@@ -464,6 +464,7 @@ function fetchData(options) {
                     data = { buffer: arrayBuffer, };
                     wqi(data);
                 } else if (binCraft) {
+                    lastRequestSize = data.byteLength / 2;
                     data = { buffer: data, };
                     wqi(data);
                 }
@@ -5761,7 +5762,7 @@ function refreshInt() {
 
     // handle globe case
 
-    if (reApi && zstd) {
+    if (reApi && (binCraft || zstd)) {
         refresh = RefreshInterval * lastRequestSize / 35000;
         let extent = getViewOversize(1.03);
         let min = 0.7;
@@ -7666,8 +7667,9 @@ function RGBColorToKMLColor(c) {
 function selectedPlanes() {
     const planes = [];
     for (let key in SelPlanes) {
-        if (Planes[key].selected) {
-            planes.push(Planes[key]);
+        let plane = SelPlanes[key];
+        if (plane.selected) {
+            planes.push(plane);
         }
     }
     planes.sort((a, b) => {
