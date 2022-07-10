@@ -420,7 +420,13 @@ function fetchData(options) {
                 if (zstd) {
                     let arr = new Uint8Array(data);
                     lastRequestSize = arr.byteLength;
-                    let res = zstdDecode( arr, 0 );
+                    let res;
+                    try {
+                        res = zstdDecode( arr, 0 );
+                    } catch (e) {
+                        webAssemblyFail(e);
+                        return;
+                    }
                     let arrayBuffer = res.buffer
                     // return type is Uint8Array, wqi requires the ArrayBuffer
                     data = { buffer: arrayBuffer, };

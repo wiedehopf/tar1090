@@ -1,7 +1,7 @@
 // rollup of https://github.com/donmccurdy/zstddec / https://www.npmjs.com/package/zstddec
 // LICENSE: JavaScript wrapper is provided under the MIT License
 // LICENSE: WASM ZSTD decoder binary is provided under the BSD 3-Clause License, Copyright (c) 2016-2021, Yann Collet, Facebook, Inc. All rights reserved.
-// (WASM ZSTD compiled by Matthias Wirth 2022)
+// (WASM ZSTD compiled by Matthias Wirth 2022, for compatibility will return 0 on error of find_DecompressedSize, max return UINT32_MAX (4 GB))
 
 !function(A, I) {
   "object" == typeof exports && "undefined" != typeof module ? I(exports) : "function" == typeof define && define.amd ? define(["exports"], I) : I((A = "undefined" != typeof globalThis ? globalThis : A || self).zstddec = {})
@@ -36,13 +36,10 @@
     decode(A, I=0) {
       if (!B)
         throw new Error("ZSTDDecoder: Await .init() before decoding.");
-      const Q = A.byteLength
-        , C = B.exports.malloc(Q);
-      g.set(A, C),
-        I = I || Number(B.exports.ZSTD_findDecompressedSize(C, Q));
-      const E = B.exports.malloc(I)
-        , i = B.exports.ZSTD_decompress(E, I, C, Q)
-        , D = g.slice(E, E + i);
+      const Q = A.byteLength, C = B.exports.malloc(Q);
+      g.set(A, C), I = I || Number(B.exports.ZSTD_findDecompressedSize(C, Q));
+      if (I === 0) { throw new Error("ZSTDDecoder: ZSTD_findDecompressedSize content size error."); };
+      const E = B.exports.malloc(I), i = B.exports.ZSTD_decompress(E, I, C, Q), D = g.slice(E, E + i);
       return B.exports.free(C),
         B.exports.free(E),
         D
