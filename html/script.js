@@ -1718,7 +1718,7 @@ function setIntervalTimers() {
 
     timers.checkMove = setInterval(checkMovement, 50);
     timers.everySecond = setInterval(everySecond, 850);
-    timers.reaper = setInterval(reaper, 20000);
+    timers.reaper = setInterval(reaper, 40000);
     //reaper();
     if (tempTrails) {
         timers.trailReaper = window.setInterval(trailReaper, 10000);
