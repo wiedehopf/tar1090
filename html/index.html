@@ -294,7 +294,7 @@
               </tr>
               <tr>
                 <td>
-                  <span class="infoHeading" title="The geometric GPS derived altitude referenced to WGS84 ellipsoid (or reference EGM96 when enabled in the settings)">Geom. Altitude</span>:
+                  <span class="infoHeading" id="selected_altitude_geom1_title" title="The geometric GPS derived altitude referenced to WGS84 ellipsoid (or reference EGM96 when enabled in the settings)">WGS84 Altitude</span>:
                   <span class="infoData" id="selected_altitude_geom1"></span>
                 </td>
               </tr>
@@ -527,7 +527,7 @@
             </div>
             <div>
               <div class="infoHeading">
-                <span title="The geometric GPS derived altitude referenced to WGS84 ellipsoid (or reference EGM96 when enabled in the settings)">Geometric</span>:
+                <span id="selected_altitude_geom2_title" title="The geometric GPS derived altitude referenced to WGS84 ellipsoid (or reference EGM96 when enabled in the settings)">WGS84</span>:
               </div>
               <div class="infoData">
                 <span id="selected_altitude_geom2">n/a</span>
@@ -706,7 +706,14 @@
               </div>
           </div>
 
-          <button id="export_kml" onclick="exportKML()">Export KML (alpha)</button>
+          <div class="sectionTitle">
+            <div class="section-title-content">
+              Export KML
+            </div>
+          </div>
+          <button id="export_kml" onclick='exportKML("geom")'>geometric altitude (EGM96)</button>
+          <button id="export_kml" onclick='exportKML("geom_averaged")'>baro + avg.(EGM96 - baro)</button>
+          <button id="export_kml" onclick='exportKML("baro")'>uncorrected pressure alt.</button>
 
         </div>
       </div> <!-- selected_infoblock -->

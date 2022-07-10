@@ -1102,6 +1102,9 @@ function initPage() {
         setState: function(state) {
             geomUseEGM = state;
             if (geomUseEGM) {
+jQuery('#selected_altitude_geom1')
+                jQuery('#selected_altitude_geom1_title').updateText('EGM96 altitude');
+                jQuery('#selected_altitude_geom2_title').updateText('Geometric EGM96');
                 let egm = loadEGM();
                 if (egm) {
                     egm.addEventListener('load', function() {
@@ -1110,6 +1113,9 @@ function initPage() {
                     });
                     return;
                 }
+            } else {
+                jQuery('#selected_altitude_geom1_title').updateText('WGS84 altitude');
+                jQuery('#selected_altitude_geom2_title').updateText('Geometric WGS84');
             }
             if (loadFinished) {
                 remakeTrails();
@@ -7511,40 +7517,42 @@ function coordsForExport(plane) {
     let runningAverage = 0;
     let lastTimestamp = 0;
     let delta;
-    const avgWindow = 8;
-    for (let i = 0; i < numSegs; i++) {
-        const seg = segs[i];
-        const geom = seg.alt_geom;
-        const baro = seg.alt_real;
-        let geomOffset = null;
-        if (!seg.ground && baro != null && geom != null) {
-            seg.geomOffset = geom - baro;
-            delta = (seg.geomOffset - runningAverage);
-            if (delta <= 50) {
-                runningAverage += delta * Math.min(1, (seg.ts - lastTimestamp) / avgWindow);
-            } else {
-                runningAverage = seg.geomOffset;
+    if (kmlStyle == 'geom_averaged') {
+        const avgWindow = 8;
+        for (let i = 0; i < numSegs; i++) {
+            const seg = segs[i];
+            const geom = seg.alt_geom;
+            const baro = seg.alt_real;
+            let geomOffset = null;
+            if (!seg.ground && baro != null && geom != null) {
+                seg.geomOffset = geom - baro;
+                delta = (seg.geomOffset - runningAverage);
+                if (delta <= 50) {
+                    runningAverage += delta * Math.min(1, (seg.ts - lastTimestamp) / avgWindow);
+                } else {
+                    runningAverage = seg.geomOffset;
+                }
+                seg.geomOffAverage = runningAverage;
+                lastTimestamp = seg.ts;
             }
-            seg.geomOffAverage = runningAverage;
-            lastTimestamp = seg.ts;
         }
-    }
-    lastTimestamp = 1e12;
-    for (let i = numSegs - 1; i >= 0; i--) {
-        const seg = segs[i];
-        const geom = seg.alt_geom;
-        const baro = seg.alt_real;
-        let geomOffset = null;
-        if (seg.geomOffset != null) {
-            delta = (seg.geomOffset - runningAverage);
-            if (delta <= 50) {
-                runningAverage += delta * Math.min(1, (lastTimestamp - seg.ts) / avgWindow);
-            } else {
-                runningAverage = seg.geomOffset;
+        lastTimestamp = 1e12;
+        for (let i = numSegs - 1; i >= 0; i--) {
+            const seg = segs[i];
+            const geom = seg.alt_geom;
+            const baro = seg.alt_real;
+            let geomOffset = null;
+            if (seg.geomOffset != null) {
+                delta = (seg.geomOffset - runningAverage);
+                if (delta <= 50) {
+                    runningAverage += delta * Math.min(1, (lastTimestamp - seg.ts) / avgWindow);
+                } else {
+                    runningAverage = seg.geomOffset;
+                }
+                //console.log(seg.geomOffAverage + ' ' + runningAverage);
+                seg.geomOffAverage = (seg.geomOffAverage + runningAverage) / 2;
+                lastTimestamp = seg.ts;
             }
-            //console.log(seg.geomOffAverage + ' ' + runningAverage);
-            seg.geomOffAverage = (seg.geomOffAverage + runningAverage) / 2;
-            lastTimestamp = seg.ts;
         }
     }
     for (let i = 0; i < numSegs; i++) {
@@ -7555,23 +7563,20 @@ function coordsForExport(plane) {
             const baro = seg.alt_real;
             const geom = seg.alt_geom;
             const geomOffAverage = seg.geomOffAverage;
-            if (geomOffAverage != null) {
+            let using_baro = false;
+            if (kmlStyle == 'geom_average' && geomOffAverage != null) {
                 const betterGeom = baro + geomOffAverage;
                 //console.log(betterGeom);
                 alt = Math.round(betterGeom * 0.3048); // convert ft to m
-            } else if (geom != null) {
+            } else if (kmlStyle != 'baro' && geom != null) {
                 alt = Math.round(geom * 0.3048); // convert ft to m
-            } else if (baro != null) {
-                // Attempt to correct altitude. This could be better?
-                //
-                // 950 feet is the correction factor for an altimeter of 30.15.
-                // 25 feet is the quantum of transponder reporting. 0 altitude
-                // could be reported as -25, so just add 25.
-                alt = (baro + 950 + 25) * 0.3048;
+            } else if (kmlStyle == 'baro' && baro != null && baro != 'ground') {
+                alt = baro * 0.3048;
+                using_baro = true;
             }
             if (seg.ground) {
                 alt = "ground";
-            } else if (alt != null && egmLoaded) {
+            } else if (alt != null && egmLoaded && !using_baro) {
                 // alt is in meters at this point
                 alt = Math.round(egm96.ellipsoidToEgm96(pos[1], pos[0], alt));
             }
@@ -7657,9 +7662,13 @@ function adjust_geom_alt(alt, pos) {
         return alt;
     }
 }
-function exportKML() {
+let kmlStyle = '';
+function exportKML(altStyle) {
+    if (altStyle) {
+        kmlStyle = altStyle;
+    }
     if (!egmLoaded) {
-        let egm = loadEGM()
+        let egm = loadEGM();
         if (egm) {
             egm.addEventListener('load', function() {
                 exportKML();
@@ -7759,8 +7768,13 @@ function exportKML() {
         ]
     ];
     const xml = prologue + hiccup(xmlObj);
+    let styleName = '';
+    if (kmlStyle == 'geom') { styleName = 'EGM96'; };
+    if (kmlStyle == 'geom_averaged') { styleName = 'EGM96_avg'; };
+    if (kmlStyle == 'baro') { styleName = 'press_alt_uncorrected'; };
+    console.log(kmlStyle + ' ' + styleName);
     download(
-        filename + '-track.kml',
+        filename + '-track-' + styleName + '.kml',
         'application/vnd.google-earth.kml+xml',
         xml);
 }
