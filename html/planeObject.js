@@ -843,10 +843,10 @@ PlaneObject.prototype.updateIcon = function() {
 
     if ( enableLabels && (!multiSelect || (multiSelect && this.selected)) &&
         (
-            (ZoomLvl >= labelZoom && this.altitude != "ground")
-            || (ZoomLvl >= labelZoomGround - 2 && this.speed > 5 && !this.fakeHex)
-            || (ZoomLvl >= labelZoomGround + 0 && !this.fakeHex)
-            || (ZoomLvl >= labelZoomGround + 1)
+            (zoomLvl >= labelZoom && this.altitude != "ground")
+            || (zoomLvl >= labelZoomGround - 2 && this.speed > 5 && !this.fakeHex)
+            || (zoomLvl >= labelZoomGround + 0 && !this.fakeHex)
+            || (zoomLvl >= labelZoomGround + 1)
             || (this.selected && !SelectedAllPlanes)
         )
     ) {

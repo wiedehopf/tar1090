@@ -138,8 +138,8 @@ let onMobile = false;
 
 let CenterLat = 0;
 let CenterLon = 0;
-let ZoomLvl = 5;
-let ZoomLvlCache;
+let zoomLvl = 5;
+let zoomLvlCache;
 
 let TrackedAircraft = 0;
 let globeTrackedAircraft = 0;
@@ -369,7 +369,7 @@ function fetchData(options) {
             return (globeIndexNow[x] - globeIndexNow[y]);
         });
 
-        if (binCraft && onlyMilitary && ZoomLvl < 5.5) {
+        if (binCraft && onlyMilitary && zoomLvl < 5.5) {
             if (zstd) {
                 ac_url.push('data/globeMil_42777.binCraft.zst');
             } else {
@@ -2038,8 +2038,8 @@ function initMap() {
     // Load stored map settings if present
     CenterLon = Number(loStore['CenterLon']) || DefaultCenterLon;
     CenterLat = Number(loStore['CenterLat']) || DefaultCenterLat;
-    ZoomLvl = Number(loStore['ZoomLvl']) || DefaultZoomLvl;
-    ZoomLvlCache = ZoomLvl;
+    zoomLvl = Number(loStore['zoomLvl']) || DefaultZoomLvl;
+    zoomLvlCache = zoomLvl;
 
     if (overrideMapType)
         MapType_tar1090 = overrideMapType;
@@ -2164,7 +2164,7 @@ function initMap() {
         layers: layers,
         view: new ol.View({
             center: ol.proj.fromLonLat([CenterLon, CenterLat]),
-            zoom: ZoomLvl,
+            zoom: zoomLvl,
             multiWorld: true,
         }),
         controls: [new ol.control.Zoom({delta: 1, duration: 0, target: 'map_canvas',}),
@@ -2338,7 +2338,7 @@ function initMap() {
 
 
     // show the hover box
-    if (!globeIndex && ZoomLvl > 5.5 && enableMouseover) {
+    if (!globeIndex && zoomLvl > 5.5 && enableMouseover) {
         OLMap.on('pointermove', onPointermove);
     }
 
@@ -4052,10 +4052,10 @@ function resetMap() {
     // Reset loStore values and map settings
     loStore['CenterLat'] = CenterLat
     loStore['CenterLon'] = CenterLon
-    //loStore['ZoomLvl']   = ZoomLvl = DefaultZoomLvl;
+    //loStore['zoomLvl']   = zoomLvl = DefaultZoomLvl;
 
     // Set and refresh
-    //OLMap.getView().setZoom(ZoomLvl);
+    //OLMap.getView().setZoom(zoomLvl);
     OLMap.getView().setCenter(ol.proj.fromLonLat([CenterLon, CenterLat]));
     OLMap.getView().setRotation(mapOrientation);
 
@@ -4542,7 +4542,7 @@ function onJump(e) {
         console.log("jumping to: " + coords[0] + " " + coords[1]);
         OLMap.getView().setCenter(ol.proj.fromLonLat([coords[1], coords[0]]));
 
-        if (ZoomLvl >= 7) {
+        if (zoomLvl >= 7) {
             fetchData({force: true});
         }
 
@@ -4892,16 +4892,16 @@ function changeZoom(init) {
     if (!OLMap)
         return;
 
-    ZoomLvl = OLMap.getView().getZoom();
+    zoomLvl = OLMap.getView().getZoom();
 
     checkScale();
 
     // small zoomstep, no need to change aircraft scaling
-    if (!init && Math.abs(ZoomLvl-ZoomLvlCache) < 0.4)
+    if (!init && Math.abs(zoomLvl-zoomLvlCache) < 0.4)
         return;
 
-    loStore['ZoomLvl'] = ZoomLvl;
-    ZoomLvlCache = ZoomLvl;
+    loStore['zoomLvl'] = zoomLvl;
+    zoomLvlCache = zoomLvl;
 
     if (!init && showTrace)
         updateAddressBar();
@@ -4910,7 +4910,7 @@ function changeZoom(init) {
 }
 
 function checkScale() {
-    if (ZoomLvl > markerZoomDivide)
+    if (zoomLvl > markerZoomDivide)
         iconSize = markerBig;
     else
         iconSize = markerSmall;
@@ -4937,7 +4937,7 @@ function setGlobalScale(scale, init) {
 }
 
 function checkPointermove() {
-    if ((webgl || ZoomLvl > 5.5) && enableMouseover && !onMobile) {
+    if ((webgl || zoomLvl > 5.5) && enableMouseover && !onMobile) {
         OLMap.on('pointermove', onPointermove);
     } else {
         OLMap.un('pointermove', onPointermove);
@@ -5084,7 +5084,7 @@ function mapRefresh(redraw) {
             // disable mobile limitations when using webGL
             if (
                 (!onMobile || webgl || nMapPlanes < 150)
-                && (!onMobile || webgl || ZoomLvl > 10 || !plane.onGround)
+                && (!onMobile || webgl || zoomLvl > 10 || !plane.onGround)
                 && plane.visible
                 && plane.inView
             ) {
@@ -5595,7 +5595,7 @@ function updateAddressBar() {
 
     if (showTrace || replay) {
         string += (string ? '&' : '?');
-        string += 'lat=' + CenterLat.toFixed(3) + '&lon=' + CenterLon.toFixed(3) + '&zoom=' + ZoomLvl.toFixed(1);
+        string += 'lat=' + CenterLat.toFixed(3) + '&lon=' + CenterLon.toFixed(3) + '&zoom=' + zoomLvl.toFixed(1);
     }
 
     if (SelPlanes.length > 0 && (showTrace || replay)) {
@@ -5729,7 +5729,10 @@ function refreshInt() {
         refresh = RefreshInterval * lastRequestSize / 35000;
         let extent = getViewOversize(1.03);
         let min = 0.7;
-        let max = 6;
+        let max = 7;
+        if (zoomLvl < 5) {
+            min += Math.min(1, (5 - zoomLvl) / 4);
+        }
         if (refresh < RefreshInterval * min) {
             refresh = RefreshInterval * min;
         }
@@ -5795,7 +5798,7 @@ function toggleShowTrace() {
             const plane = SelPlanes[i];
             plane.setNull();
         }
-        selectPlaneByHex(hex, {noDeselect: true, follow: true, zoom: ZoomLvl,});
+        selectPlaneByHex(hex, {noDeselect: true, follow: true, zoom: zoomLvl,});
     }
 
     jQuery('#history_collapse').toggle();
@@ -5932,7 +5935,7 @@ function shiftTrace(offset) {
     jQuery("#histDatePicker").datepicker('setDate', traceDateString);
 
     for (let i in SelPlanes) {
-        selectPlaneByHex(SelPlanes[i].icao, {noDeselect: true, zoom: ZoomLvl});
+        selectPlaneByHex(SelPlanes[i].icao, {noDeselect: true, zoom: zoomLvl});
     }
 
     updateAddressBar();
