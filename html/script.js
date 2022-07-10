@@ -1808,9 +1808,9 @@ function startPage() {
         jQuery("#lastLeg_cb").parent().hide();
         jQuery('#show_trace').hide();
     }
-    if (globeIndex) {
+    if (globeIndex && !icaoFilter) {
         jQuery('#V').hide();
-    } else {
+        toggleTableInView(true);
     }
 
     if (hideButtons) {
@@ -1823,8 +1823,6 @@ function startPage() {
         jQuery('.ol-attribution').show();
     }
 
-    if (!icaoFilter && globeIndex)
-        toggleTableInView(true);
 
     changeZoom("init");
     changeCenter("init");
