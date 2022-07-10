@@ -125,6 +125,7 @@ let layerExtraContrast = 0;
 let shareFiltersParam = false;
 let lastRequestSize = 0;
 let lastRequestBox = '';
+let nextQuerySelected = 0;
 
 let limitUpdates = -1;
 
@@ -342,13 +343,44 @@ function fetchData(options) {
             ac_url.push('uuid/?feed=' + uuid[i]);
         }
     } else if (reApi) {
+
+        if (now > nextQuerySelected > now && SelPlanes.length > 0) {
+            nextQuerySelected = now + 15; // directly query selected planes every 15 seconds
+            let url = 're-api/?' + (binCraft ? 'binCraft' : 'json');
+            url += zstd ? '&zstd' : '';
+            url += '&find_hex='
+            for (let k in SelPlanes) {
+                url += SelPlanes[k].icao + ','
+            }
+            url.slice(0, -1); // remove trailing comma
+            ac_url.push(url);
+        }
+
         let url = 're-api/?' + (binCraft ? 'binCraft' : 'json');
         url += zstd ? '&zstd' : '';
         url += onlyMilitary ? '&filter_mil' : '';
         lastRequestBox = requestBoxString();
-        url += '&box=' + lastRequestBox;
-        //console.log(url);
+        if (icaoFilter) {
+            if (icaoFilter.length > 0) {
+                url += '&find_hex='
+                for (let k in icaoFilter) {
+                    url += icaoFilter[k] + ','
+                }
+                url = url.slice(0, -1); // remove trailing comma
+            }
+        } else if (onlySelected && SelPlanes.length > 0) {
+            url += '&find_hex='
+            for (let k in SelPlanes) {
+                url += SelPlanes[k].icao + ','
+            }
+            url = url.slice(0, -1); // remove trailing comma
+        } else  {
+            url += '&box=' + lastRequestBox;
+        }
+
         ac_url.push(url);
+        //console.log(url);
+
     } else if (globeIndex) {
         let indexes = globeIndexes();
         const ancient = (currentTime - 2 * refreshInt() / globeSimLoad * globeTilesViewCount) / 1000;
@@ -5745,7 +5777,11 @@ function refreshInt() {
         if (refresh > RefreshInterval * max) {
             refresh = RefreshInterval * max;
         }
-        if (lastRequestBox != requestBoxString()) {
+        if (onlySelected && SelPlanes.length == 0 && reApi) {
+            // no aircraft selected, none shown
+            refresh = RefreshInterval * max * 2;
+        }
+        if (!FollowSelected && lastRequestBox != requestBoxString()) {
             refresh = Math.min(RefreshInterval, refresh / 4);
         }
     }
@@ -5774,6 +5810,7 @@ function refreshInt() {
         refresh *= 1.5;
     }
 
+    //console.log(refresh);
 
     return refresh;
 }
@@ -7630,7 +7667,7 @@ function RGBColorToKMLColor(c) {
 // Returns an array of selected planes, ordered by registration-or-ICAO.
 function selectedPlanes() {
     const planes = [];
-    for (let key in Planes) {
+    for (let key in SelPlanes) {
         if (Planes[key].selected) {
             planes.push(Planes[key]);
         }
