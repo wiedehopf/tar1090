@@ -7562,7 +7562,9 @@ function coordsForExport(plane) {
     let runningAverage = 0;
     let lastTimestamp = 0;
     let delta;
-    if (kmlStyle == 'geom_averaged') {
+    //console.log(kmlStyle);
+    if (kmlStyle == 'geom_avg') {
+        //console.log('averaging');
         const avgWindow = 8;
         for (let i = 0; i < numSegs; i++) {
             const seg = segs[i];
@@ -7609,14 +7611,13 @@ function coordsForExport(plane) {
             const geom = seg.alt_geom;
             const geomOffAverage = seg.geomOffAverage;
             let using_baro = false;
-            if (kmlStyle == 'geom_average' && geomOffAverage != null) {
+            if (kmlStyle == 'geom_avg' && geomOffAverage != null) {
                 const betterGeom = baro + geomOffAverage;
-                //console.log(betterGeom);
                 alt = Math.round(betterGeom * 0.3048); // convert ft to m
             } else if (kmlStyle != 'baro' && geom != null) {
                 alt = Math.round(geom * 0.3048); // convert ft to m
             } else if (kmlStyle == 'baro' && baro != null && baro != 'ground') {
-                alt = baro * 0.3048;
+                alt = Math.round(baro * 0.3048);
                 using_baro = true;
             }
             if (seg.ground) {
@@ -7816,9 +7817,9 @@ function exportKML(altStyle) {
     const xml = prologue + hiccup(xmlObj);
     let styleName = '';
     if (kmlStyle == 'geom') { styleName = 'EGM96'; };
-    if (kmlStyle == 'geom_averaged') { styleName = 'EGM96_avg'; };
+    if (kmlStyle == 'geom_avg') { styleName = 'EGM96_avg'; };
     if (kmlStyle == 'baro') { styleName = 'press_alt_uncorrected'; };
-    console.log(kmlStyle + ' ' + styleName);
+    //console.log(kmlStyle + ' ' + styleName);
     download(
         filename + '-track-' + styleName + '.kml',
         'application/vnd.google-earth.kml+xml',
