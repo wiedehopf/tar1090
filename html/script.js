@@ -303,8 +303,15 @@ function fetchData(options) {
         return;
     let currentTime = new Date().getTime();
 
-    if (!options.force && (currentTime - lastFetch < refreshInt() || pendingFetches > 0)) {
-        return;
+    if (!options.force) {
+        if (
+            currentTime - lastFetch < refreshInt()
+            || pendingFetches > 0
+            || OLMap.getView().getInteracting()
+            || OLMap.getView().getAnimating()
+        ) {
+            return;
+        }
     }
     if (debugFetch)
         console.log((currentTime - lastFetch)/1000);
@@ -2516,6 +2523,7 @@ function initMap() {
             case "e":
                 zoomIn();
                 break;
+            case "ArrowUp":
             case "w":
                 oldCenter = OLMap.getView().getCenter();
                 extent = OLMap.getView().calculateExtent(OLMap.getSize());
@@ -2523,6 +2531,7 @@ function initMap() {
                 OLMap.getView().setCenter(newCenter);
                 toggleFollow(false);
                 break;
+            case "ArrowDown":
             case "s":
                 oldCenter = OLMap.getView().getCenter();
                 extent = OLMap.getView().calculateExtent(OLMap.getSize());
@@ -2530,6 +2539,7 @@ function initMap() {
                 OLMap.getView().setCenter(newCenter);
                 toggleFollow(false);
                 break;
+            case "ArrowLeft":
             case "a":
                 oldCenter = OLMap.getView().getCenter();
                 extent = OLMap.getView().calculateExtent(OLMap.getSize());
@@ -2537,6 +2547,7 @@ function initMap() {
                 OLMap.getView().setCenter(newCenter);
                 toggleFollow(false);
                 break;
+            case "ArrowRight":
             case "d":
                 oldCenter = OLMap.getView().getCenter();
                 extent = OLMap.getView().calculateExtent(OLMap.getSize());
