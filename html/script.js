@@ -299,8 +299,9 @@ let C429 = 0;
 let fetchCalls = 0;
 function fetchData(options) {
     options = options || {};
-    if (heatmap || replay || showTrace || pTracks || !loadFinished)
+    if (heatmap || replay || showTrace || pTracks || !loadFinished || inhibitFetch) {
         return;
+    }
     let currentTime = new Date().getTime();
 
     if (!options.force) {

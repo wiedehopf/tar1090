@@ -795,14 +795,16 @@ function add_kml_overlay(url, name, opacity) {
     }));
 }
 let zstdDecode = null;
+let inhibitFetch = false;
 function webAssemblyFail(e) {
     zstdDecode = null;
     console.log(e);
     console.error("Error loading zstddec, probable cause: webassembly not present or not working");
     zstd = false;
     if (adsbexchange) {
+        inhibitFetch = true;
         reApi = false;
-        jQuery("#update_error_detail").text("Your browser is not supporting webassembly, this website might stop working in the future without webassembly.");
+        jQuery("#update_error_detail").text("Your browser is not supporting webassembly, this website does not work without webassembly.");
         jQuery("#update_error").css('display','block');
     }
 }
