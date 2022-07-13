@@ -1742,8 +1742,8 @@ function parseHistory() {
 let timers = {};
 function clearIntervalTimers() {
     if (loadFinished) {
-        jQuery("#update_error_detail").text('Timers paused (tab hidden).');
-        jQuery("#update_error").css('display','block');
+        jQuery("#timers_paused_detail").text('Timers paused (tab hidden).');
+        jQuery("#timers_paused").css('display','block');
     }
     console.log("clear timers");
     const entries = Object.entries(timers);
@@ -1754,7 +1754,7 @@ function clearIntervalTimers() {
 
 function setIntervalTimers() {
     if (loadFinished) {
-        jQuery("#update_error").css('display','none');
+        jQuery("#timers_paused").css('display','none');
     }
     console.log("set timers");
     if ((adsbexchange || dynGlobeRate) && !uuid) {

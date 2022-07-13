@@ -804,8 +804,8 @@ function webAssemblyFail(e) {
     if (adsbexchange) {
         inhibitFetch = true;
         reApi = false;
-        jQuery("#update_error_detail").text("Your browser is not supporting webassembly, this website does not work without webassembly.");
-        jQuery("#update_error").css('display','block');
+        jQuery("#generic_error_detail").text("Your browser is not supporting webassembly, this website does not work without webassembly.");
+        jQuery("#generic_error").css('display','block');
     }
 }
 
