@@ -2518,9 +2518,13 @@ function initMap() {
                 break;
                 // zoom and movement
             case "q":
+            case "-":
+            case "Subtract":
                 zoomOut();
                 break;
             case "e":
+            case "+":
+            case "Add":
                 zoomIn();
                 break;
             case "ArrowUp":
