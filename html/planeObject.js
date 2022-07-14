@@ -1430,7 +1430,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     if (pTracks) {
         this.speed = Math.max(this.speed, gs);
     } else {
-        this.speed = gs;
+        this.speed = this.gs;
     }
 
     this.track = track;
