@@ -1419,18 +1419,19 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 
     this.updateAlt();
 
-    if (gs != null)
-        this.gs = gs;
-    else if (data.speed != null)
-        this.gs = data.speed;
-    else if (!pTracks)
-        this.gs = null;
+    if (data.speed != null) {
+        gs = data.speed;
+    }
 
     // needed for track labels
     if (pTracks) {
-        this.speed = Math.max(this.speed, gs);
+        if (gs != null) {
+            this.speed = Math.max(this.speed, gs);
+        }
+        this.gs = gs;
     } else {
         this.speed = gs;
+        this.gs = gs;
     }
 
     this.track = track;
