@@ -801,7 +801,7 @@ function webAssemblyFail(e) {
     console.log(e);
     console.error("Error loading zstddec, probable cause: webassembly not present or not working");
     zstd = false;
-    if (adsbexchange) {
+    if (adsbexchange && !uuid) {
         inhibitFetch = true;
         reApi = false;
         jQuery("#generic_error_detail").text("Your browser is not supporting webassembly, this website does not work without webassembly.");
