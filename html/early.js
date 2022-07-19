@@ -794,8 +794,10 @@ function add_kml_overlay(url, name, opacity) {
         zIndex: 99,
     }));
 }
-let zstdDecode = null;
+
 let inhibitFetch = false;
+let zstdDecode = null;
+
 function webAssemblyFail(e) {
     zstdDecode = null;
     console.log(e);
