@@ -80,6 +80,8 @@ wget https://github.com/facebook/zstd/releases/download/v1.5.0/zstd-1.5.0.tar.gz
 tar xf zstd-1.5.0.tar.gz
 cd zstd-1.5.0/build/single_file_libs
 ./combine.sh -r ../../lib -o zstddeclib.c zstddeclib-in.c
+cp zstddeclib.c ../../..
+cd ../../..
 ```
 
 #### apply patch
