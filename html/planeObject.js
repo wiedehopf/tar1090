@@ -1344,7 +1344,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     //    0      1        2     3       4     5     6                 7               8        9
     // this format is only valid for chunk loading the history
     const alt_baro = isArray? data[1] : data.alt_baro;
-    const gs = isArray? data[2] : data.gs;
+    let gs = isArray? data[2] : data.gs;
     const track = isArray? data[3] : data.track;
     const lat = isArray? data[4] : data.lat;
     const lon = isArray? data[5] : data.lon;
