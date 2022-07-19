@@ -48,6 +48,9 @@ let calcOutlineData = null;
 let uuid = null;
 let uuidCache = [];
 
+let inhibitFetch = false;
+let zstdDecode = null;
+
 let usp;
 try {
     // let's make this case insensitive
@@ -480,6 +483,8 @@ if (uuid != null) {
         }
         dbServer = (data.dbServer && data.globeIndexGrid != null) ? true : false;
 
+        init_zstddec();
+
         if (heatmap || replay) {
             if (replay && data.globeIndexGrid != null)
                 globeIndex = 1;
@@ -523,9 +528,6 @@ if (uuid != null) {
                 historyQueued();
             });
         }
-
-
-        init_zstddec();
     });
 }
 
@@ -798,8 +800,6 @@ function add_kml_overlay(url, name, opacity) {
     }));
 }
 
-let inhibitFetch = false;
-let zstdDecode = null;
 
 function webAssemblyFail(e) {
     zstdDecode = null;
