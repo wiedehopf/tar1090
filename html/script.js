@@ -464,11 +464,7 @@ function fetchData(options) {
                     try {
                         res = zstdDecode( arr, 0 );
                     } catch (e) {
-                        webAssemblyFail(e);
-                        return;
-                    }
-                    if (res.byteLength == 0) {
-                        let errText = "zstd decompression failed, no data!";
+                        let errText = e.message;
                         console.log(errText);
                         jQuery("#update_error_detail").text(errText);
                         jQuery("#update_error").css('display','block');

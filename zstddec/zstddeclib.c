@@ -18,7 +18,7 @@
  */
 
 /*
- * findDecompressedSize interface changed from unsigned long long to size_t for wasm / browser compatibility (matthias.wirth@gmail.com)
+ * findDecompressedSize interface changed from unsigned long long to U32 for wasm / browser compatibility (matthias.wirth@gmail.com)
  * further info on the issue: https://github.com/WebAssembly/WASI/issues/54
  * This is not necessary for browsers after 2020, but there are still plenty of older devices around
  */
@@ -4944,7 +4944,7 @@ typedef enum {
  *   note 5 : ZSTD_findDecompressedSize handles multiple frames, and so it must traverse the input to
  *            read each contained frame header.  This is fast as most of the data is skipped,
  *            however it does mean that all frame data must be present and valid. */
-ZSTDLIB_API size_t ZSTD_findDecompressedSize(const void* src, size_t srcSize);
+ZSTDLIB_API U32 ZSTD_findDecompressedSize(const void* src, size_t srcSize);
 
 /*! ZSTD_decompressBound() :
  *  `src` should point to the start of a series of ZSTD encoded and/or skippable frames
@@ -11981,11 +11981,11 @@ static size_t readSkippableFrameSize(void const* src, size_t srcSize)
  *  `srcSize` must be the exact length of some number of ZSTD compressed and/or
  *      skippable frames
  *  @return : decompressed size of the frames contained */
-size_t ZSTD_findDecompressedSize(const void* src, size_t srcSize)
+U32 ZSTD_findDecompressedSize(const void* src, size_t srcSize)
 {
     unsigned long long totalDstSize = 0;
 
-    size_t _error = 0;
+    U32 _error = 0xffffffff;
 
     while (srcSize >= ZSTD_startingInputLength(ZSTD_f_zstd1)) {
         U32 const magicNumber = MEM_readLE32(src);
@@ -12021,7 +12021,7 @@ size_t ZSTD_findDecompressedSize(const void* src, size_t srcSize)
 
     if (totalDstSize > UINT32_MAX || srcSize) return _error;
 
-    return (size_t) totalDstSize;
+    return (U32) totalDstSize;
 }
 
 /** ZSTD_getDecompressedSize() :
