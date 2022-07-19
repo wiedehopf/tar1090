@@ -351,19 +351,6 @@ function fetchData(options) {
             ac_url.push('uuid/?feed=' + uuid[i]);
         }
     } else if (reApi) {
-
-        if (now > nextQuerySelected > now && SelPlanes.length > 0) {
-            nextQuerySelected = now + 15; // directly query selected planes every 15 seconds
-            let url = 're-api/?' + (binCraft ? 'binCraft' : 'json');
-            url += zstd ? '&zstd' : '';
-            url += '&find_hex='
-            for (let k in SelPlanes) {
-                url += SelPlanes[k].icao + ','
-            }
-            url.slice(0, -1); // remove trailing comma
-            ac_url.push(url);
-        }
-
         let url = 're-api/?' + (binCraft ? 'binCraft' : 'json');
         url += zstd ? '&zstd' : '';
         url += onlyMilitary ? '&filter_mil' : '';
@@ -384,6 +371,14 @@ function fetchData(options) {
             url = url.slice(0, -1); // remove trailing comma
         } else  {
             url += '&box=' + lastRequestBox;
+
+            if (SelPlanes.length > 0) {
+                url += '&find_hex='
+                for (let k in SelPlanes) {
+                    url += SelPlanes[k].icao + ','
+                }
+                url = url.slice(0, -1); // remove trailing comma
+            }
         }
 
         ac_url.push(url);
@@ -7959,6 +7954,9 @@ function mapTypeSettings() {
 }
 
 function requestBoxString() {
+    if (!mapIsVisible && lastRequestBox) {
+        return lastRequestBox;
+    }
     let extent = getViewOversize(1.03);
     let minLon = extent.minLon.toFixed(6);
     let maxLon = extent.maxLon.toFixed(6);
