@@ -45,7 +45,11 @@
         throw new Error("ZSTDDecoder: Await .init() before decoding.");
       const Q = A.byteLength, C = B.exports.malloc(Q);
       g.set(A, C), I = I || Number(B.exports.ZSTD_findDecompressedSize(C, Q));
-      if (I === 0) { throw new Error("ZSTDDecoder: ZSTD_findDecompressedSize content size error."); };
+      if (I === 0) {
+          B.exports.free(C);
+          console.log("dzstddec-tar1090-0.0.3: decompression error or empty file");
+          return new Uint8Array();
+      }
       const E = B.exports.malloc(I), i = B.exports.ZSTD_decompress(E, I, C, Q), D = g.slice(E, E + i);
       return B.exports.free(C),
         B.exports.free(E),

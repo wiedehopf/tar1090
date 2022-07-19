@@ -467,6 +467,13 @@ function fetchData(options) {
                         webAssemblyFail(e);
                         return;
                     }
+                    if (res.byteLength == 0) {
+                        let errText = "zstd decompression failed, no data!";
+                        console.log(errText);
+                        jQuery("#update_error_detail").text(errText);
+                        jQuery("#update_error").css('display','block');
+                        return;
+                    }
                     let arrayBuffer = res.buffer
                     // return type is Uint8Array, wqi requires the ArrayBuffer
                     data = { buffer: arrayBuffer, };
