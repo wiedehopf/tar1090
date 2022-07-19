@@ -523,6 +523,9 @@ if (uuid != null) {
                 historyQueued();
             });
         }
+
+
+        init_zstddec();
     });
 }
 
@@ -800,21 +803,26 @@ let zstdDecode = null;
 
 function webAssemblyFail(e) {
     zstdDecode = null;
-    console.log(e);
-    console.error("Error loading zstddec, probable cause: webassembly not present or not working");
     zstd = false;
+    binCraft = false;
     if (adsbexchange && !uuid) {
         inhibitFetch = true;
         reApi = false;
         jQuery("#generic_error_detail").text("Your browser is not supporting webassembly, this website does not work without webassembly.");
         jQuery("#generic_error").css('display','block');
     }
+    if (e) {
+        console.log(e);
+    }
+    console.error("Error loading zstddec, probable cause: webassembly not present or not working");
 }
 
-try {
-    zstddec.decoder = new zstddec.ZSTDDecoder();
-    zstddec.promise = zstddec.decoder.init();
-    zstdDecode = zstddec.decoder.decode;
-} catch (e) {
-    webAssemblyFail(e);
+function init_zstddec() {
+    try {
+        zstddec.decoder = new zstddec.ZSTDDecoder();
+        zstddec.promise = zstddec.decoder.init();
+        zstdDecode = zstddec.decoder.decode;
+    } catch (e) {
+        webAssemblyFail(e);
+    }
 }
