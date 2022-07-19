@@ -55,7 +55,7 @@
       let res = B.exports.ZSTD_decompress(E, I, C, Q);
       if (B.exports.ZSTD_isError(res)) {
         B.exports.free(C); B.exports.free(E);
-        throw new Error("ZSTDDecoder: decompression error: " + B.exports.ZSTD_getErrorName(res));
+        throw new Error("ZSTDDecoder: decompression error: " + res);
       }
       let D = g.slice(E, E + res);
       B.exports.free(C); B.exports.free(E);
