@@ -5431,7 +5431,7 @@ function findPlanes(queries, byIcao, byCallsign, byReg, byType, showWarnings) {
         for (let i in results) {
             select(results[i], {});
             results[i].updateTick(true);
-            SelectedPlane = null;
+            sp = SelectedPlane = null;
         }
         showWarnings && hideSearchWarning();
     } else if (results.length == 1) {

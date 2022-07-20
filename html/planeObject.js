@@ -526,6 +526,11 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
 
     let estimated = (time_difference > stale_timeout) || ((now - this.position_time) > stale_timeout) || stale;
 
+    if (estimated) {
+        //console.trace();
+        //console.log('estimated ' + new Date(1000 * this.position_time) + ' ' + this.position);
+    }
+
     /*
     let track_change = this.track != null ? Math.abs(this.tail_track - this.track) : NaN;
     track_change = track_change < 180 ? track_change : Math.abs(track_change - 360);
@@ -1071,6 +1076,7 @@ PlaneObject.prototype.processTrace = function() {
             for (let i = 0; i < recent.length; i++) {
                 const entry = recent[i];
                 if (trace.length == 0 || entry[0] > trace[trace.length - 1][0]) {
+                    //console.log("pushing " + entry[0]);
                     trace.push(entry);
                 }
             }
@@ -1118,9 +1124,14 @@ PlaneObject.prototype.processTrace = function() {
             let stale = state[6] & 1;
             const leg_marker = state[6] & 2;
 
+            if (1000 * timestamp > new Date().getTime()) {
+                console.log('in the future ' + new Date(timestamp * 1000) + ' ' + state.join(','));
+            }
             // no going backwards in time
-            if (timestamp < _now)
+            if (timestamp < _now) {
+                console.log('backwards trace wat? ' + timestamp + ' ' + state.join(','));
                 continue;
+            }
 
             _now = timestamp;
 
@@ -1178,10 +1189,12 @@ PlaneObject.prototype.processTrace = function() {
                     console.log('leg zulu: ' + zuluTime(new Date(this.leg_ts * 1000)) + ' epoch: ' + this.leg_ts);
                 }
             }
-            if (legStart != null && legStart > 0 && legStart == i)
+            if (legStart != null && legStart > 0 && legStart == i) {
                 this.leg_ts = _now;
-            if (legEnd != null && legEnd < trace.length && legEnd == i + 1)
+            }
+            if (legEnd != null && legEnd < trace.length && legEnd == i + 1) {
                 this.leg_ts = _now;
+            }
 
             if (_last - _now > 320) {
                 stale = true;
@@ -1210,8 +1223,10 @@ PlaneObject.prototype.processTrace = function() {
             break;
         const state = this.trace[i];
         // no going backwards in time
-        if (state.now <= _now)
+        if (state.now <= _now) {
+            //console.log(new Date(1000 * state.now));
             continue;
+        }
 
         _now = state.now;
         this.position = state.position;
@@ -1231,7 +1246,9 @@ PlaneObject.prototype.processTrace = function() {
     }
 
 
-    if ((this.position == null || tempPlane.position != null) && tempPlane.last_message_time >= this.last_message_time && !showTrace && !replay) {
+    //if ((this.position == null || tempPlane.position != null) && tempPlane.position_time > this.position_time && !showTrace && !replay) {
+    //console.log(tempPlane.position_time + ' ' + this.position_time);
+    if (tempPlane.last_message_time > this.last_message_time && !showTrace && !replay) {
         planeCloneState(this, tempPlane);
         this.updateTrack(this.position_time, _last);
     }
@@ -2384,7 +2401,7 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
 
     this.position = [lon, lat];
     this.position_time = _now;
-    this.last_message_time = Math.max(_now, this.last_message_time);
+    this.last_message_time = _now;
     this.altitude = altitude;
 
     if (altitude && altitude != "ground" && this.geom_diff_ts && _now - this.geom_diff_ts < 60) {
@@ -2809,8 +2826,16 @@ function normalizeTraceStamps(data) {
         return null;
     }
     let trace = data.trace;
+    let last = 0;
     for (let i = 0; i < trace.length; i++) {
-        trace[i][0] += data.timestamp;
+        let point = trace[i];
+        point[0] += data.timestamp;
+        if (point[0] > last) {
+            last = point[0];
+        } else {
+            console.log('normalize: trace backwards last: ' + last.toFixed(3) + ' current: ' + point[0].toFixed(3));
+        }
     }
+    data.timestamp = 0;
     return data;
 }
