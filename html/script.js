@@ -1149,7 +1149,7 @@ function initPage() {
             if (geomUseEGM) {
 jQuery('#selected_altitude_geom1')
                 jQuery('#selected_altitude_geom1_title').updateText('EGM96 altitude');
-                jQuery('#selected_altitude_geom2_title').updateText('Geometric EGM96');
+                jQuery('#selected_altitude_geom2_title').updateText('Geom. EGM96');
                 let egm = loadEGM();
                 if (egm) {
                     egm.addEventListener('load', function() {
@@ -1160,7 +1160,7 @@ jQuery('#selected_altitude_geom1')
                 }
             } else {
                 jQuery('#selected_altitude_geom1_title').updateText('WGS84 altitude');
-                jQuery('#selected_altitude_geom2_title').updateText('Geometric WGS84');
+                jQuery('#selected_altitude_geom2_title').updateText('Geom. WGS84');
             }
             if (loadFinished) {
                 remakeTrails();
