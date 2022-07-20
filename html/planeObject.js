@@ -2830,7 +2830,7 @@ function normalizeTraceStamps(data) {
     for (let i = 0; i < trace.length; i++) {
         let point = trace[i];
         point[0] += data.timestamp;
-        if (point[0] > last) {
+        if (point[0] >= last) {
             last = point[0];
         } else {
             console.log('normalize: trace backwards last: ' + last.toFixed(3) + ' current: ' + point[0].toFixed(3));
