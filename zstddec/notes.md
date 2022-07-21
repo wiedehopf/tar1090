@@ -31,19 +31,16 @@ function webAssemblyFail(e) {
     // possibly display an error if your page requires zstddec
 }
 
-try {
-    zstddec.decoder = new zstddec.ZSTDDecoder();
-    zstddec.promise = zstddec.decoder.init();
-    zstdDecode = zstddec.decoder.decode;
-} catch (e) {
-    webAssemblyFail(e);
-}
+zstddec.decoder = new zstddec.ZSTDDecoder();
+zstddec.promise = zstddec.decoder.init().catch(e => webAssemblyFail(e));
+zstdDecode = zstddec.decoder.decode;
 
 function arraybufferRequest() {
     let xhrOverride = new XMLHttpRequest();
     xhrOverride.responseType = 'arraybuffer';
     return xhrOverride;
 }
+
 function startPage() {
     let req = jQuery.ajax({
         url: "http://127.0.0.1/test.zstd", method: 'GET',
