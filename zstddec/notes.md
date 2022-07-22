@@ -20,6 +20,12 @@ const decompressedArray = decoder.decode( compressedArray, uncompressedSize );
 
 ### Example:
 
+Include the js file in your html:
+```html
+    <script src="zstddec-tar1090-0.0.4.js"></script>
+```
+
+In your js, use code similar to this to use zstddec-tar1090:
 ```js
 let zstdDecode = null;
 
