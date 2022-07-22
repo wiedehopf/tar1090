@@ -1737,20 +1737,40 @@ function parseHistory() {
     historyLoaded.resolve();
 }
 
+let replay_was_active = false;
 let timers = {};
+let timersActive = false;
 function clearIntervalTimers() {
+    if (!timersActive) {
+        return;
+    }
+
+    timersActive = false;
+
     if (loadFinished) {
         jQuery("#timers_paused_detail").text('Timers paused (tab hidden).');
         jQuery("#timers_paused").css('display','block');
+
+        replay_was_active = replay.playing;
+        if (replay.playing) {
+            playReplay(false);
+        }
     }
     console.log("clear timers");
     const entries = Object.entries(timers);
     for (let i in entries) {
         clearInterval(entries[i][1]);
     }
+
 }
 
 function setIntervalTimers() {
+    if (timersActive) {
+        return;
+    }
+
+    timersActive = true;
+
     if (loadFinished) {
         jQuery("#timers_paused").css('display','none');
     }
@@ -1777,6 +1797,11 @@ function setIntervalTimers() {
     if (receiverJson && receiverJson.outlineJson) {
         timers.drawOutline = window.setInterval(drawOutlineJson, 15000);
         drawOutlineJson();
+    }
+
+
+    if (replay_was_active) {
+        playReplay(true);
     }
 }
 
@@ -3621,7 +3646,14 @@ function refreshFeatures() {
             const plane = PlanesOrdered[i];
 
             plane.visible = plane.checkVisible() && !plane.isFiltered()
-            plane.inView = inView(plane.position, planeMan.lastRenderExtent);
+
+
+            if ((globeIndex || replay) && SelectedAllPlanes && noVanish) {
+                // pretend planes never go off the map for trails:
+                plane.inView = true;
+            } else {
+                plane.inView = inView(plane.position, planeMan.lastRenderExtent);
+            }
 
             TrackedHistorySize += plane.history_size;
 
@@ -4028,8 +4060,9 @@ function selectAllPlanes() {
     if (globeIndex) {
         for (let i in PlanesOrdered) {
             let plane = PlanesOrdered[i];
-            if (plane.visible && plane.inView)
+            if (plane.visible && plane.inView) {
                 plane.processTrace();
+            }
         }
     }
     refreshFeatures();
