@@ -529,7 +529,7 @@ function wqi(data) {
 
         ac.extraFlags = u8[106];
         ac.nogps = ac.extraFlags & 1;
-        if (ac.nogps && nogpsOnly) {
+        if (ac.nogps && nogpsOnly && (u8[73] & 64) != 0xffffffff) {
             u8[73] |= 64;
             u8[73] |= 16;
         }
