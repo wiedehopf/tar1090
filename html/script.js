@@ -30,6 +30,7 @@ let addToIconCache = [];
 let lineStyleCache = {};
 let Planes        = {};
 let PlanesOrdered = [];
+let replayPlanes = {};
 let PlaneFilter   = {};
 let SelectedPlane = null;
 let sp = null;
@@ -6899,6 +6900,7 @@ function replayClear() {
     clearTimeout(refreshId);
     reaper(true);
     refreshFilter();
+    replayPlanes = {};
 }
 
 let replayData;
@@ -7123,7 +7125,14 @@ function replayStep(arg) {
 
     i += 4;
 
-    let ext = currentExtent(1.4);
+    let ext;
+    if (zoomLvl > 10) {
+        ext = currentExtent(1.6);
+    } else if (zoomLvl > 8) {
+        ext = currentExtent(1.2);
+    } else {
+        ext = currentExtent(1.1);
+    }
     ext.maxLat *= 1e6;
     ext.maxLon *= 1e6;
     ext.minLat *= 1e6;
@@ -7133,9 +7142,9 @@ function replayStep(arg) {
         let lon = points[i + 2];
         let pos = [lon, lat];
         if (lat >= 1073741824) {
-            let ac = {seen:0, seen_pos:0,};
-            ac.hex = (points[i] & ((1<<24) - 1)).toString(16).padStart(6, '0');
-            ac.hex = (points[i] & (1<<24)) ? ('~' + ac.hex) : ac.hex;
+            let hex = (points[i] & ((1<<24) - 1)).toString(16).padStart(6, '0');
+            hex = (points[i] & (1<<24)) ? ('~' + hex) : hex;
+            let ac = {hex:hex, seen:0, seen_pos:0,};
             if (replay.pointsU8[4 * (i + 2)] != 0) {
                 ac.flight = "";
                 for (let j = 0; j < 8; j++) {
@@ -7143,6 +7152,10 @@ function replayStep(arg) {
                 }
             }
             ac.squawk = (lat & 0xFFFF).toString(10).padStart(4, '0');
+            if (!Planes[hex]) {
+                replayPlanes[hex] = ac;
+                continue;
+            }
             processAircraft(ac, false, false);
             continue;
         }
@@ -7194,13 +7207,23 @@ function replayStep(arg) {
         let ac = {
             seen: 0,
             seen_pos: 0,
-            hex: hex,
-            lat: lat,
-            lon: lon,
-            alt_baro: alt,
-            gs: gs,
-            type: type,
         };
+
+        if (!Planes[hex]) {
+            const cached = replayPlanes[hex];
+            if (cached) {
+                ac = cached;
+                //delete replayPlanes[hex];
+            }
+        }
+
+        ac.hex = hex;
+        ac.lat = lat;
+        ac.lon = lon;
+        ac.alt_baro = alt;
+        ac.gs = gs;
+        ac.type = type;
+
         processAircraft(ac, false, false);
     }
 
