@@ -2746,7 +2746,7 @@ function reaper(all) {
     let plane;
     let length = PlanesOrdered.length;
     let temp = []
-    for (let i = 0; i < length; i++) {
+    for (let i in PlanesOrdered) {
         plane = PlanesOrdered[i];
         if (plane == null)
             continue;
@@ -3375,6 +3375,19 @@ function removeHighlight() {
     refreshHighlighted();
 }
 
+// OpenLayers might have some slight memory retention issues
+// recreating all OpenLayers Features for the planes every now and then releases that retained memory
+function releaseMem() {
+    for (let i in PlanesOrdered) {
+        PlanesOrdered[i].clearMarker();
+        PlanesOrdered[i].destroyTrace();
+        PlanesOrdered[i].destroyTR();
+        delete PlanesOrdered[i].olPoint;
+    }
+    refreshFeatures();
+    TAR.planeMan.redraw();
+}
+
 function refreshFeatures() {
     for (let i in PlanesOrdered) {
         PlanesOrdered[i].updateFeatures(true);
@@ -3758,6 +3771,7 @@ function refreshFeatures() {
         ctime && console.time("DOM2");
 
         htmlTable.replaceChild(newBody, tbody);
+        tbody.remove();
         tbody = newBody;
 
         ctime && console.timeEnd("DOM2");
@@ -5167,15 +5181,7 @@ function mapRefresh(redraw) {
             const plane = PlanesOrdered[i];
             delete plane.glMarker;
             // disable mobile limitations when using webGL
-            if (
-                (!onMobile || webgl || nMapPlanes < 150)
-                && (!onMobile || webgl || zoomLvl > 10 || !plane.onGround)
-                && plane.visible
-                && plane.inView
-            ) {
-                addToMap.push(plane);
-                nMapPlanes++;
-            } else if (plane.selected) {
+            if (plane.selected || (plane.inView && plane.visible && (!onMobile || webgl || (nMapPlanes < 150 && (!plane.onGround || zoomLvl > 10))))) {
                 addToMap.push(plane);
                 nMapPlanes++;
             } else {
@@ -8024,6 +8030,10 @@ function requestBoxString() {
 
 if (adsbexchange && window.location.hostname.startsWith('inaccurate')) {
     jQuery('#inaccurate_warning').removeClass('hidden');
+}
+
+function getn(n) {
+    limitUpdates=n; RefreshInterval=0; fetchCalls=0;
 }
 
 parseURLIcaos();

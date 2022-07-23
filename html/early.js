@@ -650,8 +650,9 @@ Toggle.prototype.init = function() {
             + '</div>'));
     }
 
-    if (this.button)
-        jQuery(this.button).on('click', this.toggle.bind(this));
+    if (this.button) {
+        jQuery(this.button).on('click', () => {this.toggle()});
+    }
 
     if (loStore[this.key] == 'true')
         this.state = true;
