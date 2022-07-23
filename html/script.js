@@ -1862,6 +1862,8 @@ function startPage() {
         jQuery('.ol-attribution').show();
     }
 
+    now = new Date().getTime()/1000;
+
 
     changeZoom("init");
     changeCenter("init");
@@ -1886,6 +1888,8 @@ function startPage() {
     }
 
     loadFinished = true;
+
+    reaper();
 
     // Kick off first refresh.
     fetchData();
@@ -2749,6 +2753,7 @@ function reaper(all) {
     if (reapInProgress) {
         return;
     }
+    lastReap = now;
     reapInProgress = true;
 
     // Look for planes where we have seen no messages for >300 seconds
@@ -2788,7 +2793,6 @@ function reaper(all) {
     }
     PlanesOrdered = temp;
 
-    lastReap = now;
     reapInProgress = false;
     const removed = length - PlanesOrdered.length;
     if (removed > 0) {
@@ -3395,9 +3399,9 @@ function releaseMem() {
         PlanesOrdered[i].clearMarker();
         PlanesOrdered[i].destroyTrace();
         PlanesOrdered[i].destroyTR();
-        delete PlanesOrdered[i].olPoint;
     }
     refreshFeatures();
+    mapRefresh(true);
     TAR.planeMan.redraw();
 }
 

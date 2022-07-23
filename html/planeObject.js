@@ -1666,12 +1666,10 @@ PlaneObject.prototype.clearMarker = function() {
     if (this.marker && this.marker.visible) {
         PlaneIconFeatures.removeFeature(this.marker);
         this.marker.visible = false;
-        this.marker = null;
     }
     if (this.glMarker && this.glMarker.visible) {
         webglFeatures.removeFeature(this.glMarker);
         this.glMarker.visible = false;
-        this.glMarker = null;
     }
 };
 
