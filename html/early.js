@@ -481,7 +481,7 @@ if (uuid != null) {
         if (usp.has('noglobe') || usp.has('ptracks')) {
             data.globeIndexGrid = null; // disable globe on user request
         }
-        dbServer = (data.dbServer && data.globeIndexGrid != null) ? true : false;
+        dbServer = (data.dbServer) ? true : false;
 
         init_zstddec();
 

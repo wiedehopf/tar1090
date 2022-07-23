@@ -558,6 +558,11 @@ function fetchData(options) {
                 }
             });
     }
+
+
+    if (now - lastReap > 60) {
+        reaper();
+    }
 }
 
 // this function is called from index.html on body load
@@ -4003,7 +4008,7 @@ function select(plane, options) {
 
 function selectPlaneByHex(hex, options) {
     active();
-    console.log("SELECTING", hex, options);
+    console.log(`SELECTING ${hex}`);
     options = options || {};
     //console.log("select: " + hex);
     // If SelectedPlane has something in it, clear out the selected
@@ -4015,8 +4020,9 @@ function selectPlaneByHex(hex, options) {
     // plane to be selected
     let newPlane = Planes[hex];
 
-    if (!options.noFetch && globeIndex && hex)
+    if (!options.noFetch && globeIndex && hex) {
         newPlane = getTrace(newPlane, hex, options);
+    }
 
     // If we are clicking the same plane, we are deselecting it unless noDeselect is specified
     if (oldPlane == newPlane && (options.noDeselect || showTrace)) {
@@ -4412,8 +4418,7 @@ function toggleMilitary() {
 
     refreshFilter();
     active();
-    if (onlyMilitary)
-        fetchData({force: true});
+    fetchData({force: true});
 }
 
 function togglePersistence() {
@@ -7134,8 +7139,8 @@ function replayStep(arg) {
             replay.addressMinutes = replay.minutes;
             updateAddressBar();
         }
+        //console.log(replay.ts.toUTCString());
         if (now - lastReap > 60) {
-            //console.log(replay.ts.toUTCString());
             reaper();
         }
     }
@@ -7464,9 +7469,7 @@ function showReplayBar(){
 function timeoutFetch() {
     fetchData();
     timers.checkMove = setTimeout(timeoutFetch, Math.max(RefreshInterval, 10000));
-    if (now - lastReap > 60) {
-        reaper();
-    }
+    reaper();
 }
 
 function handleVisibilityChange() {

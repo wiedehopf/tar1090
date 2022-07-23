@@ -1631,8 +1631,9 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.nogps = data.nogps;
     }
     this.rId = data.rId;
-
-    this.checkForDB(data);
+    if (!this.dbinfoLoaded) {
+        this.checkForDB(data);
+    }
     this.last = now;
     this.updatePositionData(now, last, data, init);
     return;
@@ -2786,11 +2787,10 @@ PlaneObject.prototype.checkForDB = function(t) {
         if (t.r) this.registration = `${t.r}`;
 
         if (t.r || t.t) {
-            //console.log('fromTrace');
             this.dbinfoLoaded = true;
         }
     }
-    if (!this.dbinfoLoaded && (!dbServer || (dbServer && !globeIndex && this.selected) || replay)) {
+    if (!this.dbinfoLoaded && (!dbServer || replay)) {
         this.getAircraftData();
         return;
     }
