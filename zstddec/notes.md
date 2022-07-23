@@ -99,8 +99,9 @@ patch -u zstddeclib.c -i changes.diff
 #### compilation:
 ```
 docker pull emscripten/emsdk:3.1.15
-docker run --rm -v $(pwd):/src -u $(id -u):$(id -g) emscripten/emsdk:3.1.15 emcc zstddeclib.c --no-entry -O3 -s EXPORTED_FUNCTIONS="['_ZSTD_decompress', '_ZSTD_findDecompressedSize', '_ZSTD_isError', '_malloc', '_free']" -s ALLOW_MEMORY_GROWTH=1 -o zstddec.wasm
+docker run --rm -v $(pwd):/src -u $(id -u):$(id -g) emscripten/emsdk:3.1.15 emcc zstddeclib.c --no-entry -O3 -s EXPORTED_FUNCTIONS="['_ZSTD_decompress', '_ZSTD_findDecompressedSize', '_ZSTD_isError', '_malloc', '_free']" -s ALLOW_MEMORY_GROWTH=1 -s TOTAL_STACK=64kb -s TOTAL_MEMORY=2Mb -o zstddec.wasm
 ```
+TOTAL_MEMORY is the initial heap size which grows as necessary.
 
 ### convert to base64 for direct inclusion in js file:
 ```
