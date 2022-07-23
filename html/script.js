@@ -1784,8 +1784,9 @@ function setIntervalTimers() {
 
     timers.checkMove = setInterval(checkMovement, 50);
     timers.everySecond = setInterval(everySecond, 850);
-    timers.reaper = setInterval(reaper, 40000);
-    //reaper();
+
+    //timers.reaper = setInterval(reaper, 40000);
+
     if (tempTrails) {
         timers.trailReaper = window.setInterval(trailReaper, 10000);
         trailReaper(now);
@@ -2731,16 +2732,19 @@ function initMap() {
 
 // This looks for planes to reap out of the master Planes variable
 let lastReap = 0;
+let reapInProgress = false;
 function reaper(all) {
-    console.log("Reaping started..");
+    //console.log("Reaping started..");
+    if (!all) {
+        releaseMem();
+    }
     if (noVanish && !all)
         return;
 
-    if (lastReap == "in_progress") {
+    if (reapInProgress) {
         return;
     }
-
-    lastReap = "in_progress";
+    reapInProgress = true;
 
     // Look for planes where we have seen no messages for >300 seconds
     let plane;
@@ -2780,8 +2784,12 @@ function reaper(all) {
     PlanesOrdered = temp;
 
     lastReap = now;
-    //console.log(length - PlanesOrdered.length);
-    return (length - PlanesOrdered.length);
+    reapInProgress = false;
+    const removed = length - PlanesOrdered.length;
+    if (removed > 0) {
+        //console.log(`reaper removed ${removed} planes.`);
+    }
+    return removed;
 }
 
 // Page Title update function
@@ -7122,9 +7130,12 @@ function replayStep(arg) {
 
     if (arg != 'fast') {
         replaySetTimeHint();
-        updateAddressBar();
-        if (index % 5 == 0) {
-            console.log(replay.ts.toUTCString());
+        if (replay.addressMinutes != replay.minutes) {
+            replay.addressMinutes = replay.minutes;
+            updateAddressBar();
+        }
+        if (now - lastReap > 60) {
+            //console.log(replay.ts.toUTCString());
             reaper();
         }
     }
@@ -7453,8 +7464,9 @@ function showReplayBar(){
 function timeoutFetch() {
     fetchData();
     timers.checkMove = setTimeout(timeoutFetch, Math.max(RefreshInterval, 10000));
-    if (lastReap - now > 90000)
+    if (now - lastReap > 60) {
         reaper();
+    }
 }
 
 function handleVisibilityChange() {
