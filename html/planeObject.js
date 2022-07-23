@@ -2318,61 +2318,74 @@ PlaneObject.prototype.altBad = function(newAlt, oldAlt, oldTime, data) {
 };
 
 PlaneObject.prototype.getAircraftData = function() {
-    let req = dbLoad(this.icao);
-
-    req.done(data => {
-        //console.log('fromDB');
-        if (this.dbinfoLoaded)
-            return;
+    if (0) {
         this.dbinfoLoaded = true;
-        if (data == null) {
-            //console.log(this.icao + ': Not found in database!');
-            return;
-        }
-        if (data == "strange") {
-            //console.log(this.icao + ': Database malfunction!');
-            return;
-        }
+        return;
+    }
+    if (this.dbLoad) {
+        return;
+    }
+    this.dbLoad = true;
 
+	let req = dbLoad(this.icao);
 
-        //console.log(this.icao + ': loaded!');
-        // format [r:0, t:1, f:2]
-
-        if (data[1]) {
-            this.icaoType = `${data[1]}`;
-            this.setTypeData();
-        }
-
-        if (data[3]) {
-            this.typeLong = `${data[3]}`;
-        }
-
-        if (data[2]) {
-            this.military = (data[2][0] == '1');
-            this.interesting = (data[2][1] == '1');
-            this.pia = (data[2][2] == '1');
-            this.ladd = (data[2][3] == '1');
-            if (this.pia)
-                this.registration = null;
-        }
-
-        if (data[0]) {
-            this.registration = `${data[0]}`;
-        }
-
-        this.dataChanged();
-
-        data = null;
-    });
-
-    req.fail((jqXHR,textStatus,errorThrown) => {
-        if (textStatus == 'timeout') {
-            this.getAircraftData();
-        } else {
-            console.log(this.icao + ': Database load error: ' + textStatus + ' at URL: ' + jqXHR.url);
+    req.then(
+        data => {
+            //console.log('fromDB');
+            if (this.dbinfoLoaded)
+                return;
             this.dbinfoLoaded = true;
-        }
-    });
+            delete this.dbLoad;
+            if (data == null) {
+                //console.log(this.icao + ': Not found in database!');
+                return;
+            }
+            if (data == "strange") {
+                //console.log(this.icao + ': Database malfunction!');
+                return;
+            }
+
+
+            //console.log(this.icao + ': loaded!');
+            // format [r:0, t:1, f:2]
+
+            if (data[1]) {
+                this.icaoType = `${data[1]}`;
+                this.setTypeData();
+            }
+
+            if (data[3]) {
+                this.typeLong = `${data[3]}`;
+            }
+
+            if (data[2]) {
+                this.military = (data[2][0] == '1');
+                this.interesting = (data[2][1] == '1');
+                this.pia = (data[2][2] == '1');
+                this.ladd = (data[2][3] == '1');
+                if (this.pia)
+                    this.registration = null;
+            }
+
+            if (data[0]) {
+                this.registration = `${data[0]}`;
+            }
+
+            this.dataChanged();
+
+            data = null;
+        },
+        e => {
+            delete this.dbLoad;
+            if (e.http_status == 'timeout') {
+                this.getAircraftData();
+            } else if (e.http_status == 'other') {
+                this.dbinfoLoaded = true;
+            } else {
+                console.log(this.icao + ': Unrecognized Database load error: ' + e);
+                this.dbinfoLoaded = true;
+            }
+        });
 };
 
 PlaneObject.prototype.reapTrail = function() {
