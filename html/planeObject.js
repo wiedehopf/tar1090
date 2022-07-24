@@ -1648,12 +1648,7 @@ PlaneObject.prototype.updateTick = function(redraw) {
 };
 
 PlaneObject.prototype.updateVisible = function() {
-    if ((globeIndex || replay) && SelectedAllPlanes && noVanish) {
-        // pretend planes never go off the map for trails:
-        this.inView = true;
-    } else {
-        this.inView = inView(this.position, lastRenderExtent);
-    }
+    this.inView = inView(this.position, lastRenderExtent);
     this.visible = this.checkVisible() && !this.isFiltered();
 };
 
@@ -2740,10 +2735,11 @@ PlaneObject.prototype.checkVisible = function() {
     this.seen = Math.max(0, __now - this.last_message_time);
     this.seen_pos = Math.max(0, __now - this.position_time);
 
-    return (!globeIndex || this.inView) && (
+
+    return (!globeIndex || this.inView || this.selected || SelectedAllPlanes) && (
         (!globeIndex && this.seen < (58 - tisbReduction + jaeroTime + refreshInt()))
         || (globeIndex && this.seen_pos < (40 + jaeroTime + mlatTime + modeSTime - tisbReduction + refreshInt()) && now - this.last_info_server < zoomedOut)
-        || this.selected
+        || this.selected || SelectedAllPlanes
         || noVanish
         || (nogpsOnly && this.nogps && this.seen < 15 * 60)
     );

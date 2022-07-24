@@ -5202,7 +5202,7 @@ function mapRefresh(redraw) {
                 nMapPlanes++;
             } else {
                 plane.markerDrawn && plane.clearMarker();
-                plane.linesDrawn && plane.clearLines();
+                plane.linesDrawn && !plane.visible && plane.clearLines();
             }
         }
     } else {
