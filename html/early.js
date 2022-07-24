@@ -133,9 +133,10 @@ var fakeLocalStorage = function() {
 };
 
 
-if (window.location.href.match(/adsbexchange.com/) && window.location.pathname == '/')
+if (window.location.href.match(/adsbexchange.com/) && window.location.pathname == '/') {
     adsbexchange = true;
-if (adsbexchange && window.self != window.top) {
+}
+if (window.self != window.top) {
     fakeLocalStorage();
 } else {
     try {
@@ -352,24 +353,25 @@ if (uuid) {
     test_chunk_defer = jQuery.Deferred().reject();
 } else {
     // get configuration json files, will be used in initialize function
-    get_receiver_defer = jQuery.ajax({
+
+    {get_receiver_defer = jQuery.ajax({
         url: 'data/receiver.json',
         cache: false,
         dataType: 'json',
         timeout: 10000,
-    });
-    test_chunk_defer = jQuery.ajax({
+    });}
+    {test_chunk_defer = jQuery.ajax({
         url:'chunks/chunks.json',
         cache: false,
         dataType: 'json',
         timeout: 4000,
-    });
+    });}
 }
 
-jQuery.getJSON(databaseFolder + "/icao_aircraft_types2.js").done(function(typeLookupData) {
+{jQuery.getJSON(databaseFolder + "/icao_aircraft_types2.js").done(function(typeLookupData) {
     _aircraft_type_cache = typeLookupData;
-});
-jQuery.getJSON(databaseFolder + "/ranges.js").done(function(ranges) {
+});}
+{jQuery.getJSON(databaseFolder + "/ranges.js").done(function(ranges) {
     if (!ranges || !ranges.military) {
         console.error("couldn't load milRanges.");
         return;
@@ -382,7 +384,7 @@ jQuery.getJSON(databaseFolder + "/ranges.js").done(function(ranges) {
             continue;
         milRanges.push([a, b]);
     }
-});
+});}
 
 
 let heatmapLoadingState = {};
@@ -407,13 +409,13 @@ function loadHeatChunk() {
         num: heatmapLoadingState.index,
         xhr: arraybufferRequest,
     });
-    req.done(function (responseData) {
+    {req.done(function (responseData) {
         heatChunks[this.num] = responseData;
         loadHeatChunk();
-    });
-    req.fail(function(jqxhr, status, error) {
+    });}
+    {req.fail(function(jqxhr, status, error) {
         loadHeatChunk();
-    });
+    });}
     heatmapLoadingState.index++;
 }
 
