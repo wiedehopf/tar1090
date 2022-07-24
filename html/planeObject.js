@@ -967,7 +967,7 @@ PlaneObject.prototype.updateIcon = function() {
 
     let styleKey = (webgl ? '' : svgKey) + '!' + labelText + '!' + this.scale;
 
-    if (this.styleKey != styleKey) {
+    if (this.styleKey != styleKey || !this.marker.getStyle()) {
         this.styleKey = styleKey;
         let style;
         if (labelText) {
@@ -1667,10 +1667,14 @@ PlaneObject.prototype.clearMarker = function() {
         PlaneIconFeatures.removeFeature(this.marker);
         this.marker.visible = false;
     }
+    delete this.marker;
     if (this.glMarker && this.glMarker.visible) {
         webglFeatures.removeFeature(this.glMarker);
         this.glMarker.visible = false;
     }
+    delete this.glMarker;
+    delete this.styleKey;
+    delete this.olPoint;
 };
 
 // Update our marker on the map

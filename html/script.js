@@ -3395,14 +3395,15 @@ function removeHighlight() {
 // OpenLayers might have some slight memory retention issues
 // recreating all OpenLayers Features for the planes every now and then releases that retained memory
 function releaseMem() {
+    //console.log('releaseMem()');
     for (let i in PlanesOrdered) {
         PlanesOrdered[i].clearMarker();
         PlanesOrdered[i].destroyTrace();
         PlanesOrdered[i].destroyTR();
     }
     refreshFeatures();
-    mapRefresh(true);
     TAR.planeMan.redraw();
+    //mapRefresh(true);
 }
 
 function refreshFeatures() {
@@ -7473,7 +7474,9 @@ function showReplayBar(){
 function timeoutFetch() {
     fetchData();
     timers.checkMove = setTimeout(timeoutFetch, Math.max(RefreshInterval, 10000));
-    reaper();
+    if (now - lastReap > 120) {
+        reaper();
+    }
 }
 
 function handleVisibilityChange() {
