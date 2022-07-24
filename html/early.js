@@ -23,7 +23,7 @@ let globeIndexSpecialTiles;
 let dynGlobeRate = false;
 let binCraft = false;
 let reApi = false;
-let zstd = false;
+let zstd = true; // init hasn't failed
 let dbServer = false;
 let l3harris = false;
 let heatmap = false;
@@ -437,6 +437,8 @@ if (!heatmap) {
     loadHeatChunk();
 }
 
+init_zstddec();
+
 function historyQueued() {
     if (!globeIndex && !uuid) {
         let request = jQuery.ajax({ url: 'upintheair.json',
@@ -478,14 +480,12 @@ if (uuid != null) {
         RefreshInterval = data.refresh;
         nHistoryItems = (data.history < 2) ? 0 : data.history;
         binCraft = data.binCraft ? true : false || data.aircraft_binCraft ? true : false;
-        zstd = data.zstd ? true : false;
+        zstd = zstd && data.zstd; // check if it already failed, leave it off then
         reApi = data.reapi ? true : false;
         if (usp.has('noglobe') || usp.has('ptracks')) {
             data.globeIndexGrid = null; // disable globe on user request
         }
         dbServer = (data.dbServer) ? true : false;
-
-        init_zstddec();
 
         if (heatmap || replay) {
             if (replay && data.globeIndexGrid != null)

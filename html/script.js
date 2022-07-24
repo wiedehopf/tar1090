@@ -295,6 +295,116 @@ function processReceiverUpdate(data, init) {
     for (let j=0; j < data.aircraft.length; j++)
         processAircraft(data.aircraft[j], init, uat);
 }
+function fetchFail(jqxhr, status, error) {
+    pendingFetches--;
+    if (pendingFetches <= 0 && !tabHidden) {
+        triggerRefresh++;
+        checkMovement();
+    }
+    status = jqxhr.status;
+    if (jqxhr.readyState == 0) error = "Can't connect to server, check your network!";
+    let errText = status + (error ? (": " + error) : "");
+    console.log(jqxhr);
+    console.log(error);
+    if (status != 429 && status != '429') {
+        jQuery("#update_error_detail").text(errText);
+        jQuery("#update_error").css('display','block');
+        StaleReceiverCount++;
+    } else {
+        if (C429++ > 16) {
+            globeRateUpdate();
+            C429 = 0;
+        }
+    }
+}
+
+function fetchDone(data) {
+    pendingFetches--;
+    if (data == null) {
+        return;
+    }
+    if (zstd) {
+        let arr = new Uint8Array(data);
+        lastRequestSize = arr.byteLength;
+        let res;
+        try {
+            res = zstdDecode( arr, 0 );
+        } catch (e) {
+            let errText = e.message;
+            console.log(errText);
+            jQuery("#update_error_detail").text(errText);
+            jQuery("#update_error").css('display','block');
+            return;
+        }
+        let arrayBuffer = res.buffer
+        // return type is Uint8Array, wqi requires the ArrayBuffer
+        data = { buffer: arrayBuffer, };
+        wqi(data);
+    } else if (binCraft) {
+        lastRequestSize = data.byteLength / 2;
+        data = { buffer: data, };
+        wqi(data);
+    }
+    data.urlIndex = this.urlIndex;
+
+    if (!data.aircraft || !data.now) {
+        let error = data.error;
+        if (error) {
+            jQuery("#update_error_detail").text(error);
+            jQuery("#update_error").css('display','block');
+            StaleReceiverCount++;
+        }
+        return;
+    }
+
+    //console.time("Process " + data.globeIndex);
+    processReceiverUpdate(data);
+    //console.timeEnd("Process " + data.globeIndex);
+    data = null;
+
+    if (uat_data) {
+        processReceiverUpdate(uat_data);
+        uat_data = null;
+    }
+
+    if (pendingFetches <= 0 && !tabHidden) {
+        triggerRefresh++;
+        checkMovement();
+        if (firstFetch) {
+            firstFetch = false;
+            if (uuid) {
+                const ext = myExtent(OLMap.getView().calculateExtent(OLMap.getSize()));
+                let jump = true;
+                for (let i = 0; i < PlanesOrdered.length; ++i) {
+                    const plane = PlanesOrdered[i];
+                    if (plane.visible && inView(plane.position, ext)) {
+                        jump = false;
+                        break;
+                    }
+                }
+                if (jump) {
+                    followRandomPlane();
+                    deselectAllPlanes();
+                    OLMap.getView().setZoom(6);
+                }
+            }
+            checkRefresh();
+        }
+    }
+
+
+    // Check for stale receiver data
+    if (last == now && !globeIndex) {
+        StaleReceiverCount++;
+        if (StaleReceiverCount > 5) {
+            jQuery("#update_error_detail").text("The data from the server hasn't been updated in a while.");
+            jQuery("#update_error").css('display','block');
+        }
+    } else if (StaleReceiverCount > 0){
+        StaleReceiverCount = 0;
+        jQuery("#update_error").css('display','none');
+    }
+}
 
 let debugFetch = false;
 let C429 = 0;
@@ -449,115 +559,8 @@ function fetchData(options) {
         FetchPending.push(req);
 
         req
-            .done(function(data) {
-                pendingFetches--;
-                if (data == null) {
-                    return;
-                }
-                if (zstd) {
-                    let arr = new Uint8Array(data);
-                    lastRequestSize = arr.byteLength;
-                    let res;
-                    try {
-                        res = zstdDecode( arr, 0 );
-                    } catch (e) {
-                        let errText = e.message;
-                        console.log(errText);
-                        jQuery("#update_error_detail").text(errText);
-                        jQuery("#update_error").css('display','block');
-                        return;
-                    }
-                    let arrayBuffer = res.buffer
-                    // return type is Uint8Array, wqi requires the ArrayBuffer
-                    data = { buffer: arrayBuffer, };
-                    wqi(data);
-                } else if (binCraft) {
-                    lastRequestSize = data.byteLength / 2;
-                    data = { buffer: data, };
-                    wqi(data);
-                }
-                data.urlIndex = this.urlIndex;
-
-                if (!data.aircraft || !data.now) {
-                    let error = data.error;
-                    if (error) {
-                        jQuery("#update_error_detail").text(error);
-                        jQuery("#update_error").css('display','block');
-                        StaleReceiverCount++;
-                    }
-                    return;
-                }
-
-                //console.time("Process " + data.globeIndex);
-                processReceiverUpdate(data);
-                //console.timeEnd("Process " + data.globeIndex);
-                data = null;
-
-                if (uat_data) {
-                    processReceiverUpdate(uat_data);
-                    uat_data = null;
-                }
-
-                if (pendingFetches <= 0 && !tabHidden) {
-                    triggerRefresh++;
-                    checkMovement();
-                    if (firstFetch) {
-                        firstFetch = false;
-                        if (uuid) {
-                            const ext = myExtent(OLMap.getView().calculateExtent(OLMap.getSize()));
-                            let jump = true;
-                            for (let i = 0; i < PlanesOrdered.length; ++i) {
-                                const plane = PlanesOrdered[i];
-                                if (plane.visible && inView(plane.position, ext)) {
-                                    jump = false;
-                                    break;
-                                }
-                            }
-                            if (jump) {
-                                followRandomPlane();
-                                deselectAllPlanes();
-                                OLMap.getView().setZoom(6);
-                            }
-                        }
-                        checkRefresh();
-                    }
-                }
-
-
-                // Check for stale receiver data
-                if (last == now && !globeIndex) {
-                    StaleReceiverCount++;
-                    if (StaleReceiverCount > 5) {
-                        jQuery("#update_error_detail").text("The data from the server hasn't been updated in a while.");
-                        jQuery("#update_error").css('display','block');
-                    }
-                } else if (StaleReceiverCount > 0){
-                    StaleReceiverCount = 0;
-                    jQuery("#update_error").css('display','none');
-                }
-            })
-            .fail(function(jqxhr, status, error) {
-                pendingFetches--;
-                if (pendingFetches <= 0 && !tabHidden) {
-                    triggerRefresh++;
-                    checkMovement();
-                }
-                status = jqxhr.status;
-                if (jqxhr.readyState == 0) error = "Can't connect to server, check your network!";
-                let errText = status + (error ? (": " + error) : "");
-                console.log(jqxhr);
-                console.log(error);
-                if (status != 429 && status != '429') {
-                    jQuery("#update_error_detail").text(errText);
-                    jQuery("#update_error").css('display','block');
-                    StaleReceiverCount++;
-                } else {
-                    if (C429++ > 16) {
-                        globeRateUpdate();
-                        C429 = 0;
-                    }
-                }
-            });
+            .done(fetchDone)
+            .fail(fetchFail);
     }
 
 
@@ -1758,10 +1761,6 @@ function clearIntervalTimers() {
         jQuery("#timers_paused_detail").text('Timers paused (tab hidden).');
         jQuery("#timers_paused").css('display','block');
 
-        replay_was_active = replay.playing;
-        if (replay.playing) {
-            playReplay(false);
-        }
     }
     console.log("clear timers");
     const entries = Object.entries(timers);
@@ -1805,11 +1804,6 @@ function setIntervalTimers() {
     if (receiverJson && receiverJson.outlineJson) {
         timers.drawOutline = window.setInterval(drawOutlineJson, 15000);
         drawOutlineJson();
-    }
-
-
-    if (replay_was_active) {
-        playReplay(true);
     }
 }
 
@@ -7468,6 +7462,9 @@ function showReplayBar(){
 
 function timeoutFetch() {
     fetchData();
+    if (timers.checkMove) {
+        clearTimeout(timers.checkMove);
+    }
     timers.checkMove = setTimeout(timeoutFetch, Math.max(RefreshInterval, 10000));
     if (now - lastReap > 120) {
         reaper();
@@ -7481,10 +7478,15 @@ function handleVisibilityChange() {
     else
         tabHidden = false;
 
-    if (tabHidden) {
+    if (tabHidden && !prevHidden) {
         clearIntervalTimers();
         if (!globeIndex) {
             timeoutFetch();
+        }
+
+        replay_was_active = replay.playing;
+        if (replay.playing) {
+            playReplay(false);
         }
     }
 
@@ -7499,6 +7501,10 @@ function handleVisibilityChange() {
 
         refresh();
         fetchData();
+
+        if (replay_was_active) {
+            playReplay(true);
+        }
 
         if (showTrace)
             return;
@@ -7521,6 +7527,7 @@ function handleVisibilityChange() {
         } else if (SelectedPlane) {
             getTrace(SelectedPlane, SelectedPlane.icao, {});
         }
+
     }
 }
 

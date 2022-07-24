@@ -27,15 +27,18 @@
     init() {
       if (I) { return I; };
       if ("undefined" != typeof fetch) {
-        I = fetch("data:application/wasm;base64," + C)
-          .then((A=>A.arrayBuffer()))
-          .then((A=>WebAssembly.instantiate(A, Q)))
-          .then(this._init)
-          .catch((e) => { try { webAssemblyFail(e); } catch (e) { console.error(e); } });
+        I = fetch("data:application/wasm;base64," + C);
+        if ("undefined" != WebAssembly.instantiateStreaming) {
+          I = WebAssembly.instantiateStreaming(I, Q);
+        } else {
+          I = I.then((A=>A.arrayBuffer()))
+            .then((A=>WebAssembly.instantiate(A, Q)));
+        }
       } else {
-        I = WebAssembly.instantiate(Buffer.from(C, "base64"), Q)
-          .then(this._init);
+        I = WebAssembly.instantiate(Buffer.from(C, "base64"), Q);
       }
+      I = I.then(this._init)
+        .catch((e) => { try { webAssemblyFail(e); } catch (e) { console.error(e); } });
       return I;
     }
     _init(A) {
