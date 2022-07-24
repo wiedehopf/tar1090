@@ -413,6 +413,11 @@ I don't support this feature for the general user base.
 This information is only for people who could figure it out from the source code anyhow,
 so that they don't have to spend as much time figuring it out.
 
+If you're using --write-json-globe-index with tar1090, you might be interested in tar1090
+using the readsb API to get data, it's less requests and usually more efficient,
+for details see the file nginx-readsb-api.conf
+(this needs adding to your existing nginx tar1090 configuration, this is only for people who really know their stuff anyway)
+
 ## A separate instance with longer data retention for gauging range
 
 If this seems too complicated for you or you don't want a 2nd instance, changing / adding PTRACKS=24 to the /etc/default/tar1090 configuration should also extend the history (for /?pTracks only).
