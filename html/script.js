@@ -72,6 +72,7 @@ let globeTableLimitBase = 80;
 let globeTableLimit = 80;
 let fetchCounter = 0;
 let lastGlobeExtent;
+let lastRenderExtent;
 let pendingFetches = 0;
 let firstFetch = true;
 let debugCounter = 0;
@@ -132,7 +133,7 @@ let limitUpdates = -1;
 
 let infoBlockWidth = baseInfoBlockWidth;
 
-const renderBuffer = 45;
+const renderBuffer = 60;
 
 let shareLink = '';
 
@@ -1907,8 +1908,6 @@ function startPage() {
 
     geoMag = geoMagFactory(cof2Obj());
 
-    mapRefresh();
-
     if (heatmap) {
         drawHeatmap();
     }
@@ -3404,10 +3403,13 @@ function releaseMem() {
     }
     refreshFeatures();
     TAR.planeMan.redraw();
-    //mapRefresh(true);
 }
 
 function refreshFeatures() {
+    if (!loadFinished) {
+        return;
+    }
+    updateVisible();
     for (let i in PlanesOrdered) {
         PlanesOrdered[i].updateFeatures(true);
     }
@@ -3582,7 +3584,6 @@ function refreshFeatures() {
     let initializing = true;
 
     let planeRowTemplate = null;
-    planeMan.lastRenderExtent = null;
     let htmlTable = null;
     let tbody = null;
 
@@ -3664,11 +3665,6 @@ function refreshFeatures() {
         ctime && console.time("planeMan.refresh()");
 
 
-        if (mapIsVisible || planeMan.lastRenderExtent === null) {
-            const size = [OLMap.getSize()[0] + 45, OLMap.getSize()[1] + 45];
-            planeMan.lastRenderExtent = myExtent(OLMap.getView().calculateExtent(size));
-        }
-
         TrackedAircraft = 0;
         TrackedAircraftPositions = 0;
         TrackedHistorySize = 0;
@@ -3677,16 +3673,6 @@ function refreshFeatures() {
         let pList = []; // list of planes that might go in the table and need sorting
         for (let i = 0; i < PlanesOrdered.length; ++i) {
             const plane = PlanesOrdered[i];
-
-            plane.visible = plane.checkVisible() && !plane.isFiltered()
-
-
-            if ((globeIndex || replay) && SelectedAllPlanes && noVanish) {
-                // pretend planes never go off the map for trails:
-                plane.inView = true;
-            } else {
-                plane.inView = inView(plane.position, planeMan.lastRenderExtent);
-            }
 
             TrackedHistorySize += plane.history_size;
 
@@ -4341,21 +4327,6 @@ function onFilterByAltitude(e) {
 
     updateAltFilter();
     refreshFilter();
-}
-
-function refreshFilter() {
-    if (filterTracks)
-        remakeTrails();
-
-    TAR.planeMan.refresh();
-    refreshSelected();
-    refreshHighlighted();
-    mapRefresh(true);
-
-    drawHeatmap();
-    if (toggles.shareFilters && toggles.shareFilters.state) {
-        updateAddressBar();
-    }
 }
 
 function filterGroundVehicles(switchFilter) {
@@ -5083,7 +5054,7 @@ function changeCenter(init) {
 
     if (rawCenter[0] < OLProjExtent[0] || rawCenter[0] > OLProjExtent[2]) {
         OLMap.getView().setCenter(ol.proj.fromLonLat(center));
-        mapRefresh();
+        refresh();
     }
     if (CenterLat < -85)
         OLMap.getView().setCenter(ol.proj.fromLonLat([center[0], -85]));
@@ -5165,7 +5136,7 @@ function checkRefresh() {
         }
     }
 }
-function refresh() {
+function refresh(redraw) {
     lastRefresh = new Date().getTime();
 
     refreshZoom = getZoom();
@@ -5178,25 +5149,51 @@ function refresh() {
         }
     }
 
+    // before planeman refresh / mapRefresh
+    updateVisible();
+
     //console.time("refreshTable");
     TAR.planeMan.refresh();
     //console.timeEnd("refreshTable");
-    mapRefresh();
-
-    triggerRefresh = 0;
-
+    mapRefresh(redraw);
     refreshSelected();
     refreshHighlighted();
+
+    triggerRefresh = 0;
+}
+
+function refreshFilter() {
+    if (filterTracks)
+        remakeTrails();
+
+    refresh(true);
+
+    drawHeatmap();
+    if (toggles.shareFilters && toggles.shareFilters.state) {
+        updateAddressBar();
+    }
+}
+
+
+function updateVisible() {
+    if (mapIsVisible || !lastRenderExtent) {
+        lastRenderExtent = getRenderExtent();
+    }
+    for (let i in PlanesOrdered) {
+        PlanesOrdered[i].updateVisible();
+    }
 }
 
 function mapRefresh(redraw) {
     if (!mapIsVisible || heatmap)
         return;
-    //console.log('mapRefresh()');
     let addToMap = [];
     let nMapPlanes = 0;
+    let count = 0;
+
     if (globeIndex && !icaoFilter) {
         for (let i in PlanesOrdered) {
+            count++;
             const plane = PlanesOrdered[i];
             delete plane.glMarker;
             // disable mobile limitations when using webGL
@@ -5216,25 +5213,22 @@ function mapRefresh(redraw) {
         }
     }
 
+    //console.log('planes on map: ' + nMapPlanes + ' / ' + count);
+
     // webGL zIndex hack:
     // sort all planes by altitude
     // clear the vector source
     // delete all feature objects so they are recreated, this is important
-    // draw order will be insertion / updateFeatures / updateTick order
+    // draw order will be insertion / updateFeatures order
 
     addToMap.sort(function(x, y) { return x.zIndex - y.zIndex; });
     //console.log('maprefresh(): ' + addToMap.length);
     if (webgl) {
         webglFeatures.clear();
     }
-    if (globeIndex && !icaoFilter) {
-        for (let i in addToMap) {
-            addToMap[i].updateFeatures(redraw);
-        }
-    } else {
-        for (let i in addToMap) {
-            addToMap[i].updateTick(redraw);
-        }
+
+    for (let i in addToMap) {
+        addToMap[i].updateFeatures(redraw);
     }
 }
 
@@ -5537,13 +5531,6 @@ function setIndexDistance(index, center, coords) {
     min = Math.min(min, ol.sphere.getDistance(center, [tile[3], tile[0]]));
     min = Math.min(min, ol.sphere.getDistance(center, [tile[3], tile[2]]));
     globeIndexDist[index] = min;
-}
-
-function getViewOversize(factor) {
-    factor || (factor = 1);
-    let mapSize = OLMap.getSize();
-    let size = [mapSize[0] * factor, mapSize[1] * factor];
-    return myExtent(OLMap.getView().calculateExtent(size));
 }
 
 function globeIndexes() {
@@ -8038,11 +8025,26 @@ function mapTypeSettings() {
     }
 }
 
+function getViewOversize(factor) {
+    factor || (factor = 1);
+    let mapSize = OLMap.getSize();
+    let size = [mapSize[0] * factor, mapSize[1] * factor];
+    return myExtent(OLMap.getView().calculateExtent(size));
+}
+
+function getRenderExtent(extra) {
+    extra || (extra = 0);
+    const mapSize = OLMap.getSize();
+    const over = renderBuffer + extra;
+    const size = [mapSize[0] + over, mapSize[1] + over];
+    return myExtent(OLMap.getView().calculateExtent(size));
+}
+
 function requestBoxString() {
     if (!mapIsVisible && lastRequestBox) {
         return lastRequestBox;
     }
-    let extent = getViewOversize(1.03);
+    let extent = getRenderExtent(80);
     let minLon = extent.minLon.toFixed(6);
     let maxLon = extent.maxLon.toFixed(6);
     if (Math.abs(extent.extent[2] - extent.extent[0]) > 40075016) { // all longtitudes in view

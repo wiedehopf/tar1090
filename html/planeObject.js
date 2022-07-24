@@ -1640,8 +1640,18 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
 };
 
 PlaneObject.prototype.updateTick = function(redraw) {
-    this.visible = this.checkVisible() && !this.isFiltered();
+    this.updateVisible();
     this.updateFeatures(redraw);
+};
+
+PlaneObject.prototype.updateVisible = function() {
+    if ((globeIndex || replay) && SelectedAllPlanes && noVanish) {
+        // pretend planes never go off the map for trails:
+        this.inView = true;
+    } else {
+        this.inView = inView(this.position, lastRenderExtent);
+    }
+    this.visible = this.checkVisible() && !this.isFiltered();
 };
 
 PlaneObject.prototype.updateFeatures = function(redraw) {
@@ -2727,7 +2737,7 @@ PlaneObject.prototype.checkVisible = function() {
     this.seen = Math.max(0, __now - this.last_message_time);
     this.seen_pos = Math.max(0, __now - this.position_time);
 
-    return (
+    return (!globeIndex || this.inView) && (
         (!globeIndex && this.seen < (58 - tisbReduction + jaeroTime))
         || (globeIndex && this.seen_pos < (40 + zoomedOut + jaeroTime + mlatTime + modeSTime - tisbReduction))
         || this.selected
