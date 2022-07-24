@@ -1668,7 +1668,6 @@ PlaneObject.prototype.updateFeatures = function(redraw) {
     if (!this.visible && this.lastVisible) {
         this.clearMarker();
         this.clearLines();
-        deselect(this);
     }
 
     this.lastVisible = this.visible;
