@@ -3392,8 +3392,9 @@ function removeHighlight() {
     refreshHighlighted();
 }
 
-// OpenLayers might have some slight memory retention issues
-// recreating all OpenLayers Features for the planes every now and then releases that retained memory
+// recreating all OpenLayers Features for the planes every now and then releases some retained memory
+// Haven't been able to create a reproducer ... regardless let's stick with this workaround
+// in other words: probably not an issue with OpenLayers.
 function releaseMem() {
     //console.log('releaseMem()');
     for (let i in PlanesOrdered) {
