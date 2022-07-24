@@ -121,6 +121,7 @@ PlaneObject.prototype.setNull = function() {
     this.last_message_time = NaN;
     this.seen_pos = NaN;
     this.position_time = NaN;
+    this.last_info_server = 0;
 
     this.last = 0; // last json this plane was included in
 
@@ -1359,6 +1360,8 @@ PlaneObject.prototype.updatePositionData = function(now, last, data, init) {
 // Update our data
 PlaneObject.prototype.updateData = function(now, last, data, init) {
     // get location data first, return early if only those are needed.
+
+    this.last_info_server = now;
 
     let isArray = Array.isArray(data);
     // [.hex, .alt_baro, .gs, .track, .lat, .lon, .seen_pos, "mlat"/"tisb"/.type , .flight, .messages]
@@ -2722,7 +2725,7 @@ PlaneObject.prototype.isNonIcao = function() {
 };
 
 PlaneObject.prototype.checkVisible = function() {
-    const zoomedOut = 2 * refreshInt() / globeSimLoad * globeTilesViewCount / 1000;
+    const zoomedOut = reApi ? (2 * refreshInt() / 1000) : (2 * refreshInt() / globeSimLoad * globeTilesViewCount / 1000);
     const jaeroTime = (this.dataSource == "adsc") ? jaeroTimeout : 0;
     const mlatTime = (this.dataSource == "mlat") ? 25 : 0;
     const modeSTime = (guessModeS && this.dataSource == "modeS") ? 300 : 0;
@@ -2732,14 +2735,15 @@ PlaneObject.prototype.checkVisible = function() {
 
     // recompute seen and seen_pos
     let __now = now;
-    if (this.dataSource == "uat")
+    if (this.dataSource == "uat") {
         __now = uat_now;
+    }
     this.seen = Math.max(0, __now - this.last_message_time);
     this.seen_pos = Math.max(0, __now - this.position_time);
 
     return (!globeIndex || this.inView) && (
-        (!globeIndex && this.seen < (58 - tisbReduction + jaeroTime))
-        || (globeIndex && this.seen_pos < (40 + zoomedOut + jaeroTime + mlatTime + modeSTime - tisbReduction))
+        (!globeIndex && this.seen < (58 - tisbReduction + jaeroTime + refreshInt()))
+        || (globeIndex && this.seen_pos < (40 + jaeroTime + mlatTime + modeSTime - tisbReduction + refreshInt()) && now - this.last_info_server < zoomedOut)
         || this.selected
         || noVanish
         || (nogpsOnly && this.nogps && this.seen < 15 * 60)
