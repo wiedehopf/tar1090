@@ -763,10 +763,6 @@ PlaneObject.prototype.getMarkerColor = function(options) {
 function altitudeColor(altitude) {
     let h, s, l;
 
-    const altRound = (webgl && !pTracks && !SelectedAllPlanes) ? 200 : 500;
-    // round altitude to limit the number of colors used
-    altitude = altRound * Math.round(altitude / altRound);
-
     if (altitude == null) {
         h = ColorByAlt.unknown.h;
         s = ColorByAlt.unknown.s;
@@ -776,6 +772,10 @@ function altitudeColor(altitude) {
         s = ColorByAlt.ground.s;
         l = ColorByAlt.ground.l;
     } else {
+        const altRound = (webgl && !pTracks && !SelectedAllPlanes) ? 200 : 500;
+        // round altitude to limit the number of colors used
+        altitude = altRound * Math.round(altitude / altRound);
+
         s = ColorByAlt.air.s;
 
         // find the pair of points the current altitude lies between,
