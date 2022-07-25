@@ -28,7 +28,7 @@
       if (I) { return I; };
       if ("undefined" != typeof fetch) {
         I = fetch("data:application/wasm;base64," + C);
-        if ("undefined" != WebAssembly.instantiateStreaming) {
+        if (0 && "undefined" != WebAssembly.instantiateStreaming) {
           I = WebAssembly.instantiateStreaming(I, Q);
         } else {
           I = I.then((A=>A.arrayBuffer()))

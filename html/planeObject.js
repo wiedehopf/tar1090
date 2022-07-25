@@ -3,8 +3,8 @@
 function PlaneObject(icao) {
     icao = `${icao}`;
 
-    Planes[icao] = this;
-    PlanesOrdered.push(this);
+    g.planes[icao] = this;
+    g.planesOrdered.push(this);
 
     // Info about the plane
     this.icao      = icao;
@@ -670,16 +670,6 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     return this.updateTrackPrev();
 };
 
-// This is to remove the line from the screen if we deselect the plane
-PlaneObject.prototype.clearLines = function() {
-    this.linesDrawn = false;
-    if (this.layer && this.layer.getVisible()) {
-        this.layer.setVisible(false);
-    }
-    if (this.layer_labels && this.layer_labels.getVisible())
-        this.layer_labels.setVisible(false);
-};
-
 PlaneObject.prototype.getDataSourceNumber = function() {
     if (this.dataSource == "modeS")
         return 5;
@@ -773,6 +763,10 @@ PlaneObject.prototype.getMarkerColor = function(options) {
 function altitudeColor(altitude) {
     let h, s, l;
 
+    const altRound = (webgl && !pTracks && !SelectedAllPlanes) ? 200 : 500;
+    // round altitude to limit the number of colors used
+    altitude = altRound * Math.round(altitude / altRound);
+
     if (altitude == null) {
         h = ColorByAlt.unknown.h;
         s = ColorByAlt.unknown.s;
@@ -854,7 +848,7 @@ PlaneObject.prototype.updateIcon = function() {
             || (zoomLvl >= labelZoomGround - 2 && this.speed > 5 && !this.fakeHex)
             || (zoomLvl >= labelZoomGround + 0 && !this.fakeHex)
             || (zoomLvl >= labelZoomGround + 1)
-            || (this.selected && !SelectedAllPlanes)
+            || this.selected
         )
     ) {
         let callsign = "";
@@ -1050,7 +1044,7 @@ PlaneObject.prototype.processTrace = function() {
 
     if (!traceOpts.showTime) {
         this.track_linesegs = [];
-        this.remakeTrail();
+        this.removeTrail();
     }
 
     let firstPos = null;
@@ -2076,7 +2070,7 @@ PlaneObject.prototype.updateLines = function() {
 
 };
 
-PlaneObject.prototype.remakeTrail = function() {
+PlaneObject.prototype.removeTrail = function() {
 
     if (this.trail_features)
         this.trail_features.clear();
@@ -2088,25 +2082,44 @@ PlaneObject.prototype.remakeTrail = function() {
         delete this.track_linesegs[i].label;
     }
     this.elastic_feature = null;
-
-    /*
-    trailGroup.remove(this.layer);
-
-    this.trail_features = new ol.Collection();
-
-    this.layer = new ol.layer.Vector({
-        name: this.icao,
-        isTrail: true,
-        source: new ol.source.Vector({
-            features: this.trail_features,
-        }),
-        renderOrder: null,
-    });
-
-    trailGroup.push(this.layer);
-    */
-
 };
+
+// This is to remove the line from the screen if we deselect the plane
+PlaneObject.prototype.clearLines = function() {
+    this.linesDrawn = false;
+    if (this.layer && this.layer.getVisible()) {
+        this.layer.setVisible(false);
+    }
+    if (this.layer_labels && this.layer_labels.getVisible()) {
+        this.layer_labels.setVisible(false);
+    }
+};
+
+PlaneObject.prototype.clearTrace = function() {
+    this.clearTraceAfter = null;
+
+    this.clearLines();
+    this.removeTrail();
+
+    if (globeIndex) {
+        this.recentTrace = null;
+        this.fullTrace = null;
+    }
+}
+
+PlaneObject.prototype.destroyTrace = function() {
+    this.clearTrace();
+    if (this.layer) {
+        trailGroup.remove(this.layer);
+        this.trail_features = null;
+        this.layer = null;
+    }
+    if (this.layer_labels) {
+        trailGroup.remove(this.layer_labels);
+        this.trail_labels = null;
+        this.layer_labels = null;
+    }
+}
 
 PlaneObject.prototype.makeTR = function (trTemplate) {
 
@@ -2160,41 +2173,6 @@ PlaneObject.prototype.destroyTR = function (trTemplate) {
 
     this.tr = null;
 };
-PlaneObject.prototype.clearTrace = function() {
-    this.clearTraceAfter = null;
-    this.linesDrawn = false;
-    if (this.trail_features) {
-        this.trail_features.clear();
-    }
-    if (this.trail_labels) {
-        this.trail_labels.clear();
-    }
-    this.elastic_feature = null;
-
-    if (globeIndex) {
-        this.recentTrace = null;
-        this.fullTrace = null;
-    }
-    for (let i in this.track_linesegs) {
-        delete this.track_linesegs[i].feature;
-        delete this.track_linesegs[i].label;
-    }
-}
-
-PlaneObject.prototype.destroyTrace = function() {
-    this.clearTrace();
-    if (this.layer) {
-        trailGroup.remove(this.layer);
-        this.trail_features.clear();
-        this.trail_features = null;
-        this.layer = null;
-    }
-    if (this.layer_labels) {
-        trailGroup.remove(this.layer_labels);
-        this.trail_labels = null;
-        this.layer_labels = null;
-    }
-}
 
 PlaneObject.prototype.destroy = function() {
     this.clearLines();
@@ -2410,7 +2388,7 @@ PlaneObject.prototype.reapTrail = function() {
         }
     }
     if (this.track_linesegs.length != oldSegs.length) {
-        this.remakeTrail();
+        this.removeTrail();
         this.updateTick(true);
     }
 };
@@ -2720,7 +2698,7 @@ PlaneObject.prototype.isNonIcao = function() {
 
 PlaneObject.prototype.checkVisible = function() {
     const jaeroTime = (this.dataSource == "adsc") ? jaeroTimeout : 0;
-    const noInfoTimeout = replay ? 600 : (reApi ? (2 * refreshInt() / 1000) : (2 * refreshInt() / globeSimLoad * globeTilesViewCount / 1000));
+    const noInfoTimeout = replay ? 600 : (reApi ? (30 + 2 * refreshInt() / 1000) : (2 * refreshInt() / globeSimLoad * globeTilesViewCount / 1000));
     const mlatTime = (this.dataSource == "mlat") ? 25 : 0;
     const modeSTime = (guessModeS && this.dataSource == "modeS") ? 300 : 0;
     const tisbReduction = (this.icao[0] == '~') ? 15 : 0;
@@ -2739,7 +2717,7 @@ PlaneObject.prototype.checkVisible = function() {
     return (!globeIndex || this.inView || this.selected || SelectedAllPlanes) && (
         (!globeIndex && this.seen < (58 - tisbReduction + jaeroTime + refreshInt()))
         || (globeIndex && this.seen_pos < (40 + jaeroTime + mlatTime + modeSTime - tisbReduction + refreshInt()) && now - this.last_info_server < noInfoTimeout)
-        || this.selected || SelectedAllPlanes
+        || this.selected
         || noVanish
         || (nogpsOnly && this.nogps && this.seen < 15 * 60)
     );

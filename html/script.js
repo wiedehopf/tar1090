@@ -4,6 +4,9 @@
 
 "use strict";
 
+g.planes        = {};
+g.planesOrdered = [];
+
 // Define our global variables
 let tabHidden = false;
 let webgl = false;
@@ -28,8 +31,6 @@ let realHeat;
 let iconCache = {};
 let addToIconCache = [];
 let lineStyleCache = {};
-let Planes        = {};
-let PlanesOrdered = [];
 let replayPlanes = {};
 let PlaneFilter   = {};
 let SelectedPlane = null;
@@ -176,18 +177,11 @@ let badDotMlat;
 
 let showingReplayBar = false;
 
-// TAR1090 application object
-let TAR;
-TAR = (function (global, jQuery, TAR) {
-    return TAR;
-}(window, jQuery, TAR || {}));
-
-
 function processAircraft(ac, init, uat) {
     let isArray = Array.isArray(ac);
     let hex = isArray ? ac[0] : ac.hex;
 
-    // Do we already have this plane object in Planes?
+    // Do we already have this plane object in g.planes?
     // If not make it.
 
     /*
@@ -203,7 +197,7 @@ function processAircraft(ac, init, uat) {
         return;
     }
 
-    let plane = Planes[hex]
+    let plane = g.planes[hex]
 
     if (!plane) {
         plane = new PlaneObject(hex);
@@ -375,8 +369,8 @@ function fetchDone(data) {
             if (uuid) {
                 const ext = myExtent(OLMap.getView().calculateExtent(OLMap.getSize()));
                 let jump = true;
-                for (let i = 0; i < PlanesOrdered.length; ++i) {
-                    const plane = PlanesOrdered[i];
+                for (let i = 0; i < g.planesOrdered.length; ++i) {
+                    const plane = g.planesOrdered[i];
                     if (plane.visible && inView(plane.position, ext)) {
                         jump = false;
                         break;
@@ -1212,8 +1206,8 @@ jQuery('#selected_altitude_geom1')
             windLabelsSlim = state;
             if (!loadFinished)
                 return;
-            for (let key in PlanesOrdered) {
-                PlanesOrdered[key].updateMarker();
+            for (let key in g.planesOrdered) {
+                g.planesOrdered[key].updateMarker();
             }
         }
     });
@@ -1227,8 +1221,8 @@ jQuery('#selected_altitude_geom1')
             showLabelUnits = state;
             if (!loadFinished)
                 return;
-            for (let key in PlanesOrdered) {
-                PlanesOrdered[key].updateMarker();
+            for (let key in g.planesOrdered) {
+                g.planesOrdered[key].updateMarker();
             }
             remakeTrails();
             refreshSelected();
@@ -1724,8 +1718,8 @@ function parseHistory() {
 
         // Final pass to update all planes to their latest state
         console.log("Final history cleanup pass");
-        for (let i in PlanesOrdered) {
-            let plane = PlanesOrdered[i];
+        for (let i in g.planesOrdered) {
+            let plane = g.planesOrdered[i];
 
             if (plane.position && SitePosition)
                 plane.sitedist = ol.sphere.getDistance(SitePosition, plane.position);
@@ -1962,7 +1956,7 @@ function webglAddLayer() {
 
     processAircraft({hex: icao, lat: CenterLat, lon: CenterLon, type: 'tisb_other', seen: 0, seen_pos: 0,
         alt_baro: 25000, });
-    let plane = Planes['~c0ffee'];
+    let plane = g.planes['~c0ffee'];
 
     try {
         let glStyle = {
@@ -2039,8 +2033,8 @@ function webglAddLayer() {
         if (loStore['webgl'] == 'true')
             loStore.removeItem('webgl');
     }
-    delete Planes[plane.icao];
-    PlanesOrdered.splice(PlanesOrdered.indexOf(plane), 1);
+    delete g.planes[plane.icao];
+    g.planesOrdered.splice(g.planesOrdered.indexOf(plane), 1);
     plane.destroy();
 
     if (icaoFilter != null) {
@@ -2082,8 +2076,8 @@ function webglInit() {
                 webgl = false;
                 if (loadFinished) {
                     webglFeatures && webglFeatures.clear();
-                    for (let i in PlanesOrdered) {
-                        const plane = PlanesOrdered[i];
+                    for (let i in g.planesOrdered) {
+                        const plane = g.planesOrdered[i];
                         delete plane.glMarker;
                     }
                 }
@@ -2729,7 +2723,7 @@ function initMap() {
     });
 */
 
-// This looks for planes to reap out of the master Planes variable
+// This looks for planes to reap out of the master g.planes variable
 let lastReap = 0;
 let reapInProgress = false;
 function reaper(all) {
@@ -2748,10 +2742,10 @@ function reaper(all) {
 
     // Look for planes where we have seen no messages for >300 seconds
     let plane;
-    let length = PlanesOrdered.length;
+    let length = g.planesOrdered.length;
     let temp = []
-    for (let i in PlanesOrdered) {
-        plane = PlanesOrdered[i];
+    for (let i in g.planesOrdered) {
+        plane = g.planesOrdered[i];
         if (plane == null)
             continue;
         plane.seen = now - plane.last_message_time;
@@ -2761,7 +2755,7 @@ function reaper(all) {
         ) {
             // Reap it.
             //console.log("Removed " + plane.icao);
-            delete Planes[plane.icao];
+            delete g.planes[plane.icao];
             plane.destroy();
             continue;
         }
@@ -2781,13 +2775,16 @@ function reaper(all) {
             }
         }
     }
-    PlanesOrdered = temp;
+    g.planesOrdered = temp;
 
     reapInProgress = false;
-    const removed = length - PlanesOrdered.length;
+    const removed = length - g.planesOrdered.length;
     if (removed > 0) {
         //console.log(`reaper removed ${removed} planes.`);
     }
+
+    refresh();
+
     return removed;
 }
 
@@ -3382,15 +3379,28 @@ function removeHighlight() {
     refreshHighlighted();
 }
 
+function mstime() {
+    return new Date().getTime();
+}
+
 // recreating all OpenLayers Features for the planes every now and then releases some retained memory
 // Haven't been able to create a reproducer ... regardless let's stick with this workaround
 // in other words: probably not an issue with OpenLayers.
+
+let nextCacheClear = mstime() + 300 * 1000;
+
 function releaseMem() {
+
+    if (mstime() > nextCacheClear) {
+        nextCacheClear = mstime() + 300 * 1000;
+        lineStyleCache = {};
+        iconCache = {};
+    }
+
     //console.log('releaseMem()');
-    for (let i in PlanesOrdered) {
-        PlanesOrdered[i].clearMarker();
-        PlanesOrdered[i].destroyTrace();
-        PlanesOrdered[i].destroyTR();
+    for (let i in g.planesOrdered) {
+        g.planesOrdered[i].clearMarker();
+        g.planesOrdered[i].destroyTR();
     }
     refreshFeatures();
     TAR.planeMan.redraw();
@@ -3401,13 +3411,13 @@ function refreshFeatures() {
         return;
     }
     updateVisible();
-    for (let i in PlanesOrdered) {
-        PlanesOrdered[i].updateFeatures(true);
+    for (let i in g.planesOrdered) {
+        g.planesOrdered[i].updateFeatures(true);
     }
 }
 
 //
-// Planes table begin
+// g.planes table begin
 //
 (function (global, jQuery, TAR) {
     let planeMan = TAR.planeMan = TAR.planeMan || {};
@@ -3609,8 +3619,8 @@ function refreshFeatures() {
                 activeCols.push(col);
             }
         }
-        for (let i = 0; i < PlanesOrdered.length; ++i) {
-            PlanesOrdered[i].destroyTR();
+        for (let i = 0; i < g.planesOrdered.length; ++i) {
+            g.planesOrdered[i].destroyTR();
         }
         let table = '';
         table += '<thead class="aircraft_table_header">';
@@ -3662,8 +3672,8 @@ function refreshFeatures() {
 
         ctime && console.time("inView");
         let pList = []; // list of planes that might go in the table and need sorting
-        for (let i = 0; i < PlanesOrdered.length; ++i) {
-            const plane = PlanesOrdered[i];
+        for (let i = 0; i < g.planesOrdered.length; ++i) {
+            const plane = g.planesOrdered[i];
 
             TrackedHistorySize += plane.history_size;
 
@@ -3880,7 +3890,7 @@ function refreshFeatures() {
 
         if (id === sortId) {
             sortAscending = !sortAscending;
-            PlanesOrdered.reverse(); // this correctly flips the order of rows that compare equal
+            g.planesOrdered.reverse(); // this correctly flips the order of rows that compare equal
         } else {
             sortAscending = true;
         }
@@ -3947,7 +3957,7 @@ function refreshFeatures() {
     return TAR;
 }(window, jQuery, TAR || {}));
 //
-// Planes table end
+// g.planes table end
 //
 
 function deselect(plane) {
@@ -4001,7 +4011,7 @@ function selectPlaneByHex(hex, options) {
     // already selected plane
     let oldPlane = SelectedPlane;
     // plane to be selected
-    let newPlane = Planes[hex];
+    let newPlane = g.planes[hex];
 
     if (!options.noFetch && globeIndex && hex) {
         newPlane = getTrace(newPlane, hex, options);
@@ -4070,8 +4080,8 @@ function selectAllPlanes() {
     SelectedAllPlanes = true;
 
     if (globeIndex) {
-        for (let i in PlanesOrdered) {
-            let plane = PlanesOrdered[i];
+        for (let i in g.planesOrdered) {
+            let plane = g.planesOrdered[i];
             if (plane.visible && plane.inView) {
                 plane.processTrace();
             }
@@ -4378,6 +4388,8 @@ function toggleIsolation(state) {
 
     if (prevState != onlySelected)
         refreshFilter();
+
+    fetchData({force: true});
 }
 
 function toggleMilitary() {
@@ -4507,7 +4519,7 @@ function followRandomPlane() {
     let this_one = null;
     let tired = 0;
     do {
-        this_one = PlanesOrdered[Math.floor(Math.random()*PlanesOrdered.length)];
+        this_one = g.planesOrdered[Math.floor(Math.random()*g.planesOrdered.length)];
         if (!this_one || tired++ > 1000)
             break;
     } while ((this_one.isFiltered() && !onlySelected) || !this_one.position || (now - this_one.position_time > 30));
@@ -4533,8 +4545,8 @@ function toggleTableInView(switchOn) {
 function toggleLabels() {
     enableLabels = !enableLabels;
     loStore['enableLabels'] = enableLabels;
-    for (let key in PlanesOrdered) {
-        PlanesOrdered[key].updateMarker();
+    for (let key in g.planesOrdered) {
+        g.planesOrdered[key].updateMarker();
     }
     refreshFeatures();
     buttonActive('#L', enableLabels);
@@ -4554,8 +4566,8 @@ function toggleExtendedLabels(options) {
     extendedLabels %= 4;
     //console.log(extendedLabels);
     loStore['extendedLabels'] = extendedLabels;
-    for (let key in PlanesOrdered) {
-        PlanesOrdered[key].updateMarker();
+    for (let key in g.planesOrdered) {
+        g.planesOrdered[key].updateMarker();
     }
     buttonActive('#O', extendedLabels);
 }
@@ -4864,7 +4876,7 @@ function getPhotoLink(ac) {
             return "";
         return "<a class=\"link\" target=\"_blank\" href=\"https://flightaware.com/photos/aircraft/" + ac.registration.replace(/[^0-9a-z]/ig,'') + "\" rel=\"noreferrer\">FA Photos</a>";
     } else if (showPictures) {
-        return "<a class=\"link\" target=\"_blank\" href=\"https://www.planespotters.net/hex/" + ac.icao.toUpperCase() + "\" rel=\"noreferrer\">View on Planespotters</a>";
+        return "<a class=\"link\" target=\"_blank\" href=\"https://www.planespotters.net/hex/" + ac.icao.toUpperCase() + "\" rel=\"noreferrer\">View on g.planespotters</a>";
     }
 }
 
@@ -4904,8 +4916,8 @@ function fetchPfData() {
         const req = jQuery.ajax({ url: pf_data[i],
             dataType: 'json' });
         jQuery.when(req).done(function(data) {
-            for (let i in PlanesOrdered) {
-                const plane = PlanesOrdered[i];
+            for (let i in g.planesOrdered) {
+                const plane = g.planesOrdered[i];
                 const ac = data.aircraft[plane.icao.toUpperCase()];
                 if (!ac) {
                     continue;
@@ -4928,11 +4940,11 @@ function fetchPfData() {
 function solidGoldT(arg) {
     solidT = true;
     let list = [[], [], [], []];
-    for (let i = 0; i < PlanesOrdered.length; i++) {
-        let plane = PlanesOrdered[i];
+    for (let i = 0; i < g.planesOrdered.length; i++) {
+        let plane = g.planesOrdered[i];
         //console.log(plane);
         if (plane.visible) {
-            list[Math.floor(4*i/PlanesOrdered.length)].push(plane);
+            list[Math.floor(4*i/g.planesOrdered.length)].push(plane);
         }
     }
     getTrace(null, null, {onlyRecent: arg == 2, onlyFull: arg == 1, list: list[0],});
@@ -5170,8 +5182,8 @@ function updateVisible() {
     if (mapIsVisible || !lastRenderExtent) {
         lastRenderExtent = getRenderExtent();
     }
-    for (let i in PlanesOrdered) {
-        PlanesOrdered[i].updateVisible();
+    for (let i in g.planesOrdered) {
+        g.planesOrdered[i].updateVisible();
     }
 }
 
@@ -5183,9 +5195,9 @@ function mapRefresh(redraw) {
     let count = 0;
 
     if (globeIndex && !icaoFilter) {
-        for (let i in PlanesOrdered) {
+        for (let i in g.planesOrdered) {
             count++;
-            const plane = PlanesOrdered[i];
+            const plane = g.planesOrdered[i];
             delete plane.glMarker;
             // disable mobile limitations when using webGL
             if (plane.selected || (plane.inView && plane.visible && (!onMobile || webgl || (nMapPlanes < 150 && (!plane.onGround || zoomLvl > 10))))) {
@@ -5193,12 +5205,12 @@ function mapRefresh(redraw) {
                 nMapPlanes++;
             } else {
                 plane.markerDrawn && plane.clearMarker();
-                plane.linesDrawn && !plane.visible && plane.clearLines();
+                !SelectedAllPlanes && plane.linesDrawn && plane.clearLines();
             }
         }
     } else {
-        for (let i in PlanesOrdered) {
-            const plane = PlanesOrdered[i];
+        for (let i in g.planesOrdered) {
+            const plane = g.planesOrdered[i];
             addToMap.push(plane);
             delete plane.glMarker;
         }
@@ -5248,7 +5260,7 @@ function highlight(evt) {
     //clearTimeout(pointerMoveTimeout);
 
     if (hex) {
-        HighlightedPlane = Planes[hex];
+        HighlightedPlane = g.planes[hex];
     } else {
         HighlightedPlane = null;
     }
@@ -5263,7 +5275,7 @@ function parseURLIcaos() {
             const icao = inArray[i].toLowerCase();
             if (icao && (icao.length == 7 || icao.length == 6) && icao.toLowerCase().match(/[a-f,0-9]{6}/)) {
                 urlIcaos.push(icao);
-                let newPlane = Planes[icao] || new PlaneObject(icao);
+                let newPlane = g.planes[icao] || new PlaneObject(icao);
                 newPlane.last_message_time = NaN;
                 newPlane.position_time = NaN;
                 newPlane.selected = true;
@@ -5333,7 +5345,7 @@ function processURLParams(){
             console.log('Selected ICAO id: '+ icao + ' traceDate: ' + traceDateString);
             let options = {follow: follow, noDeselect: true};
             if (traceDate != null) {
-                let newPlane = Planes[icao] || new PlaneObject(icao);
+                let newPlane = g.planes[icao] || new PlaneObject(icao);
                 newPlane.last_message_time = NaN;
                 newPlane.position_time = NaN;
                 newPlane.selected = true;
@@ -5452,8 +5464,8 @@ function findPlanes(queries, byIcao, byCallsign, byReg, byType, showWarnings) {
                 });
             }
         }
-        for (let i in PlanesOrdered) {
-            const plane = PlanesOrdered[i];
+        for (let i in g.planesOrdered) {
+            const plane = g.planesOrdered[i];
             if (
                 (byCallsign && plane.flight != null && plane.flight.toLowerCase().match(query))
                 || (byIcao && plane.icao.toLowerCase().match(query))
@@ -5506,8 +5518,8 @@ function findPlanes(queries, byIcao, byCallsign, byReg, byType, showWarnings) {
 }
 
 function trailReaper() {
-    for (let i in PlanesOrdered) {
-        PlanesOrdered[i].reapTrail();
+    for (let i in g.planesOrdered) {
+        g.planesOrdered[i].reapTrail();
     }
 }
 
@@ -6248,7 +6260,7 @@ function initSitePos() {
 /*
 function drawAlt() {
     processAircraft({hex: 'c0ffee', });
-    let plane = Planes['c0ffee'];
+    let plane = g.planes['c0ffee'];
     newWidth = 4;
     for (let i = 0; i <= 50000; i += 500) {
         plane.position = [i/10000, 0];
@@ -6260,9 +6272,9 @@ function drawAlt() {
 */
 
 function remakeTrails() {
-    for (let i in PlanesOrdered) {
-        PlanesOrdered[i].remakeTrail();
-        PlanesOrdered[i].updateFeatures(true);
+    for (let i in g.planesOrdered) {
+        g.planesOrdered[i].removeTrail();
+        g.planesOrdered[i].updateFeatures();
     }
 }
 
@@ -6489,7 +6501,7 @@ function getTrace(newPlane, hex, options) {
     }
 
     if (!newPlane) {
-        newPlane = Planes[hex] || new PlaneObject(hex);
+        newPlane = g.planes[hex] || new PlaneObject(hex);
         newPlane.last_message_time = NaN;
         newPlane.position_time = NaN;
         select(newPlane, options);
@@ -6561,7 +6573,7 @@ function getTrace(newPlane, hex, options) {
         })
             .done(function(data) {
                 const options = this.options;
-                const plane = Planes[options.plane];
+                const plane = g.planes[options.plane];
                 plane.recentTrace = normalizeTraceStamps(data);
                 if (!showTrace) {
                     plane.processTrace();
@@ -6588,10 +6600,10 @@ function getTrace(newPlane, hex, options) {
     })
         .done(function(data) {
         const options = this.options;
-        const plane = Planes[options.plane];
+        const plane = g.planes[options.plane];
         plane.fullTrace = normalizeTraceStamps(data);
         options.defer.done(function(options) {
-            const plane = Planes[options.plane];
+            const plane = g.planes[options.plane];
             if (showTrace) {
                 legShift(0, plane);
                 if (!multiSelect) {
@@ -6612,7 +6624,7 @@ function getTrace(newPlane, hex, options) {
     })
         .fail(function() {
         const options = this.options;
-        const plane = Planes[options.plane];
+        const plane = g.planes[options.plane];
         if (showTrace)
             legShift(0, plane);
         else
@@ -7161,7 +7173,7 @@ function replayStep(arg) {
                 }
             }
             ac.squawk = (lat & 0xFFFF).toString(10).padStart(4, '0');
-            if (!Planes[hex]) {
+            if (!g.planes[hex]) {
                 replayPlanes[hex] = ac;
                 continue;
             }
@@ -7218,7 +7230,7 @@ function replayStep(arg) {
             seen_pos: 0,
         };
 
-        if (!Planes[hex]) {
+        if (!g.planes[hex]) {
             const cached = replayPlanes[hex];
             if (cached) {
                 ac = cached;
@@ -7247,10 +7259,6 @@ function replayStep(arg) {
 function updateIconCache() {
     let item;
     let tryAgain = [];
-    if (Object.keys(iconCache).length > 20000) {
-        // reset cache
-        iconCache = {};
-    }
     while(item = addToIconCache.pop()) {
         let svgKey = item[0];
         let element = item[1];
@@ -7513,8 +7521,8 @@ function handleVisibilityChange() {
 
         let count = 0;
         if (multiSelect && !SelectedAllPlanes) {
-            for (let i = 0; i < PlanesOrdered.length; ++i) {
-                let plane = PlanesOrdered[i];
+            for (let i = 0; i < g.planesOrdered.length; ++i) {
+                let plane = g.planesOrdered[i];
                 if (plane.selected) {
                     getTrace(plane, plane.icao, {});
                     if (count++ > 20)
@@ -7569,8 +7577,8 @@ function selectClosest() {
     let closest = null;
     let closestDistance = null;
     checkMovement();
-    for (let key in PlanesOrdered) {
-        const plane = PlanesOrdered[key];
+    for (let key in g.planesOrdered) {
+        const plane = g.planesOrdered[key];
         if (!closest)
             closest = plane;
         if (plane.position == null || !plane.visible)
@@ -7757,7 +7765,7 @@ const EXPORT_RGB_COLORS = [
 ];
 
 // Converts "rrggbb" colors to KML format, "aabbggrr".
-function RGBColorToKMLColor(c) {
+let RGBColorToKMLColor = function(c) {
     return 'ff' + c.substring(4, 6) + c.substring(2, 4) + c.substring(0, 2);
 }
 
@@ -7924,8 +7932,8 @@ function exportKML(altStyle) {
 }
 
 function deleteTraces() {
-    for (let i in PlanesOrdered) {
-        let plane = PlanesOrdered[i];
+    for (let i in g.planesOrdered) {
+        let plane = g.planesOrdered[i];
         delete plane.recentTrace;
         delete plane.fullTrace;
     }

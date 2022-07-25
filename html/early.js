@@ -1,6 +1,15 @@
 // This was functionality of script.js, moved it to here to start the downloading of track history earlier
 "use strict";
 
+
+// TAR1090 application object
+let TAR;
+TAR = (function (global, jQuery, TAR) {
+    return TAR;
+}(window, jQuery, TAR || {}));
+
+let g = {};
+
 let Dump1090Version = "unknown version";
 let RefreshInterval = 1000;
 let globeSimLoad = 6;
