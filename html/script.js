@@ -4001,8 +4001,8 @@ function select(plane, options) {
 
 function selectPlaneByHex(hex, options) {
     active();
-    console.log(`SELECTING ${hex}`);
     options = options || {};
+    console.log(`SELECTING ${hex} follow: ${options.follow}`);
     //console.log("select: " + hex);
     // If SelectedPlane has something in it, clear out the selected
     if (SelectedAllPlanes) {
@@ -4015,6 +4015,7 @@ function selectPlaneByHex(hex, options) {
 
     if (!options.noFetch && globeIndex && hex) {
         newPlane = getTrace(newPlane, hex, options);
+        newPlane.selected = false;
     }
 
     // If we are clicking the same plane, we are deselecting it unless noDeselect is specified
@@ -4079,7 +4080,8 @@ function selectAllPlanes() {
 
     SelectedAllPlanes = true;
 
-    if (globeIndex) {
+    // disable this for the moment
+    if (0 && globeIndex) {
         for (let i in g.planesOrdered) {
             let plane = g.planesOrdered[i];
             if (plane.visible && plane.inView) {
@@ -5351,12 +5353,10 @@ function processURLParams(){
                 newPlane.selected = true;
                 select(newPlane, options);
 
-                if (!zoom)
-                    zoom = 5;
+                (!zoom) && (zoom = 5);
             } else {
-                if (!zoom)
-                    zoom = 7;
-                selectPlaneByHex(icao, options)
+                (!zoom) && (zoom = 7);
+                selectPlaneByHex(icao, options);
             }
         }
         if (traceDate != null)
