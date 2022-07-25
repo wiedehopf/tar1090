@@ -931,7 +931,7 @@ PlaneObject.prototype.updateIcon = function() {
 
             addToIconCache.push([svgKey, null, svgURI]);
 
-            if (TrackedAircraftPositions < 200) {
+            if (true || TrackedAircraftPositions < 200) {
                 this.markerIcon = new ol.style.Icon({
                     scale: this.scale,
                     imgSize: [this.shape.w, this.shape.h],
