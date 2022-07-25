@@ -461,6 +461,7 @@ if (uuid != null) {
     RefreshInterval = 5000;
     configureReceiver.resolve();
     //console.time("Downloaded History");
+    zstd = false;
 } else {
     get_receiver_defer.fail(function(data){
 

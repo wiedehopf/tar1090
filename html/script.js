@@ -1857,9 +1857,6 @@ function startPage() {
         jQuery('.ol-attribution').show();
     }
 
-    now = new Date().getTime()/1000;
-
-
     changeZoom("init");
     changeCenter("init");
 
