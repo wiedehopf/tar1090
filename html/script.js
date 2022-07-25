@@ -3971,10 +3971,15 @@ function deselect(plane) {
         return;
     plane.selected = false;
     const index = SelPlanes.indexOf(plane);
-    if (index > -1)
+    if (index > -1) {
         SelPlanes.splice(index, 1);
+    }
     if (plane == SelectedPlane) {
-        sp = SelectedPlane = null;
+        if (SelPlanes.length > 0) {
+            sp = SelectedPlane = SelPlanes[0];
+        } else {
+            sp = SelectedPlane = null;
+        }
         refreshSelected();
     }
 
@@ -4019,9 +4024,10 @@ function selectPlaneByHex(hex, options) {
     // plane to be selected
     let newPlane = g.planes[hex];
 
+    const multiDeselect = multiSelect && newPlane && newPlane.selected && !onlySelected;
+
     if (!options.noFetch && globeIndex && hex) {
         newPlane = getTrace(newPlane, hex, options);
-        newPlane.selected = false;
     }
 
     // If we are clicking the same plane, we are deselecting it unless noDeselect is specified
@@ -4030,7 +4036,7 @@ function selectPlaneByHex(hex, options) {
     } else {
         if (multiSelect) {
             // multiSelect deselect
-            if (newPlane && newPlane.selected && !onlySelected) {
+            if (multiDeselect) {
                 deselect(newPlane);
                 newPlane = null;
                 hex = null;
@@ -4042,6 +4048,7 @@ function selectPlaneByHex(hex, options) {
                 oldPlane = null;
             }
             if (oldPlane == newPlane) {
+                console.log('oldplane == newplane');
                 deselect(newPlane);
                 oldPlane = null;
                 newPlane = null;
