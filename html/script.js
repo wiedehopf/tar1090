@@ -6273,8 +6273,10 @@ function drawAlt() {
 
 function remakeTrails() {
     for (let i in g.planesOrdered) {
-        g.planesOrdered[i].removeTrail();
-        g.planesOrdered[i].updateFeatures();
+        const plane = g.planesOrdered[i];
+        plane.removeTrail();
+        plane.linesDrawn && (plane.drawLine = 1);
+        plane.updateFeatures();
     }
 }
 

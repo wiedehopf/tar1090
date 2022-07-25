@@ -772,7 +772,7 @@ function altitudeColor(altitude) {
         s = ColorByAlt.ground.s;
         l = ColorByAlt.ground.l;
     } else {
-        const altRound = (webgl && !pTracks && !SelectedAllPlanes) ? 200 : 500;
+        const altRound = (altitude < 8000) ? 50 : ((webgl && !pTracks && !SelectedAllPlanes) ? 200 : 500);
         // round altitude to limit the number of colors used
         altitude = altRound * Math.round(altitude / altRound);
 
