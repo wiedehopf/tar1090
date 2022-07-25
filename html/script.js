@@ -2090,141 +2090,11 @@ function webglInit() {
     });
 }
 
-// Initalizes the map and starts up our timers to call various functions
-function initMap() {
-
-    if (globeIndex) {
-        jQuery('#dump1090_total_history_td').hide();
-        jQuery('#dump1090_message_rate_td').hide();
-    }
-
-    // Load stored map settings if present
-    CenterLon = Number(loStore['CenterLon']) || DefaultCenterLon;
-    CenterLat = Number(loStore['CenterLat']) || DefaultCenterLat;
-    zoomLvl = Number(loStore['zoomLvl']) || DefaultZoomLvl;
-    zoomLvlCache = zoomLvl;
-
-    if (overrideMapType)
-        MapType_tar1090 = overrideMapType;
-    else if (loStore['MapType_tar1090']) {
-        MapType_tar1090 = loStore['MapType_tar1090'];
-    }
-
-    mapTypeSettings();
-
-    // Initialize OpenLayers
-
-    layers_group = createBaseLayers();
-    layers = layers_group.getLayers();
-
-    //add_kml_overlay('https://developers.google.com/kml/documentation/KML_Samples.kml', 'samples', 0.8);
-
-    siteCircleLayer = new ol.layer.Vector({
-        name: 'siteCircles',
-        type: 'overlay',
-        title: 'Range rings',
-        source: siteCircleFeatures,
-        visible: SiteCircles,
-        zIndex: 100,
-        renderOrder: null,
-        renderBuffer: renderBuffer,
-    });
-    layers.push(siteCircleLayer);
-
-    siteCircleLayer.on('change:visible', function(evt) {
-        if (evt.target.getVisible()) {
-            geoFindMe();
-        }
-    });
-
-    locationDotLayer = new ol.layer.Vector({
-        name: 'locationDot',
-        type: 'overlay',
-        title: (receiverJson && receiverJson.lat != null) ? 'Site position' : 'Your position',
-        source: locationDotFeatures,
-        visible: SiteShow,
-        zIndex: 100,
-        renderOrder: null,
-        renderBuffer: renderBuffer,
-    });
-    layers.push(locationDotLayer);
-
-    locationDotLayer.on('change:visible', function(evt) {
-        if (evt.target.getVisible()) {
-            geoFindMe();
-        }
-    });
-
-
-    if (receiverJson && receiverJson.outlineJson) {
-        actualOutlineFeatures = new ol.source.Vector();
-        actualOutlineStyle = new ol.style.Style({
-            fill: null,
-            stroke: new ol.style.Stroke({
-                color: actual_range_outline_color,
-                width: actual_range_outline_width,
-                lineDash: actual_range_outline_dash,
-            }),
-        });
-        actualOutlineLayer = new ol.layer.Vector({
-            name: 'actualRangeOutline',
-            type: 'overlay',
-            title: 'actual range outline',
-            source: actualOutlineFeatures,
-            zIndex: 101,
-            renderBuffer: renderBuffer,
-            style: actualOutlineStyle,
-            visible: actual_range_show,
-        });
-        layers.push(actualOutlineLayer);
-    }
-    if (calcOutlineData) {
-        calcOutlineLayer = new ol.layer.Vector({
-            name: 'calcOutline',
-            type: 'overlay',
-            title: 'terrain-based range outline',
-            source: calcOutlineFeatures,
-            zIndex: 100,
-            renderOrder: null,
-            renderBuffer: renderBuffer,
-        });
-        layers.push(calcOutlineLayer);
-        drawUpintheair();
-    }
-
-
-    const dummyLayer = new ol.layer.Vector({
-        name: 'dummy',
-        renderOrder: null,
-    });
-
-    trailGroup.push(dummyLayer);
-
-    trailLayers = new ol.layer.Group({
-        name: 'ac_trail',
-        title: 'Aircraft trails',
-        type: 'overlay',
-        layers: trailGroup,
-        zIndex: 150,
-    });
-
-    layers.push(trailLayers);
-
-    iconLayer = new ol.layer.Vector({
-        name: 'iconLayer',
-        type: 'overlay',
-        title: 'Aircraft positions',
-        source: PlaneIconFeatures,
-        declutter: false,
-        zIndex: 200,
-        renderBuffer: renderBuffer,
-    });
-    layers.push(iconLayer);
-
+function ol_map_init() {
 
     OLMap = new ol.Map({
         target: 'map_canvas',
-        layers: layers,
+        layers: layers_group,
         view: new ol.View({
             center: ol.proj.fromLonLat([CenterLon, CenterLat]),
             zoom: zoomLvl,
@@ -2240,6 +2110,7 @@ function initMap() {
     console.time('webglInit');
     webglInit();
     console.timeEnd('webglInit');
+
 
     let foundType = false;
     ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
@@ -2388,8 +2259,155 @@ function initMap() {
         evt.stopPropagation();
     });
 
-    jQuery('#infoblock_close').on('click', function () {
+    // show the hover box
+    if (!globeIndex && zoomLvl > 5.5 && enableMouseover) {
+        OLMap.on('pointermove', onPointermove);
+    }
+}
 
+// Initalizes the map and starts up our timers to call various functions
+function initMap() {
+
+    if (globeIndex) {
+        jQuery('#dump1090_total_history_td').hide();
+        jQuery('#dump1090_message_rate_td').hide();
+    }
+
+    // Load stored map settings if present
+    CenterLon = Number(loStore['CenterLon']) || DefaultCenterLon;
+    CenterLat = Number(loStore['CenterLat']) || DefaultCenterLat;
+    zoomLvl = Number(loStore['zoomLvl']) || DefaultZoomLvl;
+    zoomLvlCache = zoomLvl;
+
+    if (overrideMapType)
+        MapType_tar1090 = overrideMapType;
+    else if (loStore['MapType_tar1090']) {
+        MapType_tar1090 = loStore['MapType_tar1090'];
+    }
+
+    mapTypeSettings();
+
+    // Initialize OpenLayers
+
+    layers_group = createBaseLayers();
+    layers = layers_group.getLayers();
+
+    //add_kml_overlay('https://developers.google.com/kml/documentation/KML_Samples.kml', 'samples', 0.8);
+
+    siteCircleLayer = new ol.layer.Vector({
+        name: 'siteCircles',
+        type: 'overlay',
+        title: 'Range rings',
+        source: siteCircleFeatures,
+        visible: SiteCircles,
+        zIndex: 100,
+        renderOrder: null,
+        renderBuffer: renderBuffer,
+    });
+    layers.push(siteCircleLayer);
+
+    siteCircleLayer.on('change:visible', function(evt) {
+        if (evt.target.getVisible()) {
+            geoFindMe();
+        }
+    });
+
+    locationDotLayer = new ol.layer.Vector({
+        name: 'locationDot',
+        type: 'overlay',
+        title: (receiverJson && receiverJson.lat != null) ? 'Site position' : 'Your position',
+        source: locationDotFeatures,
+        visible: SiteShow,
+        zIndex: 100,
+        renderOrder: null,
+        renderBuffer: renderBuffer,
+    });
+    layers.push(locationDotLayer);
+
+    locationDotLayer.on('change:visible', function(evt) {
+        if (evt.target.getVisible()) {
+            geoFindMe();
+        }
+    });
+
+
+    if (receiverJson && receiverJson.outlineJson) {
+        actualOutlineFeatures = new ol.source.Vector();
+        actualOutlineStyle = new ol.style.Style({
+            fill: null,
+            stroke: new ol.style.Stroke({
+                color: actual_range_outline_color,
+                width: actual_range_outline_width,
+                lineDash: actual_range_outline_dash,
+            }),
+        });
+        actualOutlineLayer = new ol.layer.Vector({
+            name: 'actualRangeOutline',
+            type: 'overlay',
+            title: 'actual range outline',
+            source: actualOutlineFeatures,
+            zIndex: 101,
+            renderBuffer: renderBuffer,
+            style: actualOutlineStyle,
+            visible: actual_range_show,
+        });
+        layers.push(actualOutlineLayer);
+    }
+    if (calcOutlineData) {
+        calcOutlineLayer = new ol.layer.Vector({
+            name: 'calcOutline',
+            type: 'overlay',
+            title: 'terrain-based range outline',
+            source: calcOutlineFeatures,
+            zIndex: 100,
+            renderOrder: null,
+            renderBuffer: renderBuffer,
+        });
+        layers.push(calcOutlineLayer);
+        drawUpintheair();
+    }
+
+
+    const dummyLayer = new ol.layer.Vector({
+        name: 'dummy',
+        renderOrder: null,
+    });
+
+    trailGroup.push(dummyLayer);
+
+    trailLayers = new ol.layer.Group({
+        name: 'ac_trail',
+        title: 'Aircraft trails',
+        type: 'overlay',
+        layers: trailGroup,
+        zIndex: 150,
+    });
+
+    layers.push(trailLayers);
+
+    iconLayer = new ol.layer.Vector({
+        name: 'iconLayer',
+        type: 'overlay',
+        title: 'Aircraft positions',
+        source: PlaneIconFeatures,
+        declutter: false,
+        zIndex: 200,
+        renderBuffer: renderBuffer,
+    });
+    layers.push(iconLayer);
+
+
+    ol_map_init();
+
+    // handle the layer settings pane checkboxes
+    //OLMap.once('postrender', function(e) {
+        //toggleLayer('#nexrad_checkbox', 'nexrad');
+        //toggleLayer('#sitepos_checkbox', 'site_pos');
+        //toggleLayer('#actrail_checkbox', 'ac_trail');
+        //toggleLayer('#acpositions_checkbox', 'webglLayer');
+    //});
+
+    jQuery('#infoblock_close').on('click', function () {
         if (showTrace)
             toggleShowTrace();
         if (onlySelected)
@@ -2400,18 +2418,6 @@ function initMap() {
     });
 
 
-    // show the hover box
-    if (!globeIndex && zoomLvl > 5.5 && enableMouseover) {
-        OLMap.on('pointermove', onPointermove);
-    }
-
-    // handle the layer settings pane checkboxes
-    OLMap.once('postrender', function(e) {
-        //toggleLayer('#nexrad_checkbox', 'nexrad');
-        //toggleLayer('#sitepos_checkbox', 'site_pos');
-        //toggleLayer('#actrail_checkbox', 'ac_trail');
-        //toggleLayer('#acpositions_checkbox', 'webglLayer');
-    });
 
     new Toggle({
         key: "darkerColors",
