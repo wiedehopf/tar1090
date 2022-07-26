@@ -5226,8 +5226,8 @@ function mapRefresh(redraw) {
     } else {
         for (let i in g.planesOrdered) {
             const plane = g.planesOrdered[i];
-            addToMap.push(plane);
             delete plane.glMarker;
+            addToMap.push(plane);
         }
     }
 

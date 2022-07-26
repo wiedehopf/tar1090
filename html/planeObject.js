@@ -2715,7 +2715,7 @@ PlaneObject.prototype.checkVisible = function() {
 
 
     return (!globeIndex || this.inView || this.selected || SelectedAllPlanes) && (
-        (!globeIndex && this.seen < (58 - tisbReduction + jaeroTime + refreshInt()))
+        (!globeIndex && this.seen < (58 - tisbReduction + jaeroTime + refreshInt() / 1000))
         || (globeIndex && this.seen_pos < (40 + jaeroTime + mlatTime + modeSTime - tisbReduction + refreshInt()) && now - this.last_info_server < noInfoTimeout)
         || this.selected
         || noVanish
