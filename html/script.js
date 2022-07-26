@@ -2182,8 +2182,13 @@ function ol_map_init() {
         target: 'map_canvas',
     }));
 
+    OLMap.on('movestart', function(event) {
+        webgl && TrackedAircraftPositions > 2000 && webglLayer.setOpacity(0.25);
+    });
+
     OLMap.on('moveend', function(event) {
         checkMovement();
+        webgl && webglLayer.setOpacity(1);
     });
 
     OLMap.on(['click', 'dblclick'], function(evt) {
