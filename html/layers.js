@@ -408,12 +408,13 @@ function createBaseLayers() {
         let refreshNexrad = function() {
             // re-build the source to force a refresh of the nexrad tiles
             let now = new Date().getTime();
-            nexrad.setSource(new ol.source.XYZ({
+            let nexradSource = new ol.source.XYZ({
                 url : 'https://mesonet{1-3}.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0q-900913/{z}/{x}/{y}.png?_=' + now,
                 attributions: 'NEXRAD courtesy of <a href="https://mesonet.agron.iastate.edu/">IEM</a>',
                 attributionsCollapsible: false,
                 maxZoom: 8,
-            }));
+            });
+            nexrad.setSource(nexradSource);
         };
 
         refreshNexrad();
@@ -425,7 +426,8 @@ function createBaseLayers() {
             url: 'https://nowcoast.noaa.gov/arcgis/services/nowcoast/radar_meteo_imagery_nexrad_time/MapServer/WMSServer',
             params: {'LAYERS': '1'},
             projection: 'EPSG:3857',
-            maxZoom: 10,
+            resolutions: [156543.03392804097, 78271.51696402048, 39135.75848201024, 19567.87924100512, 9783.93962050256, 4891.96981025128, 2445.98490512564, 1222.99245256282],
+            ratio: 1,
         });
 
         let noaaRadar = new ol.layer.Image({
@@ -447,15 +449,24 @@ function createBaseLayers() {
         const bottomLeft = ol.proj.fromLonLat([1.9,46.2]);
         const topRight = ol.proj.fromLonLat([16.0,55.0]);
         const extent = [bottomLeft[0], bottomLeft[1], topRight[0], topRight[1]];
-        let dwd = new ol.layer.Tile({
-            source: new ol.source.TileWMS({
-                url: 'https://maps.dwd.de/geoserver/wms',
-                params: {LAYERS: dwdLayers, validtime: (new Date()).getTime()},
-                projection: 'EPSG:3857',
-                attributions: 'Deutscher Wetterdienst (DWD)',
-                attributionsCollapsible: false,
+
+        let dwdSource = new ol.source.TileWMS({
+            url: 'https://maps.dwd.de/geoserver/wms',
+            params: {LAYERS: dwdLayers, validtime: (new Date()).getTime()},
+            projection: 'EPSG:3857',
+            attributions: 'Deutscher Wetterdienst (DWD)',
+            attributionsCollapsible: false,
+            tileGrid: ol.tilegrid.createXYZ({
+                extent: ol.tilegrid.extentFromProjection('EPSG:3857'),
+                maxResolution: 156543.03392804097,
                 maxZoom: 8,
+                minZoom: 0,
+                tileSize: 256,
             }),
+        });
+
+        let dwd = new ol.layer.Tile({
+            source: dwdSource,
             name: 'radolan',
             title: 'DWD RADOLAN',
             type: 'overlay',
