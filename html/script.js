@@ -420,8 +420,9 @@ function fetchData(options) {
             return;
         }
     }
-    if (debugFetch)
+    if (debugFetch) {
         console.log((currentTime - lastFetch)/1000);
+    }
     lastFetch = currentTime;
 
     FetchPending = [];
@@ -1745,10 +1746,6 @@ let replay_was_active = false;
 let timers = {};
 let timersActive = false;
 function clearIntervalTimers() {
-    if (!timersActive) {
-        return;
-    }
-
     timersActive = false;
 
     if (loadFinished) {
@@ -7486,11 +7483,12 @@ function showReplayBar(){
 };
 
 function timeoutFetch() {
+    console.log('timeoutFetch');
     fetchData();
-    if (timers.checkMove) {
+    if (timers.timeoutFetch) {
         clearTimeout(timers.checkMove);
     }
-    timers.checkMove = setTimeout(timeoutFetch, Math.max(RefreshInterval, 10000));
+    timers.timeoutFetch = setTimeout(timeoutFetch, Math.max(RefreshInterval, 10000));
     if (now - lastReap > 120) {
         reaper();
     }
