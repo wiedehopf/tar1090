@@ -7983,7 +7983,7 @@ let infoBits = {
 };
 
 function geoFindEnabled() {
-    return (!SiteOverride && (globeIndex || uuid || askLocation) && (window && window.location && window.location.protocol == 'https:'));
+    return (!disableGeoLocation && !SiteOverride && (globeIndex || uuid || askLocation) && (window && window.location && window.location.protocol == 'https:'));
 }
 
 function _printTrace(trace) {

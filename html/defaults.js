@@ -364,3 +364,5 @@ let tableColors = {
         7700:      "#ff0000",
     }
 };
+
+let disableGeoLocation = false;
