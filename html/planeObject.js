@@ -2698,7 +2698,7 @@ PlaneObject.prototype.isNonIcao = function() {
 
 PlaneObject.prototype.checkVisible = function() {
     const jaeroTime = (this.dataSource == "adsc") ? jaeroTimeout : 0;
-    const noInfoTimeout = replay ? 600 : (reApi ? (30 + 2 * refreshInt() / 1000) : (2 * refreshInt() / globeSimLoad * globeTilesViewCount / 1000));
+    const noInfoTimeout = replay ? 600 : (reApi ? (30 + 2 * refreshInt() / 1000) : (30 + Math.min(1, (globeTilesViewCount / globeSimLoad)) * (2 * refreshInt() / 1000)));
     const mlatTime = (this.dataSource == "mlat") ? 25 : 0;
     const modeSTime = (guessModeS && this.dataSource == "modeS") ? 300 : 0;
     const tisbReduction = (this.icao[0] == '~') ? 15 : 0;
