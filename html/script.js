@@ -1753,7 +1753,7 @@ function clearIntervalTimers() {
         jQuery("#timers_paused").css('display','block');
 
     }
-    console.log("clear timers");
+    console.log("clear timers " + localTime(new Date()));
     const entries = Object.entries(timers);
     for (let i in entries) {
         clearInterval(entries[i][1]);
@@ -1771,7 +1771,7 @@ function setIntervalTimers() {
     if (loadFinished) {
         jQuery("#timers_paused").css('display','none');
     }
-    console.log("set timers");
+    console.log("set timers " + localTime(new Date()));
     if ((adsbexchange || dynGlobeRate) && !uuid) {
         timers.globeRateUpdate = setInterval(globeRateUpdate, 180000);
     }
