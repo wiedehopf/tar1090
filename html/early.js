@@ -8,6 +8,7 @@ TAR = (function (global, jQuery, TAR) {
     return TAR;
 }(window, jQuery, TAR || {}));
 
+// global object to store big stuff ... avoid clojur stupidity keeping the reference to big objects
 let g = {};
 
 let Dump1090Version = "unknown version";
@@ -47,7 +48,6 @@ let pTracks = false;
 let pTracksInterval = 15;
 let lastTraceGet = 0;
 let traceRate = 0;
-let _aircraft_type_cache = null;
 let tfrs = false;
 let initialURL = window.location.href;
 let milRanges = [];
@@ -377,9 +377,6 @@ if (uuid) {
     });}
 }
 
-{jQuery.getJSON(databaseFolder + "/icao_aircraft_types2.js").done(function(typeLookupData) {
-    _aircraft_type_cache = typeLookupData;
-});}
 {jQuery.getJSON(databaseFolder + "/ranges.js").done(function(ranges) {
     if (!ranges || !ranges.military) {
         console.error("couldn't load milRanges.");

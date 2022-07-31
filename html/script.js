@@ -1892,6 +1892,8 @@ function startPage() {
         //jQuery("#map_canvas").hide();
         clearIntervalTimers('silent');
     });
+
+    setTimeout(db_load_type_cache, 200);
 }
 
 //

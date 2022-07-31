@@ -2724,7 +2724,7 @@ PlaneObject.prototype.checkVisible = function() {
 };
 
 PlaneObject.prototype.setTypeData = function() {
-	if (_aircraft_type_cache == null || !this.icaoType || this.icaoType == this.icaoTypeCache)
+	if (g.type_cache == null || !this.icaoType || this.icaoType == this.icaoTypeCache)
         return;
     this.updateMarker();
     this.icaoTypeCache = this.icaoType;
@@ -2733,10 +2733,10 @@ PlaneObject.prototype.setTypeData = function() {
     if (typeCode == 'P8 ?') {
         typeCode = 'P8';
     }
-    if (!(typeCode in _aircraft_type_cache))
+    if (!(typeCode in g.type_cache))
         return;
 
-    let typeData = _aircraft_type_cache[typeCode];
+    let typeData = g.type_cache[typeCode];
     const typeLong = typeData[0];
     const desc = typeData[1];
     const wtc = typeData[2];
