@@ -308,6 +308,12 @@ HideCols = [
 //
 //
 //darkModeDefault = true; // turn on dark mode by default (change in browser possible)
+//
+//
+//jaeroTimeout = 35 * 60; // in seconds
+
+//seenTimeout = 58; // in seconds
+//seenTimeoutMlat = 58; // in seconds
 
 //tableInView = false; // only show aircraft in current view (V button)
 

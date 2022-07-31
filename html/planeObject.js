@@ -2697,11 +2697,10 @@ PlaneObject.prototype.isNonIcao = function() {
 };
 
 PlaneObject.prototype.checkVisible = function() {
-    const jaeroTime = (this.dataSource == "adsc") ? jaeroTimeout : 0;
-    const noInfoTimeout = replay ? 600 : (reApi ? (30 + 2 * refreshInt() / 1000) : (30 + Math.min(1, (globeTilesViewCount / globeSimLoad)) * (2 * refreshInt() / 1000)));
-    const mlatTime = (this.dataSource == "mlat") ? 25 : 0;
+    const refresh = refreshInt() / 1000;
+    const noInfoTimeout = replay ? 600 : (reApi ? (30 + 2 * refresh) : (30 + Math.min(1, (globeTilesViewCount / globeSimLoad)) * (2 * refresh)));
     const modeSTime = (guessModeS && this.dataSource == "modeS") ? 300 : 0;
-    const tisbReduction = (this.icao[0] == '~') ? 15 : 0;
+    const tisbReduction = (adsbexchange && this.icao[0] == '~') ? 15 : 0;
     // If no packet in over 58 seconds, clear the plane.
     // Only clear the plane if it's not selected individually
 
@@ -2713,13 +2712,18 @@ PlaneObject.prototype.checkVisible = function() {
     this.seen = Math.max(0, __now - this.last_message_time);
     this.seen_pos = Math.max(0, __now - this.position_time);
 
+    let timeout = seenTimeout;
+    if (this.dataSource == "mlat") { timeout = seenTimeoutMlat; }
+    else if (this.dataSource == "adsc") { timeout = jaeroTimeout; }
+
+    timeout += modeSTime - tisbReduction + refresh;
 
     return (!globeIndex || this.inView || this.selected || SelectedAllPlanes) && (
-        (!globeIndex && this.seen < (58 - tisbReduction + jaeroTime + refreshInt() / 1000))
-        || (globeIndex && this.seen_pos < (40 + jaeroTime + mlatTime + modeSTime - tisbReduction + refreshInt()) && now - this.last_info_server < noInfoTimeout)
+        (!globeIndex && this.seen < timeout)
+        || (globeIndex && this.seen_pos < timeout && now - this.last_info_server < noInfoTimeout)
         || this.selected
         || noVanish
-        || (nogpsOnly && this.nogps && this.seen < 15 * 60)
+        || (nogpsOnly && this.nogps && this.seen < 15 * 60) // ugly hard coded
     );
 };
 

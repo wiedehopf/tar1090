@@ -326,6 +326,9 @@ let filterMaxRange = 1e8; // 100 000 km should include all planes on earth ;)
 
 let jaeroTimeout = 35 * 60; // in seconds
 
+let seenTimeout = 58; // in seconds
+let seenTimeoutMlat = 58; // in seconds
+
 let darkModeDefault = true; // turn on dark mode by default (change in browser possible)
 
 let tableInView = false; // only show aircraft in current view (V button)
