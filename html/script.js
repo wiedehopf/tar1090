@@ -387,6 +387,8 @@ function fetchDone(data) {
 
     if (fetchCalls == 1) { console.timeEnd("first fetch()"); };
 
+    afterFirstFetch();
+
     // Check for stale receiver data
     if (last == now && !globeIndex) {
         StaleReceiverCount++;
@@ -398,6 +400,25 @@ function fetchDone(data) {
         StaleReceiverCount = 0;
         jQuery("#update_error").css('display','none');
     }
+}
+
+function db_load_type_cache() {
+    jQuery.getJSON(databaseFolder + "/icao_aircraft_types2.js").done(function(typeLookupData) {
+        g.type_cache = typeLookupData;
+        for (let i in g.planesOrdered) {
+            g.planesOrdered[i].setTypeData();
+        }
+    });
+    refresh();
+}
+
+let afterFirstFetchDone = false;
+function afterFirstFetch() {
+    if (afterFirstFetchDone) { return; }
+    afterFirstFetchDone = true;
+    db_load_type_cache();
+    if (typeof load_gt != 'undefined' && load_gt) { load_gt(); }
+    if (typeof load_fi != 'undefined' && load_fi) { load_fi(); }
 }
 
 let debugFetch = false;
@@ -1885,15 +1906,14 @@ function startPage() {
     if (pTracks)
         setTimeout(TAR.planeMan.refresh, 10000);
 
-    if (typeof load_gt != 'undefined' && load_gt) { setTimeout(load_gt, 50);}
-    if (typeof load_fi != 'undefined' && load_fi) { setTimeout(load_fi, 100);}
-
     window.addEventListener("beforeunload", function (event) {
         //jQuery("#map_canvas").hide();
         clearIntervalTimers('silent');
     });
 
-    setTimeout(db_load_type_cache, 200);
+    if (heatmap || replay || showTrace || pTracks || inhibitFetch) {
+        afterFirstFetch();
+    }
 }
 
 //

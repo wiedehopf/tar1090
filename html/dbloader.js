@@ -154,12 +154,3 @@ function db_ajax_request_complete() {
 		});
 	}
 }
-
-function db_load_type_cache() {
-    jQuery.getJSON(databaseFolder + "/icao_aircraft_types2.js").done(function(typeLookupData) {
-        g.type_cache = typeLookupData;
-        for (let i in g.planesOrdered) {
-            g.planesOrdered[i].setTypeData();
-        }
-    });
-}
