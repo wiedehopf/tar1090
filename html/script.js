@@ -1886,7 +1886,6 @@ function startPage() {
     clearIntervalTimers();
     setIntervalTimers();
 
-
     if (tempTrails)
         selectAllPlanes();
 
@@ -1908,6 +1907,10 @@ function startPage() {
 
     if (pTracks)
         setTimeout(TAR.planeMan.refresh, 10000);
+
+    if (load_fi) {
+        load_fi();
+    }
 }
 
 //
