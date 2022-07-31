@@ -599,17 +599,9 @@ function initialize() {
         }
         configureReceiver = null;
 
-        if (!nHistoryItems) {
-            jQuery("#loader_progress").attr('value', 0.25);
-        }
-
         // Initialize stuff
         initPage();
         initMap();
-
-        if (!nHistoryItems) {
-            jQuery("#loader_progress").attr('value', 0.75);
-        }
 
         processQueryToggles();
 
@@ -1765,10 +1757,10 @@ function parseHistory() {
 let replay_was_active = false;
 let timers = {};
 let timersActive = false;
-function clearIntervalTimers() {
+function clearIntervalTimers(arg) {
     timersActive = false;
 
-    if (loadFinished) {
+    if (loadFinished && arg != 'silent') {
         jQuery("#timers_paused_detail").text('Timers paused (tab hidden).');
         jQuery("#timers_paused").css('display','block');
 
@@ -1893,9 +1885,13 @@ function startPage() {
     if (pTracks)
         setTimeout(TAR.planeMan.refresh, 10000);
 
-    if (typeof load_fi != 'undefined' && load_fi) {
-        setTimeout(load_fi, 500);
-    }
+    if (typeof load_gt != 'undefined' && load_gt) { setTimeout(load_gt, 50);}
+    if (typeof load_fi != 'undefined' && load_fi) { setTimeout(load_fi, 100);}
+
+    window.addEventListener("beforeunload", function (event) {
+        //jQuery("#map_canvas").hide();
+        clearIntervalTimers('silent');
+    });
 }
 
 //
@@ -5882,9 +5878,6 @@ function refreshInt() {
         refresh *= 1.5;
     } else if (onMobile && TrackedAircraftPositions > 800) {
         refresh *= 1.5;
-    }
-    if (onMobile && adsbexchange && fetchCalls < 2) {
-        refresh *= 3; // ugly ugly ...
     }
 
     //console.log(refresh);
