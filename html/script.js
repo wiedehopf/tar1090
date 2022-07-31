@@ -1890,7 +1890,7 @@ function startPage() {
         selectAllPlanes();
 
     if (!heatmap)
-        jQuery("#loader").addClass("hidden");
+        jQuery("#loader").hide();
 
     if (replay) {
         showReplayBar();
