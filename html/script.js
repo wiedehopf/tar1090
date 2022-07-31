@@ -993,24 +993,6 @@ function initPage() {
     initializeUnitsSelector();
     TAR.planeMan.init();
 
-    // Set up map/sidebar splitter
-    jQuery("#sidebar_container").resizable({
-        handles: {
-            w: '#splitter'
-        },
-        minWidth: 150,
-        maxWidth: (jQuery(window).innerWidth() *0.8),
-    });
-
-    jQuery("#splitter").dblclick(function() {
-        jQuery('#legend').hide();
-        jQuery('#sidebar_container').width('auto');
-        updateMapSize();
-        loStore['sidebar_width'] = jQuery('#sidebar_container').width();
-        jQuery('#sidebar_container').width(loStore['sidebar_width']);
-        jQuery('#legend').show();
-    });
-
     if (loStore['sidebar_width'] != null)
         jQuery('#sidebar_container').width(loStore['sidebar_width']);
     else
@@ -1384,16 +1366,44 @@ jQuery('#selected_altitude_geom1')
         setState: function (state) {
             if (state) {
                 jQuery("#sidebar_container").show();
-                jQuery("#expand_sidebar_control").show();
+                jQuery("#expand_sidebar_button").show();
                 jQuery("#toggle_sidebar_button").removeClass("show_sidebar");
                 jQuery("#toggle_sidebar_button").addClass("hide_sidebar");
+                if (!g.sidebar_initiated) {
+                    g.sidebar_initiated = true;
+                    // Set up map/sidebar splitter
+                    jQuery("#sidebar_container").resizable({
+                        handles: {
+                            w: '#splitter'
+                        },
+                        minWidth: 150,
+                        maxWidth: (jQuery(window).innerWidth() *0.8),
+                    });
+
+                    jQuery("#splitter").dblclick(function() {
+                        jQuery('#legend').hide();
+                        jQuery('#sidebar_container').width('auto');
+                        updateMapSize();
+                        loStore['sidebar_width'] = jQuery('#sidebar_container').width();
+                        jQuery('#sidebar_container').width(loStore['sidebar_width']);
+                        jQuery('#legend').show();
+                    });
+
+                }
+                if (!hideButtons) {
+                    jQuery('#splitter').show();
+                }
             } else {
-                jQuery("#sidebar_container").hide();
-                jQuery("#expand_sidebar_control").hide();
-                jQuery("#toggle_sidebar_button").removeClass("hide_sidebar");
-                jQuery("#toggle_sidebar_button").addClass("show_sidebar");
+                if (loadFinished) {
+                    jQuery("#sidebar_container").hide();
+                    jQuery("#expand_sidebar_button").hide();
+                    jQuery("#toggle_sidebar_button").removeClass("hide_sidebar");
+                    jQuery("#toggle_sidebar_button").addClass("show_sidebar");
+                }
             }
-            updateMapSize();
+            if (loadFinished) {
+                updateMapSize();
+            }
         },
     });
 
@@ -1841,7 +1851,6 @@ function startPage() {
     if (hideButtons) {
         jQuery('#header_top').hide();
         jQuery('#header_side').hide();
-        jQuery('#splitter').hide();
         jQuery('#tabs').hide();
         jQuery('#filterButton').hide();
         jQuery('.ol-control').hide();

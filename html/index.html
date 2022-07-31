@@ -779,10 +779,10 @@
         <div id="header_side" class="infoHeading">
           <div class="buttonContainer">
             <div id="toggle_sidebar_control">
-              <button id="toggle_sidebar_button" class="hide_sidebar sidebar_button " title="Toggle Sidebar"></button>
+              <button id="toggle_sidebar_button" class="show_sidebar sidebar_button " title="Toggle Sidebar"></button>
             </div>
             <div id="expand_sidebar_control">
-              <button id="expand_sidebar_button" class="sidebar_button" title="Expand Sidebar"></button>
+              <button id="expand_sidebar_button" class="sidebar_button" title="Expand Sidebar" style="display: none;"></button>
             </div>
             <div id="settingsCog" class="settingsCog"></div>
             <div id="L" title="Toggle (L)abels" class="button inActiveButton" onclick="toggleLabels();"><span class="buttonText">L</span></div>
@@ -825,7 +825,7 @@
       </div> <!-- map_container-->
 
       <div id="sidebar_container" style="display: none">
-        <div id="splitter" class="ui-resizable-handle ui-resizable-w"></div>
+        <div id="splitter" class="ui-resizable-handle ui-resizable-w" style="display: none;"></div>
         <div id="sidebar_canvas">
 
           <div id="sidebar-table">
@@ -1053,7 +1053,7 @@
     <script src="libs/jquery-3.6.0.min.js"></script>
     <script src="libs/elm-pep-01.js"></script>
     <script src="libs/jquery-ui-1.13.2.min.js"></script>
-    <script src="libs/jquery.ui.touch-punch-1.12.1.js"></script>
+    <script src="libs/jquery.ui.touch-punch-1.0.8.js"></script>
     <script src="libs/zstddec-tar1090-0.0.5.js"></script>
     <script src="libs/ol-custom020.js"></script>
 
