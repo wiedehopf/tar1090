@@ -272,7 +272,7 @@ select {
     white-space: pre-line;
 }
 
-#loader_progress { width:  calc(250px * var(--SCALE)); height: calc( 20px * var(--SCALE)); position: absolute; top: 50%; left: 50%; margin:  calc(128px * var(--SCALE)) 0 0 - calc(125px * var(--SCALE)); }
+#loader_progress { width:  25%; height: 30px; position: absolute; top: 50%; left: 37%; }
 
 
 .aircraft_table_header {

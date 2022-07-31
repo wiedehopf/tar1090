@@ -603,25 +603,34 @@ function initialize() {
 
         processQueryToggles();
 
-        // Wait for history item downloads and append them to the buffer
-        push_history();
-
-        jQuery.when(historyLoaded).done(function() {
-            if (!zstdDecode) {
-                startPage();
-            } else {
-                try {
-                    zstddec.promise.then(function() {
-                        startPage();
-                    });
-                } catch (e) {
-                    webAssemblyFail(e);
-                    startPage();
-                }
-            }
-        });
+        if (nHistoryItems) {
+            // Wait for history item downloads and append them to the buffer
+            push_history();
+            jQuery.when(historyLoaded).done(afterHistoryLoad);
+        } else {
+            afterHistoryLoad();
+        }
     });
 }
+function afterHistoryLoad() {
+    if (nHistoryItems) {
+        reaper();
+    }
+    if (!zstdDecode) {
+        startPage();
+    } else {
+        try {
+            zstddec.promise.then(function() {
+                startPage();
+            });
+        } catch (e) {
+            webAssemblyFail(e);
+            startPage();
+        }
+    }
+}
+
+
 
 function processQueryToggles() {
     if (!usp.has('toggles')) {
@@ -1630,14 +1639,9 @@ function initFilters() {
 
 function push_history() {
     jQuery("#loader_progress").attr('max',nHistoryItems*2);
+
     for (let i = 0; i < nHistoryItems; i++) {
         push_history_item(i);
-    }
-    if (globeIndex) {
-        parseHistory();
-    } else if (!nHistoryItems) {
-        parseHistory();
-        console.log("History loading failed");
     }
 }
 
@@ -1679,10 +1683,8 @@ function push_history_item(i) {
 }
 
 function parseHistory() {
-    if (nHistoryItems) {
-        console.timeEnd("Downloaded History");
-        console.time("Loaded aircraft tracks from History");
-    }
+    console.timeEnd("Downloaded History");
+    console.time("Loaded aircraft tracks from History");
 
     for (let i in deferHistory)
         deferHistory[i] = null;
@@ -1746,8 +1748,7 @@ function parseHistory() {
 
     PositionHistoryBuffer = null;
 
-    if (nHistoryItems)
-        console.timeEnd("Loaded aircraft tracks from History");
+    console.timeEnd("Loaded aircraft tracks from History");
 
     historyLoaded.resolve();
 }
@@ -1814,29 +1815,6 @@ let dresult;
 
 function startPage() {
 
-
-    if (0) {
-            console.log('bla');
-        jQuery.ajax({
-            url: 'data/aircraft.json.zst' , method: 'GET',
-            xhr: arraybufferRequest,
-            timeout: 15000,
-        }).done(function(data) {
-            console.log('asdf');
-            let arr = new Uint8Array(data);
-            let uncompressedSize = 83843;
-            console.time("zstd");
-            dresult = zstdDecode( arr, 0 );
-            console.timeEnd("zstd");
-            console.time("stringify");
-            dstring = String.fromCharCode.apply(null, dresult);
-            console.timeEnd("stringify");
-            console.time("JSON.parse");
-            djson = JSON.parse(dstring);
-            console.timeEnd("JSON.parse");
-        });
-    }
-
     console.log("Completing init");
 
     if (!globeIndex) {
@@ -1878,8 +1856,6 @@ function startPage() {
 
     loadFinished = true;
 
-    reaper();
-
     // Kick off first refresh.
     fetchData();
 
@@ -1908,8 +1884,8 @@ function startPage() {
     if (pTracks)
         setTimeout(TAR.planeMan.refresh, 10000);
 
-    if (load_fi) {
-        load_fi();
+    if (typeof load_fi != 'undefined' && load_fi) {
+        setTimeout(load_fi, 500);
     }
 }
 
@@ -2804,8 +2780,6 @@ function reaper(all) {
         //console.log(`reaper removed ${removed} planes.`);
     }
 
-    refresh();
-
     return removed;
 }
 
@@ -3425,6 +3399,7 @@ function releaseMem() {
     }
     refreshFeatures();
     TAR.planeMan.redraw();
+    refresh();
 }
 
 function refreshFeatures() {
