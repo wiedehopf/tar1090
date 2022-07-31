@@ -1860,9 +1860,6 @@ function startPage() {
     changeZoom("init");
     changeCenter("init");
 
-    clearIntervalTimers();
-    setIntervalTimers();
-
     processURLParams();
     if (usp.has('reg')) {
         let req = regIcaoDownload();
@@ -1885,6 +1882,10 @@ function startPage() {
 
     // Kick off first refresh.
     fetchData();
+
+    clearIntervalTimers();
+    setIntervalTimers();
+
 
     if (tempTrails)
         selectAllPlanes();
@@ -5894,6 +5895,9 @@ function refreshInt() {
         refresh *= 1.5;
     } else if (onMobile && TrackedAircraftPositions > 800) {
         refresh *= 1.5;
+    }
+    if (onMobile && adsbexchange && fetchCalls < 2) {
+        refresh *= 3; // ugly ugly ...
     }
 
     //console.log(refresh);
