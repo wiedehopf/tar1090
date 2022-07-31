@@ -22,11 +22,14 @@ function createBaseLayers() {
     let us = new ol.Collection();
     let europe = new ol.Collection();
 
+    const tileTransition = onMobile ? 0 : 150;
+
     if (loStore['customTiles'] != undefined) {
         custom_layers.push(new ol.layer.Tile({
             source: new ol.source.OSM({
                 "url" : loStore['customTiles'],
                 maxZoom: 15,
+                transition: tileTransition,
             }),
             name: 'custom_tiles',
             title: 'Custom tiles',
@@ -50,6 +53,7 @@ function createBaseLayers() {
                 "url" : "osm_tiles_offline/{z}/{x}/{y}.png",
                 attributionsCollapsible: false,
                 maxZoom: offlineMapDetail,
+                transition: tileTransition,
             }),
             name: 'osm_tiles_offline',
             title: 'OpenStreetMap offline',
@@ -62,6 +66,7 @@ function createBaseLayers() {
             "url" : "https://map.adsbexchange.com/mapproxy/tiles/1.0.0/osm/osm_grid/{z}/{x}/{y}.png",
             attributionsCollapsible: false,
             maxZoom: 16,
+            transition: tileTransition,
         }),
         name: 'osm_adsbx',
         title: 'OpenStreetMap ADSBx',
@@ -72,6 +77,7 @@ function createBaseLayers() {
         source: new ol.source.OSM({
             maxZoom: 17,
             attributionsCollapsible: false,
+            transition: tileTransition,
         }),
         name: 'osm',
         title: 'OpenStreetMap',
@@ -86,6 +92,7 @@ function createBaseLayers() {
             + ' using data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
             attributionsCollapsible: false,
             maxZoom: 15,
+            transition: tileTransition,
         }),
         name: "carto_" + basemap_id,
         title: 'CARTO.com English',
@@ -98,6 +105,7 @@ function createBaseLayers() {
                 "url" : "https://{a-d}.tile.openstreetmap.de/{z}/{x}/{y}.png",
                 attributionsCollapsible: false,
                 maxZoom: 17,
+                transition: tileTransition,
             }),
             name: 'osm_de',
             title: 'OpenStreetMap DE',
@@ -113,6 +121,7 @@ function createBaseLayers() {
                 attributions: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
                 attributionsCollapsible: false,
                 maxZoom: 19,
+                transition: tileTransition,
             }),
             name: 'maptiler_sat',
             title: 'Satellite (Premium)',
@@ -124,6 +133,7 @@ function createBaseLayers() {
                 attributions: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
                 attributionsCollapsible: false,
                 maxZoom: 19,
+                transition: tileTransition,
             }),
             name: 'maptiler_hybrid',
             title: 'Hybrid Sat. (Premium)',
@@ -135,6 +145,7 @@ function createBaseLayers() {
                 attributions: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
                 attributionsCollapsible: false,
                 maxZoom: 19,
+                transition: tileTransition,
             }),
             name: 'maptiler_custom',
             title: 'ADSBx Custom (Premium)',
@@ -148,6 +159,7 @@ function createBaseLayers() {
                 attributions: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
                 attributionsCollapsible: false,
                 maxZoom: 16,
+                transition: tileTransition,
             }),
             name: 'maptiler_english',
             title: 'English MapTiler (testing)',
@@ -163,6 +175,7 @@ function createBaseLayers() {
                 '— Sources: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
                 attributionsCollapsible: false,
                 maxZoom: 17,
+                transition: tileTransition,
             }),
             name: 'esri',
             title: 'ESRI.com Sat.',
@@ -175,6 +188,7 @@ function createBaseLayers() {
                 '— Sources: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
                 attributionsCollapsible: false,
                 maxZoom: 16,
+                transition: tileTransition,
             }),
             name: 'esri_gray',
             title: 'ESRI.com Gray',
@@ -187,6 +201,7 @@ function createBaseLayers() {
                 '— Sources: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
                 attributionsCollapsible: false,
                 maxZoom: 17,
+                transition: tileTransition,
             }),
             name: 'esri_streets',
             title: 'ESRI.com Streets',
@@ -213,6 +228,7 @@ function createBaseLayers() {
                 url: "http://test02.dev.adsbexchange.com/tiles/{z}/{x}/{y}.pbf",
                 format: new ol.format.MVT(),
                 maxZoom: 9,
+                transition: tileTransition,
             }),
             name: 'vtlayer',
             title: 'TEST VECTOR',
@@ -238,6 +254,7 @@ function createBaseLayers() {
             attributions: '<a href="https://terra.nasa.gov/about/terra-instruments/modis">MODIS Terra</a> ' +
             + 'Provided by NASA\'s Global Imagery Browse Services (GIBS), part of NASA\'s Earth Observing System Data and Information System (EOSDIS)',
             maxZoom: 8,
+            transition: tileTransition,
         }),
         name: 'gibs_reliev',
         title: 'GIBS Relief',
@@ -255,6 +272,7 @@ function createBaseLayers() {
             attributions: '<a href="https://terra.nasa.gov/about/terra-instruments/modis">MODIS Terra</a> ' +
             yesterday + ' Provided by NASA\'s Global Imagery Browse Services (GIBS), part of NASA\'s Earth Observing System Data and Information System (EOSDIS)',
             maxZoom: 9,
+            transition: tileTransition,
         }),
         name: 'gibs',
         title: 'GIBS Clouds ' + yesterday,
@@ -279,6 +297,7 @@ function createBaseLayers() {
                     + ' using data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
                     attributionsCollapsible: false,
                     maxZoom: 15,
+                    transition: tileTransition,
                 }),
                 name: "carto_" + basemap_id,
                 title: 'CARTO.com ' + basemap_id,
@@ -294,7 +313,8 @@ function createBaseLayers() {
         world.push(new ol.layer.Tile({
             source: new ol.source.BingMaps({
                 key: BingMapsAPIKey,
-                imagerySet: 'Aerial'
+                imagerySet: 'Aerial',
+                transition: tileTransition,
             }),
             name: 'bing_aerial',
             title: 'Bing Aerial',
@@ -303,7 +323,8 @@ function createBaseLayers() {
         world.push(new ol.layer.Tile({
             source: new ol.source.BingMaps({
                 key: BingMapsAPIKey,
-                imagerySet: 'RoadOnDemand'
+                imagerySet: 'RoadOnDemand',
+                transition: tileTransition,
             }),
             name: 'bing_roads',
             title: 'Bing Roads',
@@ -331,6 +352,7 @@ function createBaseLayers() {
                     attributions: 'Tiles courtesy of <a href="http://www.chartbundle.com/">ChartBundle</a>',
                     attributionsCollapsible: false,
                     maxZoom: 11,
+                    transition: tileTransition,
                 }),
                 name: 'chartbundle_' + type,
                 title: chartbundleTypes[type],
@@ -350,6 +372,7 @@ function createBaseLayers() {
                     attributions: 'Tiles courtesy of <a href="http://www.chartbundle.com/">ChartBundle</a>',
                     attributionsCollapsible: false,
                     maxZoom: 12, // doesn't work for WMS
+                    transition: tileTransition,
                 }),
                 name: 'chartbundle_' + type,
                 title: chartbundleTypes[type],
@@ -364,6 +387,7 @@ function createBaseLayers() {
             "attributions" : "openAIP.net",
             attributionsCollapsible: false,
             maxZoom: 12,
+            transition: tileTransition,
         }),
         name: 'openaip',
         title: 'openAIP TMS',
@@ -379,6 +403,7 @@ function createBaseLayers() {
             source: new ol.source.Vector({
                 url: 'tfrs.kml',
                 format: new ol.format.KML(),
+                transition: tileTransition,
             }),
             name: 'tfr',
             title: 'TFRs',
@@ -428,6 +453,7 @@ function createBaseLayers() {
             projection: 'EPSG:3857',
             resolutions: [156543.03392804097, 78271.51696402048, 39135.75848201024, 19567.87924100512, 9783.93962050256, 4891.96981025128, 2445.98490512564, 1222.99245256282],
             ratio: 1,
+            transition: tileTransition,
         });
 
         let noaaRadar = new ol.layer.Image({
@@ -463,6 +489,7 @@ function createBaseLayers() {
                 minZoom: 0,
                 tileSize: 256,
             }),
+            transition: tileTransition,
         });
 
         let dwd = new ol.layer.Tile({
@@ -495,11 +522,12 @@ function createBaseLayers() {
             zIndex: 99,
             visible: false,
             source: new ol.source.Vector({
-              url: url,
-              format: new ol.format.GeoJSON({
-                defaultDataProjection :'EPSG:4326',
+                url: url,
+                transition: tileTransition,
+                format: new ol.format.GeoJSON({
+                    defaultDataProjection :'EPSG:4326',
                     projection: 'EPSG:3857'
-              })
+                })
             }),
             style: function style(feature) {
                 return new ol.style.Style({

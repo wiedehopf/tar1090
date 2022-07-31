@@ -21,10 +21,6 @@
   </head>
 
   <body>
-    <div id="loader">
-      <progress id="loader_progress"></progress>
-    </div>
-
     <div id="layout_container">
 
       <div id="highlighted_infoblock">
@@ -719,7 +715,11 @@
       </div> <!-- selected_infoblock -->
 
       <div id="map_container">
-        <div id="map_canvas"></div>
+        <div id="map_canvas" style="background-color:#D2D2D2;">
+          <div id="loader">
+            <progress id="loader_progress"></progress>
+          </div>
+        </div>
 
         <div id="geoFindMeDialog" title="Update Location?" class="hidden">
           <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Use your device's location to show a location marker?</p>
