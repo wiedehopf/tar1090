@@ -1845,7 +1845,7 @@ function startPage() {
         req.done(function() {
             const queries = usp.get('reg').split(',');
             for (let i in queries) {
-                let icao = regCache[queries[i].toUpperCase()];
+                let icao = db.regCache[queries[i].toUpperCase()];
                 if (icao) {
                     icao = icao.toLowerCase();
                     urlIcaos.push(icao);
@@ -4632,15 +4632,15 @@ function onJump(e) {
         airport = onJumpInput.trim().toUpperCase();
     }
     if (airport) {
-        if (!_airport_coords_cache) {
+        if (!g.airport_cache) {
             jQuery.getJSON(databaseFolder + "/airport-coords.js")
                 .done(function(data) {
-                    _airport_coords_cache = data;
+                    g.airport_cache = data;
                     onJump();
                 });
             return;
         }
-        coords = _airport_coords_cache[airport];
+        coords = g.airport_cache[airport];
     }
     if (coords) {
         console.log("jumping to: " + coords[0] + " " + coords[1]);
@@ -5442,7 +5442,7 @@ function regIcaoDownload(opts) {
         opts: opts,
     });
     req.done(function(data) {
-        regCache = data;
+        db.regCache = data;
     });
     req.always(function() {
         regIcaoDownloadRunning = false;
@@ -5461,15 +5461,15 @@ function findPlanes(queries, byIcao, byCallsign, byReg, byType, showWarnings) {
         const query = queries[i];
         if (byReg) {
             let upper = query.toUpperCase().replace("-", "");
-            if (regCache) {
-                if (regCache[upper]) {
-                    selectPlaneByHex(regCache[upper].toLowerCase(), {noDeselect: true, follow: true});
+            if (db.regCache) {
+                if (db.regCache[upper]) {
+                    selectPlaneByHex(db.regCache[upper].toLowerCase(), {noDeselect: true, follow: true});
                 }
             } else if (!regIcaoDownloadRunning) {
                 let req = regIcaoDownload({ upper: `${upper}` });
                 req.done(function() {
-                    if (regCache[this.opts.upper]) {
-                        selectPlaneByHex(regCache[this.opts.upper].toLowerCase(), {noDeselect: true, follow: true});
+                    if (db.regCache[this.opts.upper]) {
+                        selectPlaneByHex(db.regCache[this.opts.upper].toLowerCase(), {noDeselect: true, follow: true});
                     }
                 });
             }
