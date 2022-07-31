@@ -386,6 +386,7 @@ function fetchDone(data) {
         }
     }
 
+    if (fetchCalls == 1) { console.timeEnd("first fetch()"); };
 
     // Check for stale receiver data
     if (last == now && !globeIndex) {
@@ -438,6 +439,8 @@ function fetchData(options) {
         return;
     }
     fetchCalls++;
+
+    if (fetchCalls == 1) { console.time("first fetch()"); };
 
     if (enable_uat) {
         FetchPendingUAT = jQuery.ajax({ url: 'chunks/978.json',
