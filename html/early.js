@@ -439,6 +439,7 @@ if (!heatmap) {
     heatmapLoadingState.index = 0;
     heatmapLoadingState.interval = interval;
     heatmapLoadingState.start = start;
+    // 2 async chains of heat chunk loading:
     loadHeatChunk();
     loadHeatChunk();
 }

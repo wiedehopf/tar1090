@@ -389,7 +389,7 @@ function fetchDone(data) {
 
     if (fetchCalls == 1) { console.timeEnd("first fetch()"); };
 
-    if (!g.afterFirstFetchDone) { afterFirstFetch(); };
+    if (!g.firstFetchDone) { afterFirstFetch(); };
 
     // Check for stale receiver data
     if (last == now && !globeIndex) {
@@ -414,13 +414,30 @@ function db_load_type_cache() {
     refresh();
 }
 
-function afterFirstFetch() {
-    if (g.afterFirstFetchDone) { return; }
+g.afterLoad = [];
+function runAfterLoad(func) {
+    if (g.firstFetchDone) {
+        func()
+    } else {
+        g.afterLoad.push(func);
+    }
+}
 
-    g.afterFirstFetchDone = true;
+function afterFirstFetch() {
+    if (g.firstFetchDone) { return; }
+
+    g.firstFetchDone = true;
 
     setTimeout(() => {
         console.time('afterFirstFetch');
+
+        let func;
+        while ((func = g.afterLoad.pop())) {
+            func();
+        }
+
+        geoMag = geoMagFactory(cof2Obj());
+
         db_load_type_cache();
         if (typeof load_gt != 'undefined' && load_gt) { load_gt(); }
         if (typeof load_fi != 'undefined' && load_fi) { load_fi(); }
@@ -1313,7 +1330,7 @@ jQuery('#selected_altitude_geom1')
         init: updateLocation,
         setState: function(state) {
             updateLocation = state;
-            watchPosition();
+            runAfterLoad(watchPosition);
         }
     });
 
@@ -1851,8 +1868,9 @@ function startPage() {
         jQuery('#show_trace').hide();
     }
     if (globeIndex && !icaoFilter) {
-        jQuery('#V').hide();
         toggleTableInView(true);
+    } else {
+        jQuery('#V').show();
     }
 
     if (hideButtons) {
@@ -1901,8 +1919,6 @@ function startPage() {
         showReplayBar();
         loadReplay(replay.ts);
     }
-
-    geoMag = geoMagFactory(cof2Obj());
 
     if (heatmap) {
         drawHeatmap();
@@ -2333,7 +2349,7 @@ function initMap() {
 
     siteCircleLayer.on('change:visible', function(evt) {
         if (evt.target.getVisible()) {
-            geoFindMe();
+            runAfterLoad(geoFindMe);
         }
     });
 
@@ -2351,7 +2367,7 @@ function initMap() {
 
     locationDotLayer.on('change:visible', function(evt) {
         if (evt.target.getVisible()) {
-            geoFindMe();
+            runAfterLoad(geoFindMe);
         }
     });
 
@@ -2539,7 +2555,9 @@ function initMap() {
                     lyr.dimKey = lyr.on('postrender', dim);
                 });
             }
-            OLMap.render();
+            if (loadFinished) {
+                OLMap.render();
+            }
             buttonActive('#B', state);
         }
     });
@@ -2727,14 +2745,16 @@ function initMap() {
         }
     }, true);
 
+
     if (!usp.has('icao')
         && !usp.has("lat") && !usp.has("lon")
         && !usp.has('airport')
     ) {
-        geoFindMe();
+        runAfterLoad(geoFindMe);
     } else {
-        initSitePos();
+        runAfterLoad(initSitePos);
     }
+
 }
 /*
     jQuery("#geoFindMeDialog").dialog({
@@ -4206,7 +4226,7 @@ function resetMap() {
 
     //selectPlaneByHex(null,false);
     jQuery("#update_error").css('display','none');
-    geoFindMe();
+    runAfterLoad(geoFindMe);
 }
 
 function updateMapSize() {
@@ -6210,6 +6230,7 @@ function watchPosition() {
 
 let geoFindInterval = null;
 function geoFindMe() {
+    //console.trace();
     if (!geoFindEnabled()) {
         initSitePos();
         return;
@@ -6326,6 +6347,7 @@ function createLocationDot() {
     locationDotFeatures.addFeature(feature);
 }
 function drawSiteCircle() {
+    //console.trace();
     siteCircleFeatures.clear();
 
     if (!SitePosition)
