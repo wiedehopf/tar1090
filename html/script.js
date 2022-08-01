@@ -2779,17 +2779,22 @@ let lastReap = 0;
 let reapInProgress = false;
 function reaper(all) {
     //console.log("Reaping started..");
-    if (!all) {
-        releaseMem();
-    }
-    if (noVanish && !all)
-        return;
 
     if (reapInProgress) {
         return;
     }
+
     lastReap = now;
+
+    if (noVanish && !all) {
+        return;
+    }
+
     reapInProgress = true;
+
+    if (!all) {
+        releaseMem();
+    }
 
     // Look for planes where we have seen no messages for >300 seconds
     let plane;
@@ -3446,10 +3451,12 @@ function releaseMem() {
         iconCache = {};
     }
 
+    //console.trace();
     //console.log('releaseMem()');
     for (let i in g.planesOrdered) {
-        g.planesOrdered[i].clearMarker();
-        g.planesOrdered[i].destroyTR();
+        let plane = g.planesOrdered[i];
+        plane.clearMarker();
+        plane.destroyTR();
     }
     refreshFeatures();
     TAR.planeMan.redraw();
