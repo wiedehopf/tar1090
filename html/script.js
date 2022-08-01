@@ -389,7 +389,7 @@ function fetchDone(data) {
 
     if (fetchCalls == 1) { console.timeEnd("first fetch()"); };
 
-    afterFirstFetch();
+    if (!g.afterFirstFetchDone) { afterFirstFetch(); };
 
     // Check for stale receiver data
     if (last == now && !globeIndex) {
@@ -414,13 +414,18 @@ function db_load_type_cache() {
     refresh();
 }
 
-let afterFirstFetchDone = false;
 function afterFirstFetch() {
-    if (afterFirstFetchDone) { return; }
-    afterFirstFetchDone = true;
-    db_load_type_cache();
-    if (typeof load_gt != 'undefined' && load_gt) { load_gt(); }
-    if (typeof load_fi != 'undefined' && load_fi) { load_fi(); }
+    if (g.afterFirstFetchDone) { return; }
+
+    g.afterFirstFetchDone = true;
+
+    setTimeout(() => {
+        console.time('afterFirstFetch');
+        db_load_type_cache();
+        if (typeof load_gt != 'undefined' && load_gt) { load_gt(); }
+        if (typeof load_fi != 'undefined' && load_fi) { load_fi(); }
+        console.timeEnd('afterFirstFetch');
+    }, 150);
 }
 
 let debugFetch = false;
