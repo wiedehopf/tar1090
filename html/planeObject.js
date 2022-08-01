@@ -1043,8 +1043,7 @@ PlaneObject.prototype.processTrace = function() {
     let pointsRecent = 0;
 
     if (!traceOpts.showTime) {
-        this.track_linesegs = [];
-        this.removeTrail();
+        this.resetTrail();
     }
 
     let firstPos = null;
@@ -2070,6 +2069,11 @@ PlaneObject.prototype.updateLines = function() {
 
 };
 
+PlaneObject.prototype.resetTrail = function() {
+    this.removeTrail();
+    this.track_linesegs = [];
+
+}
 PlaneObject.prototype.removeTrail = function() {
 
     if (this.trail_features)

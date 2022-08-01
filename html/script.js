@@ -281,12 +281,14 @@ function processReceiverUpdate(data, init) {
         globeIndexNow[data.globeIndex] = data.now;
     }
 
-    if (!uat && !init && !globeIndex)
+    if (!(uat || init || (globeIndex && adsbexchange))) {
         updateMessageRate(data);
+    }
 
     // Loop through all the planes in the data packet
-    for (let j=0; j < data.aircraft.length; j++)
+    for (let j=0; j < data.aircraft.length; j++) {
         processAircraft(data.aircraft[j], init, uat);
+    }
 }
 function fetchFail(jqxhr, status, error) {
     pendingFetches--;
@@ -2286,7 +2288,7 @@ function ol_map_init() {
 // Initalizes the map and starts up our timers to call various functions
 function initMap() {
 
-    if (globeIndex) {
+    if (globeIndex && adsbexchange) {
         jQuery('#dump1090_total_history_td').hide();
         jQuery('#dump1090_message_rate_td').hide();
     }
