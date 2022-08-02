@@ -629,6 +629,7 @@ function initialize() {
             if (receiverJson.lat != null) {
                 SiteLat = receiverJson.lat;
                 SiteLon = receiverJson.lon;
+                SitePosition = [SiteLon, SiteLat];
                 DefaultCenterLat = receiverJson.lat;
                 DefaultCenterLon = receiverJson.lon;
             }
@@ -1780,7 +1781,7 @@ function parseHistory() {
         for (let i in g.planesOrdered) {
             let plane = g.planesOrdered[i];
 
-            if (plane.position && SitePosition)
+            if (plane.position && SitePosition && !pTracks)
                 plane.sitedist = ol.sphere.getDistance(SitePosition, plane.position);
 
             if (uatNoTISB && plane.uat && plane.type && plane.type.substring(0,4) == "tisb") {
@@ -3239,14 +3240,15 @@ function refreshSelected() {
             jQuery('#selected_position').updateText(format_latlng(selected.position));
         }
     }
+    let sitedist;
     if (selected.position && SitePosition) {
-        selected.sitedist = ol.sphere.getDistance(SitePosition, selected.position);
+        sitedist = ol.sphere.getDistance(SitePosition, selected.position);
     }
     jQuery('#selected_source').updateText(format_data_source(selected.dataSource));
     jQuery('#selected_category').updateText(selected.category ? selected.category : "n/a");
     jQuery('#selected_category_label').updateText(get_category_label(selected.category));
-    jQuery('#selected_sitedist1').updateText(format_distance_long(selected.sitedist, DisplayUnits));
-    jQuery('#selected_sitedist2').updateText(format_distance_long(selected.sitedist, DisplayUnits));
+    jQuery('#selected_sitedist1').updateText(format_distance_long(sitedist, DisplayUnits));
+    jQuery('#selected_sitedist2').updateText(format_distance_long(sitedist, DisplayUnits));
     jQuery('#selected_rssi1').updateText(selected.rssi != null ? selected.rssi.toFixed(1) : "n/a");
     if (globeIndex && binCraft && !showTrace) {
         jQuery('#selected_message_count').prev().updateText('Receivers:');

@@ -1319,10 +1319,11 @@ PlaneObject.prototype.processTrace = function() {
 
 PlaneObject.prototype.updatePositionData = function(now, last, data, init) {
     if (this.position && SitePosition) {
-        if (pTracks && this.sitedist)
+        if (pTracks && this.sitedist) {
             this.sitedist = Math.max(ol.sphere.getDistance(SitePosition, this.position), this.sitedist);
-        else
+        } else {
             this.sitedist = ol.sphere.getDistance(SitePosition, this.position);
+        }
     }
 
     if (!globeIndex || this.selected || SelectedAllPlanes || replay) {
