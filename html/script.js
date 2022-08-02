@@ -411,7 +411,6 @@ function db_load_type_cache() {
             g.planesOrdered[i].setTypeData();
         }
     });
-    refresh();
 }
 
 g.afterLoad = [];
@@ -439,8 +438,17 @@ function afterFirstFetch() {
         geoMag = geoMagFactory(cof2Obj());
 
         db_load_type_cache();
-        if (typeof load_gt != 'undefined' && load_gt) { load_gt(); }
-        if (typeof load_fi != 'undefined' && load_fi) { load_fi(); }
+        refresh();
+
+        if (limitUpdates != 0) {
+            if (typeof load_gt != 'undefined' && load_gt) { load_gt(); }
+            if (typeof load_fi != 'undefined' && load_fi) { load_fi(); }
+        }
+
+        if (usp.has('screenshot')) {
+            clearIntervalTimers('silent');
+        }
+
         console.timeEnd('afterFirstFetch');
     }, 150);
 }
@@ -740,6 +748,10 @@ function initPage() {
         let tmp = parseInt(usp.get('limitUpdates'));
         if (!isNaN(tmp))
             limitUpdates = tmp;
+    }
+
+    if (usp.has('screenshot')) {
+        limitUpdates = 0;
     }
 
     if (usp.has('nowebgl')) {

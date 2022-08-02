@@ -56,6 +56,7 @@ See the main readme for more exapmles on how to use the filters
 - centerReceiver - conter the view on receiver position.
 - nowebgl - force rendering without WebGL.
 - tableInView - button V / only show aircraft in view in the table
+- screenshot - For automatic screenshotting, disables updates after the first load of all aircraft in view
 
 ## Toggles
 
