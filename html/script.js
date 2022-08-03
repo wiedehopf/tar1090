@@ -410,6 +410,7 @@ function db_load_type_cache() {
         for (let i in g.planesOrdered) {
             g.planesOrdered[i].setTypeData();
         }
+        refresh();
     });
 }
 
@@ -437,8 +438,7 @@ function afterFirstFetch() {
 
         geoMag = geoMagFactory(cof2Obj());
 
-        db_load_type_cache();
-        refresh();
+        db_load_type_cache(); // this will do a refresh()
 
         if (limitUpdates != 0) {
             if (typeof load_gt != 'undefined' && load_gt) { load_gt(); }
