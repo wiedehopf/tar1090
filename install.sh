@@ -91,7 +91,7 @@ function getGIT() {
     if cd "$TARGET" &>/dev/null && git fetch --depth 1 origin "$BRANCH" 2>/dev/null && git reset --hard FETCH_HEAD; then popd >/dev/null && return 0; fi
     if ! cd /tmp || ! rm -rf "$TARGET"; then popd > /dev/null; return 1; fi
     if git clone --depth 1 --single-branch --branch "$BRANCH" "$REPO" "$TARGET"; then popd > /dev/null; return 0; fi
-    rm -rf "$TARGET"; tmp=/tmp/getGIT-tmp.$RANDOM.$RANDOM
+    rm -rf "$TARGET"; tmp=/tmp/getGIT-tmp-tar1090
     if wget -O "$tmp" "$REPO/archive/refs/heads/$BRANCH.zip" && unzip "$tmp" -d "$tmp.folder" >/dev/null; then
         if mv -fT "$tmp.folder/$(ls "$tmp.folder")" "$TARGET"; then rm -rf "$tmp" "$tmp.folder"; popd > /dev/null; return 0; fi
     fi
@@ -216,7 +216,9 @@ do
     if [[ -z "$srcdir" || -z "$instance" ]]; then
         continue
     fi
-    TMP=$(mktemp -d -p "$ipath")
+    TMP="$ipath/.instance_tmp"
+    rm -rf "$TMP"
+    mkdir -p "$TMP"
     chmod 755 "$TMP"
 
     if [[ "$instance" != "tar1090" ]]; then
