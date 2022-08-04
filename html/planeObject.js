@@ -50,6 +50,7 @@ function PlaneObject(icao) {
 
 PlaneObject.prototype.setNull = function() {
     this.flight = null;
+    this.flightTs = 0;
     this.name = 'no callsign';
     this.squawk    = null;
     this.category  = null;
@@ -136,6 +137,7 @@ PlaneObject.prototype.setNull = function() {
 
 function planeCloneState(target, source) {
     target.flight = source.flight;
+    target.flightTs = source.flightTs;
     target.name = source.name;
     target.squawk = source.squawk;
     target.category = source.category;
@@ -1461,15 +1463,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.request_rotation_from_track = true;
     }
 
-    if (flight == null || flight == "@@@@@@@@") {
-        if (!replay) {
-            this.flight = null;
-            this.name ='no callsign';
-        }
-    } else {
-        this.flight = `${flight}`;
-        this.name = this.flight.trim() || 'empty callsign';
-    }
+    this.setFlight(flight);
 
     if (mlat && noMLAT) {
         this.dataSource = "modeS";
@@ -2487,13 +2481,7 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
         this.rId = rId;
 
     if (data != null) {
-        if (data.flight == null || data.flight == "@@@@@@@@") {
-            this.flight = null;
-            this.name ='no callsign';
-        } else {
-            this.flight = `${data.flight}`;
-            this.name = this.flight.trim() || 'empty callsign';
-        }
+        this.setFlight(data.flight);
 
         if (data.alt_geom != null && !alt_geom && altitude != null && altitude != "ground") {
             //this.alt_geom = altitude + this.geom_diff;
@@ -2852,6 +2840,23 @@ PlaneObject.prototype.setProjection = function(arg) {
         this.olPoint.setCoordinates(proj);
     }
 }
+
+PlaneObject.prototype.setFlight = function(flight) {
+    if (flight == null) {
+        if (now - this.flightTs > 10 * 60) {
+            this.flight = null;
+            this.name ='no callsign';
+        }
+    } else if (flight == "@@@@@@@@") {
+        this.flight = null;
+        this.name ='no callsign';
+    } else {
+        this.flight = `${flight}`;
+        this.name = this.flight.trim() || 'empty callsign';
+        this.flightTs = now;
+    }
+}
+
 function normalizeTraceStamps(data) {
     if (!data || !data.trace) {
         console.log('normalizeTraceStamps: trace empty?')
