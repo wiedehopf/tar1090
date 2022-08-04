@@ -517,6 +517,10 @@ alternative display style: &realHeat
 
 <https://github.com/adsbxchange/wiki/wiki/tar1090-offline-map>
 
+## Uses this library for decompressing zstd
+
+<https://github.com/wiedehopf/zstddec-tar1090>
+
 ## NO WARRANTY - Excerpt from the License:
 
   11. BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY

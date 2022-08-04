@@ -1,12 +1,10 @@
-// Derived from https://github.com/donmccurdy/zstddec with modifications for compatibility by wiedehopf (matthias.wirth@gmail.com)
-
 // LICENSE: JavaScript wrapper is provided under the MIT License
 // LICENSE: WASM ZSTD decoder binary is provided under the BSD 3-Clause License, Copyright (c) 2016-2021, Yann Collet, Facebook, Inc. All rights reserved.
 
-/*
- * WASM ZSTD compiled by wiedehopf (matthias.wirth@gmail.com) 2022, for compatibility will return UINT32_MAX / 0xffffffff on error in findDecompressedSize, decompressed filesize limited to 4 GB
- * See notes https://github.com/wiedehopf/tar1090/tree/master/zstddec/notes.md
- */
+
+// Derived from https://github.com/donmccurdy/zstddec with modifications for compatibility by wiedehopf (matthias.wirth@gmail.com)
+// See https://github.com/wiedehopf/zstddec-tar1090 for more info
+// For browser compatibility, will return UINT32_MAX / 0xffffffff on error in findDecompressedSize, decompressed filesize limited to 4 GB
 
 "use strict";
 
