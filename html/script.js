@@ -804,7 +804,7 @@ function initPage() {
         let lat = parseFloat(usp.get('SiteLat'));
         let lon = parseFloat(usp.get('SiteLon'));
         if (!isNaN(lat) && !isNaN(lon)) {
-            if (usp.has('SiteNosave')) {
+            if (true || usp.has('SiteNosave')) {
                 SiteLat = CenterLat = DefaultCenterLat = lat;
                 SiteLon = CenterLon = DefaultCenterLon = lon;
                 SiteOverride = true;
