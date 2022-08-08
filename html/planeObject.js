@@ -2711,7 +2711,7 @@ PlaneObject.prototype.checkVisible = function() {
 
     timeout += modeSTime - tisbReduction + refresh;
 
-    return (!globeIndex || this.inView || this.selected || SelectedAllPlanes) && (
+    return (!globeIndex || icaoFilter || this.inView || this.selected || SelectedAllPlanes) && (
         (!globeIndex && this.seen < timeout)
         || (globeIndex && this.seen_pos < timeout && now - this.last_info_server < noInfoTimeout)
         || this.selected
