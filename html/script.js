@@ -5956,14 +5956,17 @@ function refreshInt() {
 }
 
 function toggleShowTrace() {
-    if (!showTrace) {
-        showTrace = true;
+    showTrace = !showTrace;
+    if (showTrace) {
+        jQuery("#selected_showTrace_hide").hide();
+
         toggleFollow(false);
         showTraceWasIsolation = onlySelected;
         toggleIsolation("on");
         shiftTrace();
     } else {
-        showTrace = false;
+        jQuery("#selected_showTrace_hide").show();
+
         traceOpts = {};
         fetchData();
         legSel = -1;
@@ -7460,15 +7463,14 @@ function playReplay(state){
 
 function showReplayBar(){
     console.log('showReplayBar()');
-    if (showingReplayBar){
-        // If you can see it, hide it
+    showingReplayBar = !showingReplayBar;
+    if (!showingReplayBar){
         jQuery("#replayBar").hide();
-        showingReplayBar = false;
         replay = null;
         jQuery('#map_canvas').height('100%');
         jQuery('#sidebar_canvas').height('100%');
+        jQuery("#selected_showTrace_hide").show();
     } else {
-        // If it's hidden, show it and change the currently selected date to be an hour ago
         jQuery("#replayBar").show();
         jQuery("#replayBar").css('display', 'grid');
         jQuery('#replayBar').height('100px');
@@ -7534,7 +7536,8 @@ function showReplayBar(){
             },
         });
         jQuery('#replaySpeedHint').text('Speed: ' + replay.speed + 'x');
-        showingReplayBar = true;
+
+        jQuery("#selected_showTrace_hide").hide();
     }
 };
 
