@@ -1243,7 +1243,7 @@ PlaneObject.prototype.processTrace = function() {
     }
 
 
-    //if ((this.position == null || tempPlane.position != null) && tempPlane.position_time > this.position_time && !showTrace && !replay) {
+    //if ((this.position == null || tempPlane.position != null) && tempPlane.position_time > this.position_time && !showTrace && !replay) {}
     //console.log(tempPlane.position_time + ' ' + this.position_time);
     if (tempPlane.last_message_time > this.last_message_time && !showTrace && !replay) {
         planeCloneState(this, tempPlane);
@@ -1313,6 +1313,8 @@ PlaneObject.prototype.processTrace = function() {
         TAR.planeMan.refresh();
         updateAddressBar();
     }
+
+    this.updateVisible();
 
     if (debugTracks) {
         console.log('3h: ' + pointsRecent.toString().padStart(4, ' ') + ' total: ' + points_in_trace);

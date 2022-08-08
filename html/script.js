@@ -1880,8 +1880,11 @@ function startPage() {
         jQuery("#lastLeg_cb").parent().hide();
         jQuery('#show_trace').hide();
     }
-    if (globeIndex && !icaoFilter) {
+    if (globeIndex) {
         toggleTableInView(true);
+        if (icaoFilter) {
+            toggleTableInView(false);
+        }
     } else {
         jQuery('#V').show();
     }
@@ -3018,7 +3021,7 @@ function refreshSelected() {
     somethingSelected = true;
     buttonActive('#F', FollowSelected);
 
-    selected.checkVisible();
+    selected.updateVisible();
     selected.checkForDB();
 
     refreshPhoto(selected);
