@@ -7413,15 +7413,18 @@ function updateMessageRate(data) {
         MessageCountHistory.push({ 'time' : data.now, 'messages' : data.messages});
 
         if (MessageCountHistory.length > 1) {
+            // .. and clean up any old values
+            while ((now - MessageCountHistory[0].time) > 10.5) {
+                MessageCountHistory.shift();
+            }
             let message_time_delta = MessageCountHistory[MessageCountHistory.length-1].time - MessageCountHistory[0].time;
             let message_count_delta = MessageCountHistory[MessageCountHistory.length-1].messages - MessageCountHistory[0].messages;
-            if (message_time_delta > 0)
+            if (message_time_delta > 0) {
                 MessageRate = message_count_delta / message_time_delta;
+            }
+            //console.log(message_time_delta);
         }
 
-        // .. and clean up any old values
-        if ((now - MessageCountHistory[0].time) > 10)
-            MessageCountHistory.shift();
     } else if (uuid != null && data.messages == 1) {
         const cache = uuidCache[data.urlIndex] || { now: 0 };
         let time_delta = now - cache.now;
