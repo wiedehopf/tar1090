@@ -1033,7 +1033,7 @@ function initPage() {
         toggleTrackLabels();
     }
     if (loStore['tableInView'] == "true" || usp.has('tableInView')) {
-        toggleTableInView(true);
+        toggleTableInView('enable');
     }
     if (loStore['debug'] == "true")
         debug = true;
@@ -1881,9 +1881,9 @@ function startPage() {
         jQuery('#show_trace').hide();
     }
     if (globeIndex) {
-        toggleTableInView(true);
+        toggleTableInView('enable');
         if (icaoFilter) {
-            toggleTableInView(false);
+            toggleTableInView('disable');
         }
     } else {
         jQuery('#V').show();
@@ -4611,14 +4611,20 @@ function followRandomPlane() {
         selectPlaneByHex(this_one.icao, {follow: true});
 }
 
-function toggleTableInView(switchOn) {
-    if (switchOn || (globeIndex && !icaoFilter)) {
+function toggleTableInView(arg) {
+    if (arg == 'enable') {
         tableInView = true;
-    } else {
+    } else if (arg == 'disable') {
+        tableInView = false;
+    } else if (!globeIndex) {
         tableInView = !tableInView;
-        TAR.planeMan.refresh();
     }
-    loStore['tableInView'] = tableInView;
+
+    TAR.planeMan.refresh();
+
+    if (!globeIndex) {
+        loStore['tableInView'] = tableInView;
+    }
 
     jQuery('#with_positions').text(tableInView ? "On Screen:" : "With Position:");
 
