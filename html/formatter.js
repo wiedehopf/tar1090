@@ -400,6 +400,7 @@ function iOSVersion() {
 }
 
 function wqi(data) {
+    const INT32_MAX = 2147483647;
     const buffer = data.buffer;
     //console.log(buffer);
     let vals = new Uint32Array(data.buffer, 0, 8);
@@ -529,7 +530,7 @@ function wqi(data) {
 
         ac.extraFlags = u8[106];
         ac.nogps = ac.extraFlags & 1;
-        if (ac.nogps && nogpsOnly && (u8[73] & 64) != 0xffffffff) {
+        if (ac.nogps && nogpsOnly && s32[3] != INT32_MAX) {
             u8[73] |= 64;
             u8[73] |= 16;
         }
