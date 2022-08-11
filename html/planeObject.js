@@ -255,6 +255,10 @@ PlaneObject.prototype.isFiltered = function() {
         return true;
     }
 
+    if (g.icao_nt_only && this.addrtype != 'adsb_icao_nt') {
+        return true;
+    }
+
     if (onlySelected && !this.selected) {
         return true;
     }
@@ -1314,7 +1318,7 @@ PlaneObject.prototype.processTrace = function() {
         updateAddressBar();
     }
 
-    this.updateVisible();
+    this.updateTick();
 
     if (debugTracks) {
         console.log('3h: ' + pointsRecent.toString().padStart(4, ' ') + ' total: ' + points_in_trace);
