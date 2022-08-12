@@ -7587,41 +7587,45 @@ function handleVisibilityChange() {
     // tab is no longer hidden
     if (!tabHidden && prevHidden) {
 
-        globeRateUpdate();
-        clearIntervalTimers();
-        setIntervalTimers();
+        globeRateUpdate().done(noLongerHidden);
 
-        active();
+    }
+}
 
-        refresh();
-        fetchData();
+function noLongerHidden() {
 
-        if (replay_was_active) {
-            playReplay(true);
-        }
+    clearIntervalTimers();
+    setIntervalTimers();
 
-        if (showTrace)
-            return;
-        if (heatmap)
-            return;
+    active();
 
-        if (!globeIndex)
-            return;
+    refresh();
+    fetchData();
 
-        let count = 0;
-        if (multiSelect && !SelectedAllPlanes) {
-            for (let i = 0; i < g.planesOrdered.length; ++i) {
-                let plane = g.planesOrdered[i];
-                if (plane.selected) {
-                    getTrace(plane, plane.icao, {});
-                    if (count++ > 20)
-                        break;
-                }
+    if (replay_was_active) {
+        playReplay(true);
+    }
+
+    if (showTrace)
+        return;
+    if (heatmap)
+        return;
+
+    if (!globeIndex)
+        return;
+
+    let count = 0;
+    if (multiSelect && !SelectedAllPlanes) {
+        for (let i = 0; i < g.planesOrdered.length; ++i) {
+            let plane = g.planesOrdered[i];
+            if (plane.selected) {
+                getTrace(plane, plane.icao, {});
+                if (count++ > 20)
+                    break;
             }
-        } else if (SelectedPlane) {
-            getTrace(SelectedPlane, SelectedPlane.icao, {});
         }
-
+    } else if (SelectedPlane) {
+        getTrace(SelectedPlane, SelectedPlane.icao, {});
     }
 }
 

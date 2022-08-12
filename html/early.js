@@ -625,12 +625,14 @@ function globeRateUpdate() {
             setCookie('adsbx_sid', ((ts + 2*86400*1000) + '_' + Math.random().toString(36).substring(2, 15)), 2);
     }
     if (dynGlobeRate) {
-        jQuery.ajax({url:'/globeRates.json', cache: false, dataType: 'json', }).done(function(data) {
+        return jQuery.ajax({url:'/globeRates.json', cache: false, dataType: 'json', }).done(function(data) {
             if (data.simload != null)
                 globeSimLoad = data.simload;
             if (data.refresh != null && globeIndex)
                 RefreshInterval = data.refresh;
         });
+    } else {
+        return jQuery.Deferred().resolve();
     }
 }
 globeRateUpdate();
