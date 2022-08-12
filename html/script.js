@@ -6317,8 +6317,8 @@ function geoFindMe() {
     }
 }
 
+let initSitePosFirstRun = true;
 function initSitePos() {
-    let lastSitePosition = SitePosition;
     // Set SitePosition
     if (SiteLat != null && SiteLon != null) {
         SitePosition = [SiteLon, SiteLat];
@@ -6329,8 +6329,15 @@ function initSitePos() {
         TAR.planeMan.setColumnVis('distance', false);
     }
 
-    if (!lastSitePosition) {
-        if (SitePosition) {
+    if (initSitePosFirstRun && SitePosition) {
+        initSitePosFirstRun = false;
+        const sortBy = usp.get('sortBy');
+        if (sortBy) {
+            TAR.planeMan.cols[sortBy].sort();
+            if (usp.has('sortByReverse')) {
+                TAR.planeMan.cols[sortBy].sort();
+            }
+        } else if (SitePosition) {
             TAR.planeMan.cols.distance.sort();
         } else {
             TAR.planeMan.cols.altitude.sort();

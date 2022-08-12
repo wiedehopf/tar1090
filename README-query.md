@@ -22,6 +22,8 @@
 - filterIcao=^a - filter icao that start with a
 - filterSources=adsb,uat,adsr,mlat,tisb,modeS - filter palnes by source type.
 - filterDbFlag=military,pia,ladd - filter planes by the db flags.
+- sortBy=column - (possible values: icao, flag, flight, registration, aircraft_type, squawk, altitude, speed, vert_rate, distance, track, msgs, seen, rssi, lat, lon, data_source, military, ws, wd
+- sortByReverse - reverse the sorting specified using sortBy
 
 See the main readme for more exapmles on how to use the filters
 
@@ -57,6 +59,7 @@ See the main readme for more exapmles on how to use the filters
 - nowebgl - force rendering without WebGL.
 - tableInView - button V / only show aircraft in view in the table
 - screenshot - For automatic screenshotting, disables updates after the first load of all aircraft in view
+- SiteLat=45.0 SiteLon=10.0 - Override the receiver location for this visit
 
 ## Toggles
 
