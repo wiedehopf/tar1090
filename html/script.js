@@ -7586,7 +7586,9 @@ function handleVisibilityChange() {
 
     // tab is no longer hidden
     if (!tabHidden && prevHidden) {
-
+        if (loadFinished) {
+            jQuery("#timers_paused").css('display','none');
+        }
         globeRateUpdate().done(noLongerHidden);
 
     }
