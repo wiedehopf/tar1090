@@ -7185,7 +7185,10 @@ function replaySetTimeHint(arg) {
 
     jQuery("#replayDateHint").html("Date: " + dateString);
     jQuery("#replayTimeHint").html("Time: " + timeString);
-    jQuery("#replayDatepicker").datepicker('setDate', dateString);
+    if (replay.datepickerDate != dateString) {
+        replay.datepickerDate = dateString;
+        jQuery("#replayDatepicker").datepicker('setDate', dateString);
+    }
 
 
     let hours = replay.ts.getUTCHours();
