@@ -632,3 +632,51 @@ function wqi(data) {
     }
 }
 
+function ItemCache(maxItems) {
+    this.maxItems = maxItems;
+    this.items = {};
+    this.keys = [];
+}
+ItemCache.prototype.clear = function() {
+    this.items = {};
+    this.keys = [];
+}
+ItemCache.prototype.get = function(key) {
+    return this.items[key];
+}
+ItemCache.prototype.add = function(key, value) {
+
+    if (!(key in this.items)) {
+        this.keys.push(key);
+    }
+    this.items[key] = value;
+
+    if (this.maxItems && this.maxItems > 0) {
+        while (this.keys.length > this.maxItems) {
+            const key = this.keys.shift();
+            delete this.items[key];
+        }
+    }
+}
+
+function itemCacheTest() {
+    let a = new ItemCache(4);
+    a.add(8, 4);
+    a.add(5, 2);
+    a.add(4, 2);
+    a.add(3, 2);
+    a.add(1, 2);
+    a.add(1, 3);
+    a.add(1, 5);
+    let items = JSON.stringify(a.items)
+    let keys = JSON.stringify(a.keys);
+    const expectedItems = '{"1":5,"3":2,"4":2,"5":2}';
+    const expectedKeys = '[5,4,3,1]';
+    if (items != expectedItems || keys != expectedKeys || g.get(1) != 5) {
+        console.error(`ItemCache broken!`);
+        console.log(`got:      items: ${items} keys: ${keys}`);
+        console.log(`expected: items: ${expectedItems} keys: ${expectedKeys}`);
+    } else {
+        console.log(`ItemCache tested correctly!`);
+    }
+}
