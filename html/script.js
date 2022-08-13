@@ -7059,30 +7059,30 @@ function loadReplay(ts) {
             return;
         }
 
-        let req = jQuery.ajax({
-            url: chunk.url,
-            method: 'GET',
-            xhr: arraybufferRequest,
-            rKey: rKey,
-            ts: ts,
-        });
-
         replay.loading = true;
-        req.always(() => { replay.loading = false; });
+        jQuery('#replayLoading').text('Loading ...');
 
-        req.done(function(data) {
-            if (!data) {
-                console.log("initReplay: no data!");
-                return;
-            }
-            g.replayCache.add(this.rKey, data);
-            setTraceDate({ts: this.ts});
-            initReplay(chunk, data);
+        let req = fetch(chunk.url);
+
+        req.finally(() => {
+            replay.loading = false;
+            jQuery('#replayLoading').text('');
         });
-        req.fail(function(jqxhr, status, error) {
-            jQuery("#update_error_detail").text(jqxhr.status + ' --> No data for this timestamp!');
+
+        req.then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error, status = ${response.status}`);
+            }
+            response.arrayBuffer().then((data) => {
+                g.replayCache.add(rKey, data);
+                setTraceDate({ts: ts});
+                initReplay(chunk, data);
+            });
+        });
+        req.catch((error) => {
+            jQuery("#update_error_detail").text(error.message + ' --> No data for this timestamp!');
             jQuery("#update_error").css('display','block');
-            setTimeout(function() {jQuery("#update_error").css('display','none');}, 5000);
+            setTimeout(() => { jQuery("#update_error").css('display','none'); }, 5000);
         });
     }
 }

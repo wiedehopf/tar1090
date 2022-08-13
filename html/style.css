@@ -858,8 +858,12 @@ input{
   grid-template-areas:
     "timezone dateHint timeHint speedHint"
     "play datepicker hours speedSelect"
-    ". . minutes ."
+    "loading . minutes ."
     ". . . .";
+}
+
+#replayLoading {
+  grid-area: loading;
 }
 
 #replayTimeZone{
