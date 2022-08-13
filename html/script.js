@@ -7055,35 +7055,64 @@ function loadReplay(ts) {
     if (data) {
         initReplay(chunk, data);
     } else {
-        if (replay.loading == true) {
+        if (rKey == replay.loadingKey) {
+            // console.log('if (rKey == replay.loadingKey) {');
+            // download already in progress, do nothing
             return;
         }
+        if (replay.abortController) {
+            replay.abortController.abort();
+        }
 
-        replay.loading = true;
+        replay.loadingKey = rKey;
+
         jQuery('#replayLoading').text('Loading ...');
 
-        let req = fetch(chunk.url);
+        replay.abortController = new AbortController();
 
-        req.finally(() => {
-            replay.loading = false;
+        jQuery("#update_error").css('display','none');
+        clearTimeout(replay.errorTimeout);
+
+        const ff = () => {
+            //console.log(`finally ${rKey}`);
+            delete replay.loadingKey;
             jQuery('#replayLoading').text('');
-        });
+        };
 
-        req.then((response) => {
-            if (!response.ok) {
-                throw new Error(`HTTP error, status = ${response.status}`);
+        const errorFunc = (error) => {
+            ff();
+            if (error.name == 'AbortError') {
+                //console.log(`aborted: ${rKey}`);
+                return;
             }
-            response.arrayBuffer().then((data) => {
-                g.replayCache.add(rKey, data);
-                setTraceDate({ts: ts});
-                initReplay(chunk, data);
-            });
-        });
-        req.catch((error) => {
             jQuery("#update_error_detail").text(error.message + ' --> No data for this timestamp!');
             jQuery("#update_error").css('display','block');
-            setTimeout(() => { jQuery("#update_error").css('display','none'); }, 5000);
-        });
+            replay.errorTimeout = setTimeout(() => { jQuery("#update_error").css('display','none'); }, 5000);
+        };
+
+        fetch(chunk.url, { signal: replay.abortController.signal })
+            .then(
+                (response) => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error, status = ${response.status}`);
+                    }
+                    response.arrayBuffer()
+                        .then((data) => {
+                            delete replay.abortController;
+                            g.replayCache.add(rKey, data);
+                            setTraceDate({ts: ts});
+                            initReplay(chunk, data);
+                            //console.log(`loaded: ${rKey}`);
+                            ff();
+                        })
+                        .catch(errorFunc)
+                    ;
+                },
+                errorFunc
+            )
+            .catch( errorFunc )
+        ;
+
     }
 }
 function initReplay(chunk, data) {
