@@ -1224,6 +1224,15 @@ jQuery('#selected_altitude_geom1')
         }
     });
 
+
+    if (usp.has('labelsGeom')) {
+        toggles['labelsGeom'].toggle(true, 'init');
+    }
+
+    if (usp.has('geomEGM')) {
+        toggles['geomUseEGM'].toggle(true, 'init');
+    }
+
     new Toggle({
         key: "utcTimesLive",
         display: "Live track labels: UTC",
@@ -5808,6 +5817,12 @@ function updateAddressBar() {
         }
         if (trackLabels) {
             string += '&trackLabels';
+            if (labelsGeom) {
+                string += '&labelsGeom';
+            }
+            if (geomUseEGM) {
+                string += '&geomEGM';
+            }
         }
         if (traceOpts.showTime) {
             string += '&timestamp=';

@@ -38,6 +38,8 @@ See the main readme for more exapmles on how to use the filters
 - enableLabels - enable labels on aircraft ("L" button).
 - extendedLabels=value - select the labels type ("O" button) / Valid values are 0,1,2.
 - trackLabels - enable track labels ("K" button).
+- labelsGeom - use geometric altitude in track labels
+- geomEGM - show geometric altitudes in EGM96 (MSL) instead of WGS84 (simpler geoid reference)
 - noVanish - persistence mode ("P" button).
 - scale=0.1-x - overall interface scaling.
 - iconScale=0.1-x - scale the aircraft icons. (multiplies with ?scale)
