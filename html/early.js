@@ -145,7 +145,7 @@ var fakeLocalStorage = function() {
 if (window.location.href.match(/adsbexchange.com/) && window.location.pathname == '/') {
     adsbexchange = true;
 }
-if (window.self != window.top) {
+if (0 && window.self != window.top) {
     fakeLocalStorage();
 } else {
     try {
