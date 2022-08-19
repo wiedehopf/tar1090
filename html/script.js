@@ -1009,9 +1009,6 @@ function initPage() {
     }
 
 
-    if (onMobile)
-        enableMouseover = false;
-
     if (false && iOSVersion() <= 12 && !('PointerEvent' in window)) {
         jQuery("#generic_error_detail").text("Enable Settings - Safari - Advanced - Experimental features - Pointer Events");
         jQuery("#generic_error").css('display','block');
@@ -1538,6 +1535,23 @@ jQuery('#selected_altitude_geom1')
             adjustInfoBlock();
         }
     });
+
+    if (onMobile)
+        enableMouseover = false;
+
+    new Toggle({
+        key: "enableMouseover",
+        display: "Enable mouse-over block",
+        container: "#settingsRight",
+        init: enableMouseover,
+        setState: function(state) {
+            enableMouseover = state;
+            if (loadFinished) {
+                checkPointermove();
+            }
+        }
+    });
+
 
 
     jQuery('#selectall_checkbox').on('click', function() {
