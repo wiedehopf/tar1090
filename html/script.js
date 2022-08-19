@@ -148,6 +148,7 @@ let TrackedAircraft = 0;
 let globeTrackedAircraft = 0;
 let TrackedAircraftPositions = 0;
 let TrackedHistorySize = 0;
+let aircraftShown = 0;
 
 let SitePosition = null;
 
@@ -3776,6 +3777,7 @@ function refreshFeatures() {
                 }
             }
         }
+
         ctime && console.timeEnd("inView");
 
         ctime && console.time("resortTable");
@@ -5100,10 +5102,14 @@ function changeZoom(init) {
 }
 
 function checkScale() {
-    if (zoomLvl > markerZoomDivide)
+    if (zoomLvl > markerZoomDivide) {
         iconSize = markerBig;
-    else
+    } else {
         iconSize = markerSmall;
+        if (aircraftShown > 700) {
+            iconSize *= 0.85;
+        }
+    }
 
     // scale markers according to global scaling
     iconSize *= Math.pow(1.3, globalScale) * globalScale * iconScale;
@@ -5280,9 +5286,13 @@ function updateVisible() {
     if (mapIsVisible || !lastRenderExtent) {
         lastRenderExtent = getRenderExtent();
     }
+    aircraftShown = 0;
     for (let i in g.planesOrdered) {
-        g.planesOrdered[i].updateVisible();
+        const plane = g.planesOrdered[i];
+        plane.updateVisible();
+        aircraftShown += (plane.visible && plane.inView);
     }
+    checkScale();
 }
 
 function mapRefresh(redraw) {
