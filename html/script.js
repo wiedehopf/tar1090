@@ -5956,13 +5956,16 @@ function refreshInt() {
 
     let inactive = getInactive();
 
-    if (inactive < 70)
-        inactive = 70;
-    if (inactive > 240)
-        inactive = 240;
+    const base = 70;
+
+    if (inactive < base)
+        inactive = base;
+    if (inactive > 4 * base)
+        inactive = 4 * base;
+
 
     if (globeIndex) {
-        refresh *= inactive / 70;
+        refresh *= inactive / base;
     }
 
     if (!mapIsVisible)
@@ -5973,6 +5976,8 @@ function refreshInt() {
     } else if (onMobile && TrackedAircraftPositions > 800) {
         refresh *= 1.5;
     }
+
+    if (document.visibilityState === 'hidden') { refresh *= 4; } // in case visibility change events don't work, reduce refresh rate if visibilityState works
 
     //console.log(refresh);
 
