@@ -5104,10 +5104,12 @@ function changeZoom(init) {
 function checkScale() {
     if (zoomLvl > markerZoomDivide) {
         iconSize = markerBig;
+    } else if (zoomLvl > markerZoomDivide - 1) {
+        iconSize = markerSmall;
     } else {
         iconSize = markerSmall;
         if (aircraftShown > 700) {
-            iconSize *= 0.85;
+            iconSize *= 0.9;
         }
     }
 
