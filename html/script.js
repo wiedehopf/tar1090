@@ -260,9 +260,10 @@ function processReceiverUpdate(data, init) {
                 console.log('timestep backwards, ignoring data:' + now + ' -> ' + data.now);
                 if (backwardsCounter++ > 5) {
                     backwardsCounter = 0;
-                    console.log('resetting now:' + now + ' -> ' + data.now);
+                    console.log('resetting all data now:' + now + ' -> ' + data.now);
                     now = data.now;
                     last = now - 1;
+                    reaper(1);
                 }
             }
             return;
