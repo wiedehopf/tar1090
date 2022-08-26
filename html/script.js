@@ -129,6 +129,7 @@ let shareFiltersParam = false;
 let lastRequestSize = 0;
 let lastRequestBox = '';
 let nextQuerySelected = 0;
+let enableDynamicCachebusting = false;
 
 let limitUpdates = -1;
 
@@ -255,10 +256,15 @@ function processReceiverUpdate(data, init) {
         uat_last = uat_now;
         uat_now = data.now;
     } else {
+        if (data.now - now < -3) {
+            // data.now is too old, possibly a caching issues
+            enableDynamicCachebusting = true;
+        }
         if (data.now <= now && !globeIndex) {
             if (data.now < now) {
-                console.log('timestep backwards, ignoring data:' + now + ' -> ' + data.now);
-                if (backwardsCounter++ > 5) {
+                backwardsCounter++;
+                console.log('timestep backwards or the same, ignoring data:' + now + ' -> ' + data.now);
+                if (backwardsCounter >= 5) {
                     backwardsCounter = 0;
                     console.log('resetting all data now:' + now + ' -> ' + data.now);
                     now = data.now;
@@ -509,6 +515,11 @@ function fetchData(options) {
         });
     }
 
+    let suffix = zstd ? '.binCraft.zst' : (binCraft ? '.binCraft' : '.json');
+    if (enableDynamicCachebusting) {
+        suffix += `?${currentTime}`;
+    }
+
     let ac_url = [];
     if (uuid != null) {
         for (let i in uuid) {
@@ -569,27 +580,18 @@ function fetchData(options) {
         });
 
         if (binCraft && onlyMilitary && zoomLvl < 5.5) {
-            if (zstd) {
-                ac_url.push('data/globeMil_42777.binCraft.zst');
-            } else {
-                ac_url.push('data/globeMil_42777.binCraft');
-            }
+            ac_url.push('data/globeMil_42777' + suffix);
         } else {
 
             indexes = indexes.slice(0, globeSimLoad);
 
-            let suffix = zstd ? '.binCraft.zst' : (binCraft ? '.binCraft' : '.json');
             let mid = (binCraft && onlyMilitary) ? 'Mil_' : '_';
             for (let i in indexes) {
                 ac_url.push('data/globe' + mid + indexes[i].toString().padStart(4, '0') + suffix);
             }
         }
-    } else if (zstd) {
-        ac_url.push('data/aircraft.binCraft.zst');
-    } else if (binCraft) {
-        ac_url.push('data/aircraft.binCraft');
     } else {
-        ac_url.push('data/aircraft.json');
+        ac_url.push('data/aircraft' + suffix);
     }
 
     pendingFetches += ac_url.length;
