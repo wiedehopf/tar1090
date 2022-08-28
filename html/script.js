@@ -182,22 +182,16 @@ function processAircraft(ac, init, uat) {
     let isArray = Array.isArray(ac);
     let hex = isArray ? ac[0] : ac.hex;
 
-    // Do we already have this plane object in g.planes?
-    // If not make it.
-
-    /*
-        if ( ac.messages < 2) {
-            return;
-        }
-        */
     if (icaoFilter && !icaoFilter.includes(hex))
         return;
 
-    if (uatNoTISB && uat && ac.type && ac.type.substring(0,4) == "tisb") {
+    if (uat && uatNoTISB && ac.type && ac.type.substring(0,4) == "tisb") {
         // drop non ADS-B planes from UAT (TIS-B)
         return;
     }
 
+    // Do we already have this plane object in g.planes?
+    // If not make it.
     let plane = g.planes[hex]
 
     if (!plane) {
@@ -219,21 +213,44 @@ function processAircraft(ac, init, uat) {
         }
         return;
     }
-    // don't use data if the position is more than 1 second older than the position we have
-    if (ac.seen_pos != null && plane.position_time > now - ac.seen_pos + 1)
+    if (uat_now == 0) {
+        plane.updateData(now, last, ac, init);
         return;
+    }
+
+    // UAT dual source stuff below
+
+    let newPos = ac.seen_pos;
+    if (newPos === undefined || isNaN(newPos)) {
+        newPos = 1000;
+    }
+    let oldPos = plane.seen_pos;
+    if (oldPos === undefined || isNaN(oldPos)) {
+        oldPos = 1000;
+    }
+    let newSeen = ac.seen;
+    if (newSeen === undefined || isNaN(newSeen)) {
+        newSeen = 1000;
+    }
+    let oldSeen = plane.seen;
+    if (oldSeen === undefined || isNaN(oldSeen)) {
+        oldSeen = 1000;
+    }
+
     if (!uat) {
-        if (!plane.uat
-            || (ac.seen_pos < 2 && plane.seen_pos > 4)
-            || (plane.seen > 10 && ac.seen < 0.8 * plane.seen) || isNaN(plane.seen)
+        if (!plane.uat // plane isn't uat, new data isn't uat, accept immediately
+            || (prefer978 < 0 && newPos < -prefer978)
+            || (newPos < 2 && oldPos > 4 + prefer978)
+            || (oldPos > 60 && newSeen < 2 && oldSeen > 4 + prefer978)
             || init) {
             plane.uat = false;
             plane.updateData(now, last, ac, init);
         }
     } else {
-        if (plane.uat
-            || (ac.seen_pos < 2 && (plane.seen_pos > 4 || plane.dataSource == "mlat"))
-            || (plane.seen > 10 && ac.seen < 0.8 * plane.seen) || isNaN(plane.seen)
+        if (plane.uat // plane is uat, new data is uat, accept immediately
+            || (prefer978 > 0 && newPos < prefer978)
+            || (newPos < 2 && (oldPos > 4 - prefer978 || plane.dataSource == "mlat"))
+            || (oldPos > 60 && newSeen < 2 && oldSeen > 4 - prefer978)
             || init) {
             let tisb = Array.isArray(ac) ? (ac[7] == "tisb") : (ac.tisb != null && ac.tisb.indexOf("lat") >= 0);
             if (tisb && plane.dataSource == "adsb") {
@@ -256,6 +273,9 @@ function processReceiverUpdate(data, init) {
         uat_last = uat_now;
         uat_now = data.now;
     } else {
+        if (uat_now && now - uat_now > 15) {
+            uat_now = now;
+        }
         if (data.now - now < -3) {
             // data.now is too old, possibly a caching issues
             enableDynamicCachebusting = true;
