@@ -8,7 +8,9 @@ function PlaneObject(icao) {
 
     // Info about the plane
     this.icao      = icao;
-    this.icaorange = findICAORange(icao);
+    const icaorange = findICAORange(icao);
+    this.country = icaorange.country;
+    this.flag_image = icaorange.flag_image;
 
     this.numHex = parseInt(icao.replace('~', '1'), 16);
     this.fakeHex = this.numHex > 16777215; // non-icao hex
@@ -255,6 +257,12 @@ PlaneObject.prototype.isFiltered = function() {
         return true;
     }
 
+    for (const filter of filters_active) {
+        if (!this[filter.field] || !this[filter.field].toUpperCase().match(filter.PATTERN)) {
+            return true;
+        }
+    }
+
     if (g.icao_nt_only && this.addrtype != 'adsb_icao_nt') {
         return true;
     }
@@ -271,14 +279,6 @@ PlaneObject.prototype.isFiltered = function() {
         return true;
     }
 
-    if (onlyDataSource && this.dataSource != onlyDataSource) {
-        return true;
-    }
-
-    if (filterTISB && this.dataSource == "tisb") {
-        return true;
-    }
-
     if (!filterTracks && altFiltered(this.altitude))
         return true;
 
@@ -286,36 +286,17 @@ PlaneObject.prototype.isFiltered = function() {
         return true;
     }
 
-    let flags = PlaneFilter.flagFilter;
+    const flags = PlaneFilter.flagFilter;
     if (flags && flags.length > 0) {
         let found = false;
-        for (let i in flags) {
-            if (this[flags[i]]) {
+        for (const flag of flags) {
+            if (this[flag]) {
                 found = true;
             }
         }
         if (!found) {
             return true;
         }
-    }
-
-    if (PlaneFilter.icao && !this.icao.match(PlaneFilter.icao) ) {
-        return true;
-    }
-
-    if (PlaneFilter.type && !( (this.icaoType || 'UNKNOWN').match(PlaneFilter.type) )) {
-        return true;
-    }
-
-    if (PlaneFilter.description && !( (this.typeDescription || 'UNKNOWN' ).match(PlaneFilter.description) )) {
-        return true;
-    }
-
-    if (PlaneFilter.callsign
-        && (!this.flight || !this.flight.match(PlaneFilter.callsign))
-        && (!this.squawk || !this.squawk.match(PlaneFilter.callsign))
-    ) {
-        return true;
     }
 
     // filter out ground vehicles

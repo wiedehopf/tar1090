@@ -56,7 +56,6 @@ let extendedLabels = 0;
 let mapIsVisible = true;
 let onlyMilitary = false;
 let onlySelected = false;
-let onlyDataSource = null;
 let debug = false;
 let debugJump = false;
 let jumpTo = null;
@@ -790,9 +789,6 @@ function initPage() {
     if (usp.has('halloween'))
         halloween = true;
 
-    if (usp.has('onlyDataSource'))
-        onlyDataSource = usp.get('onlyDataSource');
-
     if (usp.has('outlineWidth')) {
         let tmp = parseInt(usp.get('outlineWidth'));
         if (!isNaN(tmp))
@@ -1005,23 +1001,6 @@ function initPage() {
         }
     }
 
-    if (usp.has('filterCallSign')) {
-        PlaneFilter.callsign = usp.get('filterCallSign');
-        shareFiltersParam = true;
-    }
-    if (usp.has('filterType')) {
-        PlaneFilter.type = usp.get('filterType');
-        shareFiltersParam = true;
-    }
-    if (usp.has('filterDescription')) {
-        PlaneFilter.description = usp.get('filterDescription');
-        shareFiltersParam = true;
-    }
-    if (usp.has('filterIcao')) {
-        PlaneFilter.icao = usp.get('filterIcao');
-        shareFiltersParam = true;
-    }
-
     if (usp.has('filterSources')) {
         PlaneFilter.sources = usp.get('filterSources').split(',');
         shareFiltersParam = true;
@@ -1102,12 +1081,12 @@ function initPage() {
 
     // Set up altitude filter button event handlers and validation options
     jQuery("#altitude_filter_form").submit(onFilterByAltitude);
-    jQuery("#callsign_filter_form").submit(updateCallsignFilter);
-    jQuery("#type_filter_form").submit(updateTypeFilter);
-    jQuery("#description_filter_form").submit(updateDescriptionFilter);
-    jQuery("#icao_filter_form").submit(updateIcaoFilter);
     jQuery("#source_filter_form").submit(updateSourceFilter);
     jQuery("#flag_filter_form").submit(updateFlagFilter);
+
+    jQuery("#altitude_filter_reset_button").click(onResetAltitudeFilter);
+    jQuery("#source_filter_reset_button").click(onResetSourceFilter);
+    jQuery("#flag_filter_reset_button").click(onResetFlagFilter);
 
     // Initialize other controls
     jQuery("#search_form").submit(onSearch);
@@ -1153,14 +1132,6 @@ function initPage() {
 
     jQuery("#leg_prev").click(function() {legShift(-1)});
     jQuery("#leg_next").click(function() {legShift(1)});
-
-    jQuery("#altitude_filter_reset_button").click(onResetAltitudeFilter);
-    jQuery("#callsign_filter_reset_button").click(onResetCallsignFilter);
-    jQuery("#type_filter_reset_button").click(onResetTypeFilter);
-    jQuery("#description_filter_reset_button").click(onResetDescriptionFilter);
-    jQuery("#icao_filter_reset_button").click(onResetIcaoFilter);
-    jQuery("#source_filter_reset_button").click(onResetSourceFilter);
-    jQuery("#flag_filter_reset_button").click(onResetFlagFilter);
 
     jQuery('#settingsCog').on('click', function() {
         jQuery('#settings_infoblock').toggle();
@@ -1698,50 +1669,6 @@ function initFlagFilter(colors) {
         event.originalEvent.ctrlKey = true;
     });
 }
-
-function initFilters() {
-    new Filter({
-        key: 'flight',
-        name: 'Callsign',
-        container: "#filterTable",
-    });
-
-    initSourceFilter(tableColors.unselected);
-    initFlagFilter(tableColors.unselected);
-
-    if (PlaneFilter) {
-        if (PlaneFilter.minAltitude && PlaneFilter.minAltitude > -1000000) {
-            jQuery('#altitude_filter_min').val(PlaneFilter.minAltitude);
-        }
-        if (PlaneFilter.maxAltitude && PlaneFilter.maxAltitude < 1000000) {
-            jQuery('#altitude_filter_max').val(PlaneFilter.maxAltitude);
-        }
-
-        if (PlaneFilter.callsign) {
-            jQuery('#callsign_filter').val(PlaneFilter.callsign);
-        }
-        if (PlaneFilter.type) {
-            jQuery('#type_filter').val(PlaneFilter.type);
-        }
-        if (PlaneFilter.description) {
-            jQuery('#description_filter').val(PlaneFilter.description);
-        }
-        if (PlaneFilter.icao) {
-            jQuery('#icao_filter').val(PlaneFilter.icao);
-        }
-
-        if (PlaneFilter.sources) {
-            sourcesFilter = PlaneFilter.sources
-            sourcesFilter.map((f) => jQuery('#source-filter-' + f).addClass('ui-selected'))
-        }
-
-        if (PlaneFilter.flagFilter) {
-            flagFilter = PlaneFilter.flagFilter
-            flagFilter.map((f) => jQuery('#flag-filter-' + f).addClass('ui-selected'))
-        }
-    }
-}
-
 
 function push_history() {
     jQuery("#loader_progress").attr('max',nHistoryItems*2);
@@ -3283,11 +3210,11 @@ function refreshSelected() {
         jQuery('#selected_seen_pos').updateText('n/a');
     }
 
-    jQuery('#selected_country').updateText(selected.icaorange.country.replace("special use", "special"));
-    if (ShowFlags && selected.icaorange.flag_image !== null) {
+    jQuery('#selected_country').updateText(selected.country.replace("special use", "special"));
+    if (ShowFlags && selected.flag_image !== null) {
         jQuery('#selected_flag').removeClass('hidden');
-        jQuery('#selected_flag img').attr('src', FlagPath + selected.icaorange.flag_image);
-        jQuery('#selected_flag img').attr('title', selected.icaorange.country);
+        jQuery('#selected_flag img').attr('src', FlagPath + selected.flag_image);
+        jQuery('#selected_flag img').attr('title', selected.country);
     } else {
         jQuery('#selected_flag').addClass('hidden');
     }
@@ -3579,8 +3506,8 @@ function refreshFeatures() {
     cols.flag = {
         text: 'Flag',
         header: function() { return ""; },
-        sort: function () { sortBy('country', compareAlpha, function(x) { return x.icaorange.country; }); },
-        value: function(plane) { return (plane.icaorange.flag_image ? ('<img width="20" height="12" style="display: block;margin: auto;" src="' + FlagPath + plane.icaorange.flag_image + '" title="' + plane.icaorange.country + '"></img>') : ''); },
+        sort: function () { sortBy('country', compareAlpha, function(x) { return x.country; }); },
+        value: function(plane) { return (plane.flag_image ? ('<img width="20" height="12" style="display: block;margin: auto;" src="' + FlagPath + plane.flag_image + '" title="' + plane.country + '"></img>') : ''); },
         hStyle: 'style="width: 20px; padding: 3px;"',
         html: true,
     };
@@ -4824,81 +4751,6 @@ function onSearchClear(e) {
     jQuery("#search_input").blur();
 }
 
-function onResetCallsignFilter(e) {
-    jQuery("#callsign_filter").val("");
-    jQuery("#callsign_filter").blur();
-
-    updateCallsignFilter();
-}
-
-function updateCallsignFilter(e) {
-    if (e)
-        e.preventDefault();
-
-    jQuery("#callsign_filter").blur();
-
-    PlaneFilter.callsign = jQuery("#callsign_filter").val().trim().toUpperCase();
-
-    refreshFilter();
-}
-
-function onResetTypeFilter(e) {
-    jQuery("#type_filter").val("");
-    jQuery("#type_filter").blur();
-
-    updateTypeFilter();
-}
-
-function updateTypeFilter(e) {
-    if (e)
-        e.preventDefault();
-
-    jQuery("#type_filter").blur();
-    let type = jQuery("#type_filter").val().trim();
-
-    PlaneFilter.type = type.toUpperCase();
-
-    refreshFilter();
-}
-
-function onResetIcaoFilter(e) {
-    jQuery("#icao_filter").val("");
-    jQuery("#icao_filter").blur();
-
-    updateIcaoFilter();
-}
-
-function updateIcaoFilter(e) {
-    if (e)
-        e.preventDefault();
-
-    jQuery("#icao_filter").blur();
-    let icao = jQuery("#icao_filter").val().trim();
-
-    PlaneFilter.icao = icao.toLowerCase();
-
-    refreshFilter();
-}
-
-function onResetDescriptionFilter(e) {
-    jQuery("#description_filter").val("");
-    jQuery("#description_filter").blur();
-
-    updateTypeFilter();
-}
-
-function updateDescriptionFilter(e) {
-    if (e)
-        e.preventDefault();
-
-    jQuery("#description_filter").blur();
-    let description = jQuery("#description_filter").val().trim();
-
-    PlaneFilter.description = description.toUpperCase();
-
-    refreshFilter();
-}
-
 function onResetAltitudeFilter(e) {
     jQuery("#altitude_filter_min").val("");
     jQuery("#altitude_filter_max").val("");
@@ -4984,6 +4836,162 @@ function updateFlagFilter(e) {
 
     refreshFilter();
 }
+
+const filters = {};
+const filter_list = [];
+const filters_active = [];
+
+function Filter(arg) {
+    this.key = arg.key;
+    this.field = arg.field;
+    this.name = arg.name;
+    this.tbody = document.getElementById(arg.table).getElementsByTagName('tbody')[0];
+
+    this.id = 'filters_' + this.key;
+    this.sid = '#' + this.id;
+
+    filters[this.key] = this;
+    filter_list.push(this);
+
+    this.init();
+}
+
+Filter.prototype.update = function(e) {
+    if (e) {
+        e.preventDefault();
+    }
+
+    this.input.blur();
+    const val = this.input.val().trim();
+
+    this.set(val);
+
+    return false;
+}
+Filter.prototype.set = function(val) {
+
+    this.input.val(val);
+    this.pattern = val;
+    this.PATTERN = this.pattern.toUpperCase();
+
+    const list_index = filters_active.indexOf(this);
+    if (val && list_index < 0) {
+        filters_active.push(this);
+    }
+    if (!val && list_index >= 0) {
+        filters_active.splice(list_index);
+    }
+
+    refreshFilter();
+}
+
+Filter.prototype.reset = function(e) {
+    if (e) {
+        e.preventDefault();
+    }
+    this.set("");
+    return false;
+}
+
+Filter.prototype.init = function() {
+    // don't F directly with the innerhtml of the body because it will drop event listeners / recreate dom elements
+    const row = this.tbody.insertRow();
+    row.innerHTML =
+        `<td><form id="${this.id}">`
+        + '<div class="infoBlockTitleText">Filter by '+ this.name +':</div>'
+        + `<input id="${this.id}_input" name="${this.id}_name" type="text" class="searchInput" maxlength="1024">`
+        + '<button class="formButton" type="submit">Filter</button>'
+        + `<button class="formButton" id="${this.id}_reset">Reset</button>`
+        + '</form></td>'
+    ;
+    this.input = jQuery(this.sid + '_input');
+    this.form = document.getElementById(this.id)
+    this.form.onsubmit = (e) => { return this.update(e); };
+    jQuery(this.sid + '_reset').click((e) => { return this.reset(e); });
+}
+
+function initFilters() {
+    initSourceFilter(tableColors.unselected);
+    initFlagFilter(tableColors.unselected);
+    new Filter({
+        key: 'callsign',
+        field: 'callsign',
+        name: 'callsign',
+        table: "filterTable",
+    });
+    new Filter({
+        key: 'squawk',
+        field: 'squawk',
+        name: 'squawk',
+        table: "filterTable",
+    });
+    new Filter({
+        key: 'type',
+        field: 'icaoType',
+        name: 'type code',
+        table: "filterTable",
+    });
+    new Filter({
+        key: 'description',
+        field: 'typeDescription',
+        name: 'type description',
+        table: "filterTable",
+    });
+    new Filter({
+        key: 'icao',
+        field: 'icao',
+        name: 'ICAO hex id',
+        table: "filterTable",
+    });
+
+
+    new Filter({
+        key: 'registration',
+        field: 'registration',
+        name: 'registration',
+        table: 'filterTable3'
+    });
+    new Filter({
+        key: 'country',
+        field: 'country',
+        name: 'country of registration',
+        table: 'filterTable3'
+    });
+    new Filter({
+        key: 'category',
+        field: 'category',
+        name: 'category (A3,B0,..)',
+        table: 'filterTable3'
+    });
+
+    if (PlaneFilter) {
+        if (PlaneFilter.minAltitude && PlaneFilter.minAltitude > -1000000) {
+            jQuery('#altitude_filter_min').val(PlaneFilter.minAltitude);
+        }
+        if (PlaneFilter.maxAltitude && PlaneFilter.maxAltitude < 1000000) {
+            jQuery('#altitude_filter_max').val(PlaneFilter.maxAltitude);
+        }
+
+        for (const filter of filter_list) {
+            if (usp.has(`filter${filter.key}`)) {
+                filter.set(usp.get(`filter${filter.key}`));
+            }
+        }
+
+        if (PlaneFilter.sources) {
+            sourcesFilter = PlaneFilter.sources
+            sourcesFilter.map((f) => jQuery('#source-filter-' + f).addClass('ui-selected'))
+        }
+
+        if (PlaneFilter.flagFilter) {
+            flagFilter = PlaneFilter.flagFilter
+            flagFilter.map((f) => jQuery('#flag-filter-' + f).addClass('ui-selected'))
+        }
+    }
+}
+
+
+
 
 
 function getFlightAwareModeSLink(code, ident, linkText) {
@@ -5889,17 +5897,9 @@ function updateAddressBar() {
         if (PlaneFilter.maxAltitude < 1000000) {
             filterStrings.push('filterAltMax=' + PlaneFilter.maxAltitude);
         }
-        if (PlaneFilter.callsign) {
-            filterStrings.push('filterCallSign=' + encodeURIComponent(PlaneFilter.callsign));
-        }
-        if (PlaneFilter.type) {
-            filterStrings.push('filterType=' + encodeURIComponent(PlaneFilter.type));
-        }
-        if (PlaneFilter.description) {
-            filterStrings.push('filterDescription=' + encodeURIComponent(PlaneFilter.description));
-        }
-        if (PlaneFilter.icao) {
-            filterStrings.push('filterIcao=' + encodeURIComponent(PlaneFilter.icao));
+
+        for (const filter of filters_active) {
+            filterStrings.push(`filter${filter.key}=${encodeURIComponent(filter.pattern)}`);
         }
 
         if (PlaneFilter.sources) {
@@ -7840,7 +7840,7 @@ function setAutoselect() {
     selectClosest();
 }
 function registrationLink(plane) {
-    if (plane.icaorange.country === 'Brazil') {
+    if (plane.country === 'Brazil') {
         return `https://sistemas.anac.gov.br/aeronaves/cons_rab_resposta_en.asp?textMarca=${plane.registration}`;
     } else {
         return '';
@@ -8316,6 +8316,7 @@ if (adsbexchange && window.location.hostname.startsWith('inaccurate')) {
 function getn(n) {
     limitUpdates=n; RefreshInterval=0; fetchCalls=0;
 }
+
 
 parseURLIcaos();
 initialize();
