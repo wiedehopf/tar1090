@@ -164,6 +164,7 @@ select {
     cursor: ew-resize;
     display: block;
     position: absolute;
+    z-index: 99;
     top:  calc( 5px * var(--SCALE));
     left: calc( 0px * var(--SCALE));
     float: right;

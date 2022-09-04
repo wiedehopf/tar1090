@@ -939,16 +939,22 @@
                     </tr>
                   </tbody>
                 </table>
-                <table cellpadding="0" cellspacing="0" id="filterTable2">
+                <table style="width: 100%" cellpadding="0" cellspacing="0" id="filterTable2">
                   <tbody>
 
                     <tr>
                       <td>
                         <form id="source_filter_form">
                           <div class="infoBlockTitleText">Filter by source:</div>
-                          <ol id="sourceFilter" class="buttonFilter"></ol>
-                          <button class="formButton" type="submit">Filter</button>
-                          <button class="formButton" id="source_filter_reset_button">Reset</button>
+                          <table>
+                            <tr><td>
+                              <ol id="sourceFilter" class="buttonFilter"></ol>
+                            </td></tr>
+                            <tr><td>
+                              <button class="formButton" type="submit">Filter</button>
+                              <button class="formButton" id="source_filter_reset_button">Reset</button>
+                            </td></tr>
+                          </table>
                         </form>
                       </td>
                     </tr>
@@ -957,9 +963,13 @@
                       <td>
                         <form id="flag_filter_form">
                           <div class="infoBlockTitleText">Filter by DB flags:</div>
-                          <ol id="flagFilter" class="buttonFilter"></ol>
-                          <button class="formButton" type="submit">Filter</button>
-                          <button class="formButton" id="flag_filter_reset_button">Reset</button>
+                            <tr><td>
+                              <ol id="flagFilter" class="buttonFilter"></ol>
+                            </td></tr>
+                            <tr><td>
+                              <button class="formButton" type="submit">Filter</button>
+                              <button class="formButton" id="flag_filter_reset_button">Reset</button>
+                            </td></tr>
                         </form>
                       </td>
                     </tr>
