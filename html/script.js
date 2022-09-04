@@ -4915,7 +4915,7 @@ function initFilters() {
     initFlagFilter(tableColors.unselected);
     new Filter({
         key: 'callsign',
-        field: 'callsign',
+        field: 'name',
         name: 'callsign',
         table: "filterTable",
     });
