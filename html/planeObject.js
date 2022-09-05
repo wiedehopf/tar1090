@@ -1076,18 +1076,29 @@ PlaneObject.prototype.processTrace = function() {
         if (legEnd != null)
             end = legEnd;
 
-        if (traceOpts.startStamp != null || traceOpts.endStamp != null) {
+        if (traceOpts.startStamp != null) {
+            let found = 0;
             for (let i = start; i < end; i++) {
                 const timestamp = trace[i][0];
-
-                if (traceOpts.startStamp != null && timestamp < traceOpts.startStamp) {
-                    start = i + 1;
-                }
-                if (traceOpts.endStamp != null && timestamp > traceOpts.endStamp) {
-                    end = i;
+                if (timestamp >= traceOpts.startStamp) {
+                    start = i;
+                    found = 1
                     break;
                 }
             }
+            if (!found) { start = end = 0; }
+        }
+        if (traceOpts.endStamp != null) {
+            let found = 0;
+            for (let i = end - 1; i >= start; i--) {
+                const timestamp = trace[i][0];
+                if (timestamp <= traceOpts.endStamp) {
+                    end = i + 1;
+                    found = 1
+                    break;
+                }
+            }
+            if (!found) { start = end = 0; }
         }
 
         if (lastLeg && !showTrace) {

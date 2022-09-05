@@ -6750,9 +6750,10 @@ function getTrace(newPlane, hex, options) {
         options.defer.done(function(options) {
             const plane = g.planes[options.plane];
             if (showTrace) {
-                legShift(0, plane);
                 if (!multiSelect) {
                     gotoTime(showTraceTimestamp);
+                } else {
+                    legShift(0, plane);
                 }
             } else {
                 plane.processTrace();
