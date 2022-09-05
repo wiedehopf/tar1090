@@ -2747,23 +2747,6 @@ function initMap() {
     }
 
 }
-/*
-    jQuery("#geoFindMeDialog").dialog({
-        resizable: false,
-        height: "auto",
-        width: "auto",
-        buttons: {
-            "Yes": function() {
-                geoFindMe();
-                jQuery(this).dialog( "close" );
-            },
-            "No": function() {
-                loStore['geoFindMeFirstVisit'] = 'no'
-                jQuery(this).dialog( "close" );
-            }
-        }
-    });
-*/
 
 // This looks for planes to reap out of the master g.planes variable
 let lastReap = 0;
@@ -8312,6 +8295,17 @@ function requestBoxString() {
 
 if (adsbexchange && window.location.hostname.startsWith('inaccurate')) {
     jQuery('#inaccurate_warning').removeClass('hidden');
+    document.getElementById('inaccurate_warning').innerHTML = `
+<br>
+This map includes inaccurate / very approximate positions, errors of 200 nmi or more are not unusual.
+<br>
+If no ADS-B / MLAT info is available but at least 1 receiver is receiving ModeS data from a hex, the aircraft is placed where the receiving station on average receives planes which do have a location.
+<br>
+Please add a disclaimer to any screenshots of this website or better yet just report that an aircraft was spotted in the approximate area WITHOUT using screenshots.
+<br>
+<br>
+        `;
+
 }
 
 function getn(n) {
