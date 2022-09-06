@@ -263,6 +263,7 @@ function processAircraft(ac, init, uat) {
     }
 }
 
+let notNewCounter = 0;
 let backwardsCounter = 0;
 function processReceiverUpdate(data, init) {
     // update now and last
@@ -276,10 +277,6 @@ function processReceiverUpdate(data, init) {
         if (uat_now && now - uat_now > 15) {
             uat_now = now;
         }
-        if (data.now - now < -3) {
-            // data.now is too old, possibly a caching issues
-            enableDynamicCachebusting = true;
-        }
         if (data.now <= now && !globeIndex) {
             if (data.now < now) {
                 backwardsCounter++;
@@ -290,11 +287,17 @@ function processReceiverUpdate(data, init) {
                     now = data.now;
                     last = now - 1;
                     reaper(1);
+                    enableDynamicCachebusting = true;
                 }
+            }
+            if (++notNewCounter > 2) {
+                // data.now is too old, possibly a caching issues
+                enableDynamicCachebusting = true;
             }
             return;
         }
         if (data.now > now) {
+            notNewCounter = 0;
             backwardsCounter = 0;
             last = now;
             now = data.now;
