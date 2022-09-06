@@ -2533,7 +2533,9 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
             this.nav_altitude = null;
         }
     }
-    if (this.addrtype.substring(0,4) == "adsb") {
+    if (!this.addrtype) {
+        this.dataSource = "unknown";
+    } else if (this.addrtype.substring(0,4) == "adsb") {
         this.dataSource = "adsb";
     } else if (this.addrtype.substring(0,4) == "adsr") {
         this.dataSource = "adsr";
