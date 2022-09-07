@@ -1006,6 +1006,8 @@ PlaneObject.prototype.updateIcon = function() {
 
 PlaneObject.prototype.processTrace = function() {
 
+    const old_last_info_server = this.last_info_server;
+
     if (this.fullTrace && !this.fullTrace.trace) {
         this.fullTrace = null;
     }
@@ -1315,6 +1317,10 @@ PlaneObject.prototype.processTrace = function() {
 
     if (debugTracks) {
         console.log('3h: ' + pointsRecent.toString().padStart(4, ' ') + ' total: ' + points_in_trace);
+    }
+
+    if (old_last_info_server > this.last_info_server || !this.last_info_server) {
+        this.last_info_server = old_last_info_server;
     }
 };
 
@@ -2691,7 +2697,7 @@ PlaneObject.prototype.isNonIcao = function() {
 };
 
 PlaneObject.prototype.checkVisible = function() {
-    const refresh = refreshInt() / 1000;
+    const refresh = lastRefreshInt / 1000;
     const noInfoTimeout = replay ? 600 : (reApi ? (30 + 2 * refresh) : (30 + Math.min(1, (globeTilesViewCount / globeSimLoad)) * (2 * refresh)));
     const modeSTime = (guessModeS && this.dataSource == "modeS") ? 300 : 0;
     const tisbReduction = (adsbexchange && this.icao[0] == '~') ? 15 : 0;
@@ -2705,6 +2711,7 @@ PlaneObject.prototype.checkVisible = function() {
     }
     this.seen = Math.max(0, __now - this.last_message_time);
     this.seen_pos = Math.max(0, __now - this.position_time);
+    this.noInfoTime = __now - this.last_info_server;
 
     let timeout = seenTimeout;
     if (this.dataSource == "mlat") { timeout = seenTimeoutMlat; }
@@ -2714,7 +2721,7 @@ PlaneObject.prototype.checkVisible = function() {
 
     const res = (!globeIndex || icaoFilter || this.inView || this.selected || SelectedAllPlanes) && (
         (!globeIndex && this.seen < timeout)
-        || (globeIndex && this.seen_pos < timeout && now - this.last_info_server < noInfoTimeout)
+        || (globeIndex && this.seen_pos < timeout && this.noInfoTime < noInfoTimeout)
         || this.selected
         || noVanish
         || (nogpsOnly && this.nogps && this.seen < 15 * 60) // ugly hard coded

@@ -130,6 +130,7 @@ let lastRequestSize = 0;
 let lastRequestBox = '';
 let nextQuerySelected = 0;
 let enableDynamicCachebusting = false;
+let lastRefreshInt = 1000;
 
 let limitUpdates = -1;
 
@@ -205,7 +206,7 @@ function processAircraft(ac, init, uat) {
         return;
 
     // Call the function update
-    if (globeIndex) {
+    if (globeIndex || replay) {
         if (!onlyMilitary || plane.military || (ac.dbFlags && ac.dbFlags & 1)) {
             plane.updateData(now, last, ac, init);
         } else {
@@ -3996,6 +3997,7 @@ function refreshFeatures() {
 // g.planes table end
 //
 
+let lastSelected = null;
 function deselect(plane) {
     if (!plane || !plane.selected)
         return;
@@ -4004,6 +4006,7 @@ function deselect(plane) {
     if (index > -1) {
         SelPlanes.splice(index, 1);
     }
+    lastSelected = plane;
     if (plane == SelectedPlane) {
         if (SelPlanes.length > 0) {
             sp = SelectedPlane = SelPlanes[0];
@@ -6016,6 +6019,8 @@ function refreshInt() {
     if (document.visibilityState === 'hidden') { refresh *= 4; } // in case visibility change events don't work, reduce refresh rate if visibilityState works
 
     //console.log(refresh);
+
+    lastRefreshInt = refresh;
 
     return refresh;
 }
