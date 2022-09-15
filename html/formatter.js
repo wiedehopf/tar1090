@@ -462,7 +462,12 @@ function wqi(data) {
         ac.nav_qnh = s16[14] / 10;
         ac.nav_heading = s16[15] / 90;
 
-        ac.squawk = u16[16].toString(16).padStart(4, '0');
+        const s = u16[16].toString(16).padStart(4, '0');
+        if (s[0] > '9') {
+            ac.squawk = String(parseInt(s[0], 16)) + s[1] + s[2] + s[3];
+        } else {
+            ac.squawk = s;
+        }
         ac.gs = s16[17] / 10;
         ac.mach = s16[18] / 1000;
         ac.roll = s16[19] / 100;
