@@ -403,12 +403,12 @@ function wqi(data) {
     const INT32_MAX = 2147483647;
     const buffer = data.buffer;
     //console.log(buffer);
-    let vals = new Uint32Array(data.buffer, 0, 8);
-    data.now = vals[0] / 1000 + vals[1] * 4294967.296;
+    let u32 = new Uint32Array(data.buffer, 0, 11);
+    data.now = u32[0] / 1000 + u32[1] * 4294967.296;
     //console.log(data.now);
-    let stride = vals[2];
-    data.global_ac_count_withpos = vals[3];
-    data.globeIndex = vals[4];
+    let stride = u32[2];
+    data.global_ac_count_withpos = u32[3];
+    data.globeIndex = u32[4];
 
     let limits = new Int16Array(buffer, 20, 4);
     data.south =  limits[0];
@@ -416,11 +416,13 @@ function wqi(data) {
     data.north =  limits[2];
     data.east =  limits[3];
 
-    data.messages = vals[7];
+    data.messages = u32[7];
 
     let s32 = new Int32Array(data.buffer, 0, stride / 4);
     let receiver_lat = s32[8] / 1e6;
     let receiver_lon = s32[9] / 1e6;
+
+    const binCraftVersion = u32[10];
 
     if (receiver_lat != 0 && receiver_lon != 0) {
         //console.log("receiver_lat: " + receiver_lat + " receiver_lon: " + receiver_lon);
@@ -485,7 +487,12 @@ function wqi(data) {
         ac.tas = u16[28];
         ac.ias = u16[29];
         ac.rc  = u16[30];
-        ac.messages = u16[31];
+
+        if (globeIndex && binCraftVersion >= 20220916) {
+            ac.messageRate = u16[31] / 10;
+        } else {
+            ac.messages = u16[31];
+        }
 
         ac.category = u8[64] ? u8[64].toString(16).toUpperCase() : undefined;
         ac.nic      = u8[65];
