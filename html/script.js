@@ -1535,8 +1535,10 @@ jQuery('#selected_altitude_geom1')
         }
     });
 
-    if (onMobile)
+    if (onMobile) {
         enableMouseover = false;
+        (hideById) && (hideById('tracking_leaderboard_container'));
+    }
 
     new Toggle({
         key: "enableMouseover",
