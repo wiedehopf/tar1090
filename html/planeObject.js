@@ -1634,6 +1634,9 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     if (!this.dbinfoLoaded) {
         this.checkForDB(data);
     }
+
+    this.setTypeFlagsReg(data);
+
     this.last = now;
     this.updatePositionData(now, last, data, init);
     return;
@@ -2759,34 +2762,36 @@ PlaneObject.prototype.setTypeData = function() {
         this.typeLong = `${typeLong}`;
 };
 
-PlaneObject.prototype.checkForDB = function(t) {
+PlaneObject.prototype.setTypeFlagsReg = function(data) {
+        if (data.t && data.t != this.icaoType) {
+            this.icaoType = `${data.t}`;
+            this.setTypeData();
+        }
+        if (data.dbFlags) {
+            this.military = data.dbFlags & 1;
+            this.interesting = data.dbFlags & 2;
+            this.pia = data.dbFlags & 4;
+            this.ladd = data.dbFlags & 8;
+            if (this.pia)
+                this.registration = null;
+        }
+        if (data.r) this.registration = `${data.r}`;
+}
+
+PlaneObject.prototype.checkForDB = function(data) {
     if (!this.dbinfoLoaded && this.icao >= 'ae6620' && this.icao <= 'ae6899') {
         this.icaoType = 'P8 ?';
         this.setTypeData();
     }
-    if (t) {
+    if (data) {
 
-        if (t.desc) this.typeLong = `${t.desc}`;
+        if (data.desc) this.typeLong = `${data.desc}`;
+        if (data.ownOp) this.ownOp = `${data.ownOp}`;
+        if (data.year) this.year = `${data.year}`;
 
-        if (t.ownOp) this.ownOp = `${t.ownOp}`;
-        if (t.year) this.year = `${t.year}`;
+        this.setTypeFlagsReg(data);
 
-        if (t.t) {
-            this.icaoType = `${t.t}`;
-            this.setTypeData();
-        }
-        if (t.dbFlags) {
-            this.military = t.dbFlags & 1;
-            this.interesting = t.dbFlags & 2;
-            this.pia = t.dbFlags & 4;
-            this.ladd = t.dbFlags & 8;
-            if (this.pia)
-                this.registration = null;
-        }
-
-        if (t.r) this.registration = `${t.r}`;
-
-        if (t.r || t.t) {
+        if (data.r || data.t) {
             this.dbinfoLoaded = true;
         }
     }
