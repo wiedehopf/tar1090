@@ -473,8 +473,11 @@ function afterFirstFetch() {
         db_load_type_cache(); // this will do a refresh()
 
         if (limitUpdates != 0) {
-            if (typeof load_gt != 'undefined' && load_gt) { load_gt(); }
-            if (typeof load_fi != 'undefined' && load_fi) { load_fi(); }
+            (typeof load_gt != 'undefined') && (load_gt) && (load_gt()) && (load_gt = null);
+            (typeof load_fi != 'undefined') && (load_fi) && (load_fi()) && (load_fi = null);
+            (typeof load_freestar != 'undefined') && (load_freestar) && (load_freestar()) && (load_freestar = null);
+        } else {
+            (typeof hide_freestar != 'undefined') && (hide_freestar) && (hide_freestar());
         }
 
         if (usp.has('screenshot')) {
