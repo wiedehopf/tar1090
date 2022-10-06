@@ -1540,7 +1540,7 @@ jQuery('#selected_altitude_geom1')
 
     if (onMobile) {
         enableMouseover = false;
-        (hideById) && (hideById('tracking_leaderboard_container'));
+        (typeof hideById != 'undefined') && (hideById) && (hideById('tracking_leaderboard_container'));
     }
 
     new Toggle({
