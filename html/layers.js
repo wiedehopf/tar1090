@@ -554,6 +554,9 @@ function createBaseLayers() {
             }
         });
     };
+    
+    // Taken from https://www.ais.pansa.pl/mil/pliki/EP_ENR_2_4_en.pdf
+    europe.push(createGeoJsonLayer('PL AWACS Orbits', 'plawacsorbits', 'geojson/PL_Mil_AWACS_Orbits.geojson', 'rgba(252, 186, 3, 0.3)', 'rgba(252, 186, 3, 1)', false));
 
     // Taken from https://github.com/alkissack/Dump1090-OpenLayers3-html
     europe.push(createGeoJsonLayer('UK Radar Corridors', 'ukradarcorridors', 'geojson/UK_Mil_RC.geojson', 'rgba(22, 171, 22, 0.3)', 'rgba(22, 171, 22, 1)'));
