@@ -555,6 +555,7 @@ function createBaseLayers() {
         });
     };
 
+    // Taken from https://english.defensie.nl/binaries/defence/documenten/publications/2022/12/14/milaip-01-23-part-1-gen-part-2-enr/MILAIP_01_2023split_GEN_ENR.pdf
     europe.push(createGeoJsonLayer('NL AWACS Orbits', 'nlawacsorbits', 'geojson/NL_Mil_AWACS_Orbits.geojson', 'rgba(252, 186, 3, 0.3)', 'rgba(252, 186, 3, 1)', false));
 
     // Taken from https://github.com/alkissack/Dump1090-OpenLayers3-html
