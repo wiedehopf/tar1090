@@ -554,6 +554,9 @@ function createBaseLayers() {
             }
         });
     };
+    
+    // Taken from https://www.ais.pansa.pl/mil/pliki/EP_ENR_2_4_en.pdf
+    europe.push(createGeoJsonLayer('PL AWACS Orbits', 'plawacsorbits', 'geojson/PL_Mil_AWACS_Orbits.geojson', 'rgba(252, 186, 3, 0.3)', 'rgba(252, 186, 3, 1)', false));
 
     // Taken from https://github.com/olithissen/AwacsOrbitsDE
     europe.push(createGeoJsonLayer('DE AWACS Orbits', 'deawacsorbits', 'geojson/DE_Mil_AWACS_Orbits.geojson', 'rgba(252, 186, 3, 0.3)', 'rgba(252, 186, 3, 1)', false));
