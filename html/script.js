@@ -1842,7 +1842,7 @@ function setIntervalTimers() {
         trailReaper(now);
     }
     if (enable_pf_data && !pTracks && !globeIndex) {
-        jQuery('#pf_info_contianer').removeClass('hidden');
+        jQuery('#pf_info_container').removeClass('hidden');
         timers.pf_data = window.setInterval(fetchPfData, RefreshInterval*10.314);
         fetchPfData();
     }
@@ -3378,14 +3378,22 @@ function refreshHighlighted() {
         return;
 
     let mapSize = OLMap.getSize();
-    if (markerPosition[0] + 200 < mapSize[0])
-        infoBox.css("left", markerPosition[0] + 20);
+    let infoBoxLeft = markerPosition[0];
+    let infoBoxTop = markerPosition[1];
+    if ((infoBoxLeft + 20 + infoBox.width()) < mapSize[0])
+        infoBoxLeft += 20;
+    else if ((infoBoxLeft - 20 - infoBox.width()) > 0)
+        infoBoxLeft -= (20 + infoBox.width());
     else
-        infoBox.css("left", markerPosition[0] - 200);
-    if (markerPosition[1] + 250 < mapSize[1])
-        infoBox.css("top", markerPosition[1] + 50);
+        infoBoxLeft = 0;
+    if ((infoBoxTop + 20 + infoBox.height()) < mapSize[1])
+        infoBoxTop += 20;
+    else if (infoBoxTop - (20 + infoBox.height()) > 0)
+        infoBoxTop -= (20 + infoBox.height());
     else
-        infoBox.css("top", markerPosition[1] - 250);
+        infoBoxTop = 0;
+    infoBox.css("left", infoBoxLeft);
+    infoBox.css("top", infoBoxTop);
 
     jQuery('#highlighted_callsign').text(highlighted.name);
 
