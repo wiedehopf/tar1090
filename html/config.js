@@ -61,7 +61,6 @@
 // carto_dark_all
 // carto_dark_nolabels
 // gibs
-// osm_adsbx
 // chartbundle_sec: "Sectional Charts",
 // chartbundle_tac: "Terminal Area Charts",
 // chartbundle_hel: "Helicopter Charts",

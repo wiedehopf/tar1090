@@ -63,18 +63,6 @@ function createBaseLayers() {
 
     world.push(new ol.layer.Tile({
         source: new ol.source.OSM({
-            "url" : "https://map.adsbexchange.com/mapproxy/tiles/1.0.0/osm/osm_grid/{z}/{x}/{y}.png",
-            attributionsCollapsible: false,
-            maxZoom: 16,
-            transition: tileTransition,
-        }),
-        name: 'osm_adsbx',
-        title: 'OpenStreetMap ADSBx',
-        type: 'base',
-    }));
-
-    world.push(new ol.layer.Tile({
-        source: new ol.source.OSM({
             maxZoom: 17,
             attributionsCollapsible: false,
             transition: tileTransition,

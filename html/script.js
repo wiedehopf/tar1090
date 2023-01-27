@@ -2157,7 +2157,7 @@ function ol_map_init() {
         }
     });
     if (!foundType) {
-        MapType_tar1090 = "osm_adsbx";
+        MapType_tar1090 = "osm";
     }
 
     ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
