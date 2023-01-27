@@ -22,7 +22,7 @@ let nHistoryItems = 0;
 let HistoryItemsReturned = 0;
 let chunkNames = [];
 let PositionHistoryBuffer = [];
-var receiverJson;
+var	receiverJson;
 let deferHistory = [];
 let historyLoaded = jQuery.Deferred();
 let configureReceiver = jQuery.Deferred();
@@ -474,7 +474,7 @@ if (uuid != null) {
 
         setTimeout(function() {
             jQuery("#loader").addClass("hidden");
-            jQuery("#update_error_detail").text("Seems the decoder / receiver / backend isn't working correctly!");
+            jQuery("#update_error_detail").text("似乎解码器/接收器/后端工作不正常！");
             jQuery("#update_error").css('display','block');
         }, 2000);
 
