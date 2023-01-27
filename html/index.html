@@ -37,31 +37,27 @@
         </div>
         <div class="infoBlockSection">
           <div>
-            <div class="infoHeading"><span>Reg.: </span></div>
+            <div class="infoHeading"><span>飞机注册号: </span></div>
             <div class="infoData"><span id="highlighted_registration">n/a</span></div>
           </div>
           <div>
-            <div class="infoHeading"><span>Type code: </span></div>
+            <div class="infoHeading"><span>机型: </span></div>
             <div class="infoData"><span id="highlighted_icaotype">n/a</span></div>
           </div>
-          <div class="rSpacer">
-          </div>
           <div>
-            <div class="infoHeading"><span>Altitude: </span></div>
+            <div class="infoHeading"><span>高度: </span></div>
             <div class="infoData"><span id="highlighted_altitude">n/a</span></div>
           </div>
           <div>
-            <div class="infoHeading"><span>Speed: </span></div>
+            <div class="infoHeading"><span>速度: </span></div>
             <div class="infoData"><span id="highlighted_speed">n/a</span></div>
           </div>
-          <div class="rSpacer">
-          </div>
           <div>
-            <div class="infoHeading"><span>Source: </span></div>
+            <div class="infoHeading"><span>信号源: </span></div>
             <div class="infoData"><span id="highlighted_source">n/a</span></div>
           </div>
           <div>
-            <div class="infoHeading"><span>RSSI: </span></div>
+            <div class="infoHeading"><span>信号强度: </span></div>
             <div class="infoData"><span id="highlighted_rssi">n/a</span></div>
           </div>
         </div>
@@ -74,9 +70,9 @@
 
           <div class="highlightedTitle infoBlockSection">
             <div>
-              <span class="identLarge" title="Callsign: Typically the air traffic control callsign or the aircraft's registration, as entered into the transponder by the pilot" id="selected_callsign">n/a</span>
+              <span class="identLarge" title="呼号：通常是空中交通管制呼号或飞机的登记，由飞行员输入应答器" id="selected_callsign">n/a</span>
             </div>
-            <div id="selected_icao" title="ICAO hex ID: The aircraft's unique ICAO identification number shown in hexadecimal format as set in the aircrafts transponder (can be wrong, we will still display the data with the wrong hex)">
+            <div id="selected_icao" title="ICAO hex ID：飞机的唯一 ICAO 识别号，以十六进制格式显示在飞机应答器中（可能是错误的，我们仍然会显示错误的十六进制数据）">
             </div>
             <div style="display: none" id="creditsSelected">
               <table class="infoSectionTable">
@@ -149,59 +145,55 @@
               </tr>
               <tr id=photo_container>
                 <td>
-                  <div title="Aircraft Photo"id="selected_photo"></div>
+                  <div title="飞机照片"id="selected_photo"></div>
                   <div id="copyrightInfo"></div>
                 </td>
               </tr>
               <tr>
                 <td>
                   <div class="infoHeading">
-                    <span title="Registration: The alphanumeric registration code assigned by the country in which the aircraft is registered.">Reg.: </span>
+                    <span title="飞机注册号：飞机注册所在国家/地区分配的字母数字注册代码。">飞机注册号: </span>
                   </div>
                   <div class="infoData"><span id="selected_registration">n/a</span></div>
                 </td>
               </tr>
               <tr>
                 <td>
-                  <div class="infoData">
-                    <span title="Country of registration" id="selected_country">n/a</span>
+                  <span class="infoHeading" title="飞机注册所在国家">飞机国籍: </span>
+                    <span class="infoData" id="selected_country">n/a</span>
                   </div>
                 </td>
               </tr>
               <tr>
                 <td>
                   <div class="infoHeading">
-                    <span title="Database flags (military / PIA / LAD)">DB flags: </span>
+                    <span title="数据库标志">数据库旗帜: </span>
                   </div>
                   <div class="infoData"><span id="selected_dbFlags">n/a</span></div>
                 </td>
               </tr>
               <tr>
                 <td>
-                  <span class="infoHeading" title="ICAO type code (A320/B738)">Type: </span>
+                  <span class="infoHeading" title="国际民航组织机型代码 (A320/B738)">机型: </span>
                   <span class="infoData"id="selected_icaotype"></span>
                 </td>
               </tr>
               <tr>
                 <td>
-                  <span class="infoData" title="Year of Manufacture / Full Type" id="selected_typelong"></span>
+                  <span class="infoHeading">机型全称: </span>
+                  <span class="infoData" id="selected_typelong"></span>
                 </td>
               </tr>
               <tr>
                 <td>
-                  <span class="infoData" title="" id="selected_ownop"></span>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <span class="infoHeading" title="ICAO type description (L/S/H Landplane/Seaplane/Helicopter 1/2/3/4 Number of P/T/J Reciprocating/Turboprop/Jet Engines">Type Desc.: </span>
+                  <span class="infoHeading" title="ICAO类型说明（L/S/H分别为陆上飞机/水上飞机/直升机，1/2/3/4为发动机数量，P/T/J分别为往复式/涡轮螺旋桨/喷气发动机）">机型描述: </span>
                   <span class="infoData"id="selected_typedesc"></span>
                 </td>
               </tr>
               <tr>
                 <td>
                   <div class="infoHeading">
-                    <span title="A 4-digit octal code assigned to the aircraft by Air Traffic Control">Squawk</span>:
+                    <span title="空中交通管制分配给飞机的 4 位八进制代码">应答机</span>:
                   </div>
                   <div class="infoData">
                     <span id="selected_squawk1"></span>
@@ -268,39 +260,39 @@
           </div>
           <div class="sectionTitle">
             <div class="section-title-content">
-              SPATIAL
+              空间数据
             </div>
           </div>
           <div id=spatial_block class="infoBlockSection">
             <table class="infoSectionTable">
               <tr id=receiver_id_div class="infoBlockSection hidden">
                 <td>
-                  <span class="infoHeading" title="receiver id that supplied the position data">rId:</span>
+                  <span class="infoHeading" title="提供位置数据的接收器 ID">接收器ID:</span>
                   <span class="infoData" id="receiver_id">n/a</span>
                 </td>
               </tr>
               <tr>
                 <td>
-                  <span class="infoHeading" title="The speed of the aircraft over the ground.">Groundspeed:</span>
+                  <span class="infoHeading" title="飞机对于地面的速度">地面速度:</span>
                   <span class="infoData" id="selected_speed1">n/a</span>
                 </td>
               </tr>
               <tr>
                 <td>
-                  <span class="infoHeading" title="The uncorrected pressure-derived height of the aircraft above mean sea level (based on barometric pressure)">Baro. Altitude</span>:
+                  <span class="infoHeading" title="飞机在平均海平面以上的未校正压力衍生高度（基于大气压力）">气压高度</span>:
                   <span class="infoData" id="selected_altitude1"></span>
                 </td>
               </tr>
               <tr>
                 <td>
-                  <span class="infoHeading" id="selected_altitude_geom1_title" title="The geometric GPS derived altitude referenced to WGS84 ellipsoid (or reference EGM96 when enabled in the settings)">WGS84 Altitude</span>:
+                  <span class="infoHeading" id="selected_altitude_geom1_title" title="参考WGS84椭球体的几何GPS衍生高度（或在设置中启用时参考EGM96）">实际高度</span>:
                   <span class="infoData" id="selected_altitude_geom1"></span>
                 </td>
               </tr>
               <tr>
                 <td>
                   <div class="infoHeading">
-                    <span title="Rate of climb or descent">Vert. Rate</span>:
+                    <span title="上升或下降的速度">垂直率</span>:
                   </div>
                   <div class="infoData">
                     <span id="selected_vert_rate">n/a</span>
@@ -314,7 +306,7 @@
               <tr>
                 <td>
                   <div class="infoHeading">
-                    <span title="Direction the aircraft is traveling over the ground">Track</span>:
+                    <span title="飞机在地面上空飞行的方向">航向</span>:
                   </div>
                   <div class="infoData">
                     <span id="selected_track1">n/a</span>
@@ -324,7 +316,7 @@
               <tr>
                 <td>
                   <div class="infoHeading">
-                    <span title="Latitude and longitude coordinates of the aircraft's last known position">Pos.:</span>
+                    <span title="接收器最后接收该架飞机消息时飞机所处位置的经纬度">经纬度:</span>
                   </div>
                   <div class="infoData">
                     <span id="selected_position">n/a</span>
@@ -334,7 +326,7 @@
               <tr>
                 <td>
                   <div class="infoHeading">
-                    <span title="Distance of the aircraft from your ADS-B site at its last known position">Distance</span>:
+                    <span title="接收器最后接收该架飞机消息时飞机所处位置与接收器的距离">距离:</span>
                   </div>
                   <div class="infoData">
                     <span id="selected_sitedist2">n/a</span>
@@ -349,14 +341,14 @@
 
           <div class="sectionTitle">
             <div class="section-title-content">
-              Signal
+              信号信息
             </div>
           </div>
           <div class="infoBlockSection">
 
             <div>
               <div class="infoHeading">
-                <span title="Data source for the reported aircraft data (e.g., ADS-B, MLAT, Other Mode S)">Source</span>:
+                <span title="报告飞机数据的数据源（例如ADS-B、MLAT、Mode-S等）">信号源</span>:
               </div>
               <div class="infoData">
                 <span id="selected_source">n/a</span>
@@ -365,7 +357,7 @@
             <div id="selected_showTrace_hide">
               <div>
                 <div class="infoHeading">
-                  <span title="Signal strength from this aircraft on your receiver in dBFS">RSSI</span>:
+                  <span title="接收器接收该架飞机的信号强度">信号强度</span>:
                 </div>
                 <div class="infoData">
                   <span id="selected_rssi1">n/a</span>
@@ -373,7 +365,7 @@
               </div>
               <div>
                 <div class="infoHeading">
-                  <span title="Number of messages received from this aircraft per second (averaged over the last 2 update intervals)">Msg. Rate</span>:
+                  <span title="接收器每秒从该架飞机接收的消息数（过去2次更新间隔的平均值）">每秒消息数</span>:
                 </div>
                 <div class="infoData">
                   <span id="selected_message_rate">n/a</span>
@@ -381,18 +373,15 @@
               </div>
               <div>
                 <div class="infoHeading">
-                  Messages:
+                  <span title="接收器所接收此架飞机的所有消息数">总消息数</span>:
                 </div>
                 <div class="infoData" id="selected_message_count">
                 </div>
               </div>
 
-              <div class="rSpacer">
-              </div>
-
               <div>
                 <div class="infoHeading">
-                  <span title="Time in seconds since a position was received from this aircraft">Last Pos.</span>:
+                  <span title="接收器最后接收该架飞机位置的时间（秒）">最后接收位置</span>:
                 </div>
                 <div class="infoData">
                   <span id="selected_seen_pos">n/a</span>
@@ -400,7 +389,7 @@
               </div>
               <div>
                 <div class="infoHeading">
-                  <span title="Time in seconds since a message was received from this aircraft">Last Seen</span>:
+                  <span title="接收器最后接收该架飞机信息的时间（秒）">最后接收消息</span>:
                 </div>
                 <div class="infoData">
                   <span id="selected_seen">n/a</span>
@@ -411,13 +400,13 @@
 
           <div class="sectionTitle">
             <div class="section-title-content">
-              FMS SEL
+              飞行管理系统选定选项
             </div>
           </div>
           <div class="infoBlockSection">
             <div>
               <div class="infoHeading">
-                <span title="The selected altitude in the aircraft's flight management system">Sel. Alt.</span>:
+                <span title="飞机飞行管理系统中选定的高度">选定的高度</span>:
               </div>
               <div class="infoData">
                 <span id="selected_nav_altitude">n/a</span>
@@ -425,7 +414,7 @@
             </div>
             <div>
               <div class="infoHeading">
-                <span title="The selected heading in the aircraft's flight management system">Sel. Head.</span>:
+                <span title="飞机飞行管理系统中选定的航向">选定的航向</span>:
               </div>
               <div class="infoData">
                 <span id="selected_nav_heading">n/a</span>
@@ -435,13 +424,13 @@
 
           <div class="sectionTitle">
             <div class="section-title-content">
-              Wind
+              风
             </div>
           </div>
           <div class="infoBlockSection">
             <div>
               <div class="infoHeading">
-                <span title="Calculated Wind speed">Speed</span>:
+                <span title="计算风速">风速</span>:
               </div>
               <div class="infoData">
                 <span id="selected_ws">n/a</span>
@@ -449,7 +438,7 @@
             </div>
             <div>
               <div class="infoHeading">
-                <span title="Calculated wind is blowing out of this direction">Direction (from)</span>:
+                <span title="计算风向">风向</span>:
               </div>
               <div class="infoData">
                 <span id="selected_wd">n/a</span>
@@ -457,7 +446,7 @@
             </div>
             <div>
               <div class="infoHeading">
-                <span title="Total (TAT) / Static (SAT/OAT) air temperature calculated using Mach and true airspeed">TAT / OAT</span>:
+                <span title="使用马赫数和真实空速计算的总（TAT）/静态（SAT/OAT）气温">TAT/OAT气温</span>:
               </div>
               <div class="infoData">
                 <span id="selected_temp">n/a</span>
@@ -466,13 +455,13 @@
           </div> <!-- Wind -->
           <div class="sectionTitle">
             <div class="section-title-content">
-              Speed
+              速度
             </div>
           </div>
           <div class="infoBlockSection">
             <div>
               <div class="infoHeading">
-                <span title="The speed of the aircraft over the ground">Ground:</span>
+                <span title="飞机对于地面的速度">地面速度:</span>
               </div>
               <div class="infoData">
                 <span id="selected_speed2">n/a</span>
@@ -480,7 +469,7 @@
             </div>
             <div>
               <div class="infoHeading">
-                <span title="True airspeed (the speed of the aircraft relative to the airmass in which it is flying)">True</span>:
+                <span title="真实空速（飞机相对于飞行气团的速度）">真实空速</span>:
               </div>
               <div class="infoData">
                 <span id="selected_tas">n/a</span>
@@ -488,7 +477,7 @@
             </div>
             <div>
               <div class="infoHeading">
-                <span title="Indicated airspeed (the airspeed read directly from the airspeed indicator on the aircraft)">Indicated:</span>
+                <span title="指示空速（直接从飞机上的空速指示器读取的空速）">指示空速</span>:
               </div>
               <div class="infoData">
                 <span id="selected_ias">n/a</span>
@@ -496,7 +485,7 @@
             </div>
             <div>
               <div class="infoHeading">
-                <span title="The ratio of the speed of the aircraft to the speed of sound in the surrounding space">Mach</span>:
+                <span title="飞机速度与周围空间声速之比">马赫</span>:
               </div>
               <div class="infoData">
                 <span id="selected_mach">n/a</span>
@@ -506,13 +495,13 @@
 
           <div class="sectionTitle">
             <div class="section-title-content">
-              Altitude
+              高度
             </div>
           </div>
           <div class="infoBlockSection">
             <div>
               <div class="infoHeading">
-                <span title="The uncorrected pressure-derived height of the aircraft above mean sea level (based on barometric pressure)">Barometric</span>:
+                <span title="飞机在平均海平面以上的未修正压力衍生高度（基于大气压）">气压高度</span>:
               </div>
               <div class="infoData">
                 <span id="selected_altitude2"></span>
@@ -520,7 +509,7 @@
             </div>
             <div>
               <div class="infoHeading">
-                <span title="Rate of climb or descent (derived from barometric altitude)">Baro. Rate</span>:
+                <span title="爬升或下降速率（由气压高度得出）">气压垂直率</span>:
               </div>
               <div class="infoData">
                 <span id="selected_baro_rate">n/a</span>
@@ -528,7 +517,7 @@
             </div>
             <div>
               <div class="infoHeading">
-                <span id="selected_altitude_geom2_title" title="The geometric GPS derived altitude referenced to WGS84 ellipsoid (or reference EGM96 when enabled in the settings)">WGS84</span>:
+                <span id="selected_altitude_geom2_title" title="参考 WGS84 椭球体的几何 GPS 派生高度（或在设置中启用时参考 EGM96）">几何高度</span>:
               </div>
               <div class="infoData">
                 <span id="selected_altitude_geom2">n/a</span>
@@ -536,7 +525,7 @@
             </div>
             <div>
               <div class="infoHeading fourColumnSection3">
-                <span title="Rate of climb or descent (derived from avionics which may be inertial or GNSS/satellite-based)">Geom. Rate</span>:
+                <span title="爬升或下降速率（源自航空电子设备，可能是惯性或基于GNSS/卫星的）">几何速率</span>:
               </div>
               <div class="infoData fourColumnSection4">
                 <span id="selected_geom_rate">n/a</span>
@@ -544,7 +533,7 @@
             </div>
             <div>
               <div class="infoHeading">
-                <span title="The altimeter/QNH setting used by the aircraft's navigation systems">QNH</span>:
+                <span title="飞机导航系统使用的高度表/修正海平面气压设置">修正海平面气压</span>:
               </div>
               <div class="infoData">
                 <span id="selected_nav_qnh">n/a</span>
@@ -554,13 +543,13 @@
 
           <div class="sectionTitle">
             <div class="section-title-content">
-              Direction
+              方向
             </div>
           </div>
           <div class="infoBlockSection">
             <div>
               <div class="infoHeading">
-                <span title="Direction the aircraft is traveling over the ground">Ground Track</span>:
+                <span title="飞机在地面上空飞行的方向">地面航迹</span>:
               </div>
               <div class="infoData">
                 <span id="selected_track2">n/a</span>
@@ -568,7 +557,7 @@
             </div>
             <div>
               <div class="infoHeading">
-                <span title="The aircraft's nose heading relative to true north">True Heading</span>:
+                <span title="飞机相对于正北的机头航向">真实航向</span>:
               </div>
               <div class="infoData">
                 <span id="selected_true_heading">n/a</span>
@@ -576,7 +565,7 @@
             </div>
             <div>
               <div class="infoHeading">
-                <span title="The aircraft's nose heading relative to magnetic north">Magnetic Heading</span>:
+                <span title="飞机机头相对于磁北的航向">磁航向</span>:
               </div>
               <div class="infoData">
                 <span id="selected_mag_heading">n/a</span>
@@ -584,7 +573,7 @@
             </div>
             <div>
               <div class="infoHeading">
-                <span title="Magnetic Declination looked up from the World Magnetic Model">Magnetic Decl.</span>:
+                <span title="磁偏角从世界磁模型向上看">磁偏角</span>:
               </div>
               <div class="infoData">
                 <span id="selected_mag_declination">n/a</span>
@@ -592,7 +581,7 @@
             </div>
             <div>
               <div class="infoHeading">
-                <span title="Rate of turn of the ground track">Track Rate</span>:
+                <span title="地面轨道的转弯速率">轨道速率</span>:
               </div>
               <div class="infoData">
                 <span id="selected_trackrate">n/a</span>
@@ -600,7 +589,7 @@
             </div>
             <div>
               <div class="infoHeading">
-                <span title="The aircraft's roll angle">Roll</span>:
+                <span title="飞机的侧倾角度">侧倾角度</span>:
               </div>
               <div class="infoData">
                 <span id="selected_roll">n/a</span>
@@ -610,13 +599,13 @@
 
           <div class="sectionTitle">
             <div class="section-title-content">
-              Stuff
+              特征
             </div>
           </div>
           <div class="infoBlockSection">
             <div>
               <div class="infoHeading">
-                <span title="The enabled navigation modes as reported by the aircraft (i.e., auto-pilot, Traffic Collision Avoidance System, altitude hold, approach, LNAV approach, and/or VNAV approach)">Nav. Modes</span>:
+                <span title="飞机报告的启用导航模式（即自动驾驶、交通防撞系统、高度保持、进近、LNAV进近和/或VNAV进近）">导航模式</span>:
               </div>
               <div class="infoData">
                 <span id="selected_nav_modes">n/a</span>
@@ -624,7 +613,7 @@
             </div>
             <div>
               <div class="infoHeading">
-                <span title="For ADS-B-equipped aircraft, the version of ADS-B to which the aircraft conforms, as reported by the aircraft">ADS-B Ver.</span>:
+                <span title="对于配备ADS-B的飞机，飞机报告的飞机符合的ADS-B版本">ADS-B版本</span>:
               </div>
               <div class="infoData">
                 <span id="selected_version">n/a</span>
@@ -632,7 +621,7 @@
             </div>
             <div>
               <div class="infoHeading">
-                <span title="Aircraft category code as reported by the aircraft, this indicates the type of aircraft and, for airplanes, a relative indicator of its size">Category</span>:
+                <span title="飞机所报告的飞机类别代码，表示飞机类型，对于飞机，还表示其尺寸的相对指示器">飞机类别</span>:
               </div>
               <div class="infoData">
                 <span id="selected_category">n/a</span>
@@ -647,13 +636,13 @@
 
           <div class="sectionTitle">
             <div class="section-title-content">
-              Accuracy
+              准确性
             </div>
           </div>
           <div class="infoBlockSection">
             <div>
               <div class="infoHeading">
-                <span title="Navigation accuracy category of the position (95% bound on positions)">NAC<sub>P</sub></span>:
+                <span title="位置的导航精度类别（95%限制在位置上）">位置精度类别</span>:
               </div>
               <div class="infoData">
                 <span id="selected_nac_p">n/a</span>
@@ -661,7 +650,7 @@
             </div>
             <div>
               <div class="infoHeading">
-                <span title="Surveillance integrity level (probability of positions lying outside the claimed radius of containment)">SIL</span>:
+                <span title="监控完整性水平（位于声称的安全壳半径之外的位置的概率）">监控完整性水平</span>:
               </div>
               <div class="infoData">
                 <span id="selected_sil">n/a</span>
@@ -669,7 +658,7 @@
             </div>
             <div>
               <div class="infoHeading">
-                <span title="Navigation accuracy category of the velocity (95% bound on velocities)">NAC<sub>V</sub></span>:
+                <span title="导航精度类别的速度（95%的速度限制）">导航精度速度</span>:
               </div>
               <div class="infoData">
                 <span id="selected_nac_v">n/a</span>
@@ -677,7 +666,7 @@
             </div>
             <div>
               <div class="infoHeading">
-                <span title="Whether the reported pressure altitude has been crosschecked against another source of pressure altitude">NIC<sub>BARO</sub></span>:
+                <span title="报告的压力高度是否与另一个压力高度源进行了交叉检查">压力高度的交叉检查</span>:
               </div>
               <div class="infoData">
                 <span id="selected_nic_baro">n/a</span>
@@ -685,7 +674,7 @@
             </div>
             <div>
               <div class="infoHeading">
-                <span title="Radius of containment, the reported position of the aircraft is expected to be within this distance of the true position, with a failure rate defined by SIL">R<sub>C</sub></span>:
+                <span title="安全半径，飞机的报告位置预计在真实位置的该距离内，故障率由安全完整性等级定义">安全半径</span>:
               </div>
               <div class="infoData">
                 <span id="selected_rc">n/a</span>
@@ -696,7 +685,7 @@
           </div>
 
           <div class="bottom-info-container">
-            <div class="bottom-info-text"> Learn more about Mode S data type by hovering over each data label.</div>
+            <div class="bottom-info-text"> 通过将鼠标悬停在每个数据标签上，了解有关模式S数据类型的更多信息。</div>
           </div>
           <div>
               <div class="infoHeading">
@@ -712,9 +701,9 @@
               Export KML
             </div>
           </div>
-          <button id="export_kml" onclick='exportKML("geom")'>geometric altitude (EGM96)</button>
-          <button id="export_kml" onclick='exportKML("geom_avg")'>baro + avg.(EGM96 - baro)</button>
-          <button id="export_kml" onclick='exportKML("baro")'>uncorrected pressure alt.</button>
+          <button id="export_kml" onclick='exportKML("geom")'>几何高度 (EGM96)</button>
+          <button id="export_kml" onclick='exportKML("geom_avg")'>气压+平均值(EGM96-气压)</button>
+          <button id="export_kml" onclick='exportKML("baro")'>未校正压力高度</button>
 
         </div>
       </div> <!-- selected_infoblock -->
@@ -730,11 +719,11 @@
         <div id="settings_infoblock">
           <div id="settings_close" class="settingsCloseBox"></div>
           <div class="settingsOptionContainer">
-            <div class="settingsText">Text and Icon size:</div>
+            <div class="settingsText">文本和图标大小</div>
           </div>
           <div style="display: block, width: 100%" id="userScaleSlider"></div>
           <div class="settingsOptionContainer">
-            <div class="settingsText">Icon size multiplier:</div>
+            <div class="settingsText">图标倍数大小</div>
           </div>
           <div style="display: block, width: 100%" id="iconScaleSlider"></div>
           <div class="rSpacer">
@@ -744,27 +733,27 @@
             <div class="settingsOptionContainer">
               <label for="units_selector"><span class="infoBlockTitleText">Units:&nbsp;&nbsp;</span></label>
               <select name="units_selector" id="units_selector">
-                <option value="nautical">Aeronautical</option>
-                <option value="metric">Metric</option>
-                <option value="imperial">Imperial</option>
+                <option value="nautical">航空</option>
+                <option value="metric">公制</option>
+                <option value="imperial">英制</option>
               </select>
             </div>
             <div class="settingsOptionContainer">
               <div class="settingsCheckbox" id="groundvehicle_filter"></div>
-              <div class="settingsText">Ground Vehicles</div>
+              <div class="settingsText">地面过滤器</div>
             </div>
             <div class="settingsOptionContainer">
               <div class="settingsCheckbox" id="blockedmlat_filter"></div>
-              <div class="settingsText">Non-ICAO Targets (radar track / airframe unknown) </div>
+              <div class="settingsText">非国际民航组织目标（雷达跟踪/机身未知）</div>
             </div>
           </div>
           <div id="settingsRight" class="settingsColumn">
             <div class="settingsOptionContainer">
-              <button class="formButton" onclick="resetSettings();">Reset All Settings</button>
+              <button class="formButton" onclick="resetSettings();">重置所有设置</button>
             </div>
             <div class="settingsOptionContainer">
               <div class="settingsCheckbox" id="grouptype_checkbox"></div>
-              <div class="settingsText">Group by Data Type</div>
+              <div class="settingsText">按数据类型分组</div>
             </div>
           </div>
         </div>
@@ -774,9 +763,9 @@
         </div>
         <div id="header_top" class="infoHeading">
           <div class="buttonContainer">
-            <span id="U" title="only show the U2 and other military planes" class="button inActiveButton" onclick="toggleMilitary();"><span class="buttonText">U</span></span>
-            <span id="H" title="(H)ome / Reset Map" class="button inActiveButton" onclick="resetMap();"><span class="buttonText">H</span></span>
-            <span id="T" title="All (T)racks" class="button inActiveButton" onclick="selectAllPlanes();"><span class="buttonText">T</span></span>
+            <span id="H" title="回到接收器位置/重置地图" class="button inActiveButton" onclick="resetMap();"><span class="buttonText">H</span></span>
+           <span id="T" title="开启/关闭所有轨迹" class="button inActiveButton" onclick="selectAllPlanes();"><span class="buttonText">T</span></span>
+           <span id="K" title="开启/关闭轨迹标签（需开启T）" class="button inActiveButton" onclick="toggleTrackLabels();"><span class="buttonText">K</span></span>
           </div>
         </div>
         <div id="header_side" class="infoHeading">
@@ -788,24 +777,23 @@
               <button id="expand_sidebar_button" class="sidebar_button" title="Expand Sidebar" style="display: none;"></button>
             </div>
             <div id="settingsCog" class="settingsCog"></div>
-            <div id="L" title="Toggle (L)abels" class="button inActiveButton" onclick="toggleLabels();"><span class="buttonText">L</span></div>
-            <div id="O" title="Toggle Label Extensi(O)ns" class="button inActiveButton" onclick="toggleExtendedLabels();"><span class="buttonText">O</span></div>
-            <div id="K" title="Toggle Trac(K) Labels" class="button inActiveButton" onclick="toggleTrackLabels();"><span class="buttonText">K</span></div>
+            <div id="L" title="开启/关闭标签" class="button inActiveButton" onclick="toggleLabels();"><span class="buttonText">L</span></div>
+            <div id="O" title="切换标签（需开启L）" class="button inActiveButton" onclick="toggleExtendedLabels();"><span class="buttonText">O</span></div>
             <div class="buttonSpacer">
             </div>
             <div style="display: none" id="B" title="Toggle Map (B)rightness" class="button inActiveButton" onclick="toggles['MapDim'].toggle();"><span class="buttonText">B</span></div>
             <div class="buttonSpacer">
             </div>
-            <div style="display: none" id="V" title="Table: only show aircraft in current (V)iew" class="button inActiveButton" onclick="toggleTableInView();"><span class="buttonText">V</span></div>
-            <div id="M" title="Toggle (M)ultiSelect" class="button inActiveButton" onclick="toggleMultiSelect();"><span class="buttonText">M</span></div>
+            <div style="display: none" id="V" title="只显示当前视图中的飞机" class="button inActiveButton" onclick="toggleTableInView();"><span class="buttonText">V</span></div>
+            <div id="M" title="开启/关闭多选" class="button inActiveButton" onclick="toggleMultiSelect();"><span class="buttonText">M</span></div>
             <div class="buttonSpacer">
             </div>
-            <div id="P" title="(P)ersistence mode" class="button inActiveButton" onclick="togglePersistence();"><span class="buttonText">P</span></div>
-            <div id="I" title="(I)solate: only show selected aircraft" class="button inActiveButton" onclick="toggleIsolation();"><span class="buttonText">I</span></div>
+            <div id="P" title="开启/关闭飞行持续模式" class="button inActiveButton" onclick="togglePersistence();"><span class="buttonText">P</span></div>
+            <div id="I" title="开启/关闭仅显示选定的飞机" class="button inActiveButton" onclick="toggleIsolation();"><span class="buttonText">I</span></div>
             <div class="buttonSpacer">
             </div>
-            <div id="R" title="Follow a (R)andom plane!" class="button inActiveButton" onclick="followRandomPlane();"><span class="buttonText">R</span></div>
-            <div id="F" title="(F)ollow" class="button inActiveButton" onclick="toggleFollow();"><span class="buttonText">F</span></div>
+            <div id="R" title="开启/关闭一个随机的详细信息" class="button inActiveButton" onclick="followRandomPlane();"><span class="buttonText">R</span></div>
+            <div id="F" title="开启/关闭跟踪" class="button inActiveButton" onclick="toggleFollow();"><span class="buttonText">F</span></div>
           <!--< div id="RP" title="Replay" class="button inActiveButton" onclick="showReplayBar();"><span class="buttonText">RP</span></div>-->
           </div>
         </div>
@@ -867,7 +855,7 @@
 
               <tr class="infoblock_heading">
                 <td style="text-align: right" class=link>
-                  <a href="https://github.com/wiedehopf/tar1090#tar1090" id="dump1090_version" target="_blank">tar1090 on github</a>
+                  <a href="https://www.mengorg.cn" target="_blank">tar1090 汉化 Powered by 小孟要吃肉</a>
                 </td>
               </tr>
               <tr class="rSpacer">
@@ -877,12 +865,12 @@
                 <td>
                   <table style="width: 100%">
                     <tr class="infoblock_heading">
-                      <td style="width: 50%"><span class="infoBlockTitleText">Total Aircraft:</span> <span id="dump1090_total_ac">n/a</span></td>
-                      <td id="dump1090_message_rate_td"><span class="infoBlockTitleText">Messages:</span> <span id="dump1090_message_rate">n/a</span>/sec</td>
+                      <td style="width: 50%"><span class="infoBlockTitleText">飞机总数:</span> <span id="dump1090_total_ac">n/a</span> 个</td>
+                      <td id="dump1090_message_rate_td"><span class="infoBlockTitleText">消息数:</span> <span id="dump1090_message_rate">n/a</span> 条/秒</td>
                     </tr>
                     <tr class="infoblock_body">
-                      <td style="width: 50%"><span id="with_positions" class="infoBlockTitleText">With Positions:</span> <span id="dump1090_total_ac_positions">n/a</span></td>
-                      <td id="dump1090_total_history_td"><span class="infoBlockTitleText">History:</span> <span id="dump1090_total_history">n/a</span> positions</td>
+                      <td style="width: 50%"><span id="with_positions" class="infoBlockTitleText">有地址的:</span> <span id="dump1090_total_ac_positions">n/a</span> 个</td>
+                      <td id="dump1090_total_history_td"><span class="infoBlockTitleText">历史记录:</span> <span id="dump1090_total_history">n/a</span> 个位置</td>
                     </tr>
                   </table>
                 </td>
@@ -893,29 +881,29 @@
 
             <div id="tabs" style="min-height: 10px; overflow: auto">
               <ul>
-                <li><a href="#tab-search">Search</a></li>
-                <li><a href="#tab-filters">Filters</a></li>
-                <li><a href="#tab-columns">Columns</a></li>
+                <li><a href="#tab-search">搜索</a></li>
+                <li><a href="#tab-filters">筛选</a></li>
+                <li><a href="#tab-columns">列表</a></li>
               </ul>
               <div id="tab-search">
                 <table id="tab-search-table" cellpadding="0" cellspacing="0">
                   <tr>
                     <td>
                       <form id="search_form">
-                        <div class="infoBlockTitleText">Search:</div>
+                        <div class="infoBlockTitleText">搜索:</div>
                         <input id="search_input" name="searchBox" type="text" class="searchInput" maxlength="128" title="Searches on the hex ID, callsign, registration, and type.">
-                        <button class="formButton" type="submit">Search</button>
-                        <button class="formButton" type="button" id="search_clear_button">Clear Search</button>
+                        <button class="formButton" type="submit">搜索</button>
+                        <button class="formButton" type="button" id="search_clear_button">清除搜索</button>
                       </form>
                     </td>
                   </tr>
                   <tr>
                     <td>
                       <form id="jump_form">
-                        <div class="infoBlockTitleText">Jump to Airport or Latitude, Longitude:</div>
+                        <div class="infoBlockTitleText">跳转到机场或纬度，经度:</div>
                         <input id="jump_input" name="jumpBox" type="text" class="searchInput" maxlength="128" title="Search by airport code like KATL, ZBAA, or LAX">
-                        <button class="formButton" type="submit">Jump</button>
-                        <button class="formButton" type="button" id="jump_clear_button">Clear</button>
+                        <button class="formButton" type="submit">跳转</button>
+                        <button class="formButton" type="button" id="jump_clear_button">清除</button>
                       </form>
                     </td>
                   </tr>
@@ -929,14 +917,14 @@
                     <tr>
                       <td>
                         <form id="altitude_filter_form">
-                          <div class="infoBlockTitleText">Filter by altitude:</div>
+                          <div class="infoBlockTitleText">按照高度筛选:</div>
                           <input id="altitude_filter_min" name="minAltitude" type="text" class="altitudeFilterInput" maxlength="5">
                           <label for="minAltitude" class="altitudeUnit"></label>
                           <span> to </span>
                           <input id="altitude_filter_max" name="maxAltitude" type="text" class="altitudeFilterInput" maxlength="5">
                           <label for="maxAltitude" class="altitudeUnit"></label>
-                          <button class="formButton" type="submit">Filter</button>
-                          <button class="formButton" id="altitude_filter_reset_button">Reset</button>
+                          <button class="formButton" type="submit">筛选</button>
+                          <button class="formButton" id="altitude_filter_reset_button">重置</button>
                         </form>
                       </td>
                     </tr>
@@ -948,14 +936,14 @@
                     <tr>
                       <td>
                         <form id="source_filter_form">
-                          <div class="infoBlockTitleText">Filter by source:</div>
+                          <div class="infoBlockTitleText">按照信号源筛选:</div>
                           <table>
                             <tr><td>
                               <ol id="sourceFilter" class="buttonFilter"></ol>
                             </td></tr>
                             <tr><td>
-                              <button class="formButton" type="submit">Filter</button>
-                              <button class="formButton" id="source_filter_reset_button">Reset</button>
+                              <button class="formButton" type="submit">筛选</button>
+                              <button class="formButton" id="source_filter_reset_button">重置</button>
                             </td></tr>
                           </table>
                         </form>
@@ -965,13 +953,13 @@
                     <tr>
                       <td>
                         <form id="flag_filter_form">
-                          <div class="infoBlockTitleText">Filter by DB flags:</div>
+                          <div class="infoBlockTitleText">按照数据库旗帜筛选:</div>
                             <tr><td>
                               <ol id="flagFilter" class="buttonFilter"></ol>
                             </td></tr>
                             <tr><td>
-                              <button class="formButton" type="submit">Filter</button>
-                              <button class="formButton" id="flag_filter_reset_button">Reset</button>
+                              <button class="formButton" type="submit">筛选</button>
+                              <button class="formButton" id="flag_filter_reset_button">重置</button>
                             </td></tr>
                         </form>
                       </td>

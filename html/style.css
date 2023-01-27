@@ -2,11 +2,11 @@
     --SCALE: 1;
     --BGCOLOR1: #F8F8F8;
     --BGCOLOR2: #CCCCCC;
-    --ACCENT: #00596b;
+    --ACCENT: #002f5d;
     --FS1: calc( 10px * var(--SCALE));
     --FS2: calc( 13px * var(--SCALE));
     --FS3: calc( 17px * var(--SCALE));
-    --TXTCOLOR1: #003f4b;
+    --TXTCOLOR1: #002f5d;
     --TXTCOLOR2: #050505;
     --TXTCOLOR3: #101010;
 }
@@ -396,7 +396,7 @@ select.error, textarea.error, input.error {
     text-transform: uppercase;
     text-align: center;
     color: #e8e8e8;
-    background: #003f4b;
+    background: #002f5d;
 }
 
 .section-title-content {
@@ -811,7 +811,7 @@ table.infoSectionTable tr td {
   border: none;
 }
 .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover{
-  background: #3d7382;
+  background: #00a0e2;
 }
 .ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited, a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   color:var(--TXTCOLOR2);

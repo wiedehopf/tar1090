@@ -13,33 +13,33 @@ let TrackDirections = ["North","NE","East","SE","South","SW","West","NW"];
 let TrackDirectionArrows = ["\u21e7","\u2b00","\u21e8","\u2b02","\u21e9","\u2b03","\u21e6","\u2b01"];
 
 let UnitLabels = {
-    'altitude': { metric: "m", imperial: "ft", nautical: "ft"},
-    'speed': { metric: "km/h", imperial: "mph", nautical: "kt" },
-    'distance': { metric: "km", imperial: "mi", nautical: "nmi" },
-    'verticalRate': { metric: "m/s", imperial: "ft/min", nautical: "ft/min" },
-    'distanceShort': { metric: "m", imperial: "ft", nautical: "m" }
+    'altitude': { metric: "米", imperial: "英尺", nautical: "英尺"},
+    'speed': { metric: "千米/小时", imperial: "英里/小时", nautical: "节" },
+    'distance': { metric: "千米", imperial: "英里", nautical: "海里" },
+    'verticalRate': { metric: "米/秒", imperial: "英尺/分钟", nautical: "英尺/分钟" },
+    'distanceShort': { metric: "米", imperial: "英尺", nautical: "海里" }
 };
 
 let aircraftCategories = {
-    'A0': 'Unspecified powered aircraft',
-    'A1': `Light (< 15${NNBSP}500${NBSP}lb)`,
-    'A2': `Small (15${NNBSP}500 to 75${NNBSP}000${NBSP}lb)`,
-    'A3': `Large (75${NNBSP}000 to 300${NNBSP}000${NBSP}lb)`,
-    'A4': 'High Vortex Large(aircraft such as B-757)',
-    'A5': `Heavy (> 300${NNBSP}000${NBSP}lb)`,
-    'A6': `High Performance (> 5${NBSP}g acceleration and > 400${NBSP}kt)`,
-    'A7': 'Rotorcraft',
-    'B0': 'Unspecified unpowered aircraft or UAV or spacecraft',
-    'B1': 'Glider/sailplane',
-    'B2': 'Lighter-than-Air',
-    'B3': 'Parachutist/Skydiver',
-    'B4': 'Ultralight/hang-glider/paraglider',
-    'B6': 'Unmanned Aerial Vehicle',
-    'B7': 'Space/Trans-atmospheric vehicle',
-    'C0': 'Unspecified ground installation or vehicle',
-    'C1': `Surface Vehicle ${ENDASH} Emergency Vehicle`,
-    'C2': `Surface Vehicle ${ENDASH} Service Vehicle`,
-    'C3': 'Fixed Ground or Tethered Obstruction'
+    'A0': '未指明动力的飞机',
+    'A1': `轻型 (< 15${NNBSP}500${NBSP}磅)`,
+    'A2': `小型 (15${NNBSP}500 至 75${NNBSP}000${NBSP}磅)`,
+    'A3': `大型 (75${NNBSP}000 至 300${NNBSP}000${NBSP}磅)`,
+    'A4': '高涡轮大型 (B-757等飞机)',
+    'A5': `重型 (> 300${NNBSP}000${NBSP}磅)`,
+    'A6': `高性能 (> 5${NBSP}g 加速度 和 > 400${NBSP}节)`,
+    'A7': '旋翼机',
+    'B0': '未指明的无动力飞机或无人机或航天器',
+    'B1': '滑翔机',
+    'B2': '飞艇',
+    'B3': '跳伞运动员',
+    'B4': '超轻/悬挂式滑翔机/滑翔伞',
+    'B6': '无人机',
+    'B7': '太空/跨大气层飞行器',
+    'C0': '未指明的地面安装或车辆',
+    'C1': `地面车辆 ${ENDASH} 急救车`,
+    'C2': `地面车辆 ${ENDASH} 急救车`,
+    'C3': '固定地面或系绳障碍物'
 };
 
 // formatting helpers
@@ -332,29 +332,29 @@ function format_data_source(source) {
 function format_nac_p (value) {
 	switch (value) {
 		case 0:
-			return "EPU ≥ 18.5 km";
+			return "不确定的预计位置 ≥ 18.5 千米";
 		case 1:
-			return "EPU < 18.5 km";
+			return "不确定的预计位置 < 18.5 千米";
 		case 2:
-			return "EPU < 7.4 km";
+			return "不确定的预计位置 < 7.4 千米";
 		case 3:
-			return "EPU < 3.7 km";
+			return "不确定的预计位置 < 3.7 千米";
 		case 4:
-			return "EPU < 1.8 km";
+			return "不确定的预计位置 < 1.8 千米";
 		case 5:
-			return "EPU < 926 m";
+			return "不确定的预计位置 < 926 米";
 		case 6:
-			return "EPU < 555 m";
+			return "不确定的预计位置 < 555 米";
 		case 7:
-			return "EPU < 185 m";
+			return "不确定的预计位置 < 185 米";
 		case 8:
-			return "EPU < 92 m";
+			return "不确定的预计位置 < 92 米";
 		case 9:
-			return "EPU < 30 m";
+			return "不确定的预计位置 < 30 米";
 		case 10:
-			return "EPU < 10 m";
+			return "不确定的预计位置 < 10 米";
 		case 11:
-			return "EPU < 3 m";
+			return "不确定的预计位置 < 3 米";
 		default:
 			return "n/a";
 
@@ -364,15 +364,15 @@ function format_nac_p (value) {
 function format_nac_v (value) {
 	switch (value) {
 		case 0:
-			return "≥ 10 m/s";
+			return "≥ 10 米/秒";
 		case 1:
-			return "< 10 m/s";
+			return "< 10 米/秒";
 		case 2:
-			return "< 3 m/s";
+			return "< 3 米/秒";
 		case 3:
-			return "< 1 m/s";
+			return "< 1 米/秒";
 		case 4:
-			return "< 0.3 m/s";
+			return "< 0.3 米/秒";
 		default:
 			return "n/a";
 	}
@@ -382,12 +382,12 @@ function format_duration(seconds) {
     if (seconds == null)
         return "n/a";
     if (seconds < 20)
-        return seconds.toFixed(1) + ' s';
+        return seconds.toFixed(1) + ' 秒';
     if (seconds < 5 * 60)
-        return seconds.toFixed(0) + ' s';
+        return seconds.toFixed(0) + ' 秒';
     if (seconds < 3 * 60 * 60)
-        return (seconds/60).toFixed(0) + ' min';
-    return (seconds/60/60).toFixed(0) + ' h';
+        return (seconds/60).toFixed(0) + ' 分钟';
+    return (seconds/60/60).toFixed(0) + ' 小时';
 
 }
 
