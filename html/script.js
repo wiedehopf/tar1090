@@ -3605,7 +3605,7 @@ function refreshFeatures() {
         align: 'right' };
     cols.wd = {
         text: 'Wind D.',
-        sort: function () { sortBy('wd', compareNumeric, function(x) { return plane.wd; }); },
+        sort: function () { sortBy('wd', compareNumeric, function(x) { return x.wd; }); },
         value: function(plane) { return plane.wd != null ? (plane.wd + '°') : ''; },
         align: 'right' };
     cols.ws = {
