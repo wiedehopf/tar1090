@@ -1310,7 +1310,7 @@ function getBaseMarker(category, typeDesignator, typeDescription, wtc, addrtype,
     return ['unknown', 1];
 }
 
-function svgShapeToURI(shape, fillColor, strokeColor, strokeWidth, scale){
+function svgShapeToSVG(shape, fillColor, strokeColor, strokeWidth, scale) {
     scale = scale ? scale : 1;
 
     strokeWidth *= (shape.strokeScale ? shape.strokeScale : 1);
@@ -1320,7 +1320,7 @@ function svgShapeToURI(shape, fillColor, strokeColor, strokeWidth, scale){
     if (!shape.path) {
         let svg = shape.svg.replace('fillColor', fillColor).replace('strokeColor', strokeColor).replace('strokeWidth', strokeWidth);
         svg = svg.replace('SIZE', 'width="' + wi + 'px" height="' + he + 'px"');
-        return "data:image/svg+xml;base64," + btoa(svg);
+        return svg;
     }
 
 
@@ -1348,6 +1348,11 @@ function svgShapeToURI(shape, fillColor, strokeColor, strokeWidth, scale){
 
     svg += '</g></svg>';
 
+    return svg;
+}
+
+function svgShapeToURI(shape, fillColor, strokeColor, strokeWidth, scale){
+    let svg = svgShapeToSVG(shape, fillColor, strokeColor, strokeWidth, scale);
     return "data:image/svg+xml;base64," + btoa(svg);
 }
 
@@ -1387,8 +1392,11 @@ function iconTest() {
     mapdiv.innerHTML = '<div style="overflow: scroll; max-height: 100%; max-width: 100%"><canvas width="' + iconSize * width + '" height="' + iconSize * height + '" id="can"></canvas></div>';
     let can = document.getElementById('can');
     let con = can.getContext('2d');
-    for (let i in shapes) {
-        let shape = shapes[i];
+
+    let svgJson = {};
+
+    for (let shapeName in shapes) {
+        let shape = shapes[shapeName];
         if (getSpriteY(shape) / iconSize >= height) {
             console.log("make the canvas BIGGER!");
             mapdiv.innerHTML = '';
@@ -1404,20 +1412,25 @@ function iconTest() {
         else
             offX = diff / 2;
 
-        let svg = svgShapeToURI(shape, '#FFFFFF', '#000000', 0.75, scale);
         let img = document.createElement('img');
         img.onload = function () {
             con.drawImage(this, getSpriteX(shape) * glIconSize + offX, getSpriteY(shape) * glIconSize + offY);
         };
-        img.src = svg;
+        let svgURI = svgShapeToURI(shape, '#FFFFFF', '#000000', 0.75, scale);
+        img.src = svgURI;
+
+        let svg = svgShapeToSVG(shape, '#FFFFFF', '#000000', 0.75, 1.4);
+        svgJson[shapeName] = svg;
 
         if (usp.has('grid')) {
-            let svg = svgShapeToURI(refCross, '#FFFFFF', '#000000', 0.75, 1);
             let img = document.createElement('img');
             img.onload = function () {
                 con.drawImage(this, getSpriteX(shape) * glIconSize, getSpriteY(shape) * glIconSize);
             };
-            img.src = svg;
+            let svgURI = svgShapeToURI(refCross, '#FFFFFF', '#000000', 0.75, 1);
+            img.src = svgURI;
         }
     }
+
+    console.log(svgJson);
 }
