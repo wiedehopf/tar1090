@@ -403,7 +403,7 @@ function wqi(data) {
     const INT32_MAX = 2147483647;
     const buffer = data.buffer;
     //console.log(buffer);
-    let u32 = new Uint32Array(data.buffer, 0, 11);
+    let u32 = new Uint32Array(data.buffer, 0, 12);
     data.now = u32[0] / 1000 + u32[1] * 4294967.296;
     //console.log(data.now);
     let stride = u32[2];
@@ -422,7 +422,10 @@ function wqi(data) {
     let receiver_lat = s32[8] / 1e6;
     let receiver_lon = s32[9] / 1e6;
 
+
     const binCraftVersion = u32[10];
+
+    data.messageRate = u32[11] / 10;
 
     if (receiver_lat != 0 && receiver_lon != 0) {
         //console.log("receiver_lat: " + receiver_lat + " receiver_lon: " + receiver_lon);

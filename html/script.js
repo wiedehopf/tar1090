@@ -7546,7 +7546,9 @@ function drawTileBorder(data) {
 }
 
 function updateMessageRate(data) {
-    if (data.messages && data.messages > 1) {
+    if (data.messageRate && data.messageRate > 0) {
+        MessageRate = data.messageRate;
+    } else if (data.messages && data.messages > 1) {
         // Detect stats reset
         if (MessageCountHistory.length > 0 && MessageCountHistory[MessageCountHistory.length-1].messages > data.messages) {
             MessageCountHistory = [];
