@@ -6328,6 +6328,7 @@ function watchPosition() {
         timeout: Infinity,
         maximumAge: 25 * 1000,
     };
+    console.log("watching position");
     watchPositionId = navigator.geolocation.watchPosition(function(position) {
         onLocationChange(position);
         pollPositionSeconds = 60;
@@ -6367,6 +6368,7 @@ function geoFindMe() {
                     timeout: 15 * 60 * 1000,
                     maximumAge: 5 * 60 * 1000 ,
                 };
+                console.log('geoFindInterval: querying position');
                 navigator.geolocation.getCurrentPosition(onLocationChange, logArg, geoposOptions);
             }, 15 * 60 * 1000);
         }
