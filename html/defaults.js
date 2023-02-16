@@ -372,3 +372,6 @@ let disableGeoLocation = false;
 
 // when data is available from both 1090 and 978, give some preference to the 978 data for up to X seconds old 978 data (set this to 15 or 30 for example)
 let prefer978 = 0;
+
+
+let dynGlobeRate = false; // enable use of globeRates.json in index.html directory to steer client refresh rate
