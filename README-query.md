@@ -25,7 +25,7 @@
 - sortBy=column - (possible values: icao, flag, flight, registration, aircraft_type, squawk, altitude, speed, vert_rate, distance, track, msgs, seen, rssi, lat, lon, data_source, military, ws, wd
 - sortByReverse - reverse the sorting specified using sortBy
 
-See the main readme for more exapmles on how to use the filters
+See the main readme for more examples on how to use the filters
 
 ## Troubleshooting
 
@@ -72,7 +72,7 @@ See the main readme for more exapmles on how to use the filters
 - kiosk - force kiosk mode (tempTrails=true / hideButtons=true / userScale=2).
 - allTracks - enable tracks as if pressing T
 
-## heatmap / reaplay (only available with readsb --heatmap parameter)
+## heatmap / replay (only available with readsb --heatmap parameter)
 
 - replay - replay history of all planes
 - heatmap - show a heatmap for the last 24h by default (optional: supply the maximum number of dots drawn, default 32000)
