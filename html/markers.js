@@ -10,6 +10,15 @@ let shapes = {
         strokeScale: 1.2,
         path: 'M16 1c-.17 0-.67.58-.9 1.03-.6 1.21-.6 1.15-.65 5.2-.04 2.97-.08 3.77-.18 3.9-.15.17-1.82 1.1-1.98 1.1-.08 0-.1-.25-.05-.83.03-.5.01-.92-.05-1.08-.1-.25-.13-.26-.71-.26-.82 0-.86.07-.78 1.5.03.6.08 1.17.11 1.25.05.12-.02.2-.25.33l-8 4.2c-.2.2-.18.1-.19 1.29 3.9-1.2 3.71-1.21 3.93-1.21.06 0 .1 0 .13.14.08.3.28.3.28-.04 0-.25.03-.27 1.16-.6.65-.2 1.22-.35 1.28-.35.05 0 .12.04.15.17.07.3.27.27.27-.08 0-.25.01-.27.7-.47.68-.1.98-.09 1.47-.1.18 0 .22 0 .26.18.06.34.22.35.27-.01.04-.2.1-.17 1.06-.14l1.07.02.05 4.2c.05 3.84.07 4.28.26 5.09.11.49.2.99.2 1.11 0 .19-.31.43-1.93 1.5l-1.93 1.26v1.02l4.13-.95.63 1.54c.05.07.12.09.19.09s.14-.02.19-.09l.63-1.54 4.13.95V29.3l-1.93-1.27c-1.62-1.06-1.93-1.3-1.93-1.49 0-.12.09-.62.2-1.11.19-.81.2-1.25.26-5.09l.05-4.2 1.07-.02c.96-.03 1.02-.05 1.06.14.05.36.21.35.27 0 .04-.17.08-.16.26-.16.49 0 .8-.02 1.48.1.68.2.69.21.69.46 0 .35.2.38.27.08.03-.13.1-.17.15-.17.06 0 .63.15 1.28.34 1.13.34 1.16.36 1.16.61 0 .35.2.34.28.04.03-.13.07-.14.13-.14.22 0 .03 0 3.93 1.2-.01-1.18.02-1.07-.19-1.27l-8-4.21c-.23-.12-.3-.21-.25-.33.03-.08.08-.65.11-1.25.08-1.43.04-1.5-.78-1.5-.58 0-.61.01-.71.26-.06.16-.08.58-.05 1.08.04.58.03.83-.05.83-.16 0-1.83-.93-1.98-1.1-.1-.13-.14-.93-.18-3.9-.05-4.05-.05-3.99-.65-5.2C16.67 1.58 16.17 1 16 1z',
     },
+    'blimp': {
+        id: 1,
+        w: 32,
+        h: 32,
+        viewBox: '-3.7 -3 32 32',
+        path: 'M12.4 26.77v-.81s.71-.24 1.42-1.7c0 0 .1.14.15.17.07.02 2.02.08 2.02.08s.18 0 .17-.3v-1.45s.14-.47-1.3-1.22c0 0 5.25-19.33-2.56-21.8-7.81 2.47-2.57 21.8-2.57 21.8-1.43.75-1.3 1.22-1.3 1.22s.02 1.16 0 1.46c0 .3.18.29.18.29s1.95-.06 2.01-.08c.06-.03.15-.17.15-.17.71 1.46 1.42 1.7 1.42 1.7v.81c0 .17.11.17.11.17s.1 0 .1-.17z',
+        accent: 'm12.48-.52-.18.25c-4.72 7.7-.1 26.23-.1 26.23l-.18.13m.03-26.57.25.21c4.72 7.7.1 26.23.1 26.23l.18.12',
+        accentMult: 0.8,
+    },
     'balloon': {
         id: 2,
         w: 13,
@@ -684,7 +693,24 @@ let shapes = {
         viewBox: "0 0 16 16",
         path: 'M 7 1 L 7 6 L 5 4 L 4 5 L 6 7 L 2 7 L 2 9 L 6 9 L 4 11 L 5 12 L 7 10 L 7 14 L 9 14 L 9 10 L 11 12 L 12 11 L 10 9 L 14 9 L 14 7 L 10 7 L 12 5 L 11 4 L 9 6 L 9 2 L 7 2',
     },
-
+    'b1b_lancer': {
+        id: 79,
+        w: 32,
+        h: 32,
+        viewBox: '0 0 64 64',
+        strokeScale: 2.2,
+        path: 'm 31.62,56.29 c -0.23,-0.11 -0.55,-0.86 -0.54,-1.56 l -7.58,2.71 c -0.17,-0.82 -0.12,-1.31 -0.01,-2.03 l 6.90,-6.31 c -0.23,-2.30 -0.51,-3.72 -1.19,-6.08 l -0.28,0.96 -1.13,0.01 -0.42,-1.31 -0.41,1.30 -1.23,-0.00 -0.50,-1.32 -0.21,-6.56 -18.70,1.18 c -0.24,-0.19 -0.38,-2.09 0.48,-3.21 L 26.26,28.95 C 28.75,24.52 29.87,18.91 30.59,9.77 L 29.53,10.42 30.71,8.40 c 0.30,-2.49 0.56,-4.45 1.29,-5.84 0.72,1.39 0.99,3.35 1.29,5.84 l 1.17,2.01 -1.05,-0.65 c 0.72,9.14 1.84,14.76 4.33,19.18 l 19.46,5.12 c 0.86,1.12 0.72,3.02 0.48,3.21 l -18.70,-1.18 -0.21,6.56 -0.50,1.32 -1.23,0.00 -0.41,-1.30 -0.42,1.31 -1.13,-0.01 -0.28,-0.96 c -0.68,2.36 -0.96,3.78 -1.19,6.08 l 6.90,6.31 c 0.10,0.72 0.15,1.22 -0.01,2.03 l -7.58,-2.71 c 0.01,0.70 -0.31,1.45 -0.54,1.56 l -0.37,0.63 z',
+    },
+    'para': {
+        id: 80,
+        w: 25,
+        h: 25,
+        viewBox: '-4 -4 72 72',
+        strokeScale: 4,
+        accentMult: 0.8,
+        path: 'M 2.7004841,35.4 C 2.3957197,34.805237 2.3346108,34.071291 2.3487212,33.492639 2.3628316,32.913987 2.4133442,32.511354 2.7,32 9.5741879,27.222774 18.4208,24.315376 32,24.357064 45.579201,24.281104 54.425812,27.222774 61.3,32 c 0.276334,0.514345 0.356292,0.854368 0.375811,1.434709 C 61.69533,34.01505 61.609571,34.773946 61.3,35.4 51.576472,38.439657 40.678687,39.277517 32,39.189844 21.874148,39.356757 12.026431,38.677104 2.7004841,35.4 Z',
+        accent: 'm 25.330646,24.634523 c -0.449188,4.692891 -0.341936,9.773843 0.03756,14.466734 M 17.376491,25.852595 c -0.815196,4.431676 -0.563898,8.706157 -0.01788,12.689083 M 10.149939,28.044695 c -0.6932861,3.230546 -0.7067571,6.748219 0.03192,9.585637 M 39.107311,24.631007 c 0.449188,4.692891 0.396257,9.757568 0.01676,14.450459 M 47.08978,25.710067 c 0.815196,4.431676 0.618698,8.91815 0.07268,12.901076 M 54.371132,28.11416 c 0.693286,3.230546 0.706757,6.559392 -0.03192,9.39681',
+    },
 }
 
 {
@@ -699,16 +725,16 @@ let shapes = {
 const _ulac = ["cessna", 0.92];
 
 let TypeDesignatorIcons = {
-    'SHIP': ['balloon', 1], // Blimp
+    'SHIP': ['blimp', 0.94], // Blimp
     'BALL': ['balloon', 1], // Balloon
 
     'A318': ['airliner', 0.90], // shortened a320 68t
-    'A319': ['airliner', 0.93], // shortened a320 75t
-    'A19N': ['airliner', 0.93], // shortened a320
-    'A320': ['airliner', 0.96], // 78t
-    'A20N': ['airliner', 0.96],
-    'A321': ['airliner', 0.99], // stretched a320 93t
-    'A21N': ['airliner', 0.99], // stretched a320
+    'A319': ['airliner', 0.92], // shortened a320 75t
+    'A19N': ['airliner', 0.92], // shortened a320
+    'A320': ['airliner', 0.94], // 78t
+    'A20N': ['airliner', 0.94],
+    'A321': ['airliner', 0.97], // stretched a320 93t
+    'A21N': ['airliner', 0.97], // stretched a320
 
     'A306': ['heavy_2e', 0.93],
     'A330': ['heavy_2e', 0.96],
@@ -726,18 +752,25 @@ let TypeDesignatorIcons = {
 
     // dubious since these are old-generation 737s
     // but the shape is similar
-    'B731': ['airliner', 0.88],
-    'B732': ['airliner', 0.88],
-    'B733': ['airliner', 0.90],
-    'B734': ['airliner', 0.94],
-    'B735': ['airliner', 0.96],
+    'B731': ['airliner', 0.86],
+    'B732': ['airliner', 0.86],
+    'B733': ['airliner', 0.87],
+    'B734': ['airliner', 0.91],
+    'B735': ['airliner', 0.93],
 
     // these probably need reworking
     // since they vary in length
-    'B736': ['airliner', 0.92],
-    'B737': ['airliner', 0.93],
-    'B738': ['airliner', 0.96],
-    'B739': ['airliner', 0.98],
+    'B736': ['airliner', 0.89],
+    'B737': ['airliner', 0.90],
+    'B738': ['airliner', 0.93],
+    'B739': ['airliner', 0.95],
+
+    'B37M': ['airliner', 0.92],
+    'B38M': ['airliner', 0.94],
+    'B39M': ['airliner', 0.96],
+
+    'P8': ['airliner', 0.98],
+    'P8 ?': ['airliner', 0.98],
 
     'J328': ['airliner', 0.78], // 15t
     'E170': ['airliner', 0.82], // 38t
@@ -808,6 +841,8 @@ let TypeDesignatorIcons = {
     'GLEX': ['jet_swept', 1], // 45t
     'GL6T': ['jet_swept', 1], // 45t
     'GLF6': ['jet_swept', 1], // 48t
+    'GA7C': ['jet_swept', 1], // 48t
+    'GA8C': ['jet_swept', 1], // 48t (fantasy type but in the database)
     'GL7T': ['jet_swept', 1], // 52t
     'E135': ['jet_swept', 0.92], // 20t
     'E35L': ['jet_swept', 0.92], // 24t
@@ -973,6 +1008,8 @@ let TypeDesignatorIcons = {
 
     'P3': ['p3_orion', 1],
 
+    'PARA': ['para', 1],
+
     'DRON': ['uav', 1],
     'Q1': ['uav', 1],
     'Q4': ['uav', 1],
@@ -984,6 +1021,8 @@ let TypeDesignatorIcons = {
 
     'V22F': ['v22_fast', 1],
     'V22': ['v22_slow', 1],
+    'B609F': ['v22_fast', 0.86],
+    'B609': ['v22_slow', 0.86],
     'H64': ['apache', 1],
 
 
@@ -1028,12 +1067,14 @@ let TypeDesignatorIcons = {
 
     'U2': ['u2', 1],
     'C2': ['c2', 1],
+    'E2': ['c2', 1],
     'H47': ['chinook', 1],
     'HAWK': ['bae_hawk', 1],
 
     'GYRO': ['gyrocopter', 1],
     'DLTA': ['verhees', 1],
 
+    'B1': ['b1b_lancer', 1.0],
     'B52': ['b52', 1],
     'C17': ['c17', 1.25],
     'C5M': ['c5', 1.18],
@@ -1106,6 +1147,8 @@ let TypeDesignatorIcons = {
     'S22T': ['cirrus_sr22', 1],
     'VEZE': ['rutan_veze', 1],
     'VELO': ['rutan_veze', 1.04],
+
+    'PRTS': ['rutan_veze', 1.3], // approximation for canard configuration
 
     'PA24': ['pa24', 1],
 
@@ -1190,6 +1233,7 @@ let CategoryIcons = {
 };
 
 function getBaseMarker(category, typeDesignator, typeDescription, wtc, addrtype, altitude, eastbound) {
+
     //return ['f5_tiger', 1];
     if (halloween) {
         if ((typeDescription && typeDescription[0] == 'H') || typeDesignator == 'C172')
@@ -1207,6 +1251,19 @@ function getBaseMarker(category, typeDesignator, typeDescription, wtc, addrtype,
     if (squareMania) {
         return ['ground_square', 1.2];
     }
+
+    // if type description (from type DB) and broadcasted category disagree, use icon for category
+    if (false && typeDescription != null && typeDescription.length === 3 && category in CategoryIcons) {
+        if (typeDescription[0] == 'L' && (category[0] != 'A' || category[1] == '7'))
+            return CategoryIcons[category];
+        if (typeDescription[0] == 'H' && category != 'A7')
+            return CategoryIcons[category];
+        if (category == 'B6')
+            return CategoryIcons[category];
+        if (category[0] == 'C')
+            return CategoryIcons[category];
+    }
+
     if (typeDesignator in TypeDesignatorIcons) {
         let shape = TypeDesignatorIcons[typeDesignator][0];
         let scaling = TypeDesignatorIcons[typeDesignator][1];
@@ -1253,7 +1310,7 @@ function getBaseMarker(category, typeDesignator, typeDescription, wtc, addrtype,
     return ['unknown', 1];
 }
 
-function svgShapeToURI(shape, fillColor, strokeColor, strokeWidth, scale){
+function svgShapeToSVG(shape, fillColor, strokeColor, strokeWidth, scale) {
     scale = scale ? scale : 1;
 
     strokeWidth *= (shape.strokeScale ? shape.strokeScale : 1);
@@ -1263,7 +1320,7 @@ function svgShapeToURI(shape, fillColor, strokeColor, strokeWidth, scale){
     if (!shape.path) {
         let svg = shape.svg.replace('fillColor', fillColor).replace('strokeColor', strokeColor).replace('strokeWidth', strokeWidth);
         svg = svg.replace('SIZE', 'width="' + wi + 'px" height="' + he + 'px"');
-        return "data:image/svg+xml;base64," + btoa(svg);
+        return svg;
     }
 
 
@@ -1291,6 +1348,11 @@ function svgShapeToURI(shape, fillColor, strokeColor, strokeWidth, scale){
 
     svg += '</g></svg>';
 
+    return svg;
+}
+
+function svgShapeToURI(shape, fillColor, strokeColor, strokeWidth, scale){
+    let svg = svgShapeToSVG(shape, fillColor, strokeColor, strokeWidth, scale);
     return "data:image/svg+xml;base64," + btoa(svg);
 }
 
@@ -1330,8 +1392,11 @@ function iconTest() {
     mapdiv.innerHTML = '<div style="overflow: scroll; max-height: 100%; max-width: 100%"><canvas width="' + iconSize * width + '" height="' + iconSize * height + '" id="can"></canvas></div>';
     let can = document.getElementById('can');
     let con = can.getContext('2d');
-    for (let i in shapes) {
-        let shape = shapes[i];
+
+    let svgJson = {};
+
+    for (let shapeName in shapes) {
+        let shape = shapes[shapeName];
         if (getSpriteY(shape) / iconSize >= height) {
             console.log("make the canvas BIGGER!");
             mapdiv.innerHTML = '';
@@ -1347,20 +1412,25 @@ function iconTest() {
         else
             offX = diff / 2;
 
-        let svg = svgShapeToURI(shape, '#FFFFFF', '#000000', 0.75, scale);
         let img = document.createElement('img');
         img.onload = function () {
             con.drawImage(this, getSpriteX(shape) * glIconSize + offX, getSpriteY(shape) * glIconSize + offY);
         };
-        img.src = svg;
+        let svgURI = svgShapeToURI(shape, '#FFFFFF', '#000000', 0.75, scale);
+        img.src = svgURI;
+
+        let svg = svgShapeToSVG(shape, '#FFFFFF', '#000000', 0.75, 1.4);
+        svgJson[shapeName] = svg;
 
         if (usp.has('grid')) {
-            let svg = svgShapeToURI(refCross, '#FFFFFF', '#000000', 0.75, 1);
             let img = document.createElement('img');
             img.onload = function () {
                 con.drawImage(this, getSpriteX(shape) * glIconSize, getSpriteY(shape) * glIconSize);
             };
-            img.src = svg;
+            let svgURI = svgShapeToURI(refCross, '#FFFFFF', '#000000', 0.75, 1);
+            img.src = svgURI;
         }
     }
+
+    console.log(svgJson);
 }

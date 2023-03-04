@@ -21,26 +21,32 @@
 
 "use strict";
 
-let _aircraft_cache = {};
-let _airport_coords_cache = null;
+let db = {};
 
-let _request_count = 0;
-let _request_queue = [];
-let _request_cache = {};
+db.request_count = 0;
+db.request_queue = [];
+db.request_cache = {};
 
-let regCache = null;
+
+Promise.unwrapped = () => {
+  let resolve, reject, promise = new Promise((_resolve, _reject) => {
+    resolve = _resolve, reject = _reject;
+  });
+  promise.resolve = resolve, promise.reject = reject;
+  return promise;
+}
 
 function dbLoad(icao) {
-	let defer = jQuery.Deferred();
-	if (icao.charAt(0) == '~') {
+    let defer = Promise.unwrapped();
+	if (icao[0] == '~') {
 		defer.resolve(null);
-		return defer;
+        return defer;
 	}
-
 	icao = icao.toUpperCase();
 
 	request_from_db(icao, 1, defer);
-	return defer;
+
+    return defer;
 }
 
 function request_from_db(icao, level, defer) {
@@ -48,54 +54,39 @@ function request_from_db(icao, level, defer) {
 	let dkey = icao.substring(level);
 	let req = db_ajax(bkey);
 
-	req.done(function(data) {
-		let subkey;
+    req.then(
+        data => {
+            let subkey;
 
-		if (data == null) {
-			defer.resolve("strange");
-			return;
-		}
+            if (data == null) {
+                defer.resolve("strange");
+                return;
+            }
 
-		if (dkey in data) {
-            defer.resolve(data[dkey]);
-			return;
-		}
+            if (dkey in data) {
+                defer.resolve(data[dkey]);
+                return;
+            }
 
-		if ("children" in data) {
-			subkey = bkey + dkey.substring(0,1);
-			if (data.children.indexOf(subkey) != -1) {
-				request_from_db(icao, level+1, defer);
-				return;
-			}
-		}
-		defer.resolve(null);
-	});
-
-	req.fail(function(jqXHR,textStatus,errorThrown) {
-		defer.reject(jqXHR,textStatus,errorThrown);
-	});
-}
-
-function getIcaoAircraftTypeData(aircraftData, defer) {
-	if (_aircraft_type_cache === null) {
-		jQuery.getJSON(databaseFolder + "/icao_aircraft_types.js")
-			.done(function(typeLookupData) {
-				_aircraft_type_cache = typeLookupData;
-			})
-			.always(function() {
-				lookupIcaoAircraftType(aircraftData, defer);
-			});
-	}
-	else {
-		lookupIcaoAircraftType(aircraftData, defer);
-	}
+            if ("children" in data) {
+                subkey = bkey + dkey.substring(0,1);
+                if (data.children.indexOf(subkey) != -1) {
+                    request_from_db(icao, level+1, defer);
+                    return;
+                }
+            }
+            defer.resolve(null);
+        },
+        error => {
+            defer.reject(error);
+        });
 }
 
 function lookupIcaoAircraftType(aircraftData, defer) {
-	if (_aircraft_type_cache !== null && aircraftData[1]) {
+	if (g.type_cache !== null && aircraftData[1]) {
 		let typeCode = aircraftData[1].toUpperCase();
-		if (typeCode in _aircraft_type_cache) {
-			let typeData = _aircraft_type_cache[typeCode];
+		if (typeCode in g.type_cache) {
+			let typeData = g.type_cache[typeCode];
             const typeLong = typeData[0];
             const desc = typeData[1];
             const wtc = typeData[2];
@@ -111,15 +102,16 @@ function lookupIcaoAircraftType(aircraftData, defer) {
 function db_ajax(bkey) {
 	let req;
 
-	if (bkey in _request_cache) {
-		return _request_cache[bkey];
+	if (bkey in db.request_cache) {
+		return db.request_cache[bkey];
 	}
 
-	req = _request_cache[bkey] = jQuery.Deferred();
+	req = db.request_cache[bkey] = Promise.unwrapped();
 	req.bkey = bkey;
 	// put it in the queue
-	_request_queue.push(req);
-	db_ajax_request_complete();
+	db.request_queue.push(req);
+
+    db_ajax_request_complete();
 
 	return req;
 }
@@ -128,28 +120,36 @@ function db_ajax_request_complete() {
 	let req;
 	let ajaxreq;
 
-	if (_request_queue.length == 0 || _request_count >= 1) {
+	if (db.request_queue.length == 0 || db.request_count >= 1) {
 		return;
 	} else {
-		_request_count++;
-		req = _request_queue.shift();
+		db.request_count++;
+		req = db.request_queue.shift();
 		const req_url = databaseFolder + '/' + req.bkey + '.js';
 		ajaxreq = jQuery.ajax({ url: req_url,
 			cache: true,
 			timeout: 30000,
 			dataType : 'json' });
-		ajaxreq.done(function(data) {
+		ajaxreq.done(data => {
             req.resolve(data);
         });
-		ajaxreq.fail(function(jqxhr, status, error) {
+		ajaxreq.fail((jqxhr, status, error) => {
 			if (status == 'timeout') {
-				delete _request_cache[req.bkey];
+				delete db.request_cache[req.bkey];
 			}
 			jqxhr.url = req_url;
-			req.reject(jqxhr, status, error);
+            let reason = new Error('');
+            if (status == 'timeout') {
+                reason.http_status = 'timeout';
+                console.error('Database: HTTP error: timeout (URL: ' + jqxhr.url + ')');
+            } else {
+                console.error('Database: HTTP error: ' + jqxhr.status + ' (URL: ' + jqxhr.url + ')');
+                reason.http_status = 'other';
+            }
+			req.reject(reason);
 		});
 		ajaxreq.always(function() {
-			_request_count--;
+			db.request_count--;
 			db_ajax_request_complete();
 		});
 	}

@@ -35,9 +35,14 @@
 .layer-switcher button:hover {
   background-color: white;
 }
+
 .layer-switcher.shown {
   overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100% - 5.5em);
 }
+
 .layer-switcher.shown.ol-control {
   background-color: transparent;
 }

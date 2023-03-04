@@ -54,6 +54,8 @@ let range_outline_dash = null; // null - solid line, [5, 5] - dashed line with 5
 let actual_range_outline_color = '#00596b';
 let actual_range_outline_width = 1.7;
 let actual_range_outline_dash = null; // null - solid line, [5, 5] - dashed line with 5 pixel lines and spaces in between
+//
+let actual_range_show = true;
 
 // which map is displayed to new visitors
 let MapType_tar1090 = "osm_adsbx";
@@ -240,14 +242,14 @@ let registrationLinks = true;
 
 // Filter implausible positions (required speed > Mach 2.5)
 // valid values: true, false, "onlyMLAT" ("" required)
-let positionFilter = true;
+let positionFilter = false;
 let positionFilterSpeed = 2.5; // in Mach
 // filter speed is based on transmitted ground speed if available
 // this factor is used to give the actual filter speed
 let positionFilterGsFactor = 2.2;
 let debugPosFilter = false;
 
-let altitudeFilter = true;
+let altitudeFilter = false;
 
 // time in seconds before an MLAT position is accepted after receiving a
 // more reliable position
@@ -324,6 +326,9 @@ let filterMaxRange = 1e8; // 100 000 km should include all planes on earth ;)
 
 let jaeroTimeout = 35 * 60; // in seconds
 
+let seenTimeout = 58; // in seconds
+let seenTimeoutMlat = 58; // in seconds
+
 let darkModeDefault = true; // turn on dark mode by default (change in browser possible)
 
 let tableInView = false; // only show aircraft in current view (V button)
@@ -357,8 +362,16 @@ let tableColors = {
         other:   "#bcbcbc",
     },
     special: {
-        7500:      "#ff5555",
-        7600:      "#00ffff",
-        7700:      "#ffff00",
+        7500:      "#ff0000",
+        7600:      "#ff0000",
+        7700:      "#ff0000",
     }
 };
+
+let disableGeoLocation = false;
+
+// when data is available from both 1090 and 978, give some preference to the 978 data for up to X seconds old 978 data (set this to 15 or 30 for example)
+let prefer978 = 0;
+
+
+let dynGlobeRate = false; // enable use of globeRates.json in index.html directory to steer client refresh rate

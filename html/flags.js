@@ -125,7 +125,7 @@ let ICAO_Ranges = [
 	{ start: 0x4CA000, end: 0x4CAFFF, country: "Ireland", flag_image: "Ireland.png" },
 	{ start: 0x4CC000, end: 0x4CCFFF, country: "Iceland", flag_image: "Iceland.png" },
 	{ start: 0x4D0000, end: 0x4D03FF, country: "Luxembourg", flag_image: "Luxembourg.png" },
-	{ start: 0x4D2000, end: 0x4D23FF, country: "Malta", flag_image: "Malta.png" },
+	{ start: 0x4D2000, end: 0x4D2FFF, country: "Malta", flag_image: "Malta.png" },
 	{ start: 0x4D4000, end: 0x4D43FF, country: "Monaco", flag_image: "Monaco.png" },
 	{ start: 0x500000, end: 0x5003FF, country: "San Marino", flag_image: "San_Marino.png" },
 	{ start: 0x501000, end: 0x5013FF, country: "Albania", flag_image: "Albania.png" },

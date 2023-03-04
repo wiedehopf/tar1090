@@ -155,10 +155,23 @@ while true; do
 
     date=$(date +%s%N | head -c-7)
 
-    while ! prune "$SRC_DIR/aircraft.json" "history_$date.json"; do
-        echo "No aircraft.json found in $SRC_DIR! Try restarting dump1090 or reinstalling tar1090 if you switched dump1090 to readsb!"
-        sleep 60
+    next_error=0
+    error_printed=0
+    while ! [[ -f "$SRC_DIR/aircraft.json" ]] || ! prune "$SRC_DIR/aircraft.json" "history_$date.json"; do
+        now=$(date +%s%N | head -c-7)
+        if (( now > next_error )); then
+            if (( next_error != 0 )); then
+                echo "No aircraft.json found in $SRC_DIR during the last 30 seconds! Try restarting dump1090 or reinstalling tar1090 if you switched dump1090 to readsb!"
+                error_printed=1
+            fi
+            next_error=$(( now + 10000 ))
+        fi
+        sleep 2
     done
+    if (( error_printed != 0 )); then
+        echo "Found aircraft.json in $SRC_DIR, continuing operation as per usual!"
+    fi
+
     sed -i -e '$a,' "history_$date.json"
 
     if [[ $ENABLE_978 == "yes" ]] && prune 978.json "history_978_$date.json"; then

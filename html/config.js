@@ -47,6 +47,8 @@
 // actual_range_outline_width = 1.7;
 // actual_range_outline_dash = null; // null - solid line, [5, 5] - dashed line with 5 pixel lines and spaces in between
 
+// Enable / disable showing the actual range outline when first visiting the page
+// actual_range_show = true;
 
 // which map is displayed to new visitors
 // MapType_tar1090 = "carto_light_all";
@@ -307,6 +309,12 @@ HideCols = [
 //
 //
 //darkModeDefault = true; // turn on dark mode by default (change in browser possible)
+//
+//
+//jaeroTimeout = 35 * 60; // in seconds
+
+//seenTimeout = 58; // in seconds
+//seenTimeoutMlat = 58; // in seconds
 
 //tableInView = false; // only show aircraft in current view (V button)
 
@@ -335,3 +343,11 @@ tableColors = {
     },
 };
 */
+
+
+// disableGeoLocation = false;
+
+// when data is available from both 1090 and 978, give some preference to the 978 data for up to X seconds old 978 data (set this to 15 or 30 for example)
+//prefer978 = 0;
+//
+// dynGlobeRate = false; // enable use of globeRates.json in index.html directory to steer client refresh rate

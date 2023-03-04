@@ -31,6 +31,9 @@ let aircraftCategories = {
     'A7': 'Rotorcraft',
     'B0': 'Unspecified unpowered aircraft or UAV or spacecraft',
     'B1': 'Glider/sailplane',
+    'B2': 'Lighter-than-Air',
+    'B3': 'Parachutist/Skydiver',
+    'B4': 'Ultralight/hang-glider/paraglider',
     'B6': 'Unmanned Aerial Vehicle',
     'B7': 'Space/Trans-atmospheric vehicle',
     'C0': 'Unspecified ground installation or vehicle',
@@ -397,12 +400,15 @@ function iOSVersion() {
 }
 
 function wqi(data) {
+    const INT32_MAX = 2147483647;
     const buffer = data.buffer;
-    let vals = new Uint32Array(data.buffer, 0, 8);
-    data.now = vals[0] / 1000 + vals[1] * 4294967.296;
-    let stride = vals[2];
-    data.global_ac_count_withpos = vals[3];
-    data.globeIndex = vals[4];
+    //console.log(buffer);
+    let u32 = new Uint32Array(data.buffer, 0, 12);
+    data.now = u32[0] / 1000 + u32[1] * 4294967.296;
+    //console.log(data.now);
+    let stride = u32[2];
+    data.global_ac_count_withpos = u32[3];
+    data.globeIndex = u32[4];
 
     let limits = new Int16Array(buffer, 20, 4);
     data.south =  limits[0];
@@ -410,11 +416,16 @@ function wqi(data) {
     data.north =  limits[2];
     data.east =  limits[3];
 
-    data.messages = vals[7];
+    data.messages = u32[7];
 
     let s32 = new Int32Array(data.buffer, 0, stride / 4);
     let receiver_lat = s32[8] / 1e6;
     let receiver_lon = s32[9] / 1e6;
+
+
+    const binCraftVersion = u32[10];
+
+    data.messageRate = u32[11] / 10;
 
     if (receiver_lat != 0 && receiver_lon != 0) {
         //console.log("receiver_lat: " + receiver_lat + " receiver_lon: " + receiver_lon);
@@ -456,7 +467,12 @@ function wqi(data) {
         ac.nav_qnh = s16[14] / 10;
         ac.nav_heading = s16[15] / 90;
 
-        ac.squawk = u16[16].toString(16).padStart(4, '0');
+        const s = u16[16].toString(16).padStart(4, '0');
+        if (s[0] > '9') {
+            ac.squawk = String(parseInt(s[0], 16)) + s[1] + s[2] + s[3];
+        } else {
+            ac.squawk = s;
+        }
         ac.gs = s16[17] / 10;
         ac.mach = s16[18] / 1000;
         ac.roll = s16[19] / 100;
@@ -474,7 +490,12 @@ function wqi(data) {
         ac.tas = u16[28];
         ac.ias = u16[29];
         ac.rc  = u16[30];
-        ac.messages = u16[31];
+
+        if (globeIndex && binCraftVersion >= 20220916) {
+            ac.messageRate = u16[31] / 10;
+        } else {
+            ac.messages = u16[31];
+        }
 
         ac.category = u8[64] ? u8[64].toString(16).toUpperCase() : undefined;
         ac.nic      = u8[65];
@@ -524,7 +545,7 @@ function wqi(data) {
 
         ac.extraFlags = u8[106];
         ac.nogps = ac.extraFlags & 1;
-        if (ac.nogps && nogpsOnly) {
+        if (ac.nogps && nogpsOnly && s32[3] != INT32_MAX) {
             u8[73] |= 64;
             u8[73] |= 16;
         }
@@ -626,3 +647,51 @@ function wqi(data) {
     }
 }
 
+function ItemCache(maxItems) {
+    this.maxItems = maxItems;
+    this.items = {};
+    this.keys = [];
+}
+ItemCache.prototype.clear = function() {
+    this.items = {};
+    this.keys = [];
+}
+ItemCache.prototype.get = function(key) {
+    return this.items[key];
+}
+ItemCache.prototype.add = function(key, value) {
+
+    if (!(key in this.items)) {
+        this.keys.push(key);
+    }
+    this.items[key] = value;
+
+    if (this.maxItems && this.maxItems > 0) {
+        while (this.keys.length > this.maxItems) {
+            const key = this.keys.shift();
+            delete this.items[key];
+        }
+    }
+}
+
+function itemCacheTest() {
+    let a = new ItemCache(4);
+    a.add(8, 4);
+    a.add(5, 2);
+    a.add(4, 2);
+    a.add(3, 2);
+    a.add(1, 2);
+    a.add(1, 3);
+    a.add(1, 5);
+    let items = JSON.stringify(a.items)
+    let keys = JSON.stringify(a.keys);
+    const expectedItems = '{"1":5,"3":2,"4":2,"5":2}';
+    const expectedKeys = '[5,4,3,1]';
+    if (items != expectedItems || keys != expectedKeys || g.get(1) != 5) {
+        console.error(`ItemCache broken!`);
+        console.log(`got:      items: ${items} keys: ${keys}`);
+        console.log(`expected: items: ${expectedItems} keys: ${expectedKeys}`);
+    } else {
+        console.log(`ItemCache tested correctly!`);
+    }
+}

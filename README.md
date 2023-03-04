@@ -372,12 +372,22 @@ This is not in any way or form officially supported and you should consider it e
 To accomplish this, you need to use the dev branch of my readsb repository.
 (https://github.com/wiedehopf/adsb-wiki/wiki/Building-readsb-from-source#wiedehopfs-dev-branch)
 
-The following options need to be added to for example the decoder options in `/etc/default/readsb`
+The following command line options need to be added to for example the decoder options in `/etc/default/readsb`
 ```
 --write-json-globe-index --write-globe-history /var/globe_history --heatmap 30
 ```
 /var/globe_history needs to be a directory writeable by the user readsb.
 `sudo mkdir /var/globe_history` and `sudo chown readsb /var/globe_history` are useful for that.
+
+You should also download
+```
+wget -O /usr/local/share/tar1090/aircraft.csv.gz https://github.com/wiedehopf/tar1090-db/raw/csv/aircraft.csv.gz
+```
+
+and add this command line option (for exaple via /etc/default/readsb):
+```
+--db-file /usr/local/share/tar1090/aircraft.csv.gz
+```
 
 You will also need to point tar1090 to /run/readsb in case you are using another dump1090/readsb.
 See the "multiple instances" readme section.
@@ -402,6 +412,11 @@ If you can't figure out how to make it work with the above information, please d
 I don't support this feature for the general user base.
 This information is only for people who could figure it out from the source code anyhow,
 so that they don't have to spend as much time figuring it out.
+
+If you're using --write-json-globe-index with tar1090, you might be interested in tar1090
+using the readsb API to get data, it's less requests and usually more efficient,
+for details see the file nginx-readsb-api.conf
+(this needs adding to your existing nginx tar1090 configuration, this is only for people who really know their stuff anyway)
 
 ## A separate instance with longer data retention for gauging range
 
@@ -497,6 +512,14 @@ Optional arguments that can be added to the URL:
 alternative display style: &realHeat
 - blurryness: &heatBlur=2
 - weight of each dot for the heatmap: &heatWeight=4
+
+## offline map
+
+<https://github.com/adsbxchange/wiki/wiki/tar1090-offline-map>
+
+## Uses this library for decompressing zstd
+
+<https://github.com/wiedehopf/zstddec-tar1090>
 
 ## NO WARRANTY - Excerpt from the License:
 

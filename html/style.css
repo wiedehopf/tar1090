@@ -164,6 +164,7 @@ select {
     cursor: ew-resize;
     display: block;
     position: absolute;
+    z-index: 99;
     top:  calc( 5px * var(--SCALE));
     left: calc( 0px * var(--SCALE));
     float: right;
@@ -242,13 +243,20 @@ select {
 }
 
 .error_box {
-    position: absolute; bottom: calc( 25px * var(--SCALE)); left: calc( 25px * var(--SCALE)); border: calc( 2px * var(--SCALE)) solid red;
+    position: absolute; bottom: calc( 90px * var(--SCALE)); left: calc( 25px * var(--SCALE)); border: calc( 2px * var(--SCALE)) solid red;
     background-color: #FFFFA3; opacity: 0.75; filter:alpha(opacity=75); padding: calc( 5px * var(--SCALE));
     color: black;
     font-weight: bold;
     font-size: var(--FS3);
     line-height: 150%;
     text-align: center;
+}
+
+.inaccurate_warning {
+    position: absolute; top: calc( 25px * var(--SCALE)); left: calc( 280px * var(--SCALE));
+    width: 50%;
+    background-color: var(--BGCOLOR1);
+    padding: calc( 5px * var(--SCALE));
 }
 
 #js_error {
@@ -265,8 +273,7 @@ select {
     white-space: pre-line;
 }
 
-div#loader { z-index: 99; position: absolute; left: 0; top: 0; bottom: 0; right: 0; background: #000; opacity: 0.8; filter: alpha(opacity=80); }
-#loader_progress { width:  calc(250px * var(--SCALE)); height: calc( 20px * var(--SCALE)); position: absolute; top: 50%; left: 50%; margin:  calc(128px * var(--SCALE)) 0 0 - calc(125px * var(--SCALE)); }
+#loader_progress { width:  25%; height: 30px; position: absolute; top: 50%; left: 37%; }
 
 
 .aircraft_table_header {
@@ -476,7 +483,7 @@ select.error, textarea.error, input.error {
     width: calc( 48px * var(--SCALE));
     height: calc( 48px * var(--SCALE));
     cursor: pointer;
-    background-image: url('images/settings-icon01.png');
+    background-image: url('images/settings-icon02.png');
     background-size: cover;
     background-repeat: no-repeat;
     margin-top: calc( 6px * var(--SCALE));
@@ -852,8 +859,12 @@ input{
   grid-template-areas:
     "timezone dateHint timeHint speedHint"
     "play datepicker hours speedSelect"
-    ". . minutes ."
+    "loading . minutes ."
     ". . . .";
+}
+
+#replayLoading {
+  grid-area: loading;
 }
 
 #replayTimeZone{

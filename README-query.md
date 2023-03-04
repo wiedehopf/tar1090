@@ -17,12 +17,15 @@
 - filterAltMin=500 - filter minimum altitute to 500 ft
 - filterAltMax=5000 - filter maximum altitute to 5000 ft
 - filterCallSign=^(UAL|DAL) - filter callsign to United or Deleta
-- filterType=B738 - filter to aircraft type B738 aka 737-800
-- filterDescription=L2J - filter aircraft by description
+- filterType=B738 - filter to aircraft type code B738 aka 737-800
+- filterDescription=L2J - filter aircraft by type description
 - filterIcao=^a - filter icao that start with a
 - filterSources=adsb,uat,adsr,mlat,tisb,modeS - filter palnes by source type.
 - filterDbFlag=military,pia,ladd - filter planes by the db flags.
+- sortBy=column - (possible values: icao, flag, flight, registration, aircraft_type, squawk, altitude, speed, vert_rate, distance, track, msgs, seen, rssi, lat, lon, data_source, military, ws, wd
+- sortByReverse - reverse the sorting specified using sortBy
 
+See the main readme for more examples on how to use the filters
 
 ## Troubleshooting
 
@@ -35,6 +38,8 @@
 - enableLabels - enable labels on aircraft ("L" button).
 - extendedLabels=value - select the labels type ("O" button) / Valid values are 0,1,2.
 - trackLabels - enable track labels ("K" button).
+- labelsGeom - use geometric altitude in track labels
+- geomEGM - show geometric altitudes in EGM96 (MSL) instead of WGS84 (simpler geoid reference)
 - noVanish - persistence mode ("P" button).
 - scale=0.1-x - overall interface scaling.
 - iconScale=0.1-x - scale the aircraft icons. (multiplies with ?scale)
@@ -55,6 +60,8 @@
 - centerReceiver - conter the view on receiver position.
 - nowebgl - force rendering without WebGL.
 - tableInView - button V / only show aircraft in view in the table
+- screenshot - For automatic screenshotting, disables updates after the first load of all aircraft in view
+- SiteLat=45.0 SiteLon=10.0 - Override the receiver location for this visit
 
 ## Toggles
 
@@ -64,3 +71,17 @@
 - desktop - force desktop view.
 - kiosk - force kiosk mode (tempTrails=true / hideButtons=true / userScale=2).
 - allTracks - enable tracks as if pressing T
+
+## heatmap / replay (only available with readsb --heatmap parameter)
+
+- replay - replay history of all planes
+- heatmap - show a heatmap for the last 24h by default (optional: supply the maximum number of dots drawn, default 32000)
+- heatDuration - how many hours to show in the heatmap
+- heatEnd - how many hours to shift the heatmap time window into the past
+- heatAlpha - 0.1 to 1.0 - how transparent the dots will be
+- heatRadius - dot size for heatmap
+- heatManualRedraw - only redraw dots when pressing r
+
+- realHeat - real heatmap instead of dots
+- heatBlur - parameter for realHeat
+- heatWeight - parameter for realHeat

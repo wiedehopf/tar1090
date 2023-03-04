@@ -87,24 +87,31 @@ fi
 function getGIT() {
     # getGIT $REPO $BRANCH $TARGET (directory)
     if [[ -z "$1" ]] || [[ -z "$2" ]] || [[ -z "$3" ]]; then echo "getGIT wrong usage, check your script or tell the author!" 1>&2; return 1; fi
-    REPO="$1"; BRANCH="$2"; TARGET="$3"; pushd .
-    if cd "$TARGET" &>/dev/null && git fetch --depth 1 origin "$BRANCH" && git reset --hard FETCH_HEAD; then popd; return 0; fi
-    if ! cd /tmp || ! rm -rf "$TARGET"; then popd; return 1; fi
-    if git clone --depth 1 --single-branch --branch "$2" "$1" "$3"; then popd; return 0; fi
-    popd; return 1;
+    REPO="$1"; BRANCH="$2"; TARGET="$3"; pushd . >/dev/null
+    if cd "$TARGET" &>/dev/null && git fetch --depth 1 origin "$BRANCH" 2>/dev/null && git reset --hard FETCH_HEAD; then popd >/dev/null && return 0; fi
+    if ! cd /tmp || ! rm -rf "$TARGET"; then popd > /dev/null; return 1; fi
+    if git clone --depth 1 --single-branch --branch "$BRANCH" "$REPO" "$TARGET"; then popd > /dev/null; return 0; fi
+    rm -rf "$TARGET"; tmp=/tmp/getGIT-tmp-tar1090
+    if wget -O "$tmp" "$REPO/archive/refs/heads/$BRANCH.zip" && unzip "$tmp" -d "$tmp.folder" >/dev/null; then
+        if mv -fT "$tmp.folder/$(ls "$tmp.folder")" "$TARGET"; then rm -rf "$tmp" "$tmp.folder"; popd > /dev/null; return 0; fi
+    fi
+    rm -rf "$tmp" "$tmp.folder"; popd > /dev/null; return 1;
+}
+function revision() {
+    git rev-parse --short HEAD 2>/dev/null || echo "$RANDOM-$RANDOM"
 }
 
-if ! { [[ "$1" == "test" ]] && cd "$ipath/git-db" && git rev-parse; }; then
+if ! { [[ "$1" == "test" ]] && cd "$ipath/git-db"; }; then
     getGIT "$db_repo" "master" "$ipath/git-db" || true
 fi
 
-if ! cd $ipath/git-db || ! git rev-parse
+if ! cd $ipath/git-db
 then
     echo "Unable to download files, exiting! (Maybe try again?)"
     exit 1
 fi
 
-DB_VERSION=$(git rev-parse --short HEAD)
+DB_VERSION=$(revision)
 
 cd "$dir"
 
@@ -116,12 +123,12 @@ then
     cd /tmp/tar1090-test
     TAR_VERSION=$(date +%s)
 else
-    if ! getGIT "$repo" "master" "$ipath/git" || ! cd "$ipath/git" || ! git rev-parse
+    if ! getGIT "$repo" "master" "$ipath/git" || ! cd "$ipath/git"
     then
         echo "Unable to download files, exiting! (Maybe try again?)"
         exit 1
     fi
-    TAR_VERSION="$(git rev-parse --short HEAD)"
+    TAR_VERSION="$(revision)"
 fi
 
 
@@ -211,7 +218,9 @@ do
     if [[ -z "$srcdir" || -z "$instance" ]]; then
         continue
     fi
-    TMP=$(mktemp -d -p "$ipath")
+    TMP="$ipath/.instance_tmp"
+    rm -rf "$TMP"
+    mkdir -p "$TMP"
     chmod 755 "$TMP"
 
     if [[ "$instance" != "tar1090" ]]; then
