@@ -1718,7 +1718,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
             console.log(baseMarkerKey);
         }
         if (!baseMarker) {
-            basemarker = ['pumpkin', 1];
+            baseMarker = ['pumpkin', 1];
         }
         this.shape = shapes[baseMarker[0]];
         this.baseScale = baseMarker[1] * 0.96;
