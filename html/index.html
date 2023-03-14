@@ -208,6 +208,16 @@
                   </div>
                 </td>
               </tr>
+              <tr id="routeRow" class="hidden">
+                <td>
+                  <div class="infoHeading">
+                    <span title="Reported flight origin and destination according to adsbdb.com">Route</span>:
+                  </div>
+                  <div class="infoData">
+                    <span id="selected_route"></span>
+                  </div>
+                </td>
+              </tr>
               <tr id="photoLinkRow" class="hidden">
                 <td>
                   <div class="infoHeading">
@@ -1022,6 +1032,7 @@
 
     <script>let databaseFolder = "db2";</script>
     <!-- JS_ANCHOR1 -->
+    <script src="https://unpkg.com/axios@1.1.2/dist/axios.min.js"></script>
     <script src="libs/jquery-3.6.1.min.js"></script>
     <script src="libs/elm-pep-01.js"></script>
     <script src="libs/jquery-ui-1.13.2.min.js"></script>

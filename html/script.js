@@ -7,6 +7,7 @@
 
 g.planes        = {};
 g.planesOrdered = [];
+g.route_cache = [];
 
 // Define our global variables
 let tabHidden = false;
@@ -1516,6 +1517,16 @@ jQuery('#selected_altitude_geom1')
             refreshSelected();
         }
     });
+    new Toggle({
+        key: "useRouteAPI",
+        display: "Lookup route",
+        container: "#settingsRight",
+        init: useRouteAPI,
+        setState: function(state) {
+            useRouteAPI = state;
+        }
+    });
+
 
     new Toggle({
         key: "enableInfoblock",
@@ -3097,6 +3108,16 @@ function refreshSelected() {
         jQuery('#selected_squawk2').updateText(selected.squawk);
     }
 
+    if (useRouteAPI) {
+        jQuery('#routeRow').show();
+        if (selected.routeString) {
+            jQuery('#selected_route').updateText(selected.routeString);
+        } else {
+            jQuery('#selected_route').updateText('n/a');
+        }
+    } else {
+        jQuery('#routeRow').hide();
+    }
     let magResult = null;
 
     if (geoMag && selected.position != null) {
@@ -3521,6 +3542,12 @@ function refreshFeatures() {
         },
         html: flightawareLinks,
         text: 'Callsign' };
+    cols.route = {
+        sort: function () { sortBy('route', compareAlpha, function(x) { return x.routeString }); },
+        value: function(plane) {
+            return ((useRouteAPI && plane.routeString) || '');
+        },
+        text: 'Route' };
     cols.registration = {
         sort: function () { sortBy('registration', compareAlpha, function(x) { return x.registration; }); },
         value: function(plane) { return (flightawareLinks ? getFlightAwareIdentLink(plane.registration, plane.registration) : (plane.registration ? plane.registration : "")); },

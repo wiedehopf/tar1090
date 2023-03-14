@@ -252,6 +252,7 @@ HideCols = [
 	"#icao",
 //	"#flag",
 //	"#flight",
+    "#route",
 	"#registration",
 //	"#aircraft_type",
 //	"#squawk",
@@ -275,6 +276,17 @@ HideCols = [
 // planespottersAPI = true;
 // get pictures from planespotting.be
 // planespottingAPI = true;
+
+// get flight route from routeApi service
+// useRouteAPI = false;
+// which routeApi service to use and whether to include lat/lng in the call
+// currently there appear to be two:
+// ADSBDB: routeApiUrl = "https://api.adsbdb.com/v0/callsign";
+// routeApiUrl = "https://api.adsb.lol/api/0/route";
+// routeApiAddLatLng = true; // set to false for adsbdb.com
+// rate limit to use: routeApiRequestsPerSlice requests per routeApiRequestSlice milliseconds
+// routeApiRequestsPerSlice = 30;
+// routeApiRequestSlice = 60000; // ms
 
 // show a link to jetphotos, only works if planespottersAPI is disabled
 // jetphotoLinks = false;
