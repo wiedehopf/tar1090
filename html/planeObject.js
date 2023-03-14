@@ -1,5 +1,126 @@
 "use strict";
 
+// the following code is copied from https://github.com/aishek/axios-rate-limit
+// where it was released under the MIT license
+function AxiosRateLimit (axios) {
+  this.queue = []
+  this.timeslotRequests = 0
+
+  this.interceptors = {
+    request: null,
+    response: null
+  }
+
+  this.handleRequest = this.handleRequest.bind(this)
+  this.handleResponse = this.handleResponse.bind(this)
+
+  this.enable(axios)
+}
+
+AxiosRateLimit.prototype.getMaxRPS = function () {
+  var perSeconds = (this.perMilliseconds / 1000)
+  return this.maxRequests / perSeconds
+}
+
+AxiosRateLimit.prototype.setMaxRPS = function (rps) {
+  this.setRateLimitOptions({
+    maxRequests: rps,
+    perMilliseconds: 1000
+  })
+}
+
+AxiosRateLimit.prototype.setRateLimitOptions = function (options) {
+  if (options.maxRPS) {
+    this.setMaxRPS(options.maxRPS)
+  } else {
+    this.perMilliseconds = options.perMilliseconds
+    this.maxRequests = options.maxRequests
+  }
+}
+
+AxiosRateLimit.prototype.enable = function (axios) {
+  function handleError (error) {
+    return Promise.reject(error)
+  }
+
+  this.interceptors.request = axios.interceptors.request.use(
+    this.handleRequest,
+    handleError
+  )
+  this.interceptors.response = axios.interceptors.response.use(
+    this.handleResponse,
+    handleError
+  )
+}
+
+AxiosRateLimit.prototype.handleRequest = function (request) {
+  return new Promise(function (resolve) {
+    this.push({ resolve: function () { resolve(request) } })
+  }.bind(this))
+}
+
+AxiosRateLimit.prototype.handleResponse = function (response) {
+  this.shift()
+  return response
+}
+
+AxiosRateLimit.prototype.push = function (requestHandler) {
+  this.queue.push(requestHandler)
+  this.shiftInitial()
+}
+
+AxiosRateLimit.prototype.shiftInitial = function () {
+  setTimeout(function () { return this.shift() }.bind(this), 0)
+}
+
+AxiosRateLimit.prototype.shift = function () {
+  if (!this.queue.length) return
+  if (this.timeslotRequests === this.maxRequests) {
+    if (this.timeoutId && typeof this.timeoutId.ref === 'function') {
+      this.timeoutId.ref()
+    }
+
+    return
+  }
+
+  var queued = this.queue.shift()
+  queued.resolve()
+
+  if (this.timeslotRequests === 0) {
+    this.timeoutId = setTimeout(function () {
+      this.timeslotRequests = 0
+      this.shift()
+    }.bind(this), this.perMilliseconds)
+
+    if (typeof this.timeoutId.unref === 'function') {
+      if (this.queue.length === 0) this.timeoutId.unref()
+    }
+  }
+
+  this.timeslotRequests += 1
+}
+
+function axiosRateLimit (axios, options) {
+  var rateLimitInstance = new AxiosRateLimit(axios)
+  rateLimitInstance.setRateLimitOptions(options)
+
+  axios.getMaxRPS = AxiosRateLimit.prototype.getMaxRPS.bind(rateLimitInstance)
+  axios.setMaxRPS = AxiosRateLimit.prototype.setMaxRPS.bind(rateLimitInstance)
+  axios.setRateLimitOptions = AxiosRateLimit.prototype.setRateLimitOptions
+    .bind(rateLimitInstance)
+
+  return axios
+}
+
+// with the AxiosRateLimit library above, let's create rate limited handler
+// for adsbdb.com lookups.
+// the adsbdb API is rate limited to 120 calls per minute, per IP address,
+// which is pretty easy to get over when starting up in a busy airspace.
+// Since this is a rolling window, let's be FAR more conservative to deal
+// with multiple page reloads, etc
+// this still gives us about one route every 2 seconds which should be fine
+let adsbdbRL = axiosRateLimit(axios.create(), { maxRequests: 30, perMilliseconds: 60000 });
+
 function PlaneObject(icao) {
     icao = `${icao}`;
 
@@ -24,6 +145,7 @@ function PlaneObject(icao) {
     this.history_size = 0;
     this.trace = []; // save last 30 seconds of positions
     this.lastTraceTs = 0;
+    this.routeString = null;
 
     // Display info
     this.visible = false;
@@ -846,6 +968,8 @@ PlaneObject.prototype.updateIcon = function() {
             callsign =  'reg: ' + this.registration;
         else
             callsign =   'hex: ' + this.icao;
+        if (adsbdbAPI && this.routeString)
+            callsign += ' - ' + this.routeString;
 
         const unknown = NBSP+NBSP+"?"+NBSP+NBSP;
 
@@ -2326,7 +2450,7 @@ PlaneObject.prototype.getAircraftData = function() {
     }
     this.dbLoad = true;
 
-	let req = dbLoad(this.icao);
+    let req = dbLoad(this.icao);
 
     req.then(
         data => {
@@ -2873,6 +2997,67 @@ PlaneObject.prototype.setFlight = function(flight) {
         this.flight = `${flight}`;
         this.name = this.flight.trim() || 'empty callsign';
         this.flightTs = now;
+        // we can only look up the route if we have a real callsign - the free database that we use has
+        // data for many traditionally scheduled flights by airlines, but typically doesn't have flight
+        // plans based on only the tail number of a plane.
+        // Also, to conserve API calls, we only want to look up flights that we have recently seen
+        if (adsbdbAPI && this.name && this.name != 'empty callsign' && this.seen < 60 && this.registration != this.name) {
+            var currentName = this.name;
+            if (g.route_cache[currentName] === undefined) {
+                // above we check for undefined - so this prevents multiple API calls for the same flight
+                g.route_cache[currentName] = '';
+                adsbdbRL.get(`https://api.adsbdb.com/v0/callsign/${currentName}`)
+                    .then((jsonResponse) => {
+                        if (adsbdbRL.getMaxRPS() < 0.1) {
+                            // we were backing off due to the rate limit, but this
+                            // call succeeded, so let's go back to the regular rate limit
+                            adsbdbRL.setRateLimitOptions({ maxRequests: 30, perMilliseconds: 60000 });
+                            console.log("set the ratelimit back to normal (30/min)");
+                        }
+                        if (debugAll) {
+                            console.log(`-- got adsbdb response for ${currentName}`, jsonResponse.data);
+                        }
+                        if (jsonResponse.data.response === undefined) {
+                            if (debugAll) {
+                                console.log("cannot parse adsbdb.com api response " , jsonResponse.data);
+                            }
+                        } else {
+                            let response = jsonResponse.data.response;
+                            if (response !== 'unknown callsign' && response.flightroute) {
+                                let origin = null;
+                                let destination = null
+                                if (response.flightroute.origin && response.flightroute.origin.iata_code) {
+                                    origin = response.flightroute.origin.iata_code;
+                                }
+                                if (response.flightroute.destination && response.flightroute.destination.iata_code) {
+                                    destination = response.flightroute.destination.iata_code;
+                                }
+                                if (origin && destination) {
+                                    g.route_cache[currentName] = `${origin}-${destination}`;
+                                } else if (origin) {
+                                    g.route_cache[currentName] = `org: ${origin}`;
+                                } else if (destination) {
+                                    g.route_cache[currentName] = `dest: ${destination}`;
+                                }
+                            }
+                    })
+                    .catch((error) => {
+                        if (debugAll) {
+                            console.log("Error response from adsbdb API", error)
+                        }
+                        if (error.response && error.response.status == 429) {
+                            console.error("adsbdb rate limit exceeded!");
+                            // back of for two minutes
+                            adsbdbRL.setRateLimitOptions({ maxRequests: 1, perMilliseconds: 120000 });
+                        }
+                    });
+            }
+            let routeString = g.route_cache[currentName];
+            // not sure if this is too verbose - it seems useful to have in the console log?
+            if (routeString && this.routeString != routeString)
+                console.log(`setting routeString ${routeString} for ${currentName}`);
+            this.routeString = routeString;
+        }
     }
 }
 

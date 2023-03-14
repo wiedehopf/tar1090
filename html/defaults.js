@@ -268,6 +268,7 @@ let HideCols = [
 	"#icao",
 //	"#flag",
 //	"#flight",
+//     "#route",
 	"#registration",
 //	"#aircraft_type",
 //	"#squawk",
@@ -292,6 +293,9 @@ let showPictures = true;
 let planespottersAPI = true;
 // get pictures from planespotting.be
 let planespottingAPI = false;
+
+// get flight route from adsbdb.com
+let adsbdbAPI = true;
 
 // show a link to jetphotos, only works if planespottersAPI is disabled
 let jetphotoLinks = false;
