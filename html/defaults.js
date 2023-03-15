@@ -295,7 +295,7 @@ let planespottersAPI = true;
 let planespottingAPI = false;
 
 // get flight route from adsbdb.com
-let adsbdbAPI = true;
+let adsbdbAPI = false;
 
 // show a link to jetphotos, only works if planespottersAPI is disabled
 let jetphotoLinks = false;
