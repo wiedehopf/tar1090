@@ -2921,6 +2921,18 @@ PlaneObject.prototype.setFlight = function(flight) {
                     console.log(routes);
                 }
                 for (var route of routes) {
+                    // let's log just a little bit of what's happening
+                    if (1 || debugAll) {
+                        var logText = `result for ${route.callsign}: `;
+                        if (route.airport_codes == 'unknown') {
+                            logText += 'unknown to the API server';
+                        } else if (route.plausible == false) {
+                            logText += `${route.airport_codes} considered implausible`;
+                        } else {
+                            logText += `adding ${route.airport_codes}`;
+                        }
+                        console.log(logText);
+                    }
                     if (route.airport_codes != 'unknown' && route.plausible == true) {
                         g.route_cache[route.callsign] = route.airport_codes;
                     }
