@@ -24,6 +24,7 @@ function PlaneObject(icao) {
     this.history_size = 0;
     this.trace = []; // save last 30 seconds of positions
     this.lastTraceTs = 0;
+    this.routeString = null;
 
     // Display info
     this.visible = false;
@@ -846,6 +847,8 @@ PlaneObject.prototype.updateIcon = function() {
             callsign =  'reg: ' + this.registration;
         else
             callsign =   'hex: ' + this.icao;
+        if (useRouteAPI && this.routeString)
+            callsign += ' - ' + this.routeString;
 
         const unknown = NBSP+NBSP+"?"+NBSP+NBSP;
 
@@ -2326,7 +2329,7 @@ PlaneObject.prototype.getAircraftData = function() {
     }
     this.dbLoad = true;
 
-	let req = dbLoad(this.icao);
+    let req = dbLoad(this.icao);
 
     req.then(
         data => {
@@ -2861,6 +2864,7 @@ PlaneObject.prototype.setProjection = function(arg) {
 }
 
 PlaneObject.prototype.setFlight = function(flight) {
+    var currentTime = new Date().getTime()/1000;
     if (flight == null) {
         if (now - this.flightTs > 10 * 60) {
             this.flight = null;
@@ -2873,6 +2877,63 @@ PlaneObject.prototype.setFlight = function(flight) {
         this.flight = `${flight}`;
         this.name = this.flight.trim() || 'empty callsign';
         this.flightTs = now;
+
+        let currentName = this.name;
+        if (g.route_cache[currentName] === undefined &&
+            useRouteAPI &&
+            this.name &&
+            this.name != 'empty callsign' &&
+            this.seen < 60 &&
+            this.registration != this.name &&
+            this.position) {
+            // we have all the pieces that allow us to lookup a route
+            let route_check = { 'callsign': this.name, 'lat': this.position[1], 'lng': this.position[0] };
+            if (debugAll) {
+                console.log(`-> at ${currentTime} remember`, route_check);
+            }
+            g.route_check_array.push(route_check);
+            g.route_cache[currentName] = ''; // this way it only gets added to the array once
+        } else {
+            // this ensures that if eventually we get (and cache) the route, the plane
+            // information gets updated as we keep coming back to this function
+            this.routeString = g.route_cache[currentName];
+        }
+    }
+    // check if it's time to send a batch of request to the API server
+    if (currentTime > g.route_cache_timer) {
+        g.route_cache_timer = currentTime + 10;
+        if (g.route_check_array.length > 0) {
+            if (debugAll) {
+                console.log(`next batch to send at ${currentTime}:`, g.route_check_array);
+            }
+            var route_check_array = g.route_check_array;
+            g.route_check_array = [];
+
+            jQuery.ajax({
+                type: "POST",
+                url: routeApiUrl,
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: JSON.stringify({ 'planes': route_check_array}),
+                headers: { "Access-Control-Allow-Origin": "*" }})
+            .done((routes) => {
+                if (debugAll) {
+                    console.log(routes);
+                }
+                for (var route of routes) {
+                    if (route.airport_codes != 'unknown' && route.plausible == true) {
+                        g.route_cache[route.callsign] = route.airport_codes;
+                    }
+                }
+            })
+            .fail((jqxhr, status, error) => {
+                console.log('API server call failed with', status);
+            });
+        } else {
+            if (debugAll) {
+                console.log(`nothing to send to server at ${currentTime}`);
+            }
+        }
     }
 }
 
