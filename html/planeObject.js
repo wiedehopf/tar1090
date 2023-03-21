@@ -2924,17 +2924,17 @@ PlaneObject.prototype.setFlight = function(flight) {
                     // let's log just a little bit of what's happening
                     if (1 || debugAll) {
                         var logText = `result for ${route.callsign}: `;
-                        if (route.airport_codes == 'unknown') {
+                        if (route._airport_codes_iata == 'unknown') {
                             logText += 'unknown to the API server';
                         } else if (route.plausible == false) {
-                            logText += `${route.airport_codes} considered implausible`;
+                            logText += `${route._airport_codes_iata} considered implausible`;
                         } else {
-                            logText += `adding ${route.airport_codes}`;
+                            logText += `adding ${route._airport_codes_iata}`;
                         }
                         console.log(logText);
                     }
                     if (route.airport_codes != 'unknown' && route.plausible == true) {
-                        g.route_cache[route.callsign] = route.airport_codes;
+                        g.route_cache[route.callsign] = route._airport_codes_iata;
                     }
                 }
             })
