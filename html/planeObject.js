@@ -2933,8 +2933,12 @@ PlaneObject.prototype.setFlight = function(flight) {
                         }
                         console.log(logText);
                     }
-                    if (route.airport_codes != 'unknown' && route.plausible == true) {
-                        g.route_cache[route.callsign] = route._airport_codes_iata;
+                    if (route.airport_codes != 'unknown') {
+                        if (route.plausible == true) {
+                            g.route_cache[route.callsign] = route._airport_codes_iata;
+                        } else {
+                            g.route_cache[route.callsign] = `?? ${route._airport_codes_iata}`;
+                        }
                     }
                 }
             })
