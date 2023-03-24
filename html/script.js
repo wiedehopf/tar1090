@@ -4566,6 +4566,10 @@ function invertMap(evt){
             init: (onMobile ? false : true),
             setState: altitudeChart.render
         });
+
+        if (usp.has('altitudeChart')) {
+            toggles['altitudeChart'].toggle(true, 'init');
+        }
     }
 
     return TAR;
