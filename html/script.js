@@ -2935,7 +2935,7 @@ function refreshPhoto(selected) {
 
     if (planespottersAPI) {
         let req = jQuery.ajax({
-            url: 'https://api.planespotters.net/pub/photos/' + urlTail,
+            url: planespottersAPIurl + urlTail,
             dataType: 'json',
             plane: selected,
         });
@@ -4513,7 +4513,7 @@ function invertMap(evt){
   ctx.globalAlpha = alpha;  // alpha 0 = no effect 1 = full effect
   ctx.fillRect(0, 0, evt.ctx.canvas.width, ctx.canvas.height);
 
-  
+
 }
 //
 // Altitude Chart begin
