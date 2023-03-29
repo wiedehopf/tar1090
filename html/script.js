@@ -2345,6 +2345,10 @@ function initMap() {
         renderOrder: null,
         renderBuffer: renderBuffer,
     });
+    if (usp.has('noRangeRings')) {
+        SiteCircles = false;
+    }
+
     layers.push(siteCircleLayer);
 
     siteCircleLayer.on('change:visible', function(evt) {
