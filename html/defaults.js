@@ -18,7 +18,7 @@ let MessageRateInTitle = false;
 
 // -- Output Settings -------------------------------------
 // The DisplayUnits setting controls whether nautical (ft, nmi, kt),
-// metric (m, km, km/h) or imperial (ft, mi, mph) units are used in the 
+// metric (m, km, km/h) or imperial (ft, mi, mph) units are used in the
 // plane table and in the detailed plane info. Valid values are
 // "nautical", "metric", or "imperial".
 let DisplayUnits = "nautical";
@@ -290,6 +290,7 @@ let HideCols = [
 let showPictures = true;
 // get pictures from planespotters.net
 let planespottersAPI = true;
+let planespottersAPIurl = "https://api.planespotters.net/pub/photos/";
 // get pictures from planespotting.be
 let planespottingAPI = false;
 
