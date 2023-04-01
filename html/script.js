@@ -775,6 +775,10 @@ function initPage() {
         enableLabels=true;
     }
 
+    if (usp.has('rangeRings')) {
+        SiteCircles = Boolean(parseInt(usp.get('rangeRings')));
+    }
+
     if (usp.has('limitUpdates')) {
         let tmp = parseInt(usp.get('limitUpdates'));
         if (!isNaN(tmp))
@@ -4559,11 +4563,15 @@ function invertMap(evt){
     }
 
     altitudeChart.init = function () {
+        let chartOn = (onMobile ? false : altitudeChartDefaultState);
+        if (usp.has('altitudeChart')) {
+            chartOn = Boolean(parseInt(usp.get('altitudeChart')));
+        }
         new Toggle({
             key: "altitudeChart",
             display: "Altitude Chart",
             container: "#settingsRight",
-            init: (onMobile ? false : true),
+            init: chartOn,
             setState: altitudeChart.render
         });
     }
