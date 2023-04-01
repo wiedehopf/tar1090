@@ -296,47 +296,34 @@ do
 
     sed -i -e "s/tar1090 on github/tar1090 on github ($(date +%y%m%d))/" index.html
 
-    sed -i \
-        -e "s/dbloader.js/dbloader_$TAR_VERSION.js/" \
-        -e "s/defaults.js/defaults_$TAR_VERSION.js/" \
-        -e "s/early.js/early_$TAR_VERSION.js/" \
-        -e "s/flags.js/flags_$TAR_VERSION.js/" \
-        -e "s/formatter.js/formatter_$TAR_VERSION.js/" \
-        -e "s/layers.js/layers_$TAR_VERSION.js/" \
-        -e "s/markers.js/markers_$TAR_VERSION.js/" \
-        -e "s/planeObject.js/planeObject_$TAR_VERSION.js/" \
-        -e "s/registrations.js/registrations_$TAR_VERSION.js/" \
-        -e "s/script.js/script_$TAR_VERSION.js/" \
-        -e "s/style.css/style_$TAR_VERSION.css/" \
-        index.html
+    # cache busting sprites.png
+    {
+        spritename="sprites_$(md5sum images/sprites.png | cut -d' ' -f1).png"
+        mv "images/sprites.png" "images/${spritename}"
+        sed -i -e "s#sprites.png#${spritename}#g" script.js
+        sed -i -e "s#sprites.png#${spritename}#g" index.html
+    }
 
-    mv dbloader.js "dbloader_$TAR_VERSION.js"
-    mv defaults.js "defaults_$TAR_VERSION.js"
-    mv early.js "early_$TAR_VERSION.js"
-    mv flags.js "flags_$TAR_VERSION.js"
-    mv formatter.js "formatter_$TAR_VERSION.js"
-    mv layers.js "layers_$TAR_VERSION.js"
-    mv markers.js "markers_$TAR_VERSION.js"
-    mv planeObject.js "planeObject_$TAR_VERSION.js"
-    mv registrations.js "registrations_$TAR_VERSION.js"
-    mv script.js "script_$TAR_VERSION.js"
-    mv style.css "style_$TAR_VERSION.css"
+    # cache busting js / css
+    {
+        sedargs=("sed" "-i" "index.html")
+        for file in dbloader.js defaults.js early.js flags.js formatter.js layers.js markers.js planeObject.js registrations.js script.js style.css; do
+            md5sum=$(md5sum $file | cut -d' ' -f1)
+            prefix=$(cut -d '.' -f1 <<< "$file")
+            postfix=$(cut -d '.' -f2 <<< "$file")
+            newname="${prefix}_${md5sum}.${postfix}"
+            mv "$file" "$newname"
+            if [[ $nginx == yes ]]; then
+                gzip -k -9 "$newname"
+            fi
+            sedargs+=("-e" "s#${file}#${newname}#")
+        done
+
+        "${sedargs[@]}"
+    }
 
     if [[ $nginx == yes ]]; then
-        gzip -k -9 "dbloader_$TAR_VERSION.js"
-        gzip -k -9 "defaults_$TAR_VERSION.js"
-        gzip -k -9 "early_$TAR_VERSION.js"
-        gzip -k -9 "flags_$TAR_VERSION.js"
-        gzip -k -9 "formatter_$TAR_VERSION.js"
-        gzip -k -9 "layers_$TAR_VERSION.js"
-        gzip -k -9 "markers_$TAR_VERSION.js"
-        gzip -k -9 "planeObject_$TAR_VERSION.js"
-        gzip -k -9 "registrations_$TAR_VERSION.js"
-        gzip -k -9 "script_$TAR_VERSION.js"
-        gzip -k -9 "style_$TAR_VERSION.css"
-
         gzip -k -9 ./libs/*.js
-        #gzip -k -9 db2/*.json .... already exists compressed
     fi
 
     rm -rf "$html_path"
