@@ -314,7 +314,7 @@ do
             newname="${prefix}_${md5sum}.${postfix}"
             mv "$file" "$newname"
             if [[ $nginx == yes ]]; then
-                gzip -k -9 "$newname"
+                gzip -k -3 "$newname"
             fi
             sedargs+=("-e" "s#${file}#${newname}#")
         done
@@ -323,7 +323,7 @@ do
     }
 
     if [[ $nginx == yes ]]; then
-        gzip -k -9 ./libs/*.js
+        gzip -k -3 ./libs/*.js
     fi
 
     rm -rf "$html_path"
