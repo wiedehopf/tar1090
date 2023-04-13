@@ -113,7 +113,6 @@ let noRegOnly = false;
 let triggerRefresh = 0;
 let firstDraw = true;
 let darkerColors = false;
-let updateLocation = false;
 let autoselect = false;
 let nogpsOnly = false;
 let trace_hist_only = false;

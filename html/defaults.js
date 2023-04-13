@@ -44,6 +44,9 @@ let SiteLat     = null;            // position of the marker
 let SiteLon     = null;
 let SiteName    = "My Radar Site"; // tooltip of the marker
 
+// Update GPS location (keep map centered on GPS location)
+let updateLocation = false;
+
 // Color controls for the range outline
 let range_outline_color = '#0000DD';
 let range_outline_width = 1.7;

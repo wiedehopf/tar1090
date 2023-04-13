@@ -35,6 +35,9 @@
 //SiteLon     = 9.0;
 //SiteName    = "My Radar Site"; // tooltip of the marker
 
+// Update GPS location (keep map centered on GPS location)
+//updateLocation = false;
+
 // Color controls for the range outline
 //range_outline_color = '#0000DD';
 //range_outline_width = 1.7;
