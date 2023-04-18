@@ -2879,75 +2879,78 @@ PlaneObject.prototype.setFlight = function(flight) {
         this.flightTs = now;
 
         let currentName = this.name;
-        if (g.route_cache[currentName] === undefined &&
-            useRouteAPI &&
-            this.name &&
-            this.name != 'empty callsign' &&
-            this.seen < 60 &&
-            this.registration != this.name &&
-            this.position) {
-            // we have all the pieces that allow us to lookup a route
-            let route_check = { 'callsign': this.name, 'lat': this.position[1], 'lng': this.position[0] };
-            if (debugAll) {
-                console.log(`-> at ${currentTime} remember`, route_check);
+        if (useRouteAPI) {
+            if (g.route_cache[currentName] === undefined &&
+                this.name &&
+                this.name != 'empty callsign' &&
+                this.seen < 60 &&
+                this.registration != this.name &&
+                this.position) {
+                // we have all the pieces that allow us to lookup a route
+                let route_check = { 'callsign': this.name, 'lat': this.position[1], 'lng': this.position[0] };
+                if (debugAll) {
+                    console.log(`-> at ${currentTime} remember`, route_check);
+                }
+                g.route_check_array.push(route_check);
+                g.route_cache[currentName] = ''; // this way it only gets added to the array once
+            } else {
+                // this ensures that if eventually we get (and cache) the route, the plane
+                // information gets updated as we keep coming back to this function
+                this.routeString = g.route_cache[currentName];
             }
-            g.route_check_array.push(route_check);
-            g.route_cache[currentName] = ''; // this way it only gets added to the array once
-        } else {
-            // this ensures that if eventually we get (and cache) the route, the plane
-            // information gets updated as we keep coming back to this function
-            this.routeString = g.route_cache[currentName];
         }
     }
-    // check if it's time to send a batch of request to the API server
-    if (currentTime > g.route_cache_timer) {
-        g.route_cache_timer = currentTime + 10;
-        if (g.route_check_array.length > 0) {
-            if (debugAll) {
-                console.log(`next batch to send at ${currentTime}:`, g.route_check_array);
-            }
-            var route_check_array = g.route_check_array;
-            g.route_check_array = [];
-
-            jQuery.ajax({
-                type: "POST",
-                url: routeApiUrl,
-                contentType: 'application/json; charset=utf-8',
-                dataType: 'json',
-                data: JSON.stringify({ 'planes': route_check_array}),
-                headers: { "Access-Control-Allow-Origin": "*" }})
-            .done((routes) => {
+    if (useRouteAPI) {
+        // check if it's time to send a batch of request to the API server
+        if (currentTime > g.route_cache_timer) {
+            g.route_cache_timer = currentTime + 10;
+            if (g.route_check_array.length > 0) {
                 if (debugAll) {
-                    console.log(routes);
+                    console.log(`next batch to send at ${currentTime}:`, g.route_check_array);
                 }
-                for (var route of routes) {
-                    // let's log just a little bit of what's happening
-                    if (1 || debugAll) {
-                        var logText = `result for ${route.callsign}: `;
-                        if (route._airport_codes_iata == 'unknown') {
-                            logText += 'unknown to the API server';
-                        } else if (route.plausible == false) {
-                            logText += `${route._airport_codes_iata} considered implausible`;
-                        } else {
-                            logText += `adding ${route._airport_codes_iata}`;
+                var route_check_array = g.route_check_array;
+                g.route_check_array = [];
+
+                jQuery.ajax({
+                    type: "POST",
+                    url: routeApiUrl,
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify({ 'planes': route_check_array}),
+                    headers: { "Access-Control-Allow-Origin": "*" }})
+                    .done((routes) => {
+                        if (debugAll) {
+                            console.log(routes);
                         }
-                        console.log(logText);
-                    }
-                    if (route.airport_codes != 'unknown') {
-                        if (route.plausible == true) {
-                            g.route_cache[route.callsign] = route._airport_codes_iata;
-                        } else {
-                            g.route_cache[route.callsign] = `?? ${route._airport_codes_iata}`;
+                        for (var route of routes) {
+                            // let's log just a little bit of what's happening
+                            if (1 || debugAll) {
+                                var logText = `result for ${route.callsign}: `;
+                                if (route._airport_codes_iata == 'unknown') {
+                                    logText += 'unknown to the API server';
+                                } else if (route.plausible == false) {
+                                    logText += `${route._airport_codes_iata} considered implausible`;
+                                } else {
+                                    logText += `adding ${route._airport_codes_iata}`;
+                                }
+                                console.log(logText);
+                            }
+                            if (route.airport_codes != 'unknown') {
+                                if (route.plausible == true) {
+                                    g.route_cache[route.callsign] = route._airport_codes_iata;
+                                } else {
+                                    g.route_cache[route.callsign] = `?? ${route._airport_codes_iata}`;
+                                }
+                            }
                         }
-                    }
+                    })
+                    .fail((jqxhr, status, error) => {
+                        console.log('API server call failed with', status);
+                    });
+            } else {
+                if (debugAll) {
+                    console.log(`nothing to send to server at ${currentTime}`);
                 }
-            })
-            .fail((jqxhr, status, error) => {
-                console.log('API server call failed with', status);
-            });
-        } else {
-            if (debugAll) {
-                console.log(`nothing to send to server at ${currentTime}`);
             }
         }
     }

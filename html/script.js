@@ -1173,20 +1173,22 @@ function initPage() {
         }
     });
 
-    new Toggle({
-        key: "lastLeg",
-        display: "Last Leg only",
-        container: "#settingsLeft",
-        init: true,
-        setState: function(state) {
-            lastLeg = state;
-            if (loadFinished && !showTrace) {
-                for (let i in SelPlanes) {
-                    SelPlanes[i].processTrace();
+    if (useRouteAPI) {
+        new Toggle({
+            key: "lastLeg",
+            display: "Last Leg only",
+            container: "#settingsLeft",
+            init: true,
+            setState: function(state) {
+                lastLeg = state;
+                if (loadFinished && !showTrace) {
+                    for (let i in SelPlanes) {
+                        SelPlanes[i].processTrace();
+                    }
                 }
             }
-        }
-    });
+        });
+    }
     new Toggle({
         key: "labelsGeom",
         display: "Labels: geom. alt. (WGS84)",
