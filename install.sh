@@ -4,30 +4,32 @@ set -e
 trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
 renice 10 $$
 
-if [ -d /bup ]; then
-    echo Talk to @PIL. Dieses Skript ist nichts fuer dich!
-    exit 1
-fi
-
-
-srcdir=/run/dump1090-fa
+srcdir=/run/readsb
 repo="https://github.com/wiedehopf/tar1090"
 db_repo="https://github.com/wiedehopf/tar1090-db"
+
+# optional command line options for this install script
+# $1: data source directory
+# $2: web path, default is "tar1090", use "webroot" to place the install at /
+# $3: specify install path
+
 ipath=/usr/local/share/tar1090
+if [[ -n "$3" ]]; then ipath="$3"; fi
+
 lighttpd=no
 nginx=no
+function useSystemd () { command -v systemd &>/dev/null; }
+function useSystemd () { return 1; }
 
 mkdir -p $ipath
-mkdir -p $ipath/aircraft_sil
 
-
-if ! id -u tar1090 &>/dev/null
+if useSystemd && ! id -u tar1090 &>/dev/null
 then
     adduser --system --home $ipath --no-create-home --quiet tar1090 || adduser --system --home-dir $ipath --no-create-home tar1090
 fi
 
 # terminate with /
-command_package="git git/jq jq/wget wget"
+command_package="git git/jq jq"
 packages=()
 
 while read -r -d '/' CMD PKG
@@ -162,7 +164,7 @@ fi
 if [[ -n $2 ]]; then
     instances="$srcdir $2"
 elif [[ -n $1 ]] && [ "$1" != "test" ] ; then
-    instances="$srcdir tar1090"
+    instances="$1 tar1090"
 elif [ -f /etc/default/tar1090_instances ]; then
     instances=$(</etc/default/tar1090_instances)	
 else
@@ -176,7 +178,7 @@ fi
 instances=$(echo -e "$instances" | grep -v -e '^#')
 
 
-if ! diff tar1090.sh /usr/local/share/tar1090/tar1090.sh &>/dev/null; then
+if ! diff tar1090.sh "$ipath"/tar1090.sh &>/dev/null; then
     changed=yes
     while read -r srcdir instance; do
         if [[ -z "$srcdir" || -z "$instance" ]]; then
@@ -188,7 +190,7 @@ if ! diff tar1090.sh /usr/local/share/tar1090/tar1090.sh &>/dev/null; then
         else
             service="tar1090"
         fi
-        systemctl stop $service 2>/dev/null || true
+        useSystemd && systemctl stop $service 2>/dev/null || true
     done < <(echo "$instances")
     cp tar1090.sh $ipath
 fi
@@ -331,15 +333,17 @@ do
         fi
     fi
 
-    if [[ $changed == yes ]] || ! diff tar1090.service /lib/systemd/system/$service.service &>/dev/null
-    then
-        cp tar1090.service /lib/systemd/system/$service.service
-        if systemctl enable $service
+    if useSystemd; then
+        if [[ $changed == yes ]] || ! diff tar1090.service /lib/systemd/system/$service.service &>/dev/null
         then
-            echo "Restarting $service ..."
-            systemctl restart $service || ! pgrep systemd
-        else
-            echo "$service.service is masked, could not start it!"
+            cp tar1090.service /lib/systemd/system/$service.service
+            if systemctl enable $service
+            then
+                echo "Restarting $service ..."
+                systemctl restart $service || ! pgrep systemd
+            else
+                echo "$service.service is masked, could not start it!"
+            fi
         fi
     fi
 
@@ -420,7 +424,7 @@ if [[ $lighttpd == yes ]]; then
     fi
 fi
 
-if systemctl show lighttpd 2>/dev/null | grep -qs -F -e 'UnitFileState=enabled' -e 'ActiveState=active'; then
+if useSystemd && systemctl show lighttpd 2>/dev/null | grep -qs -F -e 'UnitFileState=enabled' -e 'ActiveState=active'; then
     echo "Restarting lighttpd ..."
     systemctl restart lighttpd || ! pgrep systemd
 fi
@@ -433,7 +437,7 @@ if [[ $nginx == yes ]]; then
     echo "To configure nginx for tar1090, please add the following line(s) in the server {} section:"
     echo
     for service in $services; do
-        echo "include /usr/local/share/tar1090/nginx-$service.conf;"
+        echo "include ${ipath}/nginx-$service.conf;"
     done
 fi
 
@@ -448,6 +452,6 @@ elif [[ $nginx == yes ]]; then
         echo "All done! Webinterface once nginx is configured will be available at http://$(ip route get 1.2.3.4 | grep -m1 -o -P 'src \K[0-9,.]*')/$name"
     done
 else
-    echo "All done! You'll need to configure your webserver yourself, see /usr/local/share/tar1090/nginx-tar1090.conf for a reference nginx configuration"
+    echo "All done! You'll need to configure your webserver yourself, see ${ipath}/nginx-tar1090.conf for a reference nginx configuration"
 fi
 
