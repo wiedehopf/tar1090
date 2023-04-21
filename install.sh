@@ -117,10 +117,10 @@ cd "$dir"
 
 if [[ "$1" == "test" ]]
 then
-    rm -r /tmp/tar1090-test 2>/dev/null || true
-    mkdir -p /tmp/tar1090-test
-    cp -r ./* /tmp/tar1090-test
-    cd /tmp/tar1090-test
+    rm -rf "$ipath/git" || true
+    mkdir -p "$ipath/git"
+    cp -r ./* "$ipath/git"
+    cd "$ipath/git"
     TAR_VERSION=$(date +%s)
 else
     if ! getGIT "$repo" "master" "$ipath/git" || ! cd "$ipath/git"
@@ -296,35 +296,7 @@ do
 
     sed -i -e "s/tar1090 on github/tar1090 on github ($(date +%y%m%d))/" index.html
 
-    # cache busting sprites.png
-    {
-        spritename="sprites_$(md5sum images/sprites.png | cut -d' ' -f1).png"
-        mv "images/sprites.png" "images/${spritename}"
-        sed -i -e "s#sprites.png#${spritename}#g" script.js
-        sed -i -e "s#sprites.png#${spritename}#g" index.html
-    }
-
-    # cache busting js / css
-    {
-        sedargs=("sed" "-i" "index.html")
-        for file in dbloader.js defaults.js early.js flags.js formatter.js layers.js markers.js planeObject.js registrations.js script.js style.css; do
-            md5sum=$(md5sum $file | cut -d' ' -f1)
-            prefix=$(cut -d '.' -f1 <<< "$file")
-            postfix=$(cut -d '.' -f2 <<< "$file")
-            newname="${prefix}_${md5sum}.${postfix}"
-            mv "$file" "$newname"
-            if [[ $nginx == yes ]]; then
-                gzip -k -3 "$newname"
-            fi
-            sedargs+=("-e" "s#${file}#${newname}#")
-        done
-
-        "${sedargs[@]}"
-    }
-
-    if [[ $nginx == yes ]]; then
-        gzip -k -3 ./libs/*.js
-    fi
+    "$ipath/git/cachebust.sh" "$ipath/git/cachebust.list" "$TMP"
 
     rm -rf "$html_path"
     mv "$TMP" "$html_path"
