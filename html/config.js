@@ -258,6 +258,7 @@ HideCols = [
 	"#icao",
 //	"#flag",
 //	"#flight",
+//	"#route",
 	"#registration",
 //	"#aircraft_type",
 //	"#squawk",

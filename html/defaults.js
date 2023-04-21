@@ -273,7 +273,7 @@ let HideCols = [
 	"#icao",
 //	"#flag",
 //	"#flight",
-	"#route",
+//	"#route",
 	"#registration",
 //	"#aircraft_type",
 //	"#squawk",

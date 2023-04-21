@@ -1173,22 +1173,20 @@ function initPage() {
         }
     });
 
-    if (useRouteAPI) {
-        new Toggle({
-            key: "lastLeg",
-            display: "Last Leg only",
-            container: "#settingsLeft",
-            init: true,
-            setState: function(state) {
-                lastLeg = state;
-                if (loadFinished && !showTrace) {
-                    for (let i in SelPlanes) {
-                        SelPlanes[i].processTrace();
-                    }
+    new Toggle({
+        key: "lastLeg",
+        display: "Last Leg only",
+        container: "#settingsLeft",
+        init: true,
+        setState: function(state) {
+            lastLeg = state;
+            if (loadFinished && !showTrace) {
+                for (let i in SelPlanes) {
+                    SelPlanes[i].processTrace();
                 }
             }
-        });
-    }
+        }
+    });
     new Toggle({
         key: "labelsGeom",
         display: "Labels: geom. alt. (WGS84)",
@@ -1524,15 +1522,17 @@ jQuery('#selected_altitude_geom1')
             refreshSelected();
         }
     });
-    new Toggle({
-        key: "useRouteAPI",
-        display: "Lookup route",
-        container: "#settingsRight",
-        init: useRouteAPI,
-        setState: function(state) {
-            useRouteAPI = state;
-        }
-    });
+    if (useRouteAPI) {
+        new Toggle({
+            key: "useRouteAPI",
+            display: "Lookup route",
+            container: "#settingsRight",
+            init: useRouteAPI,
+            setState: function(state) {
+                useRouteAPI = state;
+            }
+        });
+    }
 
 
     new Toggle({
@@ -3549,12 +3549,14 @@ function refreshFeatures() {
         },
         html: flightawareLinks,
         text: 'Callsign' };
-    cols.route = {
-        sort: function () { sortBy('route', compareAlpha, function(x) { return x.routeString }); },
-        value: function(plane) {
-            return ((useRouteAPI && plane.routeString) || '');
-        },
-        text: 'Route' };
+    if (useRouteAPI) {
+        cols.route = {
+            sort: function () { sortBy('route', compareAlpha, function(x) { return x.routeString }); },
+            value: function(plane) {
+                return ((useRouteAPI && plane.routeString) || '');
+            },
+            text: 'Route' };
+    }
     cols.registration = {
         sort: function () { sortBy('registration', compareAlpha, function(x) { return x.registration; }); },
         value: function(plane) { return (flightawareLinks ? getFlightAwareIdentLink(plane.registration, plane.registration) : (plane.registration ? plane.registration : "")); },
