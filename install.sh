@@ -202,6 +202,7 @@ fi
 # copy over base files
 cp install.sh uninstall.sh getupintheair.sh LICENSE README.md "$ipath"
 cp default "$ipath/example_config_dont_edit"
+cp html/config.js "$ipath/example_config.js"
 rm -f "$ipath/default"
 
 # create 95-tar1090-otherport.conf
