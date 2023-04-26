@@ -213,7 +213,7 @@ rm -f "$ipath/default"
     echo '}'
 } > 95-tar1090-otherport.conf
 
-services=""
+services=()
 names=""
 otherport=""
 
