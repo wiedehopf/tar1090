@@ -1,7 +1,8 @@
 #!/bin/bash
 
 set -e
-trap 'echo ERROR on line number $LINENO' ERR
+trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
+trap "echo tar1090.sh: exiting; pkill -P $$" SIGTERM SIGINT SIGHUP SIGQUIT
 
 RUN_DIR=$1
 SRC_DIR=$2
@@ -227,9 +228,9 @@ if [[ $ENABLE_978 == "yes" ]]; then
     done &
 fi
 
-sleep 10
 
 if [[ -n "$PF_URL" ]] && [[ "x$PF_ENABLE" != "x0" ]]; then
+    sleep 10
     while true
     do
         sleep 10 &
@@ -248,4 +249,4 @@ if [[ -n "$PF_URL" ]] && [[ "x$PF_ENABLE" != "x0" ]]; then
     done &
 fi
 
-wait -n
+wait || true
