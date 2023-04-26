@@ -2,7 +2,7 @@
 
 set -e
 trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
-trap "echo tar1090.sh: exiting; pkill -P $$" SIGTERM SIGINT SIGHUP SIGQUIT
+trap "echo tar1090.sh: exiting; pkill -P $$ || true" SIGTERM SIGINT SIGHUP SIGQUIT
 
 RUN_DIR=$1
 SRC_DIR=$2
