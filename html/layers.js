@@ -61,28 +61,30 @@ function createBaseLayers() {
         }));
     }
 
-    world.push(new ol.layer.Tile({
-        source: new ol.source.OSM({
-            "url" : "https://map.adsbexchange.com/mapproxy/tiles/1.0.0/osm/osm_grid/{z}/{x}/{y}.png",
-            attributionsCollapsible: false,
-            maxZoom: 16,
-            transition: tileTransition,
-        }),
-        name: 'osm_adsbx',
-        title: 'OpenStreetMap ADSBx',
-        type: 'base',
-    }));
-
-    world.push(new ol.layer.Tile({
-        source: new ol.source.OSM({
-            maxZoom: 17,
-            attributionsCollapsible: false,
-            transition: tileTransition,
-        }),
-        name: 'osm',
-        title: 'OpenStreetMap',
-        type: 'base',
-    }));
+    if (adsbexchange) {
+        world.push(new ol.layer.Tile({
+            source: new ol.source.OSM({
+                "url" : "https://map.adsbexchange.com/mapproxy/tiles/1.0.0/osm/osm_grid/{z}/{x}/{y}.png",
+                attributionsCollapsible: false,
+                maxZoom: 16,
+                transition: tileTransition,
+            }),
+            name: 'osm_adsbx',
+            title: 'OpenStreetMap ADSBx',
+            type: 'base',
+        }));
+    } else {
+        world.push(new ol.layer.Tile({
+            source: new ol.source.OSM({
+                maxZoom: 17,
+                attributionsCollapsible: false,
+                transition: tileTransition,
+            }),
+            name: 'osm',
+            title: 'OpenStreetMap',
+            type: 'base',
+        }));
+    }
 
     let basemap_id = "rastertiles/voyager";
     world.push(new ol.layer.Tile({
@@ -334,7 +336,7 @@ function createBaseLayers() {
 
     if (ChartBundleLayers) {
 
-        let chartbundleTypes = {
+        let chartbundleTypesDirect = {
             sec: "Sectional Charts",
             enrh: "IFR Enroute High Charts",
 
@@ -342,9 +344,26 @@ function createBaseLayers() {
             hel: "Helicopter Charts",
             enrl: "IFR Enroute Low Charts",
             enra: "IFR Area Charts",
+            secgrids: "Sect. w/ SAR grid",
         };
+        let chartbundleTypesAx = {
+        };
+        if (adsbexchange) {
+            chartbundleTypesDirect = {
+                secgrids: "Sect. w/ SAR grid",
+            };
+            chartbundleTypesAx = {
+                sec: "Sectional Charts",
+                enrh: "IFR Enroute High Charts",
 
-        for (let type in chartbundleTypes) {
+                tac: "Terminal Area Charts",
+                hel: "Helicopter Charts",
+                enrl: "IFR Enroute Low Charts",
+                enra: "IFR Area Charts",
+            };
+        }
+
+        for (let type in chartbundleTypesAx) {
             us.push(new ol.layer.Tile({
                 source: new ol.source.OSM({
                     url: 'https://map.adsbexchange.com/mapproxy/tiles/1.0.0/'+ type + '/osm_grid/{z}/{x}/{y}.png',
@@ -355,15 +374,12 @@ function createBaseLayers() {
                     transition: tileTransition,
                 }),
                 name: 'chartbundle_' + type,
-                title: chartbundleTypes[type],
+                title: chartbundleTypesAx[type],
                 type: 'base',
                 group: 'chartbundle'}));
         }
-        chartbundleTypes = {
-            secgrids: "Sect. w/ SAR grid",
-        };
 
-        for (let type in chartbundleTypes) {
+        for (let type in chartbundleTypesDirect) {
             us.push(new ol.layer.Tile({
                 source: new ol.source.TileWMS({
                     url: 'https://wms.chartbundle.com/wms',
@@ -375,7 +391,7 @@ function createBaseLayers() {
                     transition: tileTransition,
                 }),
                 name: 'chartbundle_' + type,
-                title: chartbundleTypes[type],
+                title: chartbundleTypesDirect[type],
                 type: 'base',
                 group: 'chartbundle'}));
         }
