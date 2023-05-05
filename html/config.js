@@ -40,6 +40,7 @@
 
 // Color controls for the range outline
 //range_outline_color = '#0000DD';
+//range_outline_alpha = 1.0;
 //range_outline_width = 1.7;
 //range_outline_colored_by_altitude = false;
 //range_outline_dash = [5, 5]; // null - solid line, [5, 5] - dashed line with 5 pixel lines and spaces in between

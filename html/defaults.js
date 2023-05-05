@@ -49,6 +49,7 @@ let updateLocation = false;
 
 // Color controls for the range outline
 let range_outline_color = '#0000DD';
+let range_outline_alpha = 1.0;
 let range_outline_width = 1.7;
 let range_outline_colored_by_altitude = false;
 let range_outline_dash = null; // null - solid line, [5, 5] - dashed line with 5 pixel lines and spaces in between
