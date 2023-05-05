@@ -2,7 +2,7 @@
 
 set -e
 trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
-trap "echo tar1090.sh: exiting; pkill -P $$ || true" SIGTERM SIGINT SIGHUP SIGQUIT
+trap "echo tar1090.sh: exiting; pkill -P $$ || true; exit 0" SIGTERM SIGINT SIGHUP SIGQUIT
 
 RUN_DIR=$1
 SRC_DIR=$2
@@ -167,7 +167,7 @@ while true; do
             fi
             next_error=$(( now + 10000 ))
         fi
-        sleep 2
+        sleep 2 & wait $!
     done
     if (( error_printed != 0 )); then
         echo "Found aircraft.json in $SRC_DIR, continuing operation as per usual!"
@@ -230,10 +230,10 @@ fi
 
 
 if [[ -n "$PF_URL" ]] && [[ "x$PF_ENABLE" != "x0" ]]; then
-    sleep 10
+    sleep 10 & wait $!
     while true
     do
-        sleep 10 &
+        sleep 10 & wait $!
         TMP="$RUN_DIR/tar1090-tmp.pf.json"
         if cd "$RUN_DIR" && wget -T 5 -O "$TMP" "$PF_URL" &>/dev/null; then
             sed -i -e 's/"user_l[a-z]*":"[0-9,.,-]*",//g' "$TMP"
@@ -243,7 +243,7 @@ if [[ -n "$PF_URL" ]] && [[ "x$PF_ENABLE" != "x0" ]]; then
             fi
         else
             rm -f "$TMP"
-            sleep 120
+            sleep 120 & wait $!
         fi
         wait
     done &
