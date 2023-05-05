@@ -6574,7 +6574,7 @@ function drawUpintheair() {
         let color = range_outline_color;
         if (range_outline_colored_by_altitude) {
             let colorArr = altitudeColor(altitude);
-            color = 'hsl(' + colorArr[0].toFixed(0) + ',' + colorArr[1].toFixed(0) + '%,' + colorArr[2].toFixed(0) + '%)';
+            color = 'hsla(' + colorArr[0].toFixed(0) + ',' + colorArr[1].toFixed(0) + '%,' + colorArr[2].toFixed(0) + '%,' + range_outline_alpha + ')';
         }
         let outlineStyle = new ol.style.Style({
             fill: null,
