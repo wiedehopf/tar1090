@@ -30,7 +30,7 @@ then
 fi
 
 # terminate with /
-command_package="git git/jq jq"
+command_package="git git/jq jq/"
 packages=()
 
 while read -r -d '/' CMD PKG
