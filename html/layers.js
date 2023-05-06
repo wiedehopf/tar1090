@@ -464,8 +464,8 @@ function createBaseLayers() {
         let noaaRadarSource = new ol.source.ImageWMS({
             attributions: ['NOAA'],
             attributionsCollapsible: false,
-            url: 'https://nowcoast.noaa.gov/arcgis/services/nowcoast/radar_meteo_imagery_nexrad_time/MapServer/WMSServer',
-            params: {'LAYERS': '1'},
+            url: 'https://nowcoast.noaa.gov/geoserver/weather_radar/wms',
+            params: {'LAYERS': 'base_reflectivity_mosaic'},
             projection: 'EPSG:3857',
             resolutions: [156543.03392804097, 78271.51696402048, 39135.75848201024, 19567.87924100512, 9783.93962050256, 4891.96981025128, 2445.98490512564, 1222.99245256282],
             ratio: 1,
