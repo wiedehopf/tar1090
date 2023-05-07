@@ -2908,8 +2908,9 @@ PlaneObject.prototype.setFlight = function(flight) {
                 if (debugAll) {
                     console.log(`next batch to send at ${currentTime}:`, g.route_check_array);
                 }
-                var route_check_array = g.route_check_array;
-                g.route_check_array = [];
+                // grab up to the first 100 callsigns and leave the rest for later
+                var route_check_array = g.route_check_array.slice(0,100);
+                g.route_check_array = g.route_check_array.slice(100);
 
                 jQuery.ajax({
                     type: "POST",
