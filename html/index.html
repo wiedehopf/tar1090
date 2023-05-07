@@ -26,7 +26,7 @@
     <!-- BODY_ANCHOR -->
     <div id="layout_container">
 
-      <div id="highlighted_infoblock">
+      <div id="highlighted_infoblock" style="pointer-events: none">
         <div class="highlightedTitle infoBlockSection">
           <div>
             <span class="identLarge"><span id="highlighted_callsign">n/a</span></span>
@@ -149,7 +149,7 @@
               </tr>
               <tr id=photo_container>
                 <td>
-                  <div title="Aircraft Photo"id="selected_photo"></div>
+                  <div title="Aircraft Photo" id="selected_photo"></div>
                   <div id="copyrightInfo"></div>
                 </td>
               </tr>
@@ -179,7 +179,7 @@
               <tr>
                 <td>
                   <span class="infoHeading" title="ICAO type code (A320/B738)">Type: </span>
-                  <span class="infoData"id="selected_icaotype"></span>
+                  <span class="infoData" id="selected_icaotype"></span>
                 </td>
               </tr>
               <tr>
@@ -195,7 +195,7 @@
               <tr>
                 <td>
                   <span class="infoHeading" title="ICAO type description (L/S/H Landplane/Seaplane/Helicopter 1/2/3/4 Number of P/T/J Reciprocating/Turboprop/Jet Engines">Type Desc.: </span>
-                  <span class="infoData"id="selected_typedesc"></span>
+                  <span class="infoData" id="selected_typedesc"></span>
                 </td>
               </tr>
               <tr>
@@ -205,6 +205,16 @@
                   </div>
                   <div class="infoData">
                     <span id="selected_squawk1"></span>
+                  </div>
+                </td>
+              </tr>
+              <tr id="routeRow" class="hidden">
+                <td>
+                  <div class="infoHeading">
+                    <span title="Reported flight origin and destination according to adsbdb.com">Route</span>:
+                  </div>
+                  <div class="infoData">
+                    <span id="selected_route"></span>
                   </div>
                 </td>
               </tr>
@@ -307,9 +317,6 @@
                   </div>
                 </td>
               </tr>
-
-              <div class="rSpacer">
-              </div>
 
               <tr>
                 <td>
@@ -712,9 +719,9 @@
               Export KML
             </div>
           </div>
-          <button id="export_kml" onclick='exportKML("geom")'>geometric altitude (EGM96)</button>
-          <button id="export_kml" onclick='exportKML("geom_avg")'>baro + avg.(EGM96 - baro)</button>
-          <button id="export_kml" onclick='exportKML("baro")'>uncorrected pressure alt.</button>
+          <button id="export_kml_geom" onclick='exportKML("geom")'>geometric altitude (EGM96)</button>
+          <button id="export_kml_geom_avg" onclick='exportKML("geom_avg")'>baro + avg.(EGM96 - baro)</button>
+          <button id="export_kml_baro" onclick='exportKML("baro")'>uncorrected pressure alt.</button>
 
         </div>
       </div> <!-- selected_infoblock -->
@@ -732,11 +739,11 @@
           <div class="settingsOptionContainer">
             <div class="settingsText">Text and Icon size:</div>
           </div>
-          <div style="display: block, width: 100%" id="userScaleSlider"></div>
+          <div style="display: block; width: 100%;" id="userScaleSlider"></div>
           <div class="settingsOptionContainer">
             <div class="settingsText">Icon size multiplier:</div>
           </div>
-          <div style="display: block, width: 100%" id="iconScaleSlider"></div>
+          <div style="display: block; width: 100%;" id="iconScaleSlider"></div>
           <div class="rSpacer">
             <hr />
           </div>
@@ -881,7 +888,7 @@
                       <td id="dump1090_message_rate_td"><span class="infoBlockTitleText">Messages:</span> <span id="dump1090_message_rate">n/a</span>/sec</td>
                     </tr>
                     <tr class="infoblock_body">
-                      <td style="width: 50%"><span id="with_positions" class="infoBlockTitleText">With Positions:</span> <span id="dump1090_total_ac_positions">n/a</span></td>
+                      <td style="width: 50%"><span id="with_positions" class="infoBlockTitleText">With Position:</span> <span id="dump1090_total_ac_positions">n/a</span></td>
                       <td id="dump1090_total_history_td"><span class="infoBlockTitleText">History:</span> <span id="dump1090_total_history">n/a</span> positions</td>
                     </tr>
                   </table>
@@ -930,11 +937,11 @@
                       <td>
                         <form id="altitude_filter_form">
                           <div class="infoBlockTitleText">Filter by altitude:</div>
-                          <input id="altitude_filter_min" name="minAltitude" type="text" class="altitudeFilterInput" maxlength="5">
-                          <label for="minAltitude" class="altitudeUnit"></label>
+                          <input id="altitude_filter_min" name="minAltitude" type="text" class="altitudeFilterInput" maxlength="6">
+                          <label for="altitude_filter_min" class="altitudeUnit"></label>
                           <span> to </span>
-                          <input id="altitude_filter_max" name="maxAltitude" type="text" class="altitudeFilterInput" maxlength="5">
-                          <label for="maxAltitude" class="altitudeUnit"></label>
+                          <input id="altitude_filter_max" name="maxAltitude" type="text" class="altitudeFilterInput" maxlength="6">
+                          <label for="altitude_filter_max" class="altitudeUnit"></label>
                           <button class="formButton" type="submit">Filter</button>
                           <button class="formButton" id="altitude_filter_reset_button">Reset</button>
                         </form>
@@ -966,6 +973,7 @@
                       <td>
                         <form id="flag_filter_form">
                           <div class="infoBlockTitleText">Filter by DB flags:</div>
+                          <table>
                             <tr><td>
                               <ol id="flagFilter" class="buttonFilter"></ol>
                             </td></tr>
@@ -973,6 +981,7 @@
                               <button class="formButton" type="submit">Filter</button>
                               <button class="formButton" id="flag_filter_reset_button">Reset</button>
                             </td></tr>
+                          </table>
                         </form>
                       </td>
                     </tr>
@@ -1027,7 +1036,7 @@
     <script src="libs/jquery-ui-1.13.2.min.js"></script>
     <script src="libs/jquery.ui.touch-punch-1.0.8.js"></script>
     <script src="libs/zstddec-tar1090-0.0.5.js"></script>
-    <script src="libs/ol-custom021.js"></script>
+    <script src="libs/ol-custom022.js"></script>
 
     <!-- JS_ANCHOR2 -->
     <script src="early.js"></script>
@@ -1046,7 +1055,7 @@
     <script src="planeObject.js"></script>
     <script src="script.js"></script>
 
-    <link rel="preload" as="image" crossOrigin="anonymous" href="images/sprites016.png">
+    <link rel="preload" as="image" crossOrigin="anonymous" href="images/sprites.png">
 
   </body>
 </html>

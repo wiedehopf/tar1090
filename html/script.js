@@ -7,6 +7,9 @@
 
 g.planes        = {};
 g.planesOrdered = [];
+g.route_cache = [];
+g.route_check_array = [];
+g.route_cache_timer = new Date().getTime() / 1000 + 5; // 5 seconds from now
 
 // Define our global variables
 let tabHidden = false;
@@ -113,7 +116,6 @@ let noRegOnly = false;
 let triggerRefresh = 0;
 let firstDraw = true;
 let darkerColors = false;
-let updateLocation = false;
 let autoselect = false;
 let nogpsOnly = false;
 let trace_hist_only = false;
@@ -773,6 +775,10 @@ function initPage() {
         MapType_tar1090 = 'carto_light_all';
         lineWidth=4;
         enableLabels=true;
+    }
+
+    if (usp.has('rangeRings')) {
+        SiteCircles = Boolean(parseInt(usp.get('rangeRings')));
     }
 
     if (usp.has('limitUpdates')) {
@@ -1516,6 +1522,18 @@ jQuery('#selected_altitude_geom1')
             refreshSelected();
         }
     });
+    if (useRouteAPI) {
+        new Toggle({
+            key: "useRouteAPI",
+            display: "Lookup route",
+            container: "#settingsRight",
+            init: useRouteAPI,
+            setState: function(state) {
+                useRouteAPI = state;
+            }
+        });
+    }
+
 
     new Toggle({
         key: "enableInfoblock",
@@ -1998,7 +2016,7 @@ function webglAddLayer() {
         let glStyle = {
             symbol: {
                 symbolType: 'image',
-                src: 'images/sprites016.png',
+                src: 'images/sprites.png',
                 size: [ 'get', 'size' ],
                 offset: [0, 0],
                 textureCoord: [ 'array',
@@ -2935,7 +2953,7 @@ function refreshPhoto(selected) {
 
     if (planespottersAPI) {
         let req = jQuery.ajax({
-            url: 'https://api.planespotters.net/pub/photos/' + urlTail,
+            url: planespottersAPIurl + urlTail,
             dataType: 'json',
             plane: selected,
         });
@@ -3097,6 +3115,16 @@ function refreshSelected() {
         jQuery('#selected_squawk2').updateText(selected.squawk);
     }
 
+    if (useRouteAPI) {
+        jQuery('#routeRow').show();
+        if (selected.routeString) {
+            jQuery('#selected_route').updateText(selected.routeString);
+        } else {
+            jQuery('#selected_route').updateText('n/a');
+        }
+    } else {
+        jQuery('#routeRow').hide();
+    }
     let magResult = null;
 
     if (geoMag && selected.position != null) {
@@ -3521,6 +3549,14 @@ function refreshFeatures() {
         },
         html: flightawareLinks,
         text: 'Callsign' };
+    if (useRouteAPI) {
+        cols.route = {
+            sort: function () { sortBy('route', compareAlpha, function(x) { return x.routeString }); },
+            value: function(plane) {
+                return ((useRouteAPI && plane.routeString) || '');
+            },
+            text: 'Route' };
+    }
     cols.registration = {
         sort: function () { sortBy('registration', compareAlpha, function(x) { return x.registration; }); },
         value: function(plane) { return (flightawareLinks ? getFlightAwareIdentLink(plane.registration, plane.registration) : (plane.registration ? plane.registration : "")); },
@@ -4513,7 +4549,7 @@ function invertMap(evt){
   ctx.globalAlpha = alpha;  // alpha 0 = no effect 1 = full effect
   ctx.fillRect(0, 0, evt.ctx.canvas.width, ctx.canvas.height);
 
-  
+
 }
 //
 // Altitude Chart begin
@@ -4559,11 +4595,15 @@ function invertMap(evt){
     }
 
     altitudeChart.init = function () {
+        let chartOn = (onMobile ? false : altitudeChartDefaultState);
+        if (usp.has('altitudeChart')) {
+            chartOn = Boolean(parseInt(usp.get('altitudeChart')));
+        }
         new Toggle({
             key: "altitudeChart",
             display: "Altitude Chart",
             container: "#settingsRight",
-            init: (onMobile ? false : true),
+            init: chartOn,
             setState: altitudeChart.render
         });
     }
