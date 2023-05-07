@@ -2903,7 +2903,7 @@ PlaneObject.prototype.setFlight = function(flight) {
     if (useRouteAPI) {
         // check if it's time to send a batch of request to the API server
         if (currentTime > g.route_cache_timer) {
-            g.route_cache_timer = currentTime + 10;
+            g.route_cache_timer = currentTime + 1;
             if (g.route_check_array.length > 0) {
                 if (debugAll) {
                     console.log(`next batch to send at ${currentTime}:`, g.route_check_array);
