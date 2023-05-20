@@ -2904,7 +2904,9 @@ PlaneObject.prototype.setFlight = function(flight) {
         // check if it's time to send a batch of request to the API server
         if (currentTime > g.route_cache_timer) {
             g.route_cache_timer = currentTime + 1;
-            if (g.route_check_array.length > 0) {
+            // JavaScript doesn't interrupt running functions - so this should be safe to do
+            if (g.route_check_in_flight == false && g.route_check_array.length > 0) {
+                g.route_check_in_flight = true;
                 if (debugAll) {
                     console.log(`next batch to send at ${currentTime}:`, g.route_check_array);
                 }
@@ -2920,6 +2922,7 @@ PlaneObject.prototype.setFlight = function(flight) {
                     data: JSON.stringify({ 'planes': route_check_array}),
                     headers: { "Access-Control-Allow-Origin": "*" }})
                     .done((routes) => {
+                        g.route_check_in_flight = false;
                         if (debugAll) {
                             console.log(routes);
                         }
@@ -2946,6 +2949,7 @@ PlaneObject.prototype.setFlight = function(flight) {
                         }
                     })
                     .fail((jqxhr, status, error) => {
+                        g.route_check_in_flight = false;
                         console.log('API server call failed with', status);
                     });
             } else {
