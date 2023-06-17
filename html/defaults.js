@@ -238,6 +238,10 @@ let uatNoTISB = false;
 // Don't display any TIS-B planes
 let filterTISB = false;
 
+// image configuration link (back to a webUI for feeder setup)
+let imageConfigLink = "";
+let imageConfigText = "";
+
 let flightawareLinks = false;
 let shareBaseUrl = false;
 let planespottersLinks = false;

@@ -222,6 +222,14 @@ BingMapsAPIKey = null;
 // Don't display any TIS-B planes
 // filterTISB = false;
 
+// image configuration link (back to a webUI for feeder setup)
+// if the link is supposed to point to the same host that tar1090
+// is running on the token 'HOSTNAME' (without quotes) in the Link
+// text will be replaced with the current hostname at runtime
+//
+// imageConfigLink = "";
+// imageConfigText = "";
+
 //flightawareLinks = false;
 //shareBaseUrl = 'https://globe.adsbexchange.com/';
 // planespottersLinks = false;
