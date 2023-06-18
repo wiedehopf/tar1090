@@ -1609,7 +1609,7 @@ jQuery('#selected_altitude_geom1')
         }
     }
     if (imageConfigLink != "") {
-        let host = window.location).hostname;
+        let host = window.location.hostname;
         let configLink = imageConfigLink.replace('HOSTNAME', host);
         jQuery('#imageConfigLink').attr('href',configLink)
         jQuery('#imageConfigLink').text(imageConfigText)
