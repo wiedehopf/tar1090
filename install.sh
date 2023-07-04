@@ -14,9 +14,12 @@ db_repo="https://github.com/wiedehopf/tar1090-db"
 # $1: data source directory
 # $2: web path, default is "tar1090", use "webroot" to place the install at /
 # $3: specify install path
+# $4: specify git path as source instead of pulling from git
 
 ipath=/usr/local/share/tar1090
 if [[ -n "$3" ]]; then ipath="$3"; fi
+
+if [[ -n "$4" ]] && grep -qs -e 'tar1090' "$4/install.sh"; then git_source="$4"; fi
 
 lighttpd=no
 nginx=no
@@ -118,13 +121,16 @@ DB_VERSION=$(revision)
 
 cd "$dir"
 
-if [[ "$1" == "test" ]]
-then
-    rm -rf "$ipath/git" || true
+if [[ "$1" == "test" ]] || [[ -n "$git_source" ]]; then
     mkdir -p "$ipath/git"
-    cp -r ./* "$ipath/git"
+    rm -rf "$ipath/git"/* || true
+    if [[ -n "$git_source" ]]; then
+        cp -r "$git_source"/* "$ipath/git"
+    else
+        cp -r ./* "$ipath/git"
+    fi
     cd "$ipath/git"
-    TAR_VERSION=$(date +%s)
+    TAR_VERSION="$(date +%s)_${RANDOM}${RANDOM}"
 else
     if ! getGIT "$repo" "master" "$ipath/git" || ! cd "$ipath/git"
     then

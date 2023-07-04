@@ -9,7 +9,8 @@ g.planes        = {};
 g.planesOrdered = [];
 g.route_cache = [];
 g.route_check_array = [];
-g.route_cache_timer = new Date().getTime() / 1000 + 5; // 5 seconds from now
+g.route_check_in_flight = false;
+g.route_cache_timer = new Date().getTime() / 1000 + 1; // one second from now
 
 // Define our global variables
 let tabHidden = false;
@@ -1606,6 +1607,13 @@ jQuery('#selected_altitude_geom1')
             window.top.location.href = "https://www.adsbexchange.com/";
             return;
         }
+    }
+    if (imageConfigLink != "") {
+        let host = window.location.hostname;
+        let configLink = imageConfigLink.replace('HOSTNAME', host);
+        jQuery('#imageConfigLink').attr('href',configLink)
+        jQuery('#imageConfigLink').text(imageConfigText)
+        jQuery('#imageConfigHeader').show();
     }
 }
 
@@ -6574,7 +6582,7 @@ function drawUpintheair() {
         let color = range_outline_color;
         if (range_outline_colored_by_altitude) {
             let colorArr = altitudeColor(altitude);
-            color = 'hsl(' + colorArr[0].toFixed(0) + ',' + colorArr[1].toFixed(0) + '%,' + colorArr[2].toFixed(0) + '%)';
+            color = 'hsla(' + colorArr[0].toFixed(0) + ',' + colorArr[1].toFixed(0) + '%,' + colorArr[2].toFixed(0) + '%,' + range_outline_alpha + ')';
         }
         let outlineStyle = new ol.style.Style({
             fill: null,
