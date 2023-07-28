@@ -7865,7 +7865,7 @@ function testUnhide() {
     window.document.dispatchEvent(new Event('visibilitychange'));
 }
 
-function selectClosest() {
+function autoSelectClosest() {
     if (!loadFinished)
         return;
     let closest = null;
@@ -7877,7 +7877,11 @@ function selectClosest() {
             closest = plane;
         if (plane.position == null || !plane.visible)
             continue;
-        const dist = ol.sphere.getDistance([CenterLon, CenterLat], plane.position);
+        let refLoc = [CenterLon, CenterLat];
+        if (autoselectCoords && autoselectCoords.length == 2) {
+            refLoc = [ autoselectCoords[1], autoselectCoords[0] ];
+        }
+        const dist = ol.sphere.getDistance(refLoc, plane.position);
         if (dist == null || isNaN(dist))
             continue;
         if (closestDistance == null || dist < closestDistance) {
@@ -7893,8 +7897,8 @@ function setAutoselect() {
     clearInterval(timers.autoselect);
     if (!autoselect)
         return;
-    timers.autoselect = window.setInterval(selectClosest, 5000);
-    selectClosest();
+    timers.autoselect = window.setInterval(autoSelectClosest, 5000);
+    autoSelectClosest();
 }
 function registrationLink(plane) {
     if (plane.country === 'Brazil') {
