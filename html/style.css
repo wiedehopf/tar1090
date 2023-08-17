@@ -95,6 +95,11 @@ select {
     width: 100%;
     height: 100%;
 }
+#iconTestCanvas {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
 
 .sidebar_button {
     width: calc( 32px * var(--SCALE));

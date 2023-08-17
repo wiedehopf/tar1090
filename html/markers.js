@@ -1384,7 +1384,7 @@ function iconTest() {
     jQuery('.ol-control').hide();
     jQuery('.ol-attribution').show();
     jQuery("#loader").addClass("hidden");
-    let mapdiv = document.getElementById('map_canvas');
+    let mapdiv = document.getElementById('iconTestCanvas');
     console.log(mapdiv);
     let iconSize = glIconSize;
     let width = glImapWidth;
@@ -1433,4 +1433,5 @@ function iconTest() {
     }
 
     console.log(svgJson);
+    return can;
 }
