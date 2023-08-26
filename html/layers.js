@@ -471,7 +471,7 @@ function createBaseLayers() {
             ratio: 1,
             transition: tileTransition,
         });
-
+        
         let noaaSat = new ol.layer.Image({
             title: 'NOAA Infrared Sat',
             name: 'noaa_sat',
@@ -482,6 +482,14 @@ function createBaseLayers() {
             opacity: 0.35,
             extent: extent,
         });
+        
+        let refreshNoaaSat = function () {
+            noaaSatSource.refresh();
+        }
+        
+        // Refresh sat layer every 15 minutes
+        refreshNoaaSat();
+        window.setInterval(refreshNoaaSat, 15 * 60 * 1000);
 
         us.push(nexrad);
         us.push(noaaSat);
