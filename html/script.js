@@ -119,6 +119,7 @@ let firstDraw = true;
 let darkerColors = false;
 let autoselect = false;
 let nogpsOnly = false;
+let spritesDataURL = null;
 let trace_hist_only = false;
 let traces_high_res = false;
 let show_rId = true;
@@ -657,6 +658,7 @@ function fetchData(options) {
 // kicks off the whole rabbit hole
 function initialize() {
     if (usp.has('iconTest')) {
+        jQuery('#iconTestCanvas').show();
         iconTest();
         return;
     }
@@ -2020,11 +2022,13 @@ function webglAddLayer() {
         alt_baro: 25000, });
     let plane = g.planes['~c0ffee'];
 
+    let spriteSrc = spritesDataURL ? spritesDataURL : 'images/sprites.png';
+    //console.log(spriteSrc);
     try {
         let glStyle = {
             symbol: {
                 symbolType: 'image',
-                src: 'images/sprites.png',
+                src: spriteSrc,
                 size: [ 'get', 'size' ],
                 offset: [0, 0],
                 textureCoord: [ 'array',
@@ -2153,6 +2157,13 @@ function webglInit() {
 }
 
 function ol_map_init() {
+
+    if (0) {
+        let canvas = iconTest();
+        spritesDataURL = canvas.toDataURL();
+        jQuery('#iconTestCanvas').remove();
+        console.log(spritesDataURL);
+    }
 
     OLMap = new ol.Map({
         target: 'map_canvas',
@@ -7865,7 +7876,7 @@ function testUnhide() {
     window.document.dispatchEvent(new Event('visibilitychange'));
 }
 
-function selectClosest() {
+function autoSelectClosest() {
     if (!loadFinished)
         return;
     let closest = null;
@@ -7877,7 +7888,11 @@ function selectClosest() {
             closest = plane;
         if (plane.position == null || !plane.visible)
             continue;
-        const dist = ol.sphere.getDistance([CenterLon, CenterLat], plane.position);
+        let refLoc = [CenterLon, CenterLat];
+        if (autoselectCoords && autoselectCoords.length == 2) {
+            refLoc = [ autoselectCoords[1], autoselectCoords[0] ];
+        }
+        const dist = ol.sphere.getDistance(refLoc, plane.position);
         if (dist == null || isNaN(dist))
             continue;
         if (closestDistance == null || dist < closestDistance) {
@@ -7893,8 +7908,8 @@ function setAutoselect() {
     clearInterval(timers.autoselect);
     if (!autoselect)
         return;
-    timers.autoselect = window.setInterval(selectClosest, 5000);
-    selectClosest();
+    timers.autoselect = window.setInterval(autoSelectClosest, 5000);
+    autoSelectClosest();
 }
 function registrationLink(plane) {
     if (plane.country === 'Brazil') {

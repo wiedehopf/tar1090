@@ -1384,7 +1384,7 @@ function iconTest() {
     jQuery('.ol-control').hide();
     jQuery('.ol-attribution').show();
     jQuery("#loader").addClass("hidden");
-    let mapdiv = document.getElementById('map_canvas');
+    let mapdiv = document.getElementById('iconTestCanvas');
     console.log(mapdiv);
     let iconSize = glIconSize;
     let width = glImapWidth;
@@ -1416,10 +1416,10 @@ function iconTest() {
         img.onload = function () {
             con.drawImage(this, getSpriteX(shape) * glIconSize + offX, getSpriteY(shape) * glIconSize + offY);
         };
-        let svgURI = svgShapeToURI(shape, '#FFFFFF', '#000000', 0.75, scale);
+        let svgURI = svgShapeToURI(shape, '#FFFFFF', '#000000', outlineWidth * 0.75, scale);
         img.src = svgURI;
 
-        let svg = svgShapeToSVG(shape, '#FFFFFF', '#000000', 0.75, 1.4);
+        let svg = svgShapeToSVG(shape, '#FFFFFF', '#000000', outlineWidth * 0.75, 1.4);
         svgJson[shapeName] = svg;
 
         if (usp.has('grid')) {
@@ -1433,4 +1433,5 @@ function iconTest() {
     }
 
     console.log(svgJson);
+    return can;
 }

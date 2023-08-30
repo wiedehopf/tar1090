@@ -27,6 +27,9 @@
 // The google maps zoom level, 0 - 16, lower is further out
 //DefaultZoomLvl   = 7;
 
+// specify lat lon that the 'auto-select plane' feature will choose the closest plane to
+// autoselectCoords = [42, 21];
+
 // Center marker. If dump1090 provides a receiver location,
 // that location is used and these settings are ignored.
 

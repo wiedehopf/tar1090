@@ -1727,7 +1727,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
         this.baseScale = baseMarker[1] * 0.96;
     }
     this.scale = iconSize * this.baseScale;
-    this.strokeWidth = outlineWidth * ((this.selected && !SelectedAllPlanes && !onlySelected) ? 1.15 : 0.7) / this.baseScale;
+    this.strokeWidth = outlineWidth * ((this.selected && !SelectedAllPlanes && !onlySelected) ? 0.85 : 0.7) / this.baseScale;
 
     if (!this.marker && (!webgl || enableLabels)) {
         this.marker = new ol.Feature(this.olPoint);
