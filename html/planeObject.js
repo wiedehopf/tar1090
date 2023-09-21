@@ -2913,14 +2913,12 @@ PlaneObject.prototype.setFlight = function(flight) {
                 // grab up to the first 100 callsigns and leave the rest for later
                 var route_check_array = g.route_check_array.slice(0,100);
                 g.route_check_array = g.route_check_array.slice(100);
-
                 jQuery.ajax({
                     type: "POST",
                     url: routeApiUrl,
                     contentType: 'application/json; charset=utf-8',
                     dataType: 'json',
-                    data: JSON.stringify({ 'planes': route_check_array}),
-                    headers: { "Access-Control-Allow-Origin": "*" }})
+                    data: JSON.stringify({ 'planes': route_check_array})})
                     .done((routes) => {
                         g.route_check_in_flight = false;
                         if (debugAll) {
