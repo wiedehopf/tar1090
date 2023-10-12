@@ -2935,7 +2935,7 @@ PlaneObject.prototype.setFlight = function(flight) {
                                 } else {
                                     logText += `adding ${route._airport_codes_iata}`;
                                 }
-                                console.log(logText);
+                                //console.log(logText);
                             }
                             if (route.airport_codes != 'unknown') {
                                 if (route.plausible == true) {
