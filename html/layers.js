@@ -414,18 +414,27 @@ function createBaseLayers() {
         maxZoom: 13,
     }));
 
-    if (tfrs) {
-        world.push(new ol.layer.Vector({
+    if (true) {
+        us.push(new ol.layer.Vector({
             source: new ol.source.Vector({
-                url: 'tfrs.kml',
-                format: new ol.format.KML(),
-                transition: tileTransition,
+                url: 'https://raw.githubusercontent.com/airframesio/data/master/json/faa/tfrs.geojson',
+                format: new ol.format.GeoJSON(),
+                attributions: 'TFRs courtesy of <a href="https://github.com/airframesio/data" target="_blank">Airframes</a>.'
             }),
-            name: 'tfr',
+            style: new ol.style.Style({
+                fill: new ol.style.Fill({
+                    color : [255, 0, 0, 0.6]
+                }),
+                stroke: new ol.style.Stroke({
+                    color: [255, 0, 0, 0.9],
+                    width: 1
+                }),
+            }),
+            name: 'tfrs',
             title: 'TFRs',
             type: 'overlay',
             opacity: 0.7,
-            visible: true,
+            visible: false,
             zIndex: 99,
         }));
     }
