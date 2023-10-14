@@ -430,11 +430,12 @@ function createBaseLayers() {
         }));
     }
 
+    // nexrad and noaa stuff
+    const bottomLeft = ol.proj.fromLonLat([-171.0,9.0]);
+    const topRight = ol.proj.fromLonLat([-51.0,69.0]);
+    const naExtent = [bottomLeft[0], bottomLeft[1], topRight[0], topRight[1]];
+
     if (true) {
-        // nexrad and noaa stuff
-        const bottomLeft = ol.proj.fromLonLat([-171.0,9.0]);
-        const topRight = ol.proj.fromLonLat([-51.0,69.0]);
-        const extent = [bottomLeft[0], bottomLeft[1], topRight[0], topRight[1]];
 
         let nexrad = new ol.layer.Tile({
             name: 'nexrad',
@@ -443,7 +444,7 @@ function createBaseLayers() {
             opacity: 0.35,
             visible: false,
             zIndex: 99,
-            extent: extent,
+            extent: naExtent,
         });
 
         let refreshNexrad = function() {
@@ -461,6 +462,10 @@ function createBaseLayers() {
         refreshNexrad();
         window.setInterval(refreshNexrad, 2 * 60 * 1000);
 
+        us.push(nexrad);
+    }
+    if (true) {
+
         let noaaSatSource = new ol.source.ImageWMS({
             attributions: ['NOAA'],
             attributionsCollapsible: false,
@@ -471,7 +476,7 @@ function createBaseLayers() {
             ratio: 1,
             transition: tileTransition,
         });
-        
+
         let noaaSat = new ol.layer.Image({
             title: 'NOAA Infrared Sat',
             name: 'noaa_sat',
@@ -480,25 +485,49 @@ function createBaseLayers() {
             visible: false,
             source: noaaSatSource,
             opacity: 0.35,
-            extent: extent,
+            extent: naExtent,
         });
-        
+
         let refreshNoaaSat = function () {
             noaaSatSource.refresh();
         }
-        
+
         // Refresh sat layer every 15 minutes
         refreshNoaaSat();
         window.setInterval(refreshNoaaSat, 15 * 60 * 1000);
 
-        us.push(nexrad);
         us.push(noaaSat);
+    }
+    if (true) {
+        let noaaRadarSource = new ol.source.ImageWMS({
+            attributions: ['NOAA'],
+            attributionsCollapsible: false,
+            url: 'https://nowcoast.noaa.gov/geoserver/weather_radar/wms',
+            params: {'LAYERS': 'base_reflectivity_mosaic'},
+            projection: 'EPSG:3857',
+            resolutions: [156543.03392804097, 78271.51696402048, 39135.75848201024, 19567.87924100512, 9783.93962050256, 4891.96981025128, 2445.98490512564, 1222.99245256282],
+            ratio: 1,
+            transition: tileTransition,
+        });
+
+        let noaaRadar = new ol.layer.Image({
+            title: 'NOAA Radar',
+            name: 'noaa_radar',
+            zIndex: 99,
+            type: 'overlay',
+            visible: false,
+            source: noaaRadarSource,
+            opacity: 0.35,
+            extent: naExtent,
+        });
+
+        us.push(noaaRadar);
     }
 
     if (enableDWD) {
         const bottomLeft = ol.proj.fromLonLat([1.9,46.2]);
         const topRight = ol.proj.fromLonLat([16.0,55.0]);
-        const extent = [bottomLeft[0], bottomLeft[1], topRight[0], topRight[1]];
+        const dwdExtent = [bottomLeft[0], bottomLeft[1], topRight[0], topRight[1]];
 
         let dwdSource = new ol.source.TileWMS({
             url: 'https://maps.dwd.de/geoserver/wms',
@@ -524,7 +553,7 @@ function createBaseLayers() {
             opacity: 0.3,
             visible: false,
             zIndex: 99,
-            extent: extent,
+            extent: dwdExtent,
         });
 
 
@@ -562,11 +591,11 @@ function createBaseLayers() {
             });
             rainviewerRadar.setSource(rainviewerRadarSource);
         };
-        
+
         refreshRainviewerRadar();
         window.setInterval(refreshRainviewerRadar, 2 * 60 * 1000);
         world.push(rainviewerRadar);
-        
+
 
         const rainviewerClouds = new ol.layer.Tile({
             name: 'rainviewer_clouds',
@@ -586,7 +615,7 @@ function createBaseLayers() {
             });
             rainviewerClouds.setSource(rainviewerCloudsSource);
         };
-        
+
         refreshRainviewerClouds();
         window.setInterval(refreshRainviewerClouds, 2 * 60 * 1000);
         world.push(rainviewerClouds);
