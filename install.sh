@@ -33,7 +33,7 @@ then
 fi
 
 # terminate with /
-command_package="git git/jq jq/"
+command_package="git git/jq jq/busybox busybox/"
 packages=()
 
 while read -r -d '/' CMD PKG
@@ -246,7 +246,7 @@ do
     names+="$instance "
 
     # don't overwrite existing configuration
-    useSystemd && cp --update=none default /etc/default/"$service"
+    useSystemd && busybox cp -n default /etc/default/"$service"
 
     sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?${service}?g" \
         -e "s?/INSTANCE??g" -e "s?HTMLPATH?$html_path?g" 95-tar1090-otherport.conf
