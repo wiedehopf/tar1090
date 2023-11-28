@@ -220,8 +220,8 @@ let PageName = "tar1090";
 // Show country flags by ICAO addresses?
 let ShowFlags = true;
 
-// Path to country flags (can be a relative or absolute URL; include a trailing /)
-let FlagPath = "flags-tiny/";
+// UNUSED, kept here so config.js doesn't break for potential users
+let FlagPath = "";
 
 // Set to false to disable the ChartBundle base layers (US coverage only)
 let ChartBundleLayers = true;
