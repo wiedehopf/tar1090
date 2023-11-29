@@ -902,3 +902,9 @@ input{
 #replaySpeedHint{
   grid-area: speedHint;
 }
+
+.fib{
+    display: inline-block;
+    width: 16px;
+    height: 12px;
+}

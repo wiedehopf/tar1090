@@ -3559,7 +3559,7 @@ function refreshFeatures() {
         text: 'Flag',
         header: function() { return ""; },
         sort: function () { sortBy('country', compareAlpha, function(x) { return x.country; }); },
-        value: function(plane) { return (plane.country_code ? ('<span width="16" height="12" class="fib fi-' + plane.country_code + '" title="' + plane.country + '"></span>') : ''); },
+        value: function(plane) { return (plane.country_code ? ('<span class="fib fi-' + plane.country_code + '" title="' + plane.country + '"></span>') : ''); },
         hStyle: 'style="width: 16px; padding: 3px;"',
         html: true,
     };
