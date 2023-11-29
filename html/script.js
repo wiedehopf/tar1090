@@ -3254,9 +3254,9 @@ function refreshSelected() {
     if (ShowFlags) {
         jQuery('#selected_flag').removeClass('hidden');
         if(selected.country_code !== null) {
-            jQuery('#selected_flag span').attr('class', 'fi fi-' + selected.country_code);
+            jQuery('#selected_flag span').attr('class', 'fib fi-' + selected.country_code);
         } else {
-            jQuery('#selected_flag span').attr('class', 'fi');
+            jQuery('#selected_flag span').attr('class', 'fib');
         }
         jQuery('#selected_flag span').attr('title', selected.country);
     } else {
@@ -3559,8 +3559,8 @@ function refreshFeatures() {
         text: 'Flag',
         header: function() { return ""; },
         sort: function () { sortBy('country', compareAlpha, function(x) { return x.country; }); },
-        value: function(plane) { return (plane.flag_image ? ('<span width="16" height="12" class="fi fi-' + plane.country_code + '" title="' + plane.country + '"></span>') : ''); },
-        hStyle: 'style="width: 20px; padding: 3px;"',
+        value: function(plane) { return (plane.country_code ? ('<span width="16" height="12" class="fib fi-' + plane.country_code + '" title="' + plane.country + '"></span>') : ''); },
+        hStyle: 'style="width: 16px; padding: 3px;"',
         html: true,
     };
     cols.flight = {

@@ -10,7 +10,7 @@ function PlaneObject(icao) {
     this.icao      = icao;
     const icaorange = findICAORange(icao);
     this.country = icaorange.country;
-    this.flag_image = icaorange.flag_image;
+    this.country_code = icaorange.country_code;
 
     this.numHex = parseInt(icao.replace('~', '1'), 16);
     this.fakeHex = this.numHex > 16777215; // non-icao hex
