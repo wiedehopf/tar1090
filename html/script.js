@@ -3251,10 +3251,14 @@ function refreshSelected() {
     }
 
     jQuery('#selected_country').updateText(selected.country.replace("special use", "special"));
-    if (ShowFlags && selected.flag_image !== null) {
+    if (ShowFlags) {
         jQuery('#selected_flag').removeClass('hidden');
-        jQuery('#selected_flag img').attr('src', FlagPath + selected.flag_image);
-        jQuery('#selected_flag img').attr('title', selected.country);
+        if(selected.country_code !== null) {
+            jQuery('#selected_flag span').attr('class', 'fib fi-' + selected.country_code);
+        } else {
+            jQuery('#selected_flag span').attr('class', 'fib');
+        }
+        jQuery('#selected_flag span').attr('title', selected.country);
     } else {
         jQuery('#selected_flag').addClass('hidden');
     }
@@ -3555,8 +3559,8 @@ function refreshFeatures() {
         text: 'Flag',
         header: function() { return ""; },
         sort: function () { sortBy('country', compareAlpha, function(x) { return x.country; }); },
-        value: function(plane) { return (plane.flag_image ? ('<img width="20" height="12" style="display: block;margin: auto;" src="' + FlagPath + plane.flag_image + '" title="' + plane.country + '"></img>') : ''); },
-        hStyle: 'style="width: 20px; padding: 3px;"',
+        value: function(plane) { return (plane.country_code ? ('<span class="fib fi-' + plane.country_code + '" title="' + plane.country + '"></span>') : ''); },
+        hStyle: 'style="width: 16px; padding: 3px;"',
         html: true,
     };
     cols.flight = {
