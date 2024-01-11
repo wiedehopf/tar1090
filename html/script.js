@@ -327,116 +327,124 @@ function processReceiverUpdate(data, init) {
     }
 }
 function fetchFail(jqxhr, status, error) {
-    pendingFetches--;
-    if (pendingFetches <= 0 && !tabHidden) {
-        triggerRefresh++;
-        checkMovement();
-    }
-    status = jqxhr.status;
-    if (jqxhr.readyState == 0) error = "Can't connect to server, check your network!";
-    let errText = status + (error ? (": " + error) : "");
-    console.log(jqxhr);
-    console.log(error);
-    if (status != 429 && status != '429') {
-        jQuery("#update_error_detail").text(errText);
-        jQuery("#update_error").css('display','block');
-        StaleReceiverCount++;
-    } else {
-        if (C429++ > 16) {
-            globeRateUpdate();
-            C429 = 0;
+    try {
+        pendingFetches--;
+        if (pendingFetches <= 0 && !tabHidden) {
+            triggerRefresh++;
+            checkMovement();
         }
+        status = jqxhr.status;
+        if (jqxhr.readyState == 0) error = "Can't connect to server, check your network!";
+        let errText = status + (error ? (": " + error) : "");
+        console.log(jqxhr);
+        console.log(error);
+        if (status != 429 && status != '429') {
+            jQuery("#update_error_detail").text(errText);
+            jQuery("#update_error").css('display','block');
+            StaleReceiverCount++;
+        } else {
+            if (C429++ > 16) {
+                globeRateUpdate();
+                C429 = 0;
+            }
+        }
+    } catch (e) {
+        console.error(e);
     }
 }
 
 function fetchDone(data) {
-    pendingFetches--;
-    if (data == null) {
-        return;
-    }
-    if (zstd) {
-        let arr = new Uint8Array(data);
-        lastRequestSize = arr.byteLength;
-        let res;
-        try {
-            res = zstdDecode( arr, 0 );
-        } catch (e) {
-            let errText = e.message;
-            console.log(errText);
-            jQuery("#update_error_detail").text(errText);
-            jQuery("#update_error").css('display','block');
+    try {
+        pendingFetches--;
+        if (data == null) {
             return;
         }
-        let arrayBuffer = res.buffer
-        // return type is Uint8Array, wqi requires the ArrayBuffer
-        data = { buffer: arrayBuffer, };
-        wqi(data);
-    } else if (binCraft) {
-        lastRequestSize = data.byteLength / 2;
-        data = { buffer: data, };
-        wqi(data);
-    }
-    data.urlIndex = this.urlIndex;
-
-    if (!data.aircraft || !data.now) {
-        let error = data.error;
-        if (error) {
-            jQuery("#update_error_detail").text(error);
-            jQuery("#update_error").css('display','block');
-            StaleReceiverCount++;
+        if (zstd) {
+            let arr = new Uint8Array(data);
+            lastRequestSize = arr.byteLength;
+            let res;
+            try {
+                res = zstdDecode( arr, 0 );
+            } catch (e) {
+                let errText = e.message;
+                console.log(errText);
+                jQuery("#update_error_detail").text(errText);
+                jQuery("#update_error").css('display','block');
+                return;
+            }
+            let arrayBuffer = res.buffer
+            // return type is Uint8Array, wqi requires the ArrayBuffer
+            data = { buffer: arrayBuffer, };
+            wqi(data);
+        } else if (binCraft) {
+            lastRequestSize = data.byteLength / 2;
+            data = { buffer: data, };
+            wqi(data);
         }
-        return;
-    }
+        data.urlIndex = this.urlIndex;
 
-    //console.time("Process " + data.globeIndex);
-    processReceiverUpdate(data);
-    //console.timeEnd("Process " + data.globeIndex);
-    data = null;
+        if (!data.aircraft || !data.now) {
+            let error = data.error;
+            if (error) {
+                jQuery("#update_error_detail").text(error);
+                jQuery("#update_error").css('display','block');
+                StaleReceiverCount++;
+            }
+            return;
+        }
 
-    if (uat_data) {
-        processReceiverUpdate(uat_data);
-        uat_data = null;
-    }
+        //console.time("Process " + data.globeIndex);
+        processReceiverUpdate(data);
+        //console.timeEnd("Process " + data.globeIndex);
+        data = null;
 
-    if (pendingFetches <= 0 && !tabHidden) {
-        triggerRefresh++;
-        checkMovement();
-        if (firstFetch) {
-            firstFetch = false;
-            if (uuid) {
-                const ext = myExtent(OLMap.getView().calculateExtent(OLMap.getSize()));
-                let jump = true;
-                for (let i = 0; i < g.planesOrdered.length; ++i) {
-                    const plane = g.planesOrdered[i];
-                    if (plane.visible && inView(plane.position, ext)) {
-                        jump = false;
-                        break;
+        if (uat_data) {
+            processReceiverUpdate(uat_data);
+            uat_data = null;
+        }
+
+        if (pendingFetches <= 0 && !tabHidden) {
+            triggerRefresh++;
+            checkMovement();
+            if (firstFetch) {
+                firstFetch = false;
+                if (uuid) {
+                    const ext = myExtent(OLMap.getView().calculateExtent(OLMap.getSize()));
+                    let jump = true;
+                    for (let i = 0; i < g.planesOrdered.length; ++i) {
+                        const plane = g.planesOrdered[i];
+                        if (plane.visible && inView(plane.position, ext)) {
+                            jump = false;
+                            break;
+                        }
+                    }
+                    if (jump) {
+                        followRandomPlane();
+                        deselectAllPlanes();
+                        OLMap.getView().setZoom(6);
                     }
                 }
-                if (jump) {
-                    followRandomPlane();
-                    deselectAllPlanes();
-                    OLMap.getView().setZoom(6);
-                }
+                checkRefresh();
             }
-            checkRefresh();
         }
-    }
 
-    if (fetchCalls == 1) { console.timeEnd("first fetch()"); };
+        if (fetchCalls == 1) { console.timeEnd("first fetch()"); };
 
-    if (!g.firstFetchDone) { afterFirstFetch(); };
+        if (!g.firstFetchDone) { afterFirstFetch(); };
 
-    // Check for stale receiver data
-    if (last == now && !globeIndex) {
-        StaleReceiverCount++;
-        if (StaleReceiverCount > 5) {
-            jQuery("#update_error_detail").text("The data from the server hasn't been updated in a while.");
-            jQuery("#update_error").css('display','block');
+        // Check for stale receiver data
+        if (last == now && !globeIndex) {
+            StaleReceiverCount++;
+            if (StaleReceiverCount > 5) {
+                jQuery("#update_error_detail").text("The data from the server hasn't been updated in a while.");
+                jQuery("#update_error").css('display','block');
+            }
+        } else if (StaleReceiverCount > 0){
+            StaleReceiverCount = 0;
+            jQuery("#update_error").css('display','none');
         }
-    } else if (StaleReceiverCount > 0){
-        StaleReceiverCount = 0;
-        jQuery("#update_error").css('display','none');
+    } catch (e) {
+        console.error(e);
     }
 }
 
