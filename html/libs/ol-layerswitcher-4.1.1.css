@@ -64,7 +64,7 @@
   right: 2px;
   position: absolute;
   background-color: #eee;
-  margin: 0 1px;
+  margin: 1px;
 }
 
 .layer-switcher.shown button:focus,
