@@ -2100,10 +2100,7 @@ function webglAddLayer() {
             console.error(error);
         }
         console.error(error);
-        loStore['webglFailStamp'] = new Date().getTime();
         success = false;
-        if (loStore['webgl'] == 'true')
-            loStore.removeItem('webgl');
     }
     delete g.planes[plane.icao];
     g.planesOrdered.splice(g.planesOrdered.indexOf(plane), 1);
@@ -2118,12 +2115,7 @@ function webglAddLayer() {
 
 function webglInit() {
     let init = true;
-    // if webGL failed in the last 7 days, don't even try unless people click the toggle.
-    if (loStore['webglFailStamp'] && Number(loStore['webglFailStamp']) +  7 * 24 * 3600 * 1000 > new Date().getTime()) {
-        init = false;
-        if (loStore['webgl'] == undefined)
-            console.log('webGL failed in the past 7 days, not even trying to initialize it');
-    }
+
     new Toggle({
         key: "webgl",
         display: "WebGL",
