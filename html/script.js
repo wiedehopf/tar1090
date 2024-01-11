@@ -2191,6 +2191,7 @@ function ol_map_init() {
             new ol.control.ScaleLine({units: DisplayUnits})
         ],
         interactions: new ol.interaction.defaults({altShiftDragRotate:false, pinchRotate:false,}),
+        maxTilesLoading: 4,
     });
 
     console.time('webglInit');
