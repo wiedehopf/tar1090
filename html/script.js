@@ -521,7 +521,7 @@ function fetchData(options) {
         }
     }
     if (debugFetch) {
-        console.log((currentTime - lastFetch)/1000);
+        console.log('Time since last fetch: ' + (currentTime - lastFetch)/1000);
     }
     lastFetch = currentTime;
 
@@ -637,7 +637,9 @@ function fetchData(options) {
     fetchCounter += ac_url.length;
 
     for (let i in ac_url) {
-        //console.log(ac_url[i]);
+        if (debugFetch) {
+            console.log('Fetching: ' + ac_url[i]);
+        }
         let req;
         if (binCraft || zstd) {
             req = jQuery.ajax({
@@ -786,6 +788,9 @@ function initPage() {
         MapType_tar1090 = 'carto_light_all';
         lineWidth=4;
         enableLabels=true;
+    }
+    if (usp.has('debugFetch')) {
+        debugFetch = true;
     }
 
     if (usp.has('rangeRings')) {
