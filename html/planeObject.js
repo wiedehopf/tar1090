@@ -1749,11 +1749,9 @@ PlaneObject.prototype.updateMarker = function(moved) {
         this.setMarkerRgb();
         const iconRotation = this.shape.noRotate ? 0 : this.rotation;
         this.glMarker.set('rotation', iconRotation * Math.PI / 180.0 + mapOrientation);
-        this.glMarker.set('size', this.scale * Math.max(this.shape.w, this.shape.h));
-        this.glMarker.set('cx', getSpriteX(this.shape) / glImapWidth);
-        this.glMarker.set('cy', getSpriteY(this.shape) / glImapHeight);
-        this.glMarker.set('dx', (getSpriteX(this.shape) + 1) / glImapWidth);
-        this.glMarker.set('dy', (getSpriteY(this.shape) + 1) / glImapHeight);
+        this.glMarker.set('scale', this.scale * Math.max(this.shape.w, this.shape.h) / glIconSize);
+        this.glMarker.set('sx', getSpriteX(this.shape) * glIconSize);
+        this.glMarker.set('sy', getSpriteY(this.shape) * glIconSize);
     }
 
     if (this.marker && (!webgl || enableLabels)) {

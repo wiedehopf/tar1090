@@ -2039,43 +2039,36 @@ function webglAddLayer() {
     //console.log(spriteSrc);
     try {
         let glStyle = {
-            symbol: {
-                symbolType: 'image',
-                src: spriteSrc,
-                size: [ 'get', 'size' ],
-                offset: [0, 0],
-                textureCoord: [ 'array',
-                    [ 'get', 'cx' ],
-                    [ 'get', 'cy' ],
-                    [ 'get', 'dx' ],
-                    [ 'get', 'dy' ]
-                ],
-                color: [
+            'icon-src': spriteSrc,
+            'icon-color': [
                     'color',
                     [ 'get', 'r' ],
                     [ 'get', 'g' ],
                     [ 'get', 'b' ],
                     1
-                ],
-                rotateWithView: false,
-                rotation: [ 'get', 'rotation' ],
-            },
+            ],
+            'icon-size': [ glIconSize, glIconSize ],
+            'icon-offset': [
+                'array',
+                [ 'get', 'sx' ],
+                [ 'get', 'sy' ]
+            ],
+            'icon-rotation': [ 'get' , 'rotation' ],
+            'icon-rotate-with-view': false,
+            'icon-scale': [ 'get', 'scale', 'number' ]
         };
         if (heatmap) {
             glStyle = {
-                symbol: {
-                    symbolType: "circle",
-                    size: heatmap.radius * globalScale * 2.5,
-                    offset: [0, 0],
-                    opacity: heatmap.alpha || 1,
-                    color: [
-                        'color',
-                        [ 'get', 'r' ],
-                        [ 'get', 'g' ],
-                        [ 'get', 'b' ],
-                        1
-                    ],
-                }
+                'circle-radius': heatmap.radius * globalScale * 1.25,
+                'circle-displacement': [0, 0],
+                'circle-opacity': heatmap.alpha || 1,
+                'circle-fill-color' : [
+                    'color',
+                    [ 'get', 'r' ],
+                    [ 'get', 'g' ],
+                    [ 'get', 'b' ],
+                    1
+                ]
             }
         }
 
