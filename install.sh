@@ -163,6 +163,8 @@ elif [[ -f /run/dump1090-mutability/aircraft.json ]]; then
     srcdir=/run/dump1090-mutability
 elif [[ -f /run/skyaware978/aircraft.json ]]; then
     srcdir=/run/skyaware978
+elif [[ -f /run/shm/aircraft.json ]]; then
+    srcdir=/run/shm
 else
     echo --------------
     echo FATAL: could not find aircraft.json in any of the usual places!
