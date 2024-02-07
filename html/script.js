@@ -4380,12 +4380,10 @@ function adjustInfoBlock() {
 }
 
 function initializeUnitsSelector() {
-    // Get display unit preferences from local storage
-    if (!loStore.getItem('displayUnits')) {
-        loStore['displayUnits'] = 'nautical';
+    // Get display unit preferences from local storage otherwise use value previously set defaults.js or config.js
+    if (loStore.getItem('displayUnits')) {
+        DisplayUnits = loStore['displayUnits'];
     }
-
-    DisplayUnits = loStore['displayUnits'];
 
     // Initialize drop-down
     jQuery('#units_selector')
