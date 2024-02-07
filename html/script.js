@@ -1661,14 +1661,9 @@ function initSourceFilter(colors) {
     html += createFilter(colors['uat'], 'UAT / ADS-R', sources[1][0]);
     html += createFilter(colors['mlat'], 'MLAT', sources[2]);
     html += createFilter(colors['tisb'], 'TIS-B', sources[3]);
-
-    //if (!globeIndex)
     html += createFilter(colors['modeS'], 'Mode-S', sources[4]);
-    if (globeIndex)
-        html += createFilter(colors['other'], 'Other', sources[5]);
-
-    if (globeIndex)
-        html += createFilter(colors['uat'], 'ADS-C', sources[6]);
+    html += createFilter(colors['other'], 'Other', sources[5]);
+    html += createFilter(colors['uat'], 'ADS-C', sources[6]);
 
     document.getElementById('sourceFilter').innerHTML = html;
 
