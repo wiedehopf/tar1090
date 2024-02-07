@@ -90,6 +90,12 @@ if (( $( { du -s "$ipath/git-db" 2>/dev/null || echo 0; } | cut -f1) > 150000 ))
     rm -rf "$ipath/git-db"
 fi
 
+function copyNoClobber() {
+    if ! [[ -f "$2" ]]; then
+        cp "$1" "$2"
+    fi
+}
+
 function getGIT() {
     # getGIT $REPO $BRANCH $TARGET (directory)
     if [[ -z "$1" ]] || [[ -z "$2" ]] || [[ -z "$3" ]]; then echo "getGIT wrong usage, check your script or tell the author!" 1>&2; return 1; fi
@@ -244,7 +250,7 @@ do
     names+="$instance "
 
     # don't overwrite existing configuration
-    useSystemd && cp -n default /etc/default/"$service"
+    useSystemd && copyNoClobber default /etc/default/"$service"
 
     sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?${service}?g" \
         -e "s?/INSTANCE??g" -e "s?HTMLPATH?$html_path?g" 95-tar1090-otherport.conf
