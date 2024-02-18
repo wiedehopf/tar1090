@@ -451,8 +451,14 @@ function wqi(data) {
         let t = s32[0] & (1<<24);
         ac.hex = (s32[0] & ((1<<24) - 1)).toString(16).padStart(6, '0');
         ac.hex = t ? ('~' + ac.hex) : ac.hex;
-        ac.seen_pos = u16[2] / 10;
-        ac.seen = u16[3] / 10;
+
+        if (binCraftVersion >= 20240218) {
+            ac.seen = s32[1] / 10;
+            ac.seen_pos = s32[27] / 10;
+        } else {
+            ac.seen_pos = u16[2] / 10;
+            ac.seen = u16[3] / 10;
+        }
 
         ac.lon = s32[2] / 1e6;
         ac.lat = s32[3] / 1e6;
@@ -638,9 +644,15 @@ function wqi(data) {
         } else if (type4 == 'tisb') {
             ac.version = ac.tisb_version;
         }
-        if (stride == 112) {
-            ac.rId = u32[27].toString(16).padStart(8, '0');
-            //ac.rId = ac.rId.slice(0, 4) + '-' + ac.rId.slice(4);
+
+        if (binCraftVersion >= 20240218) {
+            if (stride == 116) {
+                ac.rId = u32[27].toString(16).padStart(8, '0');
+            }
+        } else {
+            if (stride == 112) {
+                ac.rId = u32[27].toString(16).padStart(8, '0');
+            }
         }
 
         data.aircraft.push(ac);
