@@ -334,7 +334,7 @@ function createBaseLayers() {
         }));
     }
 
-    if (ChartBundleLayers) {
+/*     if (ChartBundleLayers) {
 
         let chartbundleTypesDirect = {
             sec: "Sectional Charts",
@@ -395,7 +395,7 @@ function createBaseLayers() {
                 type: 'base',
                 group: 'chartbundle'}));
         }
-    }
+    } */
 
     world.push(new ol.layer.Tile({
         source: new ol.source.XYZ({
@@ -438,6 +438,46 @@ function createBaseLayers() {
             zIndex: 99,
         }));
     }
+
+    us.push(new ol.layer.Vector({
+        type: 'overlay',
+        title: 'Special Use Airspace',
+        name: 'sua',
+        zIndex: 99,
+        visible: false,
+        source: new ol.source.Vector({
+            url: 'https://opendata.arcgis.com/datasets/dd0d1b726e504137ab3c41b21835d05b_0.geojson',
+            transition: tileTransition,
+            format: new ol.format.GeoJSON({
+                defaultDataProjection: 'EPSG:4326',
+                projection: 'EPSG:3857'
+            })
+        }),
+        style: function style(feature) {
+            let type = feature.getProperties().TYPE_CODE;
+            if (type == "P" || type == "R" || type == "W") {
+                return new ol.style.Style({
+                    stroke: new ol.style.Stroke({
+                        color: 'rgba(72, 149, 239, 1)',
+                        width: 2
+                    }),
+                    fill: new ol.style.Fill({
+                        color: 'rgba(72, 149, 239, 0.3)',
+                    })
+                })
+            } else if (type == "A" || type == "MOA") {
+                return new ol.style.Style({
+                    stroke: new ol.style.Stroke({
+                        color: 'rgba(133, 45, 69, 1)',
+                        width: 2
+                    }),
+                    fill: new ol.style.Fill({
+                        color : 'rgba(133, 45, 69, 0.3)'
+                    })
+                });
+            }
+        }
+    }));
 
     // nexrad and noaa stuff
     const bottomLeft = ol.proj.fromLonLat([-171.0,9.0]);
