@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="0.40784708in"
+   height="0.40784708in"
+   viewBox="0 0 10.359316 10.359316"
+   version="1.1"
+   id="svg1"
+   xml:space="preserve"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   sodipodi:docname="icons-and-images.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><style
+     id="style20">
+.measure-arrow
+{
+}
+.measure-label
+{
+
+}
+.measure-line
+{
+}</style><sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#353535"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#a8a8a8"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.0916486"
+     inkscape:cx="735.12667"
+     inkscape:cy="385.65524"
+     inkscape:window-width="3440"
+     inkscape:window-height="1351"
+     inkscape:window-x="3831"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     showgrid="false"><inkscape:grid
+       id="grid20"
+       units="px"
+       originx="-415.22321"
+       originy="-42.209999"
+       spacingx="0.26458334"
+       spacingy="0.26458333"
+       empcolor="#3f3fff"
+       empopacity="0.25098039"
+       color="#3f3fff"
+       opacity="0.12549"
+       empspacing="5"
+       dotted="false"
+       gridanglex="30"
+       gridanglez="30"
+       visible="false" /></sodipodi:namedview><defs
+     id="defs1"><linearGradient
+       id="linearGradient4"
+       inkscape:swatch="gradient"><stop
+         style="stop-color:#001e24;stop-opacity:1;"
+         offset="0"
+         id="stop8" /><stop
+         style="stop-color:#003f4b;stop-opacity:1;"
+         offset="0.09785938"
+         id="stop9" /><stop
+         style="stop-color:#002e37;stop-opacity:1;"
+         offset="0.90366977"
+         id="stop10" /><stop
+         style="stop-color:#001e24;stop-opacity:1;"
+         offset="1"
+         id="stop11" /></linearGradient><style
+       id="style1">.cls-1{fill:url(#linear-gradient);}.cls-2{fill:none;stroke:#000;stroke-miterlimit:10;}</style></defs><g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-415.22321,-42.209999)"><rect
+       style="display:inline;fill:#003f4b;fill-opacity:1;stroke:#00151a;stroke-width:0.367;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1-8-9-3-6-19-2"
+       width="9.9923143"
+       height="9.9923143"
+       x="415.40671"
+       y="42.393501"
+       ry="1.0067443" /></g></svg>
