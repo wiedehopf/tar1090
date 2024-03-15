@@ -2,12 +2,12 @@
     --SCALE: 1;
     --BGCOLOR1: #F8F8F8; /*light gray*/
     --BGCOLOR2: #CCCCCC; /*dark gray*/
-    --PRIMARY: #003f4b; /*dark teal*/
+    --PRIMARY: #00596b; /*dark teal*/
     --ACCENT: #29d682; /*lime*/
     --FS1: calc( 10px * var(--SCALE));
     --FS2: calc( 13px * var(--SCALE));
     --FS3: calc( 17px * var(--SCALE));
-    --TXTCOLOR1: #003f4b; /*dark teal*/
+    --TXTCOLOR1: #00596b; /*dark teal*/
     --TXTCOLOR2: #000000; /*black*/
 }
 
