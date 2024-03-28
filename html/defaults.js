@@ -73,6 +73,16 @@ let MapDim = true;
 let mapDimPercentage = 0.45;
 let mapContrastPercentage = 0;
 
+// opacities for various overlays
+let nexradOpacity = 0.35
+let dwdRadolanOpacity = 0.30;
+let rainViewerRadarOpacity = 0.30;
+let rainViewerCloudsOpacity = 0.30;
+let noaaInfraredOpacity = 0.35;
+let noaaRadarOpacity = 0.35;
+let openAIPOpacity = 0.70;
+let tfrOpacity = 0.70;
+
 let offlineMapDetail = -1;
 
 // -- Marker settings -------------------------------------

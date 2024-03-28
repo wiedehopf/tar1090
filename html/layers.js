@@ -408,7 +408,7 @@ function createBaseLayers() {
         name: 'openaip',
         title: 'openAIP TMS',
         type: 'overlay',
-        opacity: 0.7,
+        opacity: openAIPOpacity,
         visible: false,
         zIndex: 99,
         maxZoom: 13,
@@ -433,7 +433,7 @@ function createBaseLayers() {
             name: 'tfrs',
             title: 'TFRs',
             type: 'overlay',
-            opacity: 0.7,
+            opacity: tfrOpacity,
             visible: false,
             zIndex: 99,
         }));
@@ -490,7 +490,7 @@ function createBaseLayers() {
             name: 'nexrad',
             title: 'NEXRAD',
             type: 'overlay',
-            opacity: 0.35,
+            opacity: nexradOpacity,
             visible: false,
             zIndex: 99,
             extent: naExtent,
@@ -533,7 +533,7 @@ function createBaseLayers() {
             type: 'overlay',
             visible: false,
             source: noaaSatSource,
-            opacity: 0.35,
+            opacity: noaaInfraredOpacity,
             extent: naExtent,
         });
 
@@ -566,7 +566,7 @@ function createBaseLayers() {
             type: 'overlay',
             visible: false,
             source: noaaRadarSource,
-            opacity: 0.35,
+            opacity: noaaRadarOpacity,
             extent: naExtent,
         });
 
@@ -599,7 +599,7 @@ function createBaseLayers() {
             name: 'radolan',
             title: 'DWD RADOLAN',
             type: 'overlay',
-            opacity: 0.3,
+            opacity: dwdRadolanOpacity,
             visible: false,
             zIndex: 99,
             extent: dwdExtent,
@@ -626,7 +626,7 @@ function createBaseLayers() {
             name: 'rainviewer_radar',
             title: 'RainViewer Radar',
             type: 'overlay',
-            opacity: 0.35,
+            opacity: rainViewerRadarOpacity,
             visible: false,
             zIndex: 99,
         });
@@ -659,7 +659,7 @@ function createBaseLayers() {
             name: 'rainviewer_clouds',
             title: 'RainViewer Clouds',
             type: 'overlay',
-            opacity: 0.35,
+            opacity: rainViewerCloudsOpacity,
             visible: false,
             zIndex: 99,
         });
