@@ -2056,7 +2056,7 @@ function webglAddLayer() {
             glStyle = {
                 'circle-radius': heatmap.radius * globalScale * 1.25,
                 'circle-displacement': [0, 0],
-                'circle-opacity': heatmap.alpha || 1,
+                'circle-opacity': heatmap.alpha || webglIconOpacity,
                 'circle-fill-color' : [
                     'color',
                     [ 'get', 'r' ],
@@ -2250,12 +2250,18 @@ function ol_map_init() {
     }));
 
     OLMap.on('movestart', function(event) {
-        webgl && TrackedAircraftPositions > 2000 && webglLayer.setOpacity(0.25);
+        if (webgl) {
+            if (TrackedAircraftPositions > webglIconMapMoveOpacityCrowdedThreshold) {
+                webglLayer.setOpacity(webglIconMapMoveOpacityCrowded)
+            } else {
+                webglLayer.setOpacity(webglIconMapMoveOpacity)
+            }
+        }
     });
 
     OLMap.on('moveend', function(event) {
         checkMovement();
-        webgl && webglLayer.setOpacity(1);
+        webgl && webglLayer.setOpacity(webglIconOpacity );
     });
 
     OLMap.on(['click', 'dblclick'], function(evt) {

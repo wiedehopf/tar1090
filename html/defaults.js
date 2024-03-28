@@ -76,6 +76,15 @@ let mapContrastPercentage = 0;
 let offlineMapDetail = -1;
 
 // -- Marker settings -------------------------------------
+// (marker == aircraft icon)
+
+// aircraft icon opacity (normal and while the user is moving the map)
+let webglIconOpacity = 1.0;
+let webglIconMapMoveOpacity = 1.0;
+
+// if more than by default 2000 aircraft are on the screen, reduce icon opacity when moving the screen:
+let webglIconMapMoveOpacityCrowded = 0.25;
+let webglIconMapMoveOpacityCrowdedThreshold = 2000;
 
 // different marker size depending on zoom lvl
 let markerZoomDivide = 8.5;
