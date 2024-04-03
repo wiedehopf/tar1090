@@ -7014,6 +7014,7 @@ function drawHeatmap() {
             }
 
             let points = myPoints[k];
+            let pointsU = new Uint32Array(points.buffer);
 
             let i = 4 * indexes[k][offsets[k]];
 
@@ -7054,6 +7055,33 @@ function drawHeatmap() {
 
                 if (PlaneFilter.enabled && altFiltered(alt))
                     continue;
+
+                if (heatmap.filters) {
+                    let type = (pointsU[i] >> 27) & 0x1F;
+                    let dataSource;
+                    switch (type) {
+                        case  0: dataSource = 'adsb';     break;
+                        case  1: dataSource = 'modeS';    break;
+                        case  2: dataSource = 'adsr';     break;
+                        case  3: dataSource = 'tisb';     break;
+                        case  4: dataSource = 'adsc';     break;
+                        case  5: dataSource = 'mlat';     break;
+                        case  6: dataSource = 'other';    break;
+                        case  7: dataSource = 'modeS';    break;
+                        case  8: dataSource = 'adsb';     break;
+                        case  9: dataSource = 'adsr';     break;
+                        case 10: dataSource = 'tisb';     break;
+                        case 11: dataSource = 'tisb';     break;
+                        default: dataSource = 'unknown';
+                    }
+                    let hex = (pointsU[i] & 0xFFFFFF).toString(16).padStart(6, '0');
+                    hex = (pointsU[i] & 0x1000000) ? ('~' + hex) : hex;
+                    let plane = g.planes[hex] || new PlaneObject(hex);
+                    plane.dataSource = dataSource;
+                    if (plane.isFiltered()) {
+                        continue;
+                    }
+                }
 
                 pointCount++;
                 //console.log(pos);

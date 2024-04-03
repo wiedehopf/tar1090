@@ -83,6 +83,7 @@ See the main readme for more examples on how to use the filters
 - heatAlpha - 0.1 to 1.0 - how transparent the dots will be
 - heatRadius - dot size for heatmap
 - heatManualRedraw - only redraw dots when pressing r
+- heatFilters - significant slowdown / experimental: enable filtering by type code / type description / hex / DB flags / military / registration / country of registration / data source
 
 - realHeat - real heatmap instead of dots
 - heatBlur - parameter for realHeat

@@ -267,6 +267,8 @@ if (usp.has('heatmap') || usp.has('realHeat')) {
         heatmap.end -= tmp * 3600 * 1000;
     if (usp.has('heatLines'))
         heatmap.lines = true;
+    if (usp.has('heatfilters'))
+        heatmap.filters = true;
     tmp = parseFloat(usp.get('heatAlpha'));
     if (!isNaN(tmp)) {
         heatmap.alpha = tmp;
