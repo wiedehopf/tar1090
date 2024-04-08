@@ -1,5 +1,6 @@
 #!/bin/bash
 # shellcheck shell=bash disable=SC2016
+umask 022
 
 
 set -e

@@ -1,4 +1,5 @@
 #!/bin/bash
+umask 022
 
 ID="$1"
 
