@@ -26,7 +26,11 @@ lighttpd=no
 nginx=no
 function useSystemd () { command -v systemd &>/dev/null; }
 
+gpath="$TAR1090_UPDATE_DIR"
+if [[ -z "$gpath" ]]; then gpath="$ipath"; fi
+
 mkdir -p "$ipath"
+mkdir -p "$gpath"
 
 if useSystemd && ! id -u tar1090 &>/dev/null
 then
@@ -87,8 +91,8 @@ fi
 
 dir=$(pwd)
 
-if (( $( { du -s "$ipath/git-db" 2>/dev/null || echo 0; } | cut -f1) > 150000 )); then
-    rm -rf "$ipath/git-db"
+if (( $( { du -s "$gpath/git-db" 2>/dev/null || echo 0; } | cut -f1) > 150000 )); then
+    rm -rf "$gpath/git-db"
 fi
 
 function copyNoClobber() {
@@ -114,11 +118,11 @@ function revision() {
     git rev-parse --short HEAD 2>/dev/null || echo "$RANDOM-$RANDOM"
 }
 
-if ! { [[ "$1" == "test" ]] && cd "$ipath/git-db"; }; then
-    getGIT "$db_repo" "master" "$ipath/git-db" || true
+if ! { [[ "$1" == "test" ]] && cd "$gpath/git-db"; }; then
+    getGIT "$db_repo" "master" "$gpath/git-db" || true
 fi
 
-if ! cd "$ipath/git-db"
+if ! cd "$gpath/git-db"
 then
     echo "Unable to download files, exiting! (Maybe try again?)"
     exit 1
@@ -129,17 +133,17 @@ DB_VERSION=$(revision)
 cd "$dir"
 
 if [[ "$1" == "test" ]] || [[ -n "$git_source" ]]; then
-    mkdir -p "$ipath/git"
-    rm -rf "$ipath/git"/* || true
+    mkdir -p "$gpath/git"
+    rm -rf "$gpath/git"/* || true
     if [[ -n "$git_source" ]]; then
-        cp -r "$git_source"/* "$ipath/git"
+        cp -r "$git_source"/* "$gpath/git"
     else
-        cp -r ./* "$ipath/git"
+        cp -r ./* "$gpath/git"
     fi
-    cd "$ipath/git"
+    cd "$gpath/git"
     TAR_VERSION="$(date +%s)_${RANDOM}${RANDOM}"
 else
-    if ! getGIT "$repo" "master" "$ipath/git" || ! cd "$ipath/git"
+    if ! getGIT "$repo" "master" "$gpath/git" || ! cd "$gpath/git"
     then
         echo "Unable to download files, exiting! (Maybe try again?)"
         exit 1
@@ -284,7 +288,7 @@ do
     sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?${service}?g" tar1090.service
 
     cp -r -T html "$TMP"
-    cp -r -T "$ipath/git-db/db" "$TMP/db-$DB_VERSION"
+    cp -r -T "$gpath/git-db/db" "$TMP/db-$DB_VERSION"
     sed -i -e "s/let databaseFolder = .*;/let databaseFolder = \"db-$DB_VERSION\";/" "$TMP/index.html"
     echo "{ \"tar1090Version\": \"$TAR_VERSION\", \"databaseVersion\": \"$DB_VERSION\" }" > "$TMP/version.json"
 
@@ -316,7 +320,7 @@ do
 
     sed -i -e "s/tar1090 on github/tar1090 on github ($(date +%y%m%d))/" index.html
 
-    "$ipath/git/cachebust.sh" "$ipath/git/cachebust.list" "$TMP"
+    "$gpath/git/cachebust.sh" "$gpath/git/cachebust.list" "$TMP"
 
     rm -rf "$html_path"
     mv "$TMP" "$html_path"
