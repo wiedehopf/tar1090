@@ -513,6 +513,24 @@ alternative display style: &realHeat
 - blurryness: &heatBlur=2
 - weight of each dot for the heatmap: &heatWeight=4
 
+## Notable websites related to tar1090 / readsb:
+
+One of this forks main uses is to be the frontend of a global map.
+For that purpose it's used in conjunction with readsb.
+
+Websites using this software:
+
+- https://adsb.lol/
+- https://globe.adsbexchange.com/
+- https://globe.airplanes.live/
+- https://globe.adsb.fi/
+
+Notable Projects that use ADS-B data:
+
+- https://gpsjam.org/
+- https://adsb.exposed/
+- https://tech.marksblogg.com/global-flight-tracking-adsb.html
+
 ## offline map
 
 <https://github.com/wiedehopf/adsb-wiki/wiki/offline-map-tiles-tar1090>
