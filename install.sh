@@ -119,7 +119,10 @@ function revision() {
 }
 
 if ! { [[ "$1" == "test" ]] && cd "$gpath/git-db"; }; then
-    getGIT "$db_repo" "master" "$gpath/git-db" || true
+    DB_VERSION_NEW=$(curl --silent --show-error "https://raw.githubusercontent.com/wiedehopf/tar1090-db/master/version")
+    if  [[ "$(cat $gpath/git-db/version 2>/dev/null)" != "$DB_VERSION_NEW" ]]; then
+        getGIT "$db_repo" "master" "$gpath/git-db" || true
+    fi
 fi
 
 if ! cd "$gpath/git-db"
@@ -143,8 +146,14 @@ if [[ "$1" == "test" ]] || [[ -n "$git_source" ]]; then
     cd "$gpath/git"
     TAR_VERSION="$(date +%s)_${RANDOM}${RANDOM}"
 else
-    if ! getGIT "$repo" "master" "$gpath/git" || ! cd "$gpath/git"
-    then
+    VERSION_NEW=$(curl --silent --show-error "https://raw.githubusercontent.com/wiedehopf/tar1090/master/version")
+    if  [[ "$(cat $gpath/git/version 2>/dev/null)" != "$VERSION_NEW" ]]; then
+        if ! getGIT "$repo" "master" "$gpath/git"; then
+            echo "Unable to download files, exiting! (Maybe try again?)"
+            exit 1
+        fi
+    fi
+    if ! cd "$gpath/git"; then
         echo "Unable to download files, exiting! (Maybe try again?)"
         exit 1
     fi
@@ -375,7 +384,6 @@ do
     mv nginx.conf.orig nginx.conf
     mv tar1090.service.orig tar1090.service
 done < <(echo "$instances")
-
 
 if [[ $lighttpd == yes ]]; then
     if lighttpd -tt -f /etc/lighttpd/lighttpd.conf 2>&1 | grep -i duplicate >/dev/null; then
