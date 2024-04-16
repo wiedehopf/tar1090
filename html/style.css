@@ -1121,5 +1121,10 @@ table.infoSectionTable tr td {
     height: 95vh;
 }
 
+.layer-switcher.shown.layer-switcher-activation-mode-click > button {
+    color: var(--TXTCOLOR3);
+}
+
+
 
 /*  font-awesome.min.css overrides  ######################################## */
