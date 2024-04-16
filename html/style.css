@@ -1031,8 +1031,13 @@ table.infoSectionTable tr td {
 
 /* remove the blue highlighting around the map buttons */
 .ol-control button {
+    background-color: var(--PRIMARY);
     outline: none;
     z-index: 999;
+}
+
+.ol-control button:hover, .ol-control button:focus {
+    outline: none;
 }
 
 .ol-zoom-in {
@@ -1042,6 +1047,11 @@ table.infoSectionTable tr td {
     height: calc( 25px * var(--SCALE)) !important;
     background-color: var(--PRIMARY);
     margin-bottom: calc( 5px * var(--SCALE)) !important;
+    cursor: pointer;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: calc( 2px * var(--SCALE));
+    padding: calc( 6px * var(--SCALE));
 }
 
 .ol-zoom-out {
@@ -1050,6 +1060,11 @@ table.infoSectionTable tr td {
     width: calc( 25px * var(--SCALE)) !important;
     height: calc( 25px * var(--SCALE)) !important;
     background-color: var(--PRIMARY);
+    cursor: pointer;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: calc( 2px * var(--SCALE));
+    padding: calc( 6px * var(--SCALE));
 }
 
 .ol-zoom {
@@ -1073,7 +1088,7 @@ table.infoSectionTable tr td {
 }
 
 .layer-switcher button {
-    background-size: 90%;
+    background-size: 65%;
     background-repeat: no-repeat;
     background-position: center;
     background-color: var(--PRIMARY);
@@ -1081,6 +1096,10 @@ table.infoSectionTable tr td {
     width: calc( 27px * var(--SCALE));
     height: calc( 27px * var(--SCALE));
     cursor: pointer;
+}
+
+.layer-switcher button:focus, .layer-switcher button:hover {
+    outline: none;
 }
 
 .layer-switcher !.shown {
