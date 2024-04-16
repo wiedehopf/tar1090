@@ -218,6 +218,8 @@ button.Legend {
 #toggle_sidebar_button.hide_sidebar {
     width: calc( 27px * var(--SCALE));
     height: calc( 27px * var(--SCALE));
+    background-image: url(images/chevron-left-solid.svg);
+    background-size: 50%;
     border-radius: calc( 2px * var(--SCALE));
     background-color: var(--PRIMARY);
     color: var(--BGCOLOR1);
@@ -225,6 +227,7 @@ button.Legend {
     background-size: 50%;
     background-repeat: no-repeat;
     background-position: center;
+    transform: scaleX(-1);
     border: none;
 }
 
@@ -331,6 +334,7 @@ button.Legend {
 #shrink_sidebar_button {
     background-image: url("images/chevron-left-solid.svg");
     background-size: 50%;
+    transform: scaleX(-1);
 }
 
 #expand_sidebar_button {
@@ -343,9 +347,9 @@ button.Legend {
     display: block;
     position: absolute;
     z-index: 99;
-    top:  calc( 5px * var(--SCALE));
+    top:  calc( 3px * var(--SCALE));
     left: calc( 0px * var(--SCALE));
-    float: right;
+    /*float: right;*/
     width: calc( 27px * var(--SCALE));
     height: calc( 27px * var(--SCALE));
     background-size: calc( 30px * var(--SCALE)) calc( 30px * var(--SCALE));
@@ -353,10 +357,10 @@ button.Legend {
     background-color: var(--PRIMARY);
     border: none;
     background-image: url("images/sort-solid.svg");
+    border-radius: calc( 2px * var(--SCALE));
     background-size: 50%;
     background-position: center;
     display: inline-block;
-    transform: scaleX(-1);
     transform: rotate(90deg);
 }
 
@@ -1032,22 +1036,20 @@ table.infoSectionTable tr td {
 }
 
 .ol-zoom-in {
-    background-image: url("images/zoom-in.png");
+    background-image: url("images/search-plus-solid.svg");
     background-size: cover;
-    color:transparent !important;
     width: calc( 25px * var(--SCALE)) !important;
     height: calc( 25px * var(--SCALE)) !important;
-    background-color: transparent !important;
+    background-color: var(--PRIMARY);
     margin-bottom: calc( 5px * var(--SCALE)) !important;
 }
 
 .ol-zoom-out {
-    background-image: url("images/zoom-out.png");
+    background-image: url("images/search-minus-solid.svg");
     background-size: cover;
-    color:transparent !important;
     width: calc( 25px * var(--SCALE)) !important;
     height: calc( 25px * var(--SCALE)) !important;
-    background-color: transparent !important;
+    background-color: var(--PRIMARY);
 }
 
 .ol-zoom {
@@ -1071,11 +1073,14 @@ table.infoSectionTable tr td {
 }
 
 .layer-switcher button {
-    background-size: calc( 26px * var(--SCALE)) calc( 26px * var(--SCALE));
+    background-size: 90%;
     background-repeat: no-repeat;
     background-position: center;
-    width: calc( 30px * var(--SCALE));
-    height: calc( 30px * var(--SCALE));
+    background-color: var(--PRIMARY);
+    background-image: url("images/layer-group-solid.svg");
+    width: calc( 27px * var(--SCALE));
+    height: calc( 27px * var(--SCALE));
+    cursor: pointer;
 }
 
 .layer-switcher !.shown {
