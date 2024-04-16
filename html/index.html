@@ -13,11 +13,15 @@
 
     <!-- CSS_ANCHOR -->
     <link rel="stylesheet" href="libs/jquery-ui-1.13.2.min.css" type="text/css">
+    <!--<link rel="stylesheet" href="libs/jquery-ui-theme-1.13.2.css" type="text/css"/>-->
+    <!--<link rel="stylesheet" href="libs/jquery-ui-structure-1.13.2.css" type="text/css"/>-->
     <link rel="stylesheet" href="libs/ol-8.2.0.css" type="text/css" />
     <link rel="stylesheet" href="libs/ol-layerswitcher-4.1.1.css" type="text/css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" type="text/css" />
     <link rel="stylesheet" href="style.css" type="text/css" />
 
     <link rel="icon" type="image/png" href="images/tar1090-favicon.png">
+    <link rel="apple-touch-icon" href="images/tar1090-favicon.png"> <!-- supports iPhone home screen web app -->
 
     <title>tar1090</title>
   </head>
@@ -25,7 +29,7 @@
   <body>
     <!-- BODY_ANCHOR -->
     <div id="layout_container">
-
+      <!-- floating infoblock appears on mouse hover -->
       <div id="highlighted_infoblock" style="pointer-events: none">
         <div class="highlightedTitle infoBlockSection">
           <div>
@@ -67,8 +71,8 @@
         </div>
       </div>
 
-
-      <div id="selected_infoblock" style="display: none">
+      <!-- left infoblock appears on mouse click -->
+      <div id="selected_infoblock" style="display: none;">
         <div id="infoblock_close" class="infoblockCloseBox"></div>
         <div id="infoblock-container">
 
@@ -78,7 +82,7 @@
             </div>
             <div id="selected_icao" title="ICAO hex ID: The aircraft's unique ICAO identification number shown in hexadecimal format as set in the aircrafts transponder (can be wrong, we will still display the data with the wrong hex)">
             </div>
-            <div style="display: none" id="creditsSelected">
+            <div style="display: none;" id="creditsSelected">
               <table class="infoSectionTable">
                 <tr>
                   <td>
@@ -228,7 +232,7 @@
             </table>
           </div>
           <button id="show_trace" type="button" class="greyButton">History</button>
-          <div id="history_collapse" class="infoBlockSection" style="display: none">
+          <div id="history_collapse" class="infoBlockSection" style="display: none;">
             <div class="identSmall" id="trace_date">UTC day:
             </div>
             <div class="rSpacer">
@@ -777,7 +781,7 @@
             </div>
           </div>
         </div>
-        <div style="display: none" id="credits">
+        <div style="display: none;" id="credits">
           <span class=credits-image></span>
           <span class=credits-text>adsbexchange.com</span>
         </div>
@@ -796,16 +800,20 @@
             <div id="expand_sidebar_control">
               <button id="expand_sidebar_button" class="sidebar_button" title="Expand Sidebar" style="display: none;"></button>
             </div>
-            <div id="settingsCog" class="settingsCog"></div>
+            <div class="buttonSpacer">
+            </div>
+            <div id="settingsCog" class="settingsCog"><i class="fas fa-cogs"></i></div>
+            <div class="buttonSpacer">
+            </div>
             <div id="L" title="Toggle (L)abels" class="button inActiveButton" onclick="toggleLabels();"><span class="buttonText">L</span></div>
             <div id="O" title="Toggle Label Extensi(O)ns" class="button inActiveButton" onclick="toggleExtendedLabels();"><span class="buttonText">O</span></div>
             <div id="K" title="Toggle Trac(K) Labels" class="button inActiveButton" onclick="toggleTrackLabels();"><span class="buttonText">K</span></div>
             <div class="buttonSpacer">
             </div>
-            <div style="display: none" id="B" title="Toggle Map (B)rightness" class="button inActiveButton" onclick="toggles['MapDim'].toggle();"><span class="buttonText">B</span></div>
+            <div style="display: none;" id="B" title="Toggle Map (B)rightness" class="button inActiveButton" onclick="toggles['MapDim'].toggle();"><span class="buttonText">B</span></div>
             <div class="buttonSpacer">
             </div>
-            <div style="display: none" id="V" title="Table: only show aircraft in current (V)iew" class="button inActiveButton" onclick="toggleTableInView();"><span class="buttonText">V</span></div>
+            <div style="display: none;" id="V" title="Table: only show aircraft in current (V)iew" class="button inActiveButton" onclick="toggleTableInView();"><span class="buttonText">V</span></div>
             <div id="M" title="Toggle (M)ultiSelect" class="button inActiveButton" onclick="toggleMultiSelect();"><span class="buttonText">M</span></div>
             <div class="buttonSpacer">
             </div>
@@ -837,7 +845,7 @@
 
       </div> <!-- map_container-->
 
-      <div id="sidebar_container" style="display: none">
+      <div id="sidebar_container" style="display: none;">
         <div id="splitter" class="ui-resizable-handle ui-resizable-w" style="display: none;"></div>
         <div id="sidebar_canvas">
 
