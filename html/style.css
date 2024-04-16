@@ -1032,20 +1032,24 @@ table.infoSectionTable tr td {
 /* remove the blue highlighting around the map buttons */
 .ol-control button {
     background-color: var(--PRIMARY);
+    border-radius: calc( 2px * var(--SCALE));
+    color: transparent;
     outline: none;
     z-index: 999;
 }
 
 .ol-control button:hover, .ol-control button:focus {
     outline: none;
+    color: transparent;
 }
 
 .ol-zoom-in {
     background-image: url("images/search-plus-solid.svg");
-    background-size: cover;
+    background-size: 70%;
     width: calc( 25px * var(--SCALE)) !important;
     height: calc( 25px * var(--SCALE)) !important;
     background-color: var(--PRIMARY);
+    color: transparent;
     margin-bottom: calc( 5px * var(--SCALE)) !important;
     cursor: pointer;
     background-position: center;
@@ -1056,10 +1060,11 @@ table.infoSectionTable tr td {
 
 .ol-zoom-out {
     background-image: url("images/search-minus-solid.svg");
-    background-size: cover;
+    background-size: 70%;
     width: calc( 25px * var(--SCALE)) !important;
     height: calc( 25px * var(--SCALE)) !important;
     background-color: var(--PRIMARY);
+    color: transparent;
     cursor: pointer;
     background-position: center;
     background-repeat: no-repeat;
@@ -1100,6 +1105,7 @@ table.infoSectionTable tr td {
 
 .layer-switcher button:focus, .layer-switcher button:hover {
     outline: none;
+    background-color: var(--PRIMARY);
 }
 
 .layer-switcher !.shown {
