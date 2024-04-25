@@ -69,6 +69,7 @@ let noVanish = false;
 let filterTracks = false; // altitude filter: don't filter planes but rather their tracks by altitude
 let refreshId = 0;
 let lastFetch = 0;
+let actualOutline = {};
 let globeIndexNow = {};
 let globeIndexDist = {};
 let globeIndexSpecialLookup = {};
@@ -1883,7 +1884,7 @@ function setIntervalTimers() {
         fetchPfData();
     }
     if (receiverJson && receiverJson.outlineJson) {
-        timers.drawOutline = window.setInterval(drawOutlineJson, 15000);
+        timers.drawOutline = window.setInterval(drawOutlineJson, actualOutline.refresh);
         drawOutlineJson();
     }
 }
@@ -2409,9 +2410,14 @@ function initMap() {
     });
 
 
-    if (receiverJson && receiverJson.outlineJson) {
-        actualOutlineFeatures = new ol.source.Vector();
-        actualOutlineStyle = new ol.style.Style({
+    actualOutline.enabled = multiOutline || (receiverJson && receiverJson.outlineJson);
+
+    if (actualOutline.enabled) {
+        actualOutline.refresh = 15000;
+        actualOutline.url = multiOutline ? 'data/multiOutline.json' : 'data/outline.json';
+
+        actualOutline.features = new ol.source.Vector();
+        actualOutline.style = new ol.style.Style({
             fill: null,
             stroke: new ol.style.Stroke({
                 color: actual_range_outline_color,
@@ -2419,17 +2425,17 @@ function initMap() {
                 lineDash: actual_range_outline_dash,
             }),
         });
-        actualOutlineLayer = new ol.layer.Vector({
+        actualOutline.layer = new ol.layer.Vector({
             name: 'actualRangeOutline',
             type: 'overlay',
             title: 'actual range outline',
-            source: actualOutlineFeatures,
+            source: actualOutline.features,
             zIndex: 101,
             renderBuffer: renderBuffer,
-            style: actualOutlineStyle,
+            style: actualOutline.style,
             visible: actual_range_show,
         });
-        layers.push(actualOutlineLayer);
+        layers.push(actualOutline.layer);
     }
     if (calcOutlineData) {
         calcOutlineLayer = new ol.layer.Vector({
@@ -6615,22 +6621,14 @@ function drawUpintheair() {
         }
     }
 }
-let actualOutlineLayer;
-let actualOutlineFeatures;
-let actualOutlineStyle;
 
 function drawOutlineJson() {
-    if (!(multiOutline || (receiverJson && receiverJson.outlineJson)))
-        return;
-    let outlineUrl = 'data/outline.json';
-    if (multiOutline) {
-        outlineUrl = 'data/multiOutline.json';
-    }
-    let request = jQuery.ajax({ url: outlineUrl,
+    let request = jQuery.ajax({ url: actualOutline.url,
         cache: false,
+        timeout: actualOutline.refresh,
         dataType: 'json' });
     request.done(function(data) {
-        actualOutlineFeatures.clear();
+        actualOutline.features.clear();
         let points = [];
         if (data.multiRange) {
             points = data.multiRange
@@ -6651,7 +6649,7 @@ function drawOutlineJson() {
                 const proj = ol.proj.fromLonLat([lon, lat]);
                 if (!geom || (lastLon && Math.abs(lon - lastLon) > 270)) {
                     geom = new ol.geom.LineString([proj]);
-                    actualOutlineFeatures.addFeature(new ol.Feature(geom));
+                    actualOutline.features.addFeature(new ol.Feature(geom));
                 } else {
                     geom.appendCoordinate(proj);
                 }
