@@ -6622,33 +6622,50 @@ let actualOutlineStyle;
 function drawOutlineJson() {
     if (!receiverJson || !receiverJson.outlineJson)
         return;
-    let request = jQuery.ajax({ url: 'data/outline.json',
+    if (!receiverJson.outlineUrl) {
+        jQuery.ajax({ url: 'data/multiOutline.json',
+            cache: false,
+            dataType: 'json' })
+        .done(function(data) {
+            console.log("found multiOutline, switching mode");
+            receiverJson.outlineUrl = 'data/multiOutline.json';
+        })
+        .fail(function() {
+            console.log("no multiOutline found, regular operation");
+            receiverJson.outlineUrl = 'data/outline.json';
+        });
+    }
+    let request = jQuery.ajax({ url: receiverJson.outlineUrl,
         cache: false,
         dataType: 'json' });
     request.done(function(data) {
         actualOutlineFeatures.clear();
-        let points;
-        if (data.actualRange && data.actualRange.last24h) {
-            points = data.actualRange.last24h.points;
+        let points = [];
+        if (data.multiRange) {
+            points = data.multiRange
+        } else if (data.actualRange && data.actualRange.last24h) {
+            points[0] = data.actualRange.last24h.points;
         } else {
-            points = data.points;
+            points[0] = data.points;
         }
-        if (!points || !points.length)
+        if (!points[0] || !points[0].length)
             return;
-        let geom = null;
-        let lastLon = null;
-        for (let j = 0; j < points.length + 1; ++j) {
-            const k = j % points.length;
-            const lat = points[k][0];
-            const lon = points[k][1];
-            const proj = ol.proj.fromLonLat([lon, lat]);
-            if (!geom || (lastLon && Math.abs(lon - lastLon) > 270)) {
-                geom = new ol.geom.LineString([proj]);
-                actualOutlineFeatures.addFeature(new ol.Feature(geom));
-            } else {
-                geom.appendCoordinate(proj);
+        for (let p = 0; p < points.length; ++p) {
+            let geom = null;
+            let lastLon = null;
+            for (let j = 0; j < points[p].length + 1; ++j) {
+                const k = j % points[p].length;
+                const lat = points[p][k][0];
+                const lon = points[p][k][1];
+                const proj = ol.proj.fromLonLat([lon, lat]);
+                if (!geom || (lastLon && Math.abs(lon - lastLon) > 270)) {
+                    geom = new ol.geom.LineString([proj]);
+                    actualOutlineFeatures.addFeature(new ol.Feature(geom));
+                } else {
+                    geom.appendCoordinate(proj);
+                }
+                lastLon = lon;
             }
-            lastLon = lon;
         }
     });
 
