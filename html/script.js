@@ -6620,22 +6620,13 @@ let actualOutlineFeatures;
 let actualOutlineStyle;
 
 function drawOutlineJson() {
-    if (!receiverJson || !receiverJson.outlineJson)
+    if (!(multiOutline || (receiverJson && receiverJson.outlineJson)))
         return;
-    if (!receiverJson.outlineUrl) {
-        jQuery.ajax({ url: 'data/multiOutline.json',
-            cache: false,
-            dataType: 'json' })
-        .done(function(data) {
-            console.log("found multiOutline, switching mode");
-            receiverJson.outlineUrl = 'data/multiOutline.json';
-        })
-        .fail(function() {
-            console.log("no multiOutline found, regular operation");
-            receiverJson.outlineUrl = 'data/outline.json';
-        });
+    let outlineUrl = 'data/outline.json';
+    if (multiOutline) {
+        outlineUrl = 'data/multiOutline.json';
     }
-    let request = jQuery.ajax({ url: receiverJson.outlineUrl,
+    let request = jQuery.ajax({ url: outlineUrl,
         cache: false,
         dataType: 'json' });
     request.done(function(data) {
