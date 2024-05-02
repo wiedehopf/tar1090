@@ -57,7 +57,9 @@ See the main readme for more examples on how to use the filters
 - sidebarWidth=xxx - size of sidebar in pixels.
 - hideSideBar - hides sidebar.
 - hideButtons - hides all buttons.
-- centerReceiver - conter the view on receiver position.
+- autoselect - keeps the plane closest to the center of the screen selected, for use with centerReceiver or lockDotCentered
+- centerReceiver - center the view on receiver position.
+- lockDotCentered - center the view on receiver position and keep it positioned there even when GPS might update it.
 - nowebgl - force rendering without WebGL.
 - tableInView - button V / only show aircraft in view in the table
 - screenshot - For automatic screenshotting, disables updates after the first load of all aircraft in view
