@@ -7916,9 +7916,11 @@ function autoSelectClosest() {
     checkMovement();
     for (let key in g.planesOrdered) {
         const plane = g.planesOrdered[key];
+        if (!plane.visible)
+            continue;
         if (!closest)
             closest = plane;
-        if (plane.position == null || !plane.visible)
+        if (plane.position == null)
             continue;
         let refLoc = [CenterLon, CenterLat];
         if (autoselectCoords && autoselectCoords.length == 2) {
