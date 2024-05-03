@@ -344,6 +344,7 @@ let showSil = false;
 
 let labelsGeom = false; // labels: uses geometric altitude (WGS84 ellipsoid unless geomUseEGM is enabled
 let geomUseEGM = false; // use EGM96 for displaying geometric altitudes (extra load time!)
+let baroUseQNH = false;
 
 let windLabelsSlim = false;
 let showLabelUnits = true;
