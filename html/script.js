@@ -1249,7 +1249,7 @@ jQuery('#selected_altitude_geom1')
 
     new Toggle({
         key: "baroUseQNH",
-        display: "Baro. alt.: Standard pressure -> Altimeter corrected",
+        display: "Baro. alt.: Standard pressure -> Pressure corrected",
         container: "#settingsLeft",
         init: baroUseQNH,
         setState: function(state) {
