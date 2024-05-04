@@ -137,6 +137,9 @@ let nextQuerySelected = 0;
 let enableDynamicCachebusting = false;
 let lastRefreshInt = 1000;
 
+
+let baroCorrectQNH = 1013.25;
+
 let limitUpdates = -1;
 
 let infoBlockWidth = baseInfoBlockWidth;
@@ -1110,6 +1113,9 @@ function initPage() {
     jQuery("#expand_sidebar_button").click(expandSidebar);
     jQuery("#shrink_sidebar_button").click(showMap);
 
+    jQuery("#altimeter_form").submit(onAltimeterChange);
+    jQuery("#altimeter_set_standard").click(onAltimeterSetStandard);
+
     // Set up altitude filter button event handlers and validation options
     jQuery("#altitude_filter_form").submit(onFilterByAltitude);
     jQuery("#source_filter_form").submit(updateSourceFilter);
@@ -1249,18 +1255,18 @@ jQuery('#selected_altitude_geom1')
 
     new Toggle({
         key: "baroUseQNH",
-        display: "Baro. alt.: Standard pressure -> Pressure corrected",
+        display: "Baro. alt.: correct for QNH",
         container: "#settingsLeft",
         init: baroUseQNH,
         setState: function(state) {
             baroUseQNH = state;
             if (baroUseQNH) {
-                jQuery('#selected_altitude1_title').updateText('Baro. altitude');
-                jQuery('#selected_altitude2_title').updateText('Adjusted Barometric');
+                jQuery('#selected_altitude1_title').updateText('Corr. baro. alt.');
+                jQuery('#selected_altitude2_title').updateText('Corr. barometric');
                 jQuery('#infoblock_altimeter').removeClass('hidden');
             } else {
                 jQuery('#selected_altitude1_title').updateText('Baro. altitude');
-                jQuery('#selected_altitude2_title').updateText('Adjusted Barometric');
+                jQuery('#selected_altitude2_title').updateText('Barometric');
                 jQuery('#infoblock_altimeter').addClass('hidden');
             }
             if (loadFinished) {
@@ -3488,7 +3494,7 @@ function refreshHighlighted() {
 
     jQuery('#highlighted_speed').text(format_speed_long(highlighted.gs, DisplayUnits));
 
-    jQuery("#highlighted_altitude").text(format_altitude_long(highlighted.altitude, highlighted.vert_rate, DisplayUnits));
+    jQuery("#highlighted_altitude").text(format_altitude_long(adjust_baro_alt(highlighted.altitude), highlighted.vert_rate, DisplayUnits));
 
     jQuery('#highlighted_pf_route').text((highlighted.pfRoute ? highlighted.pfRoute : highlighted.icao.toUpperCase()));
 
@@ -8456,26 +8462,41 @@ function getn(n) {
     limitUpdates=n; RefreshInterval=0; fetchCalls=0;
 }
 
-function adjust_baro_alt(alt) {
-    if (baroUseQNH && alt != null) {
-        let altimeter = document.getElementById("settings_altimeter").value
-        if (altimeter < 100) {
-            return corrected_alt(alt, inhg_to_hpa(altimeter));
-        } else {
-            return corrected_alt(alt, altimeter);
-        }
+function onAltimeterSetStandard(e) {
+    e.preventDefault();
+    jQuery("#altimeter_input").val(1013.25);
+    onAltimeterChange(e);
+}
+function onAltimeterChange(e) {
+    e.preventDefault();
+    jQuery("#altimeter_input").blur();
+    let altimeter = parseFloat(jQuery("#altimeter_input").val().trim());
+
+    if (altimeter < 100) {
+        // assume inHg, convert to mbar
+        baroCorrectQNH = 33.8639 * altimeter;
     } else {
+        // assume mbar / hPa
+        baroCorrectQNH = altimeter;
+    }
+
+    remakeTrails();
+    refreshSelected();
+}
+
+// Using formula from: https://www.weather.gov/media/epz/wxcalc/pressureAltitude.pdf
+// See also: https://en.wikipedia.org/wiki/Pressure_altitude
+// Inverse equation on wikipedia seems imprecise,
+// used the the weather.gov pdf and inverted the equation myself
+// This uses ISA atmosphere (should be the same as altimeters in planes)
+function adjust_baro_alt(alt) {
+    if (!baroUseQNH || alt == null) {
         return alt;
     }
-}
+    let station_pressure = Math.pow(1 - alt / 145366.45, 5.2553026) * 1013.25;
 
-function corrected_alt(alt, qnh) {
-    let station_pressure = 29.92 * Math.pow( ( (288-0.0065*(0.3048 * alt)) / 288), 5.2561);
-    return ( 1 - Math.pow( (inhg_to_hpa(station_pressure) / qnh ), 0.190284) ) * 145366.45;
-}
-
-function inhg_to_hpa(inhg) {
-    return 33.8639 * inhg
+    let res = ( 1 - Math.pow(station_pressure / baroCorrectQNH, 0.190284) ) * 145366.45;
+    return res;
 }
 
 function globeRateUpdate() {

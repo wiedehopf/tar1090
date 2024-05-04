@@ -856,7 +856,7 @@ PlaneObject.prototype.updateIcon = function() {
         if (labelsGeom) {
             alt = adjust_geom_alt(this.alt_geom, this.position);
         } else {
-            alt = this.altitude;
+            alt = adjust_baro_alt(this.altitude);
         }
         let altString = (alt == null) ? unknown : format_altitude_brief(alt, this.vert_rate, DisplayUnits, showLabelUnits);
         let speedString = (this.speed == null) ? (NBSP+'?'+NBSP) : format_speed_brief(this.speed, DisplayUnits, showLabelUnits).padStart(3, NBSP);
@@ -1957,7 +1957,7 @@ PlaneObject.prototype.updateLines = function() {
                 if (labelsGeom) {
                     alt = adjust_geom_alt(seg.alt_geom, seg.position);
                 } else {
-                    alt = seg.alt_real;
+                    alt = adjust_baro_alt(seg.alt_real);
                 }
 
                 if (alt == null) {

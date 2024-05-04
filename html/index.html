@@ -903,7 +903,14 @@
                   </table>
                   <table style="width: 100%" id="infoblock_altimeter" class="hidden">
                     <tr>
-                      <td><span class="infoBlockTitleText">Altimeter:<span> <span><input id="settings_altimeter" type="number" step="0.01" value="29.92">
+                      <td>
+                        <form id="altimeter_form">
+                          <span class="infoBlockTitleText">Altimeter:</span>
+                          <span> <input id="altimeter_input" type="number" step="0.01" value="29.92" class="searchInput"></span>
+                          <span> <button class="formButton" type="submit">Set</button></span>
+                          <span> <button class="formButton" type="button" id="altimeter_set_standard">Standard</button>
+                        </form>
+                      </td>
                     </tr>
                   </table>
                 </td>
