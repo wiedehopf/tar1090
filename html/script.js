@@ -1247,6 +1247,28 @@ jQuery('#selected_altitude_geom1')
         }
     });
 
+    new Toggle({
+        key: "baroUseQNH",
+        display: "Baro. alt.: Standard pressure -> Pressure corrected",
+        container: "#settingsLeft",
+        init: baroUseQNH,
+        setState: function(state) {
+            baroUseQNH = state;
+            if (baroUseQNH) {
+                jQuery('#selected_altitude1_title').updateText('Baro. altitude');
+                jQuery('#selected_altitude2_title').updateText('Adjusted Barometric');
+                jQuery('#infoblock_altimeter').removeClass('hidden');
+            } else {
+                jQuery('#selected_altitude1_title').updateText('Baro. altitude');
+                jQuery('#selected_altitude2_title').updateText('Adjusted Barometric');
+                jQuery('#infoblock_altimeter').addClass('hidden');
+            }
+            if (loadFinished) {
+                remakeTrails();
+                refreshSelected();
+            }
+        }
+    });
 
     if (usp.has('labelsGeom')) {
         toggles['labelsGeom'].toggle(true, 'init');
@@ -3127,8 +3149,8 @@ function refreshSelected() {
     }
 
 
-    jQuery("#selected_altitude1").updateText(format_altitude_long(selected.altitude, selected.vert_rate, DisplayUnits));
-    jQuery("#selected_altitude2").updateText(format_altitude_long(selected.altitude, selected.vert_rate, DisplayUnits));
+    jQuery("#selected_altitude1").updateText(format_altitude_long(adjust_baro_alt(selected.altitude), selected.vert_rate, DisplayUnits));
+    jQuery("#selected_altitude2").updateText(format_altitude_long(adjust_baro_alt(selected.altitude), selected.vert_rate, DisplayUnits));
 
     jQuery('#selected_onground').updateText(format_onground(selected.altitude));
 
@@ -8432,6 +8454,28 @@ Please add a disclaimer to any screenshots of this website or better yet just re
 
 function getn(n) {
     limitUpdates=n; RefreshInterval=0; fetchCalls=0;
+}
+
+function adjust_baro_alt(alt) {
+    if (baroUseQNH && alt != null) {
+        let altimeter = document.getElementById("settings_altimeter").value
+        if (altimeter < 100) {
+            return corrected_alt(alt, inhg_to_hpa(altimeter));
+        } else {
+            return corrected_alt(alt, altimeter);
+        }
+    } else {
+        return alt;
+    }
+}
+
+function corrected_alt(alt, qnh) {
+    let station_pressure = 29.92 * Math.pow( ( (288-0.0065*(0.3048 * alt)) / 288), 5.2561);
+    return ( 1 - Math.pow( (inhg_to_hpa(station_pressure) / qnh ), 0.190284) ) * 145366.45;
+}
+
+function inhg_to_hpa(inhg) {
+    return 33.8639 * inhg
 }
 
 function globeRateUpdate() {

@@ -331,6 +331,7 @@ HideCols = [
 
 // labelsGeom = false; // labels: uses geometric altitude (WGS84 ellipsoid unless geomUseEGM is enabled
 // geomUseEGM = false; // use EGM96 for displaying geometric altitudes (extra load time!)
+// baroUseQNH = false;
 
 // windLabelsSlim = false;
 // showLabelUnits = true;

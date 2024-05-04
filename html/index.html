@@ -297,7 +297,7 @@
               </tr>
               <tr>
                 <td>
-                  <span class="infoHeading" title="The uncorrected pressure-derived height of the aircraft above mean sea level (based on barometric pressure)">Baro. Altitude</span>:
+                  <span class="infoHeading" id="selected_altitude1_title" title="The uncorrected pressure-derived height of the aircraft above mean sea level (based on barometric pressure)">Baro. Altitude</span>:
                   <span class="infoData" id="selected_altitude1"></span>
                 </td>
               </tr>
@@ -519,7 +519,7 @@
           <div class="infoBlockSection">
             <div>
               <div class="infoHeading">
-                <span title="The uncorrected pressure-derived height of the aircraft above mean sea level (based on barometric pressure)">Barometric</span>:
+                <span id="selected_altitude2_title" title="The uncorrected pressure-derived height of the aircraft above mean sea level (based on barometric pressure)">Barometric</span>:
               </div>
               <div class="infoData">
                 <span id="selected_altitude2"></span>
@@ -899,6 +899,11 @@
                     <tr class="infoblock_body">
                       <td style="width: 50%"><span id="with_positions" class="infoBlockTitleText">With Position:</span> <span id="dump1090_total_ac_positions">n/a</span></td>
                       <td id="dump1090_total_history_td"><span class="infoBlockTitleText">History:</span> <span id="dump1090_total_history">n/a</span> positions</td>
+                    </tr>
+                  </table>
+                  <table style="width: 100%" id="infoblock_altimeter" class="hidden">
+                    <tr>
+                      <td><span class="infoBlockTitleText">Altimeter:<span> <span><input id="settings_altimeter" type="number" step="0.01" value="29.92">
                     </tr>
                   </table>
                 </td>
