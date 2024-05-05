@@ -1862,6 +1862,8 @@ function parseHistory() {
 }
 
 let replay_was_active = false;
+
+
 let timers = {};
 let timersActive = false;
 function clearIntervalTimers(arg) {
@@ -1915,6 +1917,12 @@ function setIntervalTimers() {
         timers.drawOutline = window.setInterval(drawOutlineJson, actualOutline.refresh);
         drawOutlineJson();
     }
+
+	if (aiscatcher_server) {
+		function updateAIScatcher() { g.aiscatcher_source.refresh(); }
+		setInterval(updateAIScatcher, aiscatcher_refresh * 1000);
+		updateAIScatcher();
+	}
 }
 
 let djson;

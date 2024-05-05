@@ -372,6 +372,10 @@ let darkModeDefault = true; // turn on dark mode by default (change in browser p
 
 let tableInView = false; // only show aircraft in current view (V button)
 
+
+let aiscatcher_server = "";
+let aiscatcher_refresh = 15;
+
 // legacy variables
 let OutlineMlatColor = null;
 

@@ -820,6 +820,66 @@ function createBaseLayers() {
         }
     }
 
+	if (aiscatcher_server) {
+
+		g.aiscatcher_source = new ol.source.Vector({
+			url: aiscatcher_server + '/geojson',
+			format: new ol.format.GeoJSON()
+		});
+
+		const aiscatcher_mapping = {
+			0: { size: [20, 20], offset: [120, 20], comment: 'CLASS_OTHER' },
+			1: { size: [20, 20], offset: [120, 20], comment: 'CLASS_UNKNOWN' },
+			2: { size: [20, 20], offset: [0, 20], comment: 'CLASS_CARGO' },
+			3: { size: [20, 20], offset: [20, 20], comment: 'CLASS_B' },
+			4: { size: [20, 20], offset: [40, 20], comment: 'CLASS_PASSENGER' },
+			5: { size: [20, 20], offset: [60, 20], comment: 'CLASS_SPECIAL' },
+			6: { size: [20, 20], offset: [80, 20], comment: 'CLASS_TANKER' },
+			7: { size: [20, 20], offset: [100, 20], comment: 'CLASS_HIGHSPEED' },
+			8: { size: [20, 20], offset: [140, 20], comment: 'CLASS_FISHING' },
+			9: { size: [25, 25], offset: [0, 60], comment: 'CLASS_PLANE' },
+			10: { size: [25, 25], offset: [0, 85], comment: 'CLASS_HELICOPTER' },
+			11: { size: [20, 20], offset: [20, 40], comment: 'CLASS_STATION' },
+			12: { size: [20, 20], offset: [0, 40], comment: 'CLASS_ATON' },
+			13: { size: [20, 20], offset: [40, 40], comment: 'CLASS_SARTEPIRB' }
+		};
+
+		var aiscatcher_overlay = new ol.layer.Vector({
+			type: 'overlay',
+			title: "aiscatcher",
+			name: "aiscatcher",
+			zIndex: 99,
+			source: g.aiscatcher_source,
+
+			style: function (feature) {
+				const cog = feature.get('cog');
+				const rotation = (cog || 0) * (Math.PI / 180);
+				const shipclass = feature.get('shipclass');
+				const speed = feature.get('speed');
+
+				const ofs = aiscatcher_mapping[shipclass].offset;
+				const size = aiscatcher_mapping[shipclass].size;
+
+				let o
+				if (speed && speed > 0.5)
+					o = [ofs[0], 0];
+				else
+					o = ofs;
+
+				return new ol.style.Style({
+					image: new ol.style.Icon({
+						src: aiscatcher_server + '/icons.png',
+						anchor: [0.5, 0.5],
+						rotation: rotation,
+						size: size,
+						offset: o
+					})
+				});
+			}
+		});
+		world.push(aiscatcher_overlay);
+	}
+
     layers.push(new ol.layer.Group({
         name: 'custom',
         title: 'Custom',

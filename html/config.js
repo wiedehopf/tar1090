@@ -361,6 +361,10 @@ HideCols = [
 
 //tableInView = false; // only show aircraft in current view (V button)
 
+
+// aiscatcher_server = "http://192.168.1.113:8100"; // update with your server address
+// aiscatcher_refresh = 15; // refresh interval in seconds
+
 /*
 tableColors = {
     unselected: {
