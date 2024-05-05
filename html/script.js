@@ -1920,7 +1920,7 @@ function setIntervalTimers() {
 
 	if (aiscatcher_server) {
 		function updateAIScatcher() { g.aiscatcher_source.refresh(); }
-		setInterval(updateAIScatcher, aiscatcher_refresh * 1000);
+		timers.aiscatcher = setInterval(updateAIScatcher, aiscatcher_refresh * 1000);
 		updateAIScatcher();
 	}
 }
