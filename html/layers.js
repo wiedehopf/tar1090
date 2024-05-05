@@ -823,8 +823,7 @@ function createBaseLayers() {
     if (aiscatcher_server) {
 
         g.aiscatcher_source = new ol.source.Vector({
-            url: aiscatcher_server + '/geojson',
-            format: new ol.format.GeoJSON()
+            format: new ol.format.GeoJSON(),
         });
 
         const aiscatcher_mapping = {

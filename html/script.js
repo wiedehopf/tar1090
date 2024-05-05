@@ -1918,11 +1918,22 @@ function setIntervalTimers() {
         drawOutlineJson();
     }
 
-	if (aiscatcher_server) {
-		function updateAIScatcher() { g.aiscatcher_source.refresh(); }
-		timers.aiscatcher = setInterval(updateAIScatcher, aiscatcher_refresh * 1000);
-		updateAIScatcher();
-	}
+    if (aiscatcher_server) {
+        function updateAIScatcher() {
+            let req = jQuery.ajax({
+                url: aiscatcher_server + '/geojson',
+                dataType: 'text',
+            });
+
+            req.done(function(data) {
+                //console.log(data);
+                g.aiscatcher_source.setUrl("data:text/plain;base64,"+btoa(data));
+                g.aiscatcher_source.refresh();
+            });
+        }
+        timers.aiscatcher = setInterval(updateAIScatcher, aiscatcher_refresh * 1000);
+        updateAIScatcher();
+    }
 }
 
 let djson;
