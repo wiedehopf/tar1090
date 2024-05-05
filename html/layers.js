@@ -844,7 +844,7 @@ function createBaseLayers() {
             13: { size: [20, 20], offset: [40, 40], comment: 'CLASS_SARTEPIRB' }
         };
 
-        var aiscatcher_overlay = new ol.layer.Vector({
+        g.aiscatcherLayer = new ol.layer.Vector({
             type: 'overlay',
             title: "aiscatcher",
             name: "aiscatcher",
@@ -878,7 +878,7 @@ function createBaseLayers() {
                 });
             }
         });
-        world.push(aiscatcher_overlay);
+        world.push(g.aiscatcherLayer);
     }
 
     layers.push(new ol.layer.Group({

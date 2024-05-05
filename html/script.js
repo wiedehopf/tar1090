@@ -2375,9 +2375,7 @@ function ol_map_init() {
     });
 
     // show the hover box
-    if (!globeIndex && zoomLvl > 5.5 && enableMouseover) {
-        OLMap.on('pointermove', onPointermove);
-    }
+    checkPointermove();
 }
 
 // Initalizes the map and starts up our timers to call various functions
@@ -5499,17 +5497,32 @@ function onPointermove(evt) {
 }
 
 function highlight(evt) {
-    const hex = evt.map.forEachFeatureAtPixel(evt.pixel,
+    const feature = evt.map.forEachFeatureAtPixel(evt.pixel,
         function(feature, layer) {
-            return feature.hex;
+            return feature;
         },
         {
             layerFilter: function(layer) {
-                return (layer == iconLayer || layer == webglLayer);
+                return (layer == iconLayer || layer == webglLayer || layer == g.aiscatcherLayer);
             },
             hitTolerance: 5 * globalScale,
         }
     );
+    if (!feature) {
+        HighlightedPlane = null;
+        refreshHighlighted();
+        return;
+    }
+    const hex = feature.hex;
+
+    const values = feature.values_;
+    const mmsi = values ? values.mmsi : null;
+    if (hex) {
+        //console.log(hex);
+    }
+    if (mmsi) {
+        //console.log(mmsi);
+    }
 
     if (HighlightedPlane && hex == HighlightedPlane.icao)
         return;
