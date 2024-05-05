@@ -860,11 +860,12 @@ function createBaseLayers() {
 				const ofs = aiscatcher_mapping[shipclass].offset;
 				const size = aiscatcher_mapping[shipclass].size;
 
-				let o
-				if (speed && speed > 0.5)
+				let o;
+				if (speed && speed > 0.5) {
 					o = [ofs[0], 0];
-				else
+                } else {
 					o = ofs;
+                }
 
 				return new ol.style.Style({
 					image: new ol.style.Icon({
