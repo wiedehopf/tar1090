@@ -8522,7 +8522,7 @@ function onAltimeterChange(e) {
 // used the the weather.gov pdf and inverted the equation myself
 // This uses ISA atmosphere (should be the same as altimeters in planes)
 function adjust_baro_alt(alt) {
-    if (!baroUseQNH || alt == null) {
+    if (!baroUseQNH || alt == null || alt == "ground") {
         return alt;
     }
     let station_pressure = Math.pow(1 - alt / 145366.45, 5.2553026) * 1013.25;
