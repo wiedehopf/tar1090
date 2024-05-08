@@ -821,7 +821,9 @@ function createBaseLayers() {
     }
 
     if (usp.has('aiscatcher_server')) { aiscatcher_server = usp.get('aiscatcher_server'); }
-    if (aiscatcher_server == 'disable') { aiscatcher_server = ""; }
+    if (aiscatcher_server == 'disable' || heatmap || replay ) {
+        aiscatcher_server = "";
+    }
     if (aiscatcher_server) {
 
         g.aiscatcher_source = new ol.source.Vector({
