@@ -32,7 +32,7 @@ let globeIndexGrid = 0;
 let globeIndexSpecialTiles;
 let binCraft = false;
 let reApi = false;
-let zstd = true; // init hasn't failed
+let zstd = true; // default to on
 let dbServer = false;
 let l3harris = false;
 let heatmap = false;
@@ -445,8 +445,6 @@ if (!heatmap) {
     loadHeatChunk();
 }
 
-init_zstddec();
-
 function historyQueued() {
     if (!globeIndex && !uuid) {
         let request = jQuery.ajax({ url: 'upintheair.json',
@@ -489,7 +487,8 @@ if (uuid != null) {
         RefreshInterval = data.refresh;
         nHistoryItems = (data.history < 2) ? 0 : data.history;
         binCraft = data.binCraft ? true : false || data.aircraft_binCraft ? true : false;
-        zstd = zstd && data.zstd; // check if it already failed, leave it off then
+        zstd = data.zstd;
+        init_zstddec();
         reApi = data.reapi ? true : false;
         if (usp.has('noglobe') || usp.has('ptracks')) {
             data.globeIndexGrid = null; // disable globe on user request
@@ -779,6 +778,9 @@ function webAssemblyFail(e) {
 }
 
 function init_zstddec() {
+    if (!zstd) {
+        return;
+    }
     try {
         zstddec.decoder = new zstddec.ZSTDDecoder();
         zstddec.promise = zstddec.decoder.init();
