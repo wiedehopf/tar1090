@@ -64,7 +64,7 @@ fi
 
 newChunk() {
     if [[ "$1" != "refresh" ]]; then
-        curChunk="chunk_$(date +%s%N | head -c-7).gz"
+        curChunk="chunk_$(date +%s%3N).gz"
         echo "$curChunk" >> chunk_list
         echo "$curChunk" >> chunk_list_all
         cp "$1" "$curChunk"
@@ -154,7 +154,7 @@ while true; do
         echo "{ \"files\" : [ ] }" | gzip -1 > empty.gz
     fi
 
-    date=$(date +%s%N | head -c-7)
+    date=$(date +%s%3N)
 
     next_error=0
     error_printed=0
