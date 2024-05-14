@@ -351,6 +351,15 @@ function lDateString(date) {
     return string;
 }
 
+function chunksDefer() {
+    return jQuery.ajax({
+        url:'chunks/chunks.json',
+        cache: false,
+        dataType: 'json',
+        timeout: 4000,
+    });
+}
+
 let get_receiver_defer;
 let test_chunk_defer;
 const hostname = window.location.hostname;
@@ -370,12 +379,7 @@ if (uuid) {
         dataType: 'json',
         timeout: 10000,
     });}
-    {test_chunk_defer = jQuery.ajax({
-        url:'chunks/chunks.json',
-        cache: false,
-        dataType: 'json',
-        timeout: 4000,
-    });}
+    {test_chunk_defer = chunksDefer();}
 }
 
 {jQuery.getJSON(databaseFolder + "/ranges.js").done(function(ranges) {
@@ -583,7 +587,8 @@ function get_history_item(i) {
     let request;
 
     if (HistoryChunks) {
-        request = jQuery.ajax({ url: 'chunks/' + chunkNames[i],
+        let filename = chunkNames[i];
+        request = jQuery.ajax({ url: 'chunks/' + filename,
             timeout: historyTimeout * 1000,
             dataType: 'json'
         });

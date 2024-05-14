@@ -1746,6 +1746,7 @@ function initFlagFilter(colors) {
 }
 
 function push_history() {
+    HistoryItemsReturned = 0;
     jQuery("#loader_progress").attr('max',nHistoryItems*2);
 
     for (let i = 0; i < nHistoryItems; i++) {
@@ -1754,7 +1755,6 @@ function push_history() {
 }
 
 function push_history_item(i) {
-
     jQuery.when(deferHistory[i])
         .done(function(json) {
 
@@ -1796,6 +1796,7 @@ function parseHistory() {
 
     for (let i in deferHistory)
         deferHistory[i] = null;
+    deferHistory = [];
 
 
     if (PositionHistoryBuffer.length > 0) {
@@ -1815,6 +1816,10 @@ function parseHistory() {
                 continue;
             }
 
+            if (g.refreshHistory && now > data.now) {
+                continue;
+            }
+
             // process new data
             if (PositionHistoryBuffer.length < 10) {
                 processReceiverUpdate(data, false);
@@ -1822,16 +1827,16 @@ function parseHistory() {
                 processReceiverUpdate(data, true);
             }
 
-            if (h==1) {
+            if (h==0) {
                 console.log("Applied history " + h + " from: "
-                    + (new Date(now * 1000)).toLocaleTimeString());
+                    + localTime(new Date(now * 1000)));
             }
 
             // prune aircraft list
             if (h++ % pruneInt == pruneInt - 1) {
 
                 console.log("Applied history " + h + " from: "
-                    + (new Date(now * 1000)).toLocaleTimeString());
+                    + localTime(new Date(now * 1000)));
 
                 reaper();
             }
@@ -1854,9 +1859,15 @@ function parseHistory() {
         TAR.planeMan.refresh();
     }
 
-    PositionHistoryBuffer = null;
+    PositionHistoryBuffer = [];
 
     console.timeEnd("Loaded aircraft tracks from History");
+
+    if (g.refreshHistory) {
+        g.refreshHistory = false;
+        noLongerHidden();
+        return;
+    }
 
     historyLoaded.resolve();
 }
@@ -7856,7 +7867,7 @@ function showReplayBar(){
 };
 
 function timeoutFetch() {
-    console.log('timeoutFetch');
+    console.log("timeoutFetch " + localTime(new Date()));
     fetchData();
     if (timers.timeoutFetch) {
         clearTimeout(timers.checkMove);
@@ -7867,6 +7878,51 @@ function timeoutFetch() {
     }
 }
 
+function refreshHistory() {
+    if ((new Date().getTime() - g.hideStamp) / 1000 < 2) {
+        console.log('short tab change, not loading history');
+        noLongerHidden();
+        return;
+    }
+    if (heatmap || replay || globeIndex || pTracks) {
+        noLongerHidden();
+        return;
+    }
+    chunksDefer().done(function(data) {
+        console.log('tab change, loading history');
+        g.refreshHistory = true;
+        HistoryChunks = true;
+        chunkNames = [];
+        try {
+            for (let i = data.chunks.length-1; i >= 0; i--) {
+                let f = data.chunks[i];
+                chunkNames.push(f);
+
+                // break after we found a chunk that's older than now
+                // chunk timestamp is the start of its data, not the end
+                // so we need to include the first chunk that's older
+                // which is done above
+
+                let parts = f.split(".")[0].split("_");
+                if (parts[0] == "chunk") {
+                    if (now > parts[1]/1e3) {
+                        break;
+                    }
+                }
+            }
+            nHistoryItems = chunkNames.length;
+            get_history();
+            push_history();
+        } catch (e) {
+            console.error(e);
+            noLongerHidden();
+        }
+    }).fail(function() {
+        noLongerHidden();
+    });
+}
+
+
 function handleVisibilityChange() {
     const prevHidden = tabHidden;
     if (document[hideName])
@@ -7875,9 +7931,10 @@ function handleVisibilityChange() {
         tabHidden = false;
 
     if (tabHidden && !prevHidden) {
+        g.hideStamp = new Date().getTime();
         clearIntervalTimers();
         if (!globeIndex) {
-            timeoutFetch();
+            //timeoutFetch();
         }
 
         replay_was_active = replay.playing;
@@ -7891,8 +7948,7 @@ function handleVisibilityChange() {
         if (loadFinished) {
             jQuery("#timers_paused").css('display','none');
         }
-        globeRateUpdate().done(noLongerHidden);
-
+        globeRateUpdate().done(refreshHistory);
     }
 }
 
