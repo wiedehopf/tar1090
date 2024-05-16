@@ -306,6 +306,10 @@ function processReceiverUpdate(data, init) {
             return;
         }
         if (data.now > now) {
+            if (now && data.now - now > 10 * 1000) {
+                console.log('now jumped: ' + localTime(new Date(now * 1000)) + ' -> ' + localTime(new Date(data.now * 1000)));
+                console.trace();
+            }
             notNewCounter = 0;
             backwardsCounter = 0;
             last = now;
@@ -1885,7 +1889,7 @@ function clearIntervalTimers(arg) {
         jQuery("#timers_paused").css('display','block');
 
     }
-    console.log("clear timers " + localTime(new Date()));
+    console.log(localTime(new Date()) + ': clear timers');
     const entries = Object.entries(timers);
     for (let i in entries) {
         clearInterval(entries[i][1]);
@@ -1903,7 +1907,7 @@ function setIntervalTimers() {
     if (loadFinished) {
         jQuery("#timers_paused").css('display','none');
     }
-    console.log("set timers " + localTime(new Date()));
+    console.log(localTime(new Date()) + ": set timers ");
     if ((adsbexchange || dynGlobeRate) && !uuid) {
         timers.globeRateUpdate = setInterval(globeRateUpdate, 180000);
     }
@@ -7879,7 +7883,7 @@ function timeoutFetch() {
 }
 
 function refreshHistory() {
-    if ((new Date().getTime() - g.hideStamp) / 1000 < 2) {
+    if (0 && (new Date().getTime() - g.hideStamp) / 1000 < 2) {
         console.log('short tab change, not loading history');
         noLongerHidden();
         return;
@@ -7889,7 +7893,7 @@ function refreshHistory() {
         return;
     }
     chunksDefer().done(function(data) {
-        console.log('tab change, loading history');
+        console.log(localTime(new Date()) + ': tab change, loading history');
         g.refreshHistory = true;
         HistoryChunks = true;
         chunkNames = [];
