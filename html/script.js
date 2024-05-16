@@ -1751,7 +1751,7 @@ function initFlagFilter(colors) {
 function push_history() {
     HistoryItemsReturned = 0;
     PositionHistoryBuffer = [];
-    jQuery("#loader_progress").attr('max',nHistoryItems);
+    jQuery("#loader_progress").attr('max',nHistoryItems + 1);
 
     for (let i = 0; i < nHistoryItems; i++) {
         push_history_item(i);
@@ -1775,8 +1775,8 @@ function push_history_item(i) {
             }
 
 
-            jQuery("#loader_progress").attr('value',HistoryItemsReturned);
             HistoryItemsReturned++;
+            jQuery("#loader_progress").attr('value',HistoryItemsReturned);
             if (HistoryItemsReturned == nHistoryItems) {
                 parseHistory();
             }
@@ -7227,7 +7227,7 @@ function drawHeatmap() {
         }
     }
     console.timeEnd("drawHeat");
-    jQuery("#loader").addClass("hidden");
+    jQuery("#loader").hide();
 }
 
 function currentExtent(factor) {
@@ -7894,11 +7894,16 @@ function refreshHistory() {
         noLongerHidden();
         return;
     }
+
+    jQuery("#loader_progress").attr('value', 0);
+    jQuery("#loader").show();
+
     chunksDefer().done(function(data) {
         console.log(localTime(new Date()) + ' tab change, loading history');
         g.refreshHistory = true;
         HistoryChunks = true;
         chunkNames = [];
+        jQuery("#loader_progress").attr('value', 1);
         try {
             for (let i = data.chunks.length-1; i >= 0; i--) {
                 let f = data.chunks[i];
@@ -7959,6 +7964,7 @@ function handleVisibilityChange() {
 }
 
 function noLongerHidden() {
+    jQuery("#loader").hide();
 
     active();
 

@@ -278,7 +278,8 @@ select {
     white-space: pre-line;
 }
 
-#loader_progress { width:  25%; height: 30px; position: absolute; top: 50%; left: 37%; }
+#loader {position: absolute; width: 25%; height: 30px; z-index: 9999; top: 50%; left: 37.5%}
+#loader_progress { width:  100%; height: 100%; position: absolute; }
 
 
 .aircraft_table_header {
