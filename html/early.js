@@ -548,6 +548,8 @@ if (uuid != null) {
 function get_history() {
 
     if (nHistoryItems > 0) {
+        console.time("Downloaded History");
+
         nHistoryItems++;
         let request = jQuery.ajax({ url: 'data/aircraft.json',
             timeout: historyTimeout*800,
@@ -562,22 +564,17 @@ function get_history() {
                 dataType: 'json' });
             deferHistory.push(request);
         }
-    }
 
-    if (HistoryChunks) {
-        if (nHistoryItems > 0) {
-            console.log("Starting to load history (" + nHistoryItems + " chunks)");
-            console.time("Downloaded History");
+        if (HistoryChunks) {
+            //console.log("Starting to load history (" + nHistoryItems + " chunks)");
             for (let i = chunkNames.length-1; i >= 0; i--) {
                 get_history_item(i);
             }
-        }
-    } else if (nHistoryItems > 0) {
-        console.log("Starting to load history (" + nHistoryItems + " items)");
-        console.time("Downloaded History");
-        // Queue up the history file downloads
-        for (let i = nHistoryItems-1; i >= 0; i--) {
-            get_history_item(i);
+        } else  {
+            //console.log("Starting to load history (" + nHistoryItems + " items)");
+            for (let i = nHistoryItems-1; i >= 0; i--) {
+                get_history_item(i);
+            }
         }
     }
 }

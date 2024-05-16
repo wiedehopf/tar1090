@@ -306,7 +306,7 @@ function processReceiverUpdate(data, init) {
             return;
         }
         if (data.now > now) {
-            if (now && data.now - now > 10 * 1000) {
+            if (now && data.now - now > 10) {
                 console.log('now jumped: ' + localTime(new Date(now * 1000)) + ' -> ' + localTime(new Date(data.now * 1000)));
                 console.trace();
             }
@@ -398,6 +398,11 @@ function fetchDone(data) {
                 jQuery("#update_error").css('display','block');
                 StaleReceiverCount++;
             }
+            return;
+        }
+
+        if (!timersActive) {
+            console.log(localTime(new Date()) + " fetchDone: not applying data due to !timersActive");
             return;
         }
 
@@ -513,6 +518,10 @@ let C429 = 0;
 let fetchCalls = 0;
 function fetchData(options) {
     options = options || {};
+    if (!timersActive) {
+        console.log(localTime(new Date()) + " fetchData inhibited by !timersActive");
+        return;
+    }
     if (heatmap || replay || showTrace || pTracks || !loadFinished || inhibitFetch) {
         return;
     }
@@ -1780,6 +1789,9 @@ function push_history_item(i) {
             if (HistoryItemsReturned == nHistoryItems) {
                 parseHistory();
             }
+            if (HistoryItemsReturned > nHistoryItems) {
+                console.log(localTime(new Date()) + " WARNING: (HistoryItemsReturned > nHistoryItems)");
+            }
         })
 
         .fail(function(jqxhr, status, error) {
@@ -1806,7 +1818,7 @@ function parseHistory() {
     if (PositionHistoryBuffer.length > 0) {
 
         // Sort history by timestamp
-        console.log("Sorting history: " + PositionHistoryBuffer.length);
+        console.log(localTime(new Date()) + " Sorting history: " + PositionHistoryBuffer.length);
         PositionHistoryBuffer.sort(function(x,y) { return (y.now - x.now); });
 
         // Process history
@@ -1814,7 +1826,14 @@ function parseHistory() {
         let h = 0;
         let pruneInt = Math.floor(PositionHistoryBuffer.length/5);
         let currentTime = new Date().getTime()/1000;
+        let lastTimestamp = 0;
+
         while (data = PositionHistoryBuffer.pop()) {
+
+            if (data.now < lastTimestamp) {
+                console.log('parseHistory sorting issue');
+            }
+            lastTimestamp = data.now;
 
             if (pTracks && currentTime - data.now > pTracks * 3600) {
                 continue;
@@ -1831,23 +1850,20 @@ function parseHistory() {
                 processReceiverUpdate(data, true);
             }
 
-            if (h==0) {
-                console.log("Applied history " + h + " from: "
-                    + localTime(new Date(now * 1000)));
-            }
+            if (++h % pruneInt == 1 || PositionHistoryBuffer.length == 0) {
 
-            // prune aircraft list
-            if (h++ % pruneInt == pruneInt - 1) {
-
-                console.log("Applied history " + h + " from: "
+                console.log("Apply History " + String(h).padStart(4) + " from: "
                     + localTime(new Date(now * 1000)));
 
-                reaper();
+                if (h != 0) {
+                    // prune aircraft list
+                    reaper();
+                }
             }
         }
 
         // Final pass to update all planes to their latest state
-        console.log("Final history cleanup pass");
+        //console.log("Final history cleanup pass");
         for (let i in g.planesOrdered) {
             let plane = g.planesOrdered[i];
 
@@ -1882,19 +1898,22 @@ let replay_was_active = false;
 let timers = {};
 let timersActive = false;
 function clearIntervalTimers(arg) {
-    timersActive = false;
+    if (!timersActive) {
+        console.trace();
+        return;
+    }
 
     if (loadFinished && arg != 'silent') {
+        console.log(localTime(new Date()) + ' clear timers');
         jQuery("#timers_paused_detail").text('Timers paused (tab hidden).');
         jQuery("#timers_paused").css('display','block');
-
     }
-    console.log(localTime(new Date()) + ': clear timers');
     const entries = Object.entries(timers);
     for (let i in entries) {
         clearInterval(entries[i][1]);
     }
 
+    timersActive = false;
 }
 
 function setIntervalTimers() {
@@ -1902,12 +1921,10 @@ function setIntervalTimers() {
         return;
     }
 
-    timersActive = true;
-
     if (loadFinished) {
         jQuery("#timers_paused").css('display','none');
     }
-    console.log(localTime(new Date()) + ": set timers ");
+    console.log(localTime(new Date()) + " set timers ");
     if ((adsbexchange || dynGlobeRate) && !uuid) {
         timers.globeRateUpdate = setInterval(globeRateUpdate, 180000);
     }
@@ -1949,6 +1966,9 @@ function setIntervalTimers() {
         timers.aiscatcher = setInterval(updateAIScatcher, aiscatcher_refresh * 1000);
         updateAIScatcher();
     }
+
+    timersActive = true;
+    fetchData();
 }
 
 let djson;
@@ -2002,10 +2022,6 @@ function startPage() {
 
     loadFinished = true;
 
-    // Kick off first refresh.
-    fetchData();
-
-    clearIntervalTimers();
     setIntervalTimers();
 
     if (tempTrails)
@@ -7893,7 +7909,7 @@ function refreshHistory() {
         return;
     }
     chunksDefer().done(function(data) {
-        console.log(localTime(new Date()) + ': tab change, loading history');
+        console.log(localTime(new Date()) + ' tab change, loading history');
         g.refreshHistory = true;
         HistoryChunks = true;
         chunkNames = [];
@@ -7914,6 +7930,7 @@ function refreshHistory() {
                     }
                 }
             }
+            //console.log(chunkNames);
             nHistoryItems = chunkNames.length;
             get_history();
             push_history();
@@ -7958,13 +7975,11 @@ function handleVisibilityChange() {
 
 function noLongerHidden() {
 
-    clearIntervalTimers();
-    setIntervalTimers();
-
     active();
 
+    setIntervalTimers();
+
     refresh();
-    fetchData();
 
     if (replay_was_active) {
         playReplay(true);
