@@ -306,9 +306,8 @@ function processReceiverUpdate(data, init) {
             return;
         }
         if (data.now > now) {
-            if (now && data.now - now > 10) {
+            if (0 && now && data.now - now > 10) {
                 console.log('now jumped: ' + localTime(new Date(now * 1000)) + ' -> ' + localTime(new Date(data.now * 1000)));
-                console.trace();
             }
             notNewCounter = 0;
             backwardsCounter = 0;
@@ -471,9 +470,10 @@ function db_load_type_cache() {
     });
 }
 
+g.afterLoadDone = false;
 g.afterLoad = [];
 function runAfterLoad(func) {
-    if (g.firstFetchDone) {
+    if (g.afterLoadDone) {
         func()
     } else {
         g.afterLoad.push(func);
@@ -486,30 +486,23 @@ function afterFirstFetch() {
     g.firstFetchDone = true;
 
     setTimeout(() => {
-        console.time('afterFirstFetch');
+        console.time('afterFirstFetch()');
 
         let func;
         while ((func = g.afterLoad.pop())) {
             func();
         }
+        g.afterLoadDone = false;
 
         geoMag = geoMagFactory(cof2Obj());
 
         db_load_type_cache(); // this will do a refresh()
 
-        if (limitUpdates != 0) {
-            (typeof load_gt != 'undefined') && (load_gt) && (load_gt()) && (load_gt = null);
-            (typeof load_fi != 'undefined') && (load_fi) && (load_fi()) && (load_fi = null);
-            (typeof load_freestar != 'undefined') && (load_freestar) && (load_freestar()) && (load_freestar = null);
-        } else {
-            (typeof hide_freestar != 'undefined') && (hide_freestar) && (hide_freestar());
-        }
-
         if (usp.has('screenshot')) {
             clearIntervalTimers('silent');
         }
 
-        console.timeEnd('afterFirstFetch');
+        console.timeEnd('afterFirstFetch()');
     }, 150);
 }
 
@@ -732,9 +725,9 @@ function initialize() {
     });
 }
 function afterHistoryLoad() {
-    if (nHistoryItems) {
-        reaper();
-    }
+    if (!heatmap)
+        jQuery("#loader").hide();
+
     if (!zstdDecode) {
         startPage();
     } else {
@@ -1977,8 +1970,6 @@ let dresult;
 
 function startPage() {
 
-    console.log("Completing init");
-
     if (!globeIndex) {
         jQuery("#lastLeg_cb").parent().hide();
         jQuery('#show_trace').hide();
@@ -2027,9 +2018,6 @@ function startPage() {
     if (tempTrails)
         selectAllPlanes();
 
-    if (!heatmap)
-        jQuery("#loader").hide();
-
     if (replay) {
         showReplayBar();
         loadReplay(replay.ts);
@@ -2045,13 +2033,14 @@ function startPage() {
         setTimeout(TAR.planeMan.refresh, 10000);
 
     window.addEventListener("beforeunload", function (event) {
-        //jQuery("#map_canvas").hide();
-        clearIntervalTimers('silent');
+        clearIntervalTimers();
     });
 
     if (heatmap || replay || showTrace || pTracks || inhibitFetch) {
         afterFirstFetch();
     }
+
+    console.timeEnd("Page Load");
 }
 
 //

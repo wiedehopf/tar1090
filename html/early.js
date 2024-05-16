@@ -1,6 +1,7 @@
 // This was functionality of script.js, moved it to here to start the downloading of track history earlier
 "use strict";
 
+console.time("Page Load");
 
 // TAR1090 application object
 let TAR;
