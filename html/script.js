@@ -7926,6 +7926,7 @@ function refreshHistory() {
             //console.log(chunkNames);
             nHistoryItems = chunkNames.length;
             get_history();
+            push_history();
         } catch (e) {
             console.error(e);
             noLongerHidden();
