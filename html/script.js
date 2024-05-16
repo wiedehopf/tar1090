@@ -682,6 +682,8 @@ function initialize() {
         return;
     }
 
+    jQuery.when(historyQueued).done(push_history);
+
     jQuery.when(configureReceiver, heatmapDefer).done(function() {
 
         if (receiverJson) {

@@ -28,6 +28,7 @@ var receiverJson;
 let deferHistory;
 let historyLoaded = jQuery.Deferred();
 let configureReceiver = jQuery.Deferred();
+let historyQueued = jQuery.Deferred();
 let historyTimeout = 60;
 let globeIndex = 0;
 let globeIndexGrid = 0;
@@ -576,8 +577,8 @@ function get_history() {
             }
         }
 
-        push_history();
     }
+    historyQueued.resolve();
 }
 
 function get_history_item(i) {
