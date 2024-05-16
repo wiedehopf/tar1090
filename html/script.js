@@ -3659,7 +3659,7 @@ function refreshFeatures() {
     cols.altitude = {
         text: 'Altitude',
         sort: function () { sortBy('altitude',compareNumeric, function(x) { return (x.altitude == "ground" ? -100000 : x.altitude); }); },
-        value: function(plane) { return format_altitude_brief(plane.altitude, plane.vert_rate, DisplayUnits); },
+        value: function(plane) { return format_altitude_brief(adjust_baro_alt(plane.altitude), plane.vert_rate, DisplayUnits); },
         align: 'right',
         header: function () { return 'Alt.' + NBSP + '(' + get_unit_label("altitude", DisplayUnits) + ')';},
     };
@@ -8574,6 +8574,9 @@ function onAltimeterChange(e) {
 
     remakeTrails();
     refreshSelected();
+    refreshFeatures();
+    TAR.planeMan.redraw();
+    refresh();
 }
 
 // Using formula from: https://www.weather.gov/media/epz/wxcalc/pressureAltitude.pdf

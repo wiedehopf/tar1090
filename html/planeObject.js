@@ -750,6 +750,7 @@ PlaneObject.prototype.getMarkerColor = function(options) {
 };
 
 function altitudeColor(altitude) {
+    altitude = adjust_baro_alt(altitude);
     let h, s, l;
 
     if (altitude == null) {
