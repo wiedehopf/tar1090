@@ -1906,6 +1906,9 @@ function clearIntervalTimers(arg) {
     }
 
     timersActive = false;
+
+    // in case the visibility changed while this was running
+    handleVisibilityChange();
 }
 
 function setIntervalTimers() {
@@ -1961,6 +1964,8 @@ function setIntervalTimers() {
 
     timersActive = true;
     fetchData();
+    // in case the visibility changed while this was running
+    handleVisibilityChange();
 }
 
 let djson;
@@ -7944,7 +7949,7 @@ function handleVisibilityChange() {
     else
         tabHidden = false;
 
-    if (tabHidden && !prevHidden) {
+    if (tabHidden && timersActive) {
         g.hideStamp = new Date().getTime();
         clearIntervalTimers();
         if (!globeIndex) {
@@ -7958,7 +7963,7 @@ function handleVisibilityChange() {
     }
 
     // tab is no longer hidden
-    if (!tabHidden && prevHidden) {
+    if (!tabHidden && !timersActive) {
         if (loadFinished) {
             jQuery("#timers_paused").css('display','none');
         }
