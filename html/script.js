@@ -45,7 +45,6 @@ let SelectedAllPlanes = false;
 let HighlightedPlane = null;
 let FollowSelected = false;
 let followPos = [];
-let loadFinished = false;
 let loadStart = new Date().getTime();
 let mapResizeTimeout;
 let pointerMoveTimeout;
@@ -289,7 +288,7 @@ function processReceiverUpdate(data, init) {
         if (data.now <= now && !globeIndex) {
             if (data.now < now) {
                 backwardsCounter++;
-                console.log('timestep backwards or the same, ignoring data:' + now + ' -> ' + data.now);
+                console.log('timestep backwards or the same, ignoring data: ' + now + ' -> ' + data.now);
                 if (backwardsCounter >= 5) {
                     backwardsCounter = 0;
                     console.log('resetting all data now:' + now + ' -> ' + data.now);
@@ -401,7 +400,7 @@ function fetchDone(data) {
         }
 
         if (!timersActive) {
-            console.log(localTime(new Date()) + " fetchDone: not applying data due to !timersActive");
+            //console.log(localTime(new Date()) + " fetchDone: not applying data due to !timersActive");
             return;
         }
 
@@ -512,7 +511,7 @@ let fetchCalls = 0;
 function fetchData(options) {
     options = options || {};
     if (!timersActive) {
-        console.log(localTime(new Date()) + " fetchData inhibited by !timersActive");
+        //console.log(localTime(new Date()) + " fetchData inhibited by !timersActive");
         return;
     }
     if (heatmap || replay || showTrace || pTracks || !loadFinished || inhibitFetch) {
@@ -716,8 +715,6 @@ function initialize() {
         processQueryToggles();
 
         if (nHistoryItems) {
-            // Wait for history item downloads and append them to the buffer
-            push_history();
             jQuery.when(historyLoaded).done(afterHistoryLoad);
         } else {
             afterHistoryLoad();
@@ -1753,7 +1750,8 @@ function initFlagFilter(colors) {
 
 function push_history() {
     HistoryItemsReturned = 0;
-    jQuery("#loader_progress").attr('max',nHistoryItems*2);
+    PositionHistoryBuffer = [];
+    jQuery("#loader_progress").attr('max',nHistoryItems);
 
     for (let i = 0; i < nHistoryItems; i++) {
         push_history_item(i);
@@ -1805,7 +1803,7 @@ function parseHistory() {
 
     for (let i in deferHistory)
         deferHistory[i] = null;
-    deferHistory = [];
+    deferHistory = null;
 
 
     if (PositionHistoryBuffer.length > 0) {
@@ -1817,7 +1815,7 @@ function parseHistory() {
         // Process history
         let data;
         let h = 0;
-        let pruneInt = Math.floor(PositionHistoryBuffer.length/5);
+        let pruneInt = 100;
         let currentTime = new Date().getTime()/1000;
         let lastTimestamp = 0;
 
@@ -1843,12 +1841,13 @@ function parseHistory() {
                 processReceiverUpdate(data, true);
             }
 
-            if (++h % pruneInt == 1 || PositionHistoryBuffer.length == 0) {
+            ++h
+            if (h == 1 || h % pruneInt == 0 || PositionHistoryBuffer.length == 0) {
 
                 console.log("Apply History " + String(h).padStart(4) + " from: "
                     + localTime(new Date(now * 1000)));
 
-                if (h != 0) {
+                if (h != 1) {
                     // prune aircraft list
                     reaper();
                 }
@@ -1871,8 +1870,6 @@ function parseHistory() {
         refreshFeatures();
         TAR.planeMan.refresh();
     }
-
-    PositionHistoryBuffer = [];
 
     console.timeEnd("Loaded aircraft tracks from History");
 
@@ -7922,7 +7919,6 @@ function refreshHistory() {
             //console.log(chunkNames);
             nHistoryItems = chunkNames.length;
             get_history();
-            push_history();
         } catch (e) {
             console.error(e);
             noLongerHidden();

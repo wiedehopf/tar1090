@@ -12,6 +12,7 @@ TAR = (function (global, jQuery, TAR) {
 // global object to store big stuff ... avoid clojur stupidity keeping the reference to big objects
 let g = {};
 
+let loadFinished = false;
 let Dump1090Version = "unknown version";
 let RefreshInterval = 1000;
 let globeSimLoad = 6;
@@ -22,9 +23,9 @@ let HistoryChunks = false;
 let nHistoryItems = 0;
 let HistoryItemsReturned = 0;
 let chunkNames = [];
-let PositionHistoryBuffer = [];
+let PositionHistoryBuffer;
 var receiverJson;
-let deferHistory = [];
+let deferHistory;
 let historyLoaded = jQuery.Deferred();
 let configureReceiver = jQuery.Deferred();
 let historyTimeout = 60;
@@ -450,22 +451,6 @@ if (!heatmap) {
     loadHeatChunk();
 }
 
-function historyQueued() {
-    if (!globeIndex && !uuid) {
-        let request = jQuery.ajax({ url: 'upintheair.json',
-            cache: true,
-            dataType: 'json' });
-        request.done(function(data) {
-            calcOutlineData = data;
-        });
-        request.always(function() {
-            configureReceiver.resolve();
-        });
-    } else {
-        configureReceiver.resolve();
-    }
-}
-
 if (uuid != null) {
     receiverJson = null;
     Dump1090Version = 'unknown';
@@ -506,7 +491,6 @@ if (uuid != null) {
             HistoryChunks = false;
             nHistoryItems = 0;
             get_history();
-            historyQueued();
         } else if (data.globeIndexGrid != null) {
             HistoryChunks = false;
             nHistoryItems = 0;
@@ -524,7 +508,6 @@ if (uuid != null) {
             }
 
             get_history();
-            historyQueued();
         } else {
             test_chunk_defer.done(function(data) {
                 HistoryChunks = true;
@@ -536,17 +519,32 @@ if (uuid != null) {
                 if (enable_uat)
                     console.log("UAT/978 enabled!");
                 get_history();
-                historyQueued();
             }).fail(function() {
                 HistoryChunks = false;
                 get_history();
-                historyQueued();
             });
         }
     });
 }
 
 function get_history() {
+    if (!loadFinished) {
+        if (!globeIndex && !uuid) {
+            let request = jQuery.ajax({ url: 'upintheair.json',
+                cache: true,
+                dataType: 'json' });
+            request.done(function(data) {
+                calcOutlineData = data;
+            });
+            request.always(function() {
+                configureReceiver.resolve();
+            });
+        } else {
+            configureReceiver.resolve();
+        }
+    }
+
+    deferHistory = [];
 
     if (nHistoryItems > 0) {
         console.time("Downloaded History");
@@ -577,6 +575,8 @@ function get_history() {
                 get_history_item(i);
             }
         }
+
+        push_history();
     }
 }
 
