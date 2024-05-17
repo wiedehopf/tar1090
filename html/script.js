@@ -682,8 +682,6 @@ function initialize() {
         return;
     }
 
-    jQuery.when(historyQueued).done(push_history);
-
     jQuery.when(configureReceiver, heatmapDefer).done(function() {
 
         if (receiverJson) {
@@ -715,6 +713,8 @@ function initialize() {
         initMap();
 
         processQueryToggles();
+
+        jQuery.when(historyQueued).done(push_history);
 
         if (nHistoryItems) {
             jQuery.when(historyLoaded).done(afterHistoryLoad);
@@ -1868,7 +1868,6 @@ function parseHistory() {
                 plane.last_message_time -= 999;
             }
         }
-
         refreshFeatures();
         TAR.planeMan.refresh();
     }
@@ -3558,12 +3557,13 @@ function mstime() {
 let nextCacheClear = mstime() + 300 * 1000;
 
 function releaseMem() {
-
-    if (mstime() > nextCacheClear) {
-        nextCacheClear = mstime() + 300 * 1000;
-        lineStyleCache = {};
-        iconCache = {};
+    if (!loadFinished || mstime() < nextCacheClear) {
+        return;
     }
+
+    nextCacheClear = mstime() + 300 * 1000;
+    lineStyleCache = {};
+    iconCache = {};
 
     //console.trace();
     //console.log('releaseMem()');
