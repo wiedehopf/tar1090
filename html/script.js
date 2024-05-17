@@ -2148,16 +2148,26 @@ function webglAddLayer() {
             style: glStyle,
             renderBuffer: renderBuffer,
         });
-        if (!webglLayer || !webglLayer.getRenderer())
+        if (!webglLayer)
             return false;
+        if (loStore['webglTested'] != 'true' && !webglLayer.getRenderer()) {
+            return false;
+        }
 
         layers.push(webglLayer);
 
         webgl = true;
-        plane.visible = true;
-        plane.updateMarker();
-        OLMap.renderSync();
 
+        // only test webgl once in every browser
+        // after that assume that it's working
+
+        if (loStore['webglTested'] != 'true') {
+            plane.visible = true;
+            plane.updateMarker();
+            OLMap.renderSync();
+        }
+
+        loStore['webglTested'] = 'true';
         success = true;
     } catch (error) {
         try {
