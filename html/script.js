@@ -7913,7 +7913,12 @@ function refreshHistory() {
     }
 
     jQuery("#loader_progress").attr('value', 0);
-    jQuery("#loader").show();
+
+    setTimeout(() => {
+        if (!timersActive) {
+            jQuery("#loader").show();
+        }
+    }, 200);
 
     chunksDefer().done(function(data) {
         console.log(localTime(new Date()) + ' tab change, loading history');
@@ -7982,11 +7987,10 @@ function handleVisibilityChange() {
 }
 
 function noLongerHidden() {
-    jQuery("#loader").hide();
-
     active();
-
     setIntervalTimers();
+
+    jQuery("#loader").hide();
 
     refresh();
 
