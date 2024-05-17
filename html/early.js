@@ -21,6 +21,7 @@ let enable_uat = false;
 let enable_pf_data = false;
 let HistoryChunks = false;
 let nHistoryItems = 0;
+let HistoryItemsLoaded;
 let HistoryItemsReturned = 0;
 let chunkNames = [];
 let PositionHistoryBuffer;
@@ -546,8 +547,10 @@ function get_history() {
     }
 
     deferHistory = [];
+    HistoryItemsLoaded = 0;
 
     if (nHistoryItems > 0) {
+        jQuery("#loader_progress").attr('max',nHistoryItems + 1);
         console.time("Downloaded History");
 
         nHistoryItems++;
@@ -582,7 +585,6 @@ function get_history() {
 }
 
 function get_history_item(i) {
-
     let request;
 
     if (HistoryChunks) {
@@ -598,6 +600,14 @@ function get_history_item(i) {
             cache: false,
             dataType: 'json' });
     }
+
+    request
+        .done(function(json) {
+            jQuery("#loader_progress").attr('value',++HistoryItemsLoaded);
+        })
+        .fail(function(jqxhr, status, error) {
+            jQuery("#loader_progress").attr('value',++HistoryItemsLoaded);
+        });
     deferHistory.push(request);
 }
 

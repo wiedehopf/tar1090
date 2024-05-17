@@ -1753,7 +1753,6 @@ function initFlagFilter(colors) {
 function push_history() {
     HistoryItemsReturned = 0;
     PositionHistoryBuffer = [];
-    jQuery("#loader_progress").attr('max',nHistoryItems + 1);
 
     for (let i = 0; i < nHistoryItems; i++) {
         push_history_item(i);
@@ -1776,9 +1775,7 @@ function push_history_item(i) {
                 PositionHistoryBuffer.push(json);
             }
 
-
             HistoryItemsReturned++;
-            jQuery("#loader_progress").attr('value',HistoryItemsReturned);
             if (HistoryItemsReturned == nHistoryItems) {
                 parseHistory();
             }
@@ -1790,7 +1787,6 @@ function push_history_item(i) {
         .fail(function(jqxhr, status, error) {
 
             //Doesn't matter if it failed, we'll just be missing a data point
-            jQuery("#loader_progress").attr('value',HistoryItemsReturned);
             //console.log(error);
             HistoryItemsReturned++;
             if (HistoryItemsReturned == nHistoryItems) {
@@ -2269,7 +2265,11 @@ function ol_map_init() {
         }
     });
     if (!foundType) {
-        MapType_tar1090 = "osm_adsbx";
+        if (adsbexchange) {
+            MapType_tar1090 = "osm_adsbx";
+        } else {
+            MapType_tar1090 = "osm";
+        }
     }
 
     ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
