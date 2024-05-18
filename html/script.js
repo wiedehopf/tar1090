@@ -1766,15 +1766,15 @@ function push_history_item(i) {
 
             if (HistoryChunks) {
                 if (json && json.files) {
-                    g.refreshHistory && console.log("itemsreturned chunk: " + HistoryItemsReturned + " chunklen: " + json.files.length);
+                    //g.refreshHistory && console.log("itemsreturned chunk: " + HistoryItemsReturned + " chunklen: " + json.files.length);
                     for (let i in json.files) {
                         PositionHistoryBuffer.push(json.files[i]);
                         if (i == 0 || i == json.files.length - 1) {
-                            g.refreshHistory && console.log("history buffer push: " + localTime(new Date(json.files[i].now * 1000)));
+                            //g.refreshHistory && console.log("history buffer push: " + localTime(new Date(json.files[i].now * 1000)));
                         }
                     }
                 } else if (json && json.now) {
-                    g.refreshHistory && console.log("itemsreturned simple json: " + HistoryItemsReturned);
+                    //g.refreshHistory && console.log("itemsreturned simple json: " + HistoryItemsReturned);
                     PositionHistoryBuffer.push(json);
                     //g.refreshHistory && console.log("history buffer push: " + localTime(new Date(json.now * 1000)));
                 }
@@ -7956,7 +7956,7 @@ function refreshHistory() {
                     }
                 }
             }
-            console.log(chunkNames);
+            //console.log(chunkNames);
             nHistoryItems = chunkNames.length;
             get_history();
             push_history();
