@@ -157,7 +157,7 @@ else
         echo "Unable to download files, exiting! (Maybe try again?)"
         exit 1
     fi
-    TAR_VERSION="$(revision)"
+    TAR_VERSION="$(cat version)"
 fi
 
 
