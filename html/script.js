@@ -1760,22 +1760,28 @@ function push_history() {
 }
 
 function push_history_item(i) {
-    jQuery.when(deferHistory[i])
+    deferHistory[i]
         .done(function(json) {
+            HistoryItemsReturned++;
 
             if (HistoryChunks) {
                 if (json && json.files) {
+                    g.refreshHistory && console.log("itemsreturned chunk: " + HistoryItemsReturned + " chunklen: " + json.files.length);
                     for (let i in json.files) {
                         PositionHistoryBuffer.push(json.files[i]);
+                        if (i == 0 || i == json.files.length - 1) {
+                            g.refreshHistory && console.log("history buffer push: " + localTime(new Date(json.files[i].now * 1000)));
+                        }
                     }
                 } else if (json && json.now) {
+                    g.refreshHistory && console.log("itemsreturned simple json: " + HistoryItemsReturned);
                     PositionHistoryBuffer.push(json);
+                    //g.refreshHistory && console.log("history buffer push: " + localTime(new Date(json.now * 1000)));
                 }
             } else {
                 PositionHistoryBuffer.push(json);
             }
 
-            HistoryItemsReturned++;
             if (HistoryItemsReturned == nHistoryItems) {
                 parseHistory();
             }
@@ -1816,12 +1822,20 @@ function parseHistory() {
         let pruneInt = 100;
         let currentTime = new Date().getTime()/1000;
         let lastTimestamp = 0;
+        let counter = 0;
 
         while (data = PositionHistoryBuffer.pop()) {
+            counter++;
 
             if (data.now < lastTimestamp) {
                 console.log('parseHistory sorting issue');
             }
+
+            if (lastTimestamp && data.now - lastTimestamp > 15) {
+                console.log("History " + String(counter).padStart(4) + " from: "
+                    + localTime(new Date(data.now * 1000)) + " GAP: " + localTime(new Date(lastTimestamp * 1000)));
+            }
+
             lastTimestamp = data.now;
 
             if (pTracks && currentTime - data.now > pTracks * 3600) {
@@ -1839,16 +1853,15 @@ function parseHistory() {
                 processReceiverUpdate(data, true);
             }
 
-            ++h
+            ++h;
             if (h == 1 || h % pruneInt == 0 || PositionHistoryBuffer.length == 0) {
+                console.log("Apply History " + String(counter).padStart(4) + " from: "
+                    + localTime(new Date(data.now * 1000)));
 
-                console.log("Apply History " + String(h).padStart(4) + " from: "
-                    + localTime(new Date(now * 1000)));
-
-                if (h != 1) {
-                    // prune aircraft list
-                    reaper();
-                }
+            }
+            if (h % pruneInt == 0) {
+                // prune aircraft list
+                reaper();
             }
         }
 
@@ -7943,7 +7956,7 @@ function refreshHistory() {
                     }
                 }
             }
-            //console.log(chunkNames);
+            console.log(chunkNames);
             nHistoryItems = chunkNames.length;
             get_history();
             push_history();
