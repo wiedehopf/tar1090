@@ -188,12 +188,14 @@ let badDotMlat;
 let showingReplayBar = false;
 
 function processAircraft(ac, init, uat) {
-    let hex = Array.isArray(ac) ? ac[0] : ac.hex;
+    const isArray = Array.isArray(ac);
+    const hex = isArray ? ac[0] : ac.hex;
 
     if (icaoFilter && !icaoFilter.includes(hex))
         return;
 
-    if (g.historyKeep && !g.historyKeep[hex]) {
+    const type = isArray ? ac[7] : ac.type;
+    if (g.historyKeep && !g.historyKeep[hex] && type != 'adsc') {
         return;
     }
 
