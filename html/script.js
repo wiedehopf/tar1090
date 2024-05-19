@@ -135,6 +135,7 @@ let lastRequestBox = '';
 let nextQuerySelected = 0;
 let enableDynamicCachebusting = false;
 let lastRefreshInt = 1000;
+let reapTimeout = globeIndex ? 240 : 480;
 
 
 let baroCorrectQNH = 1013.25;
@@ -187,11 +188,14 @@ let badDotMlat;
 let showingReplayBar = false;
 
 function processAircraft(ac, init, uat) {
-    let isArray = Array.isArray(ac);
-    let hex = isArray ? ac[0] : ac.hex;
+    let hex = Array.isArray(ac) ? ac[0] : ac.hex;
 
     if (icaoFilter && !icaoFilter.includes(hex))
         return;
+
+    if (g.historyKeep && !g.historyKeep[hex]) {
+        return;
+    }
 
     if (uat && uatNoTISB && ac.type && ac.type.substring(0,4) == "tisb") {
         // drop non ADS-B planes from UAT (TIS-B)
@@ -1816,11 +1820,37 @@ function parseHistory() {
         console.log(localTime(new Date()) + " Sorting history: " + PositionHistoryBuffer.length);
         PositionHistoryBuffer.sort(function(x,y) { return (y.now - x.now); });
 
+        let currentTime = new Date().getTime()/1000;
+
+        if (!pTracks) {
+            // get all planes within the reapTimeout
+            g.historyKeep = {};
+            for (let i = 0; i < PositionHistoryBuffer.length; i++)  {
+                let data = PositionHistoryBuffer[i];
+                if (currentTime - data.now > reapTimeout) {
+                    break;
+                }
+                for (let j=0; j < data.aircraft.length; j++) {
+                    const ac = data.aircraft[j];
+                    const isArray = Array.isArray(ac);
+                    const hex = isArray ? ac[0] : ac.hex;
+                    const seen = isArray ? ac[6] : ac.seen;
+                    if (currentTime - (data.now - seen) < reapTimeout) {
+                        g.historyKeep[hex] = 1;
+                    }
+                }
+                //console.log("hist: " + localTime(new Date(data.now * 1000)));
+            }
+            for (let i in g.planesOrdered) {
+                let hex = g.planesOrdered[i].icao;
+                g.historyKeep[hex] = 1;
+            }
+        }
+
         // Process history
         let data;
         let h = 0;
         let pruneInt = 100;
-        let currentTime = new Date().getTime()/1000;
         let lastTimestamp = 0;
         let counter = 0;
 
@@ -1857,13 +1887,13 @@ function parseHistory() {
             if (h == 1 || h % pruneInt == 0 || PositionHistoryBuffer.length == 0) {
                 console.log("Apply History " + String(counter).padStart(4) + " from: "
                     + localTime(new Date(data.now * 1000)));
-
-            }
-            if (h % pruneInt == 0) {
-                // prune aircraft list
-                reaper();
             }
         }
+
+        // only restrict aircraft process to this list while parsing history
+        g.historyKeep = null;
+
+        reaper();
 
         // Final pass to update all planes to their latest state
         //console.log("Final history cleanup pass");
@@ -2923,7 +2953,7 @@ function reaper(all) {
             continue;
         plane.seen = now - plane.last_message_time;
         if ( all || ((!plane.selected)
-            && plane.seen > 300
+            && plane.seen > reapTimeout
             && (plane.dataSource != 'adsc' || plane.seen > jaeroTimeout))
         ) {
             // Reap it.
