@@ -22,7 +22,7 @@ function createBaseLayers() {
     let us = new ol.Collection();
     let europe = new ol.Collection();
 
-    const tileTransition = onMobile ? 0 : 150;
+    const tileTransition = onMobile ? 0 : 0;
 
     if (loStore['customTiles'] != undefined) {
         custom_layers.push(new ol.layer.Tile({

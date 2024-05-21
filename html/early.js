@@ -583,16 +583,54 @@ function get_history() {
     }
     historyQueued.resolve();
 }
+function handleJsonWorker(e) {
+    const url = e.data.url;
+    //console.log("url finished: " + url);
+    const defer = g.jwr[url];
+    delete g.jwr[url];
+
+    defer.resolve(e.data.json);
+};
+
+function jsonGetWorker(url) {
+    const defer = jQuery.Deferred();
+    g.jwr[url] = defer;
+    const wid = g.jsonGetId++ % g.jsonWorker.length;
+    //console.log(`using worker ${wid}`);
+    g.jsonWorker[wid].postMessage(url);
+
+    return defer;
+}
+
+g.jWorkers = 0;
+if (g.jWorkers) {
+    g.jwr = {};
+
+    g.jsonWorker = [];
+    g.jsonGetId = 0;
+
+    for (let i = 0; i < g.jWorkers; i++) {
+        const worker = new Worker("jsonWorker.js");
+        g.jsonWorker.push(worker);
+        worker.onmessage = handleJsonWorker;
+    }
+
+}
 
 function get_history_item(i) {
     let request;
 
     if (HistoryChunks) {
-        let filename = chunkNames[i];
-        request = jQuery.ajax({ url: 'chunks/' + filename,
-            timeout: historyTimeout * 1000,
-            dataType: 'json'
-        });
+        const url = 'chunks/' + chunkNames[i];
+
+        if (g.jWorkers) {
+            request = jsonGetWorker(url);
+        } else {
+            request = jQuery.ajax({ url: url,
+                timeout: historyTimeout * 1000,
+                dataType: 'json'
+            });
+        }
     } else {
 
         request = jQuery.ajax({ url: 'data/history_' + i + '.json',
@@ -608,6 +646,7 @@ function get_history_item(i) {
         .fail(function(jqxhr, status, error) {
             jQuery("#loader_progress").attr('value',++HistoryItemsLoaded);
         });
+
     deferHistory.push(request);
 }
 
