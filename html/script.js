@@ -4710,13 +4710,13 @@ function invertMap(evt){
 
         jQuery.get(baseLegend, function (data) {
             jQuery('#altitude_chart_button').css("background-image", createLegendUrl(data));
+            jQuery('#altitude_chart').show();
         });
     }
 
     altitudeChart.render = function () {
         if (toggles['altitudeChart'].state) {
-            loadLegend();
-            jQuery('#altitude_chart').show();
+            runAfterLoad(loadLegend);
         } else {
             jQuery('#altitude_chart').hide();
         }
