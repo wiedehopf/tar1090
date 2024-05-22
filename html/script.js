@@ -730,19 +730,6 @@ function initialize() {
             historyLoaded.resolve();
         }
 
-        if (!zstdDecode) {
-            zstdDefer.resolve();
-        } else {
-            try {
-                zstddec.promise.then(function() {
-                    zstdDefer.resolve();
-                });
-            } catch (e) {
-                webAssemblyFail(e);
-                zstdDefer.resolve();
-            }
-        }
-
         jQuery.when(historyLoaded, zstdDefer).done(startPage);
     });
 }

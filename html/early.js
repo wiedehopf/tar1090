@@ -481,7 +481,6 @@ if (uuid != null) {
         nHistoryItems = (data.history < 2) ? 0 : data.history;
         binCraft = data.binCraft ? true : false || data.aircraft_binCraft ? true : false;
         zstd = data.zstd;
-        init_zstddec();
         reApi = data.reapi ? true : false;
         if (usp.has('noglobe') || usp.has('ptracks')) {
             data.globeIndexGrid = null; // disable globe on user request
@@ -527,6 +526,8 @@ if (uuid != null) {
                 get_history();
             });
         }
+
+        init_zstddec();
     });
 }
 
@@ -833,6 +834,7 @@ function webAssemblyFail(e) {
 
 function init_zstddec() {
     if (!zstd) {
+        zstdDefer.resolve();
         return;
     }
     try {
@@ -841,6 +843,21 @@ function init_zstddec() {
         zstdDecode = zstddec.decoder.decode;
     } catch (e) {
         webAssemblyFail(e);
+        zstdDefer.resolve();
+        return;
+    }
+
+    if (!zstdDecode) {
+        zstdDefer.resolve();
+    } else {
+        try {
+            zstddec.promise.then(function() {
+                zstdDefer.resolve();
+            });
+        } catch (e) {
+            webAssemblyFail(e);
+            zstdDefer.resolve();
+        }
     }
 }
 
