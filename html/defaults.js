@@ -315,6 +315,8 @@ let HideCols = [
 	"#lon",
 	"#data_source",
 	"#military",
+    "#wd",
+    "#ws",
 ]
 
 
