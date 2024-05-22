@@ -490,6 +490,9 @@ function afterFirstFetch() {
 
     g.firstFetchDone = true;
 
+    updateVisible();
+    mapRefresh();
+
     setTimeout(() => {
         console.time('afterFirstFetch()');
 
@@ -2011,10 +2014,7 @@ function setIntervalTimers() {
 
     timersActive = true;
 
-    setTimeout(fetchData, 5);
-
-    updateVisible();
-    mapRefresh();
+    fetchData();
 
     // in case the visibility changed while this was running
     handleVisibilityChange();
