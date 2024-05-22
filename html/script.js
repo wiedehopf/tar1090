@@ -724,36 +724,28 @@ function initialize() {
 
         processQueryToggles();
 
-        tryStartPage();
+        jQuery.when(historyQueued).done(push_history);
+
+        if (!nHistoryItems) {
+            historyLoaded.resolve();
+        }
+
+        if (!zstdDecode) {
+            zstdDefer.resolve();
+        } else {
+            try {
+                zstddec.promise.then(function() {
+                    zstdDefer.resolve();
+                });
+            } catch (e) {
+                webAssemblyFail(e);
+                zstdDefer.resolve();
+            }
+        }
+
+        jQuery.when(historyLoaded, zstdDefer).done(startPage);
     });
 }
-
-function doHistory() {
-
-    jQuery.when(historyQueued).done(push_history);
-
-    if (nHistoryItems) {
-        jQuery.when(historyLoaded).done(startPage);
-    } else {
-        startPage();
-    }
-}
-
-function tryStartPage() {
-    if (!zstdDecode) {
-        doHistory();
-    } else {
-        try {
-            zstddec.promise.then(function() {
-                doHistory();
-            });
-        } catch (e) {
-            webAssemblyFail(e);
-            doHistory();
-        }
-    }
-}
-
 
 
 function processQueryToggles() {

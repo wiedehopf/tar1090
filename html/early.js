@@ -28,6 +28,7 @@ let PositionHistoryBuffer;
 var receiverJson;
 let deferHistory;
 let historyLoaded = jQuery.Deferred();
+let zstdDefer = jQuery.Deferred();
 let configureReceiver = jQuery.Deferred();
 let historyQueued = jQuery.Deferred();
 let historyTimeout = 60;
