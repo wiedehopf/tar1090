@@ -365,6 +365,40 @@ function chunksDefer() {
     });
 }
 
+function handleJsonWorker(e) {
+    const url = e.data.url;
+    //console.log("url finished: " + url);
+    const defer = g.jwr[url];
+    delete g.jwr[url];
+
+    defer.resolve(e.data.json);
+};
+
+function jsonGetWorker(url) {
+    const defer = jQuery.Deferred();
+    g.jwr[url] = defer;
+    const wid = g.jsonGetId++ % g.jsonWorker.length;
+    //console.log(`using worker ${wid}`);
+    g.jsonWorker[wid].postMessage(url);
+
+    return defer;
+}
+
+g.jWorkers = 0;
+if (g.jWorkers) {
+    g.jwr = {};
+
+    g.jsonWorker = [];
+    g.jsonGetId = 0;
+
+    for (let i = 0; i < g.jWorkers; i++) {
+        const worker = new Worker("jsonWorker.js");
+        g.jsonWorker.push(worker);
+        worker.onmessage = handleJsonWorker;
+    }
+
+}
+
 let get_receiver_defer;
 let test_chunk_defer;
 const hostname = window.location.hostname;
@@ -584,39 +618,6 @@ function get_history() {
 
     }
     historyQueued.resolve();
-}
-function handleJsonWorker(e) {
-    const url = e.data.url;
-    //console.log("url finished: " + url);
-    const defer = g.jwr[url];
-    delete g.jwr[url];
-
-    defer.resolve(e.data.json);
-};
-
-function jsonGetWorker(url) {
-    const defer = jQuery.Deferred();
-    g.jwr[url] = defer;
-    const wid = g.jsonGetId++ % g.jsonWorker.length;
-    //console.log(`using worker ${wid}`);
-    g.jsonWorker[wid].postMessage(url);
-
-    return defer;
-}
-
-g.jWorkers = 0;
-if (g.jWorkers) {
-    g.jwr = {};
-
-    g.jsonWorker = [];
-    g.jsonGetId = 0;
-
-    for (let i = 0; i < g.jWorkers; i++) {
-        const worker = new Worker("jsonWorker.js");
-        g.jsonWorker.push(worker);
-        worker.onmessage = handleJsonWorker;
-    }
-
 }
 
 function get_history_item(i) {
