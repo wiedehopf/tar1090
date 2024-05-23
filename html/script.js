@@ -1588,6 +1588,13 @@ jQuery('#selected_altitude_geom1')
             init: useRouteAPI,
             setState: function(state) {
                 useRouteAPI = state;
+                if (useRouteAPI) {
+                    jQuery('#routeRow').show();
+                    jQuery('#routeRowHighlighted').show();
+                } else {
+                    jQuery('#routeRow').hide();
+                    jQuery('#routeRowHighlighted').hide();
+                }
             }
         });
     }
@@ -3265,15 +3272,13 @@ function refreshSelected() {
     }
 
     if (useRouteAPI) {
-        jQuery('#routeRow').show();
         if (selected.routeString) {
             jQuery('#selected_route').updateText(selected.routeString);
         } else {
             jQuery('#selected_route').updateText('n/a');
         }
-    } else {
-        jQuery('#routeRow').hide();
     }
+
     let magResult = null;
 
     if (geoMag && selected.position != null) {
@@ -3571,6 +3576,14 @@ function refreshHighlighted() {
         jQuery('#highlighted_icaotype').text(highlighted.icaoType);
     } else {
         jQuery('#highlighted_icaotype').text("n/a");
+    }
+
+    if (useRouteAPI) {
+        if (highlighted.routeString) {
+            jQuery('#highlighted_route').updateText(highlighted.routeString);
+        } else {
+            jQuery('#highlighted_route').updateText('n/a');
+        }
     }
 
     jQuery('#highlighted_source').text(format_data_source(highlighted.getDataSource()));
