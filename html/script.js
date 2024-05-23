@@ -1093,7 +1093,7 @@ function initPage() {
     // Set page basics
     document.title = PageName;
 
-    initializeUnitsSelector;
+    initializeUnitsSelector();
     TAR.planeMan.init();
 
     if (loStore['sidebar_width'] != null)
@@ -3857,10 +3857,8 @@ function refreshFeatures() {
                 activeCols.push(col);
             }
         }
-        if (!initialize) {
-            for (let i = 0; i < g.planesOrdered.length; ++i) {
-                g.planesOrdered[i].destroyTR();
-            }
+        for (let i = 0; i < g.planesOrdered.length; ++i) {
+            g.planesOrdered[i].destroyTR();
         }
         let table = '';
         table += '<thead class="aircraft_table_header">';
@@ -3884,6 +3882,10 @@ function refreshFeatures() {
             template += '</td>';
         }
         planeRowTemplate.innerHTML = template;
+
+        if (!initializing) {
+            planeMan.refresh();
+        }
     }
 
     planeMan.setColumnVis = function (col, visible) {
@@ -3900,13 +3902,13 @@ function refreshFeatures() {
         }
         //console.trace();
 
-        const atime = false;
-        atime && console.time("planeMan.refresh()");
-
         if (initializing) {
             planeMan.redraw();
             initializing = false;
         }
+
+        const atime = false;
+        atime && console.time("planeMan.refresh()");
 
         const ctime = false; // gets enabled for debugging table refresh speed
         // globeTableLimit = 1000; for testing performance
