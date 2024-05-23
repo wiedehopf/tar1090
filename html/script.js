@@ -535,7 +535,7 @@ function fetchData(options) {
     const refreshMs = refreshInt()
     if (!options.force) {
         if (
-            currentTime - lastFetch < refreshMs
+            currentTime - lastFetch <= refreshMs
             || pendingFetches > 0
             || OLMap.getView().getInteracting()
             || OLMap.getView().getAnimating()
