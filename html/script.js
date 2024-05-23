@@ -6213,10 +6213,15 @@ function refreshInt() {
     if (reApi && (binCraft || zstd)) {
         refresh = RefreshInterval * lastRequestSize / 35000;
         let extent = getViewOversize(1.03);
-        let min = 0.7;
+        const latDiff = extent.maxLat - extent.minLat;
+        const lonDiff = extent.maxLon - extent.minLon;
+        const area = latDiff * lonDiff;
+        const areaThreshold = 30 * 30;
+        let min = 1;
         let max = 7;
-        if (zoomLvl < 5) {
-            min += Math.min(1, (5 - zoomLvl) / 4);
+        if (area > areaThreshold && !onlySelected) {
+            const factor2 = Math.min(4, (latDiff * lonDiff) / areaThreshold);
+            min *= factor2;
         }
         if (refresh < RefreshInterval * min) {
             refresh = RefreshInterval * min;
