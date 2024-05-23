@@ -532,10 +532,10 @@ function fetchData(options) {
         return;
     }
     let currentTime = new Date().getTime();
-
+    const refreshMs = refreshInt()
     if (!options.force) {
         if (
-            currentTime - lastFetch < refreshInt()
+            currentTime - lastFetch < refreshMs
             || pendingFetches > 0
             || OLMap.getView().getInteracting()
             || OLMap.getView().getAnimating()
@@ -543,8 +543,9 @@ function fetchData(options) {
             return;
         }
     }
+    setTimeout(fetchData, refreshMs);
     if (debugFetch) {
-        console.log('Time since last fetch: ' + (currentTime - lastFetch)/1000);
+        console.log('Time since last fetch: ' + (currentTime - lastFetch) + ' ms');
     }
     lastFetch = currentTime;
 
@@ -623,7 +624,7 @@ function fetchData(options) {
 
     } else if (globeIndex) {
         let indexes = globeIndexes();
-        const ancient = (currentTime - 2 * refreshInt() / globeSimLoad * globeTilesViewCount) / 1000;
+        const ancient = (currentTime - 2 * refreshMs / globeSimLoad * globeTilesViewCount) / 1000;
         for (let i in indexes) {
             const k = indexes[i];
             if (globeIndexNow[k] < ancient) {
