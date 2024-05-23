@@ -495,6 +495,7 @@ if (uuid != null) {
     configureReceiver.resolve();
     //console.time("Downloaded History");
     zstd = false;
+    init_zstddec();
 } else {
     get_receiver_defer.fail(function(data){
 
