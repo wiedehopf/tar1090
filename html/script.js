@@ -7940,12 +7940,13 @@ function timeoutFetch() {
 }
 
 function refreshHistory() {
-    if (0 && (new Date().getTime() - g.hideStamp) / 1000 < 2) {
-        console.log('short tab change, not loading history');
+    if (heatmap || replay || globeIndex || pTracks) {
         noLongerHidden();
         return;
     }
-    if (heatmap || replay || globeIndex || pTracks) {
+
+    if (1 && (new Date().getTime() - g.hideStamp) / 1000 < 5) {
+        console.log('short tab change, not loading history');
         noLongerHidden();
         return;
     }
@@ -8017,10 +8018,13 @@ function handleVisibilityChange() {
 
     // tab is no longer hidden
     if (!tabHidden && !timersActive) {
-        if (loadFinished) {
-            jQuery("#timers_paused").css('display','none');
+        loadFinished && jQuery("#timers_paused").css('display','none');
+        globeRateUpdate();
+        if (heatmap || replay || globeIndex || pTracks) {
+            noLongerHidden();
+        } else {
+            refreshHistory();
         }
-        globeRateUpdate().done(refreshHistory);
     }
 }
 
