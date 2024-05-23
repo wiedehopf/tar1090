@@ -1174,6 +1174,18 @@ function initPage() {
         jQuery('#settings_infoblock').toggle();
     });
 
+    if (onMobile) {
+        jQuery('#fullscreenButton').on('click', function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        });
+    } else {
+        jQuery('#fullscreenButton').hide();
+    }
+
     jQuery('#settings_close').on('click', function() {
         jQuery('#settings_infoblock').hide();
     });

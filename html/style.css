@@ -447,6 +447,28 @@ select.error, textarea.error, input.error {
     z-index: 9;
 }
 
+.svgButton {
+    background-color: var(--ACCENT);
+    width: calc( 27px * var(--SCALE));
+    height: calc( 27px * var(--SCALE));
+    cursor: pointer;
+    background-position: center;
+    margin: calc( 2px * var(--SCALE));
+    display: inline-block;
+    border-radius: calc( 2px * var(--SCALE));
+}
+
+.fullscreenButton {
+    background-image: url('images/fullscreen.svg');
+    background-size: 90%;
+}
+
+.settingsCog {
+    background-image: url('images/cog-white.svg');
+    background-size: 120%;
+}
+
+
 .button {
     background-color: var(--ACCENT);
     width: calc( 27px * var(--SCALE));
@@ -483,18 +505,6 @@ select.error, textarea.error, input.error {
 }
 .inActiveButton {
  color:#fff
-}
-
-.settingsCog {
-    width: calc( 48px * var(--SCALE));
-    height: calc( 48px * var(--SCALE));
-    cursor: pointer;
-    background-image: url('images/settings-icon02.png');
-    background-size: cover;
-    background-repeat: no-repeat;
-    margin-top: calc( 6px * var(--SCALE));
-    margin-bottom: calc( 6px * var(--SCALE));
-    margin-left: calc( -12px * var(--SCALE));
 }
 
 #highlighted_infoblock {
