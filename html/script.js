@@ -7982,7 +7982,7 @@ function timeoutFetch() {
 }
 
 function refreshHistory() {
-    if (heatmap || replay || globeIndex || pTracks) {
+    if (heatmap || replay || globeIndex || pTracks || uuid) {
         noLongerHidden();
         return;
     }
