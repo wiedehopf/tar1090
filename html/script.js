@@ -466,12 +466,11 @@ function fetchDone(data) {
 }
 
 function db_load_type_cache() {
-    jQuery.getJSON(databaseFolder + "/icao_aircraft_types2.js").done(function(typeLookupData) {
+    return jQuery.getJSON(databaseFolder + "/icao_aircraft_types2.js").done(function(typeLookupData) {
         g.type_cache = typeLookupData;
         for (let i in g.planesOrdered) {
             g.planesOrdered[i].setTypeData();
         }
-        refresh();
     });
 }
 
@@ -508,14 +507,16 @@ function afterFirstFetch() {
 
         geoMag = geoMagFactory(cof2Obj());
 
-        db_load_type_cache(); // this will do a refresh()
+        db_load_type_cache().always(function() {
+            refresh();
+        });
 
         if (usp.has('screenshot')) {
             clearIntervalTimers('silent');
         }
 
         console.timeEnd('afterFirstFetch()');
-    }, 20);
+    }, 30);
 }
 
 let debugFetch = false;
@@ -1092,7 +1093,7 @@ function initPage() {
     // Set page basics
     document.title = PageName;
 
-    initializeUnitsSelector();
+    initializeUnitsSelector;
     TAR.planeMan.init();
 
     if (loStore['sidebar_width'] != null)
@@ -3833,9 +3834,6 @@ function refreshFeatures() {
         if (!ShowFlags) {
             planeMan.setColumnVis('flag', false);
         }
-
-        planeMan.redraw();
-        initializing = false;
     }
 
     planeMan.redraw = function () {
@@ -3846,8 +3844,10 @@ function refreshFeatures() {
                 activeCols.push(col);
             }
         }
-        for (let i = 0; i < g.planesOrdered.length; ++i) {
-            g.planesOrdered[i].destroyTR();
+        if (!initialize) {
+            for (let i = 0; i < g.planesOrdered.length; ++i) {
+                g.planesOrdered[i].destroyTR();
+            }
         }
         let table = '';
         table += '<thead class="aircraft_table_header">';
@@ -3871,8 +3871,6 @@ function refreshFeatures() {
             template += '</td>';
         }
         planeRowTemplate.innerHTML = template;
-
-        planeMan.refresh();
     }
 
     planeMan.setColumnVis = function (col, visible) {
@@ -3884,8 +3882,18 @@ function refreshFeatures() {
 
     // Refreshes the larger table of all the planes
     planeMan.refresh = function () {
-        if (initializing)
+        if (!loadFinished)  {
             return;
+        }
+        //console.trace();
+
+        const atime = false;
+        atime && console.time("planeMan.refresh()");
+
+        if (initializing) {
+            planeMan.redraw();
+            initializing = false;
+        }
 
         const ctime = false; // gets enabled for debugging table refresh speed
         // globeTableLimit = 1000; for testing performance
@@ -4011,6 +4019,7 @@ function refreshFeatures() {
         ctime && console.timeEnd("DOM2");
 
         ctime && console.timeEnd("planeMan.refresh()");
+        atime && console.timeEnd("planeMan.refresh()");
     }
 
     //
