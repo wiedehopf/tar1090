@@ -13,6 +13,7 @@
 
     <!-- CSS_ANCHOR -->
     <link rel="stylesheet" href="libs/jquery-ui-1.13.2.min.css" type="text/css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <link rel="stylesheet" href="libs/ol-8.2.0.css" type="text/css" />
     <link rel="stylesheet" href="libs/ol-layerswitcher-4.1.1.css" type="text/css"/>
     <link rel="stylesheet" href="style.css" type="text/css" />
@@ -23,6 +24,8 @@
   </head>
 
   <body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
     <!-- BODY_ANCHOR -->
     <div id="layout_container">
 
@@ -791,6 +794,7 @@
             <span id="U" title="only show the U2 and other military planes" class="button inActiveButton" onclick="toggleMilitary();"><span class="buttonText">U</span></span>
             <span id="H" title="(H)ome / Reset Map" class="button inActiveButton" onclick="resetMap();"><span class="buttonText">H</span></span>
             <span id="T" title="All (T)racks" class="button inActiveButton" onclick="selectAllPlanes();"><span class="buttonText">T</span></span>
+            <span id="Y" title="Repla(Y)" class="button inActiveButton" onclick="showReplayBar(); loadReplay(new Date());" style="background-image: url('images/replay-white.svg');"><span class="buttonText"></span></span>
           </div>
         </div>
         <div id="header_side" class="infoHeading">
@@ -857,26 +861,52 @@
 
               <tr id='adsbexchange_header' class="infoblock_row">
                 <td style="text-align: center">
+
+<nav class="navbar navbar-dark bg-dark">
+  <a class="navbar-brand" href="#">Site Navigation</a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+  <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="#" target="_blank">Live Map <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://adsb.oarc.uk/12htracks">12h Tracks</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://adsb.oarc.uk/myip/">Feed Check</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://adsb.oarc.uk/map/">MLAT Sync Map</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://adsb.oarc.uk/sync/">MLAT Sync Table</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://adsb.oarc.uk/graphs1090/">System Graphs</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://adsb.oarc.uk/emergencies/">Emergency Log</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://wiki.oarc.uk/flight:adsb" target="_blank">ADS-B @ OARC Wiki (new window)</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://www.oarc.uk/" target="_blank">OARC Website (new window)</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
                   <div>
-                    <span class="largeText">Improve Coverage:<br><a class="largeText" target="_blank" href="https://adsbexchange.com/how-to-feed/">adsbexchange.com</a></span>
+                    <span class="oarcLogo"><img src="images/oarclogo.jpg" width=225 height=103></span>
                   </div>
                   <div class="rSpacer"></div>
                   <div class="rSpacer"></div>
-                  <div>
-                    <span class="largeText">
-                      <a id="premium_text" class="largeText" href="https://store.adsbexchange.com/pages/subscription">Premium Login: no ads / Sat. Layer</a>
-                    </span>
-                  </div>
-                  <div class="rSpacer"></div>
-                  <div>
-                    <span class="largeText">
-                      <a class="largeText" target="_blank" href="https://adsbexchange.com/faq/">FAQ</a>
-                      &emsp;&emsp;
-                      <a class="largeText" target="_blank" href="https://adsbexchange.com/map-help/">Map Help</a>
-                    </span>
-                  </div>
-                  <div class="rSpacer">
-                  </div>
+
                 </td>
               </tr>
               <tr id="imageConfigHeader" class="infoblock_row hidden">

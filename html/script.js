@@ -1600,6 +1600,19 @@ jQuery('#selected_altitude_geom1')
         });
     }
 
+    new Toggle({
+        key: "airlineBanners",
+        display: "Airline Logo Banners",
+        container: "#settingsLeft",
+        init: true,
+        setState: function(state) {
+            airlineBanners = state;
+            console.log("Airline banners toggled");
+            if (state) {
+                setAirlineBannerVis();
+            }
+        }
+    });
 
     new Toggle({
         key: "enableInfoblock",
@@ -1669,7 +1682,7 @@ jQuery('#selected_altitude_geom1')
         }
         jQuery('#selected_infoblock').addClass('adsbx-selected-bg');
         if (false && window.self != window.top) {
-            window.top.location.href = "https://www.adsbexchange.com/";
+            window.top.location.href = "https://www.oarc.uk/";
             return;
         }
     }
@@ -8528,6 +8541,14 @@ function setPictureVisibility() {
     }
 }
 
+function setAirlineBannerVis() {
+  if (airlineBanners) {
+    jQuery('#logo_banner').removeClass('hidden');
+  } else {
+    jQuery('#logo_banner').addClass('hidden');
+  }
+}
+
 // just an idea, unused
 let infoBits = {
     type: {
@@ -8709,7 +8730,7 @@ function adjust_baro_alt(alt) {
 
 function globeRateUpdate() {
     if (adsbexchange) {
-        dynGlobeRate = true;
+        //dynGlobeRate = true;
         const cookieExp = getCookie('adsbx_sid').split('_')[0];
         const ts = new Date().getTime();
         if (!cookieExp || cookieExp < ts + 3600*1000)

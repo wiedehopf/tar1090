@@ -1,5 +1,11 @@
 "use strict";
 
+function extractOperatorICAO(callsign) {
+    if (!callsign||callsign.trim()==='') { return null; }
+    if (!/^[A-Z]{3}/.test(callsign) || isNaN(parseInt(callsign[3],10))) { return null; }
+    return callsign.substring(0,3);
+}
+
 function PlaneObject(icao) {
     icao = `${icao}`;
 
@@ -56,6 +62,7 @@ PlaneObject.prototype.setNull = function() {
     this.flightTs = 0;
     this.name = 'no callsign';
     this.squawk    = null;
+    this.opp_icao  = null;
     this.category  = null;
     this.dataSource = "modeS";
 
@@ -2876,6 +2883,8 @@ PlaneObject.prototype.setFlight = function(flight) {
         this.flight = `${flight}`;
         this.name = this.flight.trim() || 'empty callsign';
         this.flightTs = now;
+
+        this.opp_icao = extractOperatorICAO(this.name);
 
         let currentName = this.name;
         if (useRouteAPI) {
