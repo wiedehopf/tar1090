@@ -12,11 +12,12 @@ TAR = (function (global, jQuery, TAR) {
 // global object to store big stuff ... avoid clojur stupidity keeping the reference to big objects
 let g = {};
 
+let airlineBanners=false;
 let loadFinished = false;
 let Dump1090Version = "unknown version";
 let RefreshInterval = 1000;
 let globeSimLoad = 6;
-let adsbexchange = false;
+let adsbexchange = true;
 let enable_uat = false;
 let enable_pf_data = false;
 let HistoryChunks = false;
