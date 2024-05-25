@@ -3181,7 +3181,46 @@ function refreshSelected() {
 
     refreshPhoto(selected);
 
-    jQuery('#selected_callsign').updateText(selected.name);
+    jQuery('#selected_callsign').updateText(selected.name);#
+
+    //Logo stuff here
+
+    let operatorICAO = selected.opp_icao;
+    var $selected_opp_icon = $('#selected_opp_icon');
+    var $icon_img = $selected_opp_icon.find('img');
+    var $selected_airline_banner = $('#selected_airline_banner');
+    var $banner_img = $selected_airline_banner.find('img');
+    if (operatorICAO) {
+        var src=`/opp_logos/${operatorICAO}.png`;
+        if ($icon_img.length === 0) {
+            $selected_opp_icon.append(`<img src="${src}" onerror="this.style.display='none'" onload="this.style.display=''";"/>`);
+        } else {
+            if ($icon_img.attr('src') != src) {
+                $icon_img.attr('src',src);
+                $icon_img.style={};
+                $icon_img.style.display='';
+             }
+        }
+        if (airlineBanners) {
+            var src=`/avcodes_banners/${operatorICAO}.png`;
+            if ($banner_img.length === 0) {
+                $selected_airline_banner.append(`<img src="${src}" onerror="this.style.display='none'" onload="this.style.display=''";"/>`);
+            } else {
+                if ($banner_img.attr('src') != src) {
+                    $banner_img.attr('src',src);
+                    $banner_img.style={};
+                    $banner_img.style.display='';
+                }
+            }
+        }
+    } else {
+        if ($icon_img.length >= 1) {
+            $icon_img.first().remove();
+        }
+        if ($banner_img.length >= 1) {
+            $banner_img.first().remove();
+        }
+  }
 
     if (showTrace) {
         if (selected.position_time) {
