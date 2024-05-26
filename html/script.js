@@ -8148,12 +8148,14 @@ function autoSelectClosest() {
     checkMovement();
     for (let key in g.planesOrdered) {
         const plane = g.planesOrdered[key];
+        // If the plane is not visible, skip
         if (!plane.visible)
+            continue;
+        // If there are no position within 20 seconds, skip
+        if (plane.position == null || plane.seen_pos > 20)
             continue;
         if (!closest)
             closest = plane;
-        if (plane.position == null)
-            continue;
         let refLoc = [CenterLon, CenterLat];
         if (autoselectCoords && autoselectCoords.length == 2) {
             refLoc = [ autoselectCoords[1], autoselectCoords[0] ];
