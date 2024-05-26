@@ -8152,7 +8152,7 @@ function autoSelectClosest() {
             continue;
         if (!closest)
             closest = plane;
-        if (plane.position == null)
+        if (plane.position == null || plane.seen_pos > 20)
             continue;
         let refLoc = [CenterLon, CenterLat];
         if (autoselectCoords && autoselectCoords.length == 2) {
