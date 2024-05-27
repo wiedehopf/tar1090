@@ -1857,7 +1857,7 @@ function parseHistory() {
 
         let currentTime = new Date().getTime()/1000;
 
-        if (!pTracks) {
+        if (!pTracks && !noVanish) {
             // get all planes within the reapTimeout
             g.historyKeep = {};
             for (let i = 0; i < PositionHistoryBuffer.length; i++)  {
