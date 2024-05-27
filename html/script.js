@@ -1870,7 +1870,7 @@ function parseHistory() {
 
         let currentTime = new Date().getTime()/1000;
 
-        if (!pTracks) {
+        if (!pTracks && !noVanish) {
             // get all planes within the reapTimeout
             g.historyKeep = {};
             for (let i = 0; i < PositionHistoryBuffer.length; i++)  {
@@ -8204,7 +8204,7 @@ function autoSelectClosest() {
             continue;
         if (!closest)
             closest = plane;
-        if (plane.position == null)
+        if (plane.position == null || plane.seen_pos > 20)
             continue;
         let refLoc = [CenterLon, CenterLat];
         if (autoselectCoords && autoselectCoords.length == 2) {
