@@ -794,6 +794,38 @@
           <span class=credits-image></span>
           <span class=credits-text>www.oarc.uk</span>
         </div>
+        <div id="ruler_controls" class="hidden">
+          <table style="width: 100%">
+            <tr>
+              <td>
+                <span class="ruler_heading">Measure Distance</span>
+              </td>
+              <td>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <form id="rulerForm">
+                  <label for="ruler_a">A: </label>
+                  <input type="radio" id="ruler_a" checked="checked" name="ruler_point" value="A">
+                  <label for="ruler_b">B: </label>
+                  <input type="radio" id="ruler_b" name="ruler_point" value="B">
+                </form>
+              </td>
+              <td>
+                <button class="formButton" onclick="">Unused</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span class="ruler_text">Distance: <span id="ruler_value"></span></span>
+              </td>
+              <td>
+                <button class="formButton" onclick="resetRuler();">Clear</button>
+              </td>
+            </tr>
+          </table>
+        </div>
         <div id="header_top" class="infoHeading">
           <div class="buttonContainer">
             <span id="U" title="only show the U2 and other military planes" class="button inActiveButton" onclick="toggleMilitary();"><span class="buttonText">U</span></span>
