@@ -925,3 +925,13 @@ input{
 #replaySpeedHint{
   grid-area: speedHint;
 }
+
+#ruler_controls{
+    text-align: left;
+    position: absolute;
+    left: calc( 15px * var(--SCALE));
+    top: calc( 0px * var(--SCALE));
+    height: calc( 70px * var(--SCALE));
+    background-color: var(--ACCENT);
+    z-index: 9;
+}

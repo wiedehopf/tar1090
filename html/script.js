@@ -26,6 +26,11 @@ let siteCircleLayer;
 let siteCircleFeatures = new ol.source.Vector();
 let locationDotLayer;
 let locationDotFeatures = new ol.source.Vector();
+let rulerLayer;
+let rulerFeatures = new ol.source.Vector();
+let ruler_show = false;
+let ruler_a = null;
+let ruler_b = null;
 let iconLayer;
 let trailLayers;
 let heatFeatures = [];
@@ -2419,6 +2424,11 @@ function ol_map_init() {
 
         let features = webgl ? webglFeatures : PlaneIconFeatures;
         let evtCoords = evt.map.getCoordinateFromPixel(evt.pixel);
+
+        if (ruler_show) {
+            storeRulerCoords(evtCoords);
+        }
+
         let feature = features.getClosestFeatureToCoordinate(evtCoords);
         if (feature) {
             let fPixel = evt.map.getPixelFromCoordinate(feature.getGeometry().getCoordinates());
@@ -2554,6 +2564,24 @@ function initMap() {
         }
     });
 
+    // new ruler code
+    rulerLayer = new ol.layer.Vector({
+        name: 'ruler',
+        type: 'overlay',
+        title: 'show ruler',
+        source: rulerFeatures,
+        visible: ruler_show,
+        zIndex: 100,
+        renderOrder: null,
+        renderBuffer: renderBuffer,
+    });
+    layers.push(rulerLayer);
+
+    rulerLayer.on('change:visible', function(evt) {
+        if (evt.target.getVisible()) {
+            console.log('ruler event triggered');
+        }
+    });
 
     actualOutline.enabled = multiOutline || (receiverJson && receiverJson.outlineJson);
 
@@ -2816,6 +2844,9 @@ function initMap() {
                 toggleFollow(false);
                 break;
                 // misc
+            case "z":
+                toggleRuler();
+                break;
             case "b":
                 toggles['MapDim'].toggle();
                 break;
@@ -4713,6 +4744,95 @@ function toggleMilitary() {
     refreshFilter();
     active();
     fetchData({force: true});
+}
+
+function toggleRuler() {
+    ruler_show = !ruler_show;
+    rulerLayer.setVisible(ruler_show);
+    buttonActive('#Z', ruler_show);
+    if (ruler_show) {
+        jQuery("#ruler_controls").show();
+        jQuery('#ruler_value').updateText('x ' + get_unit_label("distance", DisplayUnits));
+    } else {
+        jQuery("#ruler_controls").hide();
+    }
+}
+
+function storeRulerCoords(coords) {
+    let which_coord = jQuery("input[type='radio'][name=ruler_point]:checked", '#rulerForm').val();
+    if (which_coord == 'A') {
+        ruler_a = coords;
+        drawRulerPoint(coords, which_coord);}
+    else {
+        ruler_b = coords;
+        drawRulerPoint(coords, which_coord);
+    }
+    console.log('Stored Coordinate ' + ol.proj.toLonLat(coords) + ' into ' + which_coord);
+    if (ruler_a !== null && ruler_b !== null) {
+        drawRulerLine(ruler_a, ruler_b);
+    } else {
+        console.log('missing point!');
+    }
+}
+
+function drawRulerPoint(coords, which_coord) {
+    console.log('Clearing/Drawing ruler point ' + coords + ' at ' + which_coord);
+    deleteRulerPart(which_coord);
+
+    let markerStyle = new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: 7,
+            snapToPixel: false,
+            fill: new ol.style.Fill({color: 'black'}),
+            stroke: new ol.style.Stroke({
+                color: 'white', width: 2
+            })
+        })
+    });
+
+    let feature = new ol.Feature({geometry: new ol.geom.Point(coords), name: 'ruler_' + which_coord});
+    feature.setStyle(markerStyle);
+    rulerFeatures.addFeature(feature);
+}
+
+function drawRulerLine(ruler_a, ruler_b) {
+    let ruler_coords_pair = [ruler_a, ruler_b];
+    deleteRulerPart('line');
+    console.log('Drawing Ruler Line between ' + ruler_coords_pair[0] + ' and ' + ruler_coords_pair[1]);
+
+    let feature = new ol.Feature({
+        geometry: new ol.geom.LineString(ruler_coords_pair),
+        name: 'ruler_line'
+    });
+
+    let rulerStyle = new ol.style.Style({
+        stroke: new ol.style.Stroke({
+            color: '#ff0000',
+            width: 3
+        })
+    });
+
+    feature.setStyle(rulerStyle);
+    rulerFeatures.addFeature(feature);
+
+    //do measurement and units display
+    let ruler_distance = ol.sphere.getDistance(ol.proj.toLonLat(ruler_a), ol.proj.toLonLat(ruler_b));
+    jQuery('#ruler_value').updateText(format_distance_long(ruler_distance, DisplayUnits));
+}
+
+function deleteRulerPart(which_portion) {
+    rulerFeatures.getFeatures().forEach(feature => {
+        if (feature.get('name') === 'ruler_' + which_portion ) {
+            rulerFeatures.removeFeature(feature);
+        }
+    });
+}
+
+function resetRuler() {
+    rulerFeatures.clear();
+    ruler_a = null;
+    ruler_b = null;
+    jQuery('#ruler_value').updateText('x ' + get_unit_label("distance", DisplayUnits));
 }
 
 function togglePersistence() {
