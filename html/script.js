@@ -4752,7 +4752,7 @@ function toggleRuler() {
     buttonActive('#Z', ruler_show);
     if (ruler_show) {
         jQuery("#ruler_controls").show();
-        jQuery('#ruler_value').updateText('x ' + get_unit_label("distance", DisplayUnits));
+        //jQuery('#ruler_value').updateText('x ' + get_unit_label("distance", DisplayUnits));
     } else {
         jQuery("#ruler_controls").hide();
     }
