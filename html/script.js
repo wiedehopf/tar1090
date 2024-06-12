@@ -2011,7 +2011,7 @@ function setIntervalTimers() {
         timers.pf_data = window.setInterval(fetchPfData, RefreshInterval*10.314);
         fetchPfData();
     }
-    if (receiverJson && receiverJson.outlineJson) {
+    if (actualOutline.enabled) {
         timers.drawOutline = window.setInterval(drawOutlineJson, actualOutline.refresh);
         setTimeout(drawOutlineJson, 50);
     }
