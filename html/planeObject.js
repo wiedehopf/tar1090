@@ -2892,7 +2892,7 @@ PlaneObject.prototype.setFlight = function(flight) {
         this.flightTs = now;
 
         let currentName = this.name;
-        if (useRouteAPI) {
+        if (useRouteAPI && this.visible) {
             if (g.route_cache[currentName] === undefined &&
                 this.name &&
                 this.name != 'empty callsign' &&
