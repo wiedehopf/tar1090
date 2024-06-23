@@ -2862,6 +2862,20 @@ PlaneObject.prototype.setProjection = function(arg) {
     }
 }
 
+function normalized_callsign(flight) {
+    const re = /^([A-Z]*)([0-9]*)$/;
+    const match = flight.match(re);
+    if (!match) {
+        return flight;
+    }
+    let alpha = match[1];
+    let num = match[2];
+    while(num[0] == '0' && num.length > 1) {
+        num = num.slice(1);
+    }
+    return alpha + num;
+}
+
 PlaneObject.prototype.setFlight = function(flight) {
     var currentTime = new Date().getTime()/1000;
     if (flight == null) {
@@ -2882,11 +2896,11 @@ PlaneObject.prototype.setFlight = function(flight) {
             if (g.route_cache[currentName] === undefined &&
                 this.name &&
                 this.name != 'empty callsign' &&
-                this.seen < 60 &&
+                this.seen_pos < 60 &&
                 this.registration != this.name &&
                 this.position) {
                 // we have all the pieces that allow us to lookup a route
-                let route_check = { 'callsign': this.name, 'lat': this.position[1], 'lng': this.position[0] };
+                let route_check = { 'callsign': normalized_callsign(this.name), 'lat': this.position[1], 'lng': this.position[0] };
                 if (debugAll) {
                     console.log(`-> at ${currentTime} remember`, route_check);
                 }
