@@ -1472,6 +1472,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.request_rotation_from_track = true;
     }
 
+    this.setTypeFlagsReg(data);
     this.setFlight(flight);
 
     if (mlat && noMLAT) {
@@ -1638,8 +1639,6 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     if (!this.dbinfoLoaded) {
         this.checkForDB(data);
     }
-
-    this.setTypeFlagsReg(data);
 
     this.last = now;
     this.updatePositionData(now, last, data, init);
@@ -2765,19 +2764,19 @@ PlaneObject.prototype.setTypeData = function() {
 };
 
 PlaneObject.prototype.setTypeFlagsReg = function(data) {
-        if (data.t && data.t != this.icaoType) {
-            this.icaoType = `${data.t}`;
-            this.setTypeData();
-        }
-        if (data.dbFlags) {
-            this.military = data.dbFlags & 1;
-            this.interesting = data.dbFlags & 2;
-            this.pia = data.dbFlags & 4;
-            this.ladd = data.dbFlags & 8;
-            if (this.pia)
-                this.registration = null;
-        }
-        if (data.r) this.registration = `${data.r}`;
+    if (data.t && data.t != this.icaoType) {
+        this.icaoType = `${data.t}`;
+        this.setTypeData();
+    }
+    if (data.dbFlags) {
+        this.military = data.dbFlags & 1;
+        this.interesting = data.dbFlags & 2;
+        this.pia = data.dbFlags & 4;
+        this.ladd = data.dbFlags & 8;
+        if (this.pia)
+            this.registration = null;
+    }
+    if (data.r) this.registration = `${data.r}`;
 }
 
 PlaneObject.prototype.checkForDB = function(data) {
@@ -2890,17 +2889,19 @@ PlaneObject.prototype.setFlight = function(flight) {
         this.flight = `${flight}`;
         this.name = this.flight.trim() || 'empty callsign';
         this.flightTs = now;
+        if (useRouteAPI
+            && this.visible
+            && this.name
+            && this.name != 'empty callsign'
+            && this.registration != this.name
+        ) {
 
-        let currentName = this.name;
-        if (useRouteAPI && this.visible) {
+            let currentName = normalized_callsign(this.name);
             if (g.route_cache[currentName] === undefined &&
-                this.name &&
-                this.name != 'empty callsign' &&
                 this.seen_pos < 60 &&
-                this.registration != this.name &&
                 this.position) {
                 // we have all the pieces that allow us to lookup a route
-                let route_check = { 'callsign': normalized_callsign(this.name), 'lat': this.position[1], 'lng': this.position[0] };
+                let route_check = { 'callsign': currentName, 'lat': this.position[1], 'lng': this.position[0] };
                 if (debugAll) {
                     console.log(`-> at ${currentTime} remember`, route_check);
                 }
