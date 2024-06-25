@@ -2862,7 +2862,7 @@ PlaneObject.prototype.setProjection = function(arg) {
 }
 
 function normalized_callsign(flight) {
-    const re = /^([A-Z]*)([0-9]*)$/;
+    const re = /^([A-Z]*)([A-Z0-9]*)$/;
     const match = flight.match(re);
     if (!match) {
         return flight;
