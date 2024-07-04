@@ -90,3 +90,11 @@ See the main readme for more examples on how to use the filters
 - realHeat - real heatmap instead of dots
 - heatBlur - parameter for realHeat
 - heatWeight - parameter for realHeat
+
+## showTrace (only available with readsb globe-history)
+
+- icao=71be20 - select a plane (multiple planes with comma works but is a bit glitchy)
+- showTrace=2024-07-04 - show the trace for a particular UTC date (can be selected via the history tab in the aircraft details)
+- startTime=08:31:30 - only show data after this UTC time
+- endTime=08:38:30 - only show data before this UTC time
+- timestamp=1720081992 - show aircraft details for a particular time as an UNIC epoch timestamp (needs to be within the showTrace date) (clicking on the trace will change this in the URL bar)
