@@ -687,13 +687,6 @@ function fetchData(options) {
         reaper();
     }
 }
-function earlyInitPage() {
-    // things that can run without receiver json being known
-    if (audio_url) {
-        jQuery('#mp3player').show();
-        document.getElementById('mp3player_audio').src = audio_url;
-    }
-}
 
 // this function is called from index.html on body load
 // kicks off the whole rabbit hole
@@ -785,8 +778,40 @@ function replaySpeedChange(arg) {
     legShift(0);
 };
 
-
 function initPage() {
+    if (usp.has('SiteLat') && usp.has('SiteLon')) {
+        let lat = parseFloat(usp.get('SiteLat'));
+        let lon = parseFloat(usp.get('SiteLon'));
+        if (!isNaN(lat) && !isNaN(lon)) {
+            if (true || usp.has('SiteNosave')) {
+                SiteLat = CenterLat = DefaultCenterLat = lat;
+                SiteLon = CenterLon = DefaultCenterLon = lon;
+                SiteOverride = true;
+            } else {
+                loStore['SiteLat'] = lat;
+                loStore['SiteLon'] = lon;
+            }
+        }
+    }
+    if (loStore['SiteLat'] != null && loStore['SiteLon'] != null) {
+        if (usp.has('SiteClear')) {
+            loStore.removeItem('SiteLat');
+            loStore.removeItem('SiteLon');
+        } else if (!usp.has('SiteNosave')) {
+            SiteLat = CenterLat = DefaultCenterLat = parseFloat(loStore['SiteLat']);
+            SiteLon = CenterLon = DefaultCenterLon = parseFloat(loStore['SiteLon']);
+            SiteOverride = true;
+        }
+    }
+
+}
+
+function earlyInitPage() {
+    // things that can run without receiver json being known
+    if (audio_url) {
+        jQuery('#mp3player').show();
+        document.getElementById('mp3player_audio').src = audio_url;
+    }
     let value;
 
     if (uk_advisory) {
@@ -864,31 +889,6 @@ function initPage() {
     if (usp.has('sidebarWidth')) {
         loStore['sidebar_width'] = usp.get('sidebarWidth');
         loStore['sidebar_visible'] = "true";
-    }
-
-    if (usp.has('SiteLat') && usp.has('SiteLon')) {
-        let lat = parseFloat(usp.get('SiteLat'));
-        let lon = parseFloat(usp.get('SiteLon'));
-        if (!isNaN(lat) && !isNaN(lon)) {
-            if (true || usp.has('SiteNosave')) {
-                SiteLat = CenterLat = DefaultCenterLat = lat;
-                SiteLon = CenterLon = DefaultCenterLon = lon;
-                SiteOverride = true;
-            } else {
-                loStore['SiteLat'] = lat;
-                loStore['SiteLon'] = lon;
-            }
-        }
-    }
-    if (loStore['SiteLat'] != null && loStore['SiteLon'] != null) {
-        if (usp.has('SiteClear')) {
-            loStore.removeItem('SiteLat');
-            loStore.removeItem('SiteLon');
-        } else if (!usp.has('SiteNosave')) {
-            SiteLat = CenterLat = DefaultCenterLat = parseFloat(loStore['SiteLat']);
-            SiteLon = CenterLon = DefaultCenterLon = parseFloat(loStore['SiteLon']);
-            SiteOverride = true;
-        }
     }
 
     if (usp.has('allTracks')) {
