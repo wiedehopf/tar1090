@@ -374,6 +374,7 @@ let darkModeDefault = true; // turn on dark mode by default (change in browser p
 
 let tableInView = false; // only show aircraft in current view (V button)
 
+let audio_url = ""; // show html5 audio player for this URL
 
 let aiscatcher_server = "";
 let aiscatcher_refresh = 15;

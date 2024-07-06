@@ -687,6 +687,13 @@ function fetchData(options) {
         reaper();
     }
 }
+function earlyInitPage() {
+    // things that can run without receiver json being known
+    if (audio_url) {
+        jQuery('#mp3player').show();
+        document.getElementById('mp3player_audio').src = audio_url;
+    }
+}
 
 // this function is called from index.html on body load
 // kicks off the whole rabbit hole
@@ -696,6 +703,9 @@ function initialize() {
         iconTest();
         return;
     }
+
+    // things that can run without receiver json being known
+    earlyInitPage();
 
     jQuery.when(configureReceiver, heatmapDefer).done(function() {
 
