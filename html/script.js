@@ -699,6 +699,7 @@ function initialize() {
 
     // things that can run without receiver json being known
     earlyInitPage();
+    initMapEarly();
 
     jQuery.when(configureReceiver, heatmapDefer).done(function() {
 
@@ -2488,13 +2489,7 @@ function ol_map_init() {
     checkPointermove();
 }
 
-// Initalizes the map and starts up our timers to call various functions
-function initMap() {
-
-    if (globeIndex && adsbexchange) {
-        jQuery('#dump1090_total_history_td').hide();
-        jQuery('#dump1090_message_rate_td').hide();
-    }
+function initMapEarly() {
 
     // Load stored map settings if present
     CenterLon = Number(loStore['CenterLon']) || DefaultCenterLon;
@@ -2534,6 +2529,16 @@ function initMap() {
             runAfterLoad(geoFindMe);
         }
     });
+}
+
+
+// Initalizes the map and starts up our timers to call various functions
+function initMap() {
+
+    if (globeIndex && adsbexchange) {
+        jQuery('#dump1090_total_history_td').hide();
+        jQuery('#dump1090_message_rate_td').hide();
+    }
 
     locationDotLayer = new ol.layer.Vector({
         name: 'locationDot',
