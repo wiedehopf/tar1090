@@ -779,6 +779,53 @@ function replaySpeedChange(arg) {
 };
 
 function initPage() {
+
+    if (globeIndex) {
+        function setGlobeTableLimit() {
+            let mult = 1 + 4 * toggles['moreTableLines1'].state + 16 * (toggles['moreTableLines2'] && toggles['moreTableLines2'].state);
+            globeTableLimit = globeTableLimitBase * mult;
+            if (toggles['allTableLines'] && toggles['allTableLines'].state)
+                globeTableLimit = 1e9;
+            if (onMobile)
+                globeTableLimit /= 2;
+        };
+        new Toggle({
+            key: "moreTableLines1",
+            display: "More Table Lines",
+            container: "#sidebar-table",
+            init: false,
+            setState: setGlobeTableLimit,
+        });
+        new Toggle({
+            key: "moreTableLines2",
+            display: "Even More Table Lines",
+            container: "#sidebar-table",
+            init: false,
+            setState: setGlobeTableLimit,
+        });
+        new Toggle({
+            key: "allTableLines",
+            display: "All Table Lines",
+            container: "#sidebar-table",
+            init: false,
+            setState: setGlobeTableLimit,
+        });
+    }
+
+
+    if (!globeIndex) {
+        jQuery("#lastLeg_cb").parent().hide();
+        jQuery('#show_trace').hide();
+    }
+    if (globeIndex) {
+        toggleTableInView('enable');
+        if (icaoFilter) {
+            toggleTableInView('disable');
+        }
+    } else {
+        jQuery('#V').show();
+    }
+
     if (usp.has('SiteLat') && usp.has('SiteLon')) {
         let lat = parseFloat(usp.get('SiteLat'));
         let lon = parseFloat(usp.get('SiteLon'));
@@ -1476,38 +1523,6 @@ jQuery('#selected_altitude_geom1')
         }
     });
 
-    if (globeIndex) {
-        function setGlobeTableLimit() {
-            let mult = 1 + 4 * toggles['moreTableLines1'].state + 16 * (toggles['moreTableLines2'] && toggles['moreTableLines2'].state);
-            globeTableLimit = globeTableLimitBase * mult;
-            if (toggles['allTableLines'] && toggles['allTableLines'].state)
-                globeTableLimit = 1e9;
-            if (onMobile)
-                globeTableLimit /= 2;
-        };
-        new Toggle({
-            key: "moreTableLines1",
-            display: "More Table Lines",
-            container: "#sidebar-table",
-            init: false,
-            setState: setGlobeTableLimit,
-        });
-        new Toggle({
-            key: "moreTableLines2",
-            display: "Even More Table Lines",
-            container: "#sidebar-table",
-            init: false,
-            setState: setGlobeTableLimit,
-        });
-        new Toggle({
-            key: "allTableLines",
-            display: "All Table Lines",
-            container: "#sidebar-table",
-            init: false,
-            setState: setGlobeTableLimit,
-        });
-    }
-
     new Toggle({
         key: "sidebar_visible",
         display: "Sidebar visible",
@@ -1691,19 +1706,6 @@ jQuery('#selected_altitude_geom1')
         jQuery('#imageConfigHeader').show();
     }
 
-
-    if (!globeIndex) {
-        jQuery("#lastLeg_cb").parent().hide();
-        jQuery('#show_trace').hide();
-    }
-    if (globeIndex) {
-        toggleTableInView('enable');
-        if (icaoFilter) {
-            toggleTableInView('disable');
-        }
-    } else {
-        jQuery('#V').show();
-    }
 
     if (hideButtons) {
         jQuery('#header_top').hide();
