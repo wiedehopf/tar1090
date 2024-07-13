@@ -8010,7 +8010,7 @@ function timeoutFetch() {
 }
 
 function refreshHistory() {
-    if (heatmap || replay || globeIndex || pTracks || uuid) {
+    if (heatmap || replay || globeIndex || pTracks || uuid || !HistoryChunks) {
         noLongerHidden();
         return;
     }
@@ -8061,7 +8061,7 @@ function refreshHistory() {
             noLongerHidden();
         }
     }).fail(function() {
-        noLongerHidden();
+        setTimeout(refreshHistory, 500);
     });
 }
 
