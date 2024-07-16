@@ -70,7 +70,15 @@ try {
     usp = {
         params: new URLSearchParams(),
         has: function(s) {return this.params.has(s.toLowerCase());},
-        get: function(s) {return this.params.get(s.toLowerCase());},
+        get: function(s) {
+            let val = this.params.get(s.toLowerCase());
+            if (val) {
+                // make XSS a bit harder
+                val = val.replace(/[<>#&]/g, '');
+                //console.log("usp.get(" + s + ") = " + val);
+            }
+            return val;
+        },
         getFloat: function(s) {
             if (!this.params.has(s.toLowerCase())) return null;
             const param =  this.params.get(s.toLowerCase());
