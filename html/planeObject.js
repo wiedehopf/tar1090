@@ -2862,17 +2862,18 @@ PlaneObject.prototype.setProjection = function(arg) {
 }
 
 function normalized_callsign(flight) {
-    const re = /^([A-Z]*)([A-Z0-9]*)$/;
+    const re = /^([A-Z]*)([0-9]*)([A-Z]*)$/;
     const match = flight.match(re);
     if (!match) {
         return flight;
     }
     let alpha = match[1];
     let num = match[2];
+    let alpha2 = match[3];
     while(num[0] == '0' && num.length > 1) {
         num = num.slice(1);
     }
-    return alpha + num;
+    return alpha + num + alpha2;
 }
 
 function routeCheck(currentName, lat, lon) {
