@@ -13,6 +13,7 @@
 - icao=icao - selects and isolates the selected plane(s). Separate multiple with commas.
 - noIsolation - show other planes and not only the ones selected by ?icao
 - icaoFilter=hex1,hex2,hex3 - Only show the mentioned hex IDs, no other aircraft will ever be displayed
+- icaoBlacklist=hex1,hex2,hex3 - Never show the mentioned hex IDs
 - reg=registration - Direct link to specific aircraft registration(s). Separate multiple with commas. ?icao is preferred as this option takes longer to load.
 - filterAltMin=500 - filter minimum altitute to 500 ft
 - filterAltMax=5000 - filter maximum altitute to 5000 ft

@@ -379,6 +379,9 @@ let audio_url = ""; // show html5 audio player for this URL
 let aiscatcher_server = "";
 let aiscatcher_refresh = 15;
 
+let icaoFilter = null;
+let icaoBlacklist = null;
+
 // legacy variables
 let OutlineMlatColor = null;
 

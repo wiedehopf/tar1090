@@ -82,7 +82,6 @@ let pendingFetches = 0;
 let firstFetch = true;
 let debugCounter = 0;
 let pathName = window.location.pathname.replace(/\/+/, '/') || "/";
-let icaoFilter = null;
 let sourcesFilter = null;
 let sources = ['adsb', ['uat', 'adsr'], 'mlat', 'tisb', 'modeS', 'other', 'adsc'];
 let flagFilter = null;
@@ -192,6 +191,9 @@ function processAircraft(ac, init, uat) {
     const hex = isArray ? ac[0] : ac.hex;
 
     if (icaoFilter && !icaoFilter.includes(hex))
+        return;
+
+    if (icaoBlacklist && icaoBlacklist.includes(hex))
         return;
 
     const type = isArray ? ac[7] : ac.type;
@@ -1045,6 +1047,10 @@ function earlyInitPage() {
 
     if (value = usp.get('icaoFilter')) {
         icaoFilter = value.toLowerCase().split(',');
+    }
+
+    if (value = usp.get('icaoBlacklist')) {
+        icaoBlacklist = value.toLowerCase().split(',');
     }
 
     if (value = usp.getFloat('filterMaxRange')) {

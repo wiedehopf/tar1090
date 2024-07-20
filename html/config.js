@@ -369,6 +369,10 @@ HideCols = [
 // aiscatcher_server = "http://192.168.1.113:8100"; // update with your server address
 // aiscatcher_refresh = 15; // refresh interval in seconds
 
+
+// icaoFilter = [ "123456", "888888" ]; // only show these icaos
+// icaoBlacklist = [ "123456", "888888" ]; // never show these icaos
+
 /*
 tableColors = {
     unselected: {
