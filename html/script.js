@@ -711,6 +711,7 @@ function initialize() {
             if (receiverJson.json_trace_interval < 2)
                 traces_high_res = true;
             if (receiverJson.lat != null) {
+                //console.log("receiver.json lat: " + receiverJson.lat)
                 SiteLat = receiverJson.lat;
                 SiteLon = receiverJson.lon;
                 SitePosition = [SiteLon, SiteLat];
@@ -852,6 +853,9 @@ function initPage() {
             SiteLon = CenterLon = DefaultCenterLon = parseFloat(loStore['SiteLon']);
             SiteOverride = true;
         }
+    } else {
+        CenterLat = DefaultCenterLat;
+        CenterLon = DefaultCenterLon;
     }
 
 }
@@ -2498,11 +2502,6 @@ function ol_map_init() {
 function initMapEarly() {
 
     // Load stored map settings if present
-    CenterLon = Number(loStore['CenterLon']) || DefaultCenterLon;
-    CenterLat = Number(loStore['CenterLat']) || DefaultCenterLat;
-    zoomLvl = Number(loStore['zoomLvl']) || DefaultZoomLvl;
-    zoomLvlCache = zoomLvl;
-
     if (overrideMapType)
         MapType_tar1090 = overrideMapType;
     else if (loStore['MapType_tar1090']) {
@@ -2540,6 +2539,12 @@ function initMapEarly() {
 
 // Initalizes the map and starts up our timers to call various functions
 function initMap() {
+
+    CenterLon = Number(loStore['CenterLon']) || DefaultCenterLon;
+    CenterLat = Number(loStore['CenterLat']) || DefaultCenterLat;
+    //console.log("initMap Centerlat: " + CenterLat);
+    zoomLvl = Number(loStore['zoomLvl']) || DefaultZoomLvl;
+    zoomLvlCache = zoomLvl;
 
     if (globeIndex && adsbexchange) {
         jQuery('#dump1090_total_history_td').hide();
