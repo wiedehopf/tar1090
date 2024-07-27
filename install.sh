@@ -485,3 +485,5 @@ else
     echo "All done! You'll need to configure your webserver yourself, see ${ipath}/nginx-tar1090.conf for a reference nginx configuration"
 fi
 
+# OARC changes
+cp -r ~/airline-logo-scraper/avcodes_banners/ /usr/local/share/tar1090/html
