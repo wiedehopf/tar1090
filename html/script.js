@@ -2194,7 +2194,8 @@ function webglAddLayer() {
             ],
             'icon-rotation': [ 'get' , 'rotation' ],
             'icon-rotate-with-view': false,
-            'icon-scale': [ 'get', 'scale', 'number' ]
+            //'icon-scale': [ 'array', ['get', 'scale'], ['get', 'scale'] ],
+            'icon-scale': [ 'abs', ['get', 'scale']],
         };
         if (heatmap) {
             glStyle = {
