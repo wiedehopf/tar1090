@@ -235,6 +235,15 @@ let ChartBundleLayers = true;
 //
 let BingMapsAPIKey = null;
 
+// Provide a Mapbox API key here to enable the Mapbox vector layers.
+// You can obtain a free key (with usage limits) at
+// https://www.mapbox.com/
+//
+// Be sure to quote your key:
+//   MapboxAPIKey = "your key here";
+//
+let MapboxAPIKey = null;
+
 let pf_data = ["chunks/pf.json"]
 
 let mapOrientation = 0; // This determines what is up, normally north (0 degrees)
