@@ -2879,19 +2879,16 @@ function normalized_callsign(flight) {
 function routeCheck(currentName, lat, lon) {
     // we have all the pieces that allow us to lookup a route
     let route_check = { 'callsign': currentName, 'lat': lat, 'lng': lon };
-    if (debugAll) {
-        console.log(`-> at ${currentTime} remember`, route_check);
-    }
     g.route_check_array.push(route_check);
     g.route_cache[currentName] = ''; // this way it only gets added to the array once
 }
 
-function routeDoLookup() {
+function routeDoLookup(currentTime) {
     // JavaScript doesn't interrupt running functions - so this should be safe to do
     if (g.route_check_in_flight == false && g.route_check_array.length > 0) {
         g.route_check_in_flight = true;
         if (debugAll) {
-            console.log(`next batch to send at ${currentTime}:`, g.route_check_array);
+            console.log(`${currentTime}: g.route_check_array:`, g.route_check_array);
         }
         // grab up to the first 100 callsigns and leave the rest for later
         var route_check_array = g.route_check_array.slice(0,100);
@@ -2903,13 +2900,14 @@ function routeDoLookup() {
             dataType: 'json',
             data: JSON.stringify({ 'planes': route_check_array})})
             .done((routes) => {
+                let currentTime = new Date().getTime()/1000;
                 g.route_check_in_flight = false;
                 if (debugAll) {
-                    console.log(routes);
+                    console.log(`${currentTime}: got routes:`, routes);
                 }
                 for (var route of routes) {
                     // let's log just a little bit of what's happening
-                    if (1 || debugAll) {
+                    if (debugAll) {
                         var logText = `result for ${route.callsign}: `;
                         if (route._airport_codes_iata == 'unknown') {
                             logText += 'unknown to the API server';
@@ -2934,14 +2932,13 @@ function routeDoLookup() {
                 console.log('API server call failed with', status);
             });
     } else {
-        if (debugAll) {
+        if (0 && debugAll) {
             console.log(`nothing to send to server at ${currentTime}`);
         }
     }
 }
 
 PlaneObject.prototype.setFlight = function(flight) {
-    var currentTime = new Date().getTime()/1000;
     if (flight == null) {
         if (now - this.flightTs > 10 * 60) {
             this.flight = null;
@@ -2970,12 +2967,6 @@ PlaneObject.prototype.setFlight = function(flight) {
                 // this ensures that if eventually we get (and cache) the route, the plane
                 // information gets updated as we keep coming back to this function
                 this.routeString = g.route_cache[currentName];
-            }
-
-            if (useRouteAPI && currentTime > g.route_cache_timer) {
-                // check if it's time to send a batch of request to the API server
-                g.route_cache_timer = currentTime + 1;
-                routeDoLookup();
             }
         }
     }
