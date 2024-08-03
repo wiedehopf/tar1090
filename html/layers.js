@@ -593,7 +593,9 @@ function createBaseLayers() {
             opacity: nexradOpacity,
             visible: false,
             zIndex: 99,
-            extent: naExtent,
+            //extent: naExtent,
+            // this somehow seems to cause webgl errors.
+            // workaround by just not using this, it's not important
         });
 
         let refreshNexrad = function() {
@@ -702,7 +704,8 @@ function createBaseLayers() {
             opacity: dwdRadolanOpacity,
             visible: false,
             zIndex: 99,
-            extent: dwdExtent,
+            //extent: dwdExtent,
+            // extent somehow bugged
         });
 
 
