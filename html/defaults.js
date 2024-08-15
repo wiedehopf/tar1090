@@ -387,6 +387,8 @@ let audio_url = ""; // show html5 audio player for this URL
 
 let aiscatcher_server = "";
 let aiscatcher_refresh = 15;
+let aiscatcher_test = true;
+let aisTimeout = 1200;
 
 let icaoFilter = null;
 let icaoBlacklist = null;
@@ -407,6 +409,7 @@ let tableColors = {
         tisb:      "#ffd8e6",
         unknown:   "#dcdcdc",
         other:   "#dcdcdc",
+        ais:     "#dcdcdc",
     },
     selected: {
         adsb:      "#88DDFF",
@@ -418,6 +421,7 @@ let tableColors = {
         tisb:      "#FFC1D8",
         unknown:   "#bcbcbc",
         other:   "#bcbcbc",
+        ais:   "#bcbcbc",
     },
     special: {
         7500:      "#ff0000",

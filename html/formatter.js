@@ -319,6 +319,8 @@ function format_data_source(source) {
 			return "TIS-B";
 		case 'modeS':
 			return "Mode S";
+		case 'ais':
+			return "AIS";
 		case 'mode_ac':
 			return "Mode A/C";
         case 'adsc':

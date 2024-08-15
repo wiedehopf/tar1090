@@ -1235,6 +1235,11 @@ let CategoryIcons = {
 function getBaseMarker(category, typeDesignator, typeDescription, wtc, addrtype, altitude, eastbound) {
 
     //return ['f5_tiger', 1];
+
+    if (addrtype == 'ais') {
+        return ['ground_square', 0.7];
+    }
+
     if (halloween) {
         if ((typeDescription && typeDescription[0] == 'H') || typeDesignator == 'C172')
             return ['pumpkin', 1];

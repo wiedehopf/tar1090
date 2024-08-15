@@ -1742,6 +1742,8 @@ function initLegend(colors) {
         html += '<div class="legendTitle" style="background-color:' + colors['modeS'] + ';">Mode-S</div>';
     if (globeIndex)
         html += '<div class="legendTitle" style="background-color:' + colors['other'] + ';">Other</div>';
+    if (aiscatcher_server)
+        html += '<div class="legendTitle" style="background-color:' + colors['ais'] + ';">AIS</div>';
 
     document.getElementById('legend').innerHTML = html;
 }
@@ -2050,6 +2052,10 @@ function setIntervalTimers() {
                 //console.log(data);
                 g.aiscatcher_source.setUrl("data:text/plain;base64,"+btoa(data));
                 g.aiscatcher_source.refresh();
+
+                if (aiscatcher_test) {
+                    processAIS(JSON.parse(data));
+                }
             });
         }
         timers.aiscatcher = setInterval(updateAIScatcher, aiscatcher_refresh * 1000);
@@ -2062,6 +2068,59 @@ function setIntervalTimers() {
 
     // in case the visibility changed while this was running
     handleVisibilityChange();
+}
+
+let ais_now = new Date().getTime() / 1000;
+let ais_last = new Date().getTime() / 1000;
+
+function processAIS(data) {
+
+    ais_now = new Date().getTime() / 1000;
+    ais_last = ais_now;
+
+    const features = data.features;
+    for (let i in features) {
+        processBoat(features[i], ais_now, ais_last);
+    }
+}
+
+function processBoat(feature, now, last) {
+    const pr = feature.properties;
+    const hex = 'MMSI' + pr.mmsi;
+
+    // Do we already have this plane object in g.planes?
+    // If not make it.
+    let plane = g.planes[hex]
+
+    if (!plane) {
+        plane = new PlaneObject(hex);
+        plane.country = pr.country;
+        plane.country_code = pr.country;
+        plane.baseScale = 0.2;
+    }
+
+    let ac = {};
+
+    ac.type = 'ais';
+    ac.gs = pr.speed;
+    ac.flight = pr.callsign;
+    ac.r = pr.shipname
+    ac.seen = now - pr.last_signal;
+
+    ac.messages  = pr.count;
+    ac.rssi      = pr.level;
+
+    ac.track = pr.cog;
+
+    if (feature.geometry && feature.geometry.coordinates) {
+        const coords = feature.geometry.coordinates;
+        ac.lat = coords[1];
+        ac.lon = coords[0];
+        ac.seen_pos = now - pr.last_signal;
+    }
+    //console.log(ac);
+
+    plane.updateData(now, last, ac, false);
 }
 
 let djson;
@@ -2992,9 +3051,13 @@ function reaper(all) {
         if (plane == null)
             continue;
         plane.seen = now - plane.last_message_time;
-        if ( all || ((!plane.selected)
-            && plane.seen > reapTimeout
-            && (plane.dataSource != 'adsc' || plane.seen > jaeroTimeout))
+        if ( all ||
+            (
+                (!plane.selected)
+                && plane.seen > reapTimeout
+                && (plane.dataSource != 'adsc' || plane.seen > jaeroTimeout)
+                && (plane.dataSource != 'ais' || plane.seen > aisTimeout)
+            )
         ) {
             // Reap it.
             //console.log("Removed " + plane.icao);
