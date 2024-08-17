@@ -2104,6 +2104,7 @@ function processBoat(feature, now, last) {
     ac.type = 'ais';
     ac.gs = pr.speed;
     ac.flight = pr.callsign;
+    ac.altitude = "ground";
     ac.r = pr.shipname
     ac.seen = now - pr.last_signal;
 
