@@ -16,7 +16,7 @@ let loadFinished = false;
 let Dump1090Version = "unknown version";
 let RefreshInterval = 1000;
 let globeSimLoad = 6;
-let adsbexchange = false;
+let aggregator = false;
 let enable_uat = false;
 let enable_pf_data = false;
 let HistoryChunks = false;
@@ -154,8 +154,8 @@ var fakeLocalStorage = function() {
 };
 
 
-if (window.location.href.match(/adsbexchange.com/) && window.location.pathname == '/') {
-    adsbexchange = true;
+if (window.location.href.match(/aggregator.com/) && window.location.pathname == '/') {
+    aggregator = true;
 }
 if (0 && window.self != window.top) {
     fakeLocalStorage();
@@ -217,7 +217,7 @@ if (feed != null) {
         for (let i in split) {
             uuid.push(encodeURIComponent(split[i]));
         }
-        if (uuid[0].length > 18) {
+        if (uuid[0].length > 18 && window.location.href.match(/adsbexchange.com/)) {
             console.log('redirecting the idiot, oui!');
             let URL = 'https://www.adsbexchange.com/api/feeders/tar1090/?feed=' + uuid[0];
             console.log(URL);
@@ -412,9 +412,9 @@ let test_chunk_defer;
 const hostname = window.location.hostname;
 if (uuid) {
     // don't need receiver / chunks json
-} else if (0 || (adsbexchange && (hostname.startsWith('globe.') || hostname.startsWith('globe-')))) {
-    console.log("Using adsbexchange fast-path load!");
-    let data = {"zstd":true,"reapi":true,"refresh":1600,"history":1,"dbServer":true,"binCraft":true,"globeIndexGrid":3,"globeIndexSpecialTiles":[],"version":"adsbexchange backend"};
+} else if (aggregator) {
+    console.log("Using aggregator fast-path load!");
+    let data = {"zstd":true,"reapi":true,"refresh":1000,"history":1,"dbServer":true,"binCraft":true,"globeIndexGrid":3,"globeIndexSpecialTiles":[],"version":"aggregator backend"};
     get_receiver_defer = jQuery.Deferred().resolve(data);
     test_chunk_defer = jQuery.Deferred().reject();
 } else {
@@ -832,7 +832,8 @@ function webAssemblyFail(e) {
     if (!reapi) {
         binCraft = false;
     }
-    if (adsbexchange && !uuid) {
+    // this enforcing should not be needed
+    if (0 && aggregator && !uuid) {
         inhibitFetch = true;
         reApi = false;
         jQuery("#generic_error_detail").text("Your browser is not supporting webassembly, this website does not work without webassembly.");

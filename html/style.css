@@ -50,7 +50,7 @@ select {
     z-index: 1;
     background-color: var(--BGCOLOR1);
 }
-.adsbx-selected-bg:before {
+.aggregator-selected-bg:before {
     content: ' ';
     position:absolute;
     display:block;
@@ -61,7 +61,7 @@ select {
     background-size: calc( 148 * var(--SCALE)) calc( 148 * var(--SCALE));
     background-repeat: no-repeat;
     background-position: calc( 7px * var(--SCALE)) calc( 108px * var(--SCALE));
-    background-image: url("images/cropped-Stealth-1-192x192.png");
+    background-image: url("images/aggregator-logo.png");
     z-index:2;
     opacity: 0.12;
 }
@@ -155,7 +155,7 @@ select {
     background-position: 0;
     background-color: transparent;
     border: none;
-    background-image: url("images/cropped-Stealth-1-48x48.png");
+    background-image: url("images/aggregator-logo.png");
     z-index: 99;
     opacity: 0.7;
     margin: 4px;

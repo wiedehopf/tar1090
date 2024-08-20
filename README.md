@@ -118,7 +118,7 @@ Then F5 to refresh the web interface in the browser.
 
 If your instance is not at /tar1090 you'll need to edit the config.js in the approppriate html folder, see "Multiple instances".
 
-## Enable Share links to ADSB-X
+## Enable Share links to ADSB-X or other websites using tar1090
 ```
 # ENABLE:
 sudo sed -i -e 's?.*shareBaseUrl.*?shareBaseUrl  = "https://globe.adsbexchange.com/";?' /usr/local/share/tar1090/html/config.js
