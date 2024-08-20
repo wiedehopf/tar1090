@@ -829,7 +829,9 @@ function add_kml_overlay(url, name, opacity) {
 function webAssemblyFail(e) {
     zstdDecode = null;
     zstd = false;
-    binCraft = false;
+    if (!reapi) {
+        binCraft = false;
+    }
     if (adsbexchange && !uuid) {
         inhibitFetch = true;
         reApi = false;
