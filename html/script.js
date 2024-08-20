@@ -6163,6 +6163,7 @@ function inView(pos, ex) {
 let lastAddressBarUpdate = 0;
 let updateAddressBarTimeout;
 let updateAddressBarPushed = false;
+let updateAddressBarString = "";
 function updateAddressBar() {
     if (!window.history || !window.history.replaceState)
         return;
@@ -6286,6 +6287,11 @@ function updateAddressBar() {
 
     lastAddressBarUpdate = time;
     */
+
+    if (string == updateAddressBarString) {
+        return;
+    }
+    updateAddressBarString = string;
 
     if (!updateAddressBarPushed) {
         // make sure we keep the thing we clicked on first in the browser history
