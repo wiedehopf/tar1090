@@ -829,7 +829,7 @@ function add_kml_overlay(url, name, opacity) {
 function webAssemblyFail(e) {
     zstdDecode = null;
     zstd = false;
-    if (!reapi) {
+    if (!reApi) {
         binCraft = false;
     }
     // this enforcing should not be needed
