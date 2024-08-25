@@ -3112,7 +3112,11 @@ function refreshPageTitle() {
         subtitle += MessageRate.toFixed(1) + '/s';
     }
 
-    document.title = PageName + ' - ' + subtitle;
+    if (PageName) {
+        document.title = PageName + ' - ' + subtitle;
+    } else {
+        document.title = subtitle;
+    }
 }
 
 function displaySil() {
