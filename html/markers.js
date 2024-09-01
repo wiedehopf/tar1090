@@ -1363,8 +1363,12 @@ function svgShapeToURI(shape, fillColor, strokeColor, strokeWidth, scale){
 }
 
 let glIconSize = 72;
-let glImapWidth = 8;
-let glImapHeight = 11;
+let glImapCols = 8;
+if (usp.has('iconTestCols')) {
+    glImapCols = usp.getInt('iconTestCols');
+}
+
+let glImapRows = Math.ceil(Object.keys(shapes).length / glImapCols);
 
 let refCross = {
     w: glIconSize,
@@ -1375,12 +1379,16 @@ let refCross = {
 };
 
 function getSpriteX(shape) {
-    return (shape.id % glImapWidth);
+    return (shape.id % glImapCols);
 }
 function getSpriteY(shape) {
-    return Math.floor(shape.id / glImapWidth);
+    return Math.floor(shape.id / glImapCols);
 }
 function iconTest() {
+    let labels = false;
+    if (usp.has('iconTestLabels')) {
+        labels = true;
+    }
     jQuery('#large_mode_control').hide();
     jQuery('#header_top').hide();
     jQuery('#header_side').hide();
@@ -1390,20 +1398,40 @@ function iconTest() {
     jQuery('.ol-control').hide();
     jQuery('.ol-attribution').show();
     jQuery("#loader").addClass("hidden");
+
     let mapdiv = document.getElementById('iconTestCanvas');
     console.log(mapdiv);
+
     let iconSize = glIconSize;
-    let width = glImapWidth;
-    let height = glImapHeight;
-    mapdiv.innerHTML = '<div style="overflow: scroll; max-height: 100%; max-width: 100%"><canvas width="' + iconSize * width + '" height="' + iconSize * height + '" id="can"></canvas></div>';
+    let cols = glImapCols;
+    let rows = glImapRows;
+    let font = '10px sans-serif'
+
+    // labels shall not be used when generating sprites.png
+    let labelHeight = 12;
+    if (!labels) {
+        labelHeight = 0;
+    }
+    mapdiv.innerHTML = '<div style="overflow: scroll; max-height: 100%; max-width: 100%"><canvas width="' + iconSize * cols + '" height="' + (iconSize + labelHeight) * rows + '" id="can"></canvas></div>';
+
     let can = document.getElementById('can');
     let con = can.getContext('2d');
+
+    if (labels) {
+        con.font = font;
+        con.textAlign = 'center';
+        con.textBaseline = 'bottom';
+
+        con.fillStyle = 'LightGrey';
+        con.fillRect(0, 0, can.clientWidth, can.height);
+        con.fillStyle = 'Black';
+    }
 
     let svgJson = {};
 
     for (let shapeName in shapes) {
         let shape = shapes[shapeName];
-        if (getSpriteY(shape) / iconSize >= height) {
+        if (getSpriteY(shape) / iconSize >= rows) {
             console.log("make the canvas BIGGER!");
             mapdiv.innerHTML = '';
             break;
@@ -1420,10 +1448,14 @@ function iconTest() {
 
         let img = document.createElement('img');
         img.onload = function () {
-            con.drawImage(this, getSpriteX(shape) * glIconSize + offX, getSpriteY(shape) * glIconSize + offY);
+            con.drawImage(this, getSpriteX(shape) * glIconSize + offX, getSpriteY(shape) * (glIconSize + labelHeight) + offY);
         };
         let svgURI = svgShapeToURI(shape, '#FFFFFF', '#000000', outlineWidth * 0.75, scale);
         img.src = svgURI;
+
+        if (labels) {
+            con.fillText(shapeName, getSpriteX(shape) * glIconSize + glIconSize/2, (1 + getSpriteY(shape)) * (glIconSize + labelHeight));
+        }
 
         let svg = svgShapeToSVG(shape, '#FFFFFF', '#000000', outlineWidth * 0.75, 1.4);
         svgJson[shapeName] = svg;
@@ -1431,7 +1463,7 @@ function iconTest() {
         if (usp.has('grid')) {
             let img = document.createElement('img');
             img.onload = function () {
-                con.drawImage(this, getSpriteX(shape) * glIconSize, getSpriteY(shape) * glIconSize);
+                con.drawImage(this, getSpriteX(shape) * glIconSize, getSpriteY(shape) * (glIconSize + labelHeight));
             };
             let svgURI = svgShapeToURI(refCross, '#FFFFFF', '#000000', 0.75, 1);
             img.src = svgURI;
