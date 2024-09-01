@@ -963,6 +963,7 @@ let TypeDesignatorIcons = {
     'J8B': ['hi_perf', 1],
     'JH7': ['hi_perf', 1],
     'LTNG': ['hi_perf', 1],
+    'M346': ['hi_perf', 1],
     'METR': ['hi_perf', 1],
     'MG19': ['hi_perf', 1],
     'MG25': ['hi_perf', 1],
