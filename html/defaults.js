@@ -390,6 +390,9 @@ let aiscatcher_refresh = 15;
 let aiscatcher_test = true;
 let aisTimeout = 1200;
 
+let droneJson = "";
+let droneRefresh = 1000;
+
 let icaoFilter = null;
 let icaoBlacklist = null;
 

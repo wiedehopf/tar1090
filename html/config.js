@@ -380,7 +380,11 @@ HideCols = [
 
 // aiscatcher_server = "http://192.168.1.113:8100"; // update with your server address
 // aiscatcher_refresh = 15; // refresh interval in seconds
+// aiscatcher_test = true; // show with squares on the aircraft icon layer
+// aisTimeout = 1200;
 
+// droneJson = "";
+// droneRefresh = 1000;
 
 // icaoFilter = [ "123456", "888888" ]; // only show these icaos
 // icaoBlacklist = [ "123456", "888888" ]; // never show these icaos
