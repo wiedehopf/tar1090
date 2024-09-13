@@ -2094,10 +2094,10 @@ function processDrone(drone, now, last) {
 
     ac.type = 'other';
     ac.t = 'DRON';
-    ac.gs = drone.speed;
+    ac.gs = drone.speed / 1852 * 3600; // m/s to knots
     ac.flight = drone.description;
-    ac.alt_baro = drone.alt;
-    ac.baro_rate = drone.vspeed;
+    ac.alt_baro = drone.alt * 3.28; // m to ft
+    ac.baro_rate = drone.vspeed * 3.28 * 60; // m/s to fpm
 
     ac.seen = now - new Date(drone.time).getTime() / 1000;
 
