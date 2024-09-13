@@ -384,7 +384,7 @@ HideCols = [
 // aisTimeout = 1200;
 
 // droneJson = "";
-// droneRefresh = 1000;
+// droneRefresh = 1;
 
 // icaoFilter = [ "123456", "888888" ]; // only show these icaos
 // icaoBlacklist = [ "123456", "888888" ]; // never show these icaos
