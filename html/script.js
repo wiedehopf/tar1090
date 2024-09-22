@@ -3227,7 +3227,8 @@ function refreshPhoto(selected) {
         urlTail = '/hex/' + selected.icao.toUpperCase() + '?reg=' + selected.registration;
         const type = selected.icaoType;
         // && type != 'E170' && !type.startsWith('E75')
-        if (type) {
+        // planespotters is returning 500 for icaoType query param, disable this for the moment
+        if (0 && type) {
             urlTail += '&icaoType=' + type;
         }
         param = 'DB';
