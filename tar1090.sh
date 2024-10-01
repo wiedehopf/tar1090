@@ -146,7 +146,7 @@ while true; do
     cd "$RUN_DIR"
     if ! [[ -f chunks.json ]]; then
         echo "$RUN_DIR/chunks.json was corrupted or removed, fatal!"
-        exit 1
+        kill $$
     fi
     sleep $INTERVAL &
 
