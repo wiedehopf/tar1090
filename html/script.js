@@ -5878,6 +5878,8 @@ function processURLParams(){
         }
     }
 
+    lastRenderExtent = getRenderExtent();
+
     if (urlIcaos.length > 0) {
         const icaos = urlIcaos;
         if (!usp.has('noIsolation'))
