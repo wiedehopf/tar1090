@@ -24,7 +24,7 @@ if [[ -n "$4" ]] && grep -qs -e 'tar1090' "$4/install.sh"; then git_source="$4";
 
 lighttpd=no
 nginx=no
-function useSystemd () { command -v systemd &>/dev/null; }
+function useSystemd () { command -v systemctl &>/dev/null; }
 
 gpath="$TAR1090_UPDATE_DIR"
 if [[ -z "$gpath" ]]; then gpath="$ipath"; fi
