@@ -345,7 +345,7 @@ function createBaseLayers() {
                 transition: tileTransition,
             }),
             name: 'IFR_AreaLow',
-            title: 'IRF Enroute Chart Low',
+            title: 'IFR Enroute Chart Low',
             type: 'base'
         }));
 
@@ -359,7 +359,7 @@ function createBaseLayers() {
                 transition: tileTransition,
             }),
             name: 'IFR_High',
-            title: 'IRF Enroute Chart High',
+            title: 'IFR Enroute Chart High',
             type: 'base'
         }));
     }
