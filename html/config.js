@@ -146,7 +146,7 @@
 
 ColorByAlt = {
 	// HSL for planes with unknown altitude:
-	unknown : { h: 0,   s: 0,   l: 30 },
+	unknown : { h: 0,   s: 0,   l: 80 },
 
 	// HSL for planes that are on the ground:
 	ground  : { h: 0, s: 0, l: 45 },

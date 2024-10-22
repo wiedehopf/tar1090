@@ -123,7 +123,7 @@ let altitudeChartDefaultState = true;
 // All color values are given as Hue (0-359) / Saturation (0-100) / Lightness (0-100)
 let ColorByAlt = {
 	// HSL for planes with unknown altitude:
-	unknown : { h: 0,   s: 0,   l: 20 },
+	unknown : { h: 0,   s: 0,   l: 80 },
 
 	// HSL for planes that are on the ground:
 	ground  : { h: 220, s: 0, l: 30 },
