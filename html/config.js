@@ -46,12 +46,14 @@
 //range_outline_alpha = 1.0;
 //range_outline_width = 1.7;
 //range_outline_colored_by_altitude = false;
+// NOTE: dashed lines cause slowdown when zooming in, not recommended
 //range_outline_dash = [5, 5]; // null - solid line, [5, 5] - dashed line with 5 pixel lines and spaces in between
 //
 //
 // Style controls for the actal range outline:
 // actual_range_outline_color = '#00596b';
 // actual_range_outline_width = 1.7;
+// NOTE: dashed lines cause slowdown when zooming in, not recommended
 // actual_range_outline_dash = null; // null - solid line, [5, 5] - dashed line with 5 pixel lines and spaces in between
 
 // Enable / disable showing the actual range outline when first visiting the page

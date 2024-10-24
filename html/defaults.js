@@ -54,11 +54,13 @@ let range_outline_color = '#0000DD';
 let range_outline_alpha = 1.0;
 let range_outline_width = 1.7;
 let range_outline_colored_by_altitude = false;
+// NOTE: dashed lines cause slowdown when zooming in, not recommended
 let range_outline_dash = null; // null - solid line, [5, 5] - dashed line with 5 pixel lines and spaces in between
 
 // Style controls for the actal range outline:
 let actual_range_outline_color = '#00596b';
 let actual_range_outline_width = 1.7;
+// NOTE: dashed lines cause slowdown when zooming in, not recommended
 let actual_range_outline_dash = null; // null - solid line, [5, 5] - dashed line with 5 pixel lines and spaces in between
 //
 let actual_range_show = true;
