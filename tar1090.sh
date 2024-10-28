@@ -162,6 +162,9 @@ while true; do
     next_error=0
     error_printed=0
     while ! [[ -f "$SRC_DIR/aircraft.json" ]] || ! prune "$SRC_DIR/aircraft.json" "history_$date.json"; do
+        if ! [[ -f chunks.json ]]; then
+            break
+        fi
         now=$(date +%s%N | head -c-7)
         if (( now > next_error )); then
             if (( next_error != 0 )); then
