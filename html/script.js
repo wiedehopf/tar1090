@@ -817,7 +817,7 @@ function initPage() {
     }
 
 
-    if (!globeIndex) {
+    if (!globeIndex && !haveTraces) {
         jQuery("#lastLeg_cb").parent().hide();
         jQuery('#show_trace').hide();
     }
@@ -4421,7 +4421,7 @@ function selectPlaneByHex(hex, options) {
 
     const multiDeselect = multiSelect && newPlane && newPlane.selected && !onlySelected;
 
-    if (!options.noFetch && globeIndex && hex) {
+    if (!options.noFetch && (globeIndex || showTrace) && hex) {
         newPlane = getTrace(newPlane, hex, options);
     }
 

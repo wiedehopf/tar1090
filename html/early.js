@@ -32,6 +32,7 @@ let zstdDefer = jQuery.Deferred();
 let configureReceiver = jQuery.Deferred();
 let historyQueued = jQuery.Deferred();
 let historyTimeout = 60;
+let haveTraces = false;
 let globeIndex = 0;
 let globeIndexGrid = 0;
 let globeIndexSpecialTiles;
@@ -529,6 +530,8 @@ if (uuid != null) {
             data.globeIndexGrid = null; // disable globe on user request
         }
         dbServer = (data.dbServer) ? true : false;
+
+        haveTraces = Boolean(data.haveTraces || data.globeIndexGrid);
 
         if (heatmap || replay) {
             if (replay && data.globeIndexGrid != null)
