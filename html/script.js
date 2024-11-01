@@ -4421,7 +4421,7 @@ function selectPlaneByHex(hex, options) {
 
     const multiDeselect = multiSelect && newPlane && newPlane.selected && !onlySelected;
 
-    if (!options.noFetch && (globeIndex || showTrace) && hex) {
+    if (!options.noFetch && (globeIndex || showTrace || (haveTraces && replay)) && hex) {
         newPlane = getTrace(newPlane, hex, options);
     }
 
