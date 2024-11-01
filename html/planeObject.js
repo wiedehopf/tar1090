@@ -1976,7 +1976,8 @@ PlaneObject.prototype.updateLines = function() {
             const historic = (showTrace || replay);
             const useLocal = ((historic && !utcTimesHistoric) || (!historic && !utcTimesLive));
             const date = new Date(seg.ts * 1000);
-            const refDate = (showTrace || replay) ? traceDate : new Date();
+            let refDate = showTrace ? traceDate : new Date();
+            if (replay) { refDate = replay.ts };
             if (getDay(refDate) == getDay(date)) {
                 timestamp1 = "";
             } else {
