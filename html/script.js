@@ -52,7 +52,6 @@ let iconSize = 1;
 let debugTracks = false;
 let debugAll = false;
 let trackLabels = false;
-let grouptype_checkbox;
 let multiSelect = false;
 let uat_data = null;
 let enableLabels = false;
@@ -1263,14 +1262,6 @@ function earlyInitPage() {
     jQuery('#blockedmlat_filter').on('click', function() {
         filterBlockedMLAT(true);
         refresh();
-    });
-
-    jQuery('#grouptype_checkbox').on('click', function() {
-        if (jQuery('#grouptype_checkbox').hasClass('settingsCheckboxChecked')) {
-            TAR.planeMan.cols.sitedist.sort();
-        } else {
-            TAR.planeMan.cols.data_source.sort();
-        }
     });
 
     new Toggle({
@@ -4280,14 +4271,6 @@ function refreshFeatures() {
 
     function sortBy(id, sc, se) {
         loStore['sortCol'] = id;
-
-        if (id != 'data_source' && grouptype_checkbox) {
-            jQuery('#grouptype_checkbox').removeClass('settingsCheckboxChecked');
-            grouptype_checkbox = false;
-        } else if (id == 'data_source' && !grouptype_checkbox) {
-            jQuery('#grouptype_checkbox').addClass('settingsCheckboxChecked');
-            grouptype_checkbox = true;
-        }
 
         if (id === planeMan.sortId) {
             planeMan.sortAscending = !planeMan.sortAscending;
