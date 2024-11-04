@@ -8259,7 +8259,7 @@ function noLongerHidden() {
     if (heatmap)
         return;
 
-    if (!globeIndex)
+    if (!haveTraces)
         return;
 
     let count = 0;
