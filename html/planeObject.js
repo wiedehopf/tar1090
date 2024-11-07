@@ -1021,6 +1021,10 @@ PlaneObject.prototype.processTrace = function() {
     if (replay && !this.fullTrace)
         return;
 
+    if (!showTrace && !this.fullTrace && !this.recentTrace) {
+        return;
+    }
+
     if (!now)
         now = new Date().getTime()/1000;
 
