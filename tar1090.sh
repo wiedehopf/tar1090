@@ -2,7 +2,7 @@
 
 set -e
 trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
-trap 'echo tar1090.sh: exiting; trap - SIGTERM; kill -- -$( ps opgid= $$ | tr -d " " ) || true; exit 0' SIGTERM SIGINT SIGHUP SIGQUIT
+trap 'echo tar1090.sh: exiting; trap - SIGTERM; pkill -P $$ || true; exit 0' SIGTERM SIGINT SIGHUP SIGQUIT
 
 # run with lowest priority
 renice 20 $$ || true
