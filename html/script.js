@@ -52,6 +52,7 @@ let iconSize = 1;
 let debugTracks = false;
 let verboseUpdateTrack = false;
 let debugAll = false;
+let debugRoute = false;
 let trackLabels = false;
 let multiSelect = false;
 let uat_data = null;

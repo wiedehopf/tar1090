@@ -2896,7 +2896,7 @@ function routeDoLookup(currentTime) {
     // JavaScript doesn't interrupt running functions - so this should be safe to do
     if (g.route_check_in_flight == false && g.route_check_array.length > 0) {
         g.route_check_in_flight = true;
-        if (debugAll) {
+        if (debugRoute) {
             console.log(`${currentTime}: g.route_check_array:`, g.route_check_array);
         }
         // grab up to the first 100 callsigns and leave the rest for later
@@ -2911,12 +2911,12 @@ function routeDoLookup(currentTime) {
             .done((routes) => {
                 let currentTime = new Date().getTime()/1000;
                 g.route_check_in_flight = false;
-                if (debugAll) {
+                if (debugRoute) {
                     console.log(`${currentTime}: got routes:`, routes);
                 }
                 for (var route of routes) {
                     // let's log just a little bit of what's happening
-                    if (debugAll) {
+                    if (debugRoute) {
                         var logText = `result for ${route.callsign}: `;
                         if (route._airport_codes_iata == 'unknown') {
                             logText += 'unknown to the API server';
@@ -2941,7 +2941,7 @@ function routeDoLookup(currentTime) {
                 console.log('API server call failed with', status);
             });
     } else {
-        if (0 && debugAll) {
+        if (0 && debugRoute) {
             console.log(`nothing to send to server at ${currentTime}`);
         }
     }
