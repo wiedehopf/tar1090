@@ -50,6 +50,7 @@ let mapResizeTimeout;
 let pointerMoveTimeout;
 let iconSize = 1;
 let debugTracks = false;
+let verboseUpdateTrack = false;
 let debugAll = false;
 let trackLabels = false;
 let multiSelect = false;
