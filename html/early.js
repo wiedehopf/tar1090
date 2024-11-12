@@ -338,7 +338,13 @@ function zuluTime(date) {
         + ":" + date.getUTCMinutes().toString().padStart(2,'0')
         + ":" + date.getUTCSeconds().toString().padStart(2,'0');
 }
-const TIMEZONE = new Date().toLocaleTimeString(undefined,{timeZoneName:'short'}).split(' ')[2];
+let TIMEZONE;
+if (navigator.language == 'en-US') {
+    TIMEZONE = new Date().toLocaleTimeString('en-US', {timeZoneName:'short'}).split(' ')[2];
+} else {
+    TIMEZONE = new Date().toLocaleTimeString('en-GB', {timeZoneName:'short'}).split(' ')[1];
+}
+TIMEZONE = TIMEZONE.replace("GMT", "UTC");
 function localTime(date) {
     return date.getHours().toString().padStart(2,'0')
         + ":" + date.getMinutes().toString().padStart(2,'0')
