@@ -6812,7 +6812,7 @@ function initSitePos() {
         drawSiteCircle();
         createLocationDot();
     } else {
-        TAR.planeMan.setColumnVis('distance', false);
+        TAR.planeMan.setColumnVis('sitedist', false);
     }
 
     if (initSitePosFirstRun) {
