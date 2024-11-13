@@ -447,8 +447,8 @@ function fetchDone(data) {
                 checkRefresh();
             }
         }
-
-        if (fetchCalls == 1) { console.timeEnd("first fetch()"); };
+        fetchDoneCount++;
+        if (fetchDoneCount == 1) { console.timeEnd("first fetch()"); };
 
         if (!g.firstFetchDone) { afterFirstFetch(); };
 
@@ -525,6 +525,7 @@ function afterFirstFetch() {
 let debugFetch = false;
 let C429 = 0;
 let fetchCalls = 0;
+let fetchDoneCount = 0;
 function fetchData(options) {
     options = options || {};
     if (!timersActive) {
