@@ -475,6 +475,8 @@ function loadHeatChunk() {
         xhr: arraybufferRequest,
     });
     {req.done(function (responseData) {
+        heatmapLoadingState.completed++;
+        jQuery("#loader_progress").attr('value', heatmapLoadingState.completed);
         heatChunks[this.num] = responseData;
         loadHeatChunk();
     });}
@@ -498,9 +500,14 @@ if (!heatmap) {
     heatmapLoadingState.index = 0;
     heatmapLoadingState.interval = interval;
     heatmapLoadingState.start = start;
+
+    heatmapLoadingState.completed = 0;
+    jQuery("#loader_progress").attr('value', heatmapLoadingState.completed);
+    jQuery("#loader_progress").attr('max', numChunks);
+
     // 2 async chains of heat chunk loading:
     loadHeatChunk();
-    loadHeatChunk();
+    setTimeout(loadHeatChunk, 500);
 }
 
 if (uuid != null) {
