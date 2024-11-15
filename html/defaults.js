@@ -54,11 +54,13 @@ let range_outline_color = '#0000DD';
 let range_outline_alpha = 1.0;
 let range_outline_width = 1.7;
 let range_outline_colored_by_altitude = false;
+// NOTE: dashed lines cause slowdown when zooming in, not recommended
 let range_outline_dash = null; // null - solid line, [5, 5] - dashed line with 5 pixel lines and spaces in between
 
 // Style controls for the actal range outline:
 let actual_range_outline_color = '#00596b';
 let actual_range_outline_width = 1.7;
+// NOTE: dashed lines cause slowdown when zooming in, not recommended
 let actual_range_outline_dash = null; // null - solid line, [5, 5] - dashed line with 5 pixel lines and spaces in between
 //
 let actual_range_show = true;
@@ -123,7 +125,7 @@ let altitudeChartDefaultState = true;
 // All color values are given as Hue (0-359) / Saturation (0-100) / Lightness (0-100)
 let ColorByAlt = {
 	// HSL for planes with unknown altitude:
-	unknown : { h: 0,   s: 0,   l: 20 },
+	unknown : { h: 0,   s: 0,   l: 75 },
 
 	// HSL for planes that are on the ground:
 	ground  : { h: 220, s: 0, l: 30 },
@@ -235,6 +237,15 @@ let ChartBundleLayers = true;
 //
 let BingMapsAPIKey = null;
 
+// Provide a Mapbox API key here to enable the Mapbox vector layers.
+// You can obtain a free key (with usage limits) at
+// https://www.mapbox.com/
+//
+// Be sure to quote your key:
+//   MapboxAPIKey = "your key here";
+//
+let MapboxAPIKey = null;
+
 let pf_data = ["chunks/pf.json"]
 
 let mapOrientation = 0; // This determines what is up, normally north (0 degrees)
@@ -297,16 +308,16 @@ let squareMania = false;
 // Columns that have a // in front of them are shown.
 let HideCols = [
 	"#icao",
-//	"#flag",
+//	"#country",
 //	"#flight",
 //	"#route",
 	"#registration",
-//	"#aircraft_type",
+//	"#type",
 //	"#squawk",
 //	"#altitude",
 //	"#speed",
 	"#vert_rate",
-//	"#distance",
+//	"#sitedist",
 	"#track",
 	"#msgs",
 	"#seen",
@@ -374,9 +385,18 @@ let darkModeDefault = true; // turn on dark mode by default (change in browser p
 
 let tableInView = false; // only show aircraft in current view (V button)
 
+let audio_url = ""; // show html5 audio player for this URL
 
 let aiscatcher_server = "";
 let aiscatcher_refresh = 15;
+let aiscatcher_test = true;
+let aisTimeout = 1200;
+
+let droneJson = "";
+let droneRefresh = 1;
+
+let icaoFilter = null;
+let icaoBlacklist = null;
 
 // legacy variables
 let OutlineMlatColor = null;
@@ -394,6 +414,7 @@ let tableColors = {
         tisb:      "#ffd8e6",
         unknown:   "#dcdcdc",
         other:   "#dcdcdc",
+        ais:     "#dcdcdc",
     },
     selected: {
         adsb:      "#88DDFF",
@@ -405,6 +426,7 @@ let tableColors = {
         tisb:      "#FFC1D8",
         unknown:   "#bcbcbc",
         other:   "#bcbcbc",
+        ais:   "#bcbcbc",
     },
     special: {
         7500:      "#ff0000",
@@ -422,3 +444,4 @@ let prefer978 = 0;
 let dynGlobeRate = false; // enable use of globeRates.json in index.html directory to steer client refresh rate
 
 let multiOutline = false;
+let inhibitIframe = false;

@@ -50,7 +50,7 @@ select {
     z-index: 1;
     background-color: var(--BGCOLOR1);
 }
-.adsbx-selected-bg:before {
+.aggregator-selected-bg:before {
     content: ' ';
     position:absolute;
     display:block;
@@ -887,7 +887,7 @@ input{
   grid-template-areas:
     "timezone dateHint timeHint speedHint"
     "play datepicker hours speedSelect"
-    "loading . minutes ."
+    ". dateHintLocal minutes loading "
     ". . . .";
 }
 
@@ -918,6 +918,9 @@ input{
 }
 #replayTimeHint{
    grid-area: timeHint;
+}
+#replayDateHintLocal{
+  grid-area: dateHintLocal;
 }
 #replayDateHint{
   grid-area: dateHint;

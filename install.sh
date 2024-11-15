@@ -24,7 +24,7 @@ if [[ -n "$4" ]] && grep -qs -e 'tar1090' "$4/install.sh"; then git_source="$4";
 
 lighttpd=no
 nginx=no
-function useSystemd () { command -v systemd &>/dev/null; }
+function useSystemd () { command -v systemctl &>/dev/null; }
 
 gpath="$TAR1090_UPDATE_DIR"
 if [[ -z "$gpath" ]]; then gpath="$ipath"; fi
@@ -38,7 +38,7 @@ then
 fi
 
 # terminate with /
-command_package="git git/jq jq/"
+command_package="git git/jq jq/curl curl"
 packages=()
 
 while read -r -d '/' CMD PKG
@@ -223,6 +223,7 @@ if ! diff tar1090.sh "$ipath"/tar1090.sh &>/dev/null; then
             systemctl stop "$service" 2>/dev/null || true
         fi
     done < <(echo "$instances")
+    rm -f "$ipath"/tar1090.sh
     cp tar1090.sh "$ipath"
 fi
 
