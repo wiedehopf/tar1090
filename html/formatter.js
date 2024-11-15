@@ -648,7 +648,7 @@ function wqi(data) {
 
         if (binCraftVersion >= 20240218) {
             if (stride == 116) {
-                ac.rId = u32[27].toString(16).padStart(8, '0');
+                ac.rId = u32[28].toString(16).padStart(8, '0');
             }
         } else {
             if (stride == 112) {
