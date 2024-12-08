@@ -454,15 +454,15 @@ if (uuid) {
 
 let heatmapLoadingState = {};
 function loadHeatChunk() {
-    if (heatmapLoadingState.index > heatChunks.length) {
+    if (heatmapLoadingState.index >= heatChunks.length) {
         heatmapDefer.resolve();
         return; // done, stop recursing
     }
 
-
     let time = new Date(heatmapLoadingState.start + heatmapLoadingState.index * heatmapLoadingState.interval);
     let sDate = sDateString(time);
     let index = 2 * time.getUTCHours() + Math.floor(time.getUTCMinutes() / 30);
+
 
     let base = "globe_history/";
 
@@ -474,6 +474,11 @@ function loadHeatChunk() {
         num: heatmapLoadingState.index,
         xhr: arraybufferRequest,
     });
+    heatmapLoadingState.index++;
+
+    const sliceEnd = new Date(time.getTime() + (30 * 60 - 1) * 1000);
+    console.log(zDateString(time) + ' ' + zuluTime(time) + ' - ' + zuluTime(sliceEnd) + ' ' + URL);
+
     {req.done(function (responseData) {
         heatmapLoadingState.completed++;
         jQuery("#loader_progress").attr('value', heatmapLoadingState.completed);
@@ -483,17 +488,18 @@ function loadHeatChunk() {
     {req.fail(function(jqxhr, status, error) {
         loadHeatChunk();
     });}
-    heatmapLoadingState.index++;
 }
 
 if (!heatmap) {
     heatmapDefer.resolve();
 } else {
+    // round heatmap end to half hour
+    heatmap.end = Math.floor(heatmap.end / (1800 * 1000)) * (1800 * 1000);
     let end = heatmap.end;
     let start = end - heatmap.duration * 3600 * 1000; // timestamp in ms
     let interval = 1800 * 1000;
     let numChunks = Math.round((end - start) / interval);
-    console.log('numChunks: ' + numChunks + ' heatDuration: ' + heatmap.duration + ' heatEnd: ' + new Date(heatmap.end));
+    console.log('numChunks: ' + numChunks + ' heatDuration: ' + heatmap.duration + ' heatEnd: ' + new Date(heatmap.end) + ' / ' + new Date(heatmap.end).toUTCString());
     heatChunks = Array(numChunks).fill(null);
     heatPoints = Array(numChunks).fill(null);
     // load chunks sequentially via recursion:
