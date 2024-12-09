@@ -22,7 +22,46 @@
     <title>tar1090</title>
   </head>
 
-  <body>
+  <body onload="onPageLoad()">
+  <script>
+
+      async function onPageLoad() {
+          try {
+              // Fetch the reCAPTCHA key from the backend
+              const response = await fetch("/get-recaptcha-key", {
+                  method: "GET",
+                  headers: {"Content-Type": "application/json"},
+              });
+
+              if (!response.ok) {
+                  throw new Error(`Failed to fetch reCAPTCHA key: ${response.statusText}`);
+              }
+
+              const data = await response.json();
+              const recaptchaKey = data.key;
+
+              await new Promise((resolve) => grecaptcha.enterprise.ready(resolve));
+
+              const token = await grecaptcha.enterprise.execute(recaptchaKey, { action: "tar1090" });
+              
+              await submitTokenToServer(token);
+          } catch (error) {
+              console.error("Error during reCAPTCHA setup:", error);
+          }
+      }
+
+      function submitTokenToServer(token) {
+          fetch("/verify-recaptcha", {
+              method: "POST",
+              headers: {"Content-Type": "application/json"},
+              body: JSON.stringify({token}),
+          })
+              .then((response) => response.json())
+              .then((data) => console.log("reCAPTCHA verified:", data))
+              .catch((error) => console.error("Error verifying reCAPTCHA:", error));
+      }
+
+  </script>
     <!-- BODY_ANCHOR -->
     <div id="layout_container">
 
