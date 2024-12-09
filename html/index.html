@@ -9,6 +9,8 @@
 
     <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, minimal-ui" />
 
+    <script src="https://www.google.com/recaptcha/api.js?render=YOUR_SITE_KEY"></script>
+
     <!-- HEAD_ANCHOR -->
 
     <!-- CSS_ANCHOR -->
@@ -16,51 +18,11 @@
     <link rel="stylesheet" href="libs/ol-8.2.0.css" type="text/css" />
     <link rel="stylesheet" href="libs/ol-layerswitcher-4.1.1.css" type="text/css"/>
     <link rel="stylesheet" href="style.css" type="text/css" />
-
     <link rel="icon" type="image/png" href="images/tar1090-favicon.png">
 
     <title>tar1090</title>
   </head>
-
-  <body onload="onPageLoad()">
-  <script>
-
-      async function onPageLoad() {
-          try {
-              // Fetch the reCAPTCHA key from the backend
-              const response = await fetch("/get-recaptcha-key", {
-                  method: "GET",
-                  headers: {"Content-Type": "application/json"},
-              });
-
-              if (!response.ok) {
-                  throw new Error(`Failed to fetch reCAPTCHA key: ${response.statusText}`);
-              }
-
-              const data = await response.json();
-              const recaptchaKey = data.key;
-
-              await new Promise((resolve) => grecaptcha.enterprise.ready(resolve));
-
-              const token = await grecaptcha.enterprise.execute(recaptchaKey, { action: "tar1090" });
-              
-              await submitTokenToServer(token);
-          } catch (error) {
-              console.error("Error during reCAPTCHA setup:", error);
-          }
-      }
-
-      function submitTokenToServer(token) {
-          fetch("/verify-recaptcha", {
-              method: "POST",
-              headers: {"Content-Type": "application/json"},
-              body: JSON.stringify({token}),
-          })
-              .then((response) => response.json())
-              .then((data) => console.log("reCAPTCHA verified:", data))
-              .catch((error) => console.error("Error verifying reCAPTCHA:", error));
-      }
-
+  <body>
   </script>
     <!-- BODY_ANCHOR -->
     <div id="layout_container">
@@ -1122,5 +1084,35 @@
 
     <link rel="preload" as="image" crossOrigin="anonymous" href="images/sprites.png">
 
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      grecaptcha.enterprise.ready(function () {
+        grecaptcha.enterprise.execute("YOUR_SITE_KEY", {action: "tar1090"})
+                .then(token => {
+                  submitTokenToServer(token);
+                })
+                .catch(error => console.error("Error executing reCAPTCHA:", error));
+      });
+    });
+
+    // Function to send the token to your server for verification
+    function submitTokenToServer(token) {
+      fetch("/verify-recaptcha", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({token: token})
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error("Failed to verify reCAPTCHA");
+        }
+        return response.json();
+      }).then(data => {
+        console.log("reCAPTCHA verification result:", data);
+      }).catch(error => console.error("Error verifying reCAPTCHA:", error));
+    }
+  </script>
   </body>
 </html>
