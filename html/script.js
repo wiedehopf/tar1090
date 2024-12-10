@@ -8941,30 +8941,9 @@ function submitTokenToServer(token) {
 }
 
 function validateRecaptcha() {
-
-    // Wait until the reCAPTCHA library is ready
     grecaptcha.enterprise.ready(function () {
-        // Fetch the reCAPTCHA key from your server
-        fetch("/get-recaptcha-key", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }).then(response => {
-            if (!response.ok) {
-                throw new Error("Failed to fetch reCAPTCHA key");
-            }
-            return response.json();
-        }).then(data => {
-                // Ensure the key is present in the response
-                if (!data || !data.key) {
-                    throw new Error("Missing site key in response");
-                }
-                const key = data.key;
-
-                // Execute the reCAPTCHA with the fetched key
-                return grecaptcha.enterprise.execute(key, {action: "tar1090"});
-            }).then(token => {
+        grecaptcha.enterprise.execute("YOUR_SITE_KEY", {action: "tar1090"})
+            .then(token => {
                 // Submit the token to the server
                 submitTokenToServer(token);
             })
