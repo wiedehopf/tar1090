@@ -8922,6 +8922,26 @@ function globeRateUpdate() {
     }
 }
 
+function loadRecaptchaScript(siteKey) {
+    return new Promise((resolve, reject) => {
+        const recaptchaScript = document.createElement("script");
+        recaptchaScript.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`;
+        recaptchaScript.async = true;
+
+        recaptchaScript.onload = () => {
+            console.log("reCAPTCHA script loaded.");
+            resolve();
+        };
+
+        recaptchaScript.onerror = () => {
+            console.error("Failed to load the reCAPTCHA script.");
+            reject(new Error("Failed to load reCAPTCHA script"));
+        };
+
+        document.head.appendChild(recaptchaScript);
+    });
+}
+
 function submitTokenToServer(token) {
     fetch("/verify-recaptcha", {
         method: "POST",
@@ -8940,40 +8960,47 @@ function submitTokenToServer(token) {
     }).catch(error => console.error("Error verifying reCAPTCHA:", error));
 }
 
-function validateRecaptcha() {
-
+function validateRecaptcha(siteKey) {
     // Wait until the reCAPTCHA library is ready
-    grecaptcha.enterprise.ready(function () {
-        // Fetch the reCAPTCHA key from your server
-        fetch("/get-recaptcha-key", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }).then(response => {
-            if (!response.ok) {
-                throw new Error("Failed to fetch reCAPTCHA key");
-            }
-            return response.json();
-        }).then(data => {
-                // Ensure the key is present in the response
-                if (!data || !data.key) {
-                    throw new Error("Missing site key in response");
-                }
-                const key = data.key;
-
-                // Execute the reCAPTCHA with the fetched key
-                return grecaptcha.enterprise.execute(key, {action: "tar1090"});
-            }).then(token => {
+    grecaptcha.enterprise.ready(() => {
+        grecaptcha.enterprise.execute(siteKey, {action: "tar1090"})
+            .then(token => {
                 // Submit the token to the server
                 submitTokenToServer(token);
             })
-            .catch(error => console.error("Error in reCAPTCHA process:", error));
+            .catch(error => console.error("Error executing reCAPTCHA:", error));
     });
 }
 
-// Start validation on page load
-document.addEventListener("DOMContentLoaded", validateRecaptcha);
+function initializeRecaptcha() {
+    // Fetch the reCAPTCHA key from your server
+    fetch("/get-recaptcha-key", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error("Failed to fetch reCAPTCHA key");
+        }
+        return response.json();
+    }).then(data => {
+        // Ensure the key is present in the response
+        if (!data || !data.key) {
+            throw new Error("Missing site key in response");
+        }
+        const siteKey = data.key;
+
+        // Dynamically load the reCAPTCHA script with the site key
+        return loadRecaptchaScript(siteKey).then(() => siteKey);
+    }).then(siteKey => {
+        // Start reCAPTCHA validation
+        validateRecaptcha(siteKey);
+    }).catch(error => console.error("Error initializing reCAPTCHA:", error));
+}
+
+// Start initialization on page load
+document.addEventListener("DOMContentLoaded", initializeRecaptcha);
 
 globeRateUpdate();
 
