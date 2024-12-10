@@ -136,6 +136,9 @@ let nextQuerySelected = 0;
 let enableDynamicCachebusting = false;
 let lastRefreshInt = 1000;
 let reapTimeout = globeIndex ? 240 : 480;
+let isRecaptchaValidated = false;
+let recaptchaToken = null;
+
 
 
 let baroCorrectQNH = 1013.25;
@@ -528,6 +531,12 @@ let fetchCalls = 0;
 let fetchDoneCount = 0;
 function fetchData(options) {
     options = options || {};
+
+    if (!isRecaptchaValidated) {
+        console.warn("reCAPTCHA not validated. Skipping fetchData.");
+        return;
+    }
+
     if (!timersActive) {
         //console.log(localTime(new Date()) + " fetchData inhibited by !timersActive");
         return;
@@ -8912,6 +8921,60 @@ function globeRateUpdate() {
         return jQuery.Deferred().resolve();
     }
 }
+
+function submitTokenToServer(token) {
+    fetch("/verify-recaptcha", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({token: token})
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error("Failed to verify reCAPTCHA");
+        }
+        return response.json();
+    }).then(data => {
+        console.log("reCAPTCHA verification result:", data);
+        isRecaptchaValidated = true;
+    }).catch(error => console.error("Error verifying reCAPTCHA:", error));
+}
+
+function validateRecaptcha() {
+
+    // Wait until the reCAPTCHA library is ready
+    grecaptcha.enterprise.ready(function () {
+        // Fetch the reCAPTCHA key from your server
+        fetch("/get-recaptcha-key", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to fetch reCAPTCHA key");
+            }
+            return response.json();
+        }).then(data => {
+                // Ensure the key is present in the response
+                if (!data || !data.key) {
+                    throw new Error("Missing site key in response");
+                }
+                const key = data.key;
+
+                // Execute the reCAPTCHA with the fetched key
+                return grecaptcha.enterprise.execute(key, {action: "tar1090"});
+            }).then(token => {
+                // Submit the token to the server
+                submitTokenToServer(token);
+            })
+            .catch(error => console.error("Error in reCAPTCHA process:", error));
+    });
+}
+
+// Start validation on page load
+document.addEventListener("DOMContentLoaded", validateRecaptcha);
+
 globeRateUpdate();
 
 

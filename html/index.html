@@ -1083,36 +1083,5 @@
     <script src="script.js"></script>
 
     <link rel="preload" as="image" crossOrigin="anonymous" href="images/sprites.png">
-
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      grecaptcha.enterprise.ready(function () {
-        grecaptcha.enterprise.execute("YOUR_SITE_KEY", {action: "tar1090"})
-                .then(token => {
-                  submitTokenToServer(token);
-                })
-                .catch(error => console.error("Error executing reCAPTCHA:", error));
-      });
-    });
-
-    // Function to send the token to your server for verification
-    function submitTokenToServer(token) {
-      fetch("/verify-recaptcha", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({token: token})
-      }).then(response => {
-        if (!response.ok) {
-          throw new Error("Failed to verify reCAPTCHA");
-        }
-        return response.json();
-      }).then(data => {
-        console.log("reCAPTCHA verification result:", data);
-      }).catch(error => console.error("Error verifying reCAPTCHA:", error));
-    }
-  </script>
   </body>
 </html>
