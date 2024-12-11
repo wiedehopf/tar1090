@@ -353,7 +353,15 @@ function fetchFail(jqxhr, status, error) {
         }
         status = jqxhr.status;
         if (jqxhr.readyState == 0) error = "Can't connect to server, check your network!";
-        let errText = status + (error ? (": " + error) : "");
+
+        let additionalMessages = {
+            401: " – session expired. Refresh the browser to continue.",
+            403: " – reCAPTCHA validation failed."
+        };
+
+        let errText = `${status}${error ? `: ${error}` : ""}`;
+        errText += additionalMessages[status] || "";
+
         console.log(jqxhr);
         console.log(error);
         if (status != 429 && status != '429') {
