@@ -6,8 +6,8 @@
 "use strict";
 // -- Title Settings --------------------------------------
 // Show number of aircraft and/or messages per second in the page title
-//PlaneCountInTitle = false;
-//MessageRateInTitle = false;
+PlaneCountInTitle = false;
+MessageRateInTitle = false;
 
 // -- Output Settings -------------------------------------
 // The DisplayUnits setting controls whether nautical (ft, nmi, kt),
