@@ -136,7 +136,7 @@ let nextQuerySelected = 0;
 let enableDynamicCachebusting = false;
 let lastRefreshInt = 1000;
 let reapTimeout = globeIndex ? 240 : 480;
-let isRecaptchaValidated = false;
+let isRecatchaValidationFinished = false;
 let recaptchaToken = null;
 
 
@@ -532,7 +532,7 @@ let fetchDoneCount = 0;
 function fetchData(options) {
     options = options || {};
 
-    if (!isRecaptchaValidated) {
+    if (!isRecatchaValidationFinished) {
         console.warn("reCAPTCHA not validated. Skipping fetchData.");
         return;
     }
@@ -8950,13 +8950,13 @@ function submitTokenToServer(token) {
         },
         body: JSON.stringify({token: token})
     }).then(response => {
+        isRecatchaValidationFinished = true;
         if (!response.ok) {
             throw new Error("Failed to verify reCAPTCHA");
         }
         return response.json();
     }).then(data => {
         console.log("reCAPTCHA verification result:", data);
-        isRecaptchaValidated = true;
     }).catch(error => console.error("Error verifying reCAPTCHA:", error));
 }
 
