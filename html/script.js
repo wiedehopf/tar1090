@@ -8925,7 +8925,7 @@ function globeRateUpdate() {
 function loadRecaptchaScript(siteKey) {
     return new Promise((resolve, reject) => {
         const recaptchaScript = document.createElement("script");
-        recaptchaScript.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`;
+        recaptchaScript.src = `https://www.google.com/recaptcha/enterprise.js?render=${siteKey}`;
         recaptchaScript.async = true;
 
         recaptchaScript.onload = () => {
