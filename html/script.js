@@ -404,22 +404,7 @@ function fetchDone(data) {
         if (!data.aircraft || !data.now) {
             let error = data.error;
             if (error) {
-
-                const errorParts = error.split(":");
-                const errorCode = errorParts[0].trim();
-                const errorMessage = errorParts[1] ? errorParts[1].trim() : "Unknown error";
-
-                let additionalMessage = "";
-
-                if (errorCode === "401") {
-                    additionalMessage = " Please refresh the browser to continue.";
-                } else if (errorCode === "403") {
-                    additionalMessage = " reCAPTCHA validation failed.";
-                }
-
-                const displayMessage = errorMessage + additionalMessage;
-
-                jQuery("#update_error_detail").text(displayMessage);
+                jQuery("#update_error_detail").text(error);
                 jQuery("#update_error").css('display','block');
                 StaleReceiverCount++;
             }
