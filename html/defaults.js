@@ -13,8 +13,8 @@ let disabled = false;
 
 // -- Title Settings --------------------------------------
 // Show number of aircraft and/or messages per second in the page title
-let PlaneCountInTitle = false;
-let MessageRateInTitle = false;
+let PlaneCountInTitle = true;
+let MessageRateInTitle = true;
 
 // -- Output Settings -------------------------------------
 // The DisplayUnits setting controls whether nautical (ft, nmi, kt),
@@ -340,9 +340,9 @@ let planespottersAPIurl = "https://api.planespotters.net/pub/photos/";
 let planespottingAPI = false;
 
 // get flight route from routeApi service
-let useRouteAPI = false;
+let useRouteAPI = true;
 // which routeApi service to use
-let routeApiUrl = "https://api.adsb.lol/api/0/routeset";
+let routeApiUrl = "https://flightroutes.opensky-network.org/api/routeset";
 
 // show a link to jetphotos, only works if planespottersAPI is disabled
 let jetphotoLinks = false;
