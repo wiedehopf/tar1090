@@ -26,6 +26,7 @@
 - sortBy=column - (possible values: icao, flag, flight, registration, aircraft_type, squawk, altitude, speed, vert_rate, distance, track, msgs, seen, rssi, lat, lon, data_source, military, ws, wd
 - sortByReverse - reverse the sorting specified using sortBy
 
+There is a setting in the webinterface to update the URL according to used filters, this can be simpler than building the query string by hand.
 See the main readme for more examples on how to use the filters
 
 ## Troubleshooting
