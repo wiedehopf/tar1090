@@ -541,6 +541,12 @@ Notable Projects that use ADS-B data:
 
 <https://github.com/wiedehopf/zstddec-tar1090>
 
+## Cloudflare
+
+When hosting a website with tar1090 via CF, CF needs to respect the various cache headers otherwise there will be caching issues.
+Change Browser Cache TTL from the default of 4h to "Respect Existing Headers":
+Caching -> Configuration -> Browser Cache TTL -> Respect Existing Headers
+
 ## NO WARRANTY - Excerpt from the License:
 
   11. BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
