@@ -1332,8 +1332,8 @@ jQuery('#selected_altitude_geom1')
         setState: function(state) {
             baroUseQNH = state;
             if (baroUseQNH) {
-                jQuery('#selected_altitude1_title').updateText('Corr. baro. alt.');
-                jQuery('#selected_altitude2_title').updateText('Corr. barometric');
+                jQuery('#selected_altitude1_title').updateText('Corr. baro-alt');
+                jQuery('#selected_altitude2_title').updateText('Corr. baro.');
                 jQuery('#infoblock_altimeter').removeClass('hidden');
             } else {
                 jQuery('#selected_altitude1_title').updateText('Baro. altitude');
