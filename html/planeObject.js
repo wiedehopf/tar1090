@@ -1984,7 +1984,10 @@ PlaneObject.prototype.updateLines = function() {
             const date = new Date(seg.ts * 1000);
             let refDate = showTrace ? traceDate : new Date();
             if (replay) { refDate = replay.ts };
-            if (getDay(refDate) == getDay(date)) {
+            if (useLocal && historic) {
+                timestamp1 = lDateString(date);
+                timestamp1 += '\n';
+            } else if (getDay(refDate) == getDay(date)) {
                 timestamp1 = "";
             } else {
                 if (useLocal) {
