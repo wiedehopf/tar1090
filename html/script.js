@@ -2054,14 +2054,20 @@ function setIntervalTimers() {
 }
 
 function updateDrones() {
-    let req = jQuery.ajax({
-        url: droneJson,
-        dataType: 'json',
-    });
+    let jsons = [ droneJson ];
+    if (typeof droneJson === 'array') {
+        jsons = droneJson;
+    }
+    for (let i in jsons) {
+        let req = jQuery.ajax({
+            url: jsons[i],
+            dataType: 'json',
+        });
 
-    req.done(function(data) {
-        handleDrones(data);
-    });
+        req.done(function(data) {
+            handleDrones(data);
+        });
+    }
 }
 
 function handleDrones(data) {
@@ -2084,7 +2090,7 @@ function processDrone(drone, now, last) {
         plane = new PlaneObject(hex);
     }
 
-    let ac = {};
+    let ac = drone;
 
     ac.type = 'other';
     ac.t = 'DRON';
