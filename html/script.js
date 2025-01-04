@@ -2054,10 +2054,7 @@ function setIntervalTimers() {
 }
 
 function updateDrones() {
-    let jsons = [ droneJson ];
-    if (typeof droneJson === 'array') {
-        jsons = droneJson;
-    }
+    let jsons = Array.isArray(droneJson) ? droneJson : [ droneJson ];
     for (let i in jsons) {
         let req = jQuery.ajax({
             url: jsons[i],
