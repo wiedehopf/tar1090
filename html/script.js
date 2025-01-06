@@ -6832,7 +6832,7 @@ function initSitePos() {
             if (SitePosition) {
                 TAR.planeMan.cols.sitedist.sort();
             } else {
-                planeMan.sortAscending = false;
+                TAR.planeMan.sortAscending = false;
                 TAR.planeMan.cols.altitude.sort();
             }
         }
