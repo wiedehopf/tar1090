@@ -286,6 +286,10 @@ select {
     background-color: var(--ACCENT);
     color: #FFFFFF;
     cursor: pointer;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 3px 3px -1px rgba(0, 0, 0, 0.7);
 }
 .aircraft_table_header td {
     font-size: smaller;
