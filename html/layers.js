@@ -61,6 +61,18 @@ function createBaseLayers() {
         }));
     }
 
+    if (0) {
+        let stylefunction = ol.stylefunction;
+        let openfreemap = new ol.layer.VectorTile({
+            type: 'base',
+            name: 'openfreemap',
+            title: 'openfreemap',
+        });
+        // ol-mapbox-style plugin packed in with ol ... (kinda ugly)
+        ol.applyStyle(openfreemap, "https://tiles.openfreemap.org/styles/liberty");
+        world.push(openfreemap);
+    }
+
     world.push(new ol.layer.Tile({
         source: new ol.source.OSM({
             maxZoom: 17,
