@@ -507,6 +507,7 @@ function afterFirstFetch() {
             func();
         }
 
+
         geoMag = geoMagFactory(cof2Obj());
 
         db_load_type_cache().always(function() {
@@ -1711,12 +1712,8 @@ jQuery('#selected_altitude_geom1')
 
 
     if (hideButtons) {
-        jQuery('#header_top').hide();
-        jQuery('#header_side').hide();
-        jQuery('#tabs').hide();
-        jQuery('#filterButton').hide();
-        jQuery('.ol-control').hide();
-        jQuery('.ol-attribution').show();
+        showHideButtons();
+        runAfterLoad(showHideButtons);
     }
 }
 
@@ -2644,6 +2641,25 @@ function initMapEarly() {
     });
 }
 
+function showHideButtons() {
+    if (hideButtons) {
+        jQuery('#header_top').hide();
+        jQuery('#header_side').hide();
+        jQuery('#splitter').hide();
+        jQuery('#tabs').hide();
+        jQuery('#filterButton').hide();
+        jQuery('.ol-zoom').hide();
+        jQuery('.layer-switcher').hide();
+    } else {
+        jQuery('#header_top').show();
+        jQuery('#header_side').show();
+        jQuery('#splitter').show();
+        jQuery('#tabs').show();
+        jQuery('#filterButton').show();
+        jQuery('.ol-zoom').show();
+        jQuery('.layer-switcher').show();
+    }
+}
 
 // Initalizes the map and starts up our timers to call various functions
 function initMap() {
@@ -2968,26 +2984,8 @@ function initMap() {
                 resetMap();
                 break;
             case "H":
-                if (!hideButtons) {
-                    jQuery('#header_top').hide();
-                    jQuery('#header_side').hide();
-                    jQuery('#splitter').hide();
-                    jQuery('#tabs').hide();
-                    jQuery('#filterButton').hide();
-                    jQuery('.ol-control').hide();
-                    jQuery('.ol-attribution').show();
-                } else {
-                    jQuery('#header_top').show();
-                    jQuery('#header_side').show();
-                    jQuery('#splitter').show();
-                    jQuery('#tabs').show();
-                    jQuery('#filterButton').show();
-                    jQuery('.ol-control').show();
-                    jQuery('#expand_sidebar_control').hide();
-                    toggles['sidebar_visible'].restore();
-                    TAR.altitudeChart.render();
-                }
                 hideButtons = !hideButtons;
+                showHideButtons();
                 break;
             case "f":
                 toggleFollow();
