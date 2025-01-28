@@ -2152,8 +2152,8 @@ function processBoat(feature, now, last) {
 
     ac.type = 'ais';
     ac.gs = pr.speed;
-    ac.flight = pr.callsign;
-    ac.r = pr.shipname
+    ac.flight = pr.shipname;
+    ac.r = pr.callsign;
     ac.seen = now - pr.last_signal;
 
     ac.messages  = pr.count;
