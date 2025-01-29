@@ -2133,6 +2133,36 @@ function processAIS(data) {
     }
 }
 
+function shortShiptype(typeNumber) {
+    if (typeNumber <= 19) return "RESE";
+    if (typeNumber <= 28) return "WING";
+    if (typeNumber <= 29) return "SAR";
+    if (typeNumber <= 30) return "FISH";
+    if (typeNumber <= 32) return "TUG";
+    if (typeNumber <= 33) return "DRED";
+    if (typeNumber <= 34) return "DIVE";
+    if (typeNumber <= 35) return "MIL";
+    if (typeNumber <= 36) return "SAIL";
+    if (typeNumber <= 37) return "YACH";
+    if (typeNumber <= 39) return "RESE";
+    if (typeNumber <= 49) return "HSPD";
+    if (typeNumber <= 50) return "PILO";
+    if (typeNumber <= 50) return "PILO";
+    if (typeNumber <= 51) return "SAR";
+    if (typeNumber <= 52) return "TUG";
+    if (typeNumber <= 53) return "TEND";
+    if (typeNumber <= 54) return "POLC";
+    if (typeNumber <= 55) return "LAW";
+    if (typeNumber <= 57) return "LOC";
+    if (typeNumber <= 58) return "MED";
+    if (typeNumber <= 59) return "SPEC";
+    if (typeNumber <= 69) return "PASS";
+    if (typeNumber <= 79) return "CARG";
+    if (typeNumber <= 89) return "TANK";
+    if (typeNumber <= 99) return "OTHE";
+    return "";
+}
+
 function processBoat(feature, now, last) {
     const pr = feature.properties;
     const hex = 'MMSI' + pr.mmsi;
@@ -2160,6 +2190,9 @@ function processBoat(feature, now, last) {
     ac.rssi      = pr.level;
 
     ac.track = pr.cog;
+
+    if (pr.destination) { ac.routeString = pr.destination; }
+    if (pr.shiptype !== undefined) { ac.icaoType = shortShiptype(pr.shiptype); }
 
     if (feature.geometry && feature.geometry.coordinates) {
         const coords = feature.geometry.coordinates;
