@@ -2187,6 +2187,7 @@ function processBoat(feature, now, last) {
     // Ensure callsign / registration is not blank; if so, use MMSI instead
     ac.flight = (pr.callsign && pr.callsign.trim() !== "") ? pr.callsign : "MMSI"+pr.mmsi;
     ac.r = (pr.shipname && pr.shipname.trim() !== "") ? pr.shipname : "MMSI"+pr.mmsi;
+
     ac.seen = now - pr.last_signal;
 
     ac.messages  = pr.count;
