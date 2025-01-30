@@ -853,11 +853,15 @@ PlaneObject.prototype.updateIcon = function() {
         if (useRouteAPI && this.routeString)
             callsign += ' - ' + this.routeString;
 
-        if (!extendedLabels && this.dataSource == "ais") {
-            // show registration instead for ships as callsign is less useful
-            callsign = this.registration;
+        if (!extendedLabels && this.dataSource === "ais") {
+            // Show registration instead for ships, as callsign is less useful
+            if (this.routeString && this.routeString.trim() !== "") { 
+                // Only use routeString if it exists and is not empty
+                callsign = this.registration + " - " + this.routeString;
+            } else {
+                callsign = this.registration;
+            }
         }
-
         const unknown = NBSP+NBSP+"?"+NBSP+NBSP;
 
         let alt;
