@@ -853,7 +853,7 @@ PlaneObject.prototype.updateIcon = function() {
         if (useRouteAPI && this.routeString)
             callsign += ' - ' + this.routeString;
 
-        if (!extendedLabels && this.type == "ais") {
+        if (!extendedLabels && this.dataSource == "ais") {
             // show registration instead for ships as callsign is less useful
             callsign = this.registration;
         }
@@ -1651,6 +1651,10 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     this.rId = data.rId;
     if (!this.dbinfoLoaded) {
         this.checkForDB(data);
+    }
+
+    if (data.route) {
+        this.routeString = data.route;
     }
 
     this.last = now;

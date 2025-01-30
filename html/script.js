@@ -2191,8 +2191,8 @@ function processBoat(feature, now, last) {
 
     ac.track = pr.cog;
 
-    if (pr.destination) { ac.routeString = pr.destination; }
-    if (pr.shiptype !== undefined) { ac.icaoType = shortShiptype(pr.shiptype); }
+    if (pr.destination) { ac.route = pr.destination; }
+    if (pr.shiptype !== undefined) { ac.t = shortShiptype(pr.shiptype); }
 
     if (feature.geometry && feature.geometry.coordinates) {
         const coords = feature.geometry.coordinates;
