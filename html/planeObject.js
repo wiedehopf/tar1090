@@ -1653,6 +1653,10 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.checkForDB(data);
     }
 
+    if (data.route) {
+        this.routeString = data.route;
+    }
+
     this.last = now;
     this.updatePositionData(now, last, data, init);
     return;

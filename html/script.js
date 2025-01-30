@@ -2136,7 +2136,7 @@ function processAIS(data) {
 function shortShiptype(typeNumber) {
     if (typeNumber <= 19) return "RESE";
     if (typeNumber <= 28) return "WING";
-    if (typeNumber <= 29) return "SAR";
+    if (typeNumber <= 29) return "ASAR"; //Airborne SAR
     if (typeNumber <= 30) return "FISH";
     if (typeNumber <= 32) return "TUG";
     if (typeNumber <= 33) return "DRED";
@@ -2183,7 +2183,7 @@ function processBoat(feature, now, last) {
     ac.type = 'ais';
     ac.gs = pr.speed;
     ac.flight = pr.callsign;
-    ac.r = pr.shipname
+    ac.r = pr.shipname;
     ac.seen = now - pr.last_signal;
 
     ac.messages  = pr.count;
@@ -2191,8 +2191,13 @@ function processBoat(feature, now, last) {
 
     ac.track = pr.cog;
 
-    if (pr.destination) { ac.routeString = pr.destination; }
-    if (pr.shiptype !== undefined) { ac.icaoType = shortShiptype(pr.shiptype); }
+    if (pr.destination) { ac.route = pr.destination; }
+    if (pr.shiptype !== undefined) { ac.t = shortShiptype(pr.shiptype); }
+    // Identify Non-Ship Types
+    if (pr.mmsi_type == 6) { ac.t = "ANAV"; } // Aids to Navigation
+    if (pr.mmsi_type == 5) {ac.t = "BASE"; } // Land Base Station
+    if (pr.mmsi_type == 3) {ac.t = "COAS"; } // Coast Station
+
 
     if (feature.geometry && feature.geometry.coordinates) {
         const coords = feature.geometry.coordinates;
