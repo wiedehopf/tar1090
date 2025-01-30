@@ -853,7 +853,7 @@ PlaneObject.prototype.updateIcon = function() {
         if (useRouteAPI && this.routeString)
             callsign += ' - ' + this.routeString;
 
-        if (!extendedLabels && this.type == "ais") {
+        if (!extendedLabels && this.dataSource == "ais") {
             // show registration instead for ships as callsign is less useful
             callsign = this.registration;
         }
