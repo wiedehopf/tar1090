@@ -2134,6 +2134,7 @@ function processAIS(data) {
 }
 
 function shortShiptype(typeNumber) {
+    if (typeNumber == 0) return "UNKN";
     if (typeNumber <= 19) return "RESE";
     if (typeNumber <= 28) return "WING";
     if (typeNumber <= 29) return "ASAR"; //Airborne SAR

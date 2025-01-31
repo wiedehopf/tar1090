@@ -850,12 +850,12 @@ PlaneObject.prototype.updateIcon = function() {
             callsign =  'reg: ' + this.registration;
         else
             callsign =   'hex: ' + this.icao;
-        if (useRouteAPI && this.routeString)
+        if ((useRouteAPI || this.dataSource == "ais") && this.routeString)
             callsign += ' - ' + this.routeString;
 
         if (!extendedLabels && this.dataSource == "ais") {
             // show registration instead for ships as callsign is less useful
-            callsign = this.registration;
+            callsign = this.registration || this.icao;
         }
 
         const unknown = NBSP+NBSP+"?"+NBSP+NBSP;
