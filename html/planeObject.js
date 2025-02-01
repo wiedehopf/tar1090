@@ -854,8 +854,16 @@ PlaneObject.prototype.updateIcon = function() {
             callsign += ' - ' + this.routeString;
 
         if (!extendedLabels && this.dataSource == "ais") {
-            // show registration instead for ships as callsign is less useful
-            callsign = this.registration || this.icao;
+            // Show registration instead for ships, as callsign is less useful
+            if (this.registration) { 
+                // If registration exists, append routeString if available
+                callsign = this.routeString && this.routeString.trim() !== "" 
+                    ? this.registration + " - " + this.routeString 
+                    : this.registration;
+            } else {
+                // If registration is not available, fallback to ICAO
+                callsign = this.icao;
+            }
         }
 
         const unknown = NBSP+NBSP+"?"+NBSP+NBSP;
