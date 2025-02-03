@@ -404,17 +404,6 @@ This will obviously write data to the hard drive, be aware of that.
 The data format is subject to change, don't expect this to be stable.
 Be aware of that when upgrading either tar1090 or readsb to a new commit.
 
-For these features i only maintain the nginx configuration, not the lighttpd configuration.
-Thus you'll need to use nginx with the config file provided by the tar1090 install script
-or change the lighttpd configuration yourself.
-On the default nginx install you'll usually find the server section in this config file:
-`/etc/nginx/sites-enabled/default`
-
-If you can't figure out how to make it work with the above information, please don't ask.
-I don't support this feature for the general user base.
-This information is only for people who could figure it out from the source code anyhow,
-so that they don't have to spend as much time figuring it out.
-
 If you're using --write-json-globe-index with tar1090, you might be interested in tar1090
 using the readsb API to get data, it's less requests and usually more efficient,
 for details see the file nginx-readsb-api.conf
