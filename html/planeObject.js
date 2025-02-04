@@ -851,13 +851,13 @@ PlaneObject.prototype.updateIcon = function() {
         )
     ) {
         let callsign = "";
-        if (this.flight && this.flight.trim())
+        if (this.flight && this.flight.trim() && !(this.dataSource == "ais" && !extendedLabels))
             callsign =  this.flight.trim();
         else if (this.registration)
             callsign =  'reg: ' + this.registration;
         else
             callsign =   'hex: ' + this.icao;
-        if (useRouteAPI && this.routeString)
+        if ((useRouteAPI || this.dataSource == "ais") && this.routeString)
             callsign += ' - ' + this.routeString;
 
         const unknown = NBSP+NBSP+"?"+NBSP+NBSP;
@@ -1655,6 +1655,10 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
         this.checkForDB(data);
     }
 
+    if (data.route) {
+        this.routeString = data.route;
+    }
+
     this.last = now;
     this.updatePositionData(now, last, data, init);
     return;
@@ -1991,7 +1995,10 @@ PlaneObject.prototype.updateLines = function() {
             const date = new Date(seg.ts * 1000);
             let refDate = showTrace ? traceDate : new Date();
             if (replay) { refDate = replay.ts };
-            if (getDay(refDate) == getDay(date)) {
+            if (useLocal && historic) {
+                timestamp1 = lDateString(date);
+                timestamp1 += '\n';
+            } else if (getDay(refDate) == getDay(date)) {
                 timestamp1 = "";
             } else {
                 if (useLocal) {
@@ -2008,7 +2015,7 @@ PlaneObject.prototype.updateLines = function() {
                 timestamp2 += zuluTime(date);
             }
 
-            if (traces_high_res) {
+            if (traces_high_res || debugTracks) {
                 timestamp2 += '.' + (Math.floor((seg.ts*10)) % 10);
             }
 

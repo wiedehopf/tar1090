@@ -17,15 +17,16 @@
 - reg=registration - Direct link to specific aircraft registration(s). Separate multiple with commas. ?icao is preferred as this option takes longer to load.
 - filterAltMin=500 - filter minimum altitute to 500 ft
 - filterAltMax=5000 - filter maximum altitute to 5000 ft
-- filterCallSign=^(UAL|DAL) - filter callsign to United or Deleta
+- filterCallSign=^(UAL|DAL) - filter callsign to United or Delta. Take care to escape special characters ( %5E(UAL%7CDAL) in this case).
 - filterType=B738 - filter to aircraft type code B738 aka 737-800
 - filterDescription=L2J - filter aircraft by type description
-- filterIcao=^a - filter icao that start with a
-- filterSources=adsb,uat,adsr,mlat,tisb,modeS - filter palnes by source type.
+- filterIcao=^a - filter icao that start with a (escape with %5Ea).
+- filterSources=adsb,uat,adsr,mlat,tisb,modeS - filter planes by source type.
 - filterDbFlag=military,pia,ladd - filter planes by the db flags.
 - sortBy=column - (possible values: icao, flag, flight, registration, aircraft_type, squawk, altitude, speed, vert_rate, distance, track, msgs, seen, rssi, lat, lon, data_source, military, ws, wd
 - sortByReverse - reverse the sorting specified using sortBy
 
+There is a setting in the webinterface to update the URL according to used filters, this can be simpler than building the query string by hand.
 See the main readme for more examples on how to use the filters
 
 ## Troubleshooting
