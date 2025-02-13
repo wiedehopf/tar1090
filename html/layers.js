@@ -754,6 +754,10 @@ function createBaseLayers() {
     europe.push(createGeoJsonLayer('UK A2A Refueling', 'uka2arefueling', 'geojson/UK_Mil_AAR_Zones.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
     europe.push(createGeoJsonLayer('UK AWACS Orbits', 'ukawacsorbits', 'geojson/UK_Mil_AWACS_Orbits.geojson', 'rgba(252, 186, 3, 0.3)', 'rgba(252, 186, 3, 1)', false));
 
+    // Taken from NATS Digital Datasets and converted to geojson
+    europe.push(createGeoJsonLayer('Scottish ACC Low', 'scotacclow', 'geojson/scotacclow.geojson', 'rgba(52, 46, 3, 0.1)', 'rgba(52, 46, 3, 1)'));
+    europe.push(createGeoJsonLayer('Scottish ACC High', 'scotacchigh', 'geojson/scotacchigh.geojson', 'rgba(52, 86, 3, 0.1)', 'rgba(52, 86, 3, 1)'));
+
     us.push(createGeoJsonLayer('US A2A Refueling', 'usa2arefueling', 'geojson/US_A2A_refueling.geojson', 'rgba(52, 50, 168, 0.3)', 'rgba(52, 50, 168, 1)'));
 
     us.push(createGeoJsonLayer('US ARTCC Boundaries', 'usartccboundaries', 'geojson/US_ARTCC_boundaries.geojson', 'rgba(255, 0, 255, 0.3)', 'rgba(255, 0, 255, 1)', false));
