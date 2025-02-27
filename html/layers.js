@@ -100,28 +100,36 @@ function createBaseLayers() {
     }));
 
     if (1) {
-        let openfreemap = new ol.layer.VectorTile({
+        world.push(new ol.layer.VectorTile({
             type: 'base',
             name: 'OpenFreeMapLiberty',
             title: 'OpenFreeMap Liberty',
             declutter: true,
-        });
-        // ol-mapbox-style plugin packed in with ol ... (kinda ugly)
-        ol.mapboxStyle.applyStyle(openfreemap, "https://tiles.openfreemap.org/styles/liberty");
-        ol.mapboxStyle.applyBackground(openfreemap, "https://tiles.openfreemap.org/styles/liberty");
-        world.push(openfreemap);
+            onVisible: (layer) => {
+                if (!layer.get('styleApplied')) {
+                    // ol-mapbox-style plugin packed in with ol ... (kinda ugly)
+                    ol.mapboxStyle.applyStyle(layer, "https://tiles.openfreemap.org/styles/liberty");
+                    ol.mapboxStyle.applyBackground(layer, "https://tiles.openfreemap.org/styles/liberty");
+                    layer.set('styleApplied', true);
+                }
+            },
+        }));
     }
     if (1) {
-        let openfreemap = new ol.layer.VectorTile({
+        world.push(new ol.layer.VectorTile({
             type: 'base',
             name: 'OpenFreeMapPositron',
             title: 'OpenFreeMap Positron',
             declutter: true,
-        });
-        // ol-mapbox-style plugin packed in with ol ... (kinda ugly)
-        ol.mapboxStyle.applyStyle(openfreemap, "https://tiles.openfreemap.org/styles/positron");
-        ol.mapboxStyle.applyBackground(openfreemap, "https://tiles.openfreemap.org/styles/positron");
-        world.push(openfreemap);
+            onVisible: (layer) => {
+                if (!layer.get('styleApplied')) {
+                    // ol-mapbox-style plugin packed in with ol ... (kinda ugly)
+                    ol.mapboxStyle.applyStyle(layer, "https://tiles.openfreemap.org/styles/positron");
+                    ol.mapboxStyle.applyBackground(layer, "https://tiles.openfreemap.org/styles/positron");
+                    layer.set('styleApplied', true);
+                }
+            },
+        }));
     }
 
 

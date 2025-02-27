@@ -2501,6 +2501,10 @@ function ol_map_init() {
             if (MapType_tar1090 == lyr.get('name')) {
                 foundType = true;
                 lyr.setVisible(true);
+
+                mapTypeSettings();
+                const onVisible = lyr.get('onVisible');
+                onVisible && onVisible(lyr);
             } else {
                 lyr.setVisible(false);
             }
@@ -2509,6 +2513,8 @@ function ol_map_init() {
                 if (evt.target.getVisible()) {
                     MapType_tar1090 = loStore['MapType_tar1090'] = evt.target.get('name');
                     mapTypeSettings();
+                    const onVisible = lyr.get('onVisible');
+                    onVisible && onVisible(lyr);
                 }
             });
         } else if (lyr.get('type') === 'overlay') {
