@@ -61,18 +61,6 @@ function createBaseLayers() {
         }));
     }
 
-    if (0) {
-        let stylefunction = ol.stylefunction;
-        let openfreemap = new ol.layer.VectorTile({
-            type: 'base',
-            name: 'openfreemap',
-            title: 'openfreemap',
-        });
-        // ol-mapbox-style plugin packed in with ol ... (kinda ugly)
-        ol.applyStyle(openfreemap, "https://tiles.openfreemap.org/styles/liberty");
-        world.push(openfreemap);
-    }
-
     world.push(new ol.layer.Tile({
         source: new ol.source.OSM({
             maxZoom: 17,
@@ -110,6 +98,32 @@ function createBaseLayers() {
         title: 'OpenStreetMap DE',
         type: 'base',
     }));
+
+    if (1) {
+        let openfreemap = new ol.layer.VectorTile({
+            type: 'base',
+            name: 'OpenFreeMapLiberty',
+            title: 'OpenFreeMap Liberty',
+            declutter: true,
+        });
+        // ol-mapbox-style plugin packed in with ol ... (kinda ugly)
+        ol.mapboxStyle.applyStyle(openfreemap, "https://tiles.openfreemap.org/styles/liberty");
+        ol.mapboxStyle.applyBackground(openfreemap, "https://tiles.openfreemap.org/styles/liberty");
+        world.push(openfreemap);
+    }
+    if (1) {
+        let openfreemap = new ol.layer.VectorTile({
+            type: 'base',
+            name: 'OpenFreeMapPositron',
+            title: 'OpenFreeMap Positron',
+            declutter: true,
+        });
+        // ol-mapbox-style plugin packed in with ol ... (kinda ugly)
+        ol.mapboxStyle.applyStyle(openfreemap, "https://tiles.openfreemap.org/styles/positron");
+        ol.mapboxStyle.applyBackground(openfreemap, "https://tiles.openfreemap.org/styles/positron");
+        world.push(openfreemap);
+    }
+
 
     if (1) {
         world.push(new ol.layer.Tile({
