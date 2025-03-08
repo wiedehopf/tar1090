@@ -12,6 +12,8 @@ g.route_check_array = [];
 g.route_check_in_flight = false;
 g.route_cache_timer = new Date().getTime() / 1000 + 1; // one second from now
 
+g.mapOrientation = mapOrientation;
+
 // Define our global variables
 let tabHidden = false;
 let webgl = false;
@@ -1065,9 +1067,9 @@ function earlyInitPage() {
 
 
     if (value = usp.getFloat('mapOrientation')) {
-        mapOrientation = value;
+        g.mapOrientation = value;
     }
-    mapOrientation *= (Math.PI/180); // adjust to radians
+    g.mapOrientation *= (Math.PI/180); // adjust to radians
 
     if (usp.has('r') || usp.has('replay')) {
         let numbers = (usp.get('r') || usp.get('replay') || "").split(/(?:-|:)/);
@@ -2551,7 +2553,7 @@ function ol_map_init() {
     OLProj = OLMap.getView().getProjection();
     OLProjExtent = OLProj.getExtent();
 
-    OLMap.getView().setRotation(mapOrientation); // adjust orientation
+    OLMap.getView().setRotation(g.mapOrientation); // adjust orientation
 
     OLMap.addControl(new ol.control.LayerSwitcher({
         groupSelectStyle: 'none',
@@ -4613,7 +4615,7 @@ function resetMap() {
 
         //console.log('resetMap setting center ' + [CenterLat, CenterLon]);
         OLMap.getView().setCenter(ol.proj.fromLonLat([CenterLon, CenterLat]));
-        OLMap.getView().setRotation(mapOrientation);
+        OLMap.getView().setRotation(g.mapOrientation);
 
         //selectPlaneByHex(null,false);
         jQuery("#update_error").css('display','none');
