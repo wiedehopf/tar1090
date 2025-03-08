@@ -134,7 +134,7 @@ let lastRequestSize = 0;
 let lastRequestBox = '';
 let nextQuerySelected = 0;
 let enableDynamicCachebusting = false;
-let lastRefreshInt = 1000;
+g.lastRefreshInt = 1000;
 let reapTimeout = globeIndex ? 240 : 480;
 
 
@@ -537,7 +537,7 @@ function fetchData(options) {
     }
     let currentTime = new Date().getTime();
     const refreshMs = refreshInt()
-    lastRefreshInt = refreshMs;
+    g.lastRefreshInt = refreshMs;
 
     if (!options.force) {
         if (

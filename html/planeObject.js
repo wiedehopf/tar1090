@@ -2721,7 +2721,7 @@ PlaneObject.prototype.isNonIcao = function() {
 };
 
 PlaneObject.prototype.checkVisible = function() {
-    const refresh = lastRefreshInt / 1000;
+    const refresh = g.lastRefreshInt / 1000;
     const noInfoTimeout = replay ? 600 : (reApi ? (30 + 2 * refresh) : (30 + Math.min(1, (globeTilesViewCount / globeSimLoad)) * (2 * refresh)));
     const modeSTime = (guessModeS && this.dataSource == "modeS") ? 300 : 0;
     const tisbReduction = (globeIndex && this.icao[0] == '~') ? 15 : 0;
