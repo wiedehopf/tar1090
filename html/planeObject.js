@@ -834,17 +834,20 @@ PlaneObject.prototype.updateIcon = function() {
     let svgKey  = fillColor + '!' + this.shape.name + '!' + this.strokeWidth;
     let labelText = null;
 
-    if ( enableLabels && (!multiSelect || (multiSelect && this.selected)) &&
+    if (isNaN(g.enableLabels) || isNaN(g.extendedLabels)) {
+        console.log(`${g.enableLabels} ${g.extendedLabels}`);
+    }
+    if ( g.enableLabels && (!multiSelect || (multiSelect && this.selected)) &&
         (
-            (zoomLvl >= labelZoom && this.altitude != "ground" && this.dataSource != "ais")
-            || (zoomLvl >= labelZoomGround - 2 && this.speed > 5 && !this.fakeHex)
-            || (zoomLvl >= labelZoomGround + 0 && !this.fakeHex)
-            || (zoomLvl >= labelZoomGround + 1)
+            (g.zoomLvl >= labelZoom && this.altitude != "ground" && this.dataSource != "ais")
+            || (g.zoomLvl >= labelZoomGround - 2 && this.speed > 5 && !this.fakeHex)
+            || (g.zoomLvl >= labelZoomGround + 0 && !this.fakeHex)
+            || (g.zoomLvl >= labelZoomGround + 1)
             || this.selected
         )
     ) {
         let callsign = "";
-        if (this.flight && this.flight.trim() && !(this.dataSource == "ais" && !extendedLabels))
+        if (this.flight && this.flight.trim() && !(this.dataSource == "ais" && !g.extendedLabels))
             callsign =  this.flight.trim();
         else if (this.registration)
             callsign =  'reg: ' + this.registration;
@@ -878,7 +881,7 @@ PlaneObject.prototype.updateIcon = function() {
                     labelText += '\nHIJACK';
                 }
             }
-        } else if (extendedLabels == 3) {
+        } else if (g.extendedLabels == 3) {
             if (!windLabelsSlim) {
                 labelText += 'Wind' + NBSP;
             }
@@ -905,15 +908,15 @@ PlaneObject.prototype.updateIcon = function() {
             if (windLabelsSlim && this.wd == null) {
                 labelText = '';
             }
-        } else if (extendedLabels == 2) {
+        } else if (g.extendedLabels == 2) {
             labelText += (this.registration ? this.registration : unknown) + NBSP + (this.icaoType ? this.icaoType : unknown) + '\n';
         }
-        if (extendedLabels == 1 || extendedLabels == 2) {
+        if (g.extendedLabels == 1 || g.extendedLabels == 2) {
             if ((!this.onGround || (this.speed && this.speed > 18) || (this.selected && !SelectedAllPlanes))) {
                 labelText += speedString + NBSP + NNBSP + altString.padStart(6, NBSP) + '\n';
             }
         }
-        if (extendedLabels < 3 && !uk_advisory) {
+        if (g.extendedLabels < 3 && !uk_advisory) {
             labelText += callsign;
         }
     }
@@ -1741,11 +1744,11 @@ PlaneObject.prototype.updateMarker = function(moved) {
     this.scale = iconSize * this.baseScale;
     this.strokeWidth = outlineWidth * ((this.selected && !SelectedAllPlanes && !onlySelected) ? 0.85 : 0.7) / this.baseScale;
 
-    if (!this.marker && (!webgl || enableLabels)) {
+    if (!this.marker && (!webgl || g.enableLabels)) {
         this.marker = new ol.Feature(this.olPoint);
         this.marker.hex = `${this.icao}`;
     }
-    if (webgl && !enableLabels && this.marker) {
+    if (webgl && !g.enableLabels && this.marker) {
         if (this.marker.visible) {
             PlaneIconFeatures.removeFeature(this.marker);
             this.marker.visible = false;
@@ -1766,7 +1769,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
         this.glMarker.set('sy', getSpriteY(this.shape) * glIconSize);
     }
 
-    if (this.marker && (!webgl || enableLabels)) {
+    if (this.marker && (!webgl || g.enableLabels)) {
         this.updateIcon();
         if (!this.marker.visible) {
             this.marker.visible = true;
@@ -1958,7 +1961,7 @@ PlaneObject.prototype.updateLines = function() {
             seg.label = true;
         } else if (
             trackLabels ||
-            ((i == 0 || i == this.track_linesegs.length-1 ||seg.leg) && showTrace && enableLabels)
+            ((i == 0 || i == this.track_linesegs.length-1 ||seg.leg) && showTrace && g.enableLabels)
         ) {
             // 0 vertical rate to avoid arrow
             let altString;
