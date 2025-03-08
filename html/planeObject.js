@@ -834,9 +834,6 @@ PlaneObject.prototype.updateIcon = function() {
     let svgKey  = fillColor + '!' + this.shape.name + '!' + this.strokeWidth;
     let labelText = null;
 
-    if (isNaN(g.enableLabels) || isNaN(g.extendedLabels)) {
-        console.log(`${g.enableLabels} ${g.extendedLabels}`);
-    }
     if ( g.enableLabels && (!multiSelect || (multiSelect && this.selected)) &&
         (
             (g.zoomLvl >= labelZoom && this.altitude != "ground" && this.dataSource != "ais")

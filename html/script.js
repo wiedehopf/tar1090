@@ -5002,7 +5002,6 @@ function toggleTableInView(arg) {
 
 function toggleLabels() {
     g.enableLabels = !g.enableLabels;
-    console.log(`${g.enableLabels} ${g.extendedLabels}`);
     loStore['enableLabels'] = g.enableLabels;
     for (let key in g.planesOrdered) {
         g.planesOrdered[key].updateMarker();
