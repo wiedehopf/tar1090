@@ -324,6 +324,7 @@ function processReceiverUpdate(data, init) {
             now = data.now;
         }
     }
+    g.now = now;
 
     if (globeIndex) {
         if ((showGrid || loStore['globeGrid'] == 'true')
@@ -7851,6 +7852,7 @@ function replayStep(arg) {
 
     last = now;
     now = replay.pointsU[i + 2] / 1000 + replay.pointsU[i + 1] * 4294967.296;
+    g.now = now;
 
     traceOpts.endStamp = now + replay.ival;
 

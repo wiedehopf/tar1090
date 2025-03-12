@@ -2730,6 +2730,10 @@ PlaneObject.prototype.checkVisible = function() {
 
     // recompute seen and seen_pos
     let __now = now;
+    if (isNaN(__now)) {
+        console.error("checkVisible: now is NaN, this is probably a browser bug: https://issues.chromium.org/issues/401652934");
+        __now = g.now;
+    }
     if (this.dataSource == "uat") {
         __now = uat_now;
     }
