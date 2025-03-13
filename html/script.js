@@ -874,6 +874,7 @@ function earlyInitPage() {
         for (const url of audio_url) {
             if (url) {
                 html += `
+                    <tr><td style="text-align: center">${url}</td></tr>
                     <tr><td style="text-align: center">
                     <audio crossorigin="anonymous" preload="none" src="${url}" type="audio/mp3" controls="controls" autoplay="false"></audio>
                     </td></tr>
