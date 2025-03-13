@@ -871,10 +871,16 @@ function earlyInitPage() {
             audio_url = [ audio_url ];
         }
         let html = "";
-        for (const url of audio_url) {
+        for (const entry of audio_url) {
+            let url = entry;
+            let title = entry;
+            if (Array.isArray(url)) {
+                url = entry[0];
+                title = entry[1];
+            }
             if (url) {
                 html += `
-                    <tr><td style="text-align: center">${url}</td></tr>
+                    <tr><td style="text-align: center">${title}</td></tr>
                     <tr><td style="text-align: center">
                     <audio crossorigin="anonymous" preload="none" src="${url}" type="audio/mp3" controls="controls" autoplay="false"></audio>
                     </td></tr>
