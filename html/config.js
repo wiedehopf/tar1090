@@ -379,7 +379,8 @@ lastLeg = true;
 
 //tableInView = false; // only show aircraft in current view (V button)
 
-//audio_url = ""; // show html5 audio player for this URL
+//audio_url = ["", "", "", "", "", ""]; // show html5 audio player for these URLs
+// example with titles: audio_url = [ ["URL1", "title1" ], ["URL2", "title2"] ];
 
 // aiscatcher_server = "http://192.168.1.113:8100"; // update with your server address
 // aiscatcher_refresh = 15; // refresh interval in seconds

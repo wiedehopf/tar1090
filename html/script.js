@@ -12,6 +12,8 @@ g.route_check_array = [];
 g.route_check_in_flight = false;
 g.route_cache_timer = new Date().getTime() / 1000 + 1; // one second from now
 
+g.mapOrientation = mapOrientation;
+
 // Define our global variables
 let tabHidden = false;
 let webgl = false;
@@ -61,8 +63,8 @@ let debugRoute = false;
 let trackLabels = false;
 let multiSelect = false;
 let uat_data = null;
-let enableLabels = false;
-let extendedLabels = 0;
+g.enableLabels = false;
+g.extendedLabels = 0;
 let mapIsVisible = true;
 let onlyMilitary = false;
 let onlySelected = false;
@@ -139,7 +141,7 @@ let lastRequestSize = 0;
 let lastRequestBox = '';
 let nextQuerySelected = 0;
 let enableDynamicCachebusting = false;
-let lastRefreshInt = 1000;
+g.lastRefreshInt = 1000;
 let reapTimeout = globeIndex ? 240 : 480;
 
 
@@ -155,8 +157,8 @@ let shareLink = '';
 
 let CenterLat = 0;
 let CenterLon = 0;
-let zoomLvl = 5;
-let zoomLvlCache;
+g.zoomLvl = 5;
+g.zoomLvlCache;
 
 let TrackedAircraft = 0;
 let globeTrackedAircraft = 0;
@@ -327,6 +329,7 @@ function processReceiverUpdate(data, init) {
             now = data.now;
         }
     }
+    g.now = now;
 
     if (globeIndex) {
         if ((showGrid || loStore['globeGrid'] == 'true')
@@ -542,6 +545,8 @@ function fetchData(options) {
     }
     let currentTime = new Date().getTime();
     const refreshMs = refreshInt()
+    g.lastRefreshInt = refreshMs;
+
     if (!options.force) {
         if (
             currentTime - lastFetch <= refreshMs
@@ -651,7 +656,7 @@ function fetchData(options) {
             return (globeIndexNow[x] - globeIndexNow[y]);
         });
 
-        if (binCraft && onlyMilitary && zoomLvl < 5.5) {
+        if (binCraft && onlyMilitary && g.zoomLvl < 5.5) {
             ac_url.push('data/globeMil_42777' + suffix);
         } else {
 
@@ -867,9 +872,32 @@ function initPage() {
 function earlyInitPage() {
     // things that can run without receiver json being known
     if (audio_url) {
-        jQuery('#mp3player').show();
-        document.getElementById('mp3player_audio').src = audio_url;
+        if (!Array.isArray(audio_url)) {
+            audio_url = [ audio_url ];
+        }
+        let html = "";
+        for (const entry of audio_url) {
+            let url = entry;
+            let title = entry;
+            if (Array.isArray(url)) {
+                url = entry[0];
+                title = entry[1];
+            }
+            if (url) {
+                html += `
+                    <tr><td style="text-align: center">${title}</td></tr>
+                    <tr><td style="text-align: center">
+                    <audio crossorigin="anonymous" preload="none" src="${url}" type="audio/mp3" controls="controls" autoplay="false"></audio>
+                    </td></tr>
+                `;
+            }
+        }
+        if (html) {
+            document.getElementById('mp3player').innerHTML = html;
+            jQuery('#mp3player').show();
+        }
     }
+
     let value;
 
     if (uk_advisory) {
@@ -886,7 +914,7 @@ function earlyInitPage() {
         defaultOverlays.push('uka_shoreham');
         MapType_tar1090 = 'carto_light_all';
         lineWidth=4;
-        enableLabels=true;
+        g.enableLabels=true;
     }
     if (usp.has('debugFetch')) {
         debugFetch = true;
@@ -1068,9 +1096,9 @@ function earlyInitPage() {
 
 
     if (value = usp.getFloat('mapOrientation')) {
-        mapOrientation = value;
+        g.mapOrientation = value;
     }
-    mapOrientation *= (Math.PI/180); // adjust to radians
+    g.mapOrientation *= (Math.PI/180); // adjust to radians
 
     if (usp.has('r') || usp.has('replay')) {
         let numbers = (usp.get('r') || usp.get('replay') || "").split(/(?:-|:)/);
@@ -1131,10 +1159,10 @@ function earlyInitPage() {
         toggleLabels();
     }
     if (usp.has('extendedLabels')) {
-        extendedLabels = parseInt(usp.getFloat('extendedLabels'));
+        g.extendedLabels = parseInt(usp.getFloat('extendedLabels'));
         toggleExtendedLabels({ noIncrement: true });
     } else if (loStore['extendedLabels']) {
-        extendedLabels = parseInt(loStore['extendedLabels']);
+        g.extendedLabels = parseInt(loStore['extendedLabels']);
         toggleExtendedLabels({ noIncrement: true });
     }
     if (loStore['trackLabels'] == "true" || usp.has('trackLabels')) {
@@ -2483,7 +2511,7 @@ function ol_map_init() {
         layers: layers_group,
         view: new ol.View({
             center: ol.proj.fromLonLat([CenterLon, CenterLat]),
-            zoom: zoomLvl,
+            zoom: g.zoomLvl,
             multiWorld: true,
         }),
         controls: [new ol.control.Zoom({delta: 1, duration: 0, target: 'map_canvas',}),
@@ -2519,6 +2547,10 @@ function ol_map_init() {
             if (MapType_tar1090 == lyr.get('name')) {
                 foundType = true;
                 lyr.setVisible(true);
+
+                mapTypeSettings();
+                const onVisible = lyr.get('onVisible');
+                onVisible && onVisible(lyr);
             } else {
                 lyr.setVisible(false);
             }
@@ -2527,6 +2559,8 @@ function ol_map_init() {
                 if (evt.target.getVisible()) {
                     MapType_tar1090 = loStore['MapType_tar1090'] = evt.target.get('name');
                     mapTypeSettings();
+                    const onVisible = lyr.get('onVisible');
+                    onVisible && onVisible(lyr);
                 }
             });
         } else if (lyr.get('type') === 'overlay') {
@@ -2561,7 +2595,7 @@ function ol_map_init() {
     OLProj = OLMap.getView().getProjection();
     OLProjExtent = OLProj.getExtent();
 
-    OLMap.getView().setRotation(mapOrientation); // adjust orientation
+    OLMap.getView().setRotation(g.mapOrientation); // adjust orientation
 
     OLMap.addControl(new ol.control.LayerSwitcher({
         groupSelectStyle: 'none',
@@ -2729,8 +2763,8 @@ function initMap() {
     CenterLon = Number(loStore['CenterLon']) || DefaultCenterLon;
     CenterLat = Number(loStore['CenterLat']) || DefaultCenterLat;
     //console.log("initMap Centerlat: " + CenterLat);
-    zoomLvl = Number(loStore['zoomLvl']) || DefaultZoomLvl;
-    zoomLvlCache = zoomLvl;
+    g.zoomLvl = Number(loStore['zoomLvl']) || DefaultZoomLvl;
+    g.zoomLvlCache = g.zoomLvl;
 
     if (globeIndex && aggregator) {
         jQuery('#dump1090_total_history_td').hide();
@@ -4681,14 +4715,14 @@ function resetMap() {
         // Reset loStore values and map settings
         loStore['CenterLat'] = CenterLat
         loStore['CenterLon'] = CenterLon
-        //loStore['zoomLvl']   = zoomLvl = DefaultZoomLvl;
+        //loStore['zoomLvl']   = g.zoomLvl = DefaultZoomLvl;
 
         // Set and refresh
-        //OLMap.getView().setZoom(zoomLvl);
+        //OLMap.getView().setZoom(g.zoomLvl);
 
         //console.log('resetMap setting center ' + [CenterLat, CenterLon]);
         OLMap.getView().setCenter(ol.proj.fromLonLat([CenterLon, CenterLat]));
-        OLMap.getView().setRotation(mapOrientation);
+        OLMap.getView().setRotation(g.mapOrientation);
 
         //selectPlaneByHex(null,false);
         jQuery("#update_error").css('display','none');
@@ -5163,33 +5197,33 @@ function toggleTableInView(arg) {
 }
 
 function toggleLabels() {
-    enableLabels = !enableLabels;
-    loStore['enableLabels'] = enableLabels;
+    g.enableLabels = !g.enableLabels;
+    loStore['enableLabels'] = g.enableLabels;
     for (let key in g.planesOrdered) {
         g.planesOrdered[key].updateMarker();
     }
     refreshFeatures();
-    buttonActive('#L', enableLabels);
+    buttonActive('#L', g.enableLabels);
 
     if (showTrace)
         remakeTrails();
 }
 
 function toggleExtendedLabels(options) {
-    if (isNaN(extendedLabels))
-        extendedLabels = 0;
+    if (isNaN(g.extendedLabels))
+        g.extendedLabels = 0;
 
     options = options || {};
     if (!options.noIncrement) {
-        extendedLabels++;
+        g.extendedLabels++;
     }
-    extendedLabels %= 4;
+    g.extendedLabels %= 4;
     //console.log(extendedLabels);
-    loStore['extendedLabels'] = extendedLabels;
+    loStore['extendedLabels'] = g.extendedLabels;
     for (let key in g.planesOrdered) {
         g.planesOrdered[key].updateMarker();
     }
-    buttonActive('#O', extendedLabels);
+    buttonActive('#O', g.extendedLabels);
 }
 
 function toggleTrackLabels() {
@@ -5254,7 +5288,7 @@ function onJump(e) {
         console.log("jumping to: " + coords[0] + " " + coords[1]);
         OLMap.getView().setCenter(ol.proj.fromLonLat([coords[1], coords[0]]));
 
-        if (zoomLvl >= 7) {
+        if (g.zoomLvl >= 7) {
             fetchData({force: true});
         }
 
@@ -5685,16 +5719,16 @@ function changeZoom(init) {
     if (!OLMap)
         return;
 
-    zoomLvl = OLMap.getView().getZoom();
+    g.zoomLvl = OLMap.getView().getZoom();
 
     checkScale();
 
     // small zoomstep, no need to change aircraft scaling
-    if (!init && Math.abs(zoomLvl-zoomLvlCache) < 0.4)
+    if (!init && Math.abs(g.zoomLvl-g.zoomLvlCache) < 0.4)
         return;
 
-    loStore['zoomLvl'] = zoomLvl;
-    zoomLvlCache = zoomLvl;
+    loStore['zoomLvl'] = g.zoomLvl;
+    g.zoomLvlCache = g.zoomLvl;
 
     if (!init && showTrace)
         updateAddressBar();
@@ -5703,9 +5737,9 @@ function changeZoom(init) {
 }
 
 function checkScale() {
-    if (zoomLvl > markerZoomDivide) {
+    if (g.zoomLvl > markerZoomDivide) {
         iconSize = markerBig;
-    } else if (zoomLvl > markerZoomDivide - 1) {
+    } else if (g.zoomLvl > markerZoomDivide - 1) {
         iconSize = markerSmall;
     } else {
         iconSize = markerSmall;
@@ -5736,7 +5770,7 @@ function setGlobalScale(scale, init) {
 }
 
 function checkPointermove() {
-    if ((webgl || zoomLvl > 5.5) && enableMouseover && !onMobile) {
+    if ((webgl || g.zoomLvl > 5.5) && enableMouseover && !onMobile) {
         OLMap.on('pointermove', onPointermove);
     } else {
         OLMap.un('pointermove', onPointermove);
@@ -5930,7 +5964,7 @@ function mapRefresh(redraw) {
             const plane = g.planesOrdered[i];
             delete plane.glMarker;
             // disable mobile limitations when using webGL
-            if (plane.selected || (plane.inView && plane.visible && (!onMobile || webgl || (nMapPlanes < 150 && (!plane.onGround || zoomLvl > 10))))) {
+            if (plane.selected || (plane.inView && plane.visible && (!onMobile || webgl || (nMapPlanes < 150 && (!plane.onGround || g.zoomLvl > 10))))) {
                 addToMap.push(plane);
                 nMapPlanes++;
             } else {
@@ -6447,7 +6481,7 @@ function updateAddressBar() {
 
     if (showTrace || replay) {
         string += (string ? '&' : '?');
-        string += 'lat=' + CenterLat.toFixed(3) + '&lon=' + CenterLon.toFixed(3) + '&zoom=' + zoomLvl.toFixed(1);
+        string += 'lat=' + CenterLat.toFixed(3) + '&lon=' + CenterLon.toFixed(3) + '&zoom=' + g.zoomLvl.toFixed(1);
     }
 
     if (SelPlanes.length > 0 && (showTrace)) {
@@ -6639,8 +6673,6 @@ function refreshInt() {
 
     //console.log(refresh);
 
-    lastRefreshInt = refresh;
-
     return refresh;
 }
 
@@ -6673,7 +6705,7 @@ function toggleShowTrace() {
             const plane = SelPlanes[i];
             plane.setNull();
         }
-        selectPlaneByHex(hex, {noDeselect: true, follow: true, zoom: zoomLvl,});
+        selectPlaneByHex(hex, {noDeselect: true, follow: true, zoom: g.zoomLvl,});
         if (replay) {
             replayStep();
         }
@@ -6813,7 +6845,7 @@ function shiftTrace(offset) {
     jQuery("#histDatePicker").datepicker('setDate', traceDateString);
 
     for (let i in SelPlanes) {
-        selectPlaneByHex(SelPlanes[i].icao, {noDeselect: true, zoom: zoomLvl});
+        selectPlaneByHex(SelPlanes[i].icao, {noDeselect: true, zoom: g.zoomLvl});
     }
 
     updateAddressBar();
@@ -7618,6 +7650,8 @@ function drawHeatmap() {
                     alt |= -65536;
                 if (alt == -123)
                     alt = 'ground';
+                else if (alt == -124)
+                    alt = null;
                 else
                     alt *= 25;
 
@@ -8013,6 +8047,7 @@ function replayStep(arg) {
 
     last = now;
     now = replay.pointsU[i + 2] / 1000 + replay.pointsU[i + 1] * 4294967.296;
+    g.now = now;
 
     traceOpts.endStamp = now + replay.ival;
 
@@ -8033,9 +8068,9 @@ function replayStep(arg) {
     i += 4;
 
     let ext;
-    if (zoomLvl > 10) {
+    if (g.zoomLvl > 10) {
         ext = currentExtent(1.6);
-    } else if (zoomLvl > 8) {
+    } else if (g.zoomLvl > 8) {
         ext = currentExtent(1.2);
     } else {
         ext = currentExtent(1.1);
@@ -8102,6 +8137,8 @@ function replayStep(arg) {
             alt |= -65536;
         if (alt == -123)
             alt = 'ground';
+        else if (alt == -124)
+            alt = null;
         else
             alt *= 25;
 
