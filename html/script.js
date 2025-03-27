@@ -7601,6 +7601,9 @@ function replayDefaults(ts) {
         speed = 30;
         playing = false;
     }
+    if (usp.has("replayPaused")) {
+        playing = false;
+    }
     return {
         playing: playing,
         ts: ts,

@@ -81,7 +81,8 @@ See the main readme for more examples on how to use the filters
 ## heatmap / replay (only available with readsb --heatmap parameter)
 
 - replay - replay history of all planes
-- replaySpeed - adjust replay speed, 0 loads the replay paused with default speed set
+- replaySpeed - adjust replay speed
+- replayPaused - load replay paused
 - heatmap - show a heatmap for the last 24h by default (optional: supply the maximum number of dots drawn, default 32000)
 - heatDuration - how many hours to show in the heatmap
 - heatEnd - how many hours to shift the heatmap time window into the past
