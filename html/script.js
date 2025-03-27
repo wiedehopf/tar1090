@@ -7592,11 +7592,20 @@ function currentExtent(factor) {
 
 function replayDefaults(ts) {
     jQuery("#replayPlay").html("Pause");
+    let playing = true;
+    let speed = 30;
+    if (usp.has("replaySpeed")) {
+        speed = usp.getFloat("replaySpeed");
+    }
+    if (speed == 0) {
+        speed = 30;
+        playing = false;
+    }
     return {
-        playing: true,
+        playing: playing,
         ts: ts,
         ival: 60 * 1000,
-        speed: 30,
+        speed: speed,
         dateText: zDateString(ts),
         hours: ts.getUTCHours(),
         minutes: ts.getUTCMinutes(),
