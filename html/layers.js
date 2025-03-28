@@ -28,7 +28,7 @@ function createBaseLayers() {
         custom_layers.push(new ol.layer.Tile({
             source: new ol.source.OSM({
                 "url" : loStore['customTiles'],
-                maxZoom: 15,
+                maxZoom: 20,
                 transition: tileTransition,
             }),
             name: 'custom_tiles',
