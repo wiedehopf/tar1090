@@ -8949,7 +8949,7 @@ function onAltimeterSetStandard(e) {
 }
 function onAltimeterSetSelected(e) {
     e.preventDefault();
-    if (!SelectedPlane.nav_qnh) {
+    if (!SelectedPlane || !SelectedPlane.nav_qnh) {
         return;
     }
     jQuery("#altimeter_input").val(SelectedPlane.nav_qnh);
