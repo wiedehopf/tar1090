@@ -1212,6 +1212,7 @@ function earlyInitPage() {
 
     jQuery("#altimeter_form").submit(onAltimeterChange);
     jQuery("#altimeter_set_standard").click(onAltimeterSetStandard);
+    jQuery("#altimeter_set_selected").click(onAltimeterSetSelected);
 
     // Set up altitude filter button event handlers and validation options
     jQuery("#altitude_filter_form").submit(onFilterByAltitude);
@@ -8944,6 +8945,14 @@ function getn(n) {
 function onAltimeterSetStandard(e) {
     e.preventDefault();
     jQuery("#altimeter_input").val(1013.25);
+    onAltimeterChange(e);
+}
+function onAltimeterSetSelected(e) {
+    e.preventDefault();
+    if (!SelectedPlane.nav_qnh) {
+        return;
+    }
+    jQuery("#altimeter_input").val(SelectedPlane.nav_qnh);
     onAltimeterChange(e);
 }
 function onAltimeterChange(e) {
