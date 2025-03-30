@@ -3368,6 +3368,12 @@ let somethingSelected = false;
 function refreshSelected() {
     const selected = SelectedPlane;
 
+    if (!selected || !selected.nav_qnh) {
+        jQuery('#altimeter_set_selected').prop("disabled", true);
+    } else {
+        jQuery('#altimeter_set_selected').prop("disabled", false);
+    }
+
     if (!selected) {
         if (somethingSelected) {
             adjustInfoBlock();

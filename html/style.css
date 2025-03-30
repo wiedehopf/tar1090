@@ -350,9 +350,12 @@ select {
 
 .formButton {
     font-size: var(--FS2);
-    color:var(--TXTCOLOR3);
+    color:var(--TXTCOLOR2);
     background-color: var(--BGCOLOR2);
     border-color: var(--BGCOLOR1);
+}
+.formButton:disabled {
+    color:var(--TXTCOLOR3);
 }
 
 select.error, textarea.error, input.error {
