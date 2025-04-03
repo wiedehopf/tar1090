@@ -550,7 +550,12 @@ function wqi(data) {
         }
         ac.receiverCount = u8[104];
 
-        ac.rssi = 10 * Math.log(u8[105]*u8[105]/65025 + 1.125e-5)/Math.log(10);
+        if (binCraftVersion >= 20250403) {
+            ac.rssi = (u8[105] * (50 / 255)) - 50;
+        } else {
+            let level = u8[105]*u8[105]/65025 + 1.125e-5;
+            ac.rssi = 10 * Math.log(level)/Math.log(10);
+        }
 
         ac.extraFlags = u8[106];
         ac.nogps = ac.extraFlags & 1;

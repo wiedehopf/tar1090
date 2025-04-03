@@ -1535,12 +1535,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     }
 
     if (data.rssi != null && data.rssi > -49.4) {
-        if (!globeIndex && this.rssi != null && RefreshInterval < 1500) {
-            let factor = Math.min(1, Math.log(2 - RefreshInterval / 1500));
-            this.rssi = this.rssi * (1 - factor) + data.rssi * factor;
-        } else {
-            this.rssi = data.rssi;
-        }
+        this.rssi = data.rssi;
     } else {
         this.rssi = null;
     }
