@@ -161,6 +161,22 @@ After that run the install script and it should work.
 978 should be disabled in the config file for this configuration.
 UAT traffic will be displayed as ADS-B, this can't be avoided.
 
+## AIS receiver running AIS-catcher:
+
+See the instructions for "[Configuring part 2](#configuring-part-2-the-web-interface-optional)".
+This is the relevant part in the configuration file:
+```
+// aiscatcher_server = "http://192.168.1.113:8100"; // update with your server address
+// aiscatcher_refresh = 15; // refresh interval in seconds
+// aiscatcher_test = true; // show with squares on the aircraft icon layer
+// aisTimeout = 1200;
+```
+You can remove the `//` to uncomment the line. The necessary settings to enable AIS display are `aiscatcher_server` and `aiscatcher_refresh`.
+
+Make sure that the server address is reachable from the device you are viewing the tar1090 page from (i.e. localhost / 127.0.0.1 will not work here unless you are viewing the tar1090 interface from the same machine you are running AIS-catcher - in all other cases it will need to be the local IP).
+
+**Note:** for this to work, you must have started AIS-catcher with the geojson flag set to on with the option `-N 8100 geojson on` and you should be able to see a geojson if you visit the `aiscatcher_server` address from above with `/geojson` appeanded to it - from the above example this would be `http://192.168.1.113:8100/geojson`
+
 ### Installation / Update to work with another folder, for example /run/combine1090
 
 
