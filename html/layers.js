@@ -623,7 +623,7 @@ function createBaseLayers() {
                 maxResolution: 156543.03392804097,
                 maxZoom: 8,
                 minZoom: 0,
-                tileSize: 256,
+                tileSize: 512,
             }),
             transition: tileTransition,
         });
@@ -640,12 +640,19 @@ function createBaseLayers() {
             // extent somehow bugged
         });
 
+        let dwdValidtime = "";
 
         let refreshDwd = function () {
-            dwd.getSource().updateParams({"validtime": (new Date()).getTime()});
+            let ms = Date.now();
+            let validtime = (ms - ms % (5 * 60 * 1000)) / 1000;
+            if (validtime != dwdValidtime) {
+                //console.log(`dwd validtime ${zuluTime(new Date(validtime * 1000))}`);
+                dwd.getSource().updateParams({validtime: validtime});
+                dwdValidtime = validtime;
+            }
         };
         refreshDwd();
-        window.setInterval(refreshDwd, 2 * 60 * 1000);
+        window.setInterval(refreshDwd, 15 * 1000);
 
         europe.push(dwd);
     }
