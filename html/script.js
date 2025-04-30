@@ -2607,9 +2607,9 @@ function ol_map_init() {
         let trailTS = null;
         let planeHex = null;
 
-        let features = webgl ? webglFeatures : PlaneIconFeatures;
+        let source = webgl ? webglFeatures : PlaneIconFeatures;
         let evtCoords = evt.map.getCoordinateFromPixel(evt.pixel);
-        let feature = features.getClosestFeatureToCoordinate(evtCoords);
+        let feature = source.getClosestFeatureToCoordinate(evtCoords);
         if (feature) {
             let fPixel = evt.map.getPixelFromCoordinate(feature.getGeometry().getCoordinates());
             let a = fPixel[0] - evt.pixel[0];
@@ -2620,16 +2620,29 @@ function ol_map_init() {
         }
 
         if (!planeHex || showTrace) {
-            let features = evt.map.getFeaturesAtPixel(
-                evt.pixel,
-                {
-                    layerFilter: function(layer) { return (layer.get('isTrail') == true); },
-                    hitTolerance: globalScale * (onMobile ? 30 : 20),
+            let features = [];
+            let trailFeature = null;
+            if (1) {
+                for (const layer of trailGroup.getArray()) {
+                    const source = layer.getSource();
+                    trailFeature = source.getClosestFeatureToCoordinate(evtCoords);
+                    if (trailFeature) {
+                        features.push(trailFeature);
+                    }
                 }
-            );
+            } else {
+                // old variant, slower in most cases
+                features = evt.map.getFeaturesAtPixel(
+                    evt.pixel,
+                    {
+                        layerFilter: function(layer) { return (layer.get('isTrail') == true); },
+                        hitTolerance: globalScale * (onMobile ? 30 : 20),
+                    }
+                );
+            }
             if (features.length > 0) {
-                let close = 10000000000000;
-                let closest = features[0];
+                let close2 = 200 * 200;
+                let closest = null;
                 for (let j in features) {
                     let feature = features[j];
                     let coords;
@@ -2642,23 +2655,26 @@ function ol_map_init() {
                         let fPixel = evt.map.getPixelFromCoordinate(coords[k]);
                         let a = fPixel[0] - evt.pixel[0];
                         let b = fPixel[1] - evt.pixel[1];
-                        let distance = a**2 + b**2;
-                        if (distance < close) {
+                        let distance2 = a**2 + b**2;
+                        if (distance2 < close2) {
                             closest = feature;
-                            close = distance;
+                            close2 = distance2;
                         }
                     }
                 }
-                if (showTrace)
-                    trailTS = closest.timestamp;
-                else
-                    trailHex = closest.hex;
+                if (closest) {
+                    if (showTrace)
+                        trailTS = closest.timestamp;
+                    else
+                        trailHex = closest.hex;
+                }
             }
         }
 
         const dblclick = (evt.type === 'dblclick') && !showTrace;
 
         if (showTrace && trailTS) {
+            planeHex = null;
             gotoTime(trailTS);
         }
         let hex = planeHex || trailHex;
@@ -2814,6 +2830,7 @@ function initMap() {
     const dummyLayer = new ol.layer.Vector({
         name: 'dummy',
         renderOrder: null,
+        source: new ol.source.Vector(),
     });
 
     trailGroup.push(dummyLayer);
@@ -5843,8 +5860,8 @@ function onPointermove(evt) {
 
 function highlight(evt) {
     let evtCoords = evt.map.getCoordinateFromPixel(evt.pixel);
-    let features = webgl ? webglFeatures : PlaneIconFeatures;
-    let feature = features.getClosestFeatureToCoordinate(evtCoords);
+    let source = webgl ? webglFeatures : PlaneIconFeatures;
+    let feature = source.getClosestFeatureToCoordinate(evtCoords);
     if (feature) {
         let fPixel = evt.map.getPixelFromCoordinate(feature.getGeometry().getCoordinates());
         let a = fPixel[0] - evt.pixel[0];
