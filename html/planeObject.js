@@ -1142,7 +1142,6 @@ PlaneObject.prototype.processTrace = function() {
             _now = timestamp;
 
             if (traceOpts.showTime && timestamp > traceOpts.showTime) {
-                traceOpts.showTimeEnd = timestamp;
                 if (traceOpts.replaySpeed > 0) {
                     clearTimeout(traceOpts.showTimeout);
                     traceOpts.animateRealtime = (timestamp - traceOpts.showTime) * 1000;
@@ -1154,9 +1153,12 @@ PlaneObject.prototype.processTrace = function() {
                     traceOpts.animateStepTime = traceOpts.animateRealtime / traceOpts.replaySpeed / traceOpts.animateSteps;
 
                     if (traceOpts.animateSteps < 2) {
-                        traceOpts.showTimeout = setTimeout(gotoTime, traceOpts.animateTime);
                         traceOpts.animate = false;
+                        //console.log(`animateTime: ${traceOpts.animateTime}`);
+                        traceOpts.showTime = timestamp;
+                        traceOpts.showTimeout = setTimeout(gotoTime, traceOpts.animateTime);
                     } else {
+                        traceOpts.showTimeEnd = timestamp;
                         //console.timeEnd('step');
                         //console.time('step');
                         //console.log(traceOpts.animateTime);

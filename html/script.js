@@ -7117,6 +7117,7 @@ function drawOutlineJson() {
 }
 
 function gotoTime(timestamp) {
+    //console.log(`gotoTime(${timestamp}) animate: {${traceOpts.animate}}`);
     clearTimeout(traceOpts.showTimeout);
     if (timestamp) {
         traceOpts.showTime = timestamp;
@@ -7136,10 +7137,11 @@ function gotoTime(timestamp) {
         if (--traceOpts.animateCounter == 1) {
             traceOpts.animate = false;
             traceOpts.showTime = traceOpts.showTimeEnd;
-            console.log(traceOpts.showTime);
         }
 
         traceOpts.animateStepTime = traceOpts.animateRealtime / traceOpts.replaySpeed / traceOpts.animateSteps;
+        clearTimeout(traceOpts.showTimeout);
+        //console.log(`setTimeout(gotoTime, (${traceOpts.animateStepTime}))`);
         traceOpts.showTimeout = setTimeout(gotoTime, traceOpts.animateStepTime);
     }
 }
