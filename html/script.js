@@ -2146,7 +2146,7 @@ function updateAIScatcher() {
         g.aiscatcher_source.setUrl("data:text/plain;base64,"+btoa(data));
         g.aiscatcher_source.refresh();
 
-        if (aiscatcher_test) {
+        if (1 || aiscatcher_test) {
             processAIS(JSON.parse(data));
         }
     });
@@ -2157,6 +2157,7 @@ function processAIS(data) {
     g.ais_now = new Date().getTime() / 1000;
 
     const features = data.features;
+    aisTimeout = data.time_span || aisTimeout;
     for (let i in features) {
         processBoat(features[i], g.ais_now, g.ais_last);
     }
@@ -5841,17 +5842,18 @@ function onPointermove(evt) {
 }
 
 function highlight(evt) {
-    const feature = evt.map.forEachFeatureAtPixel(evt.pixel,
-        function(feature, layer) {
-            return feature;
-        },
-        {
-            layerFilter: function(layer) {
-                return (layer == iconLayer || layer == webglLayer || layer == g.aiscatcherLayer);
-            },
-            hitTolerance: 5 * globalScale,
+    let evtCoords = evt.map.getCoordinateFromPixel(evt.pixel);
+    let features = webgl ? webglFeatures : PlaneIconFeatures;
+    let feature = features.getClosestFeatureToCoordinate(evtCoords);
+    if (feature) {
+        let fPixel = evt.map.getPixelFromCoordinate(feature.getGeometry().getCoordinates());
+        let a = fPixel[0] - evt.pixel[0];
+        let b = fPixel[1] - evt.pixel[1];
+        let c = globalScale * 20;
+        if (a**2 + b**2 > c**2) {
+            feature = null;
         }
-    );
+    }
     if (!feature) {
         HighlightedPlane = null;
         refreshHighlighted();

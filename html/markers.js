@@ -1238,7 +1238,7 @@ function getBaseMarker(category, typeDesignator, typeDescription, wtc, addrtype,
     //return ['f5_tiger', 1];
 
     if (addrtype == 'ais') {
-        return ['ground_square', 0.7];
+        return ['ground_square', 0.001];
     }
 
     if (halloween) {

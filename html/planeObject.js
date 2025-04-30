@@ -2739,6 +2739,7 @@ PlaneObject.prototype.checkVisible = function() {
     let timeout = seenTimeout;
     if (this.dataSource == "mlat") { timeout = seenTimeoutMlat; }
     else if (this.dataSource == "adsc") { timeout = jaeroTimeout; }
+    else if (this.dataSource == 'ais') { timeout = aisTimeout; }
 
     timeout += modeSTime - tisbReduction + refresh;
 

@@ -383,7 +383,7 @@ let audio_url = ["", "", "", "", "", ""]; // show html5 audio player for these U
 
 let aiscatcher_server = "";
 let aiscatcher_refresh = 15;
-let aiscatcher_test = true;
+let aiscatcher_test = true; // unused
 let aisTimeout = 1200;
 
 let droneJson = "";
