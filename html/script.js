@@ -2615,8 +2615,11 @@ function ol_map_init() {
             let a = fPixel[0] - evt.pixel[0];
             let b = fPixel[1] - evt.pixel[1];
             let c = globalScale * (onMobile ? 30 : 20);
-            if (a**2 + b**2 < c**2)
+            if (a**2 + b**2 < c**2) {
                 planeHex = feature.hex;
+            } else {
+                feature = null;
+            }
         }
 
         if (!planeHex || showTrace) {
@@ -2624,6 +2627,9 @@ function ol_map_init() {
             let trailFeature = null;
             if (1) {
                 for (const layer of trailGroup.getArray()) {
+                    if (!layer.getVisible()) {
+                        continue;
+                    }
                     const source = layer.getSource();
                     trailFeature = source.getClosestFeatureToCoordinate(evtCoords);
                     if (trailFeature) {
@@ -2641,7 +2647,10 @@ function ol_map_init() {
                 );
             }
             if (features.length > 0) {
-                let close2 = 200 * 200;
+                let hitTolerance = globalScale * (onMobile ? 30 : 20);
+                // just rubber band to the closest trace for showTrace
+                if (showTrace) { hitTolerance = 10000; }
+                let close2 = hitTolerance * hitTolerance;
                 let closest = null;
                 for (let j in features) {
                     let feature = features[j];
@@ -2677,12 +2686,14 @@ function ol_map_init() {
             planeHex = null;
             gotoTime(trailTS);
         }
-        let hex = planeHex || trailHex;
-        if (hex) {
-            selectPlaneByHex(hex, {noDeselect: dblclick, follow: dblclick});
+        console.log(`planeHex: ${planeHex} trailHex: ${trailHex}`);
+        if (planeHex) {
+            selectPlaneByHex(planeHex, {noDeselect: dblclick, follow: dblclick});
+        } else if (trailHex) {
+            selectPlaneByHex(trailHex, {noDeselect: true});
         }
 
-        if (!hex && !multiSelect && !showTrace) {
+        if (!planeHex && !trailHex && !multiSelect && !showTrace) {
             if (onlySelected)
                 toggleIsolation();
             deselect(SelectedPlane);
