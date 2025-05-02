@@ -2686,7 +2686,7 @@ function ol_map_init() {
             planeHex = null;
             gotoTime(trailTS);
         }
-        console.log(`planeHex: ${planeHex} trailHex: ${trailHex}`);
+        //console.log(`planeHex: ${planeHex} trailHex: ${trailHex}`);
         if (planeHex) {
             selectPlaneByHex(planeHex, {noDeselect: dblclick, follow: dblclick});
         } else if (trailHex) {
