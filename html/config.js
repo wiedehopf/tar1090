@@ -322,9 +322,10 @@ HideCols = [
 // get pictures from planespotting.be
 // planespottingAPI = true;
 
-// get flight route from routeApi service
+// get flight route from routeApi service default setting (toggle via settings checkbox)
 // useRouteAPI = false;
 // which routeApi service to use
+// routeApiUrl = "https://adsb.im/api/0/routeset";
 // routeApiUrl = "https://api.adsb.lol/api/0/routeset";
 
 // show a link to jetphotos, only works if planespottersAPI is disabled

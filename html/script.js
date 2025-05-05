@@ -1637,24 +1637,23 @@ jQuery('#selected_altitude_geom1')
             refreshSelected();
         }
     });
-    if (useRouteAPI) {
-        new Toggle({
-            key: "useRouteAPI",
-            display: "Lookup route",
-            container: "#settingsRight",
-            init: useRouteAPI,
-            setState: function(state) {
-                useRouteAPI = state;
-                if (useRouteAPI) {
-                    jQuery('#routeRow').show();
-                    jQuery('#routeRowHighlighted').show();
-                } else {
-                    jQuery('#routeRow').hide();
-                    jQuery('#routeRowHighlighted').hide();
-                }
+
+    new Toggle({
+        key: "useRouteAPI",
+        display: "Lookup route",
+        container: "#settingsRight",
+        init: useRouteAPI,
+        setState: function(state) {
+            useRouteAPI = state;
+            if (useRouteAPI) {
+                jQuery('#routeRow').show();
+                jQuery('#routeRowHighlighted').show();
+            } else {
+                jQuery('#routeRow').hide();
+                jQuery('#routeRowHighlighted').hide();
             }
-        });
-    }
+        }
+    });
 
 
     new Toggle({
