@@ -447,12 +447,7 @@ function createBaseLayers() {
     }));
 
     if (true) {
-        us.push(new ol.layer.Vector({
-            source: new ol.source.Vector({
-                url: 'https://raw.githubusercontent.com/wiedehopf/tar1090-aux/master/tfrs.geojson',
-                format: new ol.format.GeoJSON(),
-                attributions: 'TFRs via FAA hosted on github: <a href="https://github.com/wiedehopf/tar1090-aux" target="_blank">tar1090-aux</a>.'
-            }),
+        let tfrLayer = new ol.layer.Vector({
             style: {
                 'stroke-width': 2,
                 'stroke-color': 'red',
@@ -473,7 +468,21 @@ function createBaseLayers() {
             opacity: tfrOpacity,
             visible: false,
             zIndex: 99,
-        }));
+        });
+
+        us.push(tfrLayer);
+
+        let refreshTFR = function() {
+            let source = new ol.source.Vector({
+                url: 'https://raw.githubusercontent.com/wiedehopf/tar1090-aux/master/tfrs.geojson',
+                format: new ol.format.GeoJSON(),
+                attributions: 'TFRs via FAA hosted on github: <a href="https://github.com/wiedehopf/tar1090-aux" target="_blank">tar1090-aux</a>.'
+            });
+            tfrLayer.setSource(source);
+        };
+
+        refreshTFR();
+        window.setInterval(refreshTFR, 5 * 60 * 1000);
     }
 
     us.push(new ol.layer.Vector({
