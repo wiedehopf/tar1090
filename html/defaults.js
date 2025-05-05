@@ -337,6 +337,7 @@ let useRouteAPI = false;
 // which routeApi service to use
 let routeApiUrl = "https://adsb.im/api/0/routeset";
 // alternative: "https://api.adsb.lol/api/0/routeset";
+// routeApiUrl = ""; // to disable route API so it can't be enabled by a website visitor
 
 // show a link to jetphotos, only works if planespottersAPI is disabled
 let jetphotoLinks = false;
