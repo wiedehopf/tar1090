@@ -237,6 +237,10 @@ let uk_advisory = false;
 if (usp.has('uk_advisory')) {
     uk_advisory = true;
 }
+let atcStyle = false;
+if (usp.has('atcStyle')) {
+    atcStyle = true;
+}
 
 const customTiles = usp.get('customTiles');
 if (customTiles)

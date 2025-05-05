@@ -1251,7 +1251,7 @@ function getBaseMarker(category, typeDesignator, typeDescription, wtc, addrtype,
                 return ['witchl', 1];
         }
     }
-    if (uk_advisory) {
+    if (atcStyle) {
         return ['asterisk', 1.2];
     }
     if (squareMania) {

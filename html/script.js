@@ -896,21 +896,25 @@ function earlyInitPage() {
     let value;
 
     if (uk_advisory) {
+        defaultOverlays.push('uka_airports');
+        defaultOverlays.push('uka_airspaces');
+        defaultOverlays.push('uka_runways');
+        defaultOverlays.push('uka_shoreham');
+        atcStyle = true;
+    }
 
+    if (atcStyle) {
         labels_top = true;
         tempTrails = true;
         tempTrailsTimeout = 45;
         SiteCirclesDistances = new Array(5, 10, 20);
         SiteCirclesLineDash = [5, 5];
         SiteCirclesColors = ['#2b3436', '#2b3436', '#2b3436'];
-        defaultOverlays.push('uka_airports');
-        defaultOverlays.push('uka_airspaces');
-        defaultOverlays.push('uka_runways');
-        defaultOverlays.push('uka_shoreham');
         MapType_tar1090 = 'carto_light_all';
         lineWidth=4;
         g.enableLabels=true;
     }
+
     if (usp.has('debugFetch')) {
         debugFetch = true;
     }

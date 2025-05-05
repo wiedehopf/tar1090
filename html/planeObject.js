@@ -730,7 +730,7 @@ PlaneObject.prototype.getMarkerColor = function(options) {
         l += ColorByAlt.mlat.l;
     }
 
-    if (uk_advisory && (this.squawk == '7700' || this.squawk == '7600' || this.squawk == '7500')) {
+    if (atcStyle && (this.squawk == '7700' || this.squawk == '7600' || this.squawk == '7500')) {
         h = 0;
         s = 100;
         l = 40;
@@ -865,7 +865,7 @@ PlaneObject.prototype.updateIcon = function() {
         let speedString = (this.speed == null) ? (NBSP+'?'+NBSP) : format_speed_brief(this.speed, DisplayUnits, showLabelUnits).padStart(3, NBSP);
 
         labelText = "";
-        if (uk_advisory) {
+        if (atcStyle) {
             labelText += callsign + '\n';
             labelText += altString + '\n';
             labelText += 'x' + this.squawk;
@@ -913,7 +913,7 @@ PlaneObject.prototype.updateIcon = function() {
                 labelText += speedString + NBSP + NNBSP + altString.padStart(6, NBSP) + '\n';
             }
         }
-        if (g.extendedLabels < 3 && !uk_advisory) {
+        if (g.extendedLabels < 3 && !atcStyle) {
             labelText += callsign;
         }
     }

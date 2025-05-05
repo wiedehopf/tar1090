@@ -54,6 +54,7 @@ See the main readme for more examples on how to use the filters
 - mapOrientation=0-360 - normally true north faces up, use this to change which true direction is pointing up.
 - monochromeMarkers=xxxxxx - set constant html color for markers (parameter is an hexadecimal color).
 - monochromeTracks=xxxxxx - set constant html color for tracks (parameter is an hexadecimal color).
+- atcStyle - use a style somewhat like an ATC display
 - outlineWidth=value - set width for the for aircraft icons (only works with webGL disabled)
 - outlineColor=xxxxxx - set outline color (parameter is an hexadecimal color, only works with webGL disabled)
 - sidebarWidth=xxx - size of sidebar in pixels.
