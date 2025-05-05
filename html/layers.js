@@ -449,19 +449,24 @@ function createBaseLayers() {
     if (true) {
         us.push(new ol.layer.Vector({
             source: new ol.source.Vector({
-                url: 'https://raw.githubusercontent.com/airframesio/data/master/json/faa/tfrs.geojson',
+                url: 'https://raw.githubusercontent.com/wiedehopf/tar1090-aux/master/tfrs.geojson',
                 format: new ol.format.GeoJSON(),
-                attributions: 'TFRs courtesy of <a href="https://github.com/airframesio/data" target="_blank">Airframes</a>.'
+                attributions: 'TFRs via FAA hosted on github: <a href="https://github.com/wiedehopf/tar1090-aux" target="_blank">tar1090-aux</a>.'
             }),
-            style: new ol.style.Style({
-                fill: new ol.style.Fill({
-                    color : [255, 0, 0, 0.6]
-                }),
-                stroke: new ol.style.Stroke({
-                    color: [255, 0, 0, 0.9],
-                    width: 1
-                }),
-            }),
+            style: {
+                'stroke-width': 2,
+                'stroke-color': 'red',
+                'fill-color': [255, 0, 0, 0.08],
+                'text-value': [
+                    'concat',
+                    ['get', 'NOTAM_KEY'],
+                    '\n',
+                    ['get', 'LEGAL']
+                ],
+                'text-font': '14px sans-serif',
+                'text-stroke-width': 2,
+                'text-stroke-color': 'black'
+            },
             name: 'tfrs',
             title: 'TFRs',
             type: 'overlay',
