@@ -1642,22 +1642,24 @@ jQuery('#selected_altitude_geom1')
         }
     });
 
-    new Toggle({
-        key: "useRouteAPI",
-        display: "Lookup route",
-        container: "#settingsRight",
-        init: useRouteAPI,
-        setState: function(state) {
-            useRouteAPI = state;
-            if (useRouteAPI) {
-                jQuery('#routeRow').show();
-                jQuery('#routeRowHighlighted').show();
-            } else {
-                jQuery('#routeRow').hide();
-                jQuery('#routeRowHighlighted').hide();
+    if (routeApiUrl) {
+        new Toggle({
+            key: "useRouteAPI",
+            display: "Lookup route",
+            container: "#settingsRight",
+            init: useRouteAPI,
+            setState: function(state) {
+                useRouteAPI = state;
+                if (useRouteAPI) {
+                    jQuery('#routeRow').show();
+                    jQuery('#routeRowHighlighted').show();
+                } else {
+                    jQuery('#routeRow').hide();
+                    jQuery('#routeRowHighlighted').hide();
+                }
             }
-        }
-    });
+        });
+    }
 
 
     new Toggle({
@@ -3960,7 +3962,7 @@ function refreshFeatures() {
         },
         html: flightawareLinks,
         text: 'Callsign' };
-    if (1 || useRouteAPI) {
+    if (routeApiUrl) {
         cols.route = {
             sort: function () { sortBy('route', compareAlpha, function(x) { return x.routeString }); },
             value: function(plane) {
