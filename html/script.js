@@ -3956,7 +3956,7 @@ function refreshFeatures() {
         },
         html: flightawareLinks,
         text: 'Callsign' };
-    if (useRouteAPI) {
+    if (1 || useRouteAPI) {
         cols.route = {
             sort: function () { sortBy('route', compareAlpha, function(x) { return x.routeString }); },
             value: function(plane) {
