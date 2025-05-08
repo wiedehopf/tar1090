@@ -1659,6 +1659,8 @@ jQuery('#selected_altitude_geom1')
                 }
             }
         });
+    } else {
+        useRouteAPI = false;
     }
 
 
