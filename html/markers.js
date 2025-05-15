@@ -1070,6 +1070,7 @@ let TypeDesignatorIcons = {
     'C2': ['c2', 1],
     'E2': ['c2', 1],
     'H47': ['chinook', 1],
+    'H46': ['chinook', 1],
     'HAWK': ['bae_hawk', 1],
 
     'GYRO': ['gyrocopter', 1],
