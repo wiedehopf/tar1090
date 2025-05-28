@@ -1745,7 +1745,10 @@ jQuery('#selected_altitude_geom1')
         jQuery('#imageConfigLink').text(imageConfigText)
         jQuery('#imageConfigHeader').show();
     }
-
+    if (aiscatcher_server != "") {
+        let host = window.location.hostname;
+        aiscatcher_server = aiscatcher_server.replace('HOSTNAME', host);
+    }
 
     if (hideButtons) {
         showHideButtons();
