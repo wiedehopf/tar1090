@@ -428,10 +428,10 @@ function wqi(data) {
 
     const binCraftVersion = u32[10];
 
-    const flags = u32[11];
-    const useMessageRate = flags & (1 << 0);
-
     data.messageRate = u32[11] / 10;
+
+    const flags = u32[12];
+    const useMessageRate = flags & (1 << 0);
 
     if (receiver_lat != 0 && receiver_lon != 0) {
         //console.log("receiver_lat: " + receiver_lat + " receiver_lon: " + receiver_lon);
