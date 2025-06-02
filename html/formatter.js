@@ -428,6 +428,9 @@ function wqi(data) {
 
     const binCraftVersion = u32[10];
 
+    const flags = u32[11];
+    const useMessageRate = flags & (1 << 0);
+
     data.messageRate = u32[11] / 10;
 
     if (receiver_lat != 0 && receiver_lon != 0) {
@@ -500,7 +503,7 @@ function wqi(data) {
         ac.ias = u16[29];
         ac.rc  = u16[30];
 
-        if (globeIndex && binCraftVersion >= 20220916) {
+        if (useMessageRate) {
             ac.messageRate = u16[31] / 10;
         } else {
             ac.messages = u16[31];
