@@ -406,7 +406,7 @@ function wqi(data) {
     const INT32_MAX = 2147483647;
     const buffer = data.buffer;
     //console.log(buffer);
-    let u32 = new Uint32Array(data.buffer, 0, 12);
+    let u32 = new Uint32Array(data.buffer, 0, 13);
     data.now = u32[0] / 1000 + u32[1] * 4294967.296;
     //console.log(data.now);
     let stride = u32[2];
