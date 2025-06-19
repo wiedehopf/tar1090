@@ -324,7 +324,7 @@ function format_data_source(source) {
 		case 'mode_ac':
 			return "Mode A/C";
         case 'adsc':
-            return "Sat. ADS-C";
+            return jaeroLabel;
         case 'other':
             return "Other";
 	}

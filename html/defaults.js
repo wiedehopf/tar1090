@@ -372,6 +372,7 @@ let askLocation = false; // requires https for geolocation
 let filterMaxRange = 1e8; // 100 000 km should include all planes on earth ;)
 
 let jaeroTimeout = 35 * 60; // in seconds
+let jaeroLabel = "ADS-C"; // relabel the ADS-C data if used for other purposes (i.e. HFDL / acars2pos)
 
 let seenTimeout = 58; // in seconds
 let seenTimeoutMlat = 58; // in seconds
@@ -405,7 +406,7 @@ let tableColors = {
         mlat:      "#FDF7DD",
         uat:       "#C4FFDC",
         adsr:      "#C4FFDC",
-        adsc:      "#C4FFDC",
+        adsc:      "#9efa9e",
         modeS:     "#d8d8ff",
         tisb:      "#ffd8e6",
         unknown:   "#dcdcdc",
@@ -417,7 +418,7 @@ let tableColors = {
         mlat:      "#F1DD83",
         uat:       "#66FFA6",
         adsr:      "#66FFA6",
-        adsc:      "#66FFA6",
+        adsc:      "#75f075",
         modeS:     "#BEBEFF",
         tisb:      "#FFC1D8",
         unknown:   "#bcbcbc",

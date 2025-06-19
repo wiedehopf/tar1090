@@ -366,6 +366,7 @@ HideCols = [
 //
 //
 //jaeroTimeout = 35 * 60; // in seconds
+//jaeroLabel = "ADS-C"; // relabel the ADS-C data if used for other purposes (i.e. HFDL / acars2pos)
 
 //seenTimeout = 58; // in seconds
 //seenTimeoutMlat = 58; // in seconds
