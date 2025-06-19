@@ -2926,6 +2926,7 @@ function routeDoLookup(currentTime) {
                 for (var route of routes) {
                     if (!route) {
                         console.error(`Route API returned this invalid element in the array ${route}`);
+                        console.log(routes);
                         continue;
                     }
                     // let's log just a little bit of what's happening
