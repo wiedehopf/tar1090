@@ -2932,10 +2932,10 @@ function routeDoLookup(currentTime) {
                     // let's log just a little bit of what's happening
                     if (debugRoute) {
                         var logText = `result for ${route.callsign}: `;
-                        if (route._airport_codes_iata == 'unknown') {
+                        if (route.airport_codes == 'unknown') {
                             logText += 'unknown to the API server';
                         } else if (route.plausible == false) {
-                            logText += `${route._airport_codes_iata} considered implausible`;
+                            logText += `${route.airport_codes} considered implausible`;
                         } else {
                             logText += `adding ${route._airport_codes_iata}`;
                         }
@@ -2943,9 +2943,9 @@ function routeDoLookup(currentTime) {
                     }
                     if (route.airport_codes != 'unknown') {
                         if (route.plausible == true) {
-                            g.route_cache[route.callsign] = route._airport_codes_iata;
+                            g.route_cache[route.callsign] = route.airport_codes;
                         } else {
-                            g.route_cache[route.callsign] = `?? ${route._airport_codes_iata}`;
+                            g.route_cache[route.callsign] = `?? ${route.airport_codes}`;
                         }
                     }
                 }
