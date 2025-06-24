@@ -2930,22 +2930,23 @@ function routeDoLookup(currentTime) {
                         continue;
                     }
                     // let's log just a little bit of what's happening
+                    let codes = useIataAirportCodes ? route._airport_codes_iata : route.airport_codes;
                     if (debugRoute) {
                         var logText = `result for ${route.callsign}: `;
-                        if (route._airport_codes_iata == 'unknown') {
+                        if (codes == 'unknown') {
                             logText += 'unknown to the API server';
                         } else if (route.plausible == false) {
-                            logText += `${route._airport_codes_iata} considered implausible`;
+                            logText += `${codes} considered implausible`;
                         } else {
-                            logText += `adding ${route._airport_codes_iata}`;
+                            logText += `adding ${codes}`;
                         }
                         //console.log(logText);
                     }
-                    if (route.airport_codes != 'unknown') {
+                    if (codes != 'unknown') {
                         if (route.plausible == true) {
-                            g.route_cache[route.callsign] = route._airport_codes_iata;
+                            g.route_cache[route.callsign] = codes;
                         } else {
-                            g.route_cache[route.callsign] = `?? ${route._airport_codes_iata}`;
+                            g.route_cache[route.callsign] = `?? ${codes}`;
                         }
                     }
                 }

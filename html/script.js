@@ -1659,6 +1659,18 @@ jQuery('#selected_altitude_geom1')
                 }
             }
         });
+
+        /*
+        new Toggle({
+            key: "useIataAirportCodes",
+            display: "Show IATA airport codes",
+            container: "#settingsRight",
+            init: useIataAirportCodes,
+            setState: function(state) {
+                useIataAirportCodes = state;
+            }
+        });
+        */
     } else {
         useRouteAPI = false;
     }
