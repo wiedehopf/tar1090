@@ -850,8 +850,13 @@ PlaneObject.prototype.updateIcon = function() {
             callsign =  'reg: ' + this.registration;
         else
             callsign =   'hex: ' + this.icao;
-        if ((useRouteAPI || this.dataSource == "ais") && this.routeString)
-            callsign += ' - ' + this.routeString;
+        if ((useRouteAPI || this.dataSource == "ais") && this.routeString) {
+            if (g.extendedLabels) {
+                callsign += ' - ' + this.routeString;
+            } else {
+                callsign += '\n' + this.routeString;
+            }
+        }
 
         const unknown = NBSP+NBSP+"?"+NBSP+NBSP;
 
