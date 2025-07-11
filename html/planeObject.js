@@ -1799,7 +1799,7 @@ function altitudeLines (segment) {
         color = monochromeTracks;
 
     const modeS = (segment.dataSource == 'modeS');
-    const lineKey = color + '_' + debugTracks + '_' + noVanish + '_' + segment.estimated + '_' + newWidth + '_' + modeS;
+    const lineKey = '_' + color + debugTracks + noVanish + segment.estimated + newWidth + modeS + segment.noLabel;
 
     if (lineStyleCache[lineKey])
         return lineStyleCache[lineKey];
@@ -1861,40 +1861,27 @@ function altitudeLines (segment) {
             });
         }
     } else {
-        if (segment.noLabel || segment.estimated) {
-            lineStyleCache[lineKey] = [
-                new ol.style.Style({
-                    stroke: new ol.style.Stroke({
-                        color: color,
-                        width: 1 * newWidth * multiplier,
-                        lineJoin: join,
-                        lineCap: cap,
+        lineStyleCache[lineKey] = [
+            new ol.style.Style({
+                image: new ol.style.Circle({
+                    radius: 2 * newWidth,
+                    fill: new ol.style.Fill({
+                        color: color
                     })
                 }),
-            ];
-        } else {
-            lineStyleCache[lineKey] = [
-                new ol.style.Style({
-                    image: new ol.style.Circle({
-                        radius: 2 * newWidth,
-                        fill: new ol.style.Fill({
-                            color: color
-                        })
-                    }),
-                    geometry: function(feature) {
-                        return new ol.geom.MultiPoint(feature.getGeometry().getCoordinates());
-                    }
-                }),
-                new ol.style.Style({
-                    stroke: new ol.style.Stroke({
-                        color: color,
-                        width: 1 * newWidth * multiplier,
-                        lineJoin: join,
-                        lineCap: cap,
-                    })
+                geometry: function(feature) {
+                    return new ol.geom.MultiPoint(feature.getGeometry().getCoordinates());
+                }
+            }),
+            new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    color: color,
+                    width: ((segment.noLabel || segment.estimated) ? 0.5 : 1) * newWidth * multiplier,
+                    lineJoin: join,
+                    lineCap: cap,
                 })
-            ];
-        }
+            })
+        ];
     }
     return lineStyleCache[lineKey];
 }
