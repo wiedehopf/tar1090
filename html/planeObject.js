@@ -579,11 +579,14 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
             lastseg.fixed.appendCoordinate(projPrev);
         }
 
+        let estimatedFill = false;
+
         // draw great circle path for long distances
         if (distance > 30000
             && !(elapsed > 3600 && distance / elapsed * 3.6 < 100) && !modeS
             // don't draw a line if a long time has elapsed but no great distance was traveled
         ) {
+            estimatedFill = true;
             if (!pTracks) {
                 estimated = true;
             }
@@ -613,6 +616,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
             this.track_linesegs.push({ fixed: new ol.geom.LineString(points),
                 feature: null,
                 estimated: estimated,
+                estimatedFill: estimatedFill,
                 ground: (this.prev_alt == "ground"),
                 altitude: this.prev_alt_rounded,
                 alt_real: this.prev_alt,
@@ -1799,7 +1803,7 @@ function altitudeLines (segment) {
         color = monochromeTracks;
 
     const modeS = (segment.dataSource == 'modeS');
-    const lineKey = '_' + color + debugTracks + noVanish + segment.estimated + newWidth + modeS + segment.noLabel;
+    const lineKey = '_' + color + debugTracks + noVanish + segment.estimated + newWidth + modeS + segment.noLabel + segment.estimatedFill;
 
     if (lineStyleCache[lineKey])
         return lineStyleCache[lineKey];
@@ -1864,7 +1868,7 @@ function altitudeLines (segment) {
         lineStyleCache[lineKey] = [
             new ol.style.Style({
                 image: new ol.style.Circle({
-                    radius: 2 * newWidth,
+                    radius: (segment.estimatedFill ? 0 : 2) * newWidth,
                     fill: new ol.style.Fill({
                         color: color
                     })
