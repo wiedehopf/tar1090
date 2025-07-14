@@ -552,7 +552,7 @@ This is the relevant part in the configuration file:
 ```
 You can remove the `//` to uncomment the line.
 
-Make sure that the server address is reachable from the device you are viewing the tar1090 page from (i.e. localhost / 127.0.0.1 will not work here unless you are viewing the tar1090 interface from the same machine you are running AIS-catcher - in all other cases it will need to be the local IP).
+Make sure that the server address is reachable from the device you are viewing the tar1090 page from (i.e. localhost / 127.0.0.1 will not work here unless you are viewing the tar1090 interface from the same machine you are running AIS-catcher - in all other cases it will need to be the local IP). If you run AIS-catcher and tar1090 on the same machine, you can use the host-relative magic token `HOSTNAME` to auto-populate the IP of the system - for example `http://HOSTNAME:8100`.
 
 **Note:** for this to work, you must have started AIS-catcher with the geojson flag set to on with the option `-N 8100 geojson on` and you should be able to see a geojson if you visit the `aiscatcher_server` address from above with `/geojson` appeanded to it - from the above example this would be `http://192.168.1.113:8100/geojson`
 
