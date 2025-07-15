@@ -500,7 +500,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     if (on_ground)
         stale_timeout = 30;
 
-    if (pTracks) {
+    if (pTracks && !serverTrack) {
         stale = false;
         stale_timeout = 120;
         if (this.dataSource == "adsc")
@@ -537,7 +537,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
     let since_update = this.prev_time - this.tail_update;
     let distance_traveled = ol.sphere.getDistance(this.tail_position, this.prev_position);
 
-    if (pTracks && since_update < pTracksInterval) {
+    if (pTracks && since_update < pTracksInterval && !serverTrack) {
         return this.updateTrackPrev();
     }
 
@@ -587,7 +587,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
             // don't draw a line if a long time has elapsed but no great distance was traveled
         ) {
             estimatedFill = true;
-            if (!pTracks) {
+            if (!(pTracks && !serverTrack)) {
                 estimated = true;
             }
             let nPoints = distance / 19000;
