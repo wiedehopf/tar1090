@@ -256,7 +256,19 @@ let utcTimesHistoric = true;
 let labelZoom = 0;
 let labelZoomGround = 14.8;
 
-let labelFont = 'bold 12px tahoma';
+// font family for labels, default bold, could be empty or italic as well
+let labelStyle = 'bold';
+let labelFamily = 'Tahoma, Verdana, Helvetica, sans-serif';
+let labelScale = 1;
+
+// labelFont this is now generated from the detailed settings above, setting this in config.js won't
+// have ANY effect
+let labelFont;
+
+// some scaling for fonts and things
+let globalScale = 1;
+let userScale = 1;
+let iconScale = 1;
 
 let displayUATasADSB = false;
 let uatNoTISB = false;

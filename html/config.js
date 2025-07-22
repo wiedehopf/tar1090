@@ -238,8 +238,15 @@ MapboxAPIKey = null;
 // Only display labels when zoomed in this far:
 //labelZoom = 8;
 //labelZoomGround = 12.5;
+/
+// font family for labels, default bold, could be empty or italic as well
+// labelStyle = 'bold';
+// labelFamily = 'Tahoma, Verdana, Helvetica, sans-serif';
+// labelScale = 1;
 
-//labelFont = 'bold 12px tahoma';
+// globalScale = 1;
+// userScale = 1;
+// iconScale = 1;
 
 //displayUATasADSB = false;
 //uatNoTISB = true;
