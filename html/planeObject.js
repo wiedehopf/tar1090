@@ -2925,7 +2925,7 @@ function routeDoLookup(currentTime) {
                         console.log(routes);
                         continue;
                     }
-                    if (!route.airport_codes) {
+                    if (!route.airport_codes || route.airport_codes == "unknown") {
                         continue;
                     }
                     let codes = "";
