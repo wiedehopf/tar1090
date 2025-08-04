@@ -2925,26 +2925,35 @@ function routeDoLookup(currentTime) {
                         console.log(routes);
                         continue;
                     }
-                    // let's log just a little bit of what's happening
-                    let codes = useIataAirportCodes ? route._airport_codes_iata : route.airport_codes;
-                    if (debugRoute) {
-                        var logText = `result for ${route.callsign}: `;
-                        if (codes == 'unknown') {
-                            logText += 'unknown to the API server';
-                        } else if (route.plausible == false) {
-                            logText += `${codes} considered implausible`;
-                        } else {
-                            logText += `adding ${codes}`;
-                        }
-                        //console.log(logText);
+                    if (!route.airport_codes) {
+                        continue;
                     }
-                    if (codes != 'unknown') {
-                        if (route.plausible == true) {
-                            g.route_cache[route.callsign] = codes;
-                        } else {
-                            g.route_cache[route.callsign] = `?? ${codes}`;
+                    let codes = "";
+
+                    for (let airport of route._airports) {
+                        if (codes) {
+                            codes += " - "
                         }
+                        let aString = ""
+                        for (let type of routeDisplay) {
+                            if (aString) {
+                                aString += '/';
+                            }
+                            if (type == 'iata') {
+                                aString += airport.iata;
+                            } else if (type == 'icao') {
+                                aString += airport.icao;
+                            } else if (type == 'city') {
+                                aString += airport.location;
+                            }
+                        }
+                        codes += aString;
                     }
+
+                    if (!route.plausible) {
+                        codes = '?? ' + codes;
+                    }
+                    g.route_cache[route.callsign] = codes;
                 }
             })
             .fail((jqxhr, status, error) => {

@@ -1655,18 +1655,13 @@ jQuery('#selected_altitude_geom1')
                 }
             }
         });
-
-        /*
-        new Toggle({
-            key: "useIataAirportCodes",
-            display: "Show IATA airport codes",
-            container: "#settingsRight",
-            init: useIataAirportCodes,
-            setState: function(state) {
-                useIataAirportCodes = state;
-            }
-        });
-        */
+        if (useIataAirportCodes == false) {
+            routeDisplay = 'icao'; // cope with deprecated useIata var
+        }
+        if (usp.has('routeDisplay')) {
+            routeDisplay = usp.get('routeDisplay');
+        }
+        routeDisplay = routeDisplay.split(',');
     } else {
         useRouteAPI = false;
     }

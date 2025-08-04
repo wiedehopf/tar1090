@@ -70,6 +70,7 @@ See the main readme for more examples on how to use the filters
 - rangeRings=0,1 - 0 or 1 to enable or disable
 - altitudeChart=0,1 - 0 or 1 to enable or disable
 - SiteLat=45.0 SiteLon=10.0 - Override the receiver location for this visit
+- routeDisplay=icao - Comma separated list of what shall be shown, valid values: iata, icao, city
 
 ## Toggles
 

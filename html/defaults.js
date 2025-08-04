@@ -347,7 +347,9 @@ let planespottingAPI = false;
 // get flight route from routeApi service default setting (toggle via settings checkbox)
 let useRouteAPI = false;
 // show IATA airport codes instead of ICAO when using the route API
-let useIataAirportCodes = true;
+let useIataAirportCodes = true; // DEPRECATED, forces routeDisplay to icao when set to false
+// configure route display, possible values: iata, icao, city (can use multiple like this: 'iata,city')
+let routeDisplay = 'iata';
 // which routeApi service to use
 let routeApiUrl = "https://adsb.im/api/0/routeset";
 // alternative: "https://api.adsb.lol/api/0/routeset";
