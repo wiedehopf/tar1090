@@ -855,7 +855,7 @@ PlaneObject.prototype.updateIcon = function() {
         else
             callsign =   'hex: ' + this.icao;
         if ((useRouteAPI || this.dataSource == "ais") && this.routeString) {
-            if (g.extendedLabels) {
+            if (0 && g.extendedLabels) {
                 callsign += ' - ' + this.routeString;
             } else {
                 callsign += '\n' + this.routeString;
@@ -2932,7 +2932,11 @@ function routeDoLookup(currentTime) {
 
                     for (let airport of route._airports) {
                         if (codes) {
-                            codes += " - "
+                            if (routeDisplay.includes('city')) {
+                                codes += " -\n"
+                            } else {
+                                codes += " - "
+                            }
                         }
                         let aString = ""
                         for (let type of routeDisplay) {
