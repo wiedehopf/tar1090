@@ -214,6 +214,7 @@ function createBaseLayers() {
         world.push(vtlayer);
     }
 
+    /* seems defunct
     world.push(new ol.layer.Tile({
         source: new ol.source.OSM({
             url: 'https://gibs-{a-c}.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/EPSG3857_500m/{z}/{y}/{x}.jpeg',
@@ -222,10 +223,11 @@ function createBaseLayers() {
             maxZoom: 8,
             transition: tileTransition,
         }),
-        name: 'gibs_reliev',
+        name: 'gibs_relief',
         title: 'GIBS Relief',
         type: 'base',
     }));
+    */
 
     const date = new Date(Date.now() - 86400 * 1000);
     const yesterday = date.getUTCFullYear() + '-' + (date.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + date.getUTCDate().toString().padStart(2, '0');
