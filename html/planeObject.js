@@ -1512,6 +1512,7 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
             case 'O':
                 this.dataSource = 'ogn';
                 break;
+			case 'OID':
             case 'RID':
                 this.dataSource = 'rid';
                 break;
