@@ -125,7 +125,7 @@ let labels_top = false;
 let lockDotCentered = false;
 let overrideMapType = null;
 let layerMoreContrast = false;
-let layerExtraDim = 0;
+let layerDimFactor = 0;
 let layerExtraContrast = 0;
 let shareFiltersParam = false;
 let lastRequestSize = 0;
@@ -2966,12 +2966,19 @@ function initMap() {
 
     initFilters();
 
+    ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
+        if (lyr.get('type') != 'base')
+            return;
+        lyr.dimKey = lyr.on('postrender', dim);
+    });
+
     new Toggle({
         key: "MapDim",
         display: "Dim Map",
         container: "#settingsLeft",
         init: MapDim,
         setState: function(state) {
+            /*
             if (!state) {
                 ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
                     if (lyr.get('type') != 'base')
@@ -2985,6 +2992,7 @@ function initMap() {
                     lyr.dimKey = lyr.on('postrender', dim);
                 });
             }
+            */
             if (loadFinished) {
                 OLMap.render();
             }
@@ -4930,8 +4938,17 @@ function togglePersistence() {
 
 function dim(evt) {
     try {
-        const dim = mapDimPercentage * (1 + 0.25 * toggles['darkerColors'].state) + layerExtraDim;
-        const contrast = mapContrastPercentage * (1 + 0.1 * toggles['darkerColors'].state) + layerExtraContrast;
+        let currentDimPercentage = mapDimPercentage * layerDimFactor;
+        let currentContrastPercentage = mapContrastPercentage + layerExtraContrast;
+
+        if (!toggles['MapDim'].state) {
+            // slight dim even if disabled
+            currentDimPercentage /= 4;
+            currentContrastPercentage /= 4;
+        }
+
+        const dim = currentDimPercentage * (1 + 0.25 * toggles['darkerColors'].state);
+        const contrast = currentContrastPercentage * (1 + 0.1 * toggles['darkerColors'].state);
         if (dim > 0.0001) {
             evt.context.globalCompositeOperation = 'multiply';
             evt.context.fillStyle = 'rgba(0,0,0,'+dim+')';
@@ -8924,15 +8941,22 @@ function setSelectedIcao() {
 
 function mapTypeSettings() {
     if (MapType_tar1090.startsWith('maptiler_sat') || MapType_tar1090.startsWith('maptiler_hybrid')) {
-        layerExtraDim = -0.30;
+        layerDimFactor = 0.25;
+    } else if (MapType_tar1090 == 'esri') {
+        layerDimFactor = 0.5;
+    } else if (MapType_tar1090 == 'gibs') {
+        layerDimFactor = 0.5;
     } else if (MapType_tar1090.startsWith('carto_raster')) {
-        layerExtraDim = -0.15;
+        layerDimFactor = 0.70;
         layerExtraContrast = 0.6;
     } else if (MapType_tar1090.startsWith('carto_light')) {
-        layerExtraDim = -0.05;
+        layerDimFactor = 0.80;
         layerExtraContrast = 0.2;
+    } else if (MapType_tar1090.startsWith('carto_dark')) {
+        layerDimFactor = 0.25;
+        layerExtraContrast = 0.05;
     } else {
-        layerExtraDim = 0;
+        layerDimFactor = 1;
         layerExtraContrast = 0;
     }
 }
