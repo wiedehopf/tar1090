@@ -86,7 +86,7 @@ let firstFetch = true;
 let debugCounter = 0;
 let pathName = window.location.pathname.replace(/\/+/, '/') || "/";
 let sourcesFilter = null;
-let sources = ['adsb', ['uat', 'adsr'], 'mlat', 'tisb', 'modeS', 'other', 'adsc', 'ais'];
+let sources = ['adsb', 'flarm', 'ogn', 'rid', 'ais'];
 let flagFilter = null;
 let flagFilterValues = ['military', 'pia', 'ladd'];
 let showTrace = false;
@@ -1761,17 +1761,11 @@ jQuery('#selected_altitude_geom1')
 function initLegend(colors) {
     let html = '';
     html += '<div class="legendTitle" style="background-color:' + colors['adsb'] + ';">ADS-B</div>';
-    html += '<div class="legendTitle" style="background-color:' + colors['uat'] + ';">UAT / ADS-R</div>';
-    html += '<div class="legendTitle" style="background-color:' + colors['mlat'] + ';">MLAT</div>';
-    html += '<br>';
-    html += '<div class="legendTitle" style="background-color:' + colors['tisb'] + ';">TIS-B</div>';
-    if (!globeIndex)
-        html += '<div class="legendTitle" style="background-color:' + colors['modeS'] + ';">Mode-S</div>';
-    if (globeIndex)
-        html += '<div class="legendTitle" style="background-color:' + colors['other'] + ';">Other</div>';
+    html += '<div class="legendTitle" style="background-color:' + colors['flarm'] + ';">FLARM</div>';
+    html += '<div class="legendTitle" style="background-color:' + colors['ogn'] + ';">OGN</div>';
+    html += '<div class="legendTitle" style="background-color:' + colors['rid'] + ';">Remote ID</div>';
     if (aiscatcher_server)
         html += '<div class="legendTitle" style="background-color:' + colors['ais'] + ';">AIS</div>';
-    html += '<div class="legendTitle" style="background-color:' + colors['adsc'] + `;">${jaeroLabel}</div>`;
 
     document.getElementById('legend').innerHTML = html;
 }
@@ -1783,16 +1777,12 @@ function initSourceFilter(colors) {
 
     let html = '';
     html += createFilter(colors['adsb'], 'ADS-B', sources[0]);
-
-    html += createFilter(colors['uat'], 'UAT / ADS-R', sources[1][0]);
-    html += createFilter(colors['mlat'], 'MLAT', sources[2]);
-    html += createFilter(colors['tisb'], 'TIS-B', sources[3]);
-    html += createFilter(colors['modeS'], 'Mode-S', sources[4]);
-    html += createFilter(colors['other'], 'Other', sources[5]);
-    html += createFilter(colors['adsc'], jaeroLabel, sources[6]);
+    html += createFilter(colors['flarm'], 'FLARM', sources[1]);
+    html += createFilter(colors['ogn'], 'OGN', sources[2]);
+    html += createFilter(colors['rid'], 'Remote ID', sources[3]);
 
     if (aiscatcher_server) {
-        html += createFilter(colors['ais'], 'AIS', sources[7]);
+        html += createFilter(colors['ais'], 'AIS', sources[4]);
     }
 
     document.getElementById('sourceFilter').innerHTML = html;
@@ -1821,10 +1811,10 @@ function initFlagFilter(colors) {
     };
 
     let html = '';
-    html += createFilter(colors['tisb'], 'Military', flagFilterValues[0]);
-    //html += createFilter(colors['mlat'], 'Interesting');
-    html += createFilter(colors['uat'], 'PIA', flagFilterValues[1]);
-    html += createFilter(colors['adsb'], 'LADD', flagFilterValues[2]);
+    html += createFilter(colors['adsb'], 'Military', flagFilterValues[0]);
+    //html += createFilter(colors['flarm'], 'Interesting');
+    html += createFilter(colors['flarm'], 'PIA', flagFilterValues[1]);
+    html += createFilter(colors['ogn'], 'LADD', flagFilterValues[2]);
 
     document.getElementById('flagFilter').innerHTML = html;
 

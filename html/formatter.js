@@ -297,39 +297,20 @@ function format_latlng(p) {
 }
 
 function format_data_source(source) {
-	switch (source) {
-		case 'uat' :
-			return "UAT";
-		case 'mlat':
-			return "MLAT";
-		case 'adsb':
-		case 'adsb_icao':
-		case 'adsb_other':
-			return "ADS-B";
-		case 'adsb_icao_nt':
-			return "ADS-B noTP";
-		case 'adsr':
-		case 'adsr_icao':
-		case 'adsr_other':
-			return "ADS-R or UAT";
-		case 'tisb_icao':
-		case 'tisb_trackfile':
-		case 'tisb_other':
-		case 'tisb':
-			return "TIS-B";
-		case 'modeS':
-			return "Mode S";
-		case 'ais':
-			return "AIS";
-		case 'mode_ac':
-			return "Mode A/C";
-        case 'adsc':
-            return jaeroLabel;
-        case 'other':
-            return "Other";
-	}
+    switch (source) {
+        case 'adsb':
+            return 'ADS-B';
+        case 'flarm':
+            return 'FLARM';
+        case 'ogn':
+            return 'OGN';
+        case 'rid':
+            return 'Remote ID';
+        case 'ais':
+            return 'AIS';
+    }
 
-	return "Unknown";
+    return 'Unknown';
 }
 
 function format_nac_p (value) {

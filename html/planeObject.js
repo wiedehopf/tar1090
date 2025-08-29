@@ -666,25 +666,33 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
 };
 
 PlaneObject.prototype.getDataSourceNumber = function() {
-    if (this.dataSource == "modeS")
-        return 5;
-    if (this.dataSource == "adsc")
-        return 6;
-    if (this.dataSource == "mlat")
-        return 3;
-
-    if (this.dataSource == "uat" || (this.addrtype && this.addrtype.substring(0,4) == "adsr"))
-        return 2; // UAT
-
-    if (this.dataSource == "tisb")
-        return 4; // TIS-B
-    if (this.dataSource == "adsb")
-        return 1;
-
-    if (this.dataSource == "other" || this.dataSource == "ais")
-        return 7;
-
-    return 8;
+    switch (this.dataSource) {
+        case 'adsb':
+            return 1;
+        case 'flarm':
+            return 2;
+        case 'ogn':
+            return 3;
+        case 'rid':
+            return 4;
+        case 'ais':
+            return 5;
+        case 'modeS':
+            return 6;
+        case 'adsc':
+            return 7;
+        case 'mlat':
+            return 8;
+        case 'tisb':
+            return 9;
+        case 'uat':
+        case 'adsr':
+            return 10;
+        case 'other':
+            return 11;
+        default:
+            return 12;
+    }
 };
 
 PlaneObject.prototype.getDataSource = function() {
@@ -1492,7 +1500,25 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     this.setTypeFlagsReg(data);
     this.setFlight(flight);
 
-    if (mlat && noMLAT) {
+    const src = isArray ? null : data.src;
+    if (src) {
+        switch (src) {
+            case 'A':
+                this.dataSource = 'adsb';
+                break;
+            case 'F':
+                this.dataSource = 'flarm';
+                break;
+            case 'O':
+                this.dataSource = 'ogn';
+                break;
+            case 'R':
+                this.dataSource = 'rid';
+                break;
+            default:
+                this.dataSource = 'unknown';
+        }
+    } else if (mlat && noMLAT) {
         this.dataSource = "modeS";
     } else if (mlat) {
         this.dataSource = "mlat";
