@@ -8912,15 +8912,7 @@ shareLinkInput.hidden = true;
 document.body.appendChild(shareLinkInput);
 
 function copyShareLink() {
-    // Assign shareLinkInput the value we want to copy
-    shareLinkInput.setAttribute("value", shareLink);
-
-    // Highlight its content
-    shareLinkInput.select();
-    // Copy the highlighted text
-    document.execCommand("copy");
-    // deselect input field
-    shareLinkInput.blur();
+    navigator.clipboard.writeText(shareLink);
 
     copyLinkTime = new Date().getTime();
     copiedIcao = SelectedPlane.icao;
