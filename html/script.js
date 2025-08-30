@@ -5484,11 +5484,12 @@ function getFlightAwareModeSLink(code, ident, linkText) {
             linkText = "FlightAware: " + code.toUpperCase();
         }
 
-        let linkHtml = "<a class=\"link\" target=\"_blank\" href=\"https://flightaware.com/live/modes/" + code ;
+        /* let linkHtml = "<a class=\"link\" target=\"_blank\" href=\"https://flightaware.com/live/modes/" + code ;
         if (ident != null && ident !== "") {
             linkHtml += "/ident/" + ident.trim();
-        }
-        linkHtml += "/redirect\" rel=\"noreferrer\">" + linkText + "</a>";
+        } */
+        let linkHtml = "<a class=\"link\" target=\"_blank\" href=\"https://www.flightradar24.com/" + ident;
+        linkHtml += "\" rel=\"noreferrer\">" + linkText + "</a>";
         return linkHtml;
     }
 
