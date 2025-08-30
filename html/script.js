@@ -5281,7 +5281,8 @@ function getFlightAwareIdentLink(ident, linkText) {
         if (!linkText) {
             linkText = ident;
         }
-        return '<a class="link" target="_blank" href="https://flightaware.com/live/flight/' + ident.trim() + '" rel="noreferrer">' + linkText + '</a>';
+        //return '<a class="link" target="_blank" href="https://flightaware.com/live/flight/' + ident.trim() + '" rel="noreferrer">' + linkText + '</a>';
+        return '<a class="link" target="_blank" href="https://www.flightradar24.com/data/aircraft/' + ident.trim() + '" rel="noreferrer">' + linkText + '</a>';
     }
 
     return "";
