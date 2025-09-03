@@ -1247,7 +1247,7 @@ let CategoryIcons = {
 
     'B4': _ulac,
 
-    'B6': ['uploaded', 1],
+    'B6': ['star', 1],
 
     'C0' : ['ground_unknown', 1],
 
