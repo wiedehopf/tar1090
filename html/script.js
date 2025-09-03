@@ -8,6 +8,7 @@
 g.planes        = {};
 g.planesOrdered = [];
 g.route_cache = [];
+g.route_cities = [];
 g.route_check_array = [];
 g.route_check_in_flight = false;
 g.route_cache_timer = new Date().getTime() / 1000 + 1; // one second from now
@@ -3544,6 +3545,7 @@ function refreshSelected() {
     if (useRouteAPI) {
         if (selected.routeString) {
             jQuery('#selected_route').updateText(selected.routeString);
+            jQuery('#selected_route').attr('title', g.route_cities[selected.name]);
         } else {
             jQuery('#selected_route').updateText('n/a');
         }
@@ -3982,8 +3984,14 @@ function refreshFeatures() {
         cols.route = {
             sort: function () { sortBy('route', compareAlpha, function(x) { return x.routeString }); },
             value: function(plane) {
-                return ((useRouteAPI && plane.routeString) || '');
+                if (!useRouteAPI) return '';
+                if (plane.routeString) {
+                    return '<span title="' + g.route_cities[plane.name] + '">' + plane.routeString + '</span>';
+                } else {
+                    return '';
+                }
             },
+            html: useRouteAPI,
             text: 'Route' };
     }
     cols.registration = {
