@@ -304,7 +304,7 @@ function createBaseLayers() {
         MapboxAPIKey = loStore['mapboxKey'];
 
     if (MapboxAPIKey) {
-        world.push(new ol.MapboxVectorLayer({
+        world.push(new ol.mapboxStyle.MapboxVectorLayer({
             styleUrl: 'mapbox://styles/mapbox/streets-v10',
             accessToken: MapboxAPIKey,
             properties: {
@@ -313,7 +313,7 @@ function createBaseLayers() {
                 type: 'base',
             },
         }));
-        world.push(new ol.MapboxVectorLayer({
+        world.push(new ol.mapboxStyle.MapboxVectorLayer({
             styleUrl: 'mapbox://styles/mapbox/light-v11',
             accessToken: MapboxAPIKey,
             properties: {
@@ -322,7 +322,7 @@ function createBaseLayers() {
                 type: 'base',
             },
         }));
-        world.push(new ol.MapboxVectorLayer({
+        world.push(new ol.mapboxStyle.MapboxVectorLayer({
             styleUrl: 'mapbox://styles/mapbox/dark-v11',
             accessToken: MapboxAPIKey,
             properties: {
@@ -331,7 +331,7 @@ function createBaseLayers() {
                 type: 'base',
             },
         }));
-        world.push(new ol.MapboxVectorLayer({
+        world.push(new ol.mapboxStyle.MapboxVectorLayer({
             styleUrl: 'mapbox://styles/mapbox/outdoors-v10',
             accessToken: MapboxAPIKey,
             properties: {
