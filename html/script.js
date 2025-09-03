@@ -3991,7 +3991,7 @@ function refreshFeatures() {
                     return '';
                 }
             },
-            html: useRouteAPI,
+            html: true,
             text: 'Route' };
     }
     cols.registration = {
