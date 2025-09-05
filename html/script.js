@@ -2518,16 +2518,18 @@ function ol_map_init() {
     const drawLayer = new ol.layer.Vector({source: drawSource});
     OLMap.addLayer(drawLayer);
 
-    const editBar = new ol.control.EditBar({source: drawSource});
-    OLMap.addControl(editBar);
+    if (ol.control && ol.control.EditBar) {
+        const editBar = new ol.control.EditBar({source: drawSource});
+        OLMap.addControl(editBar);
 
-    const geojsonFormat = new ol.format.GeoJSON();
-    const updateGeoJSON = () => {
-        drawnGeoJSON = geojsonFormat.writeFeatures(drawSource.getFeatures());
-    };
-    drawSource.on('addfeature', updateGeoJSON);
-    drawSource.on('changefeature', updateGeoJSON);
-    drawSource.on('removefeature', updateGeoJSON);
+        const geojsonFormat = new ol.format.GeoJSON();
+        const updateGeoJSON = () => {
+            drawnGeoJSON = geojsonFormat.writeFeatures(drawSource.getFeatures());
+        };
+        drawSource.on('addfeature', updateGeoJSON);
+        drawSource.on('changefeature', updateGeoJSON);
+        drawSource.on('removefeature', updateGeoJSON);
+    }
 
     let foundType = false;
     ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
