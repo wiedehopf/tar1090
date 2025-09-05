@@ -235,6 +235,19 @@ select {
     top: calc(100% - calc( 85px * var(--SCALE)));
 }
 
+/* Position drawing toolbar on the left side */
+.ol-editbar.ol-control.ol-bar {
+    top: calc( 5px * var(--SCALE));
+    left: calc( 5px * var(--SCALE));
+    transform: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.ol-editbar.ol-control.ol-bar .ol-button {
+    margin-bottom: calc( 5px * var(--SCALE));
+}
+
 .ol-attribution {
     font-size: var(--FS1);
 }
