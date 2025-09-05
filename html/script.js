@@ -38,6 +38,8 @@ let realHeat;
 let iconCache = {};
 let addToIconCache = [];
 let lineStyleCache = {};
+let drawSource;
+let drawnGeoJSON = "";
 let replayPlanes = {};
 let PlaneFilter   = {};
 let SelectedPlane = null;
@@ -2510,6 +2512,22 @@ function ol_map_init() {
     webglInit();
     console.timeEnd('webglInit');
 
+
+    // Initialize drawing plugin
+    drawSource = new ol.source.Vector({wrapX: false});
+    const drawLayer = new ol.layer.Vector({source: drawSource});
+    OLMap.addLayer(drawLayer);
+
+    const editBar = new ol.control.EditBar({source: drawSource});
+    OLMap.addControl(editBar);
+
+    const geojsonFormat = new ol.format.GeoJSON();
+    const updateGeoJSON = () => {
+        drawnGeoJSON = geojsonFormat.writeFeatures(drawSource.getFeatures());
+    };
+    drawSource.on('addfeature', updateGeoJSON);
+    drawSource.on('changefeature', updateGeoJSON);
+    drawSource.on('removefeature', updateGeoJSON);
 
     let foundType = false;
     ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
