@@ -1979,6 +1979,9 @@ PlaneObject.prototype.updateLines = function() {
             const historic = (showTrace || replay);
             const useLocal = ((historic && !utcTimesHistoric) || (!historic && !utcTimesLive));
             const date = new Date(seg.ts * 1000);
+            if (!date) {
+                console.log(seg);
+            }
             let refDate = showTrace ? traceDate : new Date();
             if (replay) { refDate = replay.ts };
             if (useLocal && historic) {
