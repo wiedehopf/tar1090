@@ -4911,7 +4911,7 @@ function buttonActive(id, state) {
     }
 }
 
-function toggleIsolation(state) {
+function toggleIsolation(state, noRefresh) {
     let prevState = onlySelected;
     if (showTrace && state !== "on")
         return;
@@ -4923,7 +4923,7 @@ function toggleIsolation(state) {
 
     buttonActive('#I', onlySelected);
 
-    if (prevState != onlySelected)
+    if (prevState != onlySelected && noRefresh != "noRefresh")
         refreshFilter();
 
     fetchData({force: true});
@@ -6594,7 +6594,7 @@ function toggleShowTrace() {
 
         toggleFollow(false);
         showTraceWasIsolation = onlySelected;
-        toggleIsolation("on");
+        toggleIsolation("on", "noRefresh");
         shiftTrace();
     } else {
         jQuery("#selected_showTrace_hide").show();
