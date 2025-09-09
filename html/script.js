@@ -6660,8 +6660,9 @@ function legShift(offset, plane) {
         if (traceOpts.startStamp != null && timestamp < traceOpts.startStamp) {
             continue;
         }
-        if (traceOpts.endStamp != null && timestamp > traceOpts.endStamp)
+        if (traceOpts.endStamp != null && timestamp > traceOpts.endStamp) {
             break;
+        }
         if (legStart == null) {
             legStart = i;
             i++;

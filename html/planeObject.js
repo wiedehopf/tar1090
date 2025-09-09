@@ -3020,8 +3020,13 @@ function normalizeTraceStamps(data) {
     }
     let trace = data.trace;
     let last = 0;
+    let negOffsetWarned = 0;
     for (let i = 0; i < trace.length; i++) {
         let point = trace[i];
+        if (point[0] < 0 && !negOffsetWarned) {
+            negOffsetWarned = 1;
+            console.log('negative offset in trace');
+        }
         point[0] += data.timestamp;
         if (point[0] >= last) {
             last = point[0];
