@@ -585,6 +585,9 @@ if (uuid != null) {
                 console.log("Chunks enabled!");
                 chunkNames = (pTracks ? data.chunks_all : data.chunks) || [];
                 nHistoryItems = chunkNames.length;
+                if (usp.has('showTrace')) {
+                    nHistoryItems = 0;
+                }
                 enable_uat = (data.enable_uat == "true");
                 enable_pf_data = (data.pf_data == "true");
                 if (enable_uat)
