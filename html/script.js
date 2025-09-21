@@ -2356,7 +2356,7 @@ function startPage() {
 function webglAddLayer() {
     let success = false;
 
-    const icao = '~c0ffee';
+    const icao = 'c0ffee';
 
     if (icaoFilter != null) {
         icaoFilter.push(icao);
@@ -2364,7 +2364,7 @@ function webglAddLayer() {
 
     processAircraft({hex: icao, lat: CenterLat, lon: CenterLon, type: 'tisb_other', seen: 0, seen_pos: 0,
         alt_baro: 25000, });
-    let plane = g.planes['~c0ffee'];
+    let plane = g.planes[icao];
 
     let spriteSrc = spritesDataURL ? spritesDataURL : 'images/sprites.png';
     //console.log(spriteSrc);
