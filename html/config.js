@@ -437,3 +437,6 @@ tableColors = {
 // Default center of the map if no Site location is set
 //DefaultCenterLat = 45.0;
 //DefaultCenterLon = 9.0;
+//
+
+// MergeNonIcao = false; // set to true to merge non icao hex with the icao hex (remove the ~)

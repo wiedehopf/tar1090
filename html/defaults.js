@@ -469,3 +469,5 @@ let SiteLon     = null;
 // Default center of the map if no Site location is set
 let DefaultCenterLat = 40.56;
 let DefaultCenterLon = -73.66
+
+let MergeNonIcao = false; // set to true to merge non icao hex with the icao hex (remove the ~)

@@ -195,6 +195,10 @@ function processAircraft(ac, init, uat) {
     if (icaoBlacklist && icaoBlacklist.includes(hex))
         return;
 
+    if (MergeNonIcao && hex.startsWith('~')) {
+        hex = hex.slice(1);
+    }
+
     const type = isArray ? ac[7] : ac.type;
     if (g.historyKeep && !g.historyKeep[hex] && type != 'adsc') {
         return;
