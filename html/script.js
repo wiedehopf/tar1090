@@ -187,7 +187,7 @@ let showingReplayBar = false;
 
 function processAircraft(ac, init, uat) {
     const isArray = Array.isArray(ac);
-    const hex = isArray ? ac[0] : ac.hex;
+    let hex = isArray ? ac[0] : ac.hex;
 
     if (icaoFilter && !icaoFilter.includes(hex))
         return;
