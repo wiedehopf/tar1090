@@ -556,6 +556,12 @@ if (uuid != null) {
 
         haveTraces = Boolean(data.haveTraces || data.globeIndexGrid);
 
+        if (data.readsb) {
+            jQuery("#decoder_pre").text("decoder:");
+            jQuery("#decoder_link").text("readsb");
+            jQuery("#decoder_link").attr("href", "https://github.com/wiedehopf/readsb#readsb");
+        }
+
         if (heatmap || replay) {
             if (replay && data.globeIndexGrid != null)
                 globeIndex = 1;
