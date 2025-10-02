@@ -1644,6 +1644,10 @@ jQuery('#selected_altitude_geom1')
     });
 
     if (routeApiUrl) {
+        if (location.protocol == 'http:' && routeApiUrl == "https://adsb.im/api/0/routeset") {
+            // adsb.im API provider kindly asks that tar1090 uses http for the route API if possible
+            routeApiUrl = "http://adsb.im/api/0/routeset";
+        }
         new Toggle({
             key: "useRouteAPI",
             display: "Lookup route",
