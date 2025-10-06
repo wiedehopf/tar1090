@@ -108,8 +108,8 @@ function createBaseLayers() {
             onVisible: (layer) => {
                 if (!layer.get('styleApplied')) {
                     // ol-mapbox-style plugin packed in with ol ... (kinda ugly)
-                    ol.mapboxStyle.applyStyle(layer, "./openfreemap_tiles_offline/liberty");
-                    ol.mapboxStyle.applyBackground(layer, "./openfreemap_tiles_offline/liberty");
+                    ol.mapboxStyle.applyStyle(layer, "./openfreemap_offline/liberty");
+                    ol.mapboxStyle.applyBackground(layer, "./openfreemap_offline/liberty");
                     layer.set('styleApplied', true);
                 }
             },
