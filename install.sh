@@ -308,16 +308,27 @@ do
 
     # in case we have offlinemaps installed, modify config.js
     MAX_OFFLINE=""
+    MAX_OFFLINE_OFM=""
     for i in {0..15}; do
+        if [[ -d /usr/local/share/openfreemap_offline/mnt/tiles/$i ]]; then
+            MAX_OFFLINE_OFM=$i
+        fi
         if [[ -d /usr/local/share/osm_tiles_offline/$i ]]; then
             MAX_OFFLINE=$i
         fi
     done
     if [[ -n "$MAX_OFFLINE" ]]; then
-        if ! grep "$TMP/config.js" -e '^offlineMapDetail.*' -qs &>/dev/null; then
+        if ! grep "$TMP/config.js" -E -e '^offlineMapDetail\s*=.*' -qs; then
             echo "offlineMapDetail=$MAX_OFFLINE;" >> "$TMP/config.js"
         else
-            sed -i -e "s/^offlineMapDetail.*/offlineMapDetail=$MAX_OFFLINE;/" "$TMP/config.js"
+            sed -i -e "s/^offlineMapDetail\s*=.*/offlineMapDetail=$MAX_OFFLINE;/" "$TMP/config.js"
+        fi
+    fi
+    if [[ -n "$MAX_OFFLINE_OFM" ]]; then
+        if ! grep "$TMP/config.js" -E -e '^offlineMapDetailOFM\s*=.*' -qs; then
+            echo "offlineMapDetailOFM=$MAX_OFFLINE_OFM;" >> "$TMP/config.js"
+        else
+            sed -i -e "s/^offlineMapDetailOFM\s=.*/offlineMapDetailOFM=$MAX_OFFLINE_OFM;/" "$TMP/config.js"
         fi
     fi
 

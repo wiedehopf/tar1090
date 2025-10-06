@@ -79,6 +79,7 @@ let openAIPOpacity = 0.70;
 let tfrOpacity = 0.70;
 
 let offlineMapDetail = -1;
+let offlineMapDetailOFM = -1;
 
 // -- Marker settings -------------------------------------
 // (marker == aircraft icon)

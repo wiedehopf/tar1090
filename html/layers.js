@@ -99,6 +99,22 @@ function createBaseLayers() {
         type: 'base',
     }));
 
+    if (offlineMapDetailOFM > 0) {
+        world.push(new ol.layer.VectorTile({
+            type: 'base',
+            name: 'OpenFreeMapOffline',
+            title: 'OpenFreeMap Offline',
+            declutter: true,
+            onVisible: (layer) => {
+                if (!layer.get('styleApplied')) {
+                    // ol-mapbox-style plugin packed in with ol ... (kinda ugly)
+                    ol.mapboxStyle.applyStyle(layer, "./openfreemap_tiles_offline/liberty");
+                    ol.mapboxStyle.applyBackground(layer, "./openfreemap_tiles_offline/liberty");
+                    layer.set('styleApplied', true);
+                }
+            },
+        }));
+    }
     if (1) {
         world.push(new ol.layer.VectorTile({
             type: 'base',
