@@ -62,6 +62,8 @@ let calcOutlineData = null;
 let uuid = null;
 let uuidCache = [];
 
+let filterUuid = null;
+
 let inhibitFetch = false;
 let zstdDecode = null;
 
@@ -218,16 +220,12 @@ if (feed != null) {
         for (let i in split) {
             uuid.push(encodeURIComponent(split[i]));
         }
-        if (uuid[0].length > 18 && window.location.href.match(/adsbexchange.com/)) {
-            console.log('redirecting the idiot, oui!');
-            let URL = 'https://www.adsbexchange.com/api/feeders/tar1090/?feed=' + uuid[0];
-            console.log(URL);
-            //window.history.pushState(URL, "Title", URL);
-            window.location.href = URL;
-        }
     } else {
         console.error('uuid / feed fail!');
     }
+}
+if (usp.has('uuid')) {
+    filterUuid = usp.get('uuid');
 }
 if (usp.has('tfrs')) {
     tfrs = true;
@@ -562,7 +560,7 @@ if (uuid != null) {
             jQuery("#decoder_link").attr("href", "https://github.com/wiedehopf/readsb#readsb");
         }
 
-        if (heatmap || replay) {
+        if (heatmap || replay || filterUuid) {
             if (replay && data.globeIndexGrid != null)
                 globeIndex = 1;
             HistoryChunks = false;

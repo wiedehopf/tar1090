@@ -598,7 +598,7 @@ function fetchData(options) {
         for (let i in uuid) {
             ac_url.push('uuid/?feed=' + uuid[i]);
         }
-    } else if (reApi) {
+    } else if (reApi || filterUuid) {
         let url = 're-api/?' + (binCraft ? 'binCraft' : 'json');
         url += zstd ? '&zstd' : '';
         url += onlyMilitary ? '&filter_mil' : '';
@@ -627,6 +627,10 @@ function fetchData(options) {
                 }
                 url = url.slice(0, -1); // remove trailing comma
             }
+        }
+
+        if (filterUuid) {
+            url += '&filter_uuid=' + filterUuid;
         }
 
         ac_url.push(url);
