@@ -514,6 +514,7 @@ Notable Projects that use ADS-B data:
 
 ## offline map
 
+<https://github.com/wiedehopf/openfreemap_offline>
 <https://github.com/wiedehopf/adsb-wiki/wiki/offline-map-tiles-tar1090>
 
 ## Uses this library for decompressing zstd
