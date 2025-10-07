@@ -139,6 +139,32 @@ function createBaseLayers() {
                 }
             },
         }));
+        world.push(new ol.layer.VectorTile({
+            type: 'base',
+            name: 'OpenFreeMapOfflineDark',
+            title: 'OpenFreeMap Offl. Dark',
+            declutter: true,
+            onVisible: (layer) => {
+                if (!layer.get('styleApplied')) {
+                    ol.mapboxStyle.applyStyle(layer, "./openfreemap_offline/dark");
+                    ol.mapboxStyle.applyBackground(layer, "./openfreemap_offline/dark");
+                    layer.set('styleApplied', true);
+                }
+            },
+        }));
+        world.push(new ol.layer.VectorTile({
+            type: 'base',
+            name: 'OpenFreeMapOfflineFiord',
+            title: 'OpenFreeMap Offl. Fiord',
+            declutter: true,
+            onVisible: (layer) => {
+                if (!layer.get('styleApplied')) {
+                    ol.mapboxStyle.applyStyle(layer, "./openfreemap_offline/fiord");
+                    ol.mapboxStyle.applyBackground(layer, "./openfreemap_offline/fiord");
+                    layer.set('styleApplied', true);
+                }
+            },
+        }));
     }
     if (1) {
         world.push(new ol.layer.VectorTile({
@@ -180,6 +206,36 @@ function createBaseLayers() {
                 if (!layer.get('styleApplied')) {
                     ol.mapboxStyle.applyStyle(layer, "https://tiles.openfreemap.org/styles/positron");
                     ol.mapboxStyle.applyBackground(layer, "https://tiles.openfreemap.org/styles/positron");
+                    layer.set('styleApplied', true);
+                }
+            },
+        }));
+    }
+    if (1) {
+        world.push(new ol.layer.VectorTile({
+            type: 'base',
+            name: 'OpenFreeMapDark',
+            title: 'OpenFreeMap Dark',
+            declutter: true,
+            onVisible: (layer) => {
+                if (!layer.get('styleApplied')) {
+                    ol.mapboxStyle.applyStyle(layer, "https://tiles.openfreemap.org/styles/dark");
+                    ol.mapboxStyle.applyBackground(layer, "https://tiles.openfreemap.org/styles/dark");
+                    layer.set('styleApplied', true);
+                }
+            },
+        }));
+    }
+    if (1) {
+        world.push(new ol.layer.VectorTile({
+            type: 'base',
+            name: 'OpenFreeMapFiord',
+            title: 'OpenFreeMap Fiord',
+            declutter: true,
+            onVisible: (layer) => {
+                if (!layer.get('styleApplied')) {
+                    ol.mapboxStyle.applyStyle(layer, "https://tiles.openfreemap.org/styles/fiord");
+                    ol.mapboxStyle.applyBackground(layer, "https://tiles.openfreemap.org/styles/fiord");
                     layer.set('styleApplied', true);
                 }
             },
