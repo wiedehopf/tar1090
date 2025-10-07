@@ -104,7 +104,6 @@ function createBaseLayers() {
             type: 'base',
             name: 'OpenFreeMapOfflineBright',
             title: 'OpenFreeMap Offl. Bright',
-            declutter: true,
             onVisible: (layer) => {
                 if (!layer.get('styleApplied')) {
                     ol.mapboxStyle.applyStyle(layer, "./openfreemap_offline/bright");
@@ -117,7 +116,6 @@ function createBaseLayers() {
             type: 'base',
             name: 'OpenFreeMapOfflineLiberty',
             title: 'OpenFreeMap Offl. Lib.',
-            declutter: true,
             onVisible: (layer) => {
                 if (!layer.get('styleApplied')) {
                     ol.mapboxStyle.applyStyle(layer, "./openfreemap_offline/liberty");
@@ -130,7 +128,6 @@ function createBaseLayers() {
             type: 'base',
             name: 'OpenFreeMapOfflinePositron',
             title: 'OpenFreeMap Offl. Pos.',
-            declutter: true,
             onVisible: (layer) => {
                 if (!layer.get('styleApplied')) {
                     ol.mapboxStyle.applyStyle(layer, "./openfreemap_offline/positron");
@@ -143,7 +140,6 @@ function createBaseLayers() {
             type: 'base',
             name: 'OpenFreeMapOfflineDark',
             title: 'OpenFreeMap Offl. Dark',
-            declutter: true,
             onVisible: (layer) => {
                 if (!layer.get('styleApplied')) {
                     ol.mapboxStyle.applyStyle(layer, "./openfreemap_offline/dark");
@@ -156,7 +152,6 @@ function createBaseLayers() {
             type: 'base',
             name: 'OpenFreeMapOfflineFiord',
             title: 'OpenFreeMap Offl. Fiord',
-            declutter: true,
             onVisible: (layer) => {
                 if (!layer.get('styleApplied')) {
                     ol.mapboxStyle.applyStyle(layer, "./openfreemap_offline/fiord");
@@ -171,7 +166,6 @@ function createBaseLayers() {
             type: 'base',
             name: 'OpenFreeMapBright',
             title: 'OpenFreeMap Bright',
-            declutter: true,
             onVisible: (layer) => {
                 if (!layer.get('styleApplied')) {
                     ol.mapboxStyle.applyStyle(layer, "https://tiles.openfreemap.org/styles/bright");
@@ -186,7 +180,6 @@ function createBaseLayers() {
             type: 'base',
             name: 'OpenFreeMapLiberty',
             title: 'OpenFreeMap Liberty',
-            declutter: true,
             onVisible: (layer) => {
                 if (!layer.get('styleApplied')) {
                     ol.mapboxStyle.applyStyle(layer, "https://tiles.openfreemap.org/styles/liberty");
@@ -201,7 +194,6 @@ function createBaseLayers() {
             type: 'base',
             name: 'OpenFreeMapPositron',
             title: 'OpenFreeMap Positron',
-            declutter: true,
             onVisible: (layer) => {
                 if (!layer.get('styleApplied')) {
                     ol.mapboxStyle.applyStyle(layer, "https://tiles.openfreemap.org/styles/positron");
@@ -216,7 +208,6 @@ function createBaseLayers() {
             type: 'base',
             name: 'OpenFreeMapDark',
             title: 'OpenFreeMap Dark',
-            declutter: true,
             onVisible: (layer) => {
                 if (!layer.get('styleApplied')) {
                     ol.mapboxStyle.applyStyle(layer, "https://tiles.openfreemap.org/styles/dark");
@@ -231,7 +222,6 @@ function createBaseLayers() {
             type: 'base',
             name: 'OpenFreeMapFiord',
             title: 'OpenFreeMap Fiord',
-            declutter: true,
             onVisible: (layer) => {
                 if (!layer.get('styleApplied')) {
                     ol.mapboxStyle.applyStyle(layer, "https://tiles.openfreemap.org/styles/fiord");
