@@ -102,14 +102,54 @@ function createBaseLayers() {
     if (offlineMapDetailOFM > 0) {
         world.push(new ol.layer.VectorTile({
             type: 'base',
-            name: 'OpenFreeMapOffline',
-            title: 'OpenFreeMap Offline',
+            name: 'OpenFreeMapOfflineBright',
+            title: 'OpenFreeMap Offl. Bright',
             declutter: true,
             onVisible: (layer) => {
                 if (!layer.get('styleApplied')) {
-                    // ol-mapbox-style plugin packed in with ol ... (kinda ugly)
+                    ol.mapboxStyle.applyStyle(layer, "./openfreemap_offline/bright");
+                    ol.mapboxStyle.applyBackground(layer, "./openfreemap_offline/bright");
+                    layer.set('styleApplied', true);
+                }
+            },
+        }));
+        world.push(new ol.layer.VectorTile({
+            type: 'base',
+            name: 'OpenFreeMapOfflineLiberty',
+            title: 'OpenFreeMap Offl. Lib.',
+            declutter: true,
+            onVisible: (layer) => {
+                if (!layer.get('styleApplied')) {
                     ol.mapboxStyle.applyStyle(layer, "./openfreemap_offline/liberty");
                     ol.mapboxStyle.applyBackground(layer, "./openfreemap_offline/liberty");
+                    layer.set('styleApplied', true);
+                }
+            },
+        }));
+        world.push(new ol.layer.VectorTile({
+            type: 'base',
+            name: 'OpenFreeMapOfflinePositron',
+            title: 'OpenFreeMap Offl. Pos.',
+            declutter: true,
+            onVisible: (layer) => {
+                if (!layer.get('styleApplied')) {
+                    ol.mapboxStyle.applyStyle(layer, "./openfreemap_offline/positron");
+                    ol.mapboxStyle.applyBackground(layer, "./openfreemap_offline/positron");
+                    layer.set('styleApplied', true);
+                }
+            },
+        }));
+    }
+    if (1) {
+        world.push(new ol.layer.VectorTile({
+            type: 'base',
+            name: 'OpenFreeMapBright',
+            title: 'OpenFreeMap Bright',
+            declutter: true,
+            onVisible: (layer) => {
+                if (!layer.get('styleApplied')) {
+                    ol.mapboxStyle.applyStyle(layer, "https://tiles.openfreemap.org/styles/bright");
+                    ol.mapboxStyle.applyBackground(layer, "https://tiles.openfreemap.org/styles/bright");
                     layer.set('styleApplied', true);
                 }
             },
@@ -123,7 +163,6 @@ function createBaseLayers() {
             declutter: true,
             onVisible: (layer) => {
                 if (!layer.get('styleApplied')) {
-                    // ol-mapbox-style plugin packed in with ol ... (kinda ugly)
                     ol.mapboxStyle.applyStyle(layer, "https://tiles.openfreemap.org/styles/liberty");
                     ol.mapboxStyle.applyBackground(layer, "https://tiles.openfreemap.org/styles/liberty");
                     layer.set('styleApplied', true);
@@ -139,7 +178,6 @@ function createBaseLayers() {
             declutter: true,
             onVisible: (layer) => {
                 if (!layer.get('styleApplied')) {
-                    // ol-mapbox-style plugin packed in with ol ... (kinda ugly)
                     ol.mapboxStyle.applyStyle(layer, "https://tiles.openfreemap.org/styles/positron");
                     ol.mapboxStyle.applyBackground(layer, "https://tiles.openfreemap.org/styles/positron");
                     layer.set('styleApplied', true);
