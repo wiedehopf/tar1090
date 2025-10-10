@@ -841,7 +841,6 @@ function createBaseLayers() {
         });
 
         world.push(rainviewerClouds);
-        }
     }
 
     let createGeoJsonLayer = function (title, name, url, fill, stroke, showLabel = true) {
