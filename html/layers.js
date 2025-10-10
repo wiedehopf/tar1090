@@ -794,7 +794,7 @@ function createBaseLayers() {
                 url: 'https://tilecache.rainviewer.com/v2/radar/' + latestLayer.past[latestLayer.past.length - 1].time + '/512/{z}/{x}/{y}/6/1_1.png',
                 attributions: '<a href="https://www.rainviewer.com/api.html" target="_blank">RainViewer.com</a>',
                 attributionsCollapsible: false,
-                maxZoom: 20,
+                maxZoom: 10,
             });
             rainviewerRadar.setSource(rainviewerRadarSource);
         };
@@ -809,10 +809,9 @@ function createBaseLayers() {
         });
 
         world.push(rainviewerRadar);
+    }
 
-
-
-
+    if (false) {
         const rainviewerClouds = new ol.layer.Tile({
             name: 'rainviewer_clouds',
             title: 'RainViewer Clouds',
@@ -827,7 +826,7 @@ function createBaseLayers() {
                 url: 'https://tilecache.rainviewer.com/' + latestLayer.infrared[latestLayer.infrared.length - 1].path + '/512/{z}/{x}/{y}/0/0_0.png',
                 attributions: '<a href="https://www.rainviewer.com/api.html" target="_blank">RainViewer.com</a>',
                 attributionsCollapsible: false,
-                maxZoom: 20,
+                maxZoom: 10,
             });
             rainviewerClouds.setSource(rainviewerCloudsSource);
         };
@@ -842,6 +841,7 @@ function createBaseLayers() {
         });
 
         world.push(rainviewerClouds);
+        }
     }
 
     let createGeoJsonLayer = function (title, name, url, fill, stroke, showLabel = true) {
