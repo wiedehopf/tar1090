@@ -747,12 +747,12 @@ let TypeDesignatorIcons = {
     'B461': ['b707', 0.68], // 44t
     'B462': ['b707', 0.68], // 44t
     'B463': ['b707', 0.68], // 44t
-    'E190': ['airliner', 0.84], // 52t
-    'E195': ['airliner', 0.84], // 52t
-    'E290': ['airliner', 0.84], // 56t
-    'E295': ['airliner', 0.86], // 62t
-    'BCS1': ['airliner', 0.86], // 64t
-    'BCS3': ['airliner', 0.88], // 70t
+    'E190': ['airliner', 0.81], // 52t
+    'E195': ['airliner', 0.81], // 52t
+    'E290': ['airliner', 0.82], // 56t
+    'E295': ['airliner', 0.83], // 62t
+    'BCS1': ['airliner', 0.835], // 64t
+    'BCS3': ['airliner', 0.85], // 70t
 
     'B741': ['heavy_4e', 0.96],
     'B742': ['heavy_4e', 0.96],
