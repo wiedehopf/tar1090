@@ -723,10 +723,10 @@ let TypeDesignatorIcons = {
 
     // these probably need reworking
     // since they vary in length
-    'B736': ['airliner', 0.89],
-    'B737': ['airliner', 0.90],
-    'B738': ['airliner', 0.93],
-    'B739': ['airliner', 0.95],
+    'B736': ['airliner', 0.85],
+    'B737': ['airliner', 0.85],
+    'B738': ['airliner', 0.87],
+    'B739': ['airliner', 0.89],
 
     'B37M': ['airliner', 0.92],
     'B38M': ['airliner', 0.94],
