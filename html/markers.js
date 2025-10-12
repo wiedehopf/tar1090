@@ -634,9 +634,8 @@ let shapes = {
     'e390': {
         w: 32,
         h: 32,
-        viewBox: '-5 -10 175 170',
+        viewBox: '-5 -5 175 167',
         strokeScale: 4,
-        accentMult: 0.8,
         path: 'M82.245.552C76.577.258 70.617 29.796 71.583 37.077c-1.005 2.09-1.497 4.03-2.178 6.313l-9.7 5.428.174-.677c1.94-.001 3.26-12.26 2.558-14.59-.124-.3-.118-1.086-.995-1.171H53.79c-.822.087-.942.82-1.08 1.193-1.047 2.612-.37 13.628 1.473 14.575.205 1.793 1.242-.228 1.206 3.08l-48.252 27c-1.22.519-5.173 6.398-4.699 9.612l65.35-18.075c.678 6.023 2.061 10.756 3.762 16.529.011 0 .04-.021.04-.005V104.1c-.356 10.104 1.165 18.468 6.18 30.667l-19.562 13.294c-1.52 1-1.89 4.028-1.49 6.287l24.391-5.857c.201 2.723.464 5.673 1.122 8.162.675-3.067.806-5.317 1.083-8.19l24.204 5.888c.13-2.126-.08-4.896-1.618-6.23L86.876 134.87c4.615-12.33 5.975-20.668 6.068-30.826L93 86.17c1.848-6.117 2.981-10.824 3.724-16.408l65.348 18.075c-.053-3.455-2.224-7.301-4.71-9.617l-48.244-26.994c-.19-3.07 1.082-.493 1.161-3.084 1.673-.836 2.55-11.042 1.44-14.57-.11-.634-.474-1.016-.994-1.193h-7.653c-.474.037-.803.253-1.039 1.196-.654 2.808.135 13.31 2.631 14.565l.193.694-9.7-5.428c-.632-2.071-1.28-4.32-2.132-6.237-.018-8.233-4.47-36.65-10.772-36.611z'
     },
 }
@@ -1274,13 +1273,15 @@ function svgShapeToSVG(shape, fillColor, strokeColor, strokeWidth, scale) {
             + 'd="' + path[i] + '"/>';
     }
 
-    let accentWidth = 0.6 * (shape.accentMult ? shape.accentMult * strokeWidth : strokeWidth);
-    let accent = shape.accent;
-    if (! Array.isArray(accent))
-        accent = [accent];
-    for (let i = 0; i < accent.length; i++) {
-        svg += '<path fill="none" stroke="' + strokeColor + '" stroke-width="' + accentWidth + '" '
-            + 'd="' + accent[i] + '"/>';
+    if (shape.accent) {
+        let accentWidth = 0.6 * (shape.accentMult ? shape.accentMult * strokeWidth : strokeWidth);
+        let accent = shape.accent;
+        if (accent && ! Array.isArray(accent))
+            accent = [accent];
+        for (let i = 0; i < accent.length; i++) {
+            svg += '<path fill="none" stroke="' + strokeColor + '" stroke-width="' + accentWidth + '" '
+                + 'd="' + accent[i] + '"/>';
+        }
     }
 
     svg += '</g></svg>';
