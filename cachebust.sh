@@ -13,18 +13,23 @@ HTMLFOLDER="$2"
 
 sedreplaceargs=()
 
-SCRIPT_JS=""
-while read -r FILE; do
+function moveFile() {
+    FILE=$1
     md5sum=$(md5sum "$FILE" | cut -d' ' -f1)
     prefix=$(cut -d '.' -f1 <<< "$FILE")
     postfix=$(cut -d '.' -f2 <<< "$FILE")
     newname="${prefix}_${md5sum}.${postfix}"
     mv "$FILE" "$newname"
     sedreplaceargs+=("-e" "s#${FILE}#${newname}#")
-    if [[ "$FILE" == "script.js" ]]; then
-        SCRIPT_JS="$newname"
-    fi
+}
+
+while read -r FILE; do
+    moveFile "$FILE"
 done < "$LISTPATH"
 
+sed -i "${sedreplaceargs[@]}" "$HTMLFOLDER"/script.js
+
+# this needs to happen after it was modified
+moveFile script.js
+
 sed -i "${sedreplaceargs[@]}" "$HTMLFOLDER"/index.html
-sed -i "${sedreplaceargs[@]}" "$HTMLFOLDER"/"$SCRIPT_JS"
