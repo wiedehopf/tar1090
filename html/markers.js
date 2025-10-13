@@ -1379,8 +1379,8 @@ function svgShapeToURI(shape, fillColor, strokeColor, strokeWidth, scale){
     return "data:image/svg+xml;base64," + btoa(svg);
 }
 
-let glIconSize = 72;
-let glImapCols = 8;
+let glIconSize = 86;
+let glImapCols = 16;
 if (usp.has('iconTestCols')) {
     glImapCols = usp.getInt('iconTestCols');
 }
