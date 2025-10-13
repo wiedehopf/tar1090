@@ -1288,7 +1288,7 @@ function svgShapeToSVG(shape, fillColor, strokeColor, strokeWidth, scale) {
     let wi = shape.w * scale;
     let he = shape.h * scale;
 
-    if (!shape.path) {
+    if (shape.svg) {
         let svg = shape.svg.replace('fillColor', fillColor).replace('strokeColor', strokeColor).replace('strokeWidth', strokeWidth);
         svg = svg.replace('SIZE', 'width="' + wi + 'px" height="' + he + 'px"');
         return svg;
@@ -1300,12 +1300,14 @@ function svgShapeToSVG(shape, fillColor, strokeColor, strokeWidth, scale) {
         + 'width="' + wi + '" height="' + he + '">'
         + '<g' + (shape.transform ? (' transform="' + shape.transform + '"') : '') + '>';
 
-    let path = shape.path;
-    if (! Array.isArray(path))
-        path = [path];
-    for (let i = 0; i < path.length; i++) {
-        svg += '<path paint-order="stroke" fill="' + fillColor + '" stroke="' + strokeColor + '" stroke-width="' + (2 * strokeWidth) + '" '
-            + 'd="' + path[i] + '"/>';
+    if (shape.path) {
+        let path = shape.path;
+        if (! Array.isArray(path))
+            path = [path];
+        for (let i = 0; i < path.length; i++) {
+            svg += '<path paint-order="stroke" fill="' + fillColor + '" stroke="' + strokeColor + '" stroke-width="' + (2 * strokeWidth) + '" '
+                + 'd="' + path[i] + '"/>';
+        }
     }
 
     if (shape.accent) {
