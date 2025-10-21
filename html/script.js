@@ -6608,6 +6608,7 @@ function toggleShowTrace() {
         showTraceWasIsolation = onlySelected;
         toggleIsolation("on", "noRefresh");
         shiftTrace();
+        refreshFilter();
     } else {
         jQuery("#selected_showTrace_hide").show();
 
