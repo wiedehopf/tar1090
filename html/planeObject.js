@@ -2927,12 +2927,11 @@ PlaneObject.prototype.routeCheck = function() {
     if (!route || currentTime > route.tarNextUpdate) {
         // we have all the pieces that allow us to lookup a route
         let route_check = { 'callsign': currentName, 'lat': this.position[1], 'lng': this.position[0], icao: this.icao};
-        /*
-        if (showTrace || replay) {
+
+        if ((showTrace || replay) && routeApiUrl.includes("adsb.im")) {
             delete route_check['lat'];
             delete route_check['lng'];
         }
-        */
         g.route_check_todo[currentName] = route_check;
         return;
     }
