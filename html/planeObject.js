@@ -2911,7 +2911,7 @@ PlaneObject.prototype.routeCheck = function() {
         return;
     }
 
-    if (!this.position ) {
+    if (!this.position) {
         // don't update if no position
         return;
     }
@@ -2927,6 +2927,12 @@ PlaneObject.prototype.routeCheck = function() {
     if (!route || currentTime > route.tarNextUpdate) {
         // we have all the pieces that allow us to lookup a route
         let route_check = { 'callsign': currentName, 'lat': this.position[1], 'lng': this.position[0], icao: this.icao};
+        /*
+        if (showTrace || replay) {
+            delete route_check['lat'];
+            delete route_check['lng'];
+        }
+        */
         g.route_check_todo[currentName] = route_check;
         return;
     }
@@ -2999,12 +3005,27 @@ function routeDoLookup(currentTime) {
         console.log(`${currentTime}: g.route_check_checking:`, g.route_check_checking);
     }
 
+    const requestRoutes = [];
+    for (const entry of g.route_check_checking) {
+        requestRoutes.push({
+            callsign: entry['callsign'],
+            lat: entry['lat'],
+            lng: entry['lng'],
+        });
+    }
+
+    const requestBody = JSON.stringify({ 'planes': requestRoutes });
+
+    if (debugRoute) {
+        console.log(`${currentTime}: requesting routes:`, requestBody);
+    }
+
     jQuery.ajax({
         type: "POST",
         url: routeApiUrl,
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        data: JSON.stringify({ 'planes': g.route_check_checking }),
+        data: requestBody,
     })
         .done((routes) => {
             let currentTime = new Date().getTime()/1000;
