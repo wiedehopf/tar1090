@@ -3032,7 +3032,8 @@ function routeDoLookup(currentTime) {
         })
         .fail((jqxhr, status, error) => {
             g.route_check_in_flight = false;
-            console.log('API server call failed with', status);
+            g.route_cache_timer =  Date.now()/1000 + 15;
+            console.log('route API request error, delaying next request by 15 seconds.');
         });
 }
 
