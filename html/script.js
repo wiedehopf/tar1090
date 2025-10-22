@@ -8,8 +8,7 @@
 g.planes        = {};
 g.planesOrdered = [];
 g.route_cache = [];
-g.route_cities = [];
-g.route_check_array = [];
+g.route_check_todo = {};
 g.route_check_in_flight = false;
 g.route_cache_timer = new Date().getTime() / 1000 + 1; // one second from now
 
@@ -3557,7 +3556,7 @@ function refreshSelected() {
     if (useRouteAPI) {
         if (selected.routeString) {
             jQuery('#selected_route').updateText(selected.routeString);
-            jQuery('#selected_route').attr('title', g.route_cities[selected.name]);
+            jQuery('#selected_route').attr('title', selected.routeVerbose);
         } else {
             jQuery('#selected_route').updateText('n/a');
         }
@@ -3994,11 +3993,11 @@ function refreshFeatures() {
         text: 'Callsign' };
     if (routeApiUrl) {
         cols.route = {
-            sort: function () { sortBy('route', compareAlpha, function(x) { return x.routeString }); },
+            sort: function () { sortBy('route', compareAlpha, function(x) { return x.routeColumn }); },
             value: function(plane) {
                 if (!useRouteAPI) return '';
                 if (plane.routeString) {
-                    return '<span title="' + g.route_cities[plane.name] + '">' + plane.routeString + '</span>';
+                    return '<span title="' + plane.routeVerbose + '">' + plane.routeColumn + '</span>';
                 } else {
                     return '';
                 }
@@ -5742,7 +5741,7 @@ function checkMovement() {
     }
 
     let currentTime = new Date().getTime()/1000;
-    if (currentTime > g.route_cache_timer) {
+    if (currentTime > g.route_cache_timer && !g.route_check_in_flight) {
         // check if it's time to send a batch of request to the API server
         g.route_cache_timer = currentTime + 1;
         routeDoLookup(currentTime);

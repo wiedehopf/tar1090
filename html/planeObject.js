@@ -2707,6 +2707,9 @@ PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
 
 PlaneObject.prototype.dataChanged = function() {
     this.refreshTR = 0;
+    if (useRouteAPI){
+        this.routeCheck();
+    }
 }
 
 PlaneObject.prototype.isNonIcao = function() {
@@ -2893,90 +2896,144 @@ function normalized_callsign(flight) {
     return alpha + num + alpha2;
 }
 
-function routeCheck(currentName, lat, lon) {
-    // we have all the pieces that allow us to lookup a route
-    let route_check = { 'callsign': currentName, 'lat': lat, 'lng': lon };
-    g.route_check_array.push(route_check);
-    g.route_cache[currentName] = ''; // this way it only gets added to the array once
+PlaneObject.prototype.routeCheck = function() {
+    if (!this.visible) {
+        // we don't care, don't update
+        return;
+    }
+    if (!this.flight || !this.name
+        || this.name == 'empty callsign'
+        || this.name == 'no callsign'
+        || this.registration == this.name
+    ) {
+        this.routeString = '';
+        this.routeVerbose = '';
+        return;
+    }
+
+    if (!this.position ) {
+        // don't update if no position
+        return;
+    }
+
+    let currentName = normalized_callsign(this.name);
+    if (g.route_check_todo[currentName]) {
+        // already checking
+        return;
+    }
+    let currentTime = new Date().getTime()/1000;
+    // if we don't have a route cached or if the cache is older than 6h, do a lookup
+    const route = g.route_cache[currentName];
+    if (!route || route.tarUpdateTime - currentTime > 6 * 3600) {
+        // we have all the pieces that allow us to lookup a route
+        let route_check = { 'callsign': currentName, 'lat': this.position[1], 'lng': this.position[0], icao: this.icao};
+        g.route_check_todo[currentName] = route_check;
+        return;
+    }
+
+    if (!route._airports || route._airports.length < 1) {
+        this.routeString = '';
+        this.routeVerbose = '';
+        return;
+    }
+
+    let routeString = "";
+    let cities = "";
+
+    for (let airport of route._airports) {
+        if (routeString) {
+            if (routeDisplay.includes('city')) {
+                routeString += " -\n"
+            } else {
+                routeString += " - "
+            }
+
+            cities += " - ";
+        }
+        let aString = ""
+        for (let type of routeDisplay) {
+            if (aString) {
+                aString += '/';
+            }
+            if (type == 'iata') {
+                aString += airport.iata;
+            } else if (type == 'icao') {
+                aString += airport.icao;
+            } else if (type == 'city') {
+                aString += airport.location;
+            }
+        }
+        cities += airport.location;
+        routeString += aString;
+    }
+    if (route._airports.length > 2) {
+        this.routeColumn = 'MULTIHOP';
+    } else {
+        this.routeColumn = routeString;
+    }
+
+    if (!route.plausible) {
+        routeString = '?? ' + routeString;
+    }
+
+    //console.log(this.routeString);
+    this.routeString = routeString;
+    this.routeVerbose = cities;
 }
 
 function routeDoLookup(currentTime) {
     // JavaScript doesn't interrupt running functions - so this should be safe to do
-    if (g.route_check_in_flight == false && g.route_check_array.length > 0) {
-        g.route_check_in_flight = true;
-        if (debugRoute) {
-            console.log(`${currentTime}: g.route_check_array:`, g.route_check_array);
-        }
-        // grab up to the first 100 callsigns and leave the rest for later
-        var route_check_array = g.route_check_array.slice(0,100);
-        g.route_check_array = g.route_check_array.slice(100);
-        jQuery.ajax({
-            type: "POST",
-            url: routeApiUrl,
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            data: JSON.stringify({ 'planes': route_check_array})})
-            .done((routes) => {
-                let currentTime = new Date().getTime()/1000;
-                g.route_check_in_flight = false;
-                if (debugRoute) {
-                    console.log(`${currentTime}: got routes:`, routes);
-                }
-                for (var route of routes) {
-                    if (!route) {
-                        console.error(`Route API returned this invalid element in the array ${route}`);
-                        console.log(routes);
-                        continue;
-                    }
-                    if (!route.airport_codes || route.airport_codes == "unknown") {
-                        continue;
-                    }
-                    let codes = "";
-                    let cities = "";
-
-                    for (let airport of route._airports) {
-                        if (codes) {
-                            if (routeDisplay.includes('city')) {
-                                codes += " -\n"
-                            } else {
-                                codes += " - "
-                            }
-
-                            cities += " - ";
-                        }
-                        let aString = ""
-                        for (let type of routeDisplay) {
-                            if (aString) {
-                                aString += '/';
-                            }
-                            if (type == 'iata') {
-                                aString += airport.iata;
-                            } else if (type == 'icao') {
-                                aString += airport.icao;
-                            } else if (type == 'city') {
-                                aString += airport.location;
-                            }
-                        }
-                        cities += airport.location;
-                        codes += aString;
-                    }
-
-                    if (!route.plausible) {
-                        codes = '?? ' + codes;
-                    }
-                    g.route_cache[route.callsign] = codes;
-                    g.route_cities[route.callsign] = cities;
-                }
-            })
-            .fail((jqxhr, status, error) => {
-                g.route_check_in_flight = false;
-                console.log('API server call failed with', status);
-            });
-    } else {
-        if (0 && debugRoute) {
-            console.log(`nothing to send to server at ${currentTime}`);
-        }
+    if (g.route_check_in_flight) {
+        return;
     }
+    if (!g.route_check_checking) {
+        // grab up to the first 100 callsigns and leave the rest for later
+        g.route_check_checking = Object.values(g.route_check_todo).slice(0,100);
+    }
+    if (g.route_check_checking.length < 1) {
+        g.route_check_checking = null;
+        return;
+    }
+    g.route_check_in_flight = true;
+    if (debugRoute) {
+        console.log(`${currentTime}: g.route_check_checking:`, g.route_check_checking);
+    }
+
+    jQuery.ajax({
+        type: "POST",
+        url: routeApiUrl,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        data: JSON.stringify({ 'planes': g.route_check_checking }),
+    })
+        .done((routes) => {
+            let currentTime = new Date().getTime()/1000;
+            g.route_check_in_flight = false;
+            if (debugRoute) {
+                console.log(`${currentTime}: got routes:`, routes);
+            }
+            for (var route of routes) {
+                if (!route) {
+                    console.error(`Route API returned this invalid element in the array ${route}`);
+                    console.log(routes);
+                    continue;
+                }
+                route.tarUpdateTime = currentTime;
+                g.route_cache[route.callsign] = route;
+            }
+            for (const entry of g.route_check_checking) {
+                delete g.route_check_todo[entry.callsign];
+                const plane = g.planes[entry.icao];
+                plane && plane.dataChanged();
+            }
+            // let's update the route data immediately by refreshing the interface
+            refresh();
+            g.route_check_checking = null;
+        })
+        .fail((jqxhr, status, error) => {
+            g.route_check_in_flight = false;
+            console.log('API server call failed with', status);
+        });
 }
 
 PlaneObject.prototype.setFlight = function(flight) {
@@ -2992,24 +3049,6 @@ PlaneObject.prototype.setFlight = function(flight) {
         this.flight = `${flight}`;
         this.name = this.flight.trim() || 'empty callsign';
         this.flightTs = now;
-        if (useRouteAPI
-            && this.visible
-            && this.name
-            && this.name != 'empty callsign'
-            && this.registration != this.name
-        ) {
-
-            let currentName = normalized_callsign(this.name);
-            if (g.route_cache[currentName] === undefined &&
-                this.seen_pos < 60 &&
-                this.position) {
-                routeCheck(currentName, this.position[1], this.position[0]);
-            } else {
-                // this ensures that if eventually we get (and cache) the route, the plane
-                // information gets updated as we keep coming back to this function
-                this.routeString = g.route_cache[currentName];
-            }
-        }
     }
 }
 
