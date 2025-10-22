@@ -2924,7 +2924,7 @@ PlaneObject.prototype.routeCheck = function() {
     let currentTime = new Date().getTime()/1000;
     // if we don't have a route cached or if the cache is older than 6h, do a lookup
     const route = g.route_cache[currentName];
-    if (!route || route.tarUpdateTime - currentTime > 6 * 3600) {
+    if (!route || currentTime > route.tarNextUpdate) {
         // we have all the pieces that allow us to lookup a route
         let route_check = { 'callsign': currentName, 'lat': this.position[1], 'lng': this.position[0], icao: this.icao};
         g.route_check_todo[currentName] = route_check;
@@ -3012,17 +3012,21 @@ function routeDoLookup(currentTime) {
             if (debugRoute) {
                 console.log(`${currentTime}: got routes:`, routes);
             }
-            for (var route of routes) {
+            for (let i in routes) {
+                const route = routes[i];
                 if (!route) {
-                    console.error(`Route API returned this invalid element in the array ${route}`);
-                    console.log(routes);
+                    console.error(`Route API returned this invalid element: ${route}, probably for`, g.route_check_checking[i]);
                     continue;
                 }
-                route.tarUpdateTime = currentTime;
+                route.tarNextUpdate = currentTime + 6 * 3600; // recheck in 6 hours
                 g.route_cache[route.callsign] = route;
             }
             for (const entry of g.route_check_checking) {
                 delete g.route_check_todo[entry.callsign];
+                const cached = g.route_cache[entry.callsign];
+                if (!cached || cached.tarnextUpdate > currentTime) {
+                    g.route_cache[entry.callsign] = { tarNextUpdate: currentTime + 60 };
+                }
                 const plane = g.planes[entry.icao];
                 plane && plane.dataChanged();
             }
