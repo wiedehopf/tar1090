@@ -794,7 +794,7 @@ function createBaseLayers() {
                 url: 'https://tilecache.rainviewer.com/v2/radar/' + latestLayer.past[latestLayer.past.length - 1].time + '/512/{z}/{x}/{y}/6/1_1.png',
                 attributions: '<a href="https://www.rainviewer.com/api.html" target="_blank">RainViewer.com</a>',
                 attributionsCollapsible: false,
-                maxZoom: 10,
+                maxZoom: 7,
             });
             rainviewerRadar.setSource(rainviewerRadarSource);
         };
