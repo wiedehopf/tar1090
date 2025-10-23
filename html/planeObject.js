@@ -3006,7 +3006,17 @@ function routeDoLookup() {
         g.route_check_checking = null;
         return;
     }
+    if (g.route_check_checking.length < 10 && currentTime - g.route_last_lookup < 3.5) {
+        // only do lookups every 3 seconds if we don't have many routes to check
+        if (debugRoute) {
+            console.log('delaying route check, trying to bundle request for 3 seconds');
+        }
+        return;
+    }
+
     g.route_check_in_flight = true;
+    g.route_last_lookup = currentTime;
+
     if (debugRoute) {
         console.log(`${currentTime}: g.route_check_checking:`, g.route_check_checking);
     }

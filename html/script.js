@@ -11,6 +11,7 @@ g.route_cache = [];
 g.route_check_todo = {};
 g.route_check_in_flight = false;
 g.route_next_lookup = 0;
+g.route_last_lookup = 0;
 
 g.mapOrientation = mapOrientation;
 
@@ -5739,7 +5740,7 @@ function checkMovement() {
         return;
     }
 
-    let currentTime = new Date().getTime()/1000;
+    let currentTime = Date.now()/1000;
     if (currentTime > g.route_next_lookup && !g.route_check_in_flight) {
         // check if it's time to send a batch of request to the API server
         g.route_next_lookup = currentTime + 1;
