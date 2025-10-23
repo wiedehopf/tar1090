@@ -2911,27 +2911,33 @@ PlaneObject.prototype.routeCheck = function() {
         return;
     }
 
-    if (!this.position) {
-        // don't update if no position
-        return;
-    }
-
     let currentName = normalized_callsign(this.name);
     if (g.route_check_todo[currentName]) {
         // already checking
         return;
     }
-    let currentTime = new Date().getTime()/1000;
+    let currentTime = Date.now()/1000;
     // if we don't have a route cached or if the cache is older than 6h, do a lookup
     const route = g.route_cache[currentName];
     if (!route || currentTime > route.tarNextUpdate) {
-        // we have all the pieces that allow us to lookup a route
-        let route_check = { 'callsign': currentName, 'lat': this.position[1], 'lng': this.position[0], icao: this.icao};
-
-        if ((showTrace || replay) && routeApiUrl.includes("adsb.im")) {
-            delete route_check['lat'];
-            delete route_check['lng'];
+        if (route) {
+            console.log("routeAPI: updating ", currentName, currentTime, route.tarNextUpdate);
         }
+        // we have all the pieces that allow us to lookup a route
+        let route_check = { 'callsign': currentName, icao: this.icao};
+        if (!this.position) {
+            // no lookup (for now)
+            return;
+        } else if (showTrace || replay) {
+            if (!routeApiUrl.includes("adsb.im")) {
+                route_check['lat'] = this.position[1];
+                route_check['lng'] = this.position[0];
+            }
+        } else {
+            route_check['lat'] = this.position[1];
+            route_check['lng'] = this.position[0];
+        }
+
         g.route_check_todo[currentName] = route_check;
         return;
     }
@@ -2977,7 +2983,7 @@ PlaneObject.prototype.routeCheck = function() {
         this.routeColumn = routeString;
     }
 
-    if (!route.plausible) {
+    if (route.plausible === false) {
         routeString = '?? ' + routeString;
     }
 
@@ -2986,7 +2992,8 @@ PlaneObject.prototype.routeCheck = function() {
     this.routeVerbose = cities;
 }
 
-function routeDoLookup(currentTime) {
+function routeDoLookup() {
+    const currentTime = Date.now()/1000;
     // JavaScript doesn't interrupt running functions - so this should be safe to do
     if (g.route_check_in_flight) {
         return;
@@ -3027,7 +3034,7 @@ function routeDoLookup(currentTime) {
         data: requestBody,
     })
         .done((routes) => {
-            let currentTime = new Date().getTime()/1000;
+            const currentTime = Date.now()/1000;
             g.route_check_in_flight = false;
             if (debugRoute) {
                 console.log(`${currentTime}: got routes:`, routes);
@@ -3035,7 +3042,7 @@ function routeDoLookup(currentTime) {
             for (let i in routes) {
                 const route = routes[i];
                 if (!route) {
-                    console.error(`Route API returned this invalid element: ${route}, probably for`, g.route_check_checking[i]);
+                    console.log(`Route API returned this invalid element: ${String(route)}, probably for`, g.route_check_checking[i]);
                     continue;
                 }
                 route.tarNextUpdate = currentTime + 6 * 3600; // recheck in 6 hours
@@ -3044,8 +3051,8 @@ function routeDoLookup(currentTime) {
             for (const entry of g.route_check_checking) {
                 delete g.route_check_todo[entry.callsign];
                 const cached = g.route_cache[entry.callsign];
-                if (!cached || cached.tarnextUpdate > currentTime) {
-                    g.route_cache[entry.callsign] = { tarNextUpdate: currentTime + 60 };
+                if (!cached || currentTime > cached.tarNextUpdate) {
+                    g.route_cache[entry.callsign] = { tarNextUpdate: Math.ceil(currentTime / 30) * 30 };
                 }
                 const plane = g.planes[entry.icao];
                 plane && plane.dataChanged();

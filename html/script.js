@@ -54,7 +54,6 @@ let iconSize = 1;
 let debugTracks = false;
 let verboseUpdateTrack = false;
 let debugAll = false;
-let debugRoute = false;
 let trackLabels = false;
 let multiSelect = false;
 let uat_data = null;
@@ -5744,7 +5743,7 @@ function checkMovement() {
     if (currentTime > g.route_next_lookup && !g.route_check_in_flight) {
         // check if it's time to send a batch of request to the API server
         g.route_next_lookup = currentTime + 1;
-        routeDoLookup(currentTime);
+        routeDoLookup();
     }
 
     const zoom = OLMap.getView().getZoom();
