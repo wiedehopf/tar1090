@@ -2921,7 +2921,7 @@ PlaneObject.prototype.routeCheck = function() {
     const route = g.route_cache[currentName];
     if (!route || currentTime > route.tarNextUpdate) {
         if (route) {
-            console.log("routeAPI: updating ", currentName, currentTime, route.tarNextUpdate);
+            console.log("routeAPI: updating ", currentName, localTime(new Date(currentTime)), localTime(new Date(route.tarNextUpdate)));
         }
         // we have all the pieces that allow us to lookup a route
         let route_check = { 'callsign': currentName, icao: this.icao};
