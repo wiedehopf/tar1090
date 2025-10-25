@@ -2794,8 +2794,10 @@ function initMap() {
     g.zoomLvl = Number(loStore['zoomLvl']) || DefaultZoomLvl;
     g.zoomLvlCache = g.zoomLvl;
 
+    // always hide this, it really only shows the number of positions saved
+    jQuery('#dump1090_total_history_td').hide();
+
     if (globeIndex && aggregator) {
-        jQuery('#dump1090_total_history_td').hide();
         jQuery('#dump1090_message_rate_td').hide();
     }
 
