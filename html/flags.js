@@ -222,14 +222,7 @@ let ICAO_Ranges = [
 
 	// Block assignments mentioned in Chapter 9 section 4, at the end so they are only used if
 	// nothing above applies
-	{ start: 0x200000, end: 0x27FFFF, country: "Unassigned (AFI region)", country_code: null },
-	{ start: 0x280000, end: 0x28FFFF, country: "Unassigned (SAM region)", country_code: null },
-	{ start: 0x500000, end: 0x5FFFFF, country: "Unassigned (EUR / NAT regions)", country_code: null },
-	{ start: 0x600000, end: 0x67FFFF, country: "Unassigned (MID region)", country_code: null },
-	{ start: 0x680000, end: 0x6FFFFF, country: "Unassigned (ASIA region)", country_code: null },
-	{ start: 0x900000, end: 0x9FFFFF, country: "Unassigned (NAM / PAC regions)", country_code: null },
 	{ start: 0xB00000, end: 0xBFFFFF, country: "Unassigned (reserved for future use)", country_code: null },
-	{ start: 0xEC0000, end: 0xEFFFFF, country: "Unassigned (CAR region)", country_code: null },
 	{ start: 0xD00000, end: 0xDFFFFF, country: "Unassigned (reserved for future use)", country_code: null },
 	{ start: 0xF00000, end: 0xFFFFFF, country: "Unassigned (reserved for future use)", country_code: null },
 ];
