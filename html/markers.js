@@ -940,6 +940,7 @@ let TypeDesignatorIcons = {
     'T2': ['hi_perf', 1],
     'T37': ['hi_perf', 1],
     'T38': ['t38', 1],
+    'F104': ['t38', 1],
     'A10': ['a10', 1],
     'A3': ['hi_perf', 1],
     'A6': ['hi_perf', 1],
