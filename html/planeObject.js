@@ -28,6 +28,7 @@ function PlaneObject(icao) {
 
     // Display info
     this.visible = false;
+    this.selected = false;
     this.marker = null;
     this.markerStyle = null;
     this.markerIcon = null;
@@ -307,7 +308,7 @@ PlaneObject.prototype.isFiltered = function() {
             return true;
         if (this.altitude == 'ground' && (this.addrtype == 'adsb_icao_nt' || this.addrtype == 'tisb_other'))
             return true;
-        if (this.squawk == 7777)
+        if (this.squawk == '7777')
             return true;
     }
 
@@ -691,23 +692,24 @@ PlaneObject.prototype.getDataSource = function() {
     return this.dataSource;
 };
 
+/**
+ * Get the marker color based on altitude and other factors
+ * @typedef {{ noRound?: boolean }} MarkerColorOptions
+ *
+ * @param {MarkerColorOptions} [options]
+ * @returns {HSL}
+ */
 PlaneObject.prototype.getMarkerColor = function(options) {
-    options |= {}
+    options ||= {}
     if (monochromeMarkers) {
         return hexToHSL(monochromeMarkers);
     }
 
     let alt = options.noRound ? this.altitude : this.alt_rounded;
-    if (this.category == 'C3' || this.icaoType == 'TWR' || (this.icaoType == null && this.squawk == 7777))
+    if (this.category == 'C3' || this.icaoType == 'TWR' || (this.icaoType == null && this.squawk == '7777'))
         alt = 'ground';
 
-    let h, s, l;
-
-    let colorArr = altitudeColor(alt);
-
-    h = colorArr[0];
-    s = colorArr[1];
-    l = colorArr[2];
+    let [h, s, l] = altitudeColor(alt);
 
     // If we have not seen a recent position update, change color
     if ((this.dataSource == 'adsc' && this.seen_pos > 20 * 60)
@@ -755,6 +757,11 @@ PlaneObject.prototype.getMarkerColor = function(options) {
     return [h, s, l];
 };
 
+/**
+ * Get the color based on altitude
+ * @param {'ground' | number} [altitude]
+ * @returns {HSL}
+ */
 function altitudeColor(altitude) {
     altitude = adjust_baro_alt(altitude);
     let h, s, l;
@@ -825,7 +832,7 @@ function altitudeColor(altitude) {
 PlaneObject.prototype.setMarkerRgb = function() {
     let hsl = this.getMarkerColor({noRound: true});
     let rgb = hslToRgb(hsl, 'array');
-    if (this.shape && this.shape.svg)
+    if (this.shape && this.shape.svg) // TODO add fixedFill color to shape?
         rgb = [255, 255, 255];
     this.glMarker.set('r', rgb[0]);
     this.glMarker.set('g', rgb[1]);
@@ -930,7 +937,7 @@ PlaneObject.prototype.updateIcon = function() {
         //console.log(this.icao + " new icon and style " + this.markerSvgKey + " -> " + svgKey);
 
         if (iconCache[svgKey] == undefined) {
-            let svgURI = svgShapeToURI(this.shape, fillColor, OutlineADSBColor, this.strokeWidth);
+            let svgURI = svgShapeToURI(svgKey, this.shape, fillColor, OutlineADSBColor, this.strokeWidth);
 
             addToIconCache.push([svgKey, null, svgURI]);
 
@@ -979,8 +986,8 @@ PlaneObject.prototype.updateIcon = function() {
                     textAlign: 'left',
                     textBaseline: labels_top ? 'bottom' : 'top',
                     font: labelFont,
-                    offsetX: (this.shape.w *0.5*0.74*this.scale),
-                    offsetY: labels_top ? (this.shape.w *-0.3*0.74*this.scale) : (this.shape.w *0.5*0.74*this.scale),
+                    offsetX: (this.shape.w *0.5*0.74*this.scale[0]),
+                    offsetY: labels_top ? (this.shape.w *-0.3*0.74*this.scale[1]) : (this.shape.w *0.5*0.74*this.scale[1]),
                     padding: [1, 0, -1, 2],
                 }),
                 zIndex: this.zIndex,
@@ -1724,13 +1731,20 @@ PlaneObject.prototype.updateMarker = function(moved) {
         if (icaoType == 'B609')
             icaoType = 'B609F';
     }
-    if (icaoType == null && this.squawk == 7777)
+    if (icaoType == null && this.squawk == '7777') {
         icaoType = 'TWR';
-    let baseMarkerKey = this.category + "_"
-        + this.typeDescription + "_" + this.wtc  + "_" + icaoType + '_' + (this.altitude == "ground") + eastbound;
+    }
+
+    let baseMarkerKey = [
+        this.category,
+        this.typeDescription,
+        this.wtc,
+        icaoType,
+        (this.altitude == 'ground') + eastbound
+    ].join('_');
 
     if (!this.shape || this.baseMarkerKey != baseMarkerKey) {
-        this.baseMarkerKey = baseMarkerKey;
+        /** @type {Marker} */
         let baseMarker = null;
         try {
             baseMarker = getBaseMarker(this.category, icaoType, this.typeDescription, this.wtc, this.addrtype, this.altitude, eastbound);
@@ -1739,13 +1753,16 @@ PlaneObject.prototype.updateMarker = function(moved) {
             console.log(baseMarkerKey);
         }
         if (!baseMarker) {
-            baseMarker = ['pumpkin', 1];
+            baseMarker = ['custom', 'pumpkin'];
         }
-        this.shape = shapes[baseMarker[0]];
-        this.baseScale = baseMarker[1] * 0.96;
+
+        this.baseMarkerKey = baseMarkerKey;
+        this.markerIndex = getMarkerIndex(baseMarker);
+        this.shape = getShapeWithSize(baseMarker);
+        this.baseScale = 0.65;
     }
-    this.scale = iconSize * this.baseScale;
-    this.strokeWidth = outlineWidth * ((this.selected && !SelectedAllPlanes && !onlySelected) ? 0.85 : 0.7) / this.baseScale;
+    this.scale = this.baseScale; // this.baseScale * iconSize;
+    this.strokeWidth = outlineWidth * ((this.selected && !SelectedAllPlanes && !onlySelected) ? 0.85 : 0.7); // / this.baseScale;
 
     if (!this.marker && (!webgl || g.enableLabels)) {
         this.marker = new ol.Feature(this.olPoint);
@@ -1767,9 +1784,10 @@ PlaneObject.prototype.updateMarker = function(moved) {
         this.setMarkerRgb();
         const iconRotation = this.shape.noRotate ? 0 : this.rotation;
         this.glMarker.set('rotation', iconRotation * Math.PI / 180.0 + g.mapOrientation);
-        this.glMarker.set('scale', this.scale * Math.max(this.shape.w, this.shape.h) / glIconSize);
-        this.glMarker.set('sx', getSpriteX(this.shape) * glIconSize);
-        this.glMarker.set('sy', getSpriteY(this.shape) * glIconSize);
+        this.glMarker.set('scale', this.scale);
+        const [sx, sy] = getSpritePos(this.markerIndex);
+        this.glMarker.set('sx', sx);
+        this.glMarker.set('sy', sy);
     }
 
     if (this.marker && (!webgl || g.enableLabels)) {
@@ -2210,15 +2228,20 @@ PlaneObject.prototype.destroy = function() {
     }
 };
 
+/**
+ * Rounds the altitude for color coding and heatmap usage
+ * @param {"ground" | number} [altitude]
+ * @returns { "ground" | number }
+ */
 function calcAltitudeRounded(altitude) {
     if (altitude == null) {
         return null;
     } else if (altitude == "ground") {
         return altitude;
     } else if (altitude > 8000 || heatmap) {
-        return (altitude/500).toFixed(0)*500;
+        return Math.round(altitude/500) * 500;
     } else {
-        return (altitude/125).toFixed(0)*125;
+        return Math.round(altitude/125) * 125;
     }
 };
 
@@ -2237,6 +2260,11 @@ PlaneObject.prototype.drawRedDot = function(bad_position) {
     this.trail_features.addFeature(lineFeat);
 };
 
+/**
+ * Converts a hex color value to HSL. Conversion formula
+ * @param {string} hex 
+ * @returns {HSL} 
+ */
 function hexToHSL(hex) {
     let r = +('0x'+ hex[1] + hex[2]) / 255;
     let g = +('0x'+ hex[3] + hex[4]) / 255;
@@ -2269,17 +2297,33 @@ function hexToHSL(hex) {
 };
 
 /**
+ * @typedef {[r: number, g: number, b: number]} RGB
+ * @typedef {[h: number, s: number, l:number]} HSL
+ *
+ * @overload
+ * @param   {HSL}       arr
+ * @param   {'array'}   opacity
+ * @return  {RGB}
+ *//**
+ * @overload
+ * @param   {HSL}       arr
+ * @param   {number}    opacity
+ * @return  {string}
+ *//**
+ * @overload
+ * @param   {HSL}       arr
+ * @return  {string}
+ *//**
  * Converts an HSL color value to RGB. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
  * Assumes h, s, and l are contained in the set [0, 1] and
  * returns r, g, and b in the set [0, 255].
  *
- * @param   {number}  h       The hue
- * @param   {number}  s       The saturation
- * @param   {number}  l       The lightness
- * @return  {Array}           The RGB representation
+ * @param   {HSL}                       arr         The hue, saturation, and lightness
+ * @param   {'array'|number|undefined}  [opacity]   The opacity (0 to 1) or 'array' to return as array
+ * @return  {RGB|string}  The RGB representation
  */
-function hslToRgb(arr, opacity){
+function hslToRgb(arr, opacity) {
     let h = arr[0];
     let s = arr[1];
     let l = arr[2];

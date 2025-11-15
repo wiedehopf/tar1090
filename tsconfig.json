@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "lib": ["DOM", "ES2017"],
+    "checkJs": true,
+    "noEmit": true,
+    "downlevelIteration": true
+  }
+}
