@@ -2048,7 +2048,7 @@ function iconTest() {
   }
 
   /** @type {Marker[]} */
-  const entries = [
+  let entries = [
     ...Object.keys(TypeCodeIcons).map(/** @returns {Marker} */(k) => ["code", k]),
     ...Object.keys(TypeDescriptionIcons).map(/** @returns {Marker} */(k) => ["descr", k]),
     ...Object.keys(CategoryIcons).map(/** @returns {Marker} */(k) => ["cat", k]),
@@ -2068,6 +2068,19 @@ function iconTest() {
   })
   if (missingShapes.length > 0) {
     log("Shapes without any type designations found:", missingShapes);
+  }
+
+    // Optionally filter labels when debugging
+  let labelFilter = usp.get("iconTestLabelFilter");
+  if (labelFilter) {
+    labelFilter = labelFilter.toLowerCase();
+    log("Applying label filter:", labelFilter);
+    entries = entries.filter((marker) => {
+      const label = marker[1].toLowerCase();
+      console.log("Checking label:", label);
+      // Apply label filter if set
+      return label.includes(labelFilter)
+    })
   }
 
   let iconWidth = glIconSize;
@@ -2196,20 +2209,14 @@ function iconTest() {
     disableLogging = false;
   }
 
-  // Optionally filter labels when debugging
-  const labelFilter = usp.get("iconTestLabelFilter");
-
   /** @type {Record<string, string>} */
   let svgJson = {};
-  for (let marker of entries) {
+  entries.forEach((marker, idx) => {
     const label = marker[1];
 
-    // Apply label filter if set
-    if (labelFilter && !label.includes(labelFilter)) {
-      continue;
-    }
-
-    const shapeIndex = getMarkerIndex(marker);
+    // If labelFilter is set, draw the filtered label at it's position in the array
+    // Otherwise, calculate position based on actual marker index for consistency
+    const shapeIndex = labelFilter ? idx : getMarkerIndex(marker);
     const [curX, curY] = getSpritePos(shapeIndex, iconWidth, iconHeight);
     log(label, `Drawing shape at ${curX},${curY}`);
 
@@ -2220,7 +2227,7 @@ function iconTest() {
     const svg = drawShape(curX, curY, label, shape, true);
     disableLogging = false;
     svgJson[label] = svg;
-  }
+  })
 
   //log(svgJson);
   //log(JSON.stringify(svgJson));
