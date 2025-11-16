@@ -179,6 +179,17 @@ if (0 && window.self != window.top) {
     }
 }
 
+const lopaStore = new Proxy(loStore, {
+    get(loStore, key) {
+        key = String(window.location.origin) + String(window.location.pathname) + key;
+        return loStore[key];
+    },
+    set(loStore, key, value) {
+        key = String(window.location.origin) + String(window.location.pathname) + key;
+        return loStore[key] = value;
+    },
+});
+
 let firstError = true;
 if (usp.has('showerrors') || usp.has('jse')) {
     window.onerror = function (msg, url, lineNo, columnNo, error) {

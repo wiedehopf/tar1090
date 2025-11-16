@@ -2788,10 +2788,10 @@ function showHideButtons() {
 // Initalizes the map and starts up our timers to call various functions
 function initMap() {
 
-    CenterLon = Number(loStore['CenterLon']) || DefaultCenterLon;
-    CenterLat = Number(loStore['CenterLat']) || DefaultCenterLat;
+    CenterLon = Number(lopaStore['CenterLon']) || DefaultCenterLon;
+    CenterLat = Number(lopaStore['CenterLat']) || DefaultCenterLat;
     //console.log("initMap Centerlat: " + CenterLat);
-    g.zoomLvl = Number(loStore['zoomLvl']) || DefaultZoomLvl;
+    g.zoomLvl = Number(lopaStore['zoomLvl']) || DefaultZoomLvl;
     g.zoomLvlCache = g.zoomLvl;
 
     // always hide this, it really only shows the number of positions saved
@@ -4708,9 +4708,9 @@ function resetMap() {
             CenterLat = DefaultCenterLat;
         }
         // Reset loStore values and map settings
-        loStore['CenterLat'] = CenterLat
-        loStore['CenterLon'] = CenterLon
-        //loStore['zoomLvl']   = g.zoomLvl = DefaultZoomLvl;
+        lopaStore['CenterLat'] = CenterLat
+        lopaStore['CenterLon'] = CenterLon
+        //lopaStore['zoomLvl']   = g.zoomLvl = DefaultZoomLvl;
 
         // Set and refresh
         //OLMap.getView().setZoom(g.zoomLvl);
@@ -5650,7 +5650,7 @@ function changeZoom(init) {
     if (!init && Math.abs(g.zoomLvl-g.zoomLvlCache) < 0.4)
         return;
 
-    loStore['zoomLvl'] = g.zoomLvl;
+    lopaStore['zoomLvl'] = g.zoomLvl;
     g.zoomLvlCache = g.zoomLvl;
 
     if (!init && showTrace)
@@ -5712,8 +5712,8 @@ function changeCenter(init) {
         return;
     }
 
-    loStore['CenterLon'] = CenterLon = center[0];
-    loStore['CenterLat'] = CenterLat = center[1];
+    lopaStore['CenterLon'] = CenterLon = center[0];
+    lopaStore['CenterLat'] = CenterLat = center[1];
 
     if (!init) {
         updateAddressBar();
