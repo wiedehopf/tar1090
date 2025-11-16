@@ -1303,8 +1303,9 @@ const categoryKeys = Object.keys(CategoryIcons);
 const customKeys = Object.keys(CustomIcons);
 
 // Enable debug logging
+let disableLogging = false;
 function log() {
-  if (!usp.has('iconTestLabels')) {
+  if (!usp.has('iconTestLabels') || disableLogging) {
     return;
   }
 
@@ -1793,7 +1794,6 @@ function svgShapeToSVG(
   fillColor,
   strokeColor,
   strokeWidth,
-  returnSvg = false
 ) {
   // Scale strokeWidth relative to viewBox
   const [x, y, w, h] = shape.viewBox.split(' ').map(Number);
@@ -1832,6 +1832,7 @@ function svgShapeToSVG(
     height: shape.h,
   });
   log(type, "SVG viewBox", shape.viewBox, "width", shape.w, "height", shape.h);
+
   const showViewBox = usp.has("showViewBox");
   if (showViewBox && !returnSvg && shape.id >= 0 ) {
     const vb = shape.viewBox.split(" ");
@@ -2030,11 +2031,6 @@ function iconTest() {
     labelHeight+= 12;
   }
 
-  let showTypes = false;
-  if (usp.has("iconTypeDesignators")) {
-    showTypes = true;
-  }
-
   jQuery("#large_mode_control").hide();
   jQuery("#header_top").hide();
   jQuery("#header_side").hide();
@@ -2059,16 +2055,19 @@ function iconTest() {
     ...Object.keys(CustomIcons).map(/** @returns {Marker} */(k) => ["custom", k]),
   ];
 
-  if (showTypes) {
-    // Add shapes that do not have any type designators
-    const missingShapes = Object.keys(shapes).filter((s) => {
-      // @ts-ignore
-      return entries.some(([_, entry]) => entry[0] === s) === false
-    })
-
-    log("Adding shapes without any type designations:", missingShapes);
+  // Validate that all shapes are used at least once
+  const usedShapes = [
+    ...Object.values(TypeCodeIcons).map((td) => td[0]),
+    ...Object.values(TypeDescriptionIcons).map((td) => td[0]),
+    ...Object.values(CategoryIcons).map((td) => td[0]),
+    ...Object.values(CustomIcons).map((td) => td[0]),
+  ]
+  const missingShapes = Object.keys(shapes).filter((shapeName) => {
     // @ts-ignore
-    entries.push(...missingShapes.map(s => [s, [s, 1]]));
+    return usedShapes.some((used) => shapeName === used) === false
+  })
+  if (missingShapes.length > 0) {
+    log("Shapes without any type designations found:", missingShapes);
   }
 
   let iconWidth = glIconSize;
@@ -2176,6 +2175,7 @@ function iconTest() {
 
   // Optionally draw grid
   if (usp.has("grid")) {
+    disableLogging = true;
     for (let i = 0; i < entries.length; i++) {
       const [curX, curY] = getSpritePos(i, iconWidth, iconHeight);
 
@@ -2193,6 +2193,7 @@ function iconTest() {
       );
       img.src = svgURI;
     }
+    disableLogging = false;
   }
 
   // Optionally filter labels when debugging
@@ -2209,14 +2210,15 @@ function iconTest() {
     }
 
     const shapeIndex = getMarkerIndex(marker);
-    log(`Processing shape ${label} at index ${shapeIndex}`);
     const [curX, curY] = getSpritePos(shapeIndex, iconWidth, iconHeight);
-    log(`Drawing shape ${label} at ${curX},${curY}`);
+    log(label, `Drawing shape at ${curX},${curY}`);
 
     const shape = getShapeWithSize(marker, globalScale);
    
     drawShape(curX, curY, label, shape);
+    disableLogging = true;
     const svg = drawShape(curX, curY, label, shape, true);
+    disableLogging = false;
     svgJson[label] = svg;
   }
 
