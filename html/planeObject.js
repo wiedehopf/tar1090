@@ -987,8 +987,8 @@ PlaneObject.prototype.updateIcon = function() {
                     textAlign: 'left',
                     textBaseline: labels_top ? 'bottom' : 'top',
                     font: labelFont,
-                    offsetX: (this.shape.w *0.5*0.74*this.scale[0]),
-                    offsetY: labels_top ? (this.shape.w *-0.3*0.74*this.scale[1]) : (this.shape.w *0.5*0.74*this.scale[1]),
+                    offsetX: (this.shape.w *0.5*0.74*this.scale),
+                    offsetY: labels_top ? (this.shape.w *-0.3*0.74*this.scale) : (this.shape.w *0.5*0.74*this.scale),
                     padding: [1, 0, -1, 2],
                 }),
                 zIndex: this.zIndex,
@@ -1762,7 +1762,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
         this.shape = getShapeWithSize(baseMarker);
         this.baseScale = webgl ? 0.7 : 1.1;
     }
-    this.scale = this.baseScale; // this.baseScale * iconSize;
+    this.scale = this.baseScale;
     this.strokeWidth = outlineWidth * ((this.selected && !SelectedAllPlanes && !onlySelected) ? 0.85 : 0.7); // / this.baseScale;
 
     if (!this.marker && (!webgl || g.enableLabels)) {
