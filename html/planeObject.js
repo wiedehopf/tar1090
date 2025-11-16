@@ -832,8 +832,9 @@ function altitudeColor(altitude) {
 PlaneObject.prototype.setMarkerRgb = function() {
     let hsl = this.getMarkerColor({noRound: true});
     let rgb = hslToRgb(hsl, 'array');
-    if (this.shape && this.shape.svg) // TODO add fixedFill color to shape?
+    if (this.shape && this.shape.fixedFill) {
         rgb = [255, 255, 255];
+    }
     this.glMarker.set('r', rgb[0]);
     this.glMarker.set('g', rgb[1]);
     this.glMarker.set('b', rgb[2]);
@@ -1759,7 +1760,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
         this.baseMarkerKey = baseMarkerKey;
         this.markerIndex = getMarkerIndex(baseMarker);
         this.shape = getShapeWithSize(baseMarker);
-        this.baseScale = 0.65;
+        this.baseScale = webgl ? 0.7 : 1.1;
     }
     this.scale = this.baseScale; // this.baseScale * iconSize;
     this.strokeWidth = outlineWidth * ((this.selected && !SelectedAllPlanes && !onlySelected) ? 0.85 : 0.7); // / this.baseScale;

@@ -33,6 +33,8 @@ export type ShapeSetup = {
     viewBox?: string
     // Fixed size relative to a max of 36 x 36px
     fixedSize?: { w: number, h: number }
+    // Never change the fill color, used for ground objects
+    fixedFill?: boolean
     // Default size in a 36 x 36px box, used as reference for scaling if no dimensions are available
     defaultSize?: { w: number, h: number }
     path: ShapePath | ShapePath[]

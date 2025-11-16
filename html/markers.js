@@ -229,6 +229,7 @@ const _shapes = {
   },
   ground_emergency: {
     fixedSize: { w: 7.2, h: 18 },
+    fixedFill: true,
     viewBox: '18.557 0.000 26.880 64.000',
     path: [
       {
@@ -243,6 +244,7 @@ const _shapes = {
   },
   ground_fixed: {
     fixedSize: { w: 12, h: 12 },
+    fixedFill: true,
     noRotate: true,
     viewBox: '0.000 0.000 64.000 64.000',
     path: [
@@ -274,6 +276,7 @@ const _shapes = {
   },
   ground_service: {
     fixedSize: { w: 7.2, h: 18 },
+    fixedFill: true,
     viewBox: '18.557 0.000 26.880 64.000',
     path: [
       {
@@ -303,6 +306,7 @@ const _shapes = {
   },
   ground_unknown: {
     fixedSize: { w: 7.2, h: 18 },
+    fixedFill: true,
     viewBox: '18.557 0.000 26.880 64.000',
     path: [
       {
@@ -617,6 +621,12 @@ const _TypeCodeIcons = {
   A339: ["a333", 63.6, 64.0], // 900 neo
   A3ST: ["beluga", 56.1, 44.8],
   A337: ["beluga", 63.1, 60.3],
+
+  // A340 family
+  A342: ["b707", 59.4, 60.3],
+  A343: ["b707", 63.6, 60.3],
+  A345: ["b707", 67.8, 63.6],
+  A346: ["b707", 75.3, 63.6],
 
   // A350 family
   A359: ["a359", 66.8, 64.7],
@@ -1509,16 +1519,31 @@ if (!scaleBy || !['area', 'length', 'wingspan'].includes(scaleBy)) {
   scaleBy = 'area';
 }
 
+// Scaling factor determines how aircraft sizes are mapped to icon sizes.
+// Available options:
+// - 'log': Logarithmic scaling (default) - compresses large size ranges, good for wide size variations
+// - 'linear': Linear scaling - direct proportional mapping, may make small aircraft too small
+// - 'sigmoid': S-shaped curve - emphasizes mid-range differences, compresses small/large ends
+// - 'power': Power scaling - compresses large values when exponent < 1, expands when > 1
+// - 'piecewise': Three-segment linear scaling with different slopes for small/mid/large aircraft
+// - 'sqrt': Square root scaling - gentler compression than logarithmic
+// - 'expdecay': Exponential decay - starts steep, flattens for large aircraft
 let scaleFactor = usp.get('scaleFactor')
-if (!scaleFactor || !['log', 'linear'].includes(scaleFactor)) {
-  scaleFactor = 'linear';
+if (!scaleFactor || !['log', 'linear', 'sigmoid', 'power', 'piecewise', 'sqrt', 'expdecay'].includes(scaleFactor)) {
+  scaleFactor = 'sigmoid';
 }
+
+// Scaling parameters for advanced control
+// Controls the steepness of the sigmoid curve (higher = more pronounced S-shape, more emphasis on mid-range)
+let sigmoidK = parseFloat(usp.get('sigmoidK')) || 3;
+// Controls the power scaling exponent (< 1 compresses large values, > 1 expands them)
+let powerExponent = parseFloat(usp.get('powerExponent')) || 0.7;
 
 // Desired size range in pixels
 // Note that these min/max values are only guarenteed for the actual scaled dimension
 // F.e. when scaling by length and the largest aircraft has a wingspan greater then
 // their length, the max length will be 36 but the wingspan will be larger ofc
-const sizeRange = { min: 16, max: 40 };
+const sizeRange = { min: 16, max: 36 };
 if (scaleBy === 'area') {
   sizeRange.min = sizeRange.min * sizeRange.min;
   sizeRange.max = sizeRange.max * sizeRange.max;
@@ -1614,20 +1639,67 @@ function scaleShape(type, entry, shape) {
   log(type, 'Scaling to Size', shapeSize, 'Length', entry[1], 'Wingspan', entry[2]);
 
   let scalingFactor = 0;
-  if (scaleFactor === 'log') {
+
+  // Handle edge case where all sizes are the same
+  if (minSize === maxSize) {
+    scalingFactor = 0.5; // Use middle of range
+  } else if (scaleFactor === 'log') {
     // Logarithmic scaling
-    const logMin = Math.log(minSize);
-    const logMax = Math.log(maxSize);
-    const logShape = Math.log(shapeSize);
+    if (minSize <= 0 || maxSize <= 0 || shapeSize <= 0) {
+      log(type, 'Cannot use log scaling with non-positive sizes, falling back to linear');
+      scalingFactor = Math.max(0, Math.min(1, (shapeSize - minSize) / (maxSize - minSize)));
+    } else {
+      const logMin = Math.log(minSize);
+      const logMax = Math.log(maxSize);
+      const logShape = Math.log(shapeSize);
 
-    log(type, 'Log Size', logShape.toFixed(2), 'Log Min', logMin.toFixed(2), 'Log Max', logMax.toFixed(2));
+      log(type, 'Log Size', logShape.toFixed(2), 'Log Min', logMin.toFixed(2), 'Log Max', logMax.toFixed(2));
 
-    // Position in the logarithmic range [0, 1]
-    scalingFactor = (logShape - logMin) / (logMax - logMin);
+      // Position in the logarithmic range [0, 1]
+      scalingFactor = (logShape - logMin) / (logMax - logMin);
+    }
+  } else if (scaleFactor === 'sigmoid') {
+    // Sigmoid/Logistic curve scaling - emphasizes mid-range differences
+    const normalizedSize = (shapeSize - minSize) / (maxSize - minSize);
+    scalingFactor = 1 / (1 + Math.exp(-sigmoidK * (normalizedSize - 0.5)));
+    log(type, 'Sigmoid scaling factor', scalingFactor.toFixed(3), 'k=' + sigmoidK);
+  } else if (scaleFactor === 'power') {
+    // Power scaling - compresses large values with exponent < 1
+    const normalizedSize = (shapeSize - minSize) / (maxSize - minSize);
+    scalingFactor = Math.pow(normalizedSize, powerExponent);
+    log(type, 'Power scaling factor', scalingFactor.toFixed(3), 'exp=' + powerExponent);
+  } else if (scaleFactor === 'piecewise') {
+    // Piecewise linear scaling - different slopes for different ranges
+    const normalizedSize = (shapeSize - minSize) / (maxSize - minSize);
+    if (normalizedSize < 0.3) {
+      // Small aircraft: gentle slope (makes them smaller)
+      scalingFactor = normalizedSize * 0.5;
+    } else if (normalizedSize < 0.7) {
+      // Mid-range: steep slope (emphasizes differences)
+      scalingFactor = 0.15 + (normalizedSize - 0.3) * 2.0;
+    } else {
+      // Large aircraft: flat slope (prevents getting bigger)
+      scalingFactor = 0.75 + (normalizedSize - 0.7) * 0.5;
+    }
+    log(type, 'Piecewise scaling factor', scalingFactor.toFixed(3));
+  } else if (scaleFactor === 'sqrt') {
+    // Square root scaling - gentler compression than logarithmic
+    const normalizedSize = (shapeSize - minSize) / (maxSize - minSize);
+    scalingFactor = Math.sqrt(normalizedSize);
+    log(type, 'Sqrt scaling factor', scalingFactor.toFixed(3));
+  } else if (scaleFactor === 'expdecay') {
+    // Exponential decay scaling - starts steep, flattens out
+    const normalizedSize = (shapeSize - minSize) / (maxSize - minSize);
+    const k = 3; // Controls initial steepness
+    scalingFactor = 1 - Math.exp(-k * normalizedSize);
+    log(type, 'Expdecay scaling factor', scalingFactor.toFixed(3));
   } else {
-    // Linear scaling
+    // Linear scaling (default fallback)
     scalingFactor = (shapeSize - minSize) / (maxSize - minSize);
   }
+
+  // Clamp all scaling factors to [0, 1] (additional safety)
+  scalingFactor = Math.max(0, Math.min(1, scalingFactor));
 
   // Target size in the range
   const targetSize = sizeRange.min + (sizeRange.max - sizeRange.min) * scalingFactor;
@@ -1945,11 +2017,16 @@ function getSpritePos(
 
 function iconTest() {
   let showLabels = false;
+  let showDimension = false;
   let labelHeight = 0;
   // labels shall not be used when generating sprites.png
   if (usp.has("iconTestLabels")) {
     showLabels = true;
-    labelHeight = 12;
+    labelHeight+= 12;
+  }
+  if (usp.has("iconTestDimension")) {
+    showDimension = true;
+    labelHeight+= 12;
   }
 
   let showTypes = false;
@@ -2085,7 +2162,14 @@ function iconTest() {
     img.src = svgToURI(svg);
 
     if (showLabels) {
-      con?.fillText(label, x + iconWidth / 2, y + iconHeight);
+      con?.fillText(label, x + iconWidth / 2, y + iconHeight - (showDimension ? 12 : 0));
+    }
+    if (showDimension) {
+      con?.fillText(
+        `${(shape.w/globalScale).toFixed(1)} x ${(shape.h/globalScale).toFixed(1)}`,
+        x + iconWidth / 2,
+        y + iconHeight
+      );
     }
   }
 
