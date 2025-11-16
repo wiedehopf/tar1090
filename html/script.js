@@ -1749,7 +1749,7 @@ jQuery('#selected_altitude_geom1')
 
         // activate to prevent iframe use
         if (inhibitIframe && window.self != window.top) {
-            // window.top.location.href = "https://www.aggregator.com/";
+            window.top.location.href = "https://www.aggregator.com/";
             return;
         }
     }
