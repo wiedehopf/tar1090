@@ -1941,7 +1941,11 @@ function svgToURI(svg) {
 
 // Set global icon sizes for map icons
 let glIconSize = usp.getInt("iconSize") || 86;
-let glImapCols = Math.floor(screen.width / glIconSize);
+let glImapCols = 16;
+if (usp.has("iconTestLabels")) {
+  // When showing labels, fit as many columns as possible on screen
+  glImapCols = Math.floor(screen.width / glIconSize);
+}
 if (usp.has("iconTestCols")) {
   glImapCols = usp.getInt("iconTestCols") || glImapCols;
 }
