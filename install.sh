@@ -34,7 +34,7 @@ mkdir -p "$gpath"
 
 if useSystemd && ! id -u tar1090 &>/dev/null
 then
-    adduser --system --home "$ipath" --no-create-home --quiet tar1090 || adduser --system --home-dir "$ipath" --no-create-home tar1090
+    adduser --system --home "$ipath" --no-create-home --quiet tar1090 || adduser --system --home-dir "$ipath" --no-create-home tar1090 || sudo useradd -r -d "$ipath" -M tar1090
 fi
 
 # terminate with /
