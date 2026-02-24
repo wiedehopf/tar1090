@@ -617,7 +617,11 @@ function fetchData(options) {
             }
             url = url.slice(0, -1); // remove trailing comma
         } else  {
-            url += '&box=' + lastRequestBox;
+            if (!filterUuid) {
+                url += '&box=' + lastRequestBox;
+            } else {
+                url += '&all';
+            }
 
             if (SelPlanes.length > 0) {
                 url += '&find_hex='
