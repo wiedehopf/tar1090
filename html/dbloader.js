@@ -42,6 +42,7 @@ function dbLoad(icao) {
 		defer.resolve(null);
         return defer;
 	}
+	// UAV addresses keep $ prefix - they're stored in a separate $ block in the database
 	icao = icao.toUpperCase();
 
 	request_from_db(icao, 1, defer);

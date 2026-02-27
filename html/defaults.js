@@ -474,3 +474,5 @@ let DefaultCenterLat = 40.56;
 let DefaultCenterLon = -73.66
 
 let MergeNonIcao = false; // set to true to merge non icao hex with the icao hex (remove the ~)
+
+let enableUAV = false;

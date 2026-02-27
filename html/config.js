@@ -436,3 +436,5 @@ tableColors = {
 //
 
 // MergeNonIcao = false; // set to true to merge non icao hex with the icao hex (remove the ~)
+
+// enableUAV = true;

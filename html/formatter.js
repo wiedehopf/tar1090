@@ -456,7 +456,8 @@ function wqi(data) {
         let u8 = new Uint8Array(buffer, off, stride);
         let t = s32[0] & (1<<24);
         ac.hex = (s32[0] & ((1<<24) - 1)).toString(16).padStart(6, '0');
-        ac.hex = t ? ('~' + ac.hex) : ac.hex;
+        // Store non-ICAO flag - prefix will be set later based on type
+        ac._isNonIcao = t;
 
         if (binCraftVersion >= 20240218) {
             ac.seen = s32[1] / 10;
@@ -631,6 +632,9 @@ function wqi(data) {
             if (nav_modes & 16) ac.nav_modes.push('lnav');
             if (nav_modes & 32) ac.nav_modes.push('tcas');
         }
+        // Check if this is a UAV (type 13) before converting to string
+        const isUAV = (ac.type === 13);
+        
         switch (ac.type) {
             case  0: ac.type = 'adsb_icao';        break;
             case  1: ac.type = 'adsb_icao_nt';     break;
@@ -645,7 +649,22 @@ function wqi(data) {
             case 10: ac.type = 'tisb_trackfile';   break;
             case 11: ac.type = 'tisb_other';       break;
             case 12: ac.type = 'mode_ac';          break;
+            case 13: ac.type = 'adsb_other';       break;
             default: ac.type = 'unknown';
+        }
+        // Set hex prefix: UAV gets $, other non-ICAO gets ~
+        if (ac._isNonIcao) {
+            if (isUAV) {
+                // UAV: add $ prefix
+                ac.hex = '$' + ac.hex;
+            } else if (!ac.hex.startsWith('$')) {
+                // Other non-ICAO: add ~ prefix (preserve $ if already set from JSON)
+                ac.hex = '~' + ac.hex;
+            }
+        }
+        // Set category B6 for UAV if not already set
+        if (isUAV && !ac.category) {
+            ac.category = 'B6';
         }
         const type4 = ac.type.slice(0, 4);
         if (type4 == 'adsb') {

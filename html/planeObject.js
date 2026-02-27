@@ -12,7 +12,9 @@ function PlaneObject(icao) {
     this.country = icaorange.country;
     this.country_code = icaorange.country_code;
 
-    this.numHex = parseInt(icao.replace('~', '1'), 16);
+    // Handle both ~ (non-ICAO) and $ (UAV) prefixes for hex parsing
+    let hexForParse = icao.replace('~', '1').replace('$', '1');
+    this.numHex = parseInt(hexForParse, 16);
     this.fakeHex = this.numHex > 16777215; // non-icao hex
 
     // most properties are set via this function so they can be reset easily
@@ -311,14 +313,19 @@ PlaneObject.prototype.isFiltered = function() {
             return true;
     }
 
-    // filter out blocked MLAT flights
+    // filter out blocked MLAT flights (but not UAV)
     if (PlaneFilter.blockedMLAT == 'filtered') {
-        if (typeof this.icao === 'string' && this.icao.startsWith('~'))
+        if (typeof this.icao === 'string' && this.icao.startsWith('~') && !this.icao.startsWith('$'))
             return true;
     }
 
     if (this.sitedist && this.sitedist > filterMaxRange)
         return true;
+
+    // Hide UAV aircraft when feature flag is off
+    if (!enableUAV && this.isUAV()) {
+        return true;
+    }
 
     return false;
 };
@@ -409,6 +416,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
             leg: is_leg,
             rId: this.rId,
             dataSource: this.dataSource,
+            hex: this.icao,
         };
         this.track_linesegs.push(newseg);
         this.history_size ++;
@@ -629,6 +637,7 @@ PlaneObject.prototype.updateTrack = function(now, last, serverTrack, stale) {
                 rId: this.prev_rId,
                 dataSource: this.prev_dataSource,
                 noLabel: (i > 0),
+                hex: this.icao,
             });
         }
 
@@ -1288,6 +1297,7 @@ PlaneObject.prototype.processTrace = function() {
                 track: this.rotation,
                 rId: this.rId,
                 dataSource: this.dataSource,
+                hex: this.icao,
             });
         }
         now = new Date().getTime()/1000;
@@ -1593,6 +1603,10 @@ PlaneObject.prototype.updateData = function(now, last, data, init) {
     if (data.category != null) {
         this.category = `${data.category}`;
     }
+    // Set category B6 for UAV (identified by $ prefix) if not already set
+    if (this.isUAV() && !this.category) {
+        this.category = 'B6';
+    }
 
     if (data.true_heading != null)
         this.true_heading = data.true_heading;
@@ -1733,7 +1747,7 @@ PlaneObject.prototype.updateMarker = function(moved) {
         this.baseMarkerKey = baseMarkerKey;
         let baseMarker = null;
         try {
-            baseMarker = getBaseMarker(this.category, icaoType, this.typeDescription, this.wtc, this.addrtype, this.altitude, eastbound);
+            baseMarker = getBaseMarker(this.category, icaoType, this.typeDescription, this.wtc, this.addrtype, this.altitude, eastbound, this.isUAV());
         } catch (error) {
             console.error(error);
             console.log(baseMarkerKey);
@@ -1802,7 +1816,7 @@ function altitudeLines (segment) {
     if (monochromeTracks)
         color = monochromeTracks;
 
-    const modeS = (segment.dataSource == 'modeS');
+        const modeS = (segment.dataSource == 'modeS');
     const lineKey = '_' + color + debugTracks + noVanish + segment.estimated + newWidth + modeS + segment.noLabel + segment.estimatedFill;
 
     if (lineStyleCache[lineKey])
@@ -2329,6 +2343,41 @@ PlaneObject.prototype.altBad = function(newAlt, oldAlt, oldTime, data) {
     return fpm > max_fpm;
 };
 
+PlaneObject.prototype.loadCountryFromDB = function() {
+    if (this.countryLoad) {
+        return;
+    }
+    this.countryLoad = true;
+
+    let req = dbLoad(this.icao);
+
+    req.then(
+        data => {
+            delete this.countryLoad;
+            if (data == null || data == "strange") {
+                this.countryLoadedFromDB = true;
+                return;
+            }
+
+            // Update country from database if present (for UAVs with $ prefix)
+            if (data[4]) {
+                this.country = `${data[4]}`;
+            }
+            if (data[5]) {
+                this.country_code = `${data[5]}`;
+            }
+
+            this.countryLoadedFromDB = true;
+            this.dataChanged();
+
+            data = null;
+        },
+        e => {
+            delete this.countryLoad;
+            this.countryLoadedFromDB = true;
+        });
+};
+
 PlaneObject.prototype.getAircraftData = function() {
     if (0) {
         this.dbinfoLoaded = true;
@@ -2375,12 +2424,21 @@ PlaneObject.prototype.getAircraftData = function() {
                 this.interesting = (data[2][1] == '1');
                 this.pia = (data[2][2] == '1');
                 this.ladd = (data[2][3] == '1');
+                this.uav = (data[2][4] == '1');
                 if (this.pia)
                     this.registration = null;
             }
 
             if (data[0]) {
                 this.registration = `${data[0]}`;
+            }
+
+            // Update country from database if present (for UAVs with $ prefix)
+            if (data[4]) {
+                this.country = `${data[4]}`;
+            }
+            if (data[5]) {
+                this.country_code = `${data[5]}`;
             }
 
             this.dataChanged();
@@ -2407,6 +2465,10 @@ PlaneObject.prototype.reapTrail = function() {
     for (let i in oldSegs) {
         const seg = oldSegs[i];
         if (seg.ts + tempTrailsTimeout > now) {
+            // Ensure hex is set for old segments that might not have it
+            if (!seg.hex) {
+                seg.hex = this.icao;
+            }
             this.history_size += seg.fixed.getCoordinates().length;
             this.track_linesegs.push(seg);
         }
@@ -2550,6 +2612,10 @@ PlaneObject.prototype.updateTraceData = function(state, _now) {
         if (data.category != null) {
             this.category = `${data.category}`;
         }
+        // Set category B6 for UAV (identified by $ prefix) if not already set
+        if (this.isUAV() && !this.category) {
+            this.category = 'B6';
+        }
 
         if (data.nav_altitude_fms != null) {
             this.nav_altitude = data.nav_altitude_fms;
@@ -2672,6 +2738,7 @@ PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
         track: this.prev_rot,
         leg: is_leg,
         rId: this.prev_rId,
+        hex: this.icao,
     });
 
     this.track_linesegs.push({ fixed: new ol.geom.LineString(seg1),
@@ -2687,6 +2754,7 @@ PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
         ts: NaN,
         noLabel: true,
         rId: this.prev_rId,
+        hex: this.icao,
     });
 
     this.track_linesegs.push({ fixed: new ol.geom.LineString(seg2),
@@ -2702,6 +2770,7 @@ PlaneObject.prototype.cross180 = function(on_ground, is_leg) {
         ts: NaN,
         noLabel: true,
         rId: this.prev_rId,
+        hex: this.icao,
     });
 };
 
@@ -2713,7 +2782,15 @@ PlaneObject.prototype.dataChanged = function() {
 }
 
 PlaneObject.prototype.isNonIcao = function() {
-    if (this.icao[0] == '~')
+    // ~ is non-ICAO, but $ (UAV) is not considered non-ICAO for filtering purposes
+    if (this.icao[0] == '~' && this.icao[0] != '$')
+        return true;
+    else
+        return false;
+};
+
+PlaneObject.prototype.isUAV = function() {
+    if (this.icao[0] == '$')
         return true;
     else
         return false;
@@ -2723,7 +2800,8 @@ PlaneObject.prototype.checkVisible = function() {
     const refresh = g.lastRefreshInt / 1000;
     const noInfoTimeout = replay ? 600 : (reApi ? (30 + 2 * refresh) : (30 + Math.min(1, (globeTilesViewCount / globeSimLoad)) * (2 * refresh)));
     const modeSTime = (guessModeS && this.dataSource == "modeS") ? 300 : 0;
-    const tisbReduction = (globeIndex && this.icao[0] == '~') ? 15 : 0;
+    // Only apply timeout reduction for ~ (non-ICAO), not for $ (UAV)
+    const tisbReduction = (globeIndex && this.icao[0] == '~' && this.icao[0] != '$') ? 15 : 0;
     // If no packet in over 58 seconds, clear the plane.
     // Only clear the plane if it's not selected individually
 
@@ -2793,6 +2871,7 @@ PlaneObject.prototype.setTypeFlagsReg = function(data) {
         this.interesting = data.dbFlags & 2;
         this.pia = data.dbFlags & 4;
         this.ladd = data.dbFlags & 8;
+        this.uav = data.dbFlags & 16;
         if (this.pia)
             this.registration = null;
     }
@@ -2819,6 +2898,11 @@ PlaneObject.prototype.checkForDB = function(data) {
     if (!this.dbinfoLoaded && (!dbServer || replay || pTracks || heatmap)) {
         this.getAircraftData();
         return;
+    }
+    // For UAVs, also load country from client-side database even when dbServer is true
+    // (readsb's aircraft.json doesn't include country fields)
+    if (this.isUAV() && !this.countryLoadedFromDB && (!this.dbLoad)) {
+        this.loadCountryFromDB();
     }
     this.dataChanged();
 };
