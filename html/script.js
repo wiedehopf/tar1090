@@ -3554,6 +3554,8 @@ function refreshSelected() {
         dbFlags += '<a class="link" target="_blank" href="https://www.faa.gov/air_traffic/technology/equipadsb/privacy/" rel="noreferrer">PIA</a> / ';
     if (selected.military)
         dbFlags += 'military / ';
+    if (enableUAV && selected.uav)
+        dbFlags += 'UAV / ';
     if (dbFlags.length == 0) {
         jQuery('#selected_dbFlags').updateText("none");
     } else {
