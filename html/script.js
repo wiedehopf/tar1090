@@ -430,7 +430,7 @@ function fetchDone(data) {
             checkMovement();
             if (firstFetch) {
                 firstFetch = false;
-                if (uuid) {
+                if (uuid || filterUuid) {
                     const ext = myExtent(OLMap.getView().calculateExtent(OLMap.getSize()));
                     let jump = true;
                     for (let i = 0; i < g.planesOrdered.length; ++i) {
@@ -604,7 +604,11 @@ function fetchData(options) {
             url += onlyMilitary ? '&filter_mil' : '';
             lastRequestBox = requestBoxString();
 
-            url += '&box=' + lastRequestBox;
+            if (firstFetch) {
+                url += '&box=-90,90,-180,180';
+            } else {
+                url += '&box=' + lastRequestBox;
+            }
 
             if (SelPlanes.length > 0) {
                 url += '&find_hex='
