@@ -1,1 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 342"><path fill="#095FAD" d="M0 0h513v342H0z"/><g fill="#BE1229"><path d="M342 0h171v342H342zM0 0h171v342H0z"/></g><g fill="#FFDA44"><path d="M108.3 166.3h14.8v74.2h-14.8zM48.9 166.3h14.8v74.2H48.9z"/><circle cx="86" cy="203.4" r="14.8"/><path d="M71.2 225.7h29.7v14.8H71.2zM71.2 166.3h29.7v14.8H71.2z"/><circle cx="86" cy="144" r="14.8"/><path d="M76.3 123.9h19.5L86 108.3z"/></g></svg>
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 342">
+<rect y="0" fill="#0066b2" width="513" height="342"/>
+<g fill="#da2031">
+	<rect x="342" width="171" height="342"/>
+	<rect width="171" height="342"/>
+</g>
+<g fill="#ffd300">
+	<rect x="108.3" y="166.3" width="14.8" height="74.2"/>
+	<rect x="48.9" y="166.3" width="14.8" height="74.2"/>
+	<circle cx="86" cy="203.4" r="14.8"/>
+	<rect x="71.2" y="225.7" width="29.7" height="14.8"/>
+	<rect x="71.2" y="166.3" width="29.7" height="14.8"/>
+	<circle cx="86" cy="144" r="14.8"/>
+	<polygon points="76.3,123.9 95.8,123.9 86,108.3 	"/>
+</g>
+</svg>
