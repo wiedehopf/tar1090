@@ -1,1 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 342"><path fill="#c60c30" d="M0 0h513v342H0z"/><path fill="#FFF" d="M190 0h-60v140H0v60h130v142h60V200h323v-60H190z"/></svg>
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 342">
+<rect fill="#c60c30" width="513" height="342"/>
+<polygon fill="#FFFFFF" points="190,0 130,0 130,140 0,140 0,200 130,200 130,342 190,342 190,200 513,200 513,140
+	190,140 "/>
+</svg>

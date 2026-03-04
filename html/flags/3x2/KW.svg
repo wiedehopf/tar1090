@@ -1,1 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 342"><path fill="#FFF" d="M0 0h513v342H0z"/><path fill="#6DA544" d="M0 0h513v114H0z"/><path fill="#D80027" d="M0 228h513v114H0z"/><path d="M167 227.6 0 341.3V0l167 113.8z"/></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 342">
+<rect y="0" fill="#FFFFFF" width="513" height="342"/>
+<rect y="0" fill="#6DA544" width="513" height="114"/>
+<rect y="228" fill="#D80027" width="513" height="114"/>
+<polygon fill="#000" points="167,227.6 0,341.3 0,0 167,113.8 "/>
+</svg>
