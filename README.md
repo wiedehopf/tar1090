@@ -47,7 +47,7 @@ sudo bash -c "$(wget -nv -O - https://github.com/wiedehopf/tar1090/raw/master/in
 
 Configuration should be preserved.
 
-## Testing changes to tar1090
+## Developting / Testing changes to tar1090
 
 - Clone the github repo
 - Make changes
