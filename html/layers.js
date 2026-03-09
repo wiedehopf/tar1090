@@ -720,6 +720,12 @@ function createBaseLayers() {
             extent: naExtent,
         });
 
+        let refreshNoaaRadar = function () {
+            noaaRadarSource.refresh();
+        }
+        refreshNoaaRadar();
+        window.setInterval(refreshNoaaRadar, 5 * 60 * 1000);
+
         us.push(noaaRadar);
     }
 
