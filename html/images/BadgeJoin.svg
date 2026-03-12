@@ -2,10 +2,6 @@
 <svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 27 14">
   <defs>
     <style>
-      .cls-1 {
-        letter-spacing: -.09em;
-      }
-
       .cls-2 {
         fill: #9d1edd;
         stroke-width: 0px;
@@ -20,5 +16,5 @@
     </style>
   </defs>
   <rect class="cls-2" y="0" width="27" height="14" rx="5.14" ry="5.14"/>
-  <text class="cls-3" transform="translate(3.17 9.5)"><tspan x="0" y="0">BE</tspan><tspan class="cls-1" x="10.82" y="0">T</tspan><tspan x="14.97" y="0">A</tspan></text>
+  <text class="cls-3" transform="translate(3.17 9.5)"><tspan x="0" y="0">JOIN</tspan></text>
 </svg>

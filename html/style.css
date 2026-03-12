@@ -579,12 +579,12 @@ select.error, textarea.error, input.error {
     }
 }
 
-.button-beta-badge {
-    width: calc( 27px * var(--SCALE));
-    height: calc( 27px * var(--SCALE));
+.button-join-badge {
+    width: calc( 34px * var(--SCALE));
+    height: calc( 34px * var(--SCALE));
     cursor: pointer;
-    background-image: url('images/button-badge-beta.svg');
-    background-size: 2em;
+    background-image: url('images/button-badge-join.svg');
+    background-size: 2.5em;
     background-position-x: left;
     background-position-y: bottom;
     background-repeat: no-repeat;
