@@ -607,6 +607,7 @@ function fetchData(options) {
         lastRequestBox = requestBoxString();
         if (icaoFilter) {
             if (icaoFilter.length > 0) {
+                url += '&box=' + lastRequestBox;
                 url += '&find_hex='
                 for (let k in icaoFilter) {
                     url += icaoFilter[k] + ','
@@ -614,6 +615,7 @@ function fetchData(options) {
                 url = url.slice(0, -1); // remove trailing comma
             }
         } else if (onlySelected && SelPlanes.length > 0) {
+            url += '&box=' + lastRequestBox;
             url += '&find_hex='
             for (let k in SelPlanes) {
                 url += SelPlanes[k].icao + ','
