@@ -477,6 +477,10 @@ select.error, textarea.error, input.error {
     background-size: 120%;
 }
 
+.replayButton {
+    background-image: url('images/replay-white.svg');
+}
+
 
 .button {
     background-color: var(--ACCENT);
