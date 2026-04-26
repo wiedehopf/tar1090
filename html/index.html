@@ -787,6 +787,7 @@
             <span id="U" title="only show the U2 and other military planes" class="button inActiveButton" onclick="toggleMilitary();"><span class="buttonText">U</span></span>
             <span id="H" title="(H)ome / Reset Map" class="button inActiveButton" onclick="resetMap();"><span class="buttonText">H</span></span>
             <span id="T" title="All (T)racks" class="button inActiveButton" onclick="selectAllPlanes();"><span class="buttonText">T</span></span>
+            <span id="RP" title="Repla(Y)" class="button inActiveButton replayButton" onclick="showReplayBar(); if (showingReplayBar) loadReplay(new Date());" style="display: none"><span class="buttonText"></span></span>
           </div>
         </div>
         <div id="header_side" class="infoHeading">
@@ -817,7 +818,6 @@
             </div>
             <div id="R" title="Follow a (R)andom plane!" class="button inActiveButton" onclick="followRandomPlane();"><span class="buttonText">R</span></div>
             <div id="F" title="(F)ollow" class="button inActiveButton" onclick="toggleFollow();"><span class="buttonText">F</span></div>
-            <div id="RP" title="Repla(Y)" class="button inActiveButton replayButton" onclick="showReplayBar(); loadReplay(new Date());" style="display: none"><span class="buttonText"></span></div>
           </div>
         </div>
         <div id="altitude_chart" class="ol-unselectable ol-control altitudeFeet">
