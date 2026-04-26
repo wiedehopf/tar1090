@@ -33,7 +33,7 @@
 // Update GPS location (keep map centered on GPS location)
 //updateLocation = false;
 
-// Color controls for the range outline
+// Color controls for the heywhatsthat upintheair range outline
 //range_outline_color = '#0000DD';
 //range_outline_alpha = 1.0;
 //range_outline_width = 1.7;
@@ -42,7 +42,7 @@
 //range_outline_dash = [5, 5]; // null - solid line, [5, 5] - dashed line with 5 pixel lines and spaces in between
 //
 //
-// Style controls for the actal range outline:
+// Style controls for the actual range outline (dynamic, by default 24h retention, see readsb options)
 // actual_range_outline_color = '#00596b';
 // actual_range_outline_width = 1.7;
 // NOTE: dashed lines cause slowdown when zooming in, not recommended
