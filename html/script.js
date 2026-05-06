@@ -2318,7 +2318,6 @@ function startPage() {
 
     if (replay) {
         showReplayBar();
-        loadReplay(replay.ts);
     }
 
     if (heatmap) {
@@ -2821,6 +2820,9 @@ function initMap() {
     if ((globeIndex && aggregator) || filterUuid) {
         jQuery('#dump1090_message_rate_td').hide();
     }
+    if ((globeIndex && aggregator) || (receiverJson && receiverJson.haveReplay)) {
+        jQuery('#RP').show();
+    }
 
     locationDotLayer = new ol.layer.Vector({
         name: 'locationDot',
@@ -3150,6 +3152,9 @@ function initMap() {
             case "T":
                 filterTISB = !filterTISB;
                 refreshFilter();
+                break;
+            case "Y":
+                showReplayBar();
                 break;
             case "u":
                 toggleMilitary();
@@ -6513,7 +6518,7 @@ function updateAddressBar() {
     }
     //console.log(shareLink);
 
-    if (!string && !usp.has('showTrace') && !usp.has('icao')) {
+    if (!string && !usp.has('showTrace') && !usp.has('icao') && !usp.has('replay')) {
         string = initialURL;
     } else {
         string = pathName + string;
@@ -8290,10 +8295,12 @@ function showReplayBar(){
     showingReplayBar = !showingReplayBar;
     if (!showingReplayBar){
         jQuery("#replayBar").hide();
+        clearTimeout(refreshId);
         replay = null;
         jQuery('#map_canvas').height('100%');
         jQuery('#sidebar_canvas').height('100%');
         jQuery("#selected_showTrace_hide").show();
+        fetchData({force: true});
     } else {
         jQuery("#replayBar").show();
         jQuery("#replayBar").css('display', 'grid');
@@ -8302,7 +8309,6 @@ function showReplayBar(){
         jQuery('#sidebar_canvas').height('calc(100% - 110px)');
         if (!replay) {
             replay = replayDefaults(new Date());
-            replay.playing = false;
         }
         //ts.setUTCMinutes((parseInt((ts.getUTCMinutes() + 7.5)/15) * 15) % 60);
         let datepickerOptions = {
@@ -8368,7 +8374,11 @@ function showReplayBar(){
         jQuery('#replaySpeedHint').text('Speed: ' + replay.speed + 'x');
 
         jQuery("#selected_showTrace_hide").hide();
+
+        loadReplay(replay.ts);
     }
+
+    updateAddressBar();
 };
 
 function timeoutFetch() {
