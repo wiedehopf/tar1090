@@ -8597,7 +8597,8 @@ function registrationLink(plane) {
         Jamaica: (reg) => `https://www.jcaa.gov.jm/aircraft-registry/${reg}`,
         Montenegro: (reg) => `https://www.caa.me/en/registri?field_registarska_oznaka1_value=${reg}`,
         Norway: (reg) => `https://www.luftfartstilsynet.no/aktorer/norges-luftfartoyregister/registrerte-luftfartoy/?mark=${reg}`,
-        Iceland: (reg) => `https://island.is/en/aircraft-registry?aq=${reg}`
+        Iceland: (reg) => `https://island.is/en/aircraft-registry?aq=${reg.replace(/^TF-/, '')}`,
+        "New Zealand": (reg) => `https://www.aviation.govt.nz/aircraft/aircraft-registration/aircraft-register-search/ShowDetails/${reg.replace(/^ZK-/, '')}`
     };
 
     const generator = countryLinks[plane.country];
