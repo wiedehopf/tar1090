@@ -73,10 +73,6 @@
 // VFR_Terminal: "Terminal Area Charts",
 // IFR_AreaLow: "IFR Area Charts",
 // IFR_High: "IFR Enroute High Charts"
-//
-// only with bing key:
-// bing_aerial
-// bing_roads
 
 
 // default these overlays to on for visitors which haven't disabled them in the browser in a previous session
@@ -209,15 +205,6 @@ ColorByAlt = {
 // Show country flags by ICAO addresses?
 //ShowFlags = true;
 
-// Provide a Bing Maps API key here to enable the Bing imagery layer.
-// You can obtain a free key (with usage limits) at
-// https://www.bingmapsportal.com/ (you need a "basic key")
-//
-// Be sure to quote your key:
-//   BingMapsAPIKey = "your key here";
-//
-BingMapsAPIKey = null;
-
 // Provide a Mapbox API key here to enable the Mapbox vector layers.
 // You can obtain a free key (with usage limits) at
 // https://www.mapbox.com/
@@ -225,7 +212,7 @@ BingMapsAPIKey = null;
 // Be sure to quote your key:
 //   MapboxAPIKey = "your key here";
 //
-MapboxAPIKey = null;
+//MapboxAPIKey = null;
 
 // This determines what is up, default is north (0 degrees)
 //mapOrientation = 0;

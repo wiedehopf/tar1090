@@ -374,32 +374,6 @@ function createBaseLayers() {
         }
     }
 
-    if (loStore['bingKey'] != undefined)
-        BingMapsAPIKey = loStore['bingKey'];
-
-    if (BingMapsAPIKey) {
-        world.push(new ol.layer.Tile({
-            source: new ol.source.BingMaps({
-                key: BingMapsAPIKey,
-                imagerySet: 'Aerial',
-                transition: tileTransition,
-            }),
-            name: 'bing_aerial',
-            title: 'Bing Aerial',
-            type: 'base',
-        }));
-        world.push(new ol.layer.Tile({
-            source: new ol.source.BingMaps({
-                key: BingMapsAPIKey,
-                imagerySet: 'RoadOnDemand',
-                transition: tileTransition,
-            }),
-            name: 'bing_roads',
-            title: 'Bing Roads',
-            type: 'base',
-        }));
-    }
-
     if (loStore['mapboxKey'] != undefined)
         MapboxAPIKey = loStore['mapboxKey'];
 

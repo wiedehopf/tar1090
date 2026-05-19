@@ -272,12 +272,6 @@ if (customTiles)
 if (customTiles == 'remove')
     loStore.removeItem('customTiles');
 
-const bingKey = usp.get('BingMapsAPIKey');
-if (bingKey)
-    loStore['bingKey'] = bingKey;
-if (bingKey == 'remove')
-    loStore.removeItem('bingKey');
-
 if (usp.has('l3harris') || usp.has('ift')) {
     l3harris = true;
 }

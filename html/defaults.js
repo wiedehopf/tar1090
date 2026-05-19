@@ -222,13 +222,7 @@ let FlagPath = "";
 // Set to false to disable the ChartBundle base layers (US coverage only)
 let ChartBundleLayers = true;
 
-// Provide a Bing Maps API key here to enable the Bing imagery layer.
-// You can obtain a free key (with usage limits) at
-// https://www.bingmapsportal.com/ (you need a "basic key")
-//
-// Be sure to quote your key:
-//   BingMapsAPIKey = "your key here";
-//
+// UNUSED, doesn't work
 let BingMapsAPIKey = null;
 
 // Provide a Mapbox API key here to enable the Mapbox vector layers.
