@@ -785,6 +785,7 @@
             <span id="U" title="only show the U2 and other military planes" class="button inActiveButton" onclick="toggleMilitary();"><span class="buttonText">U</span></span>
             <span id="H" title="(H)ome / Reset Map" class="button inActiveButton" onclick="resetMap();"><span class="buttonText">H</span></span>
             <span id="T" title="All (T)racks" class="button inActiveButton" onclick="selectAllPlanes();"><span class="buttonText">T</span></span>
+            <span id="RP" title="Repla(Y)" class="button inActiveButton replayButton" onclick="showReplayBar();" style="display: none"><span class="buttonText"></span></span>
           </div>
         </div>
         <div id="header_side" class="infoHeading">
@@ -815,7 +816,6 @@
             </div>
             <div id="R" title="Follow a (R)andom plane!" class="button inActiveButton" onclick="followRandomPlane();"><span class="buttonText">R</span></div>
             <div id="F" title="(F)ollow" class="button inActiveButton" onclick="toggleFollow();"><span class="buttonText">F</span></div>
-          <!--< div id="RP" title="Replay" class="button inActiveButton" onclick="showReplayBar();"><span class="buttonText">RP</span></div>-->
           </div>
         </div>
         <div id="altitude_chart" class="ol-unselectable ol-control altitudeFeet">
@@ -905,18 +905,21 @@
               </tr>
 
               <tr class="infoblock_heading">
-                <td style="text-align: right" class=link>
-                  <a href="https://github.com/wiedehopf/tar1090#tar1090" id="tar1090_version" target="_blank">tar1090 on github</a>
+                <td style="text-align: right" class="infoBlockTitleText">
+                  <span id="webinterface_pre"></span>
+                  <span class="link"><a href="https://github.com/wiedehopf/tar1090#tar1090" target="_blank" id="webinterface_link">tar1090</a></span>
+                  <span id="webinterface_version"></span>
+                  <span id="decoder_pre"></span>
+                  <span class="link"><a href="" target="_blank" id="decoder_link"></a></span>
+                  <span id="decoder_version"></span>
                 </td>
               </tr>
               <tr class="rSpacer">
                 <td></td>
               </tr>
-              <tr id="mp3player" class="hidden">
-                <td style="text-align: center">
-                  <audio id="mp3player_audio" crossorigin="anonymous" preload="none" src="place_holder" type="audio/mp3" controls="controls" autoplay="false"></audio>
-                </td>
-              </tr>
+              <tr><td>
+              <table style="width: 100%" id="mp3player" class="hidden"></table>
+              </td></tr>
               <tr>
                 <td>
                   <table style="width: 100%">
@@ -935,6 +938,7 @@
                           <span> <input id="altimeter_input" type="number" step="0.01" value="29.92" class="searchInput"></span>
                           <span> <button class="formButton" type="submit">Set</button></span>
                           <span> <button class="formButton" type="button" id="altimeter_set_standard">Standard</button>
+                          <span> <button class="formButton" type="button" disabled id="altimeter_set_selected">From Plane</button>
                         </form>
                       </td>
                     </tr>
@@ -1085,7 +1089,7 @@
     <script src="libs/zstddec-tar1090-0.0.5.js"></script>
 
     <!-- ol-custom bundling created using https://github.com/wiedehopf/ol-rollup-->
-    <script src="libs/ol-custom025.js"></script>
+    <script src="libs/ol-custom-10.7.0.js"></script>
 
     <!-- JS_ANCHOR2 -->
     <script src="early.js"></script>
@@ -1101,6 +1105,7 @@
     <script src="markers.js"></script>
 
     <!-- JS_ANCHOR3 -->
+    <script>let spriteSrc = 'images/sprites.png';</script>
     <script src="planeObject.js"></script>
     <script src="script.js"></script>
 

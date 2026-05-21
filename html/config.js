@@ -22,27 +22,19 @@ OSNHost = "map.opensky-network.org"
 // provided by dump1090 itself. All positions are in decimal
 // degrees.
 
-// Default center of the map.
-//DefaultCenterLat = 45.0;
-//DefaultCenterLon = 9.0;
 // The google maps zoom level, 0 - 16, lower is further out
 //DefaultZoomLvl   = 7;
 
 // specify lat lon that the 'auto-select plane' feature will choose the closest plane to
 // autoselectCoords = [42, 21];
 
-// Center marker. If dump1090 provides a receiver location,
-// that location is used and these settings are ignored.
-
 //SiteShow    = false;           // true to show a center marker
-//SiteLat     = 45.0;            // position of the marker
-//SiteLon     = 9.0;
 //SiteName    = "My Radar Site"; // tooltip of the marker
 
 // Update GPS location (keep map centered on GPS location)
 //updateLocation = false;
 
-// Color controls for the range outline
+// Color controls for the heywhatsthat upintheair range outline
 //range_outline_color = '#0000DD';
 //range_outline_alpha = 1.0;
 //range_outline_width = 1.7;
@@ -51,7 +43,7 @@ OSNHost = "map.opensky-network.org"
 //range_outline_dash = [5, 5]; // null - solid line, [5, 5] - dashed line with 5 pixel lines and spaces in between
 //
 //
-// Style controls for the actal range outline:
+// Style controls for the actual range outline (dynamic, by default 24h retention, see readsb options)
 // actual_range_outline_color = '#00596b';
 // actual_range_outline_width = 1.7;
 // NOTE: dashed lines cause slowdown when zooming in, not recommended
@@ -61,27 +53,27 @@ OSNHost = "map.opensky-network.org"
 // actual_range_show = true;
 
 // which map is displayed to new visitors
-// MapType_tar1090 = "carto_light_all";
+// MapType_tar1090 = "osm";
 //
 // valid values for the above setting:
 // osm
+// OpenFreeMapBright
+// OpenFreeMapLiberty
+// OpenFreeMapPositron
+// OpenFreeMapDark
+// OpenFreeMapFiord
 // esri
+// esri_gray
+// esri_streets
 // carto_light_all
 // carto_light_nolabels
 // carto_dark_all
 // carto_dark_nolabels
-// gibs
-// osm_adsbx
-// chartbundle_sec: "Sectional Charts",
-// chartbundle_tac: "Terminal Area Charts",
-// chartbundle_hel: "Helicopter Charts",
-// chartbundle_enrl: "IFR Enroute Low Charts",
-// chartbundle_enra: "IFR Area Charts",
-// chartbundle_enrh: "IFR Enroute High Charts"
-//
-// only with bing key:
-// bing_aerial
-// bing_roads
+// gibs: clouds
+// VFR_Sectional: "Sectional Charts",
+// VFR_Terminal: "Terminal Area Charts",
+// IFR_AreaLow: "IFR Area Charts",
+// IFR_High: "IFR Enroute High Charts"
 
 
 // default these overlays to on for visitors which haven't disabled them in the browser in a previous session
@@ -214,18 +206,6 @@ PageName = "OpenSky Network";
 // Show country flags by ICAO addresses?
 //ShowFlags = true;
 
-// Set to false to disable the ChartBundle base layers (US coverage only)
-//ChartBundleLayers = true;
-
-// Provide a Bing Maps API key here to enable the Bing imagery layer.
-// You can obtain a free key (with usage limits) at
-// https://www.bingmapsportal.com/ (you need a "basic key")
-//
-// Be sure to quote your key:
-//   BingMapsAPIKey = "your key here";
-//
-BingMapsAPIKey = null;
-
 // Provide a Mapbox API key here to enable the Mapbox vector layers.
 // You can obtain a free key (with usage limits) at
 // https://www.mapbox.com/
@@ -233,7 +213,7 @@ BingMapsAPIKey = null;
 // Be sure to quote your key:
 //   MapboxAPIKey = "your key here";
 //
-MapboxAPIKey = null;
+//MapboxAPIKey = null;
 
 // This determines what is up, default is north (0 degrees)
 //mapOrientation = 0;
@@ -248,7 +228,14 @@ MapboxAPIKey = null;
 //labelZoom = 8;
 //labelZoomGround = 12.5;
 
-//labelFont = 'bold 12px tahoma';
+// font family for labels, default bold, could be empty or italic as well
+// labelStyle = 'bold';
+// labelFamily = 'Tahoma, Verdana, Helvetica, sans-serif';
+// labelScale = 1;
+
+// globalScale = 1;
+// userScale = 1;
+// iconScale = 1;
 
 //displayUATasADSB = false;
 //uatNoTISB = true;
@@ -373,17 +360,18 @@ routeApiUrl = "https://flightroutes.opensky-network.org/api/routeset";
 //
 //
 //jaeroTimeout = 35 * 60; // in seconds
+//jaeroLabel = "ADS-C"; // relabel the ADS-C data if used for other purposes (i.e. HFDL / acars2pos)
 
 //seenTimeout = 58; // in seconds
 //seenTimeoutMlat = 58; // in seconds
 
 //tableInView = false; // only show aircraft in current view (V button)
 
-//audio_url = ""; // show html5 audio player for this URL
+//audio_url = ["", "", "", "", "", ""]; // show html5 audio player for these URLs
+// example with titles: audio_url = [ ["URL1", "title1" ], ["URL2", "title2"] ];
 
 // aiscatcher_server = "http://192.168.1.113:8100"; // update with your server address
 // aiscatcher_refresh = 15; // refresh interval in seconds
-// aiscatcher_test = true; // show with squares on the aircraft icon layer
 // aisTimeout = 1200;
 
 // droneJson = "";
@@ -425,3 +413,15 @@ tableColors = {
 //prefer978 = 0;
 //
 // dynGlobeRate = false; // enable use of globeRates.json in index.html directory to steer client refresh rate
+
+// !!! Please set the latitude / longitude in the decoder rather than
+// setting it here !!!
+// (graphs1090 will get the location from the decoder)
+//SiteLat     = 45.0;            // position of the marker
+//SiteLon     = 9.0;
+// Default center of the map if no Site location is set
+//DefaultCenterLat = 45.0;
+//DefaultCenterLon = 9.0;
+//
+
+// MergeNonIcao = false; // set to true to merge non icao hex with the icao hex (remove the ~)

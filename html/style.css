@@ -322,7 +322,7 @@ select {
 
 .hidden { display: none; }
 
-.infoblock_heading a  { text-decoration: none; color: blue; font-size: x-small;}
+.infoblock_heading a  { text-decoration: none; color: blue; font-size: var(--FS2); }
 
 .dim    { opacity: 0.3; filter:alpha(opacity=30); /* For IE8 and earlier */ }
 
@@ -357,9 +357,12 @@ select {
 
 .formButton {
     font-size: var(--FS2);
-    color:var(--TXTCOLOR3);
+    color:var(--TXTCOLOR2);
     background-color: var(--BGCOLOR2);
     border-color: var(--BGCOLOR1);
+}
+.formButton:disabled {
+    color:var(--TXTCOLOR3);
 }
 
 select.error, textarea.error, input.error {
@@ -479,6 +482,10 @@ select.error, textarea.error, input.error {
 .settingsCog {
     background-image: url('images/cog-white.svg');
     background-size: 120%;
+}
+
+.replayButton {
+    background-image: url('images/replay-white.svg');
 }
 
 

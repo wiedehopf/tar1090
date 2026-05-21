@@ -34,7 +34,7 @@ mkdir -p "$gpath"
 
 if useSystemd && ! id -u tar1090 &>/dev/null
 then
-    adduser --system --home "$ipath" --no-create-home --quiet tar1090 || adduser --system --home-dir "$ipath" --no-create-home tar1090
+    adduser --system --home "$ipath" --no-create-home --quiet tar1090 || adduser --system --home-dir "$ipath" --no-create-home tar1090 || useradd -r -d "$ipath" -M tar1090
 fi
 
 # terminate with /
@@ -308,16 +308,27 @@ do
 
     # in case we have offlinemaps installed, modify config.js
     MAX_OFFLINE=""
+    MAX_OFFLINE_OFM=""
     for i in {0..15}; do
+        if [[ -d /usr/local/share/openfreemap_offline/mnt/tiles/$i ]]; then
+            MAX_OFFLINE_OFM=$i
+        fi
         if [[ -d /usr/local/share/osm_tiles_offline/$i ]]; then
             MAX_OFFLINE=$i
         fi
     done
     if [[ -n "$MAX_OFFLINE" ]]; then
-        if ! grep "$TMP/config.js" -e '^offlineMapDetail.*' -qs &>/dev/null; then
+        if ! grep "$TMP/config.js" -E -e '^offlineMapDetail\s*=.*' -qs; then
             echo "offlineMapDetail=$MAX_OFFLINE;" >> "$TMP/config.js"
         else
-            sed -i -e "s/^offlineMapDetail.*/offlineMapDetail=$MAX_OFFLINE;/" "$TMP/config.js"
+            sed -i -e "s/^offlineMapDetail\s*=.*/offlineMapDetail=$MAX_OFFLINE;/" "$TMP/config.js"
+        fi
+    fi
+    if [[ -n "$MAX_OFFLINE_OFM" ]]; then
+        if ! grep "$TMP/config.js" -E -e '^offlineMapDetailOFM\s*=.*' -qs; then
+            echo "offlineMapDetailOFM=$MAX_OFFLINE_OFM;" >> "$TMP/config.js"
+        else
+            sed -i -e "s/^offlineMapDetailOFM\s=.*/offlineMapDetailOFM=$MAX_OFFLINE_OFM;/" "$TMP/config.js"
         fi
     fi
 
@@ -328,7 +339,7 @@ do
     dir=$(pwd)
     cd "$TMP"
 
-    sed -i -e "s/tar1090 on github/tar1090 on github (${TAR_VERSION})/" index.html
+    sed -i -e 's/id="webinterface_version">/\0'"(${TAR_VERSION})/" index.html
 
     "$gpath/git/cachebust.sh" "$gpath/git/cachebust.list" "$TMP"
 

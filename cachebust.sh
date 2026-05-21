@@ -8,23 +8,26 @@ if [[ -z "$1" ]] || [[ -z "$2" ]]; then
     exit 1
 fi
 
+# most common way to use this:
+# ./cachebust.sh cachebust.list <tar1090_html_folder>
+
 LISTPATH="$1"
 HTMLFOLDER="$2"
 
 sedreplaceargs=()
 
-SCRIPT_JS=""
-while read -r FILE; do
+function moveFile() {
+    FILE=$1
     md5sum=$(md5sum "$FILE" | cut -d' ' -f1)
     prefix=$(cut -d '.' -f1 <<< "$FILE")
     postfix=$(cut -d '.' -f2 <<< "$FILE")
     newname="${prefix}_${md5sum}.${postfix}"
     mv "$FILE" "$newname"
     sedreplaceargs+=("-e" "s#${FILE}#${newname}#")
-    if [[ "$FILE" == "script.js" ]]; then
-        SCRIPT_JS="$newname"
-    fi
+}
+
+while read -r FILE; do
+    moveFile "$FILE"
 done < "$LISTPATH"
 
 sed -i "${sedreplaceargs[@]}" "$HTMLFOLDER"/index.html
-sed -i "${sedreplaceargs[@]}" "$HTMLFOLDER"/"$SCRIPT_JS"

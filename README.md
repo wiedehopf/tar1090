@@ -47,6 +47,12 @@ sudo bash -c "$(wget -nv -O - https://github.com/wiedehopf/tar1090/raw/master/in
 
 Configuration should be preserved.
 
+## Developting / Testing changes to tar1090
+
+- Clone the github repo
+- Make changes
+- run `./install.sh test` to install from your local directory
+
 
 ## Configuration part 1: History interval and number of snapshots / ptracks duration (optional)
 
@@ -404,17 +410,6 @@ This will obviously write data to the hard drive, be aware of that.
 The data format is subject to change, don't expect this to be stable.
 Be aware of that when upgrading either tar1090 or readsb to a new commit.
 
-For these features i only maintain the nginx configuration, not the lighttpd configuration.
-Thus you'll need to use nginx with the config file provided by the tar1090 install script
-or change the lighttpd configuration yourself.
-On the default nginx install you'll usually find the server section in this config file:
-`/etc/nginx/sites-enabled/default`
-
-If you can't figure out how to make it work with the above information, please don't ask.
-I don't support this feature for the general user base.
-This information is only for people who could figure it out from the source code anyhow,
-so that they don't have to spend as much time figuring it out.
-
 If you're using --write-json-globe-index with tar1090, you might be interested in tar1090
 using the readsb API to get data, it's less requests and usually more efficient,
 for details see the file nginx-readsb-api.conf
@@ -472,22 +467,6 @@ sudo cp /usr/local/share/tar1090/html/upintheair.json /usr/local/share/tar1090/h
 ```
 
 
-## history not loading issue (possible fix)
-
-For a day or so i had a bug in the install script turning symbolic links in /etc/lighttpd/conf-enabled into copies of the files they were pointing to.
-
-This can cause some other issues with my install script which fiddles with the lighttpd config files to make mod_setenv work.
-
-Anyhow if just rerunning the install script does not fix your history loading issue, you can try this:
-
-```
-cd /etc/lighttpd/conf-enabled
-for i in *; do if [ -f "../conf-available/$i" ]; then sudo ln -s -f "../conf-available/$i" $i; fi; done
-```
-
-After that rerun the install script.
-If you still have history loading issues, get back to me via the github issues or the various forums i frequent.
-
 ## readsb wiedehopf fork --heatmap feature:
 
 /var/globe_history needs to be a directory writeable by the user readsb.
@@ -535,6 +514,7 @@ Notable Projects that use ADS-B data:
 
 ## offline map
 
+<https://github.com/wiedehopf/openfreemap_offline>
 <https://github.com/wiedehopf/adsb-wiki/wiki/offline-map-tiles-tar1090>
 
 ## Uses this library for decompressing zstd
@@ -546,6 +526,21 @@ Notable Projects that use ADS-B data:
 When hosting a website with tar1090 via CF, CF needs to respect the various cache headers otherwise there will be caching issues.
 Change Browser Cache TTL from the default of 4h to "Respect Existing Headers":
 Caching -> Configuration -> Browser Cache TTL -> Respect Existing Headers
+
+## AIS receiver running AIS-catcher:
+
+See the instructions for "[Configuring part 2](#configuring-part-2-the-web-interface-optional)".
+This is the relevant part in the configuration file:
+```
+// aiscatcher_server = "http://192.168.1.113:8100"; // update with your server address
+// aiscatcher_refresh = 15; // refresh interval in seconds
+```
+You can remove the `//` to uncomment the line.
+
+Make sure that the server address is reachable from the device you are viewing the tar1090 page from (i.e. localhost / 127.0.0.1 will not work here unless you are viewing the tar1090 interface from the same machine you are running AIS-catcher - in all other cases it will need to be the local IP). If you run AIS-catcher and tar1090 on the same machine, you can use the host-relative magic token `HOSTNAME` to auto-populate the IP of the system - for example `http://HOSTNAME:8100`.
+
+**Note:** for this to work, you must have started AIS-catcher with the geojson flag set to on with the option `-N 8100 geojson on` and you should be able to see a geojson if you visit the `aiscatcher_server` address from above with `/geojson` appeanded to it - from the above example this would be `http://192.168.1.113:8100/geojson`
+
 
 ## NO WARRANTY - Excerpt from the License:
 
