@@ -2928,6 +2928,8 @@ PlaneObject.prototype.routeCheck = function() {
         if (!this.position) {
             // no lookup (for now)
             return;
+        } else if (routeApiUrl.includes("opensky-network.org")) {
+            // OpenSky route API ignores position; omit lat/lng (per Jannis Lübbe, commit 0d989b9)
         } else if (showTrace || replay) {
             if (!routeApiUrl.includes("adsb.im")) {
                 route_check['lat'] = this.position[1];
