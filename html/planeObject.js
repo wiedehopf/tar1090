@@ -2928,6 +2928,8 @@ PlaneObject.prototype.routeCheck = function() {
         if (!this.position) {
             // no lookup (for now)
             return;
+        } else if (routeApiUrl.includes("opensky-network.org")) {
+            // OpenSky route API ignores position; omit lat/lng (per Jannis Lübbe, commit 0d989b9)
         } else if (showTrace || replay) {
             if (!routeApiUrl.includes("adsb.im")) {
                 route_check['lat'] = this.position[1];
@@ -3056,6 +3058,11 @@ function routeDoLookup() {
                     continue;
                 }
                 route.tarNextUpdate = currentTime + 6 * 3600; // recheck in 6 hours
+                // OpenSky route API returns _airport_codes_iata (e.g. "FRA-LHR") rather than
+                // the _airports array expected by routeCheck; normalise it on receipt.
+                if (!route._airports && route._airport_codes_iata && route._airport_codes_iata !== 'unknown') {
+                    route._airports = route._airport_codes_iata.split('-').map(iata => ({ iata, icao: '', location: iata }));
+                }
                 g.route_cache[route.callsign] = route;
             }
             for (const entry of g.route_check_checking) {
