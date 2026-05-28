@@ -260,6 +260,9 @@ ColorByAlt = {
 // show links to various registration websites (not all countries)
 // registrationLinks = true;
 
+// enable callsign-based airline lookup from the operators database
+// airlineLookup = true;
+
 // Filter implausible positions (required speed > Mach 3.5)
 // valid values: true, false, "onlyMLAT" ("" required)
 // positionFilter = true;
@@ -284,13 +287,14 @@ ColorByAlt = {
 //squareMania = false;
 
 // Columns that have a // in front of them are shown.
-/* // remove this line to mofify columns (and the one at the end)
+/* // remove this line to modify columns (and the one at the end)
 HideCols = [
 	"#icao",
 //	"#country",
 //	"#flight",
 //	"#route",
 	"#registration",
+	"#airline",
 //	"#type",
 //	"#squawk",
 //	"#altitude",

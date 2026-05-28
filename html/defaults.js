@@ -282,6 +282,9 @@ let planespottersLinks = false;
 // show links to various registration websites (not all countries)
 let registrationLinks = true;
 
+// enable callsign-based airline lookup from the operators database
+let airlineLookup = false;
+
 // Filter implausible positions (required speed > Mach 2.5)
 // valid values: true, false, "onlyMLAT" ("" required)
 let positionFilter = false;
@@ -312,6 +315,7 @@ let HideCols = [
 //	"#flight",
 //	"#route",
 	"#registration",
+	"#airline",
 //	"#type",
 //	"#squawk",
 //	"#altitude",
