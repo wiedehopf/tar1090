@@ -4105,12 +4105,17 @@ function refreshFeatures() {
         text: 'Airline',
         sort: function () { sortBy('airline', compareAlpha, function(x) {
             let operatorData = x.getAirline ? x.getAirline() : lookupAirlineForCallsign(x.name, x.registration);
-            return operatorData ? (operatorData.n || '') : '';
+            return operatorData ? (operatorData.n || '') : null;
         }); },
         value: function(plane) {
             let operatorData = plane.getAirline ? plane.getAirline() : lookupAirlineForCallsign(plane.name, plane.registration);
-            return operatorData ? (operatorData.n || '') : '';
-        }
+            if (!operatorData) {
+                return '';
+            }
+            let title = operatorData.c ? operatorData.c + (operatorData.r ? ' / ' + '&quot;' + operatorData.r + '&quot;': '') : (operatorData.r || '');
+            return '<span title="' + title + '">' + (operatorData.n || '') + '</span>';
+        },
+        html: true
     };
     if (routeApiUrl) {
         cols.route = {
