@@ -3978,6 +3978,18 @@ function refreshHighlighted() {
         jQuery('#highlighted_registration').text("n/a");
     }
 
+    let highlightedOperator = null;
+    if (highlighted.getAirline) {
+        highlightedOperator = highlighted.getAirline();
+    } else {
+        highlightedOperator = lookupAirlineForCallsign(highlighted.name, highlighted.registration);
+    }
+    if (highlightedOperator) {
+        jQuery('#highlighted_airline').text(highlightedOperator.n || 'n/a');
+    } else {
+        jQuery('#highlighted_airline').text('n/a');
+    }
+
     jQuery('#highlighted_speed').text(format_speed_long(highlighted.gs, DisplayUnits));
 
     jQuery("#highlighted_altitude").text(format_altitude_long(adjust_baro_alt(highlighted.altitude), highlighted.vert_rate, DisplayUnits));
