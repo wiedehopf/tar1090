@@ -4076,6 +4076,20 @@ function refreshFeatures() {
         return xf - yf;
     }
 
+    function compareAlphaCI(xa, ya) {
+        // only used by the airline column for now
+        // assumes ASCII strings from the database
+        if (xa === ya)
+            return 0;
+        xa = xa ? xa.toLowerCase() : '';
+        ya = ya ? ya.toLowerCase() : '';
+        if (xa < ya)
+            return -1;
+        if (xa > ya)
+            return 1;
+        return 0;
+    }
+
     const cols = planeMan.cols = {};
 
     cols.icao = {
@@ -4103,7 +4117,7 @@ function refreshFeatures() {
         text: 'Callsign' };
     cols.airline = {
         text: 'Airline',
-        sort: function () { sortBy('airline', compareAlpha, function(x) {
+        sort: function () { sortBy('airline', compareAlphaCI, function(x) {
             let operatorData = x.getAirline ? x.getAirline() : lookupAirlineForCallsign(x.name, x.registration);
             return operatorData ? (operatorData.n || '') : null;
         }); },
