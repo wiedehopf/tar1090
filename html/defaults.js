@@ -283,7 +283,7 @@ let planespottersLinks = false;
 let registrationLinks = true;
 
 // enable callsign-based airline lookup from the operators database
-let airlineLookup = false;
+let airlineLookup = true;
 
 // Filter implausible positions (required speed > Mach 2.5)
 // valid values: true, false, "onlyMLAT" ("" required)
