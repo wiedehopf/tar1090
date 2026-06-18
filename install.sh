@@ -8,7 +8,7 @@ trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
 renice 10 $$
 
 srcdir=/run/readsb
-repo="https://github.com/wiedehopf/tar1090"
+repo="https://github.com/ibosoftnet/tar1090"
 db_repo="https://github.com/wiedehopf/tar1090-db"
 
 # optional command line options for this install script
@@ -119,7 +119,7 @@ function revision() {
 }
 
 if ! { [[ "$1" == "test" ]] && cd "$gpath/git-db"; }; then
-    DB_VERSION_NEW=$(curl --silent --show-error "https://raw.githubusercontent.com/wiedehopf/tar1090-db/master/version")
+    DB_VERSION_NEW=$(curl --silent --show-error "https://raw.githubusercontent.com/ibosoftnet/tar1090-db/master/version")
     if  [[ "$(cat "$gpath/git-db/version" 2>/dev/null)" != "$DB_VERSION_NEW" ]]; then
         getGIT "$db_repo" "master" "$gpath/git-db" || true
     fi
