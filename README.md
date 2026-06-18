@@ -1,7 +1,7 @@
 # tar1090
 
 ---
-### Changes:
+### Changes from original project:
 * ICAO terminology corrections.
 * Base map directly connected to Ibosoft AIS
 ---
