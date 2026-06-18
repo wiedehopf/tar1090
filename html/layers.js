@@ -81,7 +81,75 @@ function createBaseLayers() {
         title: 'ESRI Streets',
         type: 'base',
     }));
+    // carto.com basemaps, see the following URLs for details on them:
+    // http://basemaps.cartocdn.com
+    // https://github.com/CartoDB/cartodb/wiki/BaseMaps-available
 
+    let basemaps = [ "dark_all", "dark_nolabels",
+        "light_all", "light_nolabels"
+    ]
+
+    if (1) {
+        for (let i in basemaps) {
+            let basemap_id = basemaps[i];
+
+            world.push(new ol.layer.Tile({
+                source: new ol.source.OSM({
+                    "url" : "https://{a-d}.basemaps.cartocdn.com/"+ basemap_id + "/{z}/{x}/{y}.png",
+                    "attributions" : 'Powered by <a href="https://carto.com">CARTO.com</a>'
+                    + ' using data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
+                    attributionsCollapsible: false,
+                    maxZoom: 15,
+                    transition: tileTransition,
+                }),
+                name: "carto_" + basemap_id,
+                title: 'CARTO.com ' + basemap_id,
+                type: 'base',
+            }));
+        }
+    }
+
+    if (loStore['mapboxKey'] != undefined)
+        MapboxAPIKey = loStore['mapboxKey'];
+
+    if (MapboxAPIKey) {
+        world.push(new ol.mapboxStyle.MapboxVectorLayer({
+            styleUrl: 'mapbox://styles/mapbox/streets-v10',
+            accessToken: MapboxAPIKey,
+            properties: {
+                name: 'mapbox_streets',
+                title: 'Mapbox Streets',
+                type: 'base',
+            },
+        }));
+        world.push(new ol.mapboxStyle.MapboxVectorLayer({
+            styleUrl: 'mapbox://styles/mapbox/light-v11',
+            accessToken: MapboxAPIKey,
+            properties: {
+                name: 'mapbox_light',
+                title: 'Mapbox Light',
+                type: 'base',
+            },
+        }));
+        world.push(new ol.mapboxStyle.MapboxVectorLayer({
+            styleUrl: 'mapbox://styles/mapbox/dark-v11',
+            accessToken: MapboxAPIKey,
+            properties: {
+                name: 'mapbox_dark',
+                title: 'Mapbox Dark',
+                type: 'base',
+            },
+        }));
+        world.push(new ol.mapboxStyle.MapboxVectorLayer({
+            styleUrl: 'mapbox://styles/mapbox/outdoors-v10',
+            accessToken: MapboxAPIKey,
+            properties: {
+                name: 'mapbox_outdoors',
+                title: 'Mapbox Outdoors',
+                type: 'base',
+            },
+        }));
+    }
 
 
     // Aviation layers
@@ -143,9 +211,129 @@ function createBaseLayers() {
     });
     weather.push(rainviewerRadar);
 
+        // Refresh sat layer every 15 minutes
+        refreshNoaaSat();
+        window.setInterval(refreshNoaaSat, 15 * 60 * 1000);
+
+        us.push(noaaSat);
+    }
+    if (true) {
+        let noaaRadarSource = new ol.source.ImageWMS({
+            attributions: ['NOAA'],
+            attributionsCollapsible: false,
+            url: 'https://nowcoast.noaa.gov/geoserver/weather_radar/wms',
+            params: {'LAYERS': 'base_reflectivity_mosaic'},
+            projection: 'EPSG:3857',
+            resolutions: [156543.03392804097, 78271.51696402048, 39135.75848201024, 19567.87924100512, 9783.93962050256, 4891.96981025128, 2445.98490512564, 1222.99245256282],
+            ratio: 1,
+            transition: tileTransition,
+        });
+
+        let noaaRadar = new ol.layer.Image({
+            title: 'NOAA Radar',
+            name: 'noaa_radar',
+            zIndex: 99,
+            type: 'overlay',
+            visible: false,
+            source: noaaRadarSource,
+            opacity: noaaRadarOpacity,
+            extent: naExtent,
+        });
+
+        let refreshNoaaRadar = function () {
+            noaaRadarSource.refresh();
+        }
+        refreshNoaaRadar();
+        window.setInterval(refreshNoaaRadar, 5 * 60 * 1000);
+
+        us.push(noaaRadar);
+    }
+
+    if (enableDWD) {
+        const bottomLeft = ol.proj.fromLonLat([1.9,46.2]);
+        const topRight = ol.proj.fromLonLat([16.0,55.0]);
+        const dwdExtent = [bottomLeft[0], bottomLeft[1], topRight[0], topRight[1]];
+
+        let dwdSource = new ol.source.TileWMS({
+            url: 'https://maps.dwd.de/geoserver/wms',
+            params: {LAYERS: dwdLayers, validtime: (new Date()).getTime()},
+            projection: 'EPSG:3857',
+            attributions: 'Deutscher Wetterdienst (DWD)',
+            attributionsCollapsible: false,
+            tileGrid: ol.tilegrid.createXYZ({
+                extent: ol.tilegrid.extentFromProjection('EPSG:3857'),
+                maxResolution: 156543.03392804097,
+                maxZoom: 8,
+                minZoom: 0,
+                tileSize: 512,
+            }),
+            transition: tileTransition,
+        });
+
+        let dwd = new ol.layer.Tile({
+            source: dwdSource,
+            name: 'radolan',
+            title: 'DWD RADOLAN',
+            type: 'overlay',
+            opacity: dwdRadolanOpacity,
+            visible: false,
+            zIndex: 99,
+            //extent: dwdExtent,
+            // extent somehow bugged
+        });
+
+        let dwdValidtime = "";
+
+        let refreshDwd = function () {
+            let ms = Date.now();
+            let validtime = (ms - ms % (5 * 60 * 1000)) / 1000;
+            if (validtime != dwdValidtime) {
+                //console.log(`dwd validtime ${zuluTime(new Date(validtime * 1000))}`);
+                dwd.getSource().updateParams({validtime: validtime});
+                dwdValidtime = validtime;
+            }
+        };
+        refreshDwd();
+        window.setInterval(refreshDwd, 15 * 1000);
 
 
-    // GeoJSON Layer Creator Function
+    if (true) {
+        g.getRainviewerMaps = async function() {
+            const response = await fetch("https://api.rainviewer.com/public/weather-maps.json", {credentials: "omit",});
+            return await response.json();
+        }
+
+        const rainviewerRadar = new ol.layer.Tile({
+            name: 'rainviewer_radar',
+            title: 'RainViewer Radar',
+            type: 'overlay',
+            opacity: rainViewerRadarOpacity,
+            visible: false,
+            zIndex: 99,
+        });
+        g.refreshRainviewerRadar = async function() {
+            const maps = await g.getRainviewerMaps();
+            const past = maps.radar.past;
+            const rainviewerRadarSource = new ol.source.XYZ({
+                url: maps.host + past[past.length - 1].path + '/512/{z}/{x}/{y}/6/1_1.png',
+                attributions: '<a href="https://www.rainviewer.com/api.html" target="_blank">RainViewer.com</a>',
+                attributionsCollapsible: false,
+                maxZoom: 7,
+            });
+            rainviewerRadar.setSource(rainviewerRadarSource);
+        };
+
+        rainviewerRadar.on('change:visible', function(evt) {
+            if (evt.target.getVisible()) {
+                g.refreshRainviewerRadar();
+                g.refreshRainviewerRadarInterval = window.setInterval(g.refreshRainviewerRadar, 2 * 60 * 1000);
+            } else {
+                clearInterval(g.refreshRainviewerRadarInterval);
+            }
+        });
+
+        world.push(rainviewerRadar);
+    }
 
     let createGeoJsonLayer = function (title, name, url, fill, stroke, showLabel = true, defaultVisible = false) {
         return new ol.layer.Vector({
