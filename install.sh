@@ -8,8 +8,7 @@ trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
 renice 10 $$
 
 srcdir=/run/readsb
-repo="https://github.com/wiedehopf/tar1090"
-db_repo="https://github.com/wiedehopf/tar1090-db"
+repo="https://github.com/ibosoftnet/tar1090"
 
 # optional command line options for this install script
 # $1: data source directory
@@ -91,10 +90,6 @@ fi
 
 dir=$(pwd)
 
-if (( $( { du -s "$gpath/git-db" 2>/dev/null || echo 0; } | cut -f1) > 150000 )); then
-    rm -rf "$gpath/git-db"
-fi
-
 function copyNoClobber() {
     if ! [[ -f "$2" ]]; then
         cp "$1" "$2"
@@ -118,23 +113,6 @@ function revision() {
     git rev-parse --short HEAD 2>/dev/null || echo "$RANDOM-$RANDOM"
 }
 
-if ! { [[ "$1" == "test" ]] && cd "$gpath/git-db"; }; then
-    DB_VERSION_NEW=$(curl --silent --show-error "https://raw.githubusercontent.com/wiedehopf/tar1090-db/master/version")
-    if  [[ "$(cat "$gpath/git-db/version" 2>/dev/null)" != "$DB_VERSION_NEW" ]]; then
-        getGIT "$db_repo" "master" "$gpath/git-db" || true
-    fi
-fi
-
-if ! cd "$gpath/git-db"
-then
-    echo "Unable to download files, exiting! (Maybe try again?)"
-    exit 1
-fi
-
-DB_VERSION=$(revision)
-
-cd "$dir"
-
 if [[ "$1" == "test" ]] || [[ -n "$git_source" ]]; then
     mkdir -p "$gpath/git"
     rm -rf "$gpath/git"/* || true
@@ -146,7 +124,7 @@ if [[ "$1" == "test" ]] || [[ -n "$git_source" ]]; then
     cd "$gpath/git"
     TAR_VERSION="$(cat version)_dirty"
 else
-    VERSION_NEW=$(curl --silent --show-error "https://raw.githubusercontent.com/wiedehopf/tar1090/master/version")
+    VERSION_NEW=$(curl --silent --show-error "https://raw.githubusercontent.com/ibosoftnet/tar1090/master/version")
     if  [[ "$(cat "$gpath/git/version" 2>/dev/null)" != "$VERSION_NEW" ]]; then
         if ! getGIT "$repo" "master" "$gpath/git"; then
             echo "Unable to download files, exiting! (Maybe try again?)"
@@ -298,9 +276,8 @@ do
     sed -i.orig -e "s?SOURCE_DIR?$srcdir?g" -e "s?SERVICE?${service}?g" tar1090.service
 
     cp -r -T html "$TMP"
-    cp -r -T "$gpath/git-db/db" "$TMP/db-$DB_VERSION"
-    sed -i -e "s/let databaseFolder = .*;/let databaseFolder = \"db-$DB_VERSION\";/" "$TMP/index.html"
-    echo "{ \"tar1090Version\": \"$TAR_VERSION\", \"databaseVersion\": \"$DB_VERSION\" }" > "$TMP/version.json"
+    sed -i -e "s/let databaseFolder = .*;/let databaseFolder = \"db2\";/" "$TMP/index.html"
+    echo "{ \"tar1090Version\": \"$TAR_VERSION\" }" > "$TMP/version.json"
 
     # keep some stuff around
     mv "$html_path/config.js" "$TMP/config.js" 2>/dev/null || true
