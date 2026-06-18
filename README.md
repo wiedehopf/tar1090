@@ -1,5 +1,11 @@
 # tar1090
 
+---
+### Changes from original project:
+* ICAO terminology corrections.
+* Base map directly connected to Ibosoft AIS
+---
+
 
 ![Screenshot1](https://raw.githubusercontent.com/wiedehopf/tar1090/screenshots/screenshot3.png)
 
