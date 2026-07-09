@@ -2320,8 +2320,10 @@ function processBoat(feature, now, last) {
 
     ac.type = 'ais';
     ac.gs = pr.speed;
-    ac.flight = pr.callsign;
-    ac.r = pr.shipname;
+    // Maritime callsign is the ITU ship-station license - a registration-
+    // role identifier, not an operational one. A vessel is hailed by NAME.
+    ac.flight = pr.shipname || pr.callsign || String(pr.mmsi);
+    ac.r = pr.callsign;
     ac.seen = now - pr.last_signal;
 
     ac.messages  = pr.count;
