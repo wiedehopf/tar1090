@@ -250,6 +250,7 @@ let utcTimesHistoric = true;
 // Only display labels when zoomed in this far:
 let labelZoom = 0;
 let labelZoomGround = 14.8;
+let labelZoomAIS = 11.8;
 
 // font family for labels, default bold, could be empty or italic as well
 let labelStyle = 'bold';

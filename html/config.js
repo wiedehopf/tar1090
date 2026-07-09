@@ -225,7 +225,8 @@ ColorByAlt = {
 
 // Only display labels when zoomed in this far:
 //labelZoom = 8;
-//labelZoomGround = 12.5;
+//labelZoomGround = 14.8;
+//labelZoomAIS = 11.8;
 
 // font family for labels, default bold, could be empty or italic as well
 // labelStyle = 'bold';

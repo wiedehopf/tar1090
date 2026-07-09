@@ -842,6 +842,7 @@ PlaneObject.prototype.updateIcon = function() {
     let labelText = null;
 
     if ( g.enableLabels && (!multiSelect || (multiSelect && this.selected)) &&
+        (this.dataSource != "ais" || g.zoomLvl >= labelZoomAIS) &&
         (
             (g.zoomLvl >= labelZoom && this.altitude != "ground")
             || (g.zoomLvl >= labelZoomGround - 2 && this.speed > 5 && !this.fakeHex)
