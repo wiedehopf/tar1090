@@ -843,7 +843,7 @@ PlaneObject.prototype.updateIcon = function() {
 
     if ( g.enableLabels && (!multiSelect || (multiSelect && this.selected)) &&
         (
-            (g.zoomLvl >= labelZoom && this.altitude != "ground" && this.dataSource != "ais")
+            (g.zoomLvl >= labelZoom && this.altitude != "ground")
             || (g.zoomLvl >= labelZoomGround - 2 && this.speed > 5 && !this.fakeHex)
             || (g.zoomLvl >= labelZoomGround + 0 && !this.fakeHex)
             || (g.zoomLvl >= labelZoomGround + 1)
@@ -851,13 +851,13 @@ PlaneObject.prototype.updateIcon = function() {
         )
     ) {
         let callsign = "";
-        if (this.flight && this.flight.trim() && !(this.dataSource == "ais" && !g.extendedLabels))
+        if (this.flight && this.flight.trim())
             callsign =  this.flight.trim();
         else if (this.registration)
             callsign =  'reg: ' + this.registration;
         else
             callsign =   'hex: ' + this.icao;
-        if ((useRouteAPI || this.dataSource == "ais") && this.routeString) {
+        if (useRouteAPI && this.dataSource != "ais" && this.routeString) {
             if (0 && g.extendedLabels) {
                 callsign += ' - ' + this.routeString;
             } else {
