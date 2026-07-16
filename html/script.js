@@ -133,7 +133,7 @@ let lastRequestBox = '';
 let nextQuerySelected = 0;
 let enableDynamicCachebusting = false;
 g.lastRefreshInt = 1000;
-let reapTimeout = globeIndex ? 240 : 480;
+let reapTimeout = globeIndex ? 4 * 60 : 15 * 60;
 
 
 let baroCorrectQNH = 1013.25;
@@ -211,6 +211,25 @@ function processAircraft(ac, init, uat) {
     // Do we already have this plane object in g.planes?
     // If not make it.
     let plane = g.planes[hex]
+
+    if (!noVanish && plane && g.historyKeep && g.historyKeep[hex] && type != 'adsc') {
+        if (now - plane.last_info_server > reapTimeout) {
+
+            //console.log(`deleting ${hex} at ${now}`);
+
+            delete g.planes[plane.icao];
+            for (let i = 0; i < g.planesOrdered.length; ++i) {
+                if (g.planesOrdered[i].icao == hex) {
+                    g.planesOrdered.splice(i, 1);
+                    break;
+                }
+            }
+
+            plane.destroy();
+            plane = null;
+        }
+    }
+
 
     if (!plane) {
         plane = new PlaneObject(hex);
