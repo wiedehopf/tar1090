@@ -2956,8 +2956,12 @@ PlaneObject.prototype.routeCheck = function() {
         // we have all the pieces that allow us to lookup a route
         let route_check = { 'callsign': currentName, icao: this.icao};
         if (!this.position) {
-            // no lookup (for now)
-            return;
+            if (routeApiUrl.includes("adsb.im") && this.messages > 100) {
+                // check without plausibility check if we have received enough messages
+            } else {
+                // no lookup (for now)
+                return;
+            }
         } else if (showTrace || replay) {
             if (!routeApiUrl.includes("adsb.im")) {
                 route_check['lat'] = this.position[1];
