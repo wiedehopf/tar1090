@@ -213,6 +213,9 @@ ColorByAlt = {
 //   MapboxAPIKey = "your key here";
 //
 //MapboxAPIKey = null;
+//
+// Carto api key
+//carto_api_key = "";
 
 // This determines what is up, default is north (0 degrees)
 //mapOrientation = 0;

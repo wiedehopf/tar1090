@@ -72,23 +72,6 @@ function createBaseLayers() {
         type: 'base',
     }));
 
-    if (0) {
-        let basemap_id = "rastertiles/voyager";
-        world.push(new ol.layer.Tile({
-            source: new ol.source.OSM({
-                "url" : "https://{a-d}.basemaps.cartocdn.com/"+ basemap_id + "/{z}/{x}/{y}.png",
-                "attributions" : 'Powered by <a href="https://carto.com">CARTO.com</a>'
-                + ' using data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
-                attributionsCollapsible: false,
-                maxZoom: 15,
-                transition: tileTransition,
-            }),
-            name: "carto_" + basemap_id,
-            title: 'CARTO.com English',
-            type: 'base',
-        }));
-    }
-
     world.push(new ol.layer.Tile({
         source: new ol.source.OSM({
             "url" : "https://{a-d}.tile.openstreetmap.de/{z}/{x}/{y}.png",
@@ -349,7 +332,25 @@ function createBaseLayers() {
         type: 'base',
     }));
 
-    if (0) {
+    if (carto_api_key) {
+
+        const params = `?key=${carto_api_key}`;
+
+        let basemap_id = "rastertiles/voyager";
+        world.push(new ol.layer.Tile({
+            source: new ol.source.OSM({
+                "url" : "https://{a-d}.basemaps.cartocdn.com/"+ basemap_id + "/{z}/{x}/{y}.png" + params,
+                "attributions" : 'Powered by <a href="https://carto.com">CARTO.com</a>'
+                + ' using data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
+                attributionsCollapsible: false,
+                maxZoom: 15,
+                transition: tileTransition,
+            }),
+            name: "carto_" + basemap_id,
+            title: 'CARTO.com English',
+            type: 'base',
+        }));
+
         // carto.com basemaps, see the following URLs for details on them:
         // http://basemaps.cartocdn.com
         // https://github.com/CartoDB/cartodb/wiki/BaseMaps-available
@@ -363,7 +364,7 @@ function createBaseLayers() {
 
             world.push(new ol.layer.Tile({
                 source: new ol.source.OSM({
-                    "url" : "https://{a-d}.basemaps.cartocdn.com/"+ basemap_id + "/{z}/{x}/{y}.png",
+                    "url" : "https://{a-d}.basemaps.cartocdn.com/"+ basemap_id + "/{z}/{x}/{y}.png" + params,
                     "attributions" : 'Powered by <a href="https://carto.com">CARTO.com</a>'
                     + ' using data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
                     attributionsCollapsible: false,
