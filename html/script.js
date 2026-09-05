@@ -2716,6 +2716,9 @@ function ol_map_init() {
         target: 'map_canvas',
     }));
 
+    // adjust tooltip for layer selector
+    document.querySelector('button[title="Legend"]').title = "Map Layers";
+
     OLMap.on('movestart', function(event) {
         if (webgl) {
             if (TrackedAircraftPositions > webglIconMapMoveOpacityCrowdedThreshold) {
