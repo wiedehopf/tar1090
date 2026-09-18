@@ -236,6 +236,9 @@ ColorByAlt = {
 // labelFamily = 'Tahoma, Verdana, Helvetica, sans-serif';
 // labelScale = 1;
 
+// show the current map zoom level above the scale line
+// showZoomLevel = true;
+
 // globalScale = 1;
 // userScale = 1;
 // iconScale = 1;

@@ -134,6 +134,16 @@ select {
 }
 
 
+#zoomLevel {
+    position: absolute;
+    bottom: 30px;
+    left: 8px;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 10px;
+    background: var(--ol-partial-background-color);
+    color: var(--ol-foreground-color);
+}
 #credits {
     display: flex;
     align-items: center;

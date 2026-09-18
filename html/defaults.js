@@ -263,6 +263,9 @@ let labelScale = 1;
 // have ANY effect
 let labelFont;
 
+// show the current map zoom level above the scale line
+let showZoomLevel = false;
+
 // some scaling for fonts and things
 let globalScale = 1;
 let userScale = 1;
