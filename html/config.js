@@ -129,6 +129,10 @@
 //monochromeTracks = "#000000";
 //
 
+// draw a dashed line from the selected aircraft in its direction of travel
+// covering this many minutes at the current ground speed, 0 disables
+// headingLineMinutes = 5;
+
 // altitudeChartDefaultState = true;
 
 // These settings control the coloring of aircraft by altitude.

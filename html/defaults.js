@@ -113,6 +113,10 @@ let outlineWidth = 0.90;
 let monochromeMarkers = null;
 let monochromeTracks = null;
 
+// draw a dashed line from the selected aircraft in its direction of travel
+// covering this many minutes at the current ground speed, 0 disables
+let headingLineMinutes = 0;
+
 let altitudeChartDefaultState = true;
 
 // These settings control the coloring of aircraft by altitude.
