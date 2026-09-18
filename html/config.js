@@ -243,6 +243,15 @@ ColorByAlt = {
 // show the current map zoom level above the scale line
 // showZoomLevel = true;
 
+// Default state of the U / T / L / O / K buttons on page load.
+// L / O / K are remembered by the browser once clicked, the default only applies before that.
+// O has no visible effect unless labels (L) are on.
+// defaultMilitaryOnly = false;    // U: only show military aircraft
+// defaultAllTracks = false;       // T: show all tracks
+// defaultLabels = false;          // L: aircraft labels
+// defaultExtendedLabels = 0;      // O: label extension, 0 - 3
+// defaultTrackLabels = false;     // K: track labels
+
 // globalScale = 1;
 // userScale = 1;
 // iconScale = 1;
