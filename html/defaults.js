@@ -22,6 +22,13 @@ let MessageRateInTitle = false;
 // plane table and in the detailed plane info. Valid values are
 // "nautical", "metric", or "imperial".
 let DisplayUnits = "nautical";
+// Override DisplayUnits for a single quantity, for example altitude in feet
+// while everything else is metric. Same values as DisplayUnits, null follows
+// DisplayUnits. The Units dropdown in the settings doesn't affect overridden quantities.
+let altitudeUnits = null;
+let verticalRateUnits = null;
+let speedUnits = null;
+let distanceUnits = null;
 
 // -- Map settings ----------------------------------------
 // These settings are overridden by any position information

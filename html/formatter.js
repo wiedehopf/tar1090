@@ -54,8 +54,22 @@ function get_category_label(category) {
     return label;
 }
 
+// per quantity override of DisplayUnits (altitudeUnits and friends in config.js)
+function units_for(quantity, displayUnits) {
+	let override = null;
+	switch (quantity) {
+		case 'altitude': override = altitudeUnits; break;
+		case 'verticalRate': override = verticalRateUnits; break;
+		case 'speed': override = speedUnits; break;
+		case 'distance':
+		case 'distanceShort': override = distanceUnits; break;
+	}
+	return override || displayUnits;
+}
+
 function get_unit_label(quantity, systemOfMeasurement) {
 	let labels = UnitLabels[quantity];
+	systemOfMeasurement = units_for(quantity, systemOfMeasurement);
 	if (labels !== undefined && labels[systemOfMeasurement] !== undefined) {
 		return labels[systemOfMeasurement];
 	}
@@ -166,6 +180,7 @@ function format_onground (alt) {
 
 // alt in feet
 function convert_altitude(alt, displayUnits) {
+	displayUnits = units_for('altitude', displayUnits);
 	if (displayUnits === "metric") {
 		return alt * 0.3048;  // feet to meters
 	}
@@ -198,6 +213,7 @@ function format_speed_long(speed, displayUnits) {
 
 // speed in knots
 function convert_speed(speed, displayUnits) {
+	displayUnits = units_for('speed', displayUnits);
 	if (displayUnits === "metric") {
 		return speed * 1.852;  // knots to kilometers per hour
 	}
@@ -244,6 +260,7 @@ function format_distance_short (dist, displayUnits) {
 
 // dist in meters
 function convert_distance(dist, displayUnits) {
+	displayUnits = units_for('distance', displayUnits);
 	if (displayUnits === "metric") {
 		return (dist / 1000); // meters to kilometres
 	}
@@ -256,6 +273,7 @@ function convert_distance(dist, displayUnits) {
 // dist in meters
 // converts meters to feet or just returns metres
 function convert_distance_short(dist, displayUnits) {
+	displayUnits = units_for('distanceShort', displayUnits);
 	if (displayUnits === "imperial") {
 		return (dist / 0.3048); // meters to feet
 	}
@@ -268,6 +286,7 @@ function format_vert_rate_brief(rate, displayUnits) {
 		return "";
 	}
 
+	displayUnits = units_for('verticalRate', displayUnits);
 	return convert_vert_rate(rate, displayUnits).toFixed(displayUnits === "metric" ? 1 : 0);
 }
 
@@ -277,6 +296,7 @@ function format_vert_rate_long(rate, displayUnits) {
 		return "n/a";
 	}
 
+	displayUnits = units_for('verticalRate', displayUnits);
 	let rate_text = convert_vert_rate(rate, displayUnits).toFixed(displayUnits === "metric" ? 1 : 0) + NNBSP + get_unit_label("verticalRate", displayUnits);
 
 	return rate_text;
@@ -284,6 +304,7 @@ function format_vert_rate_long(rate, displayUnits) {
 
 // rate in ft/min
 function convert_vert_rate(rate, displayUnits) {
+	displayUnits = units_for('verticalRate', displayUnits);
 	if (displayUnits === "metric") {
 		return (rate / 196.85); // ft/min to m/s
 	}
