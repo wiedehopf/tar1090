@@ -262,7 +262,14 @@ PlaneObject.prototype.isFiltered = function() {
     }
 
     for (const filter of filters_active) {
-        if (!this[filter.field] || !this[filter.field].toUpperCase().match(filter.PATTERN)) {
+        const value = this[filter.field];
+        if (!value) {
+            return true;
+        }
+        const index = value.toUpperCase().search(filter.PATTERN);
+        // placeholder names (no callsign / empty callsign) only match from the start (#419)
+        const placeholder = filter.field == 'name' && (value == 'no callsign' || value == 'empty callsign');
+        if (placeholder ? index != 0 : index < 0) {
             //this[filter.field] && console.log(this[filter.field].toUpperCase() + ' ' + filter.PATTERN);
             return true;
         }
