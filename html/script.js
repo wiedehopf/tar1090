@@ -2690,6 +2690,8 @@ function ol_map_init() {
 
             lyr.on('change:visible', function(evt) {
                 loStore['layer_' + evt.target.get('name')] = evt.target.getVisible();
+                if (evt.target.get('name') == 'aiscatcher' && loadFinished)
+                    refreshFilter();
             });
         }
     })
