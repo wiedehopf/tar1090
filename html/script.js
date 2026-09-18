@@ -8728,7 +8728,11 @@ function setAutoselect() {
     autoSelectClosest();
 }
 function registrationLink(plane) {
-    
+    if (registrationLinkTemplate) {
+        const values = { REGISTRATION: plane.registration, ICAO: plane.icao, TYPE: plane.icaoType || '' };
+        return registrationLinkTemplate.replace(/REGISTRATION|ICAO|TYPE/g, (m) => encodeURIComponent(values[m]));
+    }
+
     const countryLinks = {
         Brazil: (reg) => `https://aeronaves.anac.gov.br/aeronaves/cons_rab_resposta_en.asp?textMarca=${reg}`,
         Australia: (reg) => `https://www.casa.gov.au/search-centre/aircraft-register?reg=${reg.replace(/^VH-/, '')}`,

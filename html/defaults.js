@@ -284,6 +284,9 @@ let planespottersLinks = false;
 
 // show links to various registration websites (not all countries)
 let registrationLinks = true;
+// custom link for the registration, overrides the per country links (requires registrationLinks)
+// placeholders: REGISTRATION, ICAO, TYPE (type code, may be empty), values are URL-encoded
+let registrationLinkTemplate = null;
 
 // enable callsign-based airline lookup from the operators database
 let airlineLookup = true;
