@@ -5452,9 +5452,12 @@ function updateAltFilter() {
         enabled = true;
 
     if (!enabled) {
+        // no altitude filter: leave min/max unset, otherwise altFiltered() hides
+        // everything without an altitude (AIS ships, aircraft without altitude)
         PlaneFilter.enabled = false;
         PlaneFilter.minAltitude = undefined;
         PlaneFilter.maxAltitude = undefined;
+        return;
     }
 
     PlaneFilter.enabled = enabled;
