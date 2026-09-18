@@ -8729,7 +8729,8 @@ function registrationLink(plane) {
     
     const countryLinks = {
         Brazil: (reg) => `https://aeronaves.anac.gov.br/aeronaves/cons_rab_resposta_en.asp?textMarca=${reg}`,
-        Australia: (reg) => `https://www.casa.gov.au/search-centre/aircraft-register?reg=${reg.replace(/^VH-/, '')}`,
+        // CASA only lists VH- regs (not RAAus 24-xxxx or ADF A56-xxx)
+        Australia: (reg) => reg.startsWith('VH-') ? `https://www.casa.gov.au/search-centre/aircraft-register?reg=${reg.slice(3)}` : '',
         Jamaica: (reg) => `https://www.jcaa.gov.jm/aircraft-registry/${reg}`,
         Montenegro: (reg) => `https://www.caa.me/en/registri?field_registarska_oznaka1_value=${reg}`,
         Norway: (reg) => `https://www.luftfartstilsynet.no/aktorer/norges-luftfartoyregister/registrerte-luftfartoy/?mark=${reg}`,
