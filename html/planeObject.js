@@ -251,6 +251,10 @@ PlaneObject.prototype.isFiltered = function() {
     if (this.selected)
         return false;
 
+    // aiscatcher layer switched off: hide the ships from the table as well
+    if (this.dataSource == 'ais' && g.aiscatcherLayer && !g.aiscatcherLayer.getVisible())
+        return true;
+
     if (noRegOnly && (
         (this.registration || this.icao.startsWith('~'))
         || (this.category && this.category.startsWith('C'))
