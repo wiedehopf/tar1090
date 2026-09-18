@@ -2433,27 +2433,30 @@ function startPage() {
     // that is a closed circle on the sphere such that the
     // great circle distance from 'center' to each point is
     // 'radius' meters
-    utils.make_geodesic_circle = function (center, radius, points) {
-        const angularDistance = radius / 6378137.0;
-        const lon1 = center[0] * Math.PI / 180.0;
-        const lat1 = center[1] * Math.PI / 180.0;
+    // Point 'distance' meters from 'start' ([lon, lat]) along 'bearing' (radians) on the sphere
+    utils.geodesic_destination = function (start, bearing, distance) {
+        const angularDistance = distance / 6378137.0;
+        const lon1 = start[0] * Math.PI / 180.0;
+        const lat1 = start[1] * Math.PI / 180.0;
 
+        let lat2 = Math.asin(Math.sin(lat1) * Math.cos(angularDistance) +
+            Math.cos(lat1) * Math.sin(angularDistance) * Math.cos(bearing));
+        let lon2 = lon1 + Math.atan2(Math.sin(bearing) * Math.sin(angularDistance) * Math.cos(lat1),
+            Math.cos(angularDistance) - Math.sin(lat1) * Math.sin(lat2));
+
+        return [lon2 * 180.0 / Math.PI, lat2 * 180.0 / Math.PI];
+    }
+
+    utils.make_geodesic_circle = function (center, radius, points) {
         let geom;
         for (let i = 0; i <= points; ++i) {
             const bearing = i * 2 * Math.PI / points;
-
-            let lat2 = Math.asin(Math.sin(lat1) * Math.cos(angularDistance) +
-                Math.cos(lat1) * Math.sin(angularDistance) * Math.cos(bearing));
-            let lon2 = lon1 + Math.atan2(Math.sin(bearing) * Math.sin(angularDistance) * Math.cos(lat1),
-                Math.cos(angularDistance) - Math.sin(lat1) * Math.sin(lat2));
-
-            lat2 = lat2 * 180.0 / Math.PI;
-            lon2 = lon2 * 180.0 / Math.PI;
+            const point = utils.geodesic_destination(center, bearing, radius);
 
             if (!geom)
-                geom = new ol.geom.LineString([[lon2, lat2]]);
+                geom = new ol.geom.LineString([point]);
             else
-                geom.appendCoordinate([lon2, lat2]);
+                geom.appendCoordinate(point);
         }
         return geom;
     }
