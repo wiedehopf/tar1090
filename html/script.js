@@ -2642,6 +2642,8 @@ function ol_map_init() {
     webglInit();
     console.timeEnd('webglInit');
 
+    if (showZoomLevel)
+        jQuery('#zoomLevel').show();
 
     let foundType = false;
     ol.control.LayerSwitcher.forEachRecursive(layers_group, function(lyr) {
@@ -4941,7 +4943,7 @@ function adjustInfoBlock() {
     }
     jQuery('#selected_infoblock').css("width", infoBlockWidth * globalScale + 'px');
 
-    jQuery('.ol-scale-line').css('left', (infoBlockWidth * globalScale + 8) + 'px');
+    jQuery('.ol-scale-line, #zoomLevel').css('left', (infoBlockWidth * globalScale + 8) + 'px');
     jQuery('#replayBar').css('left', (infoBlockWidth * globalScale + 8) + 'px');
 
     if (SelectedPlane && toggles['enableInfoblock'].state) {
@@ -4967,7 +4969,7 @@ function adjustInfoBlock() {
             jQuery("#sidebar_container").css('margin-left', '0');
         //jQuery('#sidebar_canvas').css('margin-bottom', 0);
 
-        jQuery('.ol-scale-line').css('left', '8px');
+        jQuery('.ol-scale-line, #zoomLevel').css('left', '8px');
         jQuery('#replayBar').css('left', '0px');
         jQuery('#credits').css('bottom', '');
         jQuery('#credits').css('left', '');
@@ -5814,6 +5816,9 @@ function changeZoom(init) {
     g.zoomLvl = OLMap.getView().getZoom();
 
     checkScale();
+
+    if (showZoomLevel)
+        jQuery('#zoomLevel').updateText('zoom ' + g.zoomLvl.toFixed(1));
 
     // small zoomstep, no need to change aircraft scaling
     if (!init && Math.abs(g.zoomLvl-g.zoomLvlCache) < 0.4)
