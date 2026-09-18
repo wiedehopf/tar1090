@@ -263,6 +263,9 @@ ColorByAlt = {
 
 // show links to various registration websites (not all countries)
 // registrationLinks = true;
+// custom link for the registration, overrides the per country links (requires registrationLinks)
+// placeholders: REGISTRATION, ICAO, TYPE (type code, may be empty), values are URL-encoded
+// registrationLinkTemplate = 'https://duckduckgo.com/?q=TYPE+REGISTRATION&iax=images&ia=images';
 
 // enable callsign-based airline lookup from the operators database
 // airlineLookup = true;
