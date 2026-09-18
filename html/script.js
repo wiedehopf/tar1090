@@ -2637,7 +2637,7 @@ function ol_map_init() {
         }),
         controls: [new ol.control.Zoom({delta: 1, duration: 0, target: 'map_canvas',}),
             new ol.control.Attribution({collapsed: true}),
-            new ol.control.ScaleLine({units: DisplayUnits})
+            new ol.control.ScaleLine({units: units_for('distance', DisplayUnits)})
         ],
         interactions: new ol.interaction.defaults({altShiftDragRotate:false, pinchRotate:false,}),
         maxTilesLoading: 4,
@@ -5033,7 +5033,7 @@ function onDisplayUnitsChanged(e) {
     // Reset map scale line units
     OLMap.getControls().forEach(function(control) {
         if (control instanceof ol.control.ScaleLine) {
-            control.setUnits(DisplayUnits);
+            control.setUnits(units_for('distance', DisplayUnits));
         }
     });
 
@@ -5216,7 +5216,7 @@ function invertMap(evt){
     }
 
     function loadLegend() {
-        let baseLegend = (DisplayUnits === 'metric') ? 'images/alt_legend_m.svg' : 'images/alt_legend_ft.svg';
+        let baseLegend = (units_for('altitude', DisplayUnits) === 'metric') ? 'images/alt_legend_m.svg' : 'images/alt_legend_ft.svg';
 
         jQuery.get(baseLegend, function (data) {
             jQuery('#altitude_chart_button').css("background-image", createLegendUrl(data));
@@ -5467,7 +5467,7 @@ function updateAltFilter() {
 
     PlaneFilter.enabled = enabled;
 
-    if (DisplayUnits == "metric") {
+    if (units_for('altitude', DisplayUnits) == "metric") {
         PlaneFilter.minAltitude = minAltitude * 3.2808;
         PlaneFilter.maxAltitude = maxAltitude * 3.2808;
     } else {
@@ -7252,9 +7252,10 @@ function drawSiteCircle() {
         circleColor = i < SiteCirclesColors.length ? SiteCirclesColors[i] : circleColor;
 
         let conversionFactor = 1000.0;
-        if (DisplayUnits === "nautical") {
+        const distUnits = units_for('distance', DisplayUnits);
+        if (distUnits === "nautical") {
             conversionFactor = 1852.0;
-        } else if (DisplayUnits === "imperial") {
+        } else if (distUnits === "imperial") {
             conversionFactor = 1609.0;
         }
 
