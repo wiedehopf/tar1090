@@ -263,6 +263,15 @@ let labelScale = 1;
 // have ANY effect
 let labelFont;
 
+// Default state of the U / T / L / O / K buttons on page load.
+// L / O / K are remembered by the browser once clicked, the default only applies before that.
+// O has no visible effect unless labels (L) are on.
+let defaultMilitaryOnly = false;    // U: only show military aircraft
+let defaultAllTracks = false;       // T: show all tracks
+let defaultLabels = false;          // L: aircraft labels
+let defaultExtendedLabels = 0;      // O: label extension, 0 - 3
+let defaultTrackLabels = false;     // K: track labels
+
 // some scaling for fonts and things
 let globalScale = 1;
 let userScale = 1;

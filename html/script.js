@@ -1084,7 +1084,7 @@ function earlyInitPage() {
         loStore['sidebar_visible'] = "true";
     }
 
-    if (usp.has('allTracks')) {
+    if (usp.has('allTracks') || defaultAllTracks) {
         SelectedAllPlanes = true;
         buttonActive('#T', SelectedAllPlanes);
     }
@@ -1262,7 +1262,8 @@ function earlyInitPage() {
         }, 30000);
     }
 
-    if (loStore['enableLabels'] == 'true' || usp.has('enableLabels')) {
+    if (loStore['enableLabels'] == 'true' || usp.has('enableLabels')
+        || (loStore['enableLabels'] == undefined && defaultLabels)) {
         toggleLabels();
     }
     if (usp.has('extendedLabels')) {
@@ -1271,8 +1272,12 @@ function earlyInitPage() {
     } else if (loStore['extendedLabels']) {
         g.extendedLabels = parseInt(loStore['extendedLabels']);
         toggleExtendedLabels({ noIncrement: true });
+    } else if (defaultExtendedLabels) {
+        g.extendedLabels = parseInt(defaultExtendedLabels);
+        toggleExtendedLabels({ noIncrement: true });
     }
-    if (loStore['trackLabels'] == "true" || usp.has('trackLabels')) {
+    if (loStore['trackLabels'] == "true" || usp.has('trackLabels')
+        || (loStore['trackLabels'] == undefined && defaultTrackLabels)) {
         toggleTrackLabels();
     }
     if (loStore['tableInView'] == "true" || usp.has('tableInView')) {
@@ -6238,7 +6243,7 @@ function processURLParams(){
         OLMap.getView().setZoom(zoom);
     }
 
-    if (usp.has('mil'))
+    if (usp.has('mil') || defaultMilitaryOnly)
         toggleMilitary();
 
     if (usp.has('airport')) {
