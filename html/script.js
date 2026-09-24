@@ -5010,15 +5010,24 @@ function initializeUnitsSelector() {
         .val(DisplayUnits)
         .on('change', onDisplayUnitsChanged);
 
+    // Per-quantity overrides: each dropdown shows its stored override if the
+    // user has set one via the interface, else "(same as Units)" -- config.js
+    // overrides (altitudeUnits and friends) still apply underneath until then.
+    jQuery('.quantityUnitsSelector').each(function () {
+        const quantity = jQuery(this).data('quantity');
+        const key = quantity + 'UnitsOverride';
+        jQuery(this)
+            .val(loStore[key] != undefined ? loStore[key] : '')
+            .on('change', onQuantityUnitsChanged);
+    });
+
     jQuery(".altitudeUnit").text(get_unit_label("altitude", DisplayUnits));
     jQuery(".speedUnit").text(get_unit_label("speed", DisplayUnits));
     jQuery(".distanceUnit").text(get_unit_label("distance", DisplayUnits));
     jQuery(".verticalRateUnit").text(get_unit_label("verticalRate", DisplayUnits));
 }
 
-function onDisplayUnitsChanged(e) {
-    loStore['displayUnits'] = DisplayUnits = e.target.value;
-
+function refreshUnitsDisplay() {
     TAR.altitudeChart.render();
 
     // Update filters
@@ -5045,6 +5054,23 @@ function onDisplayUnitsChanged(e) {
 
     remakeTrails();
     refreshSelected();
+}
+
+function onDisplayUnitsChanged(e) {
+    loStore['displayUnits'] = DisplayUnits = e.target.value;
+    refreshUnitsDisplay();
+}
+
+function onQuantityUnitsChanged(e) {
+    const quantity = jQuery(e.target).data('quantity');
+    const key = quantity + 'UnitsOverride';
+    const value = e.target.value;
+    if (value === '') {
+        loStore.removeItem(key);
+    } else {
+        loStore[key] = value;
+    }
+    refreshUnitsDisplay();
 }
 
 function onFilterByAltitude(e) {
