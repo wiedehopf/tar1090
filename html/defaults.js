@@ -113,6 +113,10 @@ let outlineWidth = 0.90;
 let monochromeMarkers = null;
 let monochromeTracks = null;
 
+// draw a dashed line from the selected aircraft in its direction of travel
+// covering this many minutes at the current ground speed, 0 disables
+let headingLineMinutes = 0;
+
 let altitudeChartDefaultState = true;
 
 // These settings control the coloring of aircraft by altitude.
@@ -271,6 +275,8 @@ let defaultAllTracks = false;       // T: show all tracks
 let defaultLabels = false;          // L: aircraft labels
 let defaultExtendedLabels = 0;      // O: label extension, 0 - 3
 let defaultTrackLabels = false;     // K: track labels
+// show the current map zoom level above the scale line
+let showZoomLevel = false;
 
 // some scaling for fonts and things
 let globalScale = 1;
@@ -293,6 +299,9 @@ let planespottersLinks = false;
 
 // show links to various registration websites (not all countries)
 let registrationLinks = true;
+// custom link for the registration, overrides the per country links (requires registrationLinks)
+// placeholders: REGISTRATION, ICAO, TYPE (type code, may be empty), values are URL-encoded
+let registrationLinkTemplate = null;
 
 // enable callsign-based airline lookup from the operators database
 let airlineLookup = true;
