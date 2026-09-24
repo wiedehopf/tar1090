@@ -770,8 +770,44 @@
           </div>
           <div id="settingsLeft" class="settingsColumn">
             <div class="settingsOptionContainer">
-              <label for="units_selector"><span class="infoBlockTitleText">Units:&nbsp;&nbsp;</span></label>
+              <label for="units_selector" class="unitsSelectorLabel"><span class="infoBlockTitleText">Units:</span></label>
               <select name="units_selector" id="units_selector">
+                <option value="nautical">Aeronautical</option>
+                <option value="metric">Metric</option>
+                <option value="imperial">Imperial</option>
+              </select>
+            </div>
+            <div class="settingsOptionContainer">
+              <label for="units_selector_altitude" class="unitsSelectorLabel quantityUnitsLabel"><span class="infoBlockTitleText">Altitude:</span></label>
+              <select name="units_selector_altitude" id="units_selector_altitude" class="quantityUnitsSelector" data-quantity="altitude">
+                <option value="">(default)</option>
+                <option value="nautical">Aeronautical</option>
+                <option value="metric">Metric</option>
+                <option value="imperial">Imperial</option>
+              </select>
+            </div>
+            <div class="settingsOptionContainer">
+              <label for="units_selector_speed" class="unitsSelectorLabel quantityUnitsLabel"><span class="infoBlockTitleText">Speed:</span></label>
+              <select name="units_selector_speed" id="units_selector_speed" class="quantityUnitsSelector" data-quantity="speed">
+                <option value="">(default)</option>
+                <option value="nautical">Aeronautical</option>
+                <option value="metric">Metric</option>
+                <option value="imperial">Imperial</option>
+              </select>
+            </div>
+            <div class="settingsOptionContainer">
+              <label for="units_selector_distance" class="unitsSelectorLabel quantityUnitsLabel"><span class="infoBlockTitleText">Distance:</span></label>
+              <select name="units_selector_distance" id="units_selector_distance" class="quantityUnitsSelector" data-quantity="distance">
+                <option value="">(default)</option>
+                <option value="nautical">Aeronautical</option>
+                <option value="metric">Metric</option>
+                <option value="imperial">Imperial</option>
+              </select>
+            </div>
+            <div class="settingsOptionContainer">
+              <label for="units_selector_verticalRate" class="unitsSelectorLabel quantityUnitsLabel"><span class="infoBlockTitleText">V. Rate:</span></label>
+              <select name="units_selector_verticalRate" id="units_selector_verticalRate" class="quantityUnitsSelector" data-quantity="verticalRate">
+                <option value="">(default)</option>
                 <option value="nautical">Aeronautical</option>
                 <option value="metric">Metric</option>
                 <option value="imperial">Imperial</option>

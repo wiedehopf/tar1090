@@ -54,12 +54,14 @@ function get_category_label(category) {
     return label;
 }
 
-// per quantity override of DisplayUnits (altitudeUnits and friends in config.js)
-// acts as a default only: once the user picks a system via the Units dropdown
-// (loStore['displayUnits'] set), that choice wins for every quantity
+// per quantity override of DisplayUnits (altitudeUnits and friends in config.js).
+// config value is a default only: the matching per-quantity dropdown in the
+// settings (loStore['<quantity>UnitsOverride']) wins once the user sets it,
+// independently of the other quantities and of the main Units dropdown.
 function units_for(quantity, displayUnits) {
-	if (loStore['displayUnits'] != undefined) {
-		return displayUnits;
+	let key = (quantity === 'distanceShort' ? 'distance' : quantity) + 'UnitsOverride';
+	if (loStore[key] != undefined) {
+		return loStore[key];
 	}
 	let override = null;
 	switch (quantity) {
