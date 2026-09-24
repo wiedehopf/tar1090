@@ -55,7 +55,12 @@ function get_category_label(category) {
 }
 
 // per quantity override of DisplayUnits (altitudeUnits and friends in config.js)
+// acts as a default only: once the user picks a system via the Units dropdown
+// (loStore['displayUnits'] set), that choice wins for every quantity
 function units_for(quantity, displayUnits) {
+	if (loStore['displayUnits'] != undefined) {
+		return displayUnits;
+	}
 	let override = null;
 	switch (quantity) {
 		case 'altitude': override = altitudeUnits; break;
