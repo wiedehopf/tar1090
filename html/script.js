@@ -3712,7 +3712,9 @@ function refreshSelected() {
     if (selected.wd != null && selected.ws != null) {
         jQuery('#selected_wd').updateText(format_track_brief(selected.wd, true));
         jQuery('#selected_ws').updateText(format_speed_long(selected.ws, DisplayUnits));
-    } else if (!globeIndex && magResult && selected.gs != null && selected.tas != null && selected.track != null && selected.mag_heading != null) {
+    } else if (0 && !globeIndex && magResult && selected.gs != null && selected.tas != null && selected.track != null && selected.mag_heading != null) {
+        // disable calculating wind in the webinterface, it can be VERY inaccurate
+        // use readsb if you want wind speeds :)
 
         const trk = (Math.PI / 180) * selected.track;
         const hdg = (Math.PI / 180) * heading;
