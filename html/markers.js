@@ -1096,8 +1096,10 @@ let TypeDesignatorIcons = {
     'C5M': ['c5', 1.18],
     'E3TF': ['e3awacs', 0.88],
     'E3CF': ['e3awacs', 0.88],
-    //
+    // Gliders
+    // Generic
     'GLID': ['glider', 1],
+    'GLIM': ['glider', 1],
     //Stemme
     'S6': ['glider', 1],
     'S10S': ['glider', 1],
