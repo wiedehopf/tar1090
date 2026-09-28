@@ -184,7 +184,10 @@ ColorByAlt = {
 	stale :    { h: 0, s: -10, l: +30 },
 
 	// Changes added to the color of planes that have positions from mlat
-	mlat :     { h: 0, s: -10, l: -10 }
+	mlat :     { h: 0, s: -10, l: -10 },
+
+	// HSL for planes that are squawking IDENT
+	ident :    { h: 0, s: 0, l: 100 }
 };
 
 */

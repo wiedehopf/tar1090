@@ -3682,6 +3682,9 @@ function refreshSelected() {
     if (selected.squawk == null || selected.squawk == '0000') {
         jQuery('#selected_squawk1').updateText('n/a');
         jQuery('#selected_squawk2').updateText('n/a');
+    } else if (selected.spi) {
+        jQuery('#selected_squawk1').updateText("IDENT " + selected.squawk);
+        jQuery('#selected_squawk2').updateText("IDENT " + selected.squawk);
     } else {
         jQuery('#selected_squawk1').updateText(selected.squawk);
         jQuery('#selected_squawk2').updateText(selected.squawk);

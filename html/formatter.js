@@ -556,6 +556,9 @@ function wqi(data) {
         ac.nic_a = (u8[72] & 64) >> 6;
         ac.nic_c = (u8[72] & 128) >> 7;
 
+        ac.nic_baro = (u8[73] & 1);
+        ac.alert1 = (u8[73] & 2) >> 1;
+        ac.spi = (u8[73] & 4) >> 2;
 
         ac.flight = "";
         for (let i = 78; u8[i] && i < 86; i++) {
@@ -590,9 +593,6 @@ function wqi(data) {
 
         // must come after the stuff above (validity bits)
 
-        ac.nic_baro      = (u8[73] & 1);
-        ac.alert1        = (u8[73] & 2);
-        ac.spi           = (u8[73] & 4);
         ac.flight        = (u8[73] & 8)    ? ac.flight       : undefined;
         ac.alt_baro      = (u8[73] & 16)   ? ac.alt_baro     : undefined;
         ac.alt_geom      = (u8[73] & 32)   ? ac.alt_geom     : undefined;

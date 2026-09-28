@@ -199,7 +199,10 @@ let ColorByAlt = {
 	stale :    { h: 0, s: -35, l: 9 },
 
 	// Changes added to the color of planes that have positions from mlat
-	mlat :     { h: 0, s: 0, l: 0 }
+	mlat :     { h: 0, s: 0, l: 0 },
+
+	// HSL for planes that are squawking IDENT
+	ident :    { h: 0, s: 0, l: 100 }
 };
 
 // For a monochrome display try this:
