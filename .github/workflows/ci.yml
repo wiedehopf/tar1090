@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Syntax checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: JavaScript syntax check
+        run: |
+          status=0
+          for f in html/*.js; do
+            if ! node --check "$f"; then echo "::error::JS syntax error in $f"; status=1; fi
+          done
+          exit $status
+
+      - name: Shell syntax check
+        run: |
+          status=0
+          for f in *.sh; do
+            if ! bash -n "$f"; then echo "::error::shell syntax error in $f"; status=1; fi
+          done
+          exit $status
