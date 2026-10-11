@@ -3440,6 +3440,8 @@ function displaySil() {
     let selected = SelectedPlane;
     let new_html="";
     let type = selected.icaoType ? selected.icaoType : 'ZZZZ';
+    if (type == 'P8 ?')
+        type = 'P8';
     let hex = selected.icao.toUpperCase();
     new_html = "<img id='silhouette' width='"+ 151 * globalScale + "' src='aircraft_sil/" + type + ".png' />";
     setPhotoHtml(new_html);
