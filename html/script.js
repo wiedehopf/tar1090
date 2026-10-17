@@ -513,11 +513,14 @@ function db_load_operators_cache() {
     });
 }
 
-function lookupAirlineForCallsign(callsign, registration) {
+function lookupAirlineForCallsign(callsign, registration, category) {
     if (!airlineLookup || !operatorsCache) {
         return null;
     }
     if (!callsign) {
+        return null;
+    }
+    if (category && category.startsWith('C')) {
         return null;
     }
 
@@ -553,7 +556,7 @@ function updateSelectedAirline(selected) {
     }
     jQuery('#selected_airline_row').removeClass('hidden');
 
-    let operatorData = selected.getAirline ? selected.getAirline() : lookupAirlineForCallsign(selected.name, selected.registration);
+    let operatorData = selected.getAirline ? selected.getAirline() : lookupAirlineForCallsign(selected.name, selected.registration, selected.category);
     if (operatorData) {
         let title = operatorData.c ? operatorData.c + (operatorData.r ? ' / ' + '"' + operatorData.r + '"' : '') : (operatorData.r || '');
         jQuery('#selected_airline').updateText(operatorData.n || 'n/a');
@@ -4023,7 +4026,7 @@ function refreshHighlighted() {
     if (highlighted.getAirline) {
         highlightedOperator = highlighted.getAirline();
     } else {
-        highlightedOperator = lookupAirlineForCallsign(highlighted.name, highlighted.registration);
+        highlightedOperator = lookupAirlineForCallsign(highlighted.name, highlighted.registration, highlighted.category);
     }
     if (highlightedOperator) {
         jQuery('#highlighted_airline').text(highlightedOperator.n || 'n/a');
@@ -4159,11 +4162,11 @@ function refreshFeatures() {
     cols.airline = {
         text: 'Airline',
         sort: function () { sortBy('airline', compareAlphaCI, function(x) {
-            let operatorData = x.getAirline ? x.getAirline() : lookupAirlineForCallsign(x.name, x.registration);
+            let operatorData = x.getAirline ? x.getAirline() : lookupAirlineForCallsign(x.name, x.registration, x.category);
             return operatorData ? (operatorData.n || '') : null;
         }); },
         value: function(plane) {
-            let operatorData = plane.getAirline ? plane.getAirline() : lookupAirlineForCallsign(plane.name, plane.registration);
+            let operatorData = plane.getAirline ? plane.getAirline() : lookupAirlineForCallsign(plane.name, plane.registration, plane.category);
             if (!operatorData) {
                 return '';
             }
