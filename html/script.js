@@ -556,7 +556,7 @@ function updateSelectedAirline(selected) {
     }
     jQuery('#selected_airline_row').removeClass('hidden');
 
-    let operatorData = selected.getAirline ? selected.getAirline() : lookupAirlineForCallsign(selected.name, selected.registration, selected.category);
+    let operatorData = selected.getAirline();
     if (operatorData) {
         let title = operatorData.c ? operatorData.c + (operatorData.r ? ' / ' + '"' + operatorData.r + '"' : '') : (operatorData.r || '');
         jQuery('#selected_airline').updateText(operatorData.n || 'n/a');
@@ -4022,12 +4022,7 @@ function refreshHighlighted() {
         jQuery('#highlighted_registration').text("n/a");
     }
 
-    let highlightedOperator = null;
-    if (highlighted.getAirline) {
-        highlightedOperator = highlighted.getAirline();
-    } else {
-        highlightedOperator = lookupAirlineForCallsign(highlighted.name, highlighted.registration, highlighted.category);
-    }
+    let highlightedOperator = highlighted.getAirline();
     if (highlightedOperator) {
         jQuery('#highlighted_airline').text(highlightedOperator.n || 'n/a');
     } else {
@@ -4162,11 +4157,11 @@ function refreshFeatures() {
     cols.airline = {
         text: 'Airline',
         sort: function () { sortBy('airline', compareAlphaCI, function(x) {
-            let operatorData = x.getAirline ? x.getAirline() : lookupAirlineForCallsign(x.name, x.registration, x.category);
+            let operatorData = x.getAirline();
             return operatorData ? (operatorData.n || '') : null;
         }); },
         value: function(plane) {
-            let operatorData = plane.getAirline ? plane.getAirline() : lookupAirlineForCallsign(plane.name, plane.registration, plane.category);
+            let operatorData = plane.getAirline();
             if (!operatorData) {
                 return '';
             }
