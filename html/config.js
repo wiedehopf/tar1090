@@ -19,9 +19,10 @@
 // speedUnits, distanceUnits), same values as DisplayUnits. The Units dropdown in
 // the settings doesn't affect overridden quantities.
 // e.g. metric everywhere except altitude in feet:
-//DisplayUnits = "metric";
 //altitudeUnits = "nautical";
 //verticalRateUnits = "nautical";
+//speedUnits = "nautical";
+//distanceUnits = "nautical";
 
 // -- Map settings ----------------------------------------
 // These settings are overridden by any position information
