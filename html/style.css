@@ -660,6 +660,13 @@ table.infoSectionTable tr td {
     padding-top: calc( 3.5px * var(--SCALE));
     padding-bottom: calc( 3.5px * var(--SCALE));
 }
+.unitsSelectorLabel {
+    display: inline-block;
+    width: calc(58px * var(--SCALE));
+}
+#units_selector, .quantityUnitsSelector {
+    width: calc(112px * var(--SCALE));
+}
 
 .settingsCheckbox {
     width: calc( 12px * var(--SCALE));
