@@ -2875,7 +2875,7 @@ PlaneObject.prototype.getAirline = function() {
     this.airline = lookupAirlineForCallsign(callsign, registration, category);
     // military callsigns often collide with airline codes (ICE01 is a USAF C-17, not Icelandair)
     if (this.airline && this.military && this.airline.c != this.country &&
-        !(this.airline.c == "Czech Republic" && this.country == "Czechia"))
+        !(this.airline.c == "Czech Republic" && this.country == "Czechia")) {
         this.airline = null;
     }
     return this.airline;
