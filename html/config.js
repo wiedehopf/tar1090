@@ -424,26 +424,69 @@ HideCols = [
 /*
 tableColors = {
     unselected: {
-        adsb: "#d8f4ff",
+        adsb:      "#d8f4ff",
         mlat:      "#FDF7DD",
         uat:       "#C4FFDC",
-        satellite: "#C4FFDC",
-        other:     "#d8d8ff",
+        adsr:      "#C4FFDC",
+        adsc:      "#9efa9e",
+        modeS:     "#d8d8ff",
         tisb:      "#ffd8e6",
         unknown:   "#dcdcdc",
-        squawk7500:"#ff5555",
-        squawk7600:"#00ffff",
-        squawk7700:"#ffff00",
+        other:     "#dcdcdc",
+        ais:       "#dcdcdc",
     },
     selected: {
         adsb:      "#88DDFF",
         mlat:      "#F1DD83",
         uat:       "#66FFA6",
-        satellite: "#66FFA6",
-        other:     "#BEBEFF",
+        adsr:      "#66FFA6",
+        adsc:      "#75f075",
+        modeS:     "#BEBEFF",
         tisb:      "#FFC1D8",
         unknown:   "#bcbcbc",
+        other:     "#bcbcbc",
+        ais:       "#bcbcbc",
     },
+    special: {
+        7500:      "#ff0000",
+        7600:      "#ff0000",
+        7700:      "#ff0000",
+    }
+};
+*/
+
+// table colors for dark mode, if not set they are derived from tableColors by darkening them
+/*
+tableColorsDark = {
+    unselected: {
+        adsb:      "#2a5363",
+        mlat:      "#60572e",
+        uat:       "#295f3e",
+        adsr:      "#295f3e",
+        adsc:      "#275327",
+        modeS:     "#2a2a63",
+        tisb:      "#632a3f",
+        unknown:   "#424242",
+        other:     "#424242",
+        ais:       "#424242",
+    },
+    selected: {
+        adsb:      "#234552",
+        mlat:      "#4a4326",
+        uat:       "#204b32",
+        adsr:      "#204b32",
+        adsc:      "#244724",
+        modeS:     "#28285d",
+        tisb:      "#5e283c",
+        unknown:   "#383838",
+        other:     "#383838",
+        ais:       "#383838",
+    },
+    special: {
+        7500:      "#ff0000",
+        7600:      "#ff0000",
+        7700:      "#ff0000",
+    }
 };
 */
 
