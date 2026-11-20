@@ -3057,17 +3057,19 @@ function initMap() {
     });
 
     tableColorsLight = tableColors;
-    tableColorsDark = JSON.parse(JSON.stringify(tableColors));
-    let darkVals = Object.values(tableColorsDark);
-    for (let i in ['selected', 'unselected']) {
-        let obj = darkVals[i];
-        let keys = Object.keys(obj)
-        for (let j in keys) {
-            let key = keys[j];
-            let hsl = hexToHSL(obj[key]);
-            hsl[1] *= 0.4;
-            hsl[2] *= 0.3;
-            obj[key] = hslToRgb(hsl);
+    if (!tableColorsDark) {
+        tableColorsDark = JSON.parse(JSON.stringify(tableColors));
+        let darkVals = Object.values(tableColorsDark);
+        for (let i in ['selected', 'unselected']) {
+            let obj = darkVals[i];
+            let keys = Object.keys(obj)
+            for (let j in keys) {
+                let key = keys[j];
+                let hsl = hexToHSL(obj[key]);
+                hsl[1] *= 0.4;
+                hsl[2] *= 0.3;
+                obj[key] = hslToRgb(hsl);
+            }
         }
     }
     new Toggle({
